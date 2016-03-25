@@ -226,7 +226,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Initializes the Oculus Rift.
     ovrResult result = ovr_Initialize(nullptr);
     VALIDATE(OVR_SUCCESS(result), "Failed to initialize libOVR.");
-    VALIDATE(Platform.InitWindow(hinst, L"GRASP on Oculus"), "Failed to open window.");
+    VALIDATE(Platform.InitWindow(hinst, L"Oculus Room Tiny (GL)	"), "Failed to open window.");
 
 	// Run the VR.
     Platform.Run(MainLoop);
