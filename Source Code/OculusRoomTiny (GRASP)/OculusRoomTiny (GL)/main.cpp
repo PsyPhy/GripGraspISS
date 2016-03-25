@@ -1,31 +1,44 @@
 /*****************************************************************************
 
-This is the starting point for the GRASP protocol running on Oculus Rift.
-The starting point is the sample program "OculusRoomTiny (GL)" provided by Oculus.
-See Notes.txt for the original header comments from OculusRoomTiny.
-
+This is a local copy of the OculusTinyRoom sample program. 
+I have copied it here to allow me to build the GRASP experiment 
+starting from this baseline.
 
 Joe McIntyre 
 
-*****************************************************************************/
+/*****************************************************************************
 
-// Include the Oculus SDK
+Filename    :   main.cpp
+Content     :   Simple minimal VR demo
+Created     :   December 1, 2014
+Author      :   Tom Heath
+Copyright   :   Copyright 2012 Oculus, Inc. All Rights reserved.
 
-// The following includes comes from the Oculus OVR source files.
-// The path is set via the user macro $(OVRSDKROOT) and via the property pages
-//  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
-//  OVRRootPath.props. I could not figure out how to do it within VS2010.
-#include "Kernel/OVR_System.h"
-#include "OVR_CAPI_GL.h"
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-// This include was part of another Oculus sample program, call OculusRoomTiny_Advanced.
-// I don't know why it is not included with the other Oculus includes.
-// So I made a copy here.
-#include "Win32_GLAppUtil.h"
+http://www.apache.org/licenses/LICENSE-2.0
 
-using namespace OVR;
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 /*****************************************************************************/
+/// This sample has not yet been fully assimiliated into the framework
+/// and also the GL support is not quite fully there yet, hence the VR
+/// is not that great!
+
+
+#include "Win32_GLAppUtil.h"
+#include "Kernel/OVR_System.h"
+
+// Include the Oculus SDK
+#include "OVR_CAPI_GL.h"
+
+using namespace OVR;
 
 // return true to retry later (e.g. after display lost)
 static bool MainLoop(bool retryCreate)
@@ -38,27 +51,24 @@ static bool MainLoop(bool retryCreate)
 
     ovrHmd HMD;
 	ovrGraphicsLuid luid;
-    ovrResult result = ovr_Create(&HMD, &luid);
-    if (!OVR_SUCCESS(result))
-        return retryCreate;
 
+	// Connect to Oculus Rift
+    ovrResult result = ovr_Create(&HMD, &luid);
+    if ( !OVR_SUCCESS(result) ) return retryCreate;
     ovrHmdDesc hmdDesc = ovr_GetHmdDesc(HMD);
 
-    // Setup Window and Graphics
+    // Setup a mirror window on the computer monitor.
     // Note: the mirror window can be any size, for this sample we use 1/2 the HMD resolution
     ovrSizei windowSize = { hmdDesc.Resolution.w / 2, hmdDesc.Resolution.h / 2 };
-    if (!Platform.InitDevice(windowSize.w, windowSize.h, reinterpret_cast<LUID*>(&luid)))
-        goto Done;
+    if ( !Platform.InitDevice( windowSize.w, windowSize.h, reinterpret_cast<LUID*>(&luid) ) ) goto Done;
 
     // Make eye render buffers
-    for (int eye = 0; eye < 2; ++eye)
-    {
+    for (int eye = 0; eye < 2; ++eye) {
         ovrSizei idealTextureSize = ovr_GetFovTextureSize(HMD, ovrEyeType(eye), hmdDesc.DefaultEyeFov[eye], 1);
         eyeRenderTexture[eye] = new TextureBuffer(HMD, true, true, idealTextureSize, 1, NULL, 1);
         eyeDepthBuffer[eye]   = new DepthBuffer(eyeRenderTexture[eye]->GetSize(), 0);
 
-        if (!eyeRenderTexture[eye]->TextureSet)
-        {
+        if (!eyeRenderTexture[eye]->TextureSet) {
             if (retryCreate) goto Done;
             VALIDATE(false, "Failed to create texture.");
         }
@@ -66,8 +76,7 @@ static bool MainLoop(bool retryCreate)
 
     // Create mirror texture and an FBO used to copy mirror texture to back buffer
     result = ovr_CreateMirrorTextureGL(HMD, GL_SRGB8_ALPHA8, windowSize.w, windowSize.h, reinterpret_cast<ovrTexture**>(&mirrorTexture));
-    if (!OVR_SUCCESS(result))
-    {
+    if (!OVR_SUCCESS(result)) {
         if (retryCreate) goto Done;
         VALIDATE(false, "Failed to create mirror texture.");
     }
@@ -122,10 +131,9 @@ static bool MainLoop(bool retryCreate)
         ovrTrackingState hmdState = ovr_GetTrackingState(HMD, ftiming, ovrTrue);
         ovr_CalcEyePoses(hmdState.HeadPose.ThePose, ViewOffset, EyeRenderPose);
 
-        if (isVisible)
-        {
-            for (int eye = 0; eye < 2; ++eye)
-            {
+        if ( isVisible ) {
+            for (int eye = 0; eye < 2; ++eye) {
+
                 // Increment to use next texture, just before writing
                 eyeRenderTexture[eye]->TextureSet->CurrentIndex = (eyeRenderTexture[eye]->TextureSet->CurrentIndex + 1) % eyeRenderTexture[eye]->TextureSet->TextureCount;
 
@@ -177,8 +185,7 @@ static bool MainLoop(bool retryCreate)
         ovrLayerHeader* layers = &ld.Header;
         ovrResult result = ovr_SubmitFrame(HMD, 0, &viewScaleDesc, &layers, 1);
         // exit the rendering loop if submit returns an error, will retry on ovrError_DisplayLost
-        if (!OVR_SUCCESS(result))
-            goto Done;
+        if ( !OVR_SUCCESS(result) ) goto Done;
 
         isVisible = (result == ovrSuccess);
 
@@ -197,15 +204,15 @@ static bool MainLoop(bool retryCreate)
 
 Done:
     delete roomScene;
-    if (mirrorFBO) glDeleteFramebuffers(1, &mirrorFBO);
-    if (mirrorTexture) ovr_DestroyMirrorTexture(HMD, reinterpret_cast<ovrTexture*>(mirrorTexture));
+    if ( mirrorFBO ) glDeleteFramebuffers(1, &mirrorFBO);
+    if ( mirrorTexture ) ovr_DestroyMirrorTexture(HMD, reinterpret_cast<ovrTexture*>(mirrorTexture));
     for (int eye = 0; eye < 2; ++eye)
     {
         delete eyeRenderTexture[eye];
         delete eyeDepthBuffer[eye];
     }
     Platform.ReleaseDevice();
-    ovr_Destroy(HMD);
+    ovr_Destroy( HMD );
 
     // Retry on ovrError_DisplayLost
     return retryCreate || OVR_SUCCESS(result) || (result == ovrError_DisplayLost);
@@ -216,16 +223,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
     OVR::System::Init();
 
-    // Initializes LibOVR, and the Rift
+    // Initializes the Oculus Rift.
     ovrResult result = ovr_Initialize(nullptr);
     VALIDATE(OVR_SUCCESS(result), "Failed to initialize libOVR.");
+    VALIDATE(Platform.InitWindow(hinst, L"GRASP on Oculus"), "Failed to open window.");
 
-    VALIDATE(Platform.InitWindow(hinst, L"Oculus Room Tiny (GL)"), "Failed to open window.");
-
+	// Run the VR.
     Platform.Run(MainLoop);
 
+	// Shutdown the Oculus Rift.
     ovr_Shutdown();
-
     OVR::System::Destroy();
 
     return(0);
