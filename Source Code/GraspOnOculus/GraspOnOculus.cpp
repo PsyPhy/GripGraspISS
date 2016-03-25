@@ -1,44 +1,31 @@
 /*****************************************************************************
 
-This is a local copy of the OculusTinyRoom sample program. 
-I have copied it here to allow me to build the GRASP experiment 
-starting from this baseline.
+This is the starting point for the GRASP protocol running on Oculus Rift.
+The starting point is the sample program "OculusRoomTiny (GL)" provided by Oculus.
+See Notes.txt for the original header comments from OculusRoomTiny.
+
 
 Joe McIntyre 
 
-/*****************************************************************************
-
-Filename    :   main.cpp
-Content     :   Simple minimal VR demo
-Created     :   December 1, 2014
-Author      :   Tom Heath
-Copyright   :   Copyright 2012 Oculus, Inc. All Rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-/*****************************************************************************/
-/// This sample has not yet been fully assimiliated into the framework
-/// and also the GL support is not quite fully there yet, hence the VR
-/// is not that great!
-
-
-#include "Win32_GLAppUtil.h"
-#include "Kernel/OVR_System.h"
+*****************************************************************************/
 
 // Include the Oculus SDK
+
+// The following includes comes from the Oculus OVR source files.
+// The path is set via the user macro $(OVRSDKROOT) and via the property pages
+//  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
+//  OVRRootPath.props. I could not figure out how to do it within VS2010.
+#include "Kernel/OVR_System.h"
 #include "OVR_CAPI_GL.h"
 
+// This include was part of another Oculus sample program, call OculusRoomTiny_Advanced.
+// I don't know why it is not included with the other Oculus includes.
+// So I made a copy here.
+#include "Win32_GLAppUtil.h"
+
 using namespace OVR;
+
+/*****************************************************************************/
 
 // return true to retry later (e.g. after display lost)
 static bool MainLoop(bool retryCreate)
