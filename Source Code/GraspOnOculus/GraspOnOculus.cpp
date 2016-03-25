@@ -1,13 +1,12 @@
 /*****************************************************************************
 
-This is the starting point for the GRASP protocol running on Oculus Rift.
-The starting point is the "OculusRoomTiny (GL)" provided by Oculus as a sample.
+This is a local copy of the OculusTinyRoom sample program. 
+I have copied it here to allow me to build the GRASP experiment 
+starting from this baseline.
 
 Joe McIntyre 
 
 /*****************************************************************************
-
-Original comments and credits.
 
 Filename    :   main.cpp
 Content     :   Simple minimal VR demo
@@ -32,18 +31,11 @@ limitations under the License.
 /// and also the GL support is not quite fully there yet, hence the VR
 /// is not that great!
 
-// This include was part of another Oculus sample program, call OculusRoomTiny_Advanced.
-// I don't know why it is not included with the other Oculus includes.
-// So I made a copy here.
+
 #include "Win32_GLAppUtil.h"
+#include "Kernel/OVR_System.h"
 
 // Include the Oculus SDK
-
-// The following includes comes from the Oculus OVR source files.
-// The path is set via the user macro $(OVRSDKROOT) and via the property pages
-//  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
-//  OVRRootPath.props. I could not figure out how to do it within VS2010.
-#include "Kernel/OVR_System.h"
 #include "OVR_CAPI_GL.h"
 
 using namespace OVR;

@@ -22,6 +22,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hardware", "Hardware\Hardwa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusRoomTiny (GRASP)", "OculusRoomTiny (GRASP)\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL).vcxproj", "{396D645E-3224-433C-AFBA-6EF6919A2214}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspOnOculus", "GraspOnOculus\GraspOnOculus.vcxproj", "{92626B0E-65F3-4CAA-927C-3246D766C7BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -86,6 +88,14 @@ Global
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.Release|Win32.Build.0 = Release|Win32
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Debug|Win32.Build.0 = Debug|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Release|Win32.ActiveCfg = Release|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Release|Win32.Build.0 = Release|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
