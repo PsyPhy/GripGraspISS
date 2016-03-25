@@ -1,0 +1,12 @@
+Configuration File:	ExampleConfigFile.txt
+FlashTime:	0.200000
+ReadyDuration:	1.000000
+NeutralDuration:	5.000000
+DistractorDuration:	1.000000
+BiasedDuration:	5.000000
+ResponseTimeout:	3.000000
+WindowWidth:	800
+WindowHeight:	600
+Stimulus Sequence File:	ExampleSequenceFile.txt
+Stimuli:	10
+Aborted
