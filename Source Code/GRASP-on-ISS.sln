@@ -22,7 +22,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hardware", "Hardware\Hardwa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusRoomTiny (GRASP)", "OculusRoomTiny (GRASP)\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL).vcxproj", "{396D645E-3224-433C-AFBA-6EF6919A2214}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspOnOculus", "GraspOnOculus\GraspOnOculus.vcxproj", "{92626B0E-65F3-4CAA-927C-3246D766C7BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusInterface", "OculusInterface\OculusInterface.vcxproj", "{44EC28D5-22D2-414A-9F40-1BF29EF832D9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsyPhyOculusDemo", "PsyPhyOculusDemo\PsyPhyOculusDemo.vcxproj", "{92626B0E-65F3-4CAA-927C-3246D766C7BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,14 @@ Global
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.Release|Win32.Build.0 = Release|Win32
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{396D645E-3224-433C-AFBA-6EF6919A2214}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.Debug|Win32.Build.0 = Debug|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.Release|Win32.ActiveCfg = Release|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.Release|Win32.Build.0 = Release|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{44EC28D5-22D2-414A-9F40-1BF29EF832D9}.ReleaseStatic|Win32.Build.0 = Release|Win32
 		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Debug|Win32.ActiveCfg = Debug|Win32
 		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.Debug|Win32.Build.0 = Debug|Win32
 		{92626B0E-65F3-4CAA-927C-3246D766C7BE}.DebugStatic|Win32.ActiveCfg = Debug|Win32

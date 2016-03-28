@@ -2,6 +2,11 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+
+#ifdef __cplusplus
+namespace PsyPhy {
+#endif
+
 // Useful constants for accessing components of 
 //  vectors and quaternions.
 #define X	0
@@ -13,10 +18,6 @@
 #define PITCH	1
 #define YAW		2
 
-typedef double Vector3[3];
-typedef float  Vector3f[3];
-typedef double Quaternion[4];
-typedef double Matrix3x3[3][3];
 
 #define MISSING_DOUBLE	999999.999999
 #define MISSING_FLOAT	999999.999999f
@@ -35,3 +36,7 @@ typedef double Matrix3x3[3][3];
 #define ERROR_EXIT 3
 #define ABORT_EXIT 4
 #define RETRY_EXIT 5
+
+#ifdef __cplusplus
+};
+#endif

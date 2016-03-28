@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "VectorsMixin.h"
 
+using namespace PsyPhy;
+
 const double VectorsMixin::pi = 3.14159265358979;
 const double VectorsMixin::epsilon = 0.0001;
 
@@ -406,6 +408,24 @@ void VectorsMixin::SetRotationMatrix( Matrix3x3 result, double radians, const Ve
 		result[Z][Z] = n[Z] * n[Z] * v + c;
 
 	}
+
+}
+
+void VectorsMixin::QuaternionToMatrix( Matrix3x3 m, Quaternion q ) {
+
+	NormalizeQuaternion( q );
+	m[X][X] = 1 - 2.0 * q[Y] * q[Y] - 2.0 * q[Z] * q[Z];
+	m[Y][Y] = 1 - 2.0 * q[X] * q[X] - 2.0 * q[Z] * q[Z];
+	m[Z][Z] = 1 - 2.0 * q[X] * q[X] - 2.0 * q[Y] * q[Y];
+
+	m[X][Y] = 2.0 * q[X] * q[Y] + 2.0 * q[Z] * q[M];
+	m[Y][X] = 2.0 * q[X] * q[Y] - 2.0 * q[Z] * q[M];
+
+	m[X][Z] = 2.0 * q[X] * q[Z] - 2.0 * q[Y] * q[M];
+	m[Z][X] = 2.0 * q[X] * q[Z] + 2.0 * q[Y] * q[M];
+
+	m[Y][Z] = 2.0 * q[Y] * q[Z] + 2.0 * q[X] * q[M];
+	m[Z][Y] = 2.0 * q[Y] * q[Z] - 2.0 * q[X] * q[M];
 
 }
 

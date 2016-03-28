@@ -14,6 +14,7 @@
 #include "../Useful/Timers.h"
 #include "../VectorsMixin/VectorsMixin.h"
 
+using namespace PsyPhy;
 
 /********************************************************************************/
 

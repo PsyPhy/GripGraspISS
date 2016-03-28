@@ -17,9 +17,12 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 
+#include "OpenGLUseful.h"
+
+
 /*********************************************************************************/
 
-void glDefaultLighting( void ) {
+void glUsefulDefaultSpecularLighting( void ) {
 
   // Light definition
   GLfloat LightPosition[] = { 5000.0, 5000.0, 5000.0, 0.0 };
@@ -44,7 +47,7 @@ void glDefaultLighting( void ) {
 
 }
 
-void glCodaDefaultLighting( void ) {
+void glUsefulCodaLighting( void ) {
 
   // Light definition
   GLfloat LightPosition[] = { - 5000.0, - 5000.0, 5000.0, 0.0 };
@@ -69,19 +72,20 @@ void glCodaDefaultLighting( void ) {
 
 }
 
-void glAutoLighting( float intensity ) {
+void glUsefulAutoLighting( double intensity ) {
+
+  float intensityf = (GLfloat) intensity;
 
   // Light definition
-  GLfloat LightAmbient[]  = { intensity, intensity, intensity, 1.0};
-  GLfloat LightDiffuse[]  = { intensity, intensity, intensity, 1.0};
+  GLfloat LightAmbient[]  = { intensityf, intensityf, intensityf, 1.0};
+  GLfloat LightDiffuse[]  = { intensityf, intensityf, intensityf, 1.0};
   GLfloat LightSpecular[] = { 0.00, 0.00, 0.00, 1.0};
 
   glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
   glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
   glLightfv( GL_LIGHT0, GL_SPECULAR, LightSpecular );
 
-  glEnable(GL_LIGHT0);
-
+  glEnable( GL_LIGHT0 );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
   glEnable( GL_BLEND );
 
@@ -94,7 +98,7 @@ void glAutoLighting( float intensity ) {
 
 /*********************************************************************************/
 
-void glDefaultMaterial( void ) {
+void glUsefulDefaultMaterial( void ) {
 
   // Material definition
   GLfloat MaterialAmbient[]   = { 0.25, 0.25, 0.25, 1.0};
@@ -112,3 +116,33 @@ void glDefaultMaterial( void ) {
 
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Routines to initialize the GL graphics engine at the beginning of the program 
+//  and prior to the rendering of each scene. 
+void glUsefulInitializeDefault ( void ) {
+
+	glUsefulAutoLighting( 1.0 );
+	glUsefulDefaultMaterial();
+
+	// Shade model
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping ( NEW )
+	glEnable(GL_LIGHTING);
+	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
+	glClearDepth(1.0f);									// Depth Buffer Setup
+	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
+	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+	glDisable( GL_CULL_FACE );							// glu drawing routines do not like backface culling.
+
+}
+
+// Get ready to do 3D rendering with GL.
+void glUsefulPrepareRendering ( void ) {
+
+	// This should be intergrated more cleanly into the OpenGLObjects system.
+	// Perhaps it should be a method of OpenGLWindow.
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+}

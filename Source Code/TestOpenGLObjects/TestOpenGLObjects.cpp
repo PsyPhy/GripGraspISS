@@ -12,6 +12,8 @@
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../OpenGLObjects/OpenGLTextures.h"
 
+using namespace PsyPhy;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Initial parameters of the window and the simulated objects.
@@ -54,38 +56,7 @@ Assembly		*room;				// A walled room in the virtual world.
 Texture			*wall_texture;		// The texture that is applied to the walls.
 Assembly		*object;			// A 3D object that moves within the virtual room.
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Routines to initialize the GL graphics engine at the beginning of the program 
-//  and prior to the rendering of each scene. I wonder if there is a way to integrate these
-//  better into the OpenGLObjects system?
-
-void initialize_gl ( void ) {
-
-	// Default lighting and material.
-	glDefaultLighting();
-	glDefaultMaterial();
-
-	// Shade model
-	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping ( NEW )
-	glEnable(GL_LIGHTING);
-	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
-	glClearDepth(1.0f);									// Depth Buffer Setup
-	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
-	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-
-}
-
-void prepare_gl_for_rendering ( void ) {
-
-	// Get ready to do 3D rendering with GL.
-	// This should be intergrated more cleanly into the OpenGLObjects system.
-	// Perhaps it should be a method of OpenGLWindow.
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void create_objects( void ) {
@@ -248,7 +219,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	window->Activate();
 
 	// Initialize the state of the GL graphics engine.
-	initialize_gl();
+	glUsefulInitializeDefault();
 
 	// Create the room and the moving object.
 	create_objects();
@@ -258,10 +229,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		object->SetOrientation( angle, object->jVector );
 		object->SetPosition( initial_object_position );
+		viewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
 
 		window->Clear();
 
-		prepare_gl_for_rendering();
+		glUsefulPrepareRendering();
 
 		if ( stereo ) {
 			viewpoint->Apply( window, LEFT_EYE );

@@ -19,18 +19,36 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GraspOnOculus.cpp" />
+    <ClCompile Include="OpenGLObjectsRenderer.cpp" />
+    <ClCompile Include="PsyPhyOculusDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OculusMapper.h" />
-    <ClInclude Include="OculusWIN32.h" />
     <ClInclude Include="TinyRoomSceneRenderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
+      <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\GLAUX.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\GLU32.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\glut32.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\OPENGL32.LIB">
+      <FileType>Document</FileType>
+    </Library>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92626B0E-65F3-4CAA-927C-3246D766C7BE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OculusRoomTiny</RootNamespace>
-    <ProjectName>GraspOnOculus</ProjectName>
+    <ProjectName>PsyPhyOculusDemo</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -223,7 +241,7 @@
     </BuildLog>
     <ClCompile>
       <FloatingPointModel>Precise</FloatingPointModel>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(OVRSDKROOT)LibOVR/Include/;$(OVRSDKROOT)LibOVRKernel/Src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

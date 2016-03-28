@@ -1,11 +1,8 @@
 // Couleurs : les defaults sont BLACK pour glClear et WHITE pour glColor
 
-#ifndef OpenGLColorsH
-#define OpenGLColorsH
+#pragma once
 
-#ifdef __cplusplus 
-extern "C" {
-#endif
+namespace PsyPhy {
 
 enum OPENGL_COLORS {BLACK = 0, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, ORANGE, GRAY, WHITE, COLORS };
 #define Translucid( color ) ( color + COLORS )
@@ -13,10 +10,4 @@ enum OPENGL_COLORS {BLACK = 0, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, ORANGE, 
 
 extern GLfloat OpenGLColors[][4];
 
-#ifdef __cplusplus 
-}
-#endif
-
-#endif
-
- 
+};

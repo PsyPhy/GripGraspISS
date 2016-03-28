@@ -9,12 +9,9 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 
-#include "../Useful/Useful.h"
-//#include <3dMatrix.h">
-
-#include "OpenGLObjects.h"
 #include "OpenGLColors.h"
-#include "OpenGLUseful.h"
+
+namespace PsyPhy {
 
 GLfloat OpenGLColors[][4] =
         { 
@@ -43,6 +40,8 @@ GLfloat OpenGLColors[][4] =
           {1.0f, 1.0f, 1.0f, 0.25},    // WHITE
 
 }; 
+
+};
 
 
  

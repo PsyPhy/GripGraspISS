@@ -19,6 +19,9 @@
 #include "OpenGLUseful.h"
 #include "OpenGLTextures.h"
 
+using namespace PsyPhy;
+
+
 #define MAX_TEXTURES 200
 static GLuint _texture_list[MAX_TEXTURES];
 static char _texture_filename_cache[MAX_TEXTURES][1024];

@@ -13,7 +13,7 @@
 using namespace OVR;
 
 #ifndef VALIDATE
-    #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusRoomTiny", MB_ICONERROR | MB_OK); exit(-1); }
+    #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusWIN32", MB_ICONERROR | MB_OK); exit(-1); }
 #endif
 
 //---------------------------------------------------------------------------------------
@@ -415,5 +415,3 @@ struct OculusDisplayOGL
     }
 };
 
-// Global OpenGL state
-static OculusDisplayOGL oculusDisplay;

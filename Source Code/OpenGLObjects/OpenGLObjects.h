@@ -12,6 +12,7 @@
 #include <math.h>
 #include <float.h>
 
+
 #include "../Useful/Useful.h"
 #include "../VectorsMixin/VectorsMixin.h"
 
@@ -24,6 +25,8 @@
 #include "OpenGLUseful.h"
 #include "OpenGLTextures.h"
 
+namespace PsyPhy {
+
 /* 
  * Default values for spheres, cylinders, etc. 
  */
@@ -35,6 +38,17 @@
 #define DEFAULT_THICKNESS     1.0
 #define DEFAULT_LENGTH       25.0
 
+/*
+ * Maximum number of comonent objects in a given assembly.
+ * Assemblies should be implemented as linked lists so as not
+ *  to impose a limit, but I'm too lazy.
+ */
+#define MAX_COMPONENTS  100
+
+/*
+ * Maximum number of points in a polygon for structures like an extrusion.
+ */
+#define MAX_VERTICES 255
 
 /***************************************************************************/
 
@@ -455,6 +469,6 @@ public:
 
 };
 
-
+};
 
 #endif

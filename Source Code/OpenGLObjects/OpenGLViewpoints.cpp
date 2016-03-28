@@ -13,11 +13,10 @@
 
 #include "../Useful/Useful.h"
 
-#include "OpenGLColors.h"
-#include "OpenGLUseful.h"
 #include "OpenGLObjects.h"
 #include "OpenGLViewpoints.h"
 
+using namespace PsyPhy;
 
 /********************************************************************************/
 
@@ -95,17 +94,24 @@ void Viewpoint::SetOrientation( Matrix3x3 m ) {
 		gl_orientation[ i * 4 + j ] = 0.0;
 	}
 	gl_orientation[ i * 4 + j ] = 1.0;
+
 }
 
-void Viewpoint::SetOrientation( double angle, Vector3 axis ) {
+void Viewpoint::SetOrientation( double angle, const Vector3 axis ) {
 
   Matrix3x3 m;
-
   SetRotationMatrix( m, ToRadians( angle ), axis );
   SetOrientation( m );
 
 }
 
+void Viewpoint::SetOrientation( Quaternion q ) {
+
+  Matrix3x3 m;
+  QuaternionToMatrix( m, q );
+  SetOrientation( m );
+
+}
 void Viewpoint::SetOrientation( double roll, double pitch, double yaw ) {
 
   Matrix3x3 m;
@@ -154,11 +160,19 @@ void Viewpoint::SetAttitude( Matrix3x3 m ) {
 	gl_attitude[ i * 4 + j ] = 1.0;
 }
 
-void Viewpoint::SetAttitude( double angle, Vector3 axis ) {
+void Viewpoint::SetAttitude( double angle, const Vector3 axis ) {
 
   Matrix3x3 m;
 
   SetRotationMatrix( m, ToRadians( angle ), axis );
+  SetAttitude( m );
+
+}
+
+void Viewpoint::SetAttitude( Quaternion q ) {
+
+  Matrix3x3 m;
+  QuaternionToMatrix( m, q );
   SetAttitude( m );
 
 }

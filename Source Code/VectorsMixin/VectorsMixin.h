@@ -9,14 +9,20 @@
 // Vectors here are 3D. Quaternions are 4D.
 
 #pragma once
-// using namespace System;
 
 #include "../Useful/Useful.h" 
+
+namespace PsyPhy {
 
 // I am also putting here support for calculations on 3D rigid bodies.
 // It should probably be a separate class, but I will deal with that later.
 
 #define MAX_RIGID_BODY_MARKERS	256
+
+typedef double Vector3[3];
+typedef float  Vector3f[3];
+typedef double Quaternion[4];
+typedef double Matrix3x3[3][3];
 
 class VectorsMixin {
 
@@ -95,6 +101,7 @@ public:
 
 	void RotateVector( Vector3 result, const Quaternion q, const Vector3 v );
 	void MatrixToQuaternion( Quaternion result, Matrix3x3 m );
+	void VectorsMixin::QuaternionToMatrix( Matrix3x3 result, Quaternion q );
 
 	void QuaternionToCannonicalRotations( Vector3 rotations, Quaternion q );
 
@@ -108,3 +115,4 @@ public:
 
 };
 
+};

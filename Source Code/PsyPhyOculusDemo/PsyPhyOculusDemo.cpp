@@ -10,22 +10,39 @@ Joe McIntyre
 
 // Include the Oculus SDK
 
-// The following includes comes from the Oculus OVR source files.
-// The path is set via the user macro $(OVRSDKROOT) and via the property pages
-//  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
-//  OVRRootPath.props. I could not figure out how to do it within VS2010.
-#include "Kernel/OVR_System.h"
-#include "OVR_CAPI_GL.h"
 
-// Interface to Windows
-#include "OculusWIN32.h"
-#include "OculusMapper.h"
+// Interface to the Oculus and Windows
+#include "../OculusInterface/OculusInterface.h"
 
 // OpenGL rendering functions for Room Tiny.
 #include "TinyRoomSceneRenderer.h"
 
+// OpenGL rendering based on PsyPhy OpenGLObjects.
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "OpenGLObjectsRenderer.h"
 
 using namespace OVR;
+
+// Interface to OpenGL windows and HMD.
+static OculusDisplayOGL oculusDisplay;
+
+// Mapping and rendering in Oculus.
+static OculusMapper oculusMapper;
+
+void ViewpointSetPose ( PsyPhy::OculusViewpoint *viewpoint, ovrPosef pose ) {
+	PsyPhy::Vector3 pos;
+	PsyPhy::Quaternion ori;
+	pos[X] = pose.Position.x;
+	pos[Y] = pose.Position.y;
+	pos[Z] = pose.Position.z;
+	ori[X] = pose.Orientation.x;
+	ori[Y] = pose.Orientation.y;
+	ori[Z] = pose.Orientation.z;
+	ori[M] = pose.Orientation.w;
+	viewpoint->SetOffset( pos );
+	viewpoint->SetAttitude( ori );
+};
 
 /*****************************************************************************/
 
@@ -36,20 +53,28 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	result = oculusMapper.Initialize( platform );
 	if ( OVR_FAILURE ( result ) ) return result;
 
-    // Make scene - can simplify further if needed
-    Scene *roomScene = new Scene(false);
+    // Make scene 
+	// Call with 'true' to include GPU intensive object, 'false' to keep it simple.
+	// The intensive object appears to be a partition wall of some sort that cuts
+	//  the room -- and the table -- in two. On the Perspectives machine it causes the 
+	//  table to flicker.
+    Scene *roomScene = new Scene( false );
+	CreateObjects();
 
     // Main loop
     bool isVisible = true;
     while ( platform->HandleMessages() )
     {
-        // Keyboard inputs to adjust player orientation
-        static float Yaw( 3.141592f );  
+		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
+        static float Yaw( 3.14159f );  
+
+		// Keyboard inputs to adjust player orientation in the horizontal plane.
         if ( platform->Key[VK_LEFT] )  Yaw += 0.02f;
         if ( platform->Key[VK_RIGHT] ) Yaw -= 0.02f;
 
-        // Keyboard inputs to adjust player position
-        static Vector3f PlayerPosition( 0.0f, 1.6f, -5.0f );
+        // Keyboard inputs to adjust player position. The forward, backward, leftward and rightward steps
+		//  are taken relative to the current viewing orientation of the subjec.
+        static Vector3f PlayerPosition( 0.0f, 0.0f, -5.0f );
         if ( platform->Key['W'] || platform->Key[VK_UP] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( Vector3f( 0, 0, -0.05f) );
         if ( platform->Key['S'] || platform->Key[VK_DOWN] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( Vector3f( 0, 0, +0.05f) );
         if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( Vector3f( +0.05f, 0, 0) );
@@ -58,34 +83,58 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		// Place the viewpoint at the height specified by the Oculus configuration manager.
 		// If the origin of our tracker reference frame is at zero height, this is not necessary
 		//  because the tracker will put the viewpoint at the proper, measured height.
-		PlayerPosition.y = ovr_GetFloat( oculusMapper.HMD, OVR_KEY_EYE_HEIGHT, PlayerPosition.y);
+		// PlayerPosition.y = ovr_GetFloat( oculusMapper.HMD, OVR_KEY_EYE_HEIGHT, PlayerPosition.y);
 
-		// Animate the cube
+		// Animate the cube.
         static float cubeClock = 0;
         roomScene->Models[0]->Pos = Vector3f(9 * sin( cubeClock ), 3, 9 * cos( cubeClock += 0.015f ) );
 
+		// Animate the sphere.
+		static double toolP = 0.0;
+		tool->SetOrientation( toolP, toolP, - toolP );
+		toolP += 1.0;
+
         if ( isVisible )
         {
-			oculusMapper.PrepareViewpoints();
+			// Read the predicted state of the Oculus head tracker.
+			ovrPosef headPose = oculusMapper.ReadHeadPose();
+			// Prepare the viewpoints using info about the subject's IPD
+			//  as managed by the Oculus Configuration Utility.
+			oculusMapper.PrepareViewpoints( headPose );
             for (int eye = 0; eye < 2; ++eye)
             {
 				Matrix4f	view;
 				Matrix4f	projection;
-
-				// Get ready to draw into one of the eyes.
- 				oculusMapper.SelectEye( eye );
 
 				// Compute the player's orientation transform in the world.
 				// The reference point for the viewing pose is determined by the 
 				//  player's yaw angle and position that are controlled by the keyboard.
                 Matrix4f PlayerOrientation = Matrix4f::RotationY( Yaw );
 
+				// Get ready to draw into one of the eyes.
+ 				oculusMapper.SelectEye( eye );
+
 				// Get the viewing pose and projection matrices based on the programmed player's
 				//  position and orientation and the sensed position and orientation of the HMD.
 				oculusMapper.GetEyeProjections( eye, PlayerPosition,  PlayerOrientation, &view, &projection );
 
-                // Render the world
-				roomScene->Render( view, projection );
+                // Render the world using the Oculus rendering routines.
+				// roomScene->Render( view, projection );
+
+				// Render the world using the PsyPhy 3D modelling routines.
+
+				// Set the baseline orientation of the viewpoint to the player's position.
+				PsyPhy::Vector3 pos;
+				pos[X] = PlayerPosition.x;
+				pos[Y] = PlayerPosition.y;
+				pos[Z] = PlayerPosition.z;
+				viewpoint->SetPosition( pos );
+				viewpoint->SetOrientation( viewpoint->ToDegrees( - Yaw ), viewpoint->jVector );
+
+				// Get the orientation of the head as measured by the Oculus and convert to 
+				//  a PsyPhy position and orientation quaternion.
+				ViewpointSetPose( viewpoint, headPose );
+				DrawObjects( eye );
 
 				// There is some cleaning up that has to be done after the view for each eye is drawn.
 				oculusMapper.DeselectEye( eye );
@@ -125,18 +174,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	// Pass a pointer to Platform to give access to the HandleMessages() method and other parameters.
 	result = MainLoop( &oculusDisplay );
     VALIDATE( OVR_SUCCESS( result ), "An error occurred setting up the GL graphics window.");
-
-	// If we get here it means that the previous pass through MainLoop exited either normally
-	//  or perhaps with an ovrError_DisplayLost status. If the user asked to quit, MainLoop
-	//  kills the program, so we would not be here. So if we get here, we try to run
-    do {
-		// Be sure to handle any messages while waiting for the main loop to run again.
-        if ( !oculusDisplay.HandleMessages() ) break;
-		// Sleep a bit before retrying to reduce CPU load while the HMD is disconnected
-        Sleep(10);
-		// Try the main loop again.
-		result = MainLoop( &oculusDisplay );
-    } while ( OVR_SUCCESS( result ) || result == ovrError_DisplayLost );
 
 
 	// Shutdown the Rift.

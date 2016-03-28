@@ -19,6 +19,7 @@
 #include "OpenGLUseful.h"
 #include "OpenGLTextures.h"
 
+using namespace PsyPhy;
 
 /* 
  * Default values for spheres, cylinders, etc. 

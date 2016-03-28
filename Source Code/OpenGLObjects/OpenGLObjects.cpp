@@ -14,39 +14,27 @@
 #include "../Useful/Useful.h"
 
 #include "OpenGLObjects.h"
-#include "OpenGLColors.h"
-#include "OpenGLUseful.h"
 
 #define USE_PARENT_COLOR  -1.0
 
+using namespace PsyPhy;
+
 /***************************************************************************/
 
-/*
- * Initialize a gl position to zero.
- */
-
-void init_gl_displacement( double *m ) {
-
+// Initialize a gl position to zero.
+static void _init_gl_displacement( double *m ) {
   m[0] = m[1] = m[2] = 0.0; 
-
 }
 
-/***************************************************************************/
-
-/*
- * Initialize a homogeneous coordinate matrix (4x4) to the identity matrix.
- */
-
-void init_gl_rotation( double *m ) {
-
+// Initialize a homogeneous coordinate matrix (4x4) to the identity matrix.
+ static void _init_gl_rotation( double *m ) {
   m[0] = m[5] = m[10] = m[15] = 1.0; 
   m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.0;
-
 }
 
 /***************************************************************************/
 
-// By default an object has a zero position and orientation.
+
 
 OpenGLObject::OpenGLObject( void ) {
 
@@ -57,30 +45,44 @@ OpenGLObject::OpenGLObject( void ) {
 	enabled = true;
 	list = -1;
 
+	// By default an object has a zero position and orientation.	
+	// Here we initialize the object's state and the corresponding GL equivalents.
 	CopyVector( position, zeroVector );
 	CopyMatrix( orientation, identityMatrix );
 	CopyVector( offset, zeroVector );
 	CopyMatrix( attitude, identityMatrix );
 
-	init_gl_rotation( gl_attitude );
-	init_gl_rotation( gl_orientation );
-	init_gl_displacement( gl_position );
-	init_gl_displacement( gl_offset );
+	_init_gl_rotation( gl_attitude );
+	_init_gl_rotation( gl_orientation );
+	_init_gl_displacement( gl_position );
+	_init_gl_displacement( gl_offset );
+
+	// By default, use the color of the parent or the previously drawn object.
 	SetColor( 0.0, 0.0, 0.0, USE_PARENT_COLOR );
 
 }
 
 /*********************************************************************************/
-
 /*
- * Set the position of an object either from a 3D vector or from 3 scalar values.
- */
 
+Each object has two positions and two orientations. The top level position and 
+orientation determine the control point, the 'offset' and 'attitude' allow you 
+to change the position and orientation of the actual drawn object with respect to
+the control point. One way to think of it is that offset and attitude allow you 
+to set the position and orientation of the rendered object when it is set to the
+zero position and orientation.
+
+*/
+
+
+
+// Set the position of an object from a 3D vector.
 void OpenGLObject::SetPosition( const Vector3 p ) {
   CopyVector( position, p );
   CopyVector( gl_position, position );
 }
 
+// Set the position of an object from XYZ scalar values.
 void OpenGLObject::SetPosition( double x, double y, double z ) {
   position[X] = x;
   position[Y] = y;
@@ -88,26 +90,24 @@ void OpenGLObject::SetPosition( double x, double y, double z ) {
   CopyVector( gl_position, position );
 }
 
+// Retrieve the position of the object into a vector.
 void OpenGLObject::GetPosition( Vector3 p ) {
   CopyVector( p, position );
 }
 
-/*
- * Offset the object from its control position.
- */
-
+// Offset the object from its control position with a vector.
 void OpenGLObject::SetOffset( const Vector3 p ) {
   CopyVector( offset, p );
   CopyVector( gl_offset, offset );
 }
-
+// Offset the object from its control position with XYZ scalars.
 void OpenGLObject::SetOffset( double x, double y, double z ) {
   offset[X] = x;
   offset[Y] = y;
   offset[Z] = z;
   CopyVector( gl_offset, offset );
 }
-
+// Retrieve the offset of the object into a vector.
 void OpenGLObject::GetOffset( Vector3 p ) {
   CopyVector( p, offset );
 }
@@ -119,6 +119,7 @@ void OpenGLObject::GetOffset( Vector3 p ) {
  *  as defined by a 3D axis vector and a scalar angle in degrees.
  */
 
+// Set the orientation of the object.
 void OpenGLObject::SetOrientation( Matrix3x3 m ) {
 	int i, j;
 	CopyMatrix( orientation, m );
@@ -134,6 +135,7 @@ void OpenGLObject::SetOrientation( Matrix3x3 m ) {
 	gl_orientation[ i * 4 + j ] = 1.0;
 }
 
+// Set the orientation of the object.
 void OpenGLObject::SetOrientation( double angle, const Vector3 axis ) {
 
   Matrix3x3 m;
@@ -143,6 +145,7 @@ void OpenGLObject::SetOrientation( double angle, const Vector3 axis ) {
 
 }
 
+// Set the orientation of the object.
 void OpenGLObject::SetOrientation( double roll, double pitch, double yaw ) {
 
   double m[3][3];
@@ -430,7 +433,8 @@ void Box::Draw( void ) {
   if ( texture ) {
 
     GLfloat u, v;
-    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  
     glEnable( GL_TEXTURE_2D );
     texture->Use();
 
@@ -443,15 +447,15 @@ void Box::Draw( void ) {
 
       glNormal3d( 0.0, 0.0, - 1.0 );
       glTexCoord2f(0.0f, 0.0f); glVertex3d( - x, - y, z );
-      glTexCoord2f(u, 0.0f); glVertex3d( - x,   y, z );
+      glTexCoord2f(u, 0.0f); glVertex3d(  x,  - y, z );
       glTexCoord2f(u, v); glVertex3d(   x,   y, z );
-      glTexCoord2f(0.0f, v); glVertex3d(   x, - y, z );
+      glTexCoord2f(0.0f, v); glVertex3d(  - x, y, z );
 
       glNormal3d( 0.0, 0.0, 1.0 );
       glTexCoord2f(0.0f, 0.0f); glVertex3d( - x, - y, - z );
-      glTexCoord2f(u, 0.0f); glVertex3d(   x, - y, - z );
+      glTexCoord2f(u, 0.0f); glVertex3d(   - x,  y, - z );
       glTexCoord2f(u, v); glVertex3d(   x,   y, - z );
-      glTexCoord2f(0.0f, v); glVertex3d( - x,   y, - z );
+      glTexCoord2f(0.0f, v); glVertex3d(  x,  - y, - z );
 
       if ( texture->u_length ) u = umag * length / texture->u_length;
       else u = umag;
@@ -470,22 +474,22 @@ void Box::Draw( void ) {
       glTexCoord2f(u, v); glVertex3d(   x, - y,   z );
       glTexCoord2f(u, 0.0f); glVertex3d( - x, - y,   z );
 
-      if ( texture->u_length ) u = umag * length / texture->u_length;
+      if ( texture->u_length ) u = umag * height / texture->u_length;
       else u = umag;
-      if ( texture->v_length ) v = vmag * height / texture->v_length;
+      if ( texture->v_length ) v = vmag * length / texture->v_length;
       else v = vmag;
 
       glNormal3d( -1.0, 0.0, 0.0 );
       glTexCoord2f(0.0f, 0.0f); glVertex3d(   x, - y, - z );
-      glTexCoord2f(u, 0.0f); glVertex3d(   x, - y,   z );
+      glTexCoord2f(u, 0.0f); glVertex3d(   x, y,   - z );
       glTexCoord2f(u, v); glVertex3d(   x,   y,   z );
-      glTexCoord2f(0.0f, v); glVertex3d(   x,   y, - z );
+      glTexCoord2f(0.0f, v); glVertex3d(   x,   - y, z );
 
       glNormal3d( 1.0, 0.0, 0.0 );
       glTexCoord2f(0.0f, 0.0f); glVertex3d( - x, - y, - z );
-      glTexCoord2f(0.0f, v); glVertex3d( - x,   y, - z );
+      glTexCoord2f(0.0f, v); glVertex3d( - x,   - y,  z );
       glTexCoord2f(u, v); glVertex3d( - x,   y,   z );
-      glTexCoord2f(u, 0.0f); glVertex3d( - x, - y,   z );
+      glTexCoord2f(u, 0.0f); glVertex3d( - x,  y,    -z );
       glEnd();
       glDisable( GL_TEXTURE_2D );
   }

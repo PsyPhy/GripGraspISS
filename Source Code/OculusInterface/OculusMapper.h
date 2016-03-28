@@ -1,4 +1,6 @@
+#ifndef PUNT
 #define PUNT( msg ) MessageBoxA(NULL, (msg), "OculusRoomTiny", MB_ICONERROR | MB_OK); exit(-1)
+#endif
 
 struct OculusMapper
 {
@@ -91,25 +93,19 @@ struct OculusMapper
 	}
 
 	// Read the tracker and compute the poses for each of the eyes.
-	void PrepareViewpoints ( void ) {
+	ovrPosef ReadHeadPose ( void ) {
 
-        // Get eye poses, feeding in correct IPD offset
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeViewOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeViewOffset;
-
+		ovrPosef headPose;
         double ftiming = ovr_GetPredictedDisplayTime( HMD, 0 );
+ 		ovrTrackingState hmdState = ovr_GetTrackingState( HMD, ftiming, ovrTrue );
         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
-
-		ovrTrackingState hmdState = ovr_GetTrackingState( HMD, ftiming, ovrTrue );
-        ovr_CalcEyePoses( hmdState.HeadPose.ThePose, ViewOffset, EyeRenderPose );
+		headPose = hmdState.HeadPose.ThePose;
+		return headPose;
 
 	}
 
 	// Prepare for rendering to one or the other eye.
-	// Gets the transforms that will map from world space to the space of each eye.
-	// Inputs are which eye, the position and the orientation of the HMD.
-	// Outputs are the view and projection matrices.
 	void SelectEye ( int eye ) {
 
 		// Increment to use next texture, just before writing
@@ -119,6 +115,27 @@ struct OculusMapper
 
 	}
 
+	void DeselectEye ( int eye ) {
+		// Avoids an error when calling SetAndClearRenderSurface during next iteration.
+        // Without this, during the next while loop iteration SetAndClearRenderSurface
+        // would bind a framebuffer with an invalid COLOR_ATTACHMENT0 because the texture ID
+        // associated with COLOR_ATTACHMENT0 had been unlocked by calling wglDXUnlockObjectsNV.
+        eyeRenderTexture[eye]->UnsetRenderSurface();
+	}
+	
+	void PrepareViewpoints ( ovrPosef headPose ) {
+
+        // Get eye poses, feeding in correct IPD offset
+        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeViewOffset;
+		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeViewOffset;
+        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
+
+	}
+
+	// Get the transforms that will map from world space to the space of each eye.
+	// Inputs are which eye, the position and the orientation of the head.
+	// The mapper takes care of transforming from head pose to eye pose.
+	// Outputs are the view and projection matrices for the specified eye.
 	void GetEyeProjections ( int eye, Vector3f position, Matrix4f orientation, Matrix4f *view, Matrix4f *projection ) {
 
 		Vector3f shiftedEyePosition = position + orientation.Transform( EyeRenderPose[eye].Position );
@@ -131,14 +148,6 @@ struct OculusMapper
 
 	}
 
-	void DeselectEye ( int eye ) {
-		// Avoids an error when calling SetAndClearRenderSurface during next iteration.
-        // Without this, during the next while loop iteration SetAndClearRenderSurface
-        // would bind a framebuffer with an invalid COLOR_ATTACHMENT0 because the texture ID
-        // associated with COLOR_ATTACHMENT0 had been unlocked by calling wglDXUnlockObjectsNV.
-        eyeRenderTexture[eye]->UnsetRenderSurface();
-	}
-	
 	ovrResult BlastIt () {
 		
 		// Do distortion rendering, Present and flush/sync
@@ -164,7 +173,7 @@ struct OculusMapper
 		
         ovrLayerHeader *layers = &ld.Header;
         ovrResult result = ovr_SubmitFrame( HMD, 0, &viewScaleDesc, &layers, 1 );
-        // exit the rendering loop if submit returns an error, will retry on ovrError_DisplayLost
+        // exit the rendering loop if submit returns an error
         if ( !OVR_SUCCESS(result) ) return result;
 
         isVisible = (result == ovrSuccess);
@@ -186,4 +195,3 @@ struct OculusMapper
 
 };
 
-static OculusMapper oculusMapper;

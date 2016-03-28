@@ -1,3 +1,11 @@
+/******************************************************************************/
+/*                                                                            */
+/*                            TinyRoomSceneRenderer                           */
+/*                                                                            */
+/******************************************************************************/
+
+// Draws a scence using the new-fangled OpenGL commands that I learned about
+//  from studying the OculusRoomTiny program.
 
 //------------------------------------------------------------------------------
 struct ShaderFill
@@ -273,7 +281,7 @@ struct Scene
         return shader;
     }
 
-    void Init(int includeIntensiveGPUobject)
+    void Init( int includeIntensiveGPUobject )
     {
         static const GLchar* VertexShaderSrc =
             "#version 150\n"
@@ -341,11 +349,12 @@ struct Scene
         m->AllocateBuffers();
         Add(m);
 
-        if (includeIntensiveGPUobject)
+        if ( includeIntensiveGPUobject )
         {
-            m = new Model(Vector3f(0, 0, 0), grid_material[0]);  // Floors
-            for (float depth = 0.0f; depth > -3.0f; depth -= 0.1f)
-                m->AddSolidColorBox(9.0f, 0.5f, -depth, -9.0f, 3.5f, -depth, 0x10ff80ff); // Partition
+            m = new Model(Vector3f(0, 0, 0), grid_material[0]);  // Partition
+            for (float depth = 0.0f; depth > -3.0f; depth -= 0.1f) {
+                m->AddSolidColorBox(9.0f, 0.5f, -depth, -9.0f, 3.5f, -depth, 0x10ff80ff); 
+			}
             m->AllocateBuffers();
             Add(m);
         }
@@ -393,10 +402,10 @@ struct Scene
     }
 
     Scene() : numModels(0) {}
-    Scene(bool includeIntensiveGPUobject) :
+    Scene( bool includeIntensiveGPUobject ) :
         numModels(0)
     {
-        Init(includeIntensiveGPUobject);
+        Init( includeIntensiveGPUobject );
     }
     void Release()
     {

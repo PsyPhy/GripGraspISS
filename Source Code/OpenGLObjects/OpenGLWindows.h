@@ -21,6 +21,8 @@
 #define FONT_HEIGHT   48
 #define FONT_WIDTH    100
 
+namespace PsyPhy {
+
 class OpenGLWindow
 
 {
@@ -89,5 +91,7 @@ public:
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
 OpenGLWindow *CreateMainGlWindow( int argc, char *argv[] );
+
+};
 
 #endif

@@ -13,10 +13,9 @@
 #include <gl\gl.h>
 #include <gl\glu.h>
 
-#include "OpenGLWindows.h"
-#include "OpenGLColors.h"
-#include "OpenGLUseful.h"
 #include "OpenGLObjects.h"
+
+namespace PsyPhy {
 
 /* 
  * Default values for a Viewpoint object. 
@@ -36,7 +35,7 @@
  *  ignored.
  */
 
-typedef enum { LEFT_EYE, RIGHT_EYE, CYCLOPS } Eye;
+typedef enum { LEFT_EYE = 0, RIGHT_EYE = 1, CYCLOPS = -1 } Eye;
 
 class Viewpoint : public OpenGLObject {
 
@@ -54,18 +53,20 @@ public:
   Viewpoint( double ipd = DEFAULT_IPD, double fov = DEFAULT_FOV, 
     double nearest = DEFAULT_NEAREST, double farthest = DEFAULT_FARTHEST );
 
-  void Apply( OpenGLWindow *wnd, Eye eye = CYCLOPS );
+  virtual void Apply( OpenGLWindow *wnd, Eye eye = CYCLOPS );
 
   void SetPosition( double p[3] );
   void SetPosition( double x, double y, double z );
   void SetOrientation( double m[3][3] );
-  void SetOrientation( double angle, double axis[3] );
+  void SetOrientation( Quaternion q );
+  void SetOrientation( double angle, const double axis[3] );
   void SetOrientation( double roll, double pitch, double yaw );
 
   void SetOffset( double p[3] );
   void SetOffset( double x, double y, double z );
   void SetAttitude( double m[3][3] );
-  void SetAttitude( double angle, double axis[3] );
+  void SetAttitude( Quaternion q );
+  void SetAttitude( double angle, const double axis[3] );
   void SetAttitude( double roll, double pitch, double yaw );
 
 };
@@ -97,4 +98,5 @@ public:
 
 };
 
+};
 #endif
