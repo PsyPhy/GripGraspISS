@@ -65,5 +65,13 @@ void PoseTracker::CopyTrackerPose( TrackerPose *destination, TrackerPose *source
 	CopyQuaternion( destination->orientation, source->orientation );
 };
 
+bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
+	CopyVector( pose->position, zeroVector );
+	CopyQuaternion( pose->orientation, nullQuaternion );
+	pose->visible = true;
+	pose->time = 0.0;
+	return( pose->visible );
+}
+
 
 

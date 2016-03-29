@@ -44,10 +44,16 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 		virtual bool GetCurrentPosition( PsyPhy::Vector3 position );
 		virtual bool GetCurrentOrientation( PsyPhy::Quaternion orientation );
 		virtual bool GetCurrentPose( TrackerPose *pose );
-		virtual bool GetCurrentPoseIntrinsic( TrackerPose *pose ){ return false; };
+		virtual bool GetCurrentPoseIntrinsic( TrackerPose *pose ) { return false; };
 
 		void CopyTrackerPose( TrackerPose *destination, TrackerPose *source ) ;
 
+};
+
+class NullPoseTracker : public PoseTracker {
+
+public:
+	bool GetCurrentPoseIntrinsic( TrackerPose *pose );
 };
 
 };

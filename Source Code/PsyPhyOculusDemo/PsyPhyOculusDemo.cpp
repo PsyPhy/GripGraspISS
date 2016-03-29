@@ -54,7 +54,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	result = oculusMapper.Initialize( platform );
 	if ( OVR_FAILURE ( result ) ) return result;
 
-	PsyPhy::OculusPoseTracker *headTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
+	PsyPhy::PoseTracker *headTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
 	VALIDATE( headTracker->Initialize(), "Error initializing OculusPoseTracker." );
 
     // Make scene 
