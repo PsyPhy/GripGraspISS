@@ -14,6 +14,7 @@
     <ProjectGuid>{964BBD65-C198-4A02-8255-349803BDB59D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Hardware</RootNamespace>
+    <ProjectName>Trackers</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,11 +71,14 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CodaRTnetTracker.h" />
+    <ClInclude Include="MouseTracker.h" />
+    <ClInclude Include="PoseTrackers.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="Trackers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PoseTrackers.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

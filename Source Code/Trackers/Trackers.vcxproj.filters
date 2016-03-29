@@ -5,11 +5,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="Trackers.h" />
+    <ClInclude Include="CodaRTnetTracker.h" />
+    <ClInclude Include="MouseTracker.h" />
+    <ClInclude Include="PoseTrackers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Trackers.cpp" />
+    <ClCompile Include="PoseTrackers.cpp" />
   </ItemGroup>
 </Project>
