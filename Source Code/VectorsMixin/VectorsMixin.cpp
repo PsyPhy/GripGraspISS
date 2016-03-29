@@ -10,6 +10,7 @@
 // This is the main DLL file.
 
 #include "stdafx.h"
+#include "../Useful/Useful.h" 
 #include "VectorsMixin.h"
 
 using namespace PsyPhy;
@@ -396,15 +397,15 @@ void VectorsMixin::SetRotationMatrix( Matrix3x3 result, double radians, const Ve
 		v = ( 1 - c );
 
 		result[X][X] = n[X] * n[X] * v + c;
-		result[X][Y] = n[Y] * n[X] * v - n[Z] * s;
-		result[X][Z] = n[Z] * n[X] * v + n[Y] * s;
+		result[Y][X] = n[Y] * n[X] * v - n[Z] * s;
+		result[Z][X] = n[Z] * n[X] * v + n[Y] * s;
 
-		result[Y][X] = n[X] * n[Y] * v + n[Z] * s;
+		result[X][Y] = n[X] * n[Y] * v + n[Z] * s;
 		result[Y][Y] = n[Y] * n[Y] * v + c;
-		result[Y][Z] = n[Z] * n[Y] * v - n[X] * s;
+		result[Z][Y] = n[Z] * n[Y] * v - n[X] * s;
 
-		result[Z][X] = n[X] * n[Z] * v - n[Y] * s;
-		result[Z][Y] = n[Y] * n[Z] * v + n[X] * s;
+		result[X][Z] = n[X] * n[Z] * v - n[Y] * s;
+		result[Y][Z] = n[Y] * n[Z] * v + n[X] * s;
 		result[Z][Z] = n[Z] * n[Z] * v + c;
 
 	}
