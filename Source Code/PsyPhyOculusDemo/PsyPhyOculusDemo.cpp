@@ -110,9 +110,6 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Read the predicted state of the Oculus head tracker.
 			ovrPosef ovrHeadPose = oculusMapper.ReadHeadPose();
 
-			// Prepare the viewpoints using info about the subject's IPD
-			//  as managed by the Oculus Configuration Utility.
-			oculusMapper.PrepareViewpoints( ovrHeadPose );
             for (int eye = 0; eye < 2; ++eye)
             {
 				Matrix4f	view;

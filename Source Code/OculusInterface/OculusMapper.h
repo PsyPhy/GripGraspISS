@@ -2,6 +2,8 @@
 #define PUNT( msg ) MessageBoxA(NULL, (msg), "OculusRoomTiny", MB_ICONERROR | MB_OK); exit(-1)
 #endif
 
+#define PRESUMED_SAME_FRAME_THRESHOLD 0.01
+
 class OculusMapper
 {
 
@@ -104,8 +106,8 @@ public:
         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
 		headPose = hmdState.HeadPose.ThePose;
+		PrepareViewpoints( headPose );
 		return headPose;
-
 	}
 
 	// Prepare for rendering to one or the other eye.
@@ -157,10 +159,14 @@ public:
 
 		// Here is some magic that I do not fully understand.
 		// EyeRenderPose[] must contain the orientation as sensed by the HMD,
-		//  even if we have overridden the viewing orientation. So here I read the current state
-		//  and use it to compute the EyeRenderPoses.
-		ovrPosef intrinsicHeadPose = ReadHeadPose();
-		PrepareViewpoints( intrinsicHeadPose );
+		//  even if we have overridden the viewing orientation. If the HMD head orientation
+		//  has been read 'recently', I assume that the viewpoints are already set.
+		// But if the delay is long, then perhaps we are not using ReadHeadPose() at all
+		//  (i.e. we are using another tracker), so I perform a ReadHeadPose() here to be 
+		//  sure that the Viewpoints are prepared as needed.
+		if ( ovr_GetTimeInSeconds() - sensorSampleTime > PRESUMED_SAME_FRAME_THRESHOLD ) {
+			ReadHeadPose();
+		}
 
         // Set up positional data.
         ovrViewScaleDesc viewScaleDesc;
