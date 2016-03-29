@@ -99,14 +99,14 @@ struct Model
 {
     struct Vertex
     {
-        Vector3f  Pos;
+        OVR::Vector3f  Pos;
         DWORD     C;
         float     U, V;
     };
 
-    Vector3f        Pos;
-    Quatf           Rot;
-    Matrix4f        Mat;
+    OVR::Vector3f        Pos;
+    OVR::Quatf           Rot;
+    OVR::Matrix4f        Mat;
     int             numVertices, numIndices;
     Vertex          Vertices[2000]; // Note fixed maximum
     GLushort        Indices[2000];
@@ -114,7 +114,7 @@ struct Model
     VertexBuffer  * vertexBuffer;
     IndexBuffer   * indexBuffer;
 
-    Model(Vector3f pos, ShaderFill * fill) :
+    Model(OVR::Vector3f pos, ShaderFill * fill) :
         numVertices(0),
         numIndices(0),
         Pos(pos),
@@ -130,10 +130,10 @@ struct Model
         FreeBuffers();
     }
 
-    Matrix4f& GetMatrix()
+    OVR::Matrix4f& GetMatrix()
     {
-        Mat = Matrix4f(Rot);
-        Mat = Matrix4f::Translation(Pos) * Mat;
+        Mat = OVR::Matrix4f(Rot);
+        Mat = OVR::Matrix4f::Translation(Pos) * Mat;
         return Mat;
     }
 
@@ -154,20 +154,20 @@ struct Model
 
     void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, DWORD c)
     {
-        Vector3f Vert[][2] =
+        OVR::Vector3f Vert[][2] =
         {
-            Vector3f(x1, y2, z1), Vector3f(z1, x1), Vector3f(x2, y2, z1), Vector3f(z1, x2),
-            Vector3f(x2, y2, z2), Vector3f(z2, x2), Vector3f(x1, y2, z2), Vector3f(z2, x1),
-            Vector3f(x1, y1, z1), Vector3f(z1, x1), Vector3f(x2, y1, z1), Vector3f(z1, x2),
-            Vector3f(x2, y1, z2), Vector3f(z2, x2), Vector3f(x1, y1, z2), Vector3f(z2, x1),
-            Vector3f(x1, y1, z2), Vector3f(z2, y1), Vector3f(x1, y1, z1), Vector3f(z1, y1),
-            Vector3f(x1, y2, z1), Vector3f(z1, y2), Vector3f(x1, y2, z2), Vector3f(z2, y2),
-            Vector3f(x2, y1, z2), Vector3f(z2, y1), Vector3f(x2, y1, z1), Vector3f(z1, y1),
-            Vector3f(x2, y2, z1), Vector3f(z1, y2), Vector3f(x2, y2, z2), Vector3f(z2, y2),
-            Vector3f(x1, y1, z1), Vector3f(x1, y1), Vector3f(x2, y1, z1), Vector3f(x2, y1),
-            Vector3f(x2, y2, z1), Vector3f(x2, y2), Vector3f(x1, y2, z1), Vector3f(x1, y2),
-            Vector3f(x1, y1, z2), Vector3f(x1, y1), Vector3f(x2, y1, z2), Vector3f(x2, y1),
-            Vector3f(x2, y2, z2), Vector3f(x2, y2), Vector3f(x1, y2, z2), Vector3f(x1, y2)
+            OVR::Vector3f(x1, y2, z1), OVR::Vector3f(z1, x1), OVR::Vector3f(x2, y2, z1), OVR::Vector3f(z1, x2),
+            OVR::Vector3f(x2, y2, z2), OVR::Vector3f(z2, x2), OVR::Vector3f(x1, y2, z2), OVR::Vector3f(z2, x1),
+            OVR::Vector3f(x1, y1, z1), OVR::Vector3f(z1, x1), OVR::Vector3f(x2, y1, z1), OVR::Vector3f(z1, x2),
+            OVR::Vector3f(x2, y1, z2), OVR::Vector3f(z2, x2), OVR::Vector3f(x1, y1, z2), OVR::Vector3f(z2, x1),
+            OVR::Vector3f(x1, y1, z2), OVR::Vector3f(z2, y1), OVR::Vector3f(x1, y1, z1), OVR::Vector3f(z1, y1),
+            OVR::Vector3f(x1, y2, z1), OVR::Vector3f(z1, y2), OVR::Vector3f(x1, y2, z2), OVR::Vector3f(z2, y2),
+            OVR::Vector3f(x2, y1, z2), OVR::Vector3f(z2, y1), OVR::Vector3f(x2, y1, z1), OVR::Vector3f(z1, y1),
+            OVR::Vector3f(x2, y2, z1), OVR::Vector3f(z1, y2), OVR::Vector3f(x2, y2, z2), OVR::Vector3f(z2, y2),
+            OVR::Vector3f(x1, y1, z1), OVR::Vector3f(x1, y1), OVR::Vector3f(x2, y1, z1), OVR::Vector3f(x2, y1),
+            OVR::Vector3f(x2, y2, z1), OVR::Vector3f(x2, y2), OVR::Vector3f(x1, y2, z1), OVR::Vector3f(x1, y2),
+            OVR::Vector3f(x1, y1, z2), OVR::Vector3f(x1, y1), OVR::Vector3f(x2, y1, z2), OVR::Vector3f(x2, y1),
+            OVR::Vector3f(x2, y2, z2), OVR::Vector3f(x2, y2), OVR::Vector3f(x1, y2, z2), OVR::Vector3f(x1, y2)
         };
 
         GLushort CubeIndices[] =
@@ -188,9 +188,9 @@ struct Model
         {
             // Make vertices, with some token lighting
             Vertex vvv; vvv.Pos = Vert[v][0]; vvv.U = Vert[v][1].x; vvv.V = Vert[v][1].y;
-            float dist1 = (vvv.Pos - Vector3f(-2, 4, -2)).Length();
-            float dist2 = (vvv.Pos - Vector3f(3, 4, -3)).Length();
-            float dist3 = (vvv.Pos - Vector3f(-4, 3, 25)).Length();
+            float dist1 = (vvv.Pos - OVR::Vector3f(-2, 4, -2)).Length();
+            float dist2 = (vvv.Pos - OVR::Vector3f(3, 4, -3)).Length();
+            float dist3 = (vvv.Pos - OVR::Vector3f(-4, 3, 25)).Length();
             int   bri = rand() % 160;
             float B = ((c >> 16) & 0xff) * (bri + 192.0f * (0.65f + 8 / dist1 + 1 / dist2 + 4 / dist3)) / 255.0f;
             float G = ((c >>  8) & 0xff) * (bri + 192.0f * (0.65f + 8 / dist1 + 1 / dist2 + 4 / dist3)) / 255.0f;
@@ -203,9 +203,9 @@ struct Model
         }
     }
 
-    void Render(Matrix4f view, Matrix4f proj)
+    void Render(OVR::Matrix4f view, OVR::Matrix4f proj)
     {
-        Matrix4f combined = proj * view * GetMatrix();
+        OVR::Matrix4f combined = proj * view * GetMatrix();
 
         glUseProgram(Fill->program);
         glUniform1i(glGetUniformLocation(Fill->program, "Texture0"), 0);
@@ -253,7 +253,7 @@ struct Scene
         Models[numModels++] = n;
     }
 
-    void Render(Matrix4f view, Matrix4f proj)
+    void Render(OVR::Matrix4f view, OVR::Matrix4f proj)
     {
         for (int i = 0; i < numModels; ++i)
             Models[i]->Render(view, proj);
@@ -329,7 +329,7 @@ struct Scene
                     if (k == 3) tex_pixels[j * 256 + i] = 0xffffffff;// blank
                 }
             }
-            TextureBuffer * generated_texture = new TextureBuffer(nullptr, false, false, Sizei(256, 256), 4, (unsigned char *)tex_pixels, 1);
+            TextureBuffer * generated_texture = new TextureBuffer(nullptr, false, false, OVR::Sizei(256, 256), 4, (unsigned char *)tex_pixels, 1);
             grid_material[k] = new ShaderFill(vshader, fshader, generated_texture);
         }
 
@@ -337,12 +337,12 @@ struct Scene
         glDeleteShader(fshader);
 
         // Construct geometry
-        Model * m = new Model(Vector3f(0, 0, 0), grid_material[2]);  // Moving box
+        Model * m = new Model(OVR::Vector3f(0, 0, 0), grid_material[2]);  // Moving box
         m->AddSolidColorBox(0, 0, 0, +1.0f, +1.0f, 1.0f, 0xff404040);
         m->AllocateBuffers();
         Add(m);
 
-        m = new Model(Vector3f(0, 0, 0), grid_material[1]);  // Walls
+        m = new Model(OVR::Vector3f(0, 0, 0), grid_material[1]);  // Walls
         m->AddSolidColorBox(-10.1f, 0.0f, -20.0f, -10.0f, 4.0f, 20.0f, 0xff808080); // Left Wall
         m->AddSolidColorBox(-10.0f, -0.1f, -20.1f, 10.0f, 4.0f, -20.0f, 0xff808080); // Back Wall
         m->AddSolidColorBox(10.0f, -0.1f, -20.0f, 10.1f, 4.0f, 20.0f, 0xff808080); // Right Wall
@@ -351,7 +351,7 @@ struct Scene
 
         if ( includeIntensiveGPUobject )
         {
-            m = new Model(Vector3f(0, 0, 0), grid_material[0]);  // Partition
+            m = new Model(OVR::Vector3f(0, 0, 0), grid_material[0]);  // Partition
             for (float depth = 0.0f; depth > -3.0f; depth -= 0.1f) {
                 m->AddSolidColorBox(9.0f, 0.5f, -depth, -9.0f, 3.5f, -depth, 0x10ff80ff); 
 			}
@@ -359,18 +359,18 @@ struct Scene
             Add(m);
         }
 
-        m = new Model(Vector3f(0, 0, 0), grid_material[0]);  // Floors
+        m = new Model(OVR::Vector3f(0, 0, 0), grid_material[0]);  // Floors
         m->AddSolidColorBox(-10.0f, -0.1f, -20.0f, 10.0f, 0.0f, 20.1f, 0xff808080); // Main floor
         m->AddSolidColorBox(-15.0f, -6.1f, 18.0f, 15.0f, -6.0f, 30.0f, 0xff808080); // Bottom floor
         m->AllocateBuffers();
         Add(m);
 
-        m = new Model(Vector3f(0, 0, 0), grid_material[2]);  // Ceiling
+        m = new Model(OVR::Vector3f(0, 0, 0), grid_material[2]);  // Ceiling
         m->AddSolidColorBox(-10.0f, 4.0f, -20.0f, 10.0f, 4.1f, 20.1f, 0xff808080);
         m->AllocateBuffers();
         Add(m);
 
-        m = new Model(Vector3f(0, 0, 0), grid_material[3]);  // Fixtures & furniture
+        m = new Model(OVR::Vector3f(0, 0, 0), grid_material[3]);  // Fixtures & furniture
         m->AddSolidColorBox(9.5f, 0.75f, 3.0f, 10.1f, 2.5f, 3.1f, 0xff383838);   // Right side shelf// Verticals
         m->AddSolidColorBox(9.5f, 0.95f, 3.7f, 10.1f, 2.75f, 3.8f, 0xff383838);   // Right side shelf
         m->AddSolidColorBox(9.55f, 1.20f, 2.5f, 10.1f, 1.30f, 3.75f, 0xff383838); // Right side shelf// Horizontals

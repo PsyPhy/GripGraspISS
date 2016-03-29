@@ -14,7 +14,7 @@
     <ProjectGuid>{1E440AE3-5AAC-4A68-B0E2-37F4CB2BBA4A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TestOpenGL</RootNamespace>
-    <ProjectName>TestOpenGLWindow</ProjectName>
+    <ProjectName>zTestOpenGLWindow</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

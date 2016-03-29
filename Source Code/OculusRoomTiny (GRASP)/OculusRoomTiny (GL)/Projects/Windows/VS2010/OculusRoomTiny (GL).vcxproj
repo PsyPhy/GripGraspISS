@@ -28,7 +28,7 @@
     <ProjectGuid>{396D645E-3224-433C-AFBA-6EF6919A2214}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OculusRoomTiny</RootNamespace>
-    <ProjectName>OculusRoomTiny (GRASP)</ProjectName>
+    <ProjectName>zOculusRoomTiny (GRASP)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,6 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(ProjectDir)..\..\..\Obj\Windows\$(Platform)\$(Configuration)\VS2010\</IntDir>
     <OutDir>$(ProjectDir)..\..\..\Bin\Windows\$(Platform)\$(Configuration)\VS2010\</OutDir>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

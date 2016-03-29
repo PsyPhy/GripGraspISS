@@ -2,7 +2,9 @@
 #include "../OculusInterface/OculusInterface.h"
 
 #include "../OpenGLObjects/OpenGLObjects.h"
-#include "OpenGLObjectsRenderer.h"
+#include "PsyPhyRendering.h"
+
+extern OculusMapper oculusMapper;
 
 using namespace PsyPhy;
 
@@ -14,7 +16,7 @@ OculusViewpoint *viewpoint;
 Assembly	*tool;
 Assembly	*room;
 
-void CreateObjects ( void ) {
+void CreatePsyPhyObjects ( void ) {
 
 	// Some local objects used to construct the Assemblies.
 	Sphere	*sphere;
@@ -25,8 +27,15 @@ void CreateObjects ( void ) {
 	// Set up a default GL rendering context.
 	glUsefulInitializeDefault();
 
+	// Tone down the intensity a little bit from the default lighting.
+	// Auto lighting is used to avoid giving a reference from directional lighting.
+	// I don't fully understand the lighting thing, because when I set the intensity to 0
+	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
+	glUsefulAutoLighting( 0.0 );
+	glUsefulDefaultSpecularLighting();
+
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
-	viewpoint = new OculusViewpoint();
+	viewpoint = new OculusViewpoint( &oculusMapper );
 		
 	/// Create a room to put the object in.
 
@@ -72,19 +81,13 @@ void CreateObjects ( void ) {
 
 }
 
-void DrawObjects ( int eye ) {
+void DrawPsyPhyObjects ( int eye, PoseTracker *headTracker ) {
 
 	// Prepare the GL graphics state for drawing in a way that is compatible 
 	//  with OpenGLObjects. I am doing this each time we call DrawObjects in 
 	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
 	//  do this just once at the beginning, e.g. in CreateObjects.
 	glUsefulPrepareRendering();
-
-	// Tone down the intensity a little bit from the default lighting.
-	// Auto lighting is used to avoid giving a reference from directional lighting.
-	// I don't fully understand the lighting thing, because when I set the intensity to 0
-	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
-	glUsefulAutoLighting( 0.0 );
 
 	// Set up the viewing transformations.
 	viewpoint->Apply( eye );
