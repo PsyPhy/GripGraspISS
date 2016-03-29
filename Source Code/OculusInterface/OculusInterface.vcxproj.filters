@@ -9,4 +9,8 @@
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OculusPoseTracker.cpp" />
+    <ClCompile Include="OculusViewpoint.cpp" />
+  </ItemGroup>
 </Project>
