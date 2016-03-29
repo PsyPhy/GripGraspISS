@@ -2,8 +2,11 @@
 #define PUNT( msg ) MessageBoxA(NULL, (msg), "OculusRoomTiny", MB_ICONERROR | MB_OK); exit(-1)
 #endif
 
-struct OculusMapper
+class OculusMapper
 {
+
+public:
+
     static const bool   UseDebugContext = false;
 
 	OculusDisplayOGL	*display;
@@ -136,14 +139,14 @@ struct OculusMapper
 	// Inputs are which eye, the position and the orientation of the head.
 	// The mapper takes care of transforming from head pose to eye pose.
 	// Outputs are the view and projection matrices for the specified eye.
-	void GetEyeProjections ( int eye, Vector3f position, Matrix4f orientation, Matrix4f *view, Matrix4f *projection ) {
+	void GetEyeProjections ( int eye, OVR::Vector3f position, OVR::Matrix4f orientation, OVR::Matrix4f *view, OVR::Matrix4f *projection ) {
 
-		Vector3f shiftedEyePosition = position + orientation.Transform( EyeRenderPose[eye].Position );
-		Matrix4f eyeOrientation = orientation * Matrix4f( EyeRenderPose[eye].Orientation );
-        Vector3f up = eyeOrientation.Transform( Vector3f( 0, 1, 0 ) );
-        Vector3f forward = eyeOrientation.Transform( Vector3f( 0, 0, -1 ) );
+		OVR::Vector3f shiftedEyePosition = position + orientation.Transform( EyeRenderPose[eye].Position );
+		OVR::Matrix4f eyeOrientation = orientation * OVR::Matrix4f( EyeRenderPose[eye].Orientation );
+        OVR::Vector3f up = eyeOrientation.Transform( OVR::Vector3f( 0, 1, 0 ) );
+        OVR::Vector3f forward = eyeOrientation.Transform( OVR::Vector3f( 0, 0, -1 ) );
 
-        *view = Matrix4f::LookAtRH( shiftedEyePosition, shiftedEyePosition + forward, up );
+        *view = OVR::Matrix4f::LookAtRH( shiftedEyePosition, shiftedEyePosition + forward, up );
         *projection = ovrMatrix4f_Projection( hmdDesc.DefaultEyeFov[eye], 0.2f, 1000.0f, ovrProjection_RightHanded );
 
 	}
@@ -151,6 +154,13 @@ struct OculusMapper
 	ovrResult BlastIt () {
 		
 		// Do distortion rendering, Present and flush/sync
+
+		// Here is some magic that I do not fully understand.
+		// EyeRenderPose[] must contain the orientation as sensed by the HMD,
+		//  even if we have overridden the viewing orientation. So here I read the current state
+		//  and use it to compute the EyeRenderPoses.
+		ovrPosef intrinsicHeadPose = ReadHeadPose();
+		PrepareViewpoints( intrinsicHeadPose );
 
         // Set up positional data.
         ovrViewScaleDesc viewScaleDesc;
@@ -164,8 +174,9 @@ struct OculusMapper
 
         for (int eye = 0; eye < 2; ++eye)
         {
+			DeselectEye( eye );
             ld.ColorTexture[eye] = eyeRenderTexture[eye]->TextureSet;
-            ld.Viewport[eye]     = Recti(eyeRenderTexture[eye]->GetSize());
+            ld.Viewport[eye]     = OVR::Recti(eyeRenderTexture[eye]->GetSize());
             ld.Fov[eye]          = hmdDesc.DefaultEyeFov[eye];
             ld.RenderPose[eye]   = EyeRenderPose[eye];
             ld.SensorSampleTime  = sensorSampleTime;

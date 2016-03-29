@@ -7,10 +7,17 @@
 // Based on Win32_GLAppUtil.h from Oculus.
 // I have separated the Win32 OpenGL functionality here from the scene drawing elsewhere.
 
+// The following includes comes from the Oculus OVR source files.
+// The path is set via the user macro $(OVRSDKROOT) and via the property pages
+//  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
+//  OVRRootPath.props. I could not figure out how to do it within VS2010.
+#include "Kernel/OVR_System.h"
+#include "OVR_CAPI_GL.h"
+
 #include "GL/CAPI_GLE.h"
 #include "Extras/OVR_Math.h"
 
-using namespace OVR;
+//using namespace OVR;
 
 #ifndef VALIDATE
     #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusWIN32", MB_ICONERROR | MB_OK); exit(-1); }
@@ -21,7 +28,7 @@ struct DepthBuffer
 {
     GLuint        texId;
 
-    DepthBuffer(Sizei size, int sampleCount)
+    DepthBuffer(OVR::Sizei size, int sampleCount)
     {
         OVR_ASSERT(sampleCount <= 1); // The code doesn't currently handle MSAA textures.
 
@@ -59,9 +66,9 @@ struct TextureBuffer
     ovrSwapTextureSet*  TextureSet;
     GLuint              texId;
     GLuint              fboId;
-    Sizei               texSize;
+    OVR::Sizei               texSize;
 
-    TextureBuffer(ovrHmd hmd, bool rendertarget, bool displayableOnHmd, Sizei size, int mipLevels, unsigned char * data, int sampleCount) :
+    TextureBuffer(ovrHmd hmd, bool rendertarget, bool displayableOnHmd, OVR::Sizei size, int mipLevels, unsigned char * data, int sampleCount) :
         hmd(hmd),
         TextureSet(nullptr),
         texId(0),
@@ -154,7 +161,7 @@ struct TextureBuffer
         }
     }
 
-    Sizei GetSize() const
+    OVR::Sizei GetSize() const
     {
         return texSize;
     }
