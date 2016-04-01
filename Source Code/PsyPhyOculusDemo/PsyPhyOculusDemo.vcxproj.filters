@@ -25,5 +25,8 @@
     <Library Include="..\Lib\OPENGL32.LIB">
       <Filter>Library Files</Filter>
     </Library>
+    <Library Include="..\Lib\codaRTNetProtocol.lib">
+      <Filter>Library Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
