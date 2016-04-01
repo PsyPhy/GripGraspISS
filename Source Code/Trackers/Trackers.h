@@ -20,10 +20,21 @@
 
 /********************************************************************************/
 
-#define MAX_MARKERS	24
-#define MAX_UNITS	2
-#define MAX_FRAMES	20000
+// Constants used to allocate buffers. They should be small to save space but
+//  large enough to handle most options. Here I have set them for the GRASP project.
+
+// On GRASP with DEX, the max number of markers is 24, but the CODA will acquire 28
+//  when in 200Hz mode. So we allocate enough space for all to keep the retrieval 
+//  routines happy.
+#define MAX_MARKERS				28
+// On DEX (GRASP) we have 2 units. In the lab we could have more, but I set it to
+//  2 in order to save buffer space.
+#define MAX_UNITS				2
+// The longest duration of acquisition allowed. (samples/sec * sec/min * min)
+#define MAX_MINUTES	10
+#define MAX_FRAMES				(200 * 60 * MAX_MINUTES)
 #define DEFAULT_SAMPLE_PERIOD	0.005
+#define INVISIBLE				-99999.99999
 
 // Structures that hold the collected data.
 typedef struct {
@@ -42,13 +53,6 @@ typedef struct {
 	bool	hasCombinedFrame;
 	int		unitFrames;
 } MarkerFrameSet;
-
-typedef struct {
-	PsyPhy::Vector3		position;
-	PsyPhy::Quaternion	orientation;
-	bool		visibility;
-	double		time;
-} TrackerPose;
 
 class Tracker : public PsyPhy::VectorsMixin {
 
