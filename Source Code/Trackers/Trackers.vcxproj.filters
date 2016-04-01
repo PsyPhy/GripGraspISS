@@ -14,5 +14,6 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Trackers.cpp" />
     <ClCompile Include="PoseTrackers.cpp" />
+    <ClCompile Include="CodaRTnetTracker.cpp" />
   </ItemGroup>
 </Project>

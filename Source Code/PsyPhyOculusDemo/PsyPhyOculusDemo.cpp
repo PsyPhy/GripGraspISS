@@ -7,11 +7,21 @@ See Notes.txt for the original header comments from OculusRoomTiny.
 Joe McIntyre 
 
 *****************************************************************************/
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <time.h>
+
+#include "../Useful/fMessageBox.h"
+
 // Interface to the Oculus and Windows
 #include "../OculusInterface/OculusInterface.h"
 
 // OpenGL rendering functions for Room Tiny.
 #include "TinyRoomSceneRenderer.h"
+
+// Coda tracker and equivalents.
+#include "../Trackers/CodaRTnetTracker.h"
 
 // Include 3D and 6D tracking capabilities.
 #include "../OculusInterface/OculusPoseTracker.h"
@@ -20,6 +30,10 @@ Joe McIntyre
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "PsyPhyRendering.h"
+
+// A device that records 3D marker positions.
+// Those marker positions will also drive the 6dof pose trackers.
+PsyPhy::CodaRTnetTracker codaTracker;
 
 using namespace OVR;
 
@@ -45,6 +59,11 @@ void ViewpointSetPose ( PsyPhy::OculusViewpoint *viewpoint, ovrPosef pose ) {
 
 static bool useOVR = false;
 static bool usePsyPhy = true;
+
+// For this demo program we will store only 8 markers.
+// But CodaRTnetTracker can handle up to 28 at 200 Hz.
+int nMarkers = 8;
+
 /*****************************************************************************/
 
 ovrResult MainLoop( OculusDisplayOGL *platform )
@@ -143,7 +162,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Perform any periodic updating that the head tracker might require.
 			VALIDATE( headTracker->Update(), "Error updating OculusPoseTracker." );
 			// Now get the current orienation of the head.
-			VALIDATE( headTracker->GetCurrentPose( &headPose ), "Error reading head pose." );
+			VALIDATE( headTracker->GetCurrentPose( &headPose ), "Error reading head tracker" ); 
 
 			for (int eye = 0; eye < 2; ++eye)
             {
@@ -186,6 +205,9 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
 
+	// Initialize the connection to the CODA tracking system.
+	codaTracker.Initialize();
+
     // Initializes LibOVR, and the Rift
     OVR::System::Init();
     ovrResult result = ovr_Initialize( nullptr );
@@ -194,14 +216,53 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	// Initialize the Oculus-enabled Windows platform.
     VALIDATE( oculusDisplay.InitWindow( hinst, L"GraspOnOculus"), "Failed to open window." );
 
+	// Start an acquisition on the CODA.
+	codaTracker.StartAcquisition( 600.0 );
+
     // Call the main loop.
 	// Pass a pointer to Platform to give access to the HandleMessages() method and other parameters.
 	result = MainLoop( &oculusDisplay );
     VALIDATE( OVR_SUCCESS( result ), "An error occurred setting up the GL graphics window.");
 
 	// Shutdown the Rift.
+	// I shut it down before halting the CODA just so that the HMD goes dark while the 
+	// CODA frames are being retrieved.
     ovr_Shutdown();
     OVR::System::Destroy();
+	oculusDisplay.CloseWindow();
+	oculusDisplay.ReleaseDevice();
+
+	// Halt the Coda acquisition.
+	codaTracker.StopAcquisition();
+
+	// Output the CODA data to stdout, which can be redirected to a file.
+	char *filename = "Joe.txt";
+	FILE *fp = fopen( filename, "w" );
+	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
+
+	fprintf( fp, "%s\n", filename );
+	fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
+	fprintf( fp, "Frame\tTime" );
+	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+		for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
+			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+		}
+	}
+	fprintf( fp, "\n" );
+
+	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
+		fprintf( fp, "%05d\t%8.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
+				fprintf( fp, "\t%1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, "\t%6.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+			}
+		}
+		fprintf( fp, "\n" );
+	}
+	fclose( fp );
+
+
 
     return(0);
 }

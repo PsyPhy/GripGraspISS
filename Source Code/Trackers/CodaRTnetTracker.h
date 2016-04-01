@@ -10,6 +10,20 @@
 
 #include "Trackers.h"
 
+// RTNet C++ includes
+#define NO64BIT
+#include "../Include/codaRTNetProtocolCPP/RTNetClient.h"
+#include "../Include/codaRTNetProtocolCPP/DeviceOptionsAlignment.h"
+#include "../Include/codaRTNetProtocolCPP/DeviceOptionsCodaPacketMode.h"
+#include "../Include/codaRTNetProtocolCPP/DeviceOptionsCodaMode.h"
+#include "../Include/codaRTNetProtocolCPP/DeviceInfoAlignment.h"
+#include "../Include/codaRTNetProtocolCPP/PacketDecode3DResult.h"
+#include "../Include/codaRTNetProtocolCPP/PacketDecode3DResultExt.h"
+#include "../Include/codaRTNetProtocolCPP/PacketDecodeADC16.h"
+#include "../Include/codaRTNetProtocolCPP/DeviceInfoUnitCoordSystem.h"
+
+namespace PsyPhy {
+
 class CodaRTnetTracker : public Tracker {
 
 private:
@@ -28,40 +42,45 @@ private:
 	bool overrun;
 
 	// Helper function to print network connection error codes (client-side errors)
-	void print_network_error(const NetworkException& exNet);
+	void print_network_error(const codaRTNet::NetworkException& exNet);
 
 	// Helper function to print device error codes (server-side errors)
-	void print_devicestatusarray_errors(const DeviceStatusArray& status);
+	void print_devicestatusarray_errors(const codaRTNet::DeviceStatusArray& status);
 
 	// Helper function to print system alignment status
-	int print_alignment_status(const DWORD* marker_id_array, const DeviceInfoAlignment& info);
+	int print_alignment_status(const DWORD* marker_id_array, const codaRTNet::DeviceInfoAlignment& info);
 
 	//* Generic data packet
-	RTNetworkPacket packet;
+	codaRTNet::RTNetworkPacket packet;
 
 	// client connection object
-	RTNetClient cl;
+	codaRTNet::RTNetClient cl;
 
 	int codaConfig;
-	DeviceOptionsCodaMode mode;
-	DeviceOptionsCodaPacketMode packet_mode;
+	codaRTNet::DeviceOptionsCodaMode coda_mode;
+	codaRTNet::DeviceOptionsCodaPacketMode packet_mode;
+	int packetsPerFrame;
 
 	// decoder objects
-	PacketDecode3DResultExt decode3D;	// 3D measurements (CX1)
-	PacketDecodeADC16		decodeADC;		// 16-bit ADC measurements (GS16AIO)
+	codaRTNet::PacketDecode3DResultExt decode3D;	// 3D measurements (CX1)
+	codaRTNet::PacketDecodeADC16		decodeADC;		// 16-bit ADC measurements (GS16AIO)
 
 	// Various objects
-	AutoDiscover	discover;
+	codaRTNet::AutoDiscover	discover;
 
 
   // Holds information about the different configurations defined on the CODA system.
   // I am guessing that there will only be one. Ideally, though, one might define
   // three different configurations, one with both Coda units active, the other 
   // two with each of the Codas working in isolation.
-	HWConfigEnum	configs;
-	DataStream		stream;
+	codaRTNet::HWConfigEnum	configs;
+	codaRTNet::DataStream		stream;
 	CODANET_HWCONFIG_DEVICEENABLE devices;
 
+public:
+	// Buffers to hold the data retrieved from the CODA units.
+	// I am making them public so that the calling program can access them directly,
+	// rather than going through RetrieveMarkerFramesUnit();
 	MarkerFrame		recordedMarkerFrames[MAX_UNITS][MAX_FRAMES];
 
 protected:
@@ -70,14 +89,18 @@ public:
 
 	CodaRTnetTracker( void ) : 
 		// Host address and UDP port for the Coda RTnet server.
-		serverAddress("192.168.1.1"), 
+		serverAddress("192.168.5.61"), 
 		serverPort(10111), 
+
 		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
-		mode( CODANET_CODA_MODE_200, 1, false ), 
-		// Request marker data from each Coda unit separately, and the combined data.
-		packet_mode( CODANET_CODAPACKETMODE_SEPARATE_AND_COMBINED_COORD ),	
-		// Use the first Coda configuration in the list.
+		coda_mode( CODANET_CODA_MODE_200, 1, false ), 
+
+		// Request marker data from each Coda unit separately.
+		packet_mode( CODANET_CODAPACKETMODE_SEPARATE_COORD ),	
+
+		// Selects which of the configurations, as defined on the server, to be used.
 		// This has to be set up as a cx1 only configuration on the server.
+		// Someday I will think about how to allow for other devices as well, e.g. the ADC.
 		codaConfig(1), 
 		// A Coda RTnet configuration can include cx1 devices, ADC, force platforms, etc.
 		// This is just a constant specifying the cx1 device.
@@ -95,7 +118,8 @@ public:
 	bool GetAcquisitionState( void );
 	int  GetNumberOfCodas( void );
 
-	int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames, int unit );
+	int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
+	int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 	bool	GetCurrentMarkerFrame( MarkerFrame &frame );
 
 	// Need to add the following.
@@ -105,4 +129,4 @@ public:
 
 };
 
-
+};
