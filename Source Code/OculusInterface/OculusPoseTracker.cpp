@@ -31,6 +31,8 @@ bool OculusPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose ) {
 	pose->orientation[Y] = ovrHeadPose.Orientation.y;
 	pose->orientation[Z] = ovrHeadPose.Orientation.z;
 	pose->orientation[M] = ovrHeadPose.Orientation.w;
+	// We assume that the pose is obtained for this tracker.
+	pose->visible = true;
 
 	return true; 
 
