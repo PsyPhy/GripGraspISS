@@ -23,7 +23,7 @@ double Tracker::GetSamplePeriod( void ) {
 	return( samplePeriod );
 }
 int Tracker::GetNumberOfUnits( void ) {
-	return( 0 );
+	return( nUnits );
 }
 
 void Tracker::StartAcquisition( float max_duration ) {}
