@@ -107,7 +107,7 @@ public:
 
 	bool ComputeRigidBodyPose( Vector3 position, Quaternion orientation,
 								Vector3 model[], Vector3 actual[], 
-								int N, Quaternion default_orientation );
+								int N, const Quaternion default_orientation );
 
 	char *vstr( const Vector3 v );
 	char *qstr( const Quaternion q );

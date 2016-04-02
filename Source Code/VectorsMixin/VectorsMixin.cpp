@@ -541,7 +541,7 @@ double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 // are provided, to compute the position.
 
 bool VectorsMixin::ComputeRigidBodyPose( Vector3 position, Quaternion orientation,
-										 Vector3 model[], Vector3 actual[], int N, Quaternion default_orientation ) {
+										 Vector3 model[], Vector3 actual[], int N, const Quaternion default_orientation ) {
 
 	Vector3		model_centroid, actual_centroid;
 	Vector3		model_delta[MAX_RIGID_BODY_MARKERS], actual_delta[MAX_RIGID_BODY_MARKERS];
