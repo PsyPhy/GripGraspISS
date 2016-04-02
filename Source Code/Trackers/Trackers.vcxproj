@@ -78,6 +78,7 @@
     <ClInclude Include="Trackers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CodaPoseTracker.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
     <ClCompile Include="PoseTrackers.cpp" />
     <ClCompile Include="stdafx.cpp">

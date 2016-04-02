@@ -64,6 +64,9 @@ void PoseTracker::CopyTrackerPose( TrackerPose *destination, TrackerPose *source
 	CopyVector( destination->position, source->position );
 	CopyQuaternion( destination->orientation, source->orientation );
 };
+bool PoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
+	return( false );
+}
 
 bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
 	CopyVector( pose->position, zeroVector );
