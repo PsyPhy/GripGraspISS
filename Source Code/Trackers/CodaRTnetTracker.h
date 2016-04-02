@@ -120,7 +120,7 @@ public:
 
 	int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
 	int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
-	bool	GetCurrentMarkerFrame( MarkerFrame &frame );
+	bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive );

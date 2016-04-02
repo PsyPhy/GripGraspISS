@@ -35,12 +35,16 @@ bool Tracker::CheckAcquisitionOverrun( void ) {
 	return( false );
 }
 
+// Get the most recent frame of marker data.
+// By default, simply take the data from unit 0.
 bool  Tracker::GetCurrentMarkerFrame( MarkerFrame &frame ) { 
-	return( false );
+	return( GetCurrentMarkerFrameUnit( frame, 0 ) );
 }
+// Should return the most recent frame of data. 
+// If your tracker does not provide this functionality, then simply
+//  return false to signal that no frame is available.
 bool  Tracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit ) { 
-	// If the tracker has no concept of separate units, just get the data from the default unit.
-	return( GetCurrentMarkerFrame( frame ) );
+	return( false );
 }
 
 int  Tracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) { 
