@@ -86,11 +86,13 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 		virtual bool	GetCurrentMarkerFrameIntrinsic( MarkerFrame &frame, int unit );
 
+
 		virtual double	GetSamplePeriod( void );
 		virtual int		GetNumberOfUnits( void );
 		virtual void	GetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation ) ;
 
-		void			CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
+		void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
+		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
 
 };
 

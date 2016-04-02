@@ -63,6 +63,30 @@ void Tracker::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 	}
 }
 
+void	Tracker::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames ) {
+	int mrk, frm;
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		CopyVector( frame.marker[mrk].position, zeroVector );
+		frame.marker[mrk].visibility = false;
+	}
+	frame.time = 0.0;
+
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		int count = 0;
+		for ( frm = 0; frm < n_frames; frm++ ) {
+			if ( frames[frm].marker[mrk].visibility ) {
+				AddVectors( frame.marker[mrk].position, frame.marker[mrk].position, frames[frm].marker[mrk].position );
+				count++;
+			}
+		}
+		if ( count > 0 ) {
+			frame.marker[mrk].visibility = true;
+			ScaleVector( frame.marker[mrk].position, frame.marker[mrk].position, 1.0 / (double) count );
+		}
+	}
+}
+
+
 /**************************************************************************************/
 
 // Get the latest frame of marker data from the specified unit.
