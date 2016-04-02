@@ -88,6 +88,7 @@ void CodaRTnetTracker::Initialize( void ) {
 		DWORD	running_config = cl.getRunningHWConfig();
 
 #ifdef ALWAYS_SHUTDOWN
+		cl.stopAcq();
 		OutputDebugString( "Shutting down ... " );
 		cl.stopSystem();
 		running_config = NULL;
@@ -341,7 +342,7 @@ int CodaRTnetTracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames
 }
 
 
-bool CodaRTnetTracker::GetCurrentMarkerFrame( MarkerFrame &frame ) {
+bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
 	
 	int unit_count;
 	int mrk;
@@ -386,9 +387,9 @@ bool CodaRTnetTracker::GetCurrentMarkerFrame( MarkerFrame &frame ) {
 	}
 	
 	// Set a counter to count the number of packets that we get from the request.
-	// We are supposed to get nCoda + 1 packets per request.
+	// We are supposed to get nCoda packets per request.
 	unit_count = 0;
-	while ( unit_count <= nUnits ) {
+	while ( unit_count < nUnits ) {
 
 		// Time out means we did not get as many packets as expected.
 		// So request them again for this time slice.
@@ -424,16 +425,15 @@ bool CodaRTnetTracker::GetCurrentMarkerFrame( MarkerFrame &frame ) {
 			}
 			
 			// The 'page' number is used to say which CODA unit the packet belongs to.
-			// TODO: Double check that page 0 is the combined data.
 			int   unit = decode3D.getPage();
-			if ( unit > nUnits ) {
+			if ( unit >= nUnits ) {
 				// I don't believe that we should ever get here, but who knows?
 				MessageBox( NULL, "Which unit?!?!", "Dexterous", MB_OK );
 				exit( -1 );
 			}
 			
-			// For realtime monitoring we take only the combined data.
-			if ( unit == 0 ) {
+			// Process the data from the selected unit only.
+			if ( unit == selected_unit ) {
 
 				// Compute the time from the tick counter in the packet and the tick duration.
 				// Actually, I am not sure if the tick is defined on a single shot acquistion.
@@ -458,7 +458,7 @@ bool CodaRTnetTracker::GetCurrentMarkerFrame( MarkerFrame &frame ) {
 				status = true;
 			}
 			// Count the number of packets received for this frame.
-			// There should be one per unit, plus one for the combined.
+			// There should be one per unit.
 			unit_count++;
 		}
 	}
