@@ -7,4 +7,4 @@ extern PsyPhy::OculusViewpoint *viewpoint;
 extern PsyPhy::Assembly	*tool;
 extern PsyPhy::Assembly *room;
 void CreatePsyPhyObjects ( void );
-void DrawPsyPhyObjects ( int eye, PsyPhy::PoseTracker *headTracker );
+void DrawPsyPhyObjects ( void );

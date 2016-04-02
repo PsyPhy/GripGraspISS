@@ -81,16 +81,7 @@ void CreatePsyPhyObjects ( void ) {
 
 }
 
-void DrawPsyPhyObjects ( int eye, PoseTracker *headTracker ) {
-
-	// Prepare the GL graphics state for drawing in a way that is compatible 
-	//  with OpenGLObjects. I am doing this each time we call DrawObjects in 
-	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
-	//  do this just once at the beginning, e.g. in CreateObjects.
-	glUsefulPrepareRendering();
-
-	// Set up the viewing transformations.
-	viewpoint->Apply( eye );
+void DrawPsyPhyObjects ( void ) {
 
 	// Draw the room and the tool.
 	room->Draw();

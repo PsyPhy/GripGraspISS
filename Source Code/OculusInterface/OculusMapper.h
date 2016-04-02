@@ -1,8 +1,4 @@
-#ifndef PUNT
-#define PUNT( msg ) MessageBoxA(NULL, (msg), "OculusRoomTiny", MB_ICONERROR | MB_OK); exit(-1)
-#endif
-
-#define PRESUMED_SAME_FRAME_THRESHOLD 0.01
+#define PRESUMED_SAME_FRAME_THRESHOLD 0.0025
 
 class OculusMapper
 {
@@ -100,13 +96,17 @@ public:
 	// Read the tracker and compute the poses for each of the eyes.
 	ovrPosef ReadHeadPose ( void ) {
 
+        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeViewOffset;
+		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeViewOffset;
+ 
 		ovrPosef headPose;
         double ftiming = ovr_GetPredictedDisplayTime( HMD, 0 );
- 		ovrTrackingState hmdState = ovr_GetTrackingState( HMD, ftiming, ovrTrue );
-        // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
+         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
+		ovrTrackingState hmdState = ovr_GetTrackingState( HMD, ftiming, ovrTrue );
 		headPose = hmdState.HeadPose.ThePose;
-		PrepareViewpoints( headPose );
+        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
+
 		return headPose;
 	}
 
@@ -128,18 +128,9 @@ public:
         eyeRenderTexture[eye]->UnsetRenderSurface();
 	}
 	
-	void PrepareViewpoints ( ovrPosef headPose ) {
-
-        // Get eye poses, feeding in correct IPD offset
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeViewOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeViewOffset;
-        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
-
-	}
-
 	// Get the transforms that will map from world space to the space of each eye.
-	// Inputs are which eye, the position and the orientation of the head.
-	// The mapper takes care of transforming from head pose to eye pose.
+	// Inputs are which eye, the position and the orientation of the player.
+	// The mapper takes care of transforming from player to head pose to eye pose.
 	// Outputs are the view and projection matrices for the specified eye.
 	void GetEyeProjections ( int eye, OVR::Vector3f position, OVR::Matrix4f orientation, OVR::Matrix4f *view, OVR::Matrix4f *projection ) {
 
@@ -159,8 +150,8 @@ public:
 
 		// Here is some magic that I do not fully understand.
 		// EyeRenderPose[] must contain the orientation as sensed by the HMD,
-		//  even if we have overridden the viewing orientation. If the HMD head orientation
-		//  has been read 'recently', I assume that the viewpoints are already set.
+		//  even if we have overridden the viewing orientation with another tracker. If the HMD 
+		//  orientation has been read 'recently', I assume that the viewpoints are already set.
 		// But if the delay is long, then perhaps we are not using ReadHeadPose() at all
 		//  (i.e. we are using another tracker), so I perform a ReadHeadPose() here to be 
 		//  sure that the Viewpoints are prepared as needed.
@@ -180,7 +171,6 @@ public:
 
         for (int eye = 0; eye < 2; ++eye)
         {
-			DeselectEye( eye );
             ld.ColorTexture[eye] = eyeRenderTexture[eye]->TextureSet;
             ld.Viewport[eye]     = OVR::Recti(eyeRenderTexture[eye]->GetSize());
             ld.Fov[eye]          = hmdDesc.DefaultEyeFov[eye];

@@ -2,6 +2,7 @@
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "OculusViewpoint.h"
+#include "../Useful/fMessageBox.h"
 
 // Allows one to use the PsyPhy OpenGL object libraries with the Oculus.
 // Using this viewpoint, instead of the standard OpenGLObjects viewpoint sets up the GL transformations
@@ -35,10 +36,6 @@ void OculusViewpoint::Apply( int eye ) {
 		glLoadIdentity();
 		gluPerspective( fov, aspect, nearest, farthest );
 		glTranslated( +ipd / 2, 0.0, 0.0 );
-
-		//// Get ready to draw into one of the eyes.
- 		oculusMapper->SelectEye( eye );
-
 		break;
 
 	case  RIGHT_EYE:
@@ -47,10 +44,6 @@ void OculusViewpoint::Apply( int eye ) {
 		glLoadIdentity();
 		gluPerspective( fov, aspect, nearest, farthest );
 		glTranslated( -ipd / 2, 0.0, 0.0 );
-
-		//// Get ready to draw into one of the eyes.
- 		oculusMapper->SelectEye( eye );
-
 		break;
 
 	default:
@@ -74,3 +67,24 @@ void OculusViewpoint::Apply( int eye ) {
 	glTranslatedv( gl_position );
 
 };
+
+// Get the transforms that will map from world space to the space of each eye.
+// Outputs are the view and projection matrices for the specified eye.
+void OculusViewpoint::GetEyeProjections ( int eye, OVR::Matrix4f *view, OVR::Matrix4f *projection ) {
+
+	fAbortMessageOnCondition( true, "OculusViewpoint::GetEyeProjections", "This does not yet work!" );
+	/*
+
+	The code here is taken from OculusRoomTiny. What I want to do is to implement the same calculation
+	based on the position, offset, orientation and attitude of the viewpoint. But I need to think more.
+
+	OVR::Vector3f shiftedEyePosition = position + orientation.Transform( EyeRenderPose[eye].Position );
+	OVR::Matrix4f eyeOrientation = orientation * OVR::Matrix4f( EyeRenderPose[eye].Orientation );
+    OVR::Vector3f up = eyeOrientation.Transform( OVR::Vector3f( 0, 1, 0 ) );
+    OVR::Vector3f forward = eyeOrientation.Transform( OVR::Vector3f( 0, 0, -1 ) );
+
+    *view = OVR::Matrix4f::LookAtRH( shiftedEyePosition, shiftedEyePosition + forward, up );
+    *projection = ovrMatrix4f_Projection( hmdDesc.DefaultEyeFov[eye], 0.2f, 1000.0f, ovrProjection_RightHanded );
+	*/
+
+}
