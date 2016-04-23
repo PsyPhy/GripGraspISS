@@ -89,7 +89,8 @@ public:
 
 	CodaRTnetTracker( void ) : 
 		// Host address and UDP port for the Coda RTnet server.
-		serverAddress("192.168.5.61"), 
+		// serverAddress("192.168.5.61"), 
+		serverAddress( "10.80.12.103" ),
 		serverPort(10111), 
 
 		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
@@ -101,7 +102,7 @@ public:
 		// Selects which of the configurations, as defined on the server, to be used.
 		// This has to be set up as a cx1 only configuration on the server.
 		// Someday I will think about how to allow for other devices as well, e.g. the ADC.
-		codaConfig(1), 
+		codaConfig(0), 
 		// A Coda RTnet configuration can include cx1 devices, ADC, force platforms, etc.
 		// This is just a constant specifying the cx1 device.
 		cx1Device(1),
