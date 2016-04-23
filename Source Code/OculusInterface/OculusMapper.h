@@ -109,6 +109,22 @@ public:
 
 		return headPose;
 	}
+	// Read the tracker state compute the poses for each of the eyes.
+	ovrTrackingState ReadTrackingState ( void ) {
+
+        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeViewOffset;
+		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeViewOffset;
+ 
+		ovrPosef headPose;
+        double ftiming = ovr_GetPredictedDisplayTime( HMD, 0 );
+         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
+        sensorSampleTime = ovr_GetTimeInSeconds();
+		ovrTrackingState hmdState = ovr_GetTrackingState( HMD, ftiming, ovrTrue );
+		headPose = hmdState.HeadPose.ThePose;
+        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
+
+		return hmdState;
+	}
 
 	// Prepare for rendering to one or the other eye.
 	void SelectEye ( int eye ) {
