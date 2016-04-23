@@ -90,6 +90,7 @@ public:
 	CodaRTnetTracker( void ) : 
 		// Host address and UDP port for the Coda RTnet server.
 		// serverAddress("192.168.5.61"), 
+	    // The following addresss is for the RTnet server on DEX via the ETD port.
 		serverAddress( "10.80.12.103" ),
 		serverPort(10111), 
 
