@@ -12,5 +12,6 @@
   <ItemGroup>
     <ClCompile Include="OculusPoseTracker.cpp" />
     <ClCompile Include="OculusViewpoint.cpp" />
+    <ClCompile Include="OculusCodaPoseTracker.cpp" />
   </ItemGroup>
 </Project>

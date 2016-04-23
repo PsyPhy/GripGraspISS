@@ -97,6 +97,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="OculusPoseTracker.cpp" />
     <ClCompile Include="OculusViewpoint.cpp" />
   </ItemGroup>

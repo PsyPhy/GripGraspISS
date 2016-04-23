@@ -25,8 +25,9 @@ Joe McIntyre
 #include "../Trackers/CodaRTnetTracker.h"
 
 // Include 3D and 6D tracking capabilities.
-#include "../OculusInterface/OculusPoseTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
+#include "../OculusInterface/OculusPoseTracker.h"
+#include "../OculusInterface/OculusCodaPoseTracker.h"
 
 // OpenGL rendering based on PsyPhy OpenGLObjects.
 #include "../OpenGLObjects/OpenGLObjects.h"
@@ -59,8 +60,8 @@ void ViewpointSetPose ( PsyPhy::OculusViewpoint *viewpoint, ovrPosef pose ) {
 	viewpoint->SetAttitude( ori );
 };
 
-static bool useOVR = true;
-static bool usePsyPhy = false;
+static bool useOVR = false;
+static bool usePsyPhy = true;
 
 // For this demo program we will store only 8 markers.
 // But CodaRTnetTracker can handle up to 28 at 200 Hz.
@@ -92,8 +93,11 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	PsyPhy::PoseTracker *nullPoseTracker = new PsyPhy::NullPoseTracker();
 	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
+	PsyPhy::PoseTracker *oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper );
+	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+
 	// Pick which PoseTracker to use.
-	PsyPhy::PoseTracker *headPoseTracker = oculusPoseTracker;
+	PsyPhy::PoseTracker *headPoseTracker = oculusCodaPoseTracker;
 
     // Make scene 
 	// Call with 'true' to include GPU intensive object, 'false' to keep it simple.
@@ -188,7 +192,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			PsyPhy::TrackerPose headPose;
 
 			// Get the current position of the CODA markers.
-			codaTracker.GetCurrentMarkerFrameUnit( markerFrame, 0 );
+			// codaTracker.GetCurrentMarkerFrameUnit( markerFrame, 0 );
 
 			// Perform any periodic updating that the head tracker might require.
 			fAbortMessageOnCondition( !headPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
