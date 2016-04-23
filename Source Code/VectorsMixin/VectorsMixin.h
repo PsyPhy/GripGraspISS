@@ -23,6 +23,10 @@ typedef double Vector3[3];
 typedef float  Vector3f[3];
 typedef double Quaternion[4];
 typedef double Matrix3x3[3][3];
+typedef struct {
+	Vector3	position;
+	Quaternion	orientation;
+} Pose;
 
 class VectorsMixin {
 
