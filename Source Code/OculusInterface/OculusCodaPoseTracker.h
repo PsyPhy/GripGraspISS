@@ -24,13 +24,15 @@ class OculusCodaPoseTracker : public PoseTracker {
 		TrackerPose		currentState;
 		TrackerPose		predictedState;
 
+		FILE *fp;
+
 	protected:
 
 	public:
 
 		double InertialWeighting;
 
-		OculusCodaPoseTracker( OculusMapper *mapper = nullptr, CodaPoseTracker *coda1 = nullptr, CodaPoseTracker *coda2 = nullptr );
+		OculusCodaPoseTracker( OculusMapper *mapper, CodaPoseTracker *coda1, CodaPoseTracker *coda2 );
 		~OculusCodaPoseTracker();
 
 		bool Initialize( void );

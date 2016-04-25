@@ -136,7 +136,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	// Create a pose tracker that combines Coda and Oculus data.
 	// For the moment OculusCodaPoseTracker is still in development and uses only Oculus gyro data.
 	// So we can go ahead and create it even if the useCoda flag is false.
-	PsyPhy::PoseTracker *oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, primaryCodaPoseTracker );
+	PsyPhy::PoseTracker *oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, primaryCodaPoseTracker, secondaryCodaPoseTracker );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
 
 	// Create a null tracker. This can be used to work in egocentric coordinates.
