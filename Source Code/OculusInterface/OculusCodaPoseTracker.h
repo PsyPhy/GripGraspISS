@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/CodaPoseTracker.h"
 
 namespace PsyPhy {
 
@@ -17,6 +18,8 @@ class OculusCodaPoseTracker : public PoseTracker {
 	private:
 
 		OculusMapper *oculusMapper;
+		CodaPoseTracker	*primaryCoda;
+		CodaPoseTracker *secondaryCoda;
 
 		TrackerPose		currentState;
 		TrackerPose		predictedState;
@@ -25,7 +28,9 @@ class OculusCodaPoseTracker : public PoseTracker {
 
 	public:
 
-		OculusCodaPoseTracker( OculusMapper *mapper = nullptr );
+		double InertialWeighting;
+
+		OculusCodaPoseTracker( OculusMapper *mapper = nullptr, CodaPoseTracker *coda1 = nullptr, CodaPoseTracker *coda2 = nullptr );
 		~OculusCodaPoseTracker();
 
 		bool Initialize( void );
