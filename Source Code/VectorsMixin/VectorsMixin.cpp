@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "../Useful/Useful.h" 
+#include "../Useful/fOutputDebugString.h" 
 #include "VectorsMixin.h"
 
 using namespace PsyPhy;
@@ -547,7 +548,6 @@ bool VectorsMixin::ComputeRigidBodyPose( Vector3 position, Quaternion orientatio
 	Vector3		model_delta[MAX_RIGID_BODY_MARKERS], actual_delta[MAX_RIGID_BODY_MARKERS];
 	Vector3		model_center_of_rotation, actual_center_of_rotation;
 	Matrix3x3	model_local, actual_local;
-	Matrix3x3	best, exact;
 
 	int i;
 
@@ -602,8 +602,10 @@ bool VectorsMixin::ComputeRigidBodyPose( Vector3 position, Quaternion orientatio
 		}
 
 		// Compute the best fit transformation between the two.
+		Matrix3x3 best, ortho_best;
 		BestFitTransformation( best, model_delta, actual_delta, N );
-		MatrixToQuaternion( orientation, best );
+		OrthonormalizeMatrix( ortho_best, best );
+		MatrixToQuaternion( orientation, ortho_best );
 
 	}
 
@@ -613,6 +615,7 @@ bool VectorsMixin::ComputeRigidBodyPose( Vector3 position, Quaternion orientatio
 
 		Vector3 temp;
 		Matrix3x3 inverse;
+		Matrix3x3 exact;
 
 		// Use one relative vector to define the X axis.
 		SubtractVectors( model_local[X], model[1], model[0] );
