@@ -4,7 +4,11 @@
 /*                                                                               */
 /*********************************************************************************/
 
-// Access the Oculus head tracker in the PsyPhy domain.
+// Access the Oculus head tracker in the PsyPhy domain. We simply take whatever
+//  pose the Oculus has computed using whatever means it usually uses. It will 
+//  presumably use the compass and gravity to cancel drift in the inertial 
+//  orientation measurements. If the Oculus tracking camera is not connected, then
+//  the position component of the pose stays at 0.
 
 #include "OculusInterface.h"
 #include "OculusPoseTracker.h"
@@ -31,7 +35,7 @@ bool OculusPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose ) {
 	pose->orientation[Y] = ovrHeadPose.Orientation.y;
 	pose->orientation[Z] = ovrHeadPose.Orientation.z;
 	pose->orientation[M] = ovrHeadPose.Orientation.w;
-	// We assume that the pose is obtained for this tracker.
+	// We assume that the pose is always obtained for this tracker.
 	pose->visible = true;
 
 	return true; 
