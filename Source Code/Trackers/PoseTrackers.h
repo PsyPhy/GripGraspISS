@@ -29,9 +29,13 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 		TrackerPose		nullPose;
 
+
 	public:
 
-		PoseTracker ();
+		PoseTracker() {
+			CopyQuaternion( nullPose.orientation, nullQuaternion );
+			CopyVector( nullPose.position, zeroVector );
+		}
 		~PoseTracker ();
 
 		virtual bool Initialize( void ){ return true; };
@@ -40,12 +44,12 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 		virtual void Boresight( TrackerPose *pose );
 		virtual bool BoresightCurrent( void );
-
+		virtual void Unboresight( void );
+		 
 		virtual bool GetCurrentPosition( PsyPhy::Vector3 position );
 		virtual bool GetCurrentOrientation( PsyPhy::Quaternion orientation );
 		virtual bool GetCurrentPose( TrackerPose *pose );
 		virtual bool GetCurrentPoseIntrinsic( TrackerPose *pose );
-
 		void CopyTrackerPose( TrackerPose *destination, TrackerPose *source ) ;
 
 };
@@ -57,3 +61,4 @@ public:
 };
 
 };
+

@@ -16,12 +16,9 @@
 
 using namespace PsyPhy;
 
-PoseTracker::PoseTracker() {
-	CopyQuaternion( nullPose.orientation, nullQuaternion );
-	CopyVector( nullPose.position, zeroVector );
-}
 PoseTracker::~PoseTracker () {}
 
+// Boresight to a specified position and orientation.
 void PoseTracker::Boresight( TrackerPose *pose ) {
 	CopyTrackerPose( &nullPose, pose );
 	nullPose.orientation[X] *= -1.0;
@@ -29,11 +26,19 @@ void PoseTracker::Boresight( TrackerPose *pose ) {
 	nullPose.orientation[Z] *= -1.0;
 	ScaleVector( nullPose.position, nullPose.position, -1.0 );
 }
+
+// Boresight so that the current position and orientation is the null position and orientation.
 bool PoseTracker::BoresightCurrent( void ) {
 	TrackerPose pose;
 	bool success;
 	if ( success = GetCurrentPoseIntrinsic( &pose ) ) Boresight( &pose );
 	return success;
+}
+
+// Remove boresight correction and return to intinsic reference frame.
+void PoseTracker::Unboresight( void ) {
+	CopyVector( nullPose.position, zeroVector );
+	CopyQuaternion( nullPose.orientation, nullQuaternion );
 }
 
 bool PoseTracker::GetCurrentPosition( Vector3 position ) {
@@ -75,6 +80,5 @@ bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
 	pose->time = 0.0;
 	return( pose->visible );
 }
-
 
 
