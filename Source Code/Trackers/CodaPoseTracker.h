@@ -32,12 +32,13 @@ class CodaPoseTracker : public PoseTracker {
 		} modelMarker[MAX_MARKERS];
 		int nModelMarkers;
 
-
 	protected:
 
 	public:
 
-		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0) {
+		double intermarkerDistanceTolerance;
+
+		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0), intermarkerDistanceTolerance(2.0) {
 			// Store the pointer to the marker frame.
 			this->frame = frame;
 			// Do whatever the default PoseTracker would do.

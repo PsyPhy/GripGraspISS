@@ -8,6 +8,7 @@
 #include "CodaPoseTracker.h"
 #include "../Useful/Useful.h"
 #include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 
 using namespace PsyPhy;
 
@@ -19,25 +20,54 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
 
 	Vector3		selected_model[MAX_MARKERS];
 	Vector3		selected_actual[MAX_MARKERS];
+	Vector3		validated_model[MAX_MARKERS];
+	Vector3		validated_actual[MAX_MARKERS];
 
 	bool		visible;
 
 	// Select the visible output markers and the corresponding inputs.
-	int n_markers = 0;
+	int visible_markers = 0;
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		int id = modelMarker[mrk].id;
 		if ( frame->marker[id].visibility ) {
-			CopyVector( selected_model[n_markers], modelMarker[mrk].position );
-			CopyVector( selected_actual[n_markers], frame->marker[id].position );
-			n_markers++;
+			CopyVector( selected_model[visible_markers], modelMarker[mrk].position );
+			CopyVector( selected_actual[visible_markers], frame->marker[id].position );
+			visible_markers++;
 		}
 	}
 
+	// Try to discard markers with reflections by comparing inter-marker distances.
+	// We step through each of the visible markers, compute the distance between it and each of
+	// the other markers and then compare the distance with the distance from the model. If
+	// at least one distance is within tolerance, then the first marker is included in the 
+	// validated list. 
+	int validated_markers = 0;
+	for ( int mrk1 = 0; mrk1 < visible_markers; mrk1++ ) {
+		for ( int mrk2 = 0; mrk2 < visible_markers; mrk2++ ) {
+			if ( mrk1 != mrk2 ) {
+				Vector3 delta_model, delta_actual;
+				SubtractVectors( delta_model, selected_model[mrk1], selected_model[mrk2] );
+				SubtractVectors( delta_actual, selected_actual[mrk1], selected_actual[mrk2] );
+				if ( fabs( VectorNorm( delta_model ) - VectorNorm( delta_actual ) ) < intermarkerDistanceTolerance ) {
+					CopyVector( validated_model[validated_markers], selected_model[mrk1] );
+					CopyVector( validated_actual[validated_markers], selected_actual[mrk1] );
+					validated_markers++;
+					break;
+				}
+			}
+		}
+	}
+	if ( validated_markers < visible_markers ) fOutputDebugString( "Rejected %d markers.\n", visible_markers - validated_markers );
+
 	// ComputeRigidBodyPose() does it all!
-	pose->visible = ComputeRigidBodyPose( pose->position, pose->orientation, selected_model, selected_actual, n_markers, nullQuaternion );
+	pose->visible = ComputeRigidBodyPose( pose->position, pose->orientation, validated_model, validated_actual, validated_markers, nullptr );
+
 	// Convert CODA position in mm to position in meters.
 	ScaleVector( pose->position, pose->position, 0.001 );
+	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
+	// I don't know what that will be, yet, so I set the time to zero.
 	pose->time = 0.0;
+	// returns whether or not the rigid body is visible.
 	return( pose->visible );
 
 }
