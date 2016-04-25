@@ -70,6 +70,8 @@ static bool useCoda = true;
 int nMarkers = 8;
 /*****************************************************************************/
 
+// Polling the CODA in the rendering loop can cause non-smooth updating.
+// Here we use a thread to get the CODA pose data in the background.
 #define N_CODAS 2
 bool lockCoda[N_CODAS] = { false, false };
 bool stopMarkerGrabs = false;
@@ -142,7 +144,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
 	// Pick which PoseTracker to use.
-	PsyPhy::PoseTracker *headPoseTracker = oculusPoseTracker;
+	PsyPhy::PoseTracker *headPoseTracker = oculusCodaPoseTracker;
 
     // Make the scene based on the OculusRoomTiny example.
 	// Call with 'true' to include GPU intensive object, 'false' to keep it simple.
