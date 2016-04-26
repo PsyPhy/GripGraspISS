@@ -32,6 +32,7 @@ namespace PsyPhy {
  */
 #define DEFAULT_STACKS       32
 #define DEFAULT_SLICES       32
+#define DEFAULT_FACETS		 60
 #define DEFAULT_RADIUS       10.0
 #define DEFAULT_HEIGHT       20.0
 #define DEFAULT_WIDTH        10.0
@@ -358,13 +359,11 @@ public:
   double bottom_radius;
   double height;
 
-  int    slices;
-  int    stacks;
-  GLUquadric *quad;
+  int    facets;
 
   Cylinder( double top_radius = DEFAULT_RADIUS, double bottom_radius = DEFAULT_RADIUS, 
               double height = DEFAULT_HEIGHT, 
-              int slices = DEFAULT_SLICES, int stacks = DEFAULT_STACKS );
+              int facets = DEFAULT_FACETS );
 
   void  Draw();
   void  SetRadius( double top_radius, double bottom_radius = NaN );

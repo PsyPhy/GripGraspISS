@@ -982,16 +982,12 @@ void Disk::SetRadius( double outer, double inner ) {
 
 /********************************************************************************/
 
-Cylinder::Cylinder( double top_r, double bottom_r, double hght, int slcs, int stks ) {
+Cylinder::Cylinder( double top_radius, double bottom_radius, double height, int facets ) {
 
-  quad = gluNewQuadric();
-
-  top_radius = top_r;
-  bottom_radius = bottom_r;
-  slices = slcs;
-  stacks = stks;
-  height = hght;
-
+  this->top_radius = top_radius;
+  this->bottom_radius = bottom_radius;
+  this->height = height;
+  this->facets = facets;
 
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
@@ -999,10 +995,81 @@ Cylinder::Cylinder( double top_r, double bottom_r, double hght, int slcs, int st
 
 void Cylinder::Draw( void ) {
 
-  if ( ! enabled ) return;
-  PrepDraw();
-  gluCylinder( quad, top_radius, bottom_radius, height, slices, stacks );
-  FinishDraw();
+	double angle;
+	double deltaA = Pi / 30.0;
+
+	double x1, x2, x3, x4;
+	double y1, y2, y3, y4;
+	double z1 = - height / 2.0;
+	double z2 = height / 2.0;
+
+	if ( ! enabled ) return;
+	PrepDraw();
+
+	if ( texture ) {
+
+		GLfloat u1, u2, v1, v2;
+		GLfloat u_scale, v_scale;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		if ( texture->u_length ) u_scale = umag * ( top_radius + bottom_radius ) * Pi / texture->u_length;
+		else u_scale = umag;
+		if ( texture->v_length ) v_scale = vmag * height / texture->v_length;
+		else v_scale = vmag;
+
+		glEnable( GL_TEXTURE_2D );
+		texture->Use();
+		for ( angle = 0.0; angle <= 2.0 * Pi; angle+=deltaA ){
+
+			x1 = top_radius * cos( angle );
+			x2 = top_radius * cos( angle + deltaA );
+			x3 = bottom_radius * cos( angle + deltaA );
+			x4 = bottom_radius * cos( angle );
+			y1 = top_radius * sin( angle );
+			y2 = top_radius * sin( angle + deltaA );
+			y3 = bottom_radius * sin( angle + deltaA );
+			y4 = bottom_radius * sin( angle );
+
+			u1 = u_scale *  angle / (2.0 * Pi);
+			u2 = u_scale * ( angle + deltaA ) /  (2.0 * Pi);
+
+			v1 = 0.0;
+			v2 = v_scale;
+
+			glBegin(GL_QUADS);
+			glNormal3d( ( x1+x2+x3+x4 ) / 4.0,( y1+y2+y3+y4 ) / 4.0, 0.0 );
+			glTexCoord2f( u1, v1 ); glVertex3d( x1, y1, z1 );
+			glTexCoord2f( u2, v1 ); glVertex3d( x2, y2, z1 );
+			glTexCoord2f( u2, v2 ); glVertex3d( x3, y3, z2 );
+			glTexCoord2f( u1, v2 ); glVertex3d( x4, y4, z2 );
+			glEnd();
+
+		}
+	}
+	else {
+		for ( angle = 0.0; angle <= 2.0 * Pi; angle+=deltaA ){
+
+			x1 = top_radius * cos( angle );
+			x2 = top_radius * cos( angle + deltaA );
+			x3 = bottom_radius * cos( angle + deltaA );
+			x4 = bottom_radius * cos( angle );
+			y1 = top_radius * sin( angle );
+			y2 = top_radius * sin( angle + deltaA );
+			y3 = bottom_radius * sin( angle + deltaA );
+			y4 = bottom_radius * sin( angle );
+
+			glBegin(GL_QUADS);
+			glNormal3d( ( x1+x2+x3+x4 ) / 4.0,( y1+y2+y3+y4 ) / 4.0, 0.0 );
+			glVertex3d( x1, y1, z1 );
+			glVertex3d( x2, y2, z1 );
+			glVertex3d( x3, y3, z2 );
+			glVertex3d( x4, y4, z2 );
+			glEnd();
+
+		}
+	}
+
+	FinishDraw();
 
 }
 

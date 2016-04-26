@@ -55,6 +55,8 @@ Viewpoint		*viewpoint;			// The viewpoint into the virtual world.
 Assembly		*room;				// A walled room in the virtual world.
 Texture			*wall_texture;		// The texture that is applied to the walls.
 Assembly		*object;			// A 3D object that moves within the virtual room.
+	
+Cylinder *cylinder;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +67,6 @@ void create_objects( void ) {
 	Sphere *sphere;
 	Slab *slab;
 	Box *box;
-	Cylinder *cylinder;
 	Disk *disk;
 
 	// Create a room to put the object in.
@@ -85,7 +86,8 @@ void create_objects( void ) {
 	disk = new Disk( 750.0 );
 	disk->SetPosition( 0.0, 0.0, - room_length / 2.0 + wall_thickness );
 	disk->SetColor( ORANGE );
-	room->AddComponent( disk );
+	//room->AddComponent( disk );
+
 
 	// The center of the room is at the origin.
 	room->SetPosition( 0.0, 0.0, 0.0 );
@@ -137,6 +139,14 @@ void create_objects( void ) {
 	object->SetPosition( initial_object_position);
 	object->SetOrientation( initial_object_orientation );
 
+	// A cylinder 'cause we are testing code to draw cylinders.
+	cylinder = new Cylinder( 50.0, 50.0, 200.0 );
+	cylinder->SetPosition( 0.0, - room_height / 8.0, - room_length / 8.0 );
+	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
+	// cylinder->SetColor( BLUE );
+	cylinder->SetTexture( wall_texture, 5.0 );
+	room->AddComponent( cylinder );
+
 }
 
 void render( void ) {
@@ -145,7 +155,7 @@ void render( void ) {
 	room->Draw();
 
 	// Draw the complex object at its current position. 
-	object->Draw();
+	//object->Draw();
 
 }
 
@@ -225,12 +235,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	create_objects();
 
 	frame_counter = 0;
-	for ( double angle = 0.0; true; angle += 5.0 ) {
+	for ( double a = 0.0; true; a += 0.05 ) {
+
+		// Oscillate the viewpoint.
+		double angle = 45.0 * cos( a );
 
 		object->SetOrientation( angle, object->jVector );
 		object->SetPosition( initial_object_position );
 		viewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
-
+		cylinder->SetOrientation(  0.1 * angle, 45 + 0.1 * angle, 0.0 );
 		window->Clear();
 
 		glUsefulPrepareRendering();
