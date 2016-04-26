@@ -86,7 +86,7 @@ void create_objects( void ) {
 	disk = new Disk( 750.0 );
 	disk->SetPosition( 0.0, 0.0, - room_length / 2.0 + wall_thickness );
 	disk->SetColor( ORANGE );
-	//room->AddComponent( disk );
+	room->AddComponent( disk );
 
 
 	// The center of the room is at the origin.
@@ -155,7 +155,7 @@ void render( void ) {
 	room->Draw();
 
 	// Draw the complex object at its current position. 
-	//object->Draw();
+	object->Draw();
 
 }
 
