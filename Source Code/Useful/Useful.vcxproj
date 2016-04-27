@@ -75,12 +75,14 @@
   <ItemGroup>
     <ClCompile Include="fMessageBox.c" />
     <ClCompile Include="fOutputDebugString.c" />
+    <ClCompile Include="OpenGLUseful.c" />
     <ClCompile Include="ParseCommaDelimitedLine.c" />
     <ClCompile Include="Timers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fMessageBox.h" />
     <ClInclude Include="fOutputDebugString.h" />
+    <ClInclude Include="OpenGLUseful.h" />
     <ClInclude Include="ParseCommaDelimitedLine.h" />
     <ClInclude Include="Timers.h" />
     <ClInclude Include="Useful.h" />

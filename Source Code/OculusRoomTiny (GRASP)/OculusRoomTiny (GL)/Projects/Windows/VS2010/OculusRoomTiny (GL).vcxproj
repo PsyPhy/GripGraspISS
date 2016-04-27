@@ -222,7 +222,7 @@
     </BuildLog>
     <ClCompile>
       <FloatingPointModel>Precise</FloatingPointModel>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalIncludeDirectories>$(OVRSDKROOT)LibOVR/Include/;$(OVRSDKROOT)LibOVRKernel/Src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

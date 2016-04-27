@@ -13,10 +13,10 @@
 #include <gl\gl.h>
 #include <gl\glu.h>
 #include "../Include/glaux.h"
+#include "../Useful/OpenGLUseful.h"
 
 #include "OpenGLWindows.h"
 #include "OpenGLColors.h"
-#include "OpenGLUseful.h"
 #include "OpenGLTextures.h"
 
 using namespace PsyPhy;

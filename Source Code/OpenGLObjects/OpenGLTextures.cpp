@@ -13,10 +13,10 @@
 #include "../Include/glaux.h"	// Header File For The Glaux Library
 
 #include "../Useful/Useful.h"
+#include "../Useful/OpenGLUseful.h"
 
 #include "OpenGLObjects.h"
 #include "OpenGLColors.h"
-#include "OpenGLUseful.h"
 #include "OpenGLTextures.h"
 
 using namespace PsyPhy;

@@ -1,8 +1,8 @@
 /********************************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "../Useful/OpenGLUseful.h"
 #include "OpenGLWindows.h"
-#include "OpenGLUseful.h"
 
 using namespace PsyPhy;
 
@@ -134,7 +134,7 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 	else if ( !Border ) {
 		dwExStyle = WS_EX_APPWINDOW;					// Window Extended Style
 		dwStyle = ( parent ? WS_CHILD : WS_POPUP );		// Windows Style
-		ShowCursor(false);								// Hide Mouse Pointer
+		//ShowCursor(false);								// Hide Mouse Pointer
 	}
 
 	else 
