@@ -29,4 +29,7 @@
       <Filter>Library Files</Filter>
     </Library>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\PsyPhyOculusDemo.mrk" />
+  </ItemGroup>
 </Project>

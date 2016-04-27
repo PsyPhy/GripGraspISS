@@ -65,9 +65,8 @@ static bool useOVR = false;
 static bool usePsyPhy = true;
 static bool useCoda = true;
 
-// For this demo program we will store only 8 markers.
-// But CodaRTnetTracker can handle up to 28 at 200 Hz.
-int nMarkers = 8;
+// CodaRTnetTracker can handle up to 28 at 200 Hz.
+int nMarkers = 24;
 /*****************************************************************************/
 
 // Polling the CODA in the rendering loop can cause non-smooth updating.
@@ -364,11 +363,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	fprintf( fp, "\n" );
 
 	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-		fprintf( fp, "%05d\t%8.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+		fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, "\t%1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, "\t%6.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+				fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
 			}
 		}
 		fprintf( fp, "\n" );

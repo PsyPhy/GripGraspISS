@@ -54,6 +54,9 @@
       <FileType>Document</FileType>
     </Library>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\PsyPhyOculusDemo.mrk" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92626B0E-65F3-4CAA-927C-3246D766C7BE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
