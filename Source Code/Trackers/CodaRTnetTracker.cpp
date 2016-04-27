@@ -478,7 +478,7 @@ int CodaRTnetTracker::GetNumberOfCodas( void ) {
 	return( nUnits );
 }
 
-int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive ) {
+int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
 
 	// Get what are the alignment transformations before doing the alignment.
 	// This is just for debugging. Set a breakpoint to see the results.
@@ -499,10 +499,13 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 
 	// print alignment diagnostics
 	DWORD marker_id_array[5] = { origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1 };
-	int response = print_alignment_status(marker_id_array, info);
+	int response;
+
+	if ( info.dev.dwStatus != 0 ) response = print_alignment_status( marker_id_array, info, MB_ABORTRETRYIGNORE );
+	else if ( force_show ) response = print_alignment_status( marker_id_array, info, MB_OK );
 
 	if ( info.dev.dwStatus == 0 ) return( NORMAL_EXIT );
-	else return( ERROR_EXIT );
+	else return( response );
 }
 
 /*********************************************************************************/
@@ -609,7 +612,7 @@ void CodaRTnetTracker::print_network_error(const NetworkException& exNet)
 // Helper function to show alignment status
 // @param marker_id_array 5-element array containing one-based marker identities for alignment markers
 // @param info Alignment info retrieved from server
-int CodaRTnetTracker::print_alignment_status(const DWORD* marker_id_array,  const DeviceInfoAlignment& info)
+int CodaRTnetTracker::print_alignment_status( const DWORD* marker_id_array,  const DeviceInfoAlignment& info, DWORD MB )
 {
 
 	char message[10240] = "";
@@ -725,11 +728,9 @@ int CodaRTnetTracker::print_alignment_status(const DWORD* marker_id_array,  cons
 			}
 		}
 	}
-	if ( info.dev.dwStatus ) {
-		int response = MessageBox( NULL, message, "Coda RTnet Alignment", MB_ABORTRETRYIGNORE );
-		return( response );
-	}
-	else return( NORMAL_EXIT );
+
+	int response = MessageBox( NULL, message, "Coda RTnet Alignment", MB );
+	return( response );
 
 }
 

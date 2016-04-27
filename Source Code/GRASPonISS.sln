@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateRigidBodyModelFile", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspGUI", "GraspGUI\GraspGUI.vcxproj", "{41BBF00C-DF99-4192-A876-D57C22ECFD53}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodAlignment", "CharnwoodAlignment\CharnwoodAlignment.vcxproj", "{BA718EC0-44BD-4821-871B-0A35A77E3251}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -126,6 +128,14 @@ Global
 		{41BBF00C-DF99-4192-A876-D57C22ECFD53}.Release|Win32.Build.0 = Release|Win32
 		{41BBF00C-DF99-4192-A876-D57C22ECFD53}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{41BBF00C-DF99-4192-A876-D57C22ECFD53}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.Debug|Win32.Build.0 = Debug|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.Release|Win32.ActiveCfg = Release|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.Release|Win32.Build.0 = Release|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{BA718EC0-44BD-4821-871B-0A35A77E3251}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
