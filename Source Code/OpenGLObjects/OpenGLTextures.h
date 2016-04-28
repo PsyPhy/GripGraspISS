@@ -14,6 +14,8 @@
 #include <gl\glu.h>
 #include "../Include/glut.h"
 
+namespace PsyPhy {
+
 class Texture {
 
 private:
@@ -41,6 +43,8 @@ public:
   int LoadBitmap( char *filename );	// Load Bitmaps And Convert To Textures
   void Use();
   void Define();
+
+};
 
 };
 

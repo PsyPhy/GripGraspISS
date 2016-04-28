@@ -18,6 +18,7 @@
 
 #include "../Useful/Useful.h"
 #include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Useful/OpenGLUseful.h"
 

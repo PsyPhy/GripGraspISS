@@ -46,6 +46,7 @@ double wall_thickness = 10.0;
 // A texture that is used to decorate the walls of the room.
 // This file has to be in the execution directory.
 char *wall_texture_bitmap = "lime.bmp";
+char *side_texture_bitmap = "klime.bmp";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
