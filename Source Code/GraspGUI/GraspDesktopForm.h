@@ -38,12 +38,21 @@ namespace GraspGUI {
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::GroupBox^  groupBox2;
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::GroupBox^  groupBox5;
-	private: System::Windows::Forms::Panel^  panel3;
-	private: System::Windows::Forms::GroupBox^  groupBox4;
-	private: System::Windows::Forms::Panel^  panel2;
-	private: System::Windows::Forms::GroupBox^  groupBox3;
-	private: System::Windows::Forms::Panel^  panel1;
+	private: System::Windows::Forms::GroupBox^  torsoStatusGroup;
+	private: System::Windows::Forms::Panel^  torsoDynamicPanel;
+
+
+
+	private: System::Windows::Forms::GroupBox^  toolStatusGroup;
+	private: System::Windows::Forms::Panel^  toolDynamicPanel;
+
+
+	private: System::Windows::Forms::GroupBox^  hmdStatusGroup;
+
+	private: System::Windows::Forms::Panel^  hmdDynamicPanel;
+
+
+
 	private: System::Windows::Forms::Panel^  hmdPanel;
 
 	private: System::Windows::Forms::GroupBox^  NavigatorGroupBox;
@@ -64,10 +73,14 @@ namespace GraspGUI {
 
 	private: System::Windows::Forms::GroupBox^  groupBox7;
 	private: System::Windows::Forms::Panel^  columbusPanel;
+	private: System::Windows::Forms::Panel^  torsoStaticPanel;
 
-	private: System::Windows::Forms::Panel^  panel8;
-	private: System::Windows::Forms::Panel^  panel7;
-	private: System::Windows::Forms::Panel^  panel6;
+
+	private: System::Windows::Forms::Panel^  toolStaticPanel;
+
+	private: System::Windows::Forms::Panel^  hmdStaticPanel;
+
+
 
 	protected: 
 
@@ -91,15 +104,15 @@ namespace GraspGUI {
 			this->groupBox7 = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox6 = (gcnew System::Windows::Forms::GroupBox());
 			this->columbusPanel = (gcnew System::Windows::Forms::Panel());
-			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
-			this->panel8 = (gcnew System::Windows::Forms::Panel());
-			this->panel3 = (gcnew System::Windows::Forms::Panel());
-			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
-			this->panel7 = (gcnew System::Windows::Forms::Panel());
-			this->panel2 = (gcnew System::Windows::Forms::Panel());
-			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
-			this->panel6 = (gcnew System::Windows::Forms::Panel());
-			this->panel1 = (gcnew System::Windows::Forms::Panel());
+			this->torsoStatusGroup = (gcnew System::Windows::Forms::GroupBox());
+			this->torsoStaticPanel = (gcnew System::Windows::Forms::Panel());
+			this->torsoDynamicPanel = (gcnew System::Windows::Forms::Panel());
+			this->toolStatusGroup = (gcnew System::Windows::Forms::GroupBox());
+			this->toolStaticPanel = (gcnew System::Windows::Forms::Panel());
+			this->toolDynamicPanel = (gcnew System::Windows::Forms::Panel());
+			this->hmdStatusGroup = (gcnew System::Windows::Forms::GroupBox());
+			this->hmdStaticPanel = (gcnew System::Windows::Forms::Panel());
+			this->hmdDynamicPanel = (gcnew System::Windows::Forms::Panel());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->NavigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->ProgressBox = (gcnew System::Windows::Forms::GroupBox());
@@ -118,9 +131,9 @@ namespace GraspGUI {
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox6->SuspendLayout();
-			this->groupBox5->SuspendLayout();
-			this->groupBox4->SuspendLayout();
-			this->groupBox3->SuspendLayout();
+			this->torsoStatusGroup->SuspendLayout();
+			this->toolStatusGroup->SuspendLayout();
+			this->hmdStatusGroup->SuspendLayout();
 			this->NavigatorGroupBox->SuspendLayout();
 			this->ProgressBox->SuspendLayout();
 			this->TaskGroupBox->SuspendLayout();
@@ -142,8 +155,10 @@ namespace GraspGUI {
 			// 
 			// groupBox1
 			// 
+			this->groupBox1->BackColor = System::Drawing::SystemColors::Control;
 			this->groupBox1->Controls->Add(this->hmdPanel);
 			this->groupBox1->Controls->Add(this->MainLabel);
+			this->groupBox1->ForeColor = System::Drawing::SystemColors::HotTrack;
 			this->groupBox1->Location = System::Drawing::Point(20, 20);
 			this->groupBox1->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox1->Name = L"groupBox1";
@@ -163,12 +178,14 @@ namespace GraspGUI {
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->BackColor = System::Drawing::SystemColors::Control;
 			this->groupBox2->Controls->Add(this->groupBox7);
 			this->groupBox2->Controls->Add(this->groupBox6);
-			this->groupBox2->Controls->Add(this->groupBox5);
-			this->groupBox2->Controls->Add(this->groupBox4);
-			this->groupBox2->Controls->Add(this->groupBox3);
+			this->groupBox2->Controls->Add(this->torsoStatusGroup);
+			this->groupBox2->Controls->Add(this->toolStatusGroup);
+			this->groupBox2->Controls->Add(this->hmdStatusGroup);
 			this->groupBox2->Controls->Add(this->label1);
+			this->groupBox2->ForeColor = System::Drawing::SystemColors::HotTrack;
 			this->groupBox2->Location = System::Drawing::Point(20, 566);
 			this->groupBox2->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox2->Name = L"groupBox2";
@@ -207,92 +224,92 @@ namespace GraspGUI {
 			this->columbusPanel->Size = System::Drawing::Size(679, 287);
 			this->columbusPanel->TabIndex = 5;
 			// 
-			// groupBox5
+			// torsoStatusGroup
 			// 
-			this->groupBox5->Controls->Add(this->panel8);
-			this->groupBox5->Controls->Add(this->panel3);
-			this->groupBox5->Location = System::Drawing::Point(715, 243);
-			this->groupBox5->Margin = System::Windows::Forms::Padding(4);
-			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox5->Size = System::Drawing::Size(253, 102);
-			this->groupBox5->TabIndex = 3;
-			this->groupBox5->TabStop = false;
-			this->groupBox5->Text = L"Chest";
+			this->torsoStatusGroup->Controls->Add(this->torsoStaticPanel);
+			this->torsoStatusGroup->Controls->Add(this->torsoDynamicPanel);
+			this->torsoStatusGroup->Location = System::Drawing::Point(715, 243);
+			this->torsoStatusGroup->Margin = System::Windows::Forms::Padding(4);
+			this->torsoStatusGroup->Name = L"torsoStatusGroup";
+			this->torsoStatusGroup->Padding = System::Windows::Forms::Padding(4);
+			this->torsoStatusGroup->Size = System::Drawing::Size(253, 102);
+			this->torsoStatusGroup->TabIndex = 3;
+			this->torsoStatusGroup->TabStop = false;
+			this->torsoStatusGroup->Text = L"Torso";
 			// 
-			// panel8
+			// torsoStaticPanel
 			// 
-			this->panel8->Location = System::Drawing::Point(131, 21);
-			this->panel8->Margin = System::Windows::Forms::Padding(4);
-			this->panel8->Name = L"panel8";
-			this->panel8->Size = System::Drawing::Size(107, 73);
-			this->panel8->TabIndex = 1;
+			this->torsoStaticPanel->Location = System::Drawing::Point(131, 21);
+			this->torsoStaticPanel->Margin = System::Windows::Forms::Padding(4);
+			this->torsoStaticPanel->Name = L"torsoStaticPanel";
+			this->torsoStaticPanel->Size = System::Drawing::Size(107, 73);
+			this->torsoStaticPanel->TabIndex = 1;
 			// 
-			// panel3
+			// torsoDynamicPanel
 			// 
-			this->panel3->Location = System::Drawing::Point(16, 21);
-			this->panel3->Margin = System::Windows::Forms::Padding(4);
-			this->panel3->Name = L"panel3";
-			this->panel3->Size = System::Drawing::Size(107, 73);
-			this->panel3->TabIndex = 0;
+			this->torsoDynamicPanel->Location = System::Drawing::Point(16, 21);
+			this->torsoDynamicPanel->Margin = System::Windows::Forms::Padding(4);
+			this->torsoDynamicPanel->Name = L"torsoDynamicPanel";
+			this->torsoDynamicPanel->Size = System::Drawing::Size(107, 73);
+			this->torsoDynamicPanel->TabIndex = 0;
 			// 
-			// groupBox4
+			// toolStatusGroup
 			// 
-			this->groupBox4->Controls->Add(this->panel7);
-			this->groupBox4->Controls->Add(this->panel2);
-			this->groupBox4->Location = System::Drawing::Point(715, 133);
-			this->groupBox4->Margin = System::Windows::Forms::Padding(4);
-			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox4->Size = System::Drawing::Size(253, 102);
-			this->groupBox4->TabIndex = 2;
-			this->groupBox4->TabStop = false;
-			this->groupBox4->Text = L"Tool";
+			this->toolStatusGroup->Controls->Add(this->toolStaticPanel);
+			this->toolStatusGroup->Controls->Add(this->toolDynamicPanel);
+			this->toolStatusGroup->Location = System::Drawing::Point(715, 133);
+			this->toolStatusGroup->Margin = System::Windows::Forms::Padding(4);
+			this->toolStatusGroup->Name = L"toolStatusGroup";
+			this->toolStatusGroup->Padding = System::Windows::Forms::Padding(4);
+			this->toolStatusGroup->Size = System::Drawing::Size(253, 102);
+			this->toolStatusGroup->TabIndex = 2;
+			this->toolStatusGroup->TabStop = false;
+			this->toolStatusGroup->Text = L"Tool";
 			// 
-			// panel7
+			// toolStaticPanel
 			// 
-			this->panel7->Location = System::Drawing::Point(131, 22);
-			this->panel7->Margin = System::Windows::Forms::Padding(4);
-			this->panel7->Name = L"panel7";
-			this->panel7->Size = System::Drawing::Size(107, 73);
-			this->panel7->TabIndex = 1;
+			this->toolStaticPanel->Location = System::Drawing::Point(131, 22);
+			this->toolStaticPanel->Margin = System::Windows::Forms::Padding(4);
+			this->toolStaticPanel->Name = L"toolStaticPanel";
+			this->toolStaticPanel->Size = System::Drawing::Size(107, 73);
+			this->toolStaticPanel->TabIndex = 1;
 			// 
-			// panel2
+			// toolDynamicPanel
 			// 
-			this->panel2->Location = System::Drawing::Point(16, 22);
-			this->panel2->Margin = System::Windows::Forms::Padding(4);
-			this->panel2->Name = L"panel2";
-			this->panel2->Size = System::Drawing::Size(107, 73);
-			this->panel2->TabIndex = 0;
+			this->toolDynamicPanel->Location = System::Drawing::Point(16, 22);
+			this->toolDynamicPanel->Margin = System::Windows::Forms::Padding(4);
+			this->toolDynamicPanel->Name = L"toolDynamicPanel";
+			this->toolDynamicPanel->Size = System::Drawing::Size(107, 73);
+			this->toolDynamicPanel->TabIndex = 0;
 			// 
-			// groupBox3
+			// hmdStatusGroup
 			// 
-			this->groupBox3->Controls->Add(this->panel6);
-			this->groupBox3->Controls->Add(this->panel1);
-			this->groupBox3->Location = System::Drawing::Point(715, 23);
-			this->groupBox3->Margin = System::Windows::Forms::Padding(4);
-			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox3->Size = System::Drawing::Size(253, 102);
-			this->groupBox3->TabIndex = 1;
-			this->groupBox3->TabStop = false;
-			this->groupBox3->Text = L"HMD";
+			this->hmdStatusGroup->Controls->Add(this->hmdStaticPanel);
+			this->hmdStatusGroup->Controls->Add(this->hmdDynamicPanel);
+			this->hmdStatusGroup->Location = System::Drawing::Point(715, 23);
+			this->hmdStatusGroup->Margin = System::Windows::Forms::Padding(4);
+			this->hmdStatusGroup->Name = L"hmdStatusGroup";
+			this->hmdStatusGroup->Padding = System::Windows::Forms::Padding(4);
+			this->hmdStatusGroup->Size = System::Drawing::Size(253, 102);
+			this->hmdStatusGroup->TabIndex = 1;
+			this->hmdStatusGroup->TabStop = false;
+			this->hmdStatusGroup->Text = L"HMD";
 			// 
-			// panel6
+			// hmdStaticPanel
 			// 
-			this->panel6->Location = System::Drawing::Point(131, 21);
-			this->panel6->Margin = System::Windows::Forms::Padding(4);
-			this->panel6->Name = L"panel6";
-			this->panel6->Size = System::Drawing::Size(107, 73);
-			this->panel6->TabIndex = 2;
+			this->hmdStaticPanel->Location = System::Drawing::Point(131, 21);
+			this->hmdStaticPanel->Margin = System::Windows::Forms::Padding(4);
+			this->hmdStaticPanel->Name = L"hmdStaticPanel";
+			this->hmdStaticPanel->Size = System::Drawing::Size(107, 73);
+			this->hmdStaticPanel->TabIndex = 2;
 			// 
-			// panel1
+			// hmdDynamicPanel
 			// 
-			this->panel1->Location = System::Drawing::Point(16, 21);
-			this->panel1->Margin = System::Windows::Forms::Padding(4);
-			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(107, 73);
-			this->panel1->TabIndex = 0;
+			this->hmdDynamicPanel->Location = System::Drawing::Point(16, 21);
+			this->hmdDynamicPanel->Margin = System::Windows::Forms::Padding(4);
+			this->hmdDynamicPanel->Name = L"hmdDynamicPanel";
+			this->hmdDynamicPanel->Size = System::Drawing::Size(107, 73);
+			this->hmdDynamicPanel->TabIndex = 0;
 			// 
 			// label1
 			// 
@@ -308,6 +325,7 @@ namespace GraspGUI {
 			// 
 			// NavigatorGroupBox
 			// 
+			this->NavigatorGroupBox->BackColor = System::Drawing::SystemColors::Control;
 			this->NavigatorGroupBox->Controls->Add(this->ProgressBox);
 			this->NavigatorGroupBox->Controls->Add(this->TaskGroupBox);
 			this->NavigatorGroupBox->Controls->Add(this->ProtocolGroupBox);
@@ -316,11 +334,12 @@ namespace GraspGUI {
 			this->NavigatorGroupBox->Controls->Add(this->LogonNext);
 			this->NavigatorGroupBox->Controls->Add(this->WelcomeLabel);
 			this->NavigatorGroupBox->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
-			this->NavigatorGroupBox->Location = System::Drawing::Point(1005, 23);
+			this->NavigatorGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->NavigatorGroupBox->Location = System::Drawing::Point(1005, 20);
 			this->NavigatorGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->NavigatorGroupBox->Name = L"NavigatorGroupBox";
 			this->NavigatorGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->NavigatorGroupBox->Size = System::Drawing::Size(561, 992);
+			this->NavigatorGroupBox->Size = System::Drawing::Size(561, 995);
 			this->NavigatorGroupBox->TabIndex = 5;
 			this->NavigatorGroupBox->TabStop = false;
 			this->NavigatorGroupBox->Text = L"Navigator";
@@ -512,12 +531,14 @@ namespace GraspGUI {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->BackColor = System::Drawing::SystemColors::Control;
 			this->ClientSize = System::Drawing::Size(1576, 988);
 			this->Controls->Add(this->NavigatorGroupBox);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox2);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
+			this->ForeColor = System::Drawing::SystemColors::HotTrack;
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -530,9 +551,9 @@ namespace GraspGUI {
 			this->groupBox2->ResumeLayout(false);
 			this->groupBox2->PerformLayout();
 			this->groupBox6->ResumeLayout(false);
-			this->groupBox5->ResumeLayout(false);
-			this->groupBox4->ResumeLayout(false);
-			this->groupBox3->ResumeLayout(false);
+			this->torsoStatusGroup->ResumeLayout(false);
+			this->toolStatusGroup->ResumeLayout(false);
+			this->hmdStatusGroup->ResumeLayout(false);
 			this->NavigatorGroupBox->ResumeLayout(false);
 			this->NavigatorGroupBox->PerformLayout();
 			this->ProgressBox->ResumeLayout(false);
@@ -552,8 +573,18 @@ namespace GraspGUI {
 		PsyPhy::OpenGLWindow	*workspaceWindow;			// The window on the app GUI.
 		PsyPhy::Viewpoint		*workspaceViewpoint;		// A virtual view of the 3D work volume.
 
+		PsyPhy::OpenGLWindow	*hmdDynamicWindow;			
+		PsyPhy::OpenGLWindow	*hmdStaticWindow;			
+		PsyPhy::OpenGLWindow	*toolDynamicWindow;			
+		PsyPhy::OpenGLWindow	*toolStaticWindow;			
+		PsyPhy::OpenGLWindow	*torsoDynamicWindow;			
+		PsyPhy::OpenGLWindow	*torsoStaticWindow;		
+		PsyPhy::Viewpoint		*codaViewpoint;
+
 		PsyPhy::Assembly		*room;
 		PsyPhy::Assembly		*object;
+		PsyPhy::Assembly		*head;
+		PsyPhy::Assembly		*torso;
 		PsyPhy::Texture			*wall_texture;
 
 		PsyPhy::Assembly		*side_room;

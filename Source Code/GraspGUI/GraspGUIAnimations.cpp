@@ -52,6 +52,12 @@ OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Pa
 // Initialize the objects used to show the status on the screen.
 void GraspDesktop::InitializeAnimations( void ) {
 
+	// Dimensions of the room.
+	double room_width = 1800.0;
+	double room_height = 2000.0;
+	double room_length = 8000.0;
+	double wall_thickness = 10.0;
+
 	hmdWindow = CreateOpenGLWindowInForm( hmdPanel);
 	hmdWindow->Activate();
 	hmdWindow->Clear( 0.50, 0.50, 0.60 );
@@ -70,6 +76,16 @@ void GraspDesktop::InitializeAnimations( void ) {
 	workspaceViewpoint->SetPosition( 1000.0, 0.0, -500.0 );
 	workspaceViewpoint->SetOrientation( 0.0, 0.0, -90.0 );
 
+	// Create windows to show the status of each of the tracked objects.
+	hmdDynamicWindow = CreateOpenGLWindowInForm( hmdDynamicPanel );
+	hmdStaticWindow = CreateOpenGLWindowInForm( hmdStaticPanel );
+	toolDynamicWindow = CreateOpenGLWindowInForm( toolDynamicPanel );
+	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel );
+	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel );
+	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel );
+ 	codaViewpoint = new Viewpoint( 6.0, 5.0, 10.0, 10000.0);
+	codaViewpoint->SetPosition( 0.0, 0.0, - room_length / 2.0 );
+	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 	// Initialize the state of the GL graphics engine.
 	glUsefulInitializeDefault();
 
@@ -83,11 +99,6 @@ void GraspDesktop::InitializeAnimations( void ) {
 	// This file has to be in the execution directory.
 	char *wall_texture_bitmap = "lime.bmp";
 
-	// Dimensions of the room.
-	double room_width = 1800.0;
-	double room_height = 2000.0;
-	double room_length = 8000.0;
-	double wall_thickness = 10.0;
 
 	// Create a room to put the object in.
 
@@ -145,8 +156,9 @@ void GraspDesktop::InitializeAnimations( void ) {
 	sphere->SetColor( RED );
 	object->AddComponent( sphere );
 
-	Cylinder *cylinder = new Cylinder( 10.0, 30.0, 60.0 );
+	Cylinder *cylinder = new Cylinder( 10.0, 30.0, 160.0 );
 	cylinder->SetPosition( 0.0, 0.0, 0.0 );
+	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
 	cylinder->SetColor( YELLOW );
 	object->AddComponent( cylinder );
 
@@ -157,8 +169,38 @@ void GraspDesktop::InitializeAnimations( void ) {
 	object->AddComponent( cylinder );
 
 	// Initialize the position of the mobile object.
-	object->SetPosition(  0.0, 0.0, 750.0 );
+	object->SetAttitude( 0.0, 90.0, 0.0 );
+	object->SetPosition(  0.0, 0.0, 650.0 );
 	object->SetOrientation( 0.0, 0.0, 0.0 );
+
+	head = new Assembly();
+	sphere = new Sphere( 100.0 );
+	sphere->SetColor( .4f, 0.0f, .4f );
+	head->AddComponent( sphere );
+	sphere = new Sphere( 20.0 );
+	sphere->SetColor( 1.0f, 0.0f, .5f );
+	sphere->SetPosition( -50.0, 20.0, -100.0 );
+	head->AddComponent( sphere );
+	sphere = new Sphere( 20.0 );
+	sphere->SetColor( 1.0f, 0.0f, .5f );
+	sphere->SetPosition( 50.0, 20.0, -100.0 );
+	head->AddComponent( sphere );
+	cylinder = new Cylinder( 20.0, 5.0, 30.0 );	
+	cylinder->SetPosition( 0.0, -20.0, -100.0 );
+	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
+	cylinder->SetColor( YELLOW );
+	head->AddComponent( cylinder );
+	head->SetPosition(  0.0, 0.0, 0.0 );
+	head->SetOrientation( 0.0, 0.0, 0.0 );
+
+	torso = new Assembly();
+	slab = new Slab( 160.0, 200.0, 40.0 );
+	slab->SetColor( 0.1f, 0.4f, 0.0f );
+	torso->AddComponent( slab );
+	disk = new Disk( 50.0 );
+	disk->SetPosition( 0.0, 0.0, -40.0 );
+	disk->SetColor( 1.0f, 0.7f, 0.0f );
+	torso->AddComponent( disk );
 
 	CreateRefreshTimer( 20 );
 	StartRefreshTimer();
@@ -174,11 +216,14 @@ void GraspDesktop::RefreshAnimations( void ) {
 	pseudo_time += 0.05;
 
 	// Make the object move as if the hand is moving it.
-	object->SetOrientation( angle, object->jVector );
+	object->SetOrientation( angle, object->kVector );
 	object->SetPosition( 0.0, 0.0, -750.0 );
+	head->SetOrientation( angle, object->kVector );
+	torso->SetPosition( 0.0, -220.0, 0.0 );
 
 	// Simulate movements of the head and show what the subject is seeing.
 	hmdViewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
+	head->SetOrientation( 0.0, 0.0, 0.1 * angle );
 	hmdWindow->Activate();
 	hmdWindow->Clear();
 	glUsefulPrepareRendering();
@@ -194,7 +239,51 @@ void GraspDesktop::RefreshAnimations( void ) {
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
 	side_room->Draw();
 	object->Draw();
+	head->Draw();
+	torso->Draw();
 	workspaceWindow->Swap();
+
+	hmdDynamicWindow->Activate();
+	hmdDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	codaViewpoint->Apply( hmdDynamicWindow, CYCLOPS );
+	head->Draw();
+	hmdDynamicWindow->Swap();
+
+	toolDynamicWindow->Activate();
+	toolDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	codaViewpoint->Apply( toolDynamicWindow, CYCLOPS );
+	object->Draw();
+	toolDynamicWindow->Swap();
+
+	torsoDynamicWindow->Activate();
+	torsoDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	codaViewpoint->Apply( torsoDynamicWindow, CYCLOPS );
+	torso->SetPosition( 0.0, 0.0, 0.0 );
+	torso->Draw();
+	torsoDynamicWindow->Swap();
+
+	hmdStaticWindow->Activate();
+	hmdStaticWindow->Clear(1.0, 0.8, 1.0 );
+	codaViewpoint->Apply( hmdStaticWindow, CYCLOPS );
+	head->SetOrientation( 0.0, 0.0, 0.0 );
+	head->SetPosition( 0.0, 0.0, 0.0 );
+	head->Draw();
+	hmdStaticWindow->Swap();
+
+	toolStaticWindow->Activate();
+	toolStaticWindow->Clear(1.0, 0.8, 1.0 );
+	codaViewpoint->Apply( toolStaticWindow, CYCLOPS );
+	object->SetPosition( 0.0, 0.0, 0.0 );
+	object->SetOrientation( 0.0, 0.0, 0.0 );
+	object->Draw();
+	toolStaticWindow->Swap();
+
+	torsoStaticWindow->Activate();
+	torsoStaticWindow->Clear(1.0, 0.8, 1.0 );
+	codaViewpoint->Apply( torsoStaticWindow, CYCLOPS );
+	torso->SetOrientation( 0.0, 0.0, 0.0 );
+	torso->Draw();
+	torsoStaticWindow->Swap();
 
 
 }
