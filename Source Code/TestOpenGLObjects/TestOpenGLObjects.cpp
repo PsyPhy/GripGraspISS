@@ -5,7 +5,7 @@
 // It opens a simple OpenGLWindow and renders a few objects in a visual scence.
 #include "stdafx.h"
 
-#include "../OpenGLObjects/OpenGLUseful.h"
+#include "../Useful/OpenGLUseful.h"
 #include "../OpenGLObjects/OpenGLColors.h"
 #include "../OpenGLObjects/OpenGLWindows.h"
 #include "../OpenGLObjects/OpenGLObjects.h"

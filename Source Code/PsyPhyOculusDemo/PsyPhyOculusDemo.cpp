@@ -26,7 +26,9 @@ Joe McIntyre
 #include "../Trackers/CodaRTnetTracker.h"
 
 // Include 3D and 6D tracking capabilities.
+#include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaPoseTracker.h"
+#include "../Trackers/DualCodaPoseTracker.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 
@@ -65,9 +67,8 @@ static bool useOVR = false;
 static bool usePsyPhy = true;
 static bool useCoda = true;
 
-// For this demo program we will store only 8 markers.
-// But CodaRTnetTracker can handle up to 28 at 200 Hz.
-int nMarkers = 8;
+// CodaRTnetTracker can handle up to 28 at 200 Hz.
+int nMarkers = 24;
 /*****************************************************************************/
 
 // Polling the CODA in the rendering loop can cause non-smooth updating.
@@ -113,6 +114,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	// A buffer to hold the most recent frame of marker data.
 	MarkerFrame primaryMarkerFrame, secondaryMarkerFrame;
 	PsyPhy::CodaPoseTracker *primaryCodaPoseTracker, *secondaryCodaPoseTracker;
+	PsyPhy::CodaPoseTracker *primaryHandPoseTracker, *secondaryHandPoseTracker;
+	PsyPhy::DualCodaPoseTracker *handPoseTracker;
 
 	if ( useCoda ) {
 		// Create a PoseTracker that will compute the pose based on marker data and a rigid body model.
@@ -123,7 +126,22 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		secondaryCodaPoseTracker = new PsyPhy::CodaPoseTracker( &secondaryMarkerFrame );
 		fAbortMessageOnCondition( !secondaryCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing secondaryCodaPoseTracker." );
 		secondaryCodaPoseTracker->ReadModelMarkerPositions( "HMD.bdy" );
-}
+		
+		// Create a PoseTracker that will compute the pose based on marker data and a rigid body model.
+		primaryHandPoseTracker = new PsyPhy::CodaPoseTracker( &primaryMarkerFrame );
+		fAbortMessageOnCondition( !primaryCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing primaryHandPoseTracker." );
+		primaryHandPoseTracker->ReadModelMarkerPositions( "Hand.bdy" );
+		// Create a second PoseTracker that uses data from the secondary CODA unit.
+		secondaryHandPoseTracker = new PsyPhy::CodaPoseTracker( &secondaryMarkerFrame );
+		fAbortMessageOnCondition( !secondaryHandPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing secondaryHandPoseTracker." );
+		secondaryHandPoseTracker->ReadModelMarkerPositions( "Hand.bdy" );
+		handPoseTracker = new PsyPhy::DualCodaPoseTracker( primaryHandPoseTracker, secondaryHandPoseTracker );
+		fAbortMessageOnCondition( !handPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing handPoseTracker." );
+
+	}
+	else {
+		//	PsyPhy::PoseTracker *handPoseTracker = new NullPoseTracker();
+	}
 
 	// Initialize the interface to the Oculus HMD.
 	result = oculusMapper.Initialize( platform );
@@ -331,7 +349,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Call the main loop.
 	// Pass a pointer to Platform to give access to the HandleMessages() method and other parameters.
 	result = MainLoop( &oculusDisplay );
-    fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus",  "An error occurred setting up the GL graphics window.");
+    fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus",  "An error occurred setting up the GL graphics window.\nIs the Oculus connected?");
 
 	stopMarkerGrabs = true;
 	WaitForSingleObject( threadHandle, INFINITE );
@@ -364,11 +382,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	fprintf( fp, "\n" );
 
 	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-		fprintf( fp, "%05d\t%8.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+		fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, "\t%1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, "\t%6.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+				fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
 			}
 		}
 		fprintf( fp, "\n" );

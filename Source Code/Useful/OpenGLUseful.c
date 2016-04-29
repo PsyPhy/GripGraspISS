@@ -17,7 +17,7 @@
 #include <gl/gl.h>
 #include <gl/glu.h>
 
-#include "OpenGLUseful.h"
+#include "../Useful/OpenGLUseful.h"
 
 
 /*********************************************************************************/

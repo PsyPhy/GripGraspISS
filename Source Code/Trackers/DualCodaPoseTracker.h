@@ -13,16 +13,12 @@
 
 namespace PsyPhy {
 
-class OculusCodaPoseTracker : public PoseTracker {
+class DualCodaPoseTracker : public PoseTracker {
 
 	private:
 
-		OculusMapper *oculusMapper;
 		CodaPoseTracker	*primaryCoda;
 		CodaPoseTracker *secondaryCoda;
-
-		TrackerPose		currentState;
-		TrackerPose		predictedState;
 
 		FILE *fp;
 
@@ -30,10 +26,10 @@ class OculusCodaPoseTracker : public PoseTracker {
 
 	public:
 
-		double InertialWeighting;
+		TrackerPose currentState;
 
-		OculusCodaPoseTracker( OculusMapper *mapper, CodaPoseTracker *coda1, CodaPoseTracker *coda2 );
-		~OculusCodaPoseTracker();
+		DualCodaPoseTracker( CodaPoseTracker *coda1, CodaPoseTracker *coda2 );
+		~DualCodaPoseTracker();
 
 		bool Initialize( void );
 		bool  Update( void );

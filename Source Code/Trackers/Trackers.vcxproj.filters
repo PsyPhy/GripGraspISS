@@ -16,5 +16,6 @@
     <ClCompile Include="PoseTrackers.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
+    <ClCompile Include="DualCodaPoseTracker.cpp" />
   </ItemGroup>
 </Project>

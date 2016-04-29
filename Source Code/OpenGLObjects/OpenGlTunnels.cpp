@@ -14,11 +14,10 @@
 #include <gl/glu.h>
 
 #include "../Useful/Useful.h"
+#include "../Useful/OpenGLUseful.h"
 
 #include "OpenGLObjects.h"
 #include "OpenGLColors.h"
-#include "OpenGLUseful.h"
-
 #include "OpenGlTunnels.h"
 
 // Couloir

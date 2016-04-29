@@ -48,7 +48,7 @@ private:
 	void print_devicestatusarray_errors(const codaRTNet::DeviceStatusArray& status);
 
 	// Helper function to print system alignment status
-	int print_alignment_status(const DWORD* marker_id_array, const codaRTNet::DeviceInfoAlignment& info);
+	int print_alignment_status(const DWORD* marker_id_array, const codaRTNet::DeviceInfoAlignment& info, DWORD MB );
 
 	//* Generic data packet
 	codaRTNet::RTNetworkPacket packet;
@@ -125,7 +125,7 @@ public:
 	bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 
 	// Need to add the following.
-	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive );
+	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 

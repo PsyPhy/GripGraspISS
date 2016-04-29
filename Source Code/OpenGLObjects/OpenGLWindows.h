@@ -1,9 +1,6 @@
 //---------------------------------------------------------------------------
 
-#ifndef OpenGLWindowH
-#define OpenGLWindowH 
-
-//---------------------------------------------------------------------------
+#pragma once 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,5 +90,3 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
 OpenGLWindow *CreateMainGlWindow( int argc, char *argv[] );
 
 };
-
-#endif
