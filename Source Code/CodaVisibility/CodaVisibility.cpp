@@ -37,11 +37,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	while ( _kbhit() == 0 ) {
 		for ( int unit = 0; unit < 2; unit++ ) {
 			codaTracker.GetCurrentMarkerFrameUnit( localFrame, unit );
-			fprintf( stderr, "Unit %d: ", unit );
+			fprintf( stderr, "Unit %d:    ", unit );
 			for ( int mrk = 0; mrk < 24; mrk++ ) {
 				if ( localFrame.marker[mrk].visibility ) fprintf( stderr, "O" );
 				else fprintf( stderr, "." );
-				if ( ((mrk+1) % 8) == 0 ) fprintf( stderr, " " );
+				if ( ((mrk+1) % 8) == 0 ) fprintf( stderr, "    " );
 			}
 			fprintf( stderr, "  " );
 		}
