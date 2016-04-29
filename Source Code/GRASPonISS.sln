@@ -32,6 +32,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspGUI", "GraspGUI\GraspG
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodAlignment", "CharnwoodAlignment\CharnwoodAlignment.vcxproj", "{BA718EC0-44BD-4821-871B-0A35A77E3251}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodaVisibility", "CodaVisibility\CodaVisibility.vcxproj", "{C5CC589F-3534-4691-8772-BB74742F58B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -136,6 +138,14 @@ Global
 		{BA718EC0-44BD-4821-871B-0A35A77E3251}.Release|Win32.Build.0 = Release|Win32
 		{BA718EC0-44BD-4821-871B-0A35A77E3251}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{BA718EC0-44BD-4821-871B-0A35A77E3251}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.Debug|Win32.Build.0 = Debug|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.Release|Win32.ActiveCfg = Release|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.Release|Win32.Build.0 = Release|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{C5CC589F-3534-4691-8772-BB74742F58B5}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

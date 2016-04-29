@@ -38,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	codaTracker.Initialize();
 	fprintf( stderr, "OK.\n" );
 
-	codaTracker.PerformAlignment( 8, 9, 8, 8, 10, true );
+	codaTracker.PerformAlignment( 8, 0, 16, 16, 8, true );
 
 	return 0;
 }
