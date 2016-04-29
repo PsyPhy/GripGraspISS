@@ -26,9 +26,9 @@ void glUsefulDefaultSpecularLighting( void ) {
 
   // Light definition
   GLfloat LightPosition[] = { 5000.0, 5000.0, 5000.0, 0.0 };
-  GLfloat LightAmbient[]  = { 0.25, 0.25, 0.25, 1.0};
-  GLfloat LightDiffuse[]  = { 0.50, 0.50, 0.50, 1.0};
-  GLfloat LightSpecular[] = { 0.50, 0.50, 0.50, 1.0};
+  GLfloat LightAmbient[]  = { 0.05, 0.05, 0.05, 1.0};
+  GLfloat LightDiffuse[]  = { 0.050, 0.050, 0.050, 1.0};
+  GLfloat LightSpecular[] = { 0.90, 0.90, 0.90, 1.0};
 
   glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
   glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
@@ -50,7 +50,7 @@ void glUsefulDefaultSpecularLighting( void ) {
 void glUsefulCodaLighting( void ) {
 
   // Light definition
-  GLfloat LightPosition[] = { - 5000.0, - 5000.0, 5000.0, 0.0 };
+  GLfloat LightPosition[] = {  5000.0,  5000.0, 5000.0, 0.0 };
   GLfloat LightAmbient[]  = { 0.25, 0.25, 0.25, 1.0};
   GLfloat LightDiffuse[]  = { 0.50, 0.50, 0.50, 1.0};
   GLfloat LightSpecular[] = { 0.50, 0.50, 0.50, 1.0};
@@ -104,7 +104,7 @@ void glUsefulDefaultMaterial( void ) {
   GLfloat MaterialAmbient[]   = { 0.25, 0.25, 0.25, 1.0};
   GLfloat MaterialDiffuse[]   = { 0.50, 0.50, 0.50, 1.0};
   GLfloat MaterialSpecular[]  = { 0.50, 0.50, 0.50, 1.0};
-  GLfloat MaterialShininess[] = { 50.0 };
+  GLfloat MaterialShininess[] = { 100.0 };
 
   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
   glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
