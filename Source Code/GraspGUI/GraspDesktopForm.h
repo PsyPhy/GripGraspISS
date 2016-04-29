@@ -155,7 +155,7 @@ namespace GraspGUI {
 			// 
 			// groupBox1
 			// 
-			this->groupBox1->BackColor = System::Drawing::SystemColors::Control;
+			this->groupBox1->BackColor = System::Drawing::SystemColors::Window;
 			this->groupBox1->Controls->Add(this->hmdPanel);
 			this->groupBox1->Controls->Add(this->MainLabel);
 			this->groupBox1->ForeColor = System::Drawing::SystemColors::HotTrack;
@@ -178,7 +178,7 @@ namespace GraspGUI {
 			// 
 			// groupBox2
 			// 
-			this->groupBox2->BackColor = System::Drawing::SystemColors::Control;
+			this->groupBox2->BackColor = System::Drawing::SystemColors::Window;
 			this->groupBox2->Controls->Add(this->groupBox7);
 			this->groupBox2->Controls->Add(this->groupBox6);
 			this->groupBox2->Controls->Add(this->torsoStatusGroup);
@@ -325,7 +325,7 @@ namespace GraspGUI {
 			// 
 			// NavigatorGroupBox
 			// 
-			this->NavigatorGroupBox->BackColor = System::Drawing::SystemColors::Control;
+			this->NavigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
 			this->NavigatorGroupBox->Controls->Add(this->ProgressBox);
 			this->NavigatorGroupBox->Controls->Add(this->TaskGroupBox);
 			this->NavigatorGroupBox->Controls->Add(this->ProtocolGroupBox);
@@ -531,14 +531,14 @@ namespace GraspGUI {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->BackColor = System::Drawing::SystemColors::Control;
+			this->BackColor = System::Drawing::SystemColors::Window;
 			this->ClientSize = System::Drawing::Size(1576, 988);
 			this->Controls->Add(this->NavigatorGroupBox);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox2);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
