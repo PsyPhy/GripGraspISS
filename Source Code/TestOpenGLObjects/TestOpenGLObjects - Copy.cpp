@@ -57,7 +57,6 @@ Assembly		*room;				// A walled room in the virtual world.
 Assembly		*Response;
 Assembly		*HandFeedback;
 Assembly		*Target;
-Assembly		*LaserPointer;
 
 Texture			*wall_texture;		// The texture that is applied to the walls.
 Texture			*sky_texture;
@@ -155,11 +154,6 @@ void create_objects( void ) {
 		HandFeedback->AddComponent(sphere);
 	}
 	HandFeedback->SetPosition(0.0,0.0, -500);
-
-	//LaserPOinter
-	LaserPointer = new Assembly();
-	disk = new Disk(50);
-	disk->SetPosition(0.0, 0.0, (room_length-1000));
 
 	//Target
 	Target = new Assembly();

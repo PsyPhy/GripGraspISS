@@ -122,7 +122,7 @@ void glUsefulDefaultMaterial( void ) {
 //  and prior to the rendering of each scene. 
 void glUsefulInitializeDefault ( void ) {
 
-	glUsefulAutoLighting( 1.0 );
+	glUsefulAutoLighting( 0.7 );
 	glUsefulDefaultMaterial();
 
 	// Shade model
