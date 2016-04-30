@@ -34,7 +34,7 @@ void GraspDesktop::StopRefreshTimer( void ) {
 // To use, create a panel in the form and then pass the reference to that panel to this routine.
 // This is actually a generally useful routine and should probably be included in the 
 // OpenGLObjects / OpenGLWindows package, rather than here.
-OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
+OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, void *share ) {
 
 	HWND	parent;
 	OpenGLWindow *window;
@@ -42,7 +42,7 @@ OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Pa
 	window = new OpenGLWindow();
 	window->Border = false;
 
-	if ( !window->Create( parent, "HMD", 0, 0,panel->Width, panel->Height ) ) {
+	if ( !window->Create( parent, "HMD", 0, 0,panel->Width, panel->Height, share ) ) {
 		fMessageBox( MB_OK, "GraspGUI", "Error creating OpenGLWindow inside Forms Panel." );
 		exit( -1 );
 	}  
@@ -57,35 +57,39 @@ void GraspDesktop::InitializeAnimations( void ) {
 	double room_height = 2000.0;
 	double room_length = 8000.0;
 	double wall_thickness = 10.0;
+		
 
+	// Create a window and viewpoint to show what the subject is seeing.
 	hmdWindow = CreateOpenGLWindowInForm( hmdPanel);
 	hmdWindow->Activate();
 	hmdWindow->Clear( 0.50, 0.50, 0.60 );
-		
-	// Create a viewpoint in the center of the virtual room.
+
  	hmdViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
 	hmdViewpoint->SetPosition( 0.0, 0.0, 0.0 );
 	hmdViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
-	workspaceWindow = CreateOpenGLWindowInForm( columbusPanel);
+	// Create a window and viewpoint to observe what is going on in the workspace.
+	// This window shares the rendering context (hRC) from hmdWindow so that 
+	// textures are defined in both.
+	workspaceWindow = CreateOpenGLWindowInForm( columbusPanel, hmdWindow );
 	workspaceWindow->Activate();
 	workspaceWindow->Clear( 0.30, 0.50, 0.60 );
 	
-	// Create a fixed viewpoint into the 3D workspace.
  	workspaceViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
 	workspaceViewpoint->SetPosition( 1000.0, 0.0, -500.0 );
 	workspaceViewpoint->SetOrientation( 0.0, 0.0, -90.0 );
 
 	// Create windows to show the status of each of the tracked objects.
-	hmdDynamicWindow = CreateOpenGLWindowInForm( hmdDynamicPanel );
-	hmdStaticWindow = CreateOpenGLWindowInForm( hmdStaticPanel );
-	toolDynamicWindow = CreateOpenGLWindowInForm( toolDynamicPanel );
-	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel );
-	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel );
-	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel );
+	hmdDynamicWindow = CreateOpenGLWindowInForm( hmdDynamicPanel, workspaceWindow );
+	hmdStaticWindow = CreateOpenGLWindowInForm( hmdStaticPanel, workspaceWindow );
+	toolDynamicWindow = CreateOpenGLWindowInForm( toolDynamicPanel, workspaceWindow );
+	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel, workspaceWindow );
+	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel, workspaceWindow );
+	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel, workspaceWindow );
  	codaViewpoint = new Viewpoint( 6.0, 5.0, 10.0, 10000.0);
 	codaViewpoint->SetPosition( 0.0, 0.0, - room_length / 2.0 );
 	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+
 	// Initialize the state of the GL graphics engine.
 	glUsefulInitializeDefault();
 
@@ -125,18 +129,12 @@ void GraspDesktop::InitializeAnimations( void ) {
 	room->SetPosition( 0.0, 0.0, 0.0 );
 	room->SetOrientation( 0.0, 0.0, 0.0 );
 
-	// The wall texture is 256 pixels wide by 512 high.
-	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
-	char *side_texture_bitmap = "kLime.bmp";
-	workspaceWindow->Activate();
-	side_texture = new Texture( side_texture_bitmap, 2000, 4000 );
-
 	side_room = new Assembly();
 	side_room->SetColor( WHITE );
 
 	box = new Box( room_height, room_width, room_length );
 	box->SetColor( GRAY );
-	box->SetTexture( side_texture );
+	box->SetTexture( wall_texture );
 	side_room->AddComponent( box );
 
 	// Create a simple object to look at.
@@ -202,9 +200,6 @@ void GraspDesktop::InitializeAnimations( void ) {
 	disk->SetColor( 1.0f, 0.7f, 0.0f );
 	torso->AddComponent( disk );
 
-	CreateRefreshTimer( 20 );
-	StartRefreshTimer();
-	RefreshAnimations();
 }
 
 // Draw the objects used to show the status on the screen.

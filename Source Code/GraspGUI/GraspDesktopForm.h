@@ -17,10 +17,13 @@ namespace GraspGUI {
 	public:
 		GraspDesktop(void)
 		{
+			// Standard Windows Forms initialization.
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+
+			// Custom initializations.
+			InitializeAnimations();
+			CreateRefreshTimer( 20 );
+
 		}
 
 	protected:
@@ -593,7 +596,10 @@ namespace GraspGUI {
 		void InitializeAnimations( void );
 		void RefreshAnimations( void );
 		void KillAnimations( void );
-		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel );
+		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, void *share );
+		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
+			return( CreateOpenGLWindowInForm( panel, nullptr ) );
+		}
 
 
 	private: System::Windows::Forms::DialogResult MessageBox( String^ message, String^ caption, MessageBoxButtons buttons ) {
@@ -637,9 +643,11 @@ private:
 	void StartRefreshTimer( void );
 	void StopRefreshTimer( void );
 	private: System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
-				 InitializeAnimations();
-			 }
+				RefreshAnimations();
+				StartRefreshTimer();
+}
 	private: System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+				 StopRefreshTimer();
 				 KillAnimations();
 			 }
 	private: System::Void GraspDesktop_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {

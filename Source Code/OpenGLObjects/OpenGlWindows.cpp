@@ -8,7 +8,6 @@ using namespace PsyPhy;
 
 static bool already_registered = false;
 
-
 /********************************************************************************/
 
 // An event handler that recognizes OpenGLWindows.
@@ -62,7 +61,7 @@ OpenGLWindow::OpenGLWindow( void ) {
 
 /********************************************************************************/
 
-bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h )
+bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h, void *share )
 {
 
 	int		PixelFormat;	// Holds The Results After Searching For A Match
@@ -78,14 +77,14 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 	WindowRect.top = (long) y;        // Set Top Value To y
 	WindowRect.bottom = (long) y + h; // Set Bottom Value To Acheive Requested Height
 
-	hInstance			  = GetModuleHandle(NULL);					// Grab An Instance For Our Window
-	wc.style			  = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;		// Redraw On Size, And Own DC For Window.
-	wc.lpfnWndProc	= (WNDPROC) OpenGLWindowProc;				// WndProc Handles Messages
+	hInstance			= GetModuleHandle(NULL);					// Grab An Instance For Our Window
+	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;		// Redraw On Size, And Own DC For Window.
+	wc.lpfnWndProc		= (WNDPROC) OpenGLWindowProc;				// WndProc Handles Messages
 	wc.cbClsExtra		= 0;										// No Extra Window Data
 	wc.cbWndExtra		= 0;										// No Extra Window Data
 	wc.hInstance		= hInstance;								// Set The Instance
 	wc.hIcon			= LoadIcon(NULL, IDI_WINLOGO);				// Load The Default Icon
-	wc.hCursor		= LoadCursor(NULL, IDC_ARROW);				// Load The Arrow Pointer
+	wc.hCursor			= LoadCursor(NULL, IDC_ARROW);				// Load The Arrow Pointer
 	wc.hbrBackground	= NULL;										// No Background Required For GL
 	wc.lpszMenuName		= NULL;									// We Don't Want A Menu
 	wc.lpszClassName	= "OpenGL";									// Set The Class Name
@@ -195,8 +194,10 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 		0, 0, 0								// Layer Masks Ignored
 	};
 
+	hDC = GetDC( hWnd );
+
 	// Did We Get A Device Context?
-	if ( !( hDC = GetDC( hWnd ) ) )				
+	if ( !hDC )				
 	{
 		// If not, reset the display.
 		Destroy();								
@@ -205,7 +206,7 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 	}
 
 	// Did Windows Find A Matching Pixel Format?
-	if (!(PixelFormat = ChoosePixelFormat( hDC,&pfd )))	
+	if ( !(PixelFormat = ChoosePixelFormat( hDC,&pfd )) )	
 	{
 		// If not, reset the display.
 		Destroy();											
@@ -221,8 +222,11 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 		return false;										
 	}
 
+	if ( share != nullptr ) hRC = static_cast <OpenGLWindow *>(share)->hRC;
+	else hRC = wglCreateContext( hDC );
+
 	// Are We Able To Get A Rendering Context?
-	if ( !( hRC = wglCreateContext(hDC) ) )		
+	if ( !( hRC ) )		
 	{
 		Destroy();								
 		MessageBox(NULL,"Can't Create A GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);

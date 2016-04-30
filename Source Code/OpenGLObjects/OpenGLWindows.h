@@ -60,7 +60,7 @@ public:
   bool (*event_callback)( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
   OpenGLWindow( void );
-  bool Create( HWND parent, char *title, int x, int y, int w, int h );
+  bool Create( HWND parent, char *title, int x, int y, int w, int h, void *share = nullptr );
   void SetPosition( int x, int y, int w, int h );
   void Destroy( void );
   void Activate( void );
