@@ -8,6 +8,7 @@ using namespace PsyPhy;
 
 static bool already_registered = false;
 
+
 /********************************************************************************/
 
 // An event handler that recognizes OpenGLWindows.
@@ -176,12 +177,12 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 
 	static	PIXELFORMATDESCRIPTOR pfd =		// pfd Tells Windows How We Want Things To Be
 	{
-		sizeof(PIXELFORMATDESCRIPTOR),			// Size Of This Pixel Format Descriptor
+		sizeof(PIXELFORMATDESCRIPTOR),		// Size Of This Pixel Format Descriptor
 		1,									// Version Number
-		flag,									// Must Support Double Buffering
+		flag,								// Must Support Double Buffering
 		PFD_TYPE_RGBA,						// Request An RGBA Format
 		Colordepth,							// Select Our Color Depth
-		0, 0, 0, 0, 0, 0,						// Color Bits Ignored
+		0, 0, 0, 0, 0, 0,					// Color Bits Ignored
 		1,									// YES Alpha Buffer
 		0,									// Shift Bit Ignored
 		0,									// No Accumulation Buffer
@@ -194,48 +195,55 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 		0, 0, 0								// Layer Masks Ignored
 	};
 
-	if ( !( hDC = GetDC(hWnd) ) )				// Did We Get A Device Context?
+	// Did We Get A Device Context?
+	if ( !( hDC = GetDC( hWnd ) ) )				
 	{
-		Destroy();								// If not, reset the display.
+		// If not, reset the display.
+		Destroy();								
 		MessageBox(NULL,"Can't Create A GL Device Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return false;							// Abort.
+		return false;							
 	}
 
-	if (!(PixelFormat = ChoosePixelFormat( hDC,&pfd )))	// Did Windows Find A Matching Pixel Format?
+	// Did Windows Find A Matching Pixel Format?
+	if (!(PixelFormat = ChoosePixelFormat( hDC,&pfd )))	
 	{
-		Destroy();											// If not, reset the display.
+		// If not, reset the display.
+		Destroy();											
 		MessageBox(NULL,"Can't Find A Suitable PixelFormat.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return false;										// Abort.
+		return false;										
 	}
 
-	if( !SetPixelFormat( hDC, PixelFormat, &pfd) )		// Are We Able To Set The Pixel Format?
+	// Are We Able To Set The Pixel Format?
+	if( !SetPixelFormat( hDC, PixelFormat, &pfd) )		
 	{
-		Destroy();											// Reset The Display
+		// Reset The DisplayDestroy();											
 		MessageBox(NULL,"Can't Set The PixelFormat.","ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return false;										// Return false
+		return false;										
 	}
 
-	if ( !( hRC=wglCreateContext(hDC) ) )		// Are We Able To Get A Rendering Context?
+	// Are We Able To Get A Rendering Context?
+	if ( !( hRC = wglCreateContext(hDC) ) )		
 	{
-		Destroy();								// Reset The Display
+		Destroy();								
 		MessageBox(NULL,"Can't Create A GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return false;								 
 	}
 
-	if( !wglMakeCurrent(hDC,hRC) )					// Try To Activate The Rendering Context
+	// Try To Activate The Rendering Context
+	if( !wglMakeCurrent( hDC, hRC ) )					
 	{
-		Destroy();								            // Reset The Display
+		Destroy();								            
 		MessageBox(NULL,"Can't Activate The GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return false;								 
 	}
 
-	ShowWindow(hWnd,SW_SHOW);						// Show The Window
+	ShowWindow(hWnd,SW_SHOW);					// Show The Window
 	SetForegroundWindow(hWnd);					// Slightly Higher Priority
 	SetFocus(hWnd);								// Sets Keyboard Focus To The Window
 
 	Clear( BLACK );
 
-	glEnable(GL_TEXTURE_2D);								// Enable Texture Mapping ( NEW )
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping ( NEW )
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);				// Black Background
 	glClearDepth(1.0f);									// Depth Buffer Setup
@@ -247,7 +255,7 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h 
 	// Builds font list
 	// BuildGLFont(FONT_DEFAULT, 1);
 
-	return true;									// Success
+	return true; // Success
 
 }
 
@@ -261,9 +269,10 @@ void OpenGLWindow::SetPosition( int x, int y, int w, int h )  {
 
 void OpenGLWindow::Activate( void )
 {
-	if( !wglMakeCurrent(hDC,hRC) )					// Try To Activate The Rendering Context
+	// Try To Activate The Rendering Context
+	if( !wglMakeCurrent(hDC,hRC) )					
 	{
-		Destroy();								        // Reset The Display
+		Destroy();								   
 		MessageBox(NULL,"Can't Activate The GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 	}
 
@@ -276,39 +285,42 @@ void OpenGLWindow::Destroy( void )
 	// Free memory
 	// KillGLFont();
 
-	if (FullScreen)										// Are We In Fullscreen Mode?
-	{
-		ChangeDisplaySettings(NULL,0);	// If So Switch Back To The Desktop
-		ShowCursor(true);								// Show Mouse Pointer
+	// Are We In Fullscreen Mode?
+	if (FullScreen)	{									
+	
+		// If So Switch Back To The Desktop
+		ChangeDisplaySettings(NULL,0);	
+		ShowCursor(true);
 	}
 
-	if (hRC)											    // Do We Have A Rendering Context?
+	// Do We Have A Rendering Context?
+	if (hRC)											    
 	{
-		if (!wglMakeCurrent(NULL,NULL))	// Are We Able To Release The DC And RC Contexts?
+		if ( !wglMakeCurrent(NULL,NULL) )	// Are We Able To Release The DC And RC Contexts?
 		{
 			//      MessageBox(NULL,"Release Of DC And RC Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		}
 
-		if (!wglDeleteContext(hRC))			// Are We Able To Delete The RC?
+		if ( !wglDeleteContext(hRC) )			// Are We Able To Delete The RC?
 		{
 			//      MessageBox(NULL,"Release Rendering Context Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		}
 		hRC=NULL;	
 	}
 
-	if (hDC && !ReleaseDC(hWnd,hDC))	// Are We Able To Release The DC
+	if (hDC && !ReleaseDC( hWnd, hDC ))	// Are We Able To Release The DC
 	{
 		//    MessageBox(NULL,"Release Device Context Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		hDC=NULL;	
 	}
 
-	if (hWnd && !DestroyWindow(hWnd))	// Are We Able To Destroy The Window?
+	if (hWnd && !DestroyWindow( hWnd ))	// Are We Able To Destroy The Window?
 	{
 		//    MessageBox(NULL,"Could Not Release hWnd.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		hWnd=NULL;
 	}
 
-	if (!UnregisterClass("OpenGL",hInstance))			// Are We Able To Unregister Class
+	if ( !UnregisterClass( "OpenGL", hInstance ) )			// Are We Able To Unregister Class
 	{
 		//    MessageBox(NULL,"Could Not Unregister Class.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		//    hInstance=NULL;	
