@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodAlignment", "Charn
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodaVisibility", "CodaVisibility\CodaVisibility.vcxproj", "{C5CC589F-3534-4691-8772-BB74742F58B5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HTMLExperiment", "HTMLExperiment\HTMLExperiment.vcxproj", "{DF6858A7-4A03-440A-AB41-11CC74EFC396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -146,6 +148,14 @@ Global
 		{C5CC589F-3534-4691-8772-BB74742F58B5}.Release|Win32.Build.0 = Release|Win32
 		{C5CC589F-3534-4691-8772-BB74742F58B5}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{C5CC589F-3534-4691-8772-BB74742F58B5}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.Debug|Win32.Build.0 = Debug|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.Release|Win32.ActiveCfg = Release|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.Release|Win32.Build.0 = Release|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{DF6858A7-4A03-440A-AB41-11CC74EFC396}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
