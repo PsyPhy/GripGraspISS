@@ -12,7 +12,6 @@
 #include <gl/glu.h>
 
 #include "../Useful/Useful.h"
-
 #include "OpenGLObjects.h"
 
 #define USE_PARENT_COLOR  -1.0
@@ -33,8 +32,6 @@ static void _init_gl_displacement( double *m ) {
 }
 
 /***************************************************************************/
-
-
 
 OpenGLObject::OpenGLObject( void ) {
 
@@ -59,22 +56,19 @@ OpenGLObject::OpenGLObject( void ) {
 
 	// By default, use the color of the parent or the previously drawn object.
 	SetColor( 0.0, 0.0, 0.0, USE_PARENT_COLOR );
-
 }
 
 /*********************************************************************************/
 /*
 
-Each object has two positions and two orientations. The top level position and 
-orientation determine the control point, the 'offset' and 'attitude' allow you 
-to change the position and orientation of the actual drawn object with respect to
-the control point. One way to think of it is that offset and attitude allow you 
-to set the position and orientation of the rendered object when it is set to the
-zero position and orientation.
+	Each object has two positions and two orientations. The top level position and 
+	orientation determine the control point, the 'offset' and 'attitude' allow you 
+	to change the position and orientation of the actual drawn object with respect to
+	the control point. One way to think of it is that offset and attitude allow you 
+	to set the position and orientation of the rendered object when it is set to the
+	zero position and orientation.
 
 */
-
-
 
 // Set the position of an object from a 3D vector.
 void OpenGLObject::SetPosition( const Vector3 p ) {
@@ -114,10 +108,8 @@ void OpenGLObject::GetOffset( Vector3 p ) {
 
 /*********************************************************************************/
 
-/*
- * Set the orientation of an object either from a 3x3 rotation matrix or
- *  as defined by a 3D axis vector and a scalar angle in degrees.
- */
+// Set the orientation of an object either from a 3x3 rotation matrix or
+// as defined by a 3D axis vector and a scalar angle in degrees.
 
 // Set the orientation of the object.
 void OpenGLObject::SetOrientation( Matrix3x3 m ) {
@@ -174,9 +166,7 @@ void OpenGLObject::GetOrientation( Matrix3x3 m ) {
   CopyMatrix( m, orientation );
 }
 
-/*
- * Set the attitude of an object when it is at it's zero orientation.
- */
+// Set the attitude of an object when it is at it's zero orientation.
 
 void OpenGLObject::SetAttitude( Matrix3x3 m ) {
 	int i, j;
@@ -237,11 +227,10 @@ bool OpenGLObject::IsEnabled( void ) { return( enabled ); }
 
 /***************************************************************************/
 
-/*
- * Set the color of an object either with an rgb vector, 
- *  by 3 rgb values, or by an index into a predefined color
- *  table. Defined values in the table are found in OpenGLColors.h.
- */
+// Set the color of an object either with an rgb vector, 
+//  by 3 rgb values, or by an index into a predefined color
+//  table. Defined values in the table are found in OpenGLColors.h.
+
 void OpenGLObject::SetColor( float c[4] ) {
 
   color[0] = c[0];
@@ -315,13 +304,10 @@ void OpenGLObject::PrepDraw( void ) {
   glTranslatedv( gl_offset );
   glMultMatrixd( gl_attitude );
 
-
 }
 
-/*
- * By default there is no actual Draw method.
- * This method must be overlayed by the derived classes.
- */
+// By default there is no actual Draw method.
+// This method must be overlayed by the derived classes.
 
 void OpenGLObject::Draw( void ) {
 
@@ -342,10 +328,8 @@ void OpenGLObject::FinishDraw( void ) {
 
 /***************************************************************************/
 
-/*
- * Constructor initializes the position and orientation to zero and 
- *  sets the number of component elements to 0.
- */
+// Constructor initializes the position and orientation to zero and 
+//  sets the number of component elements to 0.
 
 Assembly::Assembly( void ) {
 
@@ -385,10 +369,8 @@ void Assembly::RemoveComponent( OpenGLObject *c ) {
 
 }
 
-/*
- * Draw sets up a local coordinate frame at the position and orientation  
- *  of the entire assembly, then draws the component elements within that frame.
- */
+// Draw sets up a local coordinate frame at the position and orientation  
+//  of the entire assembly, then draws the component elements within that frame.
 
 void Assembly::Draw( void ) {
 
@@ -551,7 +533,6 @@ Slab::Slab( double w, double l, double th ) {
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
 }
-
 
 void Slab::Draw( void ) {
 
@@ -734,7 +715,6 @@ void Patch::Draw( void ) {
 }
 /***************************************************************************/
 
-
 Bar::Bar( double l, double w, double th, bool cap ) {
 
   width = w;
@@ -745,7 +725,6 @@ Bar::Bar( double l, double w, double th, bool cap ) {
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
 }
-
 
 void Bar::Draw( void ) {
 
@@ -803,7 +782,6 @@ void Bar::Draw( void ) {
 
   }
 
-
   glBegin( GL_POLYGON );
 
     glNormal3d( - 1.0, 0.0, 0.0 );
@@ -837,9 +815,7 @@ Extrusion::Extrusion( double l, double vert[][2], int n ) {
 		vertex[i][0] = vert[i][0];
 		vertex[i][1] = vert[i][1];
 	} 
-
 	OpenGLObject();   // Do what every OpenGlObject does at creation.
-
 }
 
 
@@ -1089,10 +1065,8 @@ void Cylinder::SetHeight( double height ) {
 
 Frustrum::Frustrum( double near_v[3], double far_v[3] ) {
 
-
   CopyVector( near_vertex, near_v  );
   CopyVector( far_vertex, far_v );
-
   multi_color = true;
 
   OpenGLObject();   // Do what every OpenGlObject does at creation.
@@ -1296,7 +1270,8 @@ void Hole::Draw( void ) {
 
 /***************************************************************************/
 
-/* A rectangle with a hole in it. */
+// A rectangle with a hole in it.
+
 WindowFrame::WindowFrame( double width, double height, double thickness ) {
 
   this->width = width;
@@ -1306,7 +1281,6 @@ WindowFrame::WindowFrame( double width, double height, double thickness ) {
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
 }
-
 
 void WindowFrame::Draw( void ) {
 
@@ -1339,7 +1313,6 @@ void WindowFrame::Draw( void ) {
     glVertex3d( - x - thickness, y + thickness, z );
     glVertex3d(   x + thickness, y + thickness, z );
     glVertex3d(   x, y, z );
-
 
   glEnd();
 
