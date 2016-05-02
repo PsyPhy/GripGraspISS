@@ -26,9 +26,9 @@ void glUsefulDefaultSpecularLighting( void ) {
 
   // Light definition
   GLfloat LightPosition[] = { 5000.0, 5000.0, 5000.0, 0.0 };
-  GLfloat LightAmbient[]  = { 0.05, 0.05, 0.05, 1.0};
-  GLfloat LightDiffuse[]  = { 0.050, 0.050, 0.050, 1.0};
-  GLfloat LightSpecular[] = { 0.90, 0.90, 0.90, 1.0};
+  GLfloat LightAmbient[]  = { 0.05f, 0.05f, 0.05f, 1.0f};
+  GLfloat LightDiffuse[]  = { 0.050f, 0.050f, 0.050f, 1.0f};
+  GLfloat LightSpecular[] = { 0.90f, 0.90f, 0.90f, 1.0f};
 
   glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
   glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );

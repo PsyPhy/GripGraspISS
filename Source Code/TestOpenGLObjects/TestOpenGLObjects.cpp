@@ -73,7 +73,6 @@ void create_objects( void ) {
 	// Local objects used to construct the OpenGLObject assemblies.
 	Sphere *sphere;
 	Slab *slab;
-	Box *box;
 	Disk *disk;
 
 	Cylinder *tunnel;
@@ -239,6 +238,7 @@ void render( void ) {
 	Response->Draw();
 	HandFeedback->Draw();
 	Target->Draw();
+	Sleep( 10 );
 
 	// Draw the complex object at its current position. 
 	//object->Draw();
@@ -355,6 +355,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	window->Destroy();
-	fMessageBox( MB_OK, "TestOpenGLObjects", "Frame count: %d", frame_counter );
+	// fMessageBox( MB_OK, "TestOpenGLObjects", "Frame count: %d", frame_counter );
 }
 

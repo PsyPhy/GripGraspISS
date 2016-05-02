@@ -93,6 +93,9 @@ public:
  
   void SetColor( GLfloat c[4] );
   void SetColor( float r, float g, float b, float a = 1.0 );
+  void SetColor( double r, double g, double b, double a = 1.0 ) { 
+	  SetColor( ((float) r), ((float) g), ((float) b), ((float) a ));
+  }
   void SetColor( int index );
 
   void  SetTexture( Texture *texture );

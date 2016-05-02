@@ -70,7 +70,7 @@ void CodaRTnetTracker::Initialize( void ) {
 				iconfig, configs.config[iconfig].dwAddressHandle, dest );
 		}
 		
-		if (configs.dwNumConfig < codaConfig)
+		if (configs.dwNumConfig < (DWORD) codaConfig)
 		{
 			fOutputDebugString("ERROR: specified hardware configuration %d not available.\n", codaConfig);
 			exit( -1 );
@@ -416,7 +416,7 @@ bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int select
 			// Count the total number of valid packets..
 			nSuccessfullPackets++;
 			// find number of markers included in the packet.
-			DWORD n_markers = decode3D.getNumMarkers();
+			int n_markers = decode3D.getNumMarkers();
 
 			// Single shots can return 56 marker positions, even if we are using
 			// 200 Hz / 28 markers for continuous acquisition. Stay within bounds.

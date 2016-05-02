@@ -112,7 +112,7 @@ void TunnelSegment::Draw( void )
 /////////////////////////
 // Junction's definition
 /////////////////////////
-
+#if( 0 )
 void TunnelJunction::Draw( void )
 {
 
@@ -187,7 +187,7 @@ void TunnelJunction::Draw( void )
     }
     FinishDraw();
 }
-
+#endif
 
 /******************************************************************************************/
 

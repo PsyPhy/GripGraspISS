@@ -23,8 +23,6 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
 	Vector3		validated_model[MAX_MARKERS];
 	Vector3		validated_actual[MAX_MARKERS];
 
-	bool		visible;
-
 	// Select the visible output markers and the corresponding inputs.
 	int visible_markers = 0;
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
