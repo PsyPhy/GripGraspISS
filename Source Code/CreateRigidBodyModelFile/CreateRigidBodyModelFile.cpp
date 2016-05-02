@@ -1,5 +1,10 @@
 // CreateRigidBodyModelFile.cpp : Defines the entry point for the console application.
 //
+
+// Disable warnings about unsafe functions.
+// We use the 'unsafe' versions to maintain source-code compatibility with Visual C++ 6
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
@@ -8,8 +13,6 @@
 
 #include <windows.h>
 #include <mmsystem.h>
-
-#define _CRT_SECURE_NO_WARNINGS
 #include <time.h>
 #include "../Useful/fMessageBox.h"
 
