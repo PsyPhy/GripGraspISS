@@ -61,7 +61,7 @@ OpenGLWindow::OpenGLWindow( void ) {
 
 /********************************************************************************/
 
-bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h, void *share )
+bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h, HGLRC shared_hRC )
 {
 
 	int		PixelFormat;	// Holds The Results After Searching For A Match
@@ -222,7 +222,7 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h,
 		return false;										
 	}
 
-	if ( share != nullptr ) hRC = static_cast <OpenGLWindow *>(share)->hRC;
+	if ( shared_hRC != nullptr ) hRC = shared_hRC;
 	else hRC = wglCreateContext( hDC );
 
 	// Are We Able To Get A Rendering Context?

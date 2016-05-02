@@ -596,7 +596,7 @@ namespace GraspGUI {
 		void InitializeAnimations( void );
 		void RefreshAnimations( void );
 		void KillAnimations( void );
-		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, void *share );
+		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel,  HGLRC shared_hRC );
 		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
 			return( CreateOpenGLWindowInForm( panel, nullptr ) );
 		}

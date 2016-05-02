@@ -34,7 +34,7 @@ void GraspDesktop::StopRefreshTimer( void ) {
 // To use, create a panel in the form and then pass the reference to that panel to this routine.
 // This is actually a generally useful routine and should probably be included in the 
 // OpenGLObjects / OpenGLWindows package, rather than here.
-OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, void *share ) {
+OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, HGLRC shared_hRC ) {
 
 	HWND	parent;
 	OpenGLWindow *window;
@@ -42,7 +42,7 @@ OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Pa
 	window = new OpenGLWindow();
 	window->Border = false;
 
-	if ( !window->Create( parent, "HMD", 0, 0,panel->Width, panel->Height, share ) ) {
+	if ( !window->Create( parent, "HMD", 0, 0,panel->Width, panel->Height, shared_hRC ) ) {
 		fMessageBox( MB_OK, "GraspGUI", "Error creating OpenGLWindow inside Forms Panel." );
 		exit( -1 );
 	}  
@@ -71,7 +71,7 @@ void GraspDesktop::InitializeAnimations( void ) {
 	// Create a window and viewpoint to observe what is going on in the workspace.
 	// This window shares the rendering context (hRC) from hmdWindow so that 
 	// textures are defined in both.
-	workspaceWindow = CreateOpenGLWindowInForm( columbusPanel, hmdWindow );
+	workspaceWindow = CreateOpenGLWindowInForm( columbusPanel, hmdWindow->hRC );
 	workspaceWindow->Activate();
 	workspaceWindow->Clear( 0.30, 0.50, 0.60 );
 	
@@ -80,12 +80,12 @@ void GraspDesktop::InitializeAnimations( void ) {
 	workspaceViewpoint->SetOrientation( 0.0, 0.0, -90.0 );
 
 	// Create windows to show the status of each of the tracked objects.
-	hmdDynamicWindow = CreateOpenGLWindowInForm( hmdDynamicPanel, workspaceWindow );
-	hmdStaticWindow = CreateOpenGLWindowInForm( hmdStaticPanel, workspaceWindow );
-	toolDynamicWindow = CreateOpenGLWindowInForm( toolDynamicPanel, workspaceWindow );
-	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel, workspaceWindow );
-	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel, workspaceWindow );
-	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel, workspaceWindow );
+	hmdDynamicWindow = CreateOpenGLWindowInForm( hmdDynamicPanel, workspaceWindow->hRC );
+	hmdStaticWindow = CreateOpenGLWindowInForm( hmdStaticPanel, workspaceWindow->hRC );
+	toolDynamicWindow = CreateOpenGLWindowInForm( toolDynamicPanel, workspaceWindow->hRC );
+	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel, workspaceWindow->hRC );
+	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel, workspaceWindow->hRC );
+	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel, workspaceWindow->hRC );
  	codaViewpoint = new Viewpoint( 6.0, 5.0, 10.0, 10000.0);
 	codaViewpoint->SetPosition( 0.0, 0.0, - room_length / 2.0 );
 	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );

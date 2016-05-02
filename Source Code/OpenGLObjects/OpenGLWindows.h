@@ -26,10 +26,6 @@ class OpenGLWindow
 
 private:
 
-  HINSTANCE hInstance;	// Holds The Instance Of The Application
-  HDC	    hDC;		    // Private GDI Device Context
-  HGLRC     hRC;		    // Permanent Rendering Context
-
   int       lastInput;
 
   int       pointerLastX;
@@ -41,10 +37,14 @@ private:
 protected:
 public:
 
+  HINSTANCE hInstance;	// Holds The Instance Of The Application
+  HDC	    hDC;		    // Private GDI Device Context
+  HGLRC     hRC;		    // Permanent Rendering Context
+
   HWND      hWnd;	    	// Holds Our Window Handle
-  HWND      hParent;
-  DWORD		dwExStyle;				// Window Extended Style
-  DWORD		dwStyle;				  // Window Style
+  HWND      hParent;		// Parent window.
+  DWORD		dwExStyle;		// Window Extended Style
+  DWORD		dwStyle;		// Window Style
 
   int width;
   int height;
@@ -60,7 +60,7 @@ public:
   bool (*event_callback)( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
   OpenGLWindow( void );
-  bool Create( HWND parent, char *title, int x, int y, int w, int h, void *share = nullptr );
+  bool Create( HWND parent, char *title, int x, int y, int w, int h, HGLRC shared_hRC = nullptr );
   void SetPosition( int x, int y, int w, int h );
   void Destroy( void );
   void Activate( void );
