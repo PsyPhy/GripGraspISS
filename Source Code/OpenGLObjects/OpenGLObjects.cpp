@@ -912,7 +912,7 @@ Ellipsoid::Ellipsoid( double rx, double ry, double rz, int sl, int st ) {
 
 Ellipsoid::Ellipsoid( double rxy, double rz, int sl, int st ) {
 
- Ellipsoid( rxy, rxy, rz, sl, st );
+	Ellipsoid( rxy, rxy, rz, sl, st );
 
 }
 
@@ -1035,7 +1035,10 @@ void Cylinder::Draw( void ) {
 			y4 = bottom_radius * sin( angle );
 
 			glBegin(GL_QUADS);
-			glNormal3d( ( x1+x2+x3+x4 ) / 4.0,( y1+y2+y3+y4 ) / 4.0, 0.0 );
+			// This caluculation of the normal is not quite right.
+			// It assumes that the top and bottom radii are the same.
+			// It also uses the a single normal for all 4 vertices. 
+			glNormal3d( cos( angle ), sin( angle ), 0.0 );
 			glVertex3d( x1, y1, z1 );
 			glVertex3d( x2, y2, z1 );
 			glVertex3d( x3, y3, z2 );
@@ -1061,6 +1064,160 @@ void Cylinder::SetHeight( double height ) {
 	this->height = height;
 }
 
+/***************************************************************************/
+
+Annulus::Annulus( double axis_radius, double tube_radius, double length, int facets ) {
+
+  this->axis_radius = axis_radius;
+  this->tube_radius = tube_radius;
+  this->length = length;
+  this->facets = facets;
+
+  OpenGLObject();   // Do what every OpenGlObject does at creation.
+
+}
+
+void Annulus::Draw( void ) {
+
+	double alpha, beta;
+	double deltaA = Pi / (double) facets;
+	double deltaB = Pi / (double) facets;
+
+	if ( ! enabled ) return;
+	PrepDraw();
+	
+	for ( alpha = 0.0; alpha <= 2.0 * Pi; alpha += deltaA ) {
+
+		Vector3 vertex[4];
+		Vector3 normal[4];
+
+		vertex[0][X] = axis_radius + tube_radius * cos( alpha - deltaA );
+		vertex[0][Y] = tube_radius * sin( alpha - deltaA );
+		vertex[0][Z] = 0.0;
+
+		vertex[1][X] = axis_radius + tube_radius * cos( alpha + deltaA );
+		vertex[1][Y] = tube_radius * sin( alpha + deltaA );
+		vertex[1][Z] = 0.0;
+
+		vertex[2][X] = axis_radius + tube_radius * cos( alpha + deltaA );
+		vertex[2][Y] = tube_radius * sin( alpha + deltaA );
+		vertex[2][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( deltaB );
+
+		vertex[3][X] = axis_radius + tube_radius * cos( alpha - deltaA );
+		vertex[3][Y] = tube_radius * sin( alpha - deltaA );
+		vertex[3][Z] = sqrt( vertex[3][X] * vertex[3][X] + vertex[3][Y] * vertex[3][Y] ) * sin( deltaB );
+
+		normal[3][X] = normal[0][X] = cos( alpha - deltaA );
+		normal[3][Y] = normal[0][Y] = sin( alpha - deltaA );
+		normal[3][Z] = normal[0][Z] = 0.0;
+
+		normal[2][X] = normal[1][X] = cos( alpha + deltaA );
+		normal[2][Y] = normal[1][Y] = sin( alpha + deltaA );
+		normal[2][Z] = normal[1][Z] = 0.0;
+
+		for ( beta = 0.0; beta < length * 2.0 * Pi; beta += deltaB ) {
+
+			Quaternion rotation;
+			SetQuaternion( rotation, - beta, jVector );
+
+			glBegin(GL_QUADS);
+			for ( int v = 0; v < 4; v++ ) {
+				Vector3 rNormal;
+				Vector3 rVertex;
+				RotateVector( rNormal, rotation, normal[v] );
+				RotateVector( rVertex, rotation, vertex[v] );
+				glNormal3dv( rNormal );
+				glVertex3dv( rVertex );
+			}
+			glEnd();
+		}
+	}
+
+	FinishDraw();
+
+}
+/***************************************************************************/
+
+TaperedAnnulus::TaperedAnnulus( double axis_radius, double start_radius, double stop_radius, double length, int facets ) {
+
+  this->axis_radius = axis_radius;
+  this->start_radius = start_radius;
+  this->stop_radius = stop_radius;
+  this->length = length;
+  this->facets = facets;
+
+  OpenGLObject();   // Do what every OpenGlObject does at creation.
+
+}
+
+void TaperedAnnulus::Draw( void ) {
+
+	double alpha, beta, lambda, radius;
+	double deltaA = Pi / (double) facets;
+	double deltaB;
+	double deltaR;
+	double deltaL;
+
+	if ( ! enabled ) return;
+	PrepDraw();
+	
+	deltaL = 1.0 / (double) facets;
+	for ( lambda = 0.0; lambda < length; lambda += deltaL ) {
+
+		beta = 2.0 * Pi * lambda;
+		deltaB = 2.0 * Pi * deltaL;
+
+		radius = start_radius + lambda / length * (stop_radius - start_radius);
+		deltaR = deltaL / length * (stop_radius - start_radius);
+
+		for ( alpha = 0.0; alpha <= 2.0 * Pi; alpha += deltaA ) {
+
+			Vector3 vertex[4];
+			Vector3 normal[4];
+
+			vertex[0][X] = axis_radius + radius * cos( alpha - deltaA );
+			vertex[0][Y] = radius * sin( alpha - deltaA );
+			vertex[0][Z] = 0.0;
+
+			vertex[1][X] = axis_radius + radius * cos( alpha + deltaA );
+			vertex[1][Y] = radius * sin( alpha + deltaA );
+			vertex[1][Z] = 0.0;
+
+			vertex[2][X] = axis_radius + (radius + deltaR) * cos( alpha + deltaA );
+			vertex[2][Y] = (radius + deltaR) * sin( alpha + deltaA );
+			vertex[2][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( deltaB );
+
+			vertex[3][X] = axis_radius + (radius + deltaR) * cos( alpha - deltaA );
+			vertex[3][Y] =(radius + deltaR) * sin( alpha - deltaA );
+			vertex[3][Z] = sqrt( vertex[3][X] * vertex[3][X] + vertex[3][Y] * vertex[3][Y] ) * sin( deltaB );
+
+			normal[3][X] = normal[0][X] = cos( alpha - deltaA );
+			normal[3][Y] = normal[0][Y] = sin( alpha - deltaA );
+			normal[3][Z] = normal[0][Z] = 0.0;
+
+			normal[2][X] = normal[1][X] = cos( alpha + deltaA );
+			normal[2][Y] = normal[1][Y] = sin( alpha + deltaA );
+			normal[2][Z] = normal[1][Z] = 0.0;
+
+			Quaternion rotation;
+			SetQuaternion( rotation, - beta, jVector );
+
+			glBegin(GL_QUADS);
+			for ( int v = 0; v < 4; v++ ) {
+				Vector3 rNormal;
+				Vector3 rVertex;
+				RotateVector( rNormal, rotation, normal[v] );
+				RotateVector( rVertex, rotation, vertex[v] );
+				glNormal3dv( rNormal );
+				glVertex3dv( rVertex );
+			}
+			glEnd();
+		}
+	}
+
+	FinishDraw();
+
+}
 /***************************************************************************/
 
 Frustrum::Frustrum( double near_v[3], double far_v[3] ) {
@@ -1196,6 +1353,8 @@ void Circle::Draw( void ) {
 }
 
 /********************************************************************************/
+
+// A rectangular hole in a disk.
 
 Hole::Hole( double radius, double width, double height ) {
 

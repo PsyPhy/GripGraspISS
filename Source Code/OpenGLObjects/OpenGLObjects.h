@@ -376,6 +376,41 @@ public:
 
 //---------------------------------------------------------------------------
 
+class Annulus : public OpenGLObject {
+
+public:
+
+  double axis_radius;
+  double tube_radius;
+  // The parameter 'length' varies from 0.0 to 1.0, where 1.0 is a full 360° annulus.
+  double length;
+  int    facets;
+
+  Annulus( double axis_radius = DEFAULT_RADIUS, 
+			double tube_radius = DEFAULT_RADIUS, 
+			double length = 1.0, int facets = DEFAULT_FACETS );
+  void  Draw();
+
+};
+class TaperedAnnulus : public OpenGLObject {
+
+public:
+
+  double axis_radius;
+  double start_radius;
+  double stop_radius;
+  // The parameter 'length' varies from 0.0 to 1.0, where 1.0 is a full 360° annulus.
+  double length;
+  int    facets;
+
+  TaperedAnnulus( double axis_radius = DEFAULT_RADIUS, 
+			double start_radius = DEFAULT_RADIUS, double stop_radius = DEFAULT_RADIUS, 
+			double length = 1.0, int facets = DEFAULT_FACETS );
+  void  Draw();
+
+};
+//---------------------------------------------------------------------------
+
 class Frustrum : public OpenGLObject {
 
 private:
