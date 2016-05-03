@@ -6,7 +6,7 @@
     {
 #endif
 
-void glUsefulDefaultSpecularLighting( void ); // Directional
+void glUsefulDefaultSpecularLighting( double intensity ); // Directional
 void glUsefulCodaLighting( void ); 
 void glUsefulAutoLighting( double intensity );    // Non-Directional
 void glUsefulDefaultMaterial( void );

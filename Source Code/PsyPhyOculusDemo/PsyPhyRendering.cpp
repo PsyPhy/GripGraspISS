@@ -32,7 +32,7 @@ void CreatePsyPhyObjects ( void ) {
 	// I don't fully understand the lighting thing, because when I set the intensity to 0
 	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
 	glUsefulAutoLighting( 0.0 );
-	glUsefulDefaultSpecularLighting();
+	glUsefulDefaultSpecularLighting( 0.7 );
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	viewpoint = new OculusViewpoint( &oculusMapper );

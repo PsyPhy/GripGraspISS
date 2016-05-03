@@ -22,26 +22,30 @@
 
 /*********************************************************************************/
 
-void glUsefulDefaultSpecularLighting( void ) {
+void glUsefulDefaultSpecularLighting( double intensity ) {
 
-  // Light definition
-  GLfloat LightPosition[] = { 5000.0, 5000.0, 5000.0, 0.0 };
-  GLfloat LightAmbient[]  = { 0.05f, 0.05f, 0.05f, 1.0f};
-  GLfloat LightDiffuse[]  = { 0.050f, 0.050f, 0.050f, 1.0f};
-  GLfloat LightSpecular[] = { 0.90f, 0.90f, 0.90f, 1.0f};
+	GLfloat fintensity = (GLfloat) intensity;
+	GLfloat ambient = fintensity / 1.0f;
+	GLfloat diffuse = fintensity / 1.0f;
 
-  glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
-  glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
-  glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
-  glLightfv( GL_LIGHT0, GL_SPECULAR, LightSpecular );
+	// Light definition
+	GLfloat LightPosition[] = { 0.0, 0.0, 1000.0, 0.0 };
+	GLfloat LightAmbient[]  = { ambient, ambient, ambient, 1.0};
+	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
+	GLfloat LightSpecular[] = { fintensity, fintensity, fintensity, 1.0};
 
-  glEnable(GL_LIGHT0);
+	glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
+	glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
+	glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
+	glLightfv( GL_LIGHT0, GL_SPECULAR, LightSpecular );
 
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
-  glEnable( GL_BLEND );
+	glEnable(GL_LIGHT0);
 
-  glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  glClearColor( 1.0F, 1.0F, 1.0F, 0.0F );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
+	glEnable( GL_BLEND );
+
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glClearColor( 1.0F, 1.0F, 1.0F, 0.0F );
 
 
 
@@ -101,10 +105,10 @@ void glUsefulAutoLighting( double intensity ) {
 void glUsefulDefaultMaterial( void ) {
 
   // Material definition
-  GLfloat MaterialAmbient[]   = { 0.25, 0.25, 0.25, 1.0};
-  GLfloat MaterialDiffuse[]   = { 0.50, 0.50, 0.50, 1.0};
-  GLfloat MaterialSpecular[]  = { 0.50, 0.50, 0.50, 1.0};
-  GLfloat MaterialShininess[] = { 100.0 };
+  GLfloat MaterialAmbient[]   = { 0.0, 0.0, 0.0, 1.0};
+  GLfloat MaterialDiffuse[]   = { 0.0, 0.0, 0.0, 1.0};
+  GLfloat MaterialSpecular[]  = { 0.90, 0.90, 0.90, 1.0};
+  GLfloat MaterialShininess[] = { 50.0 };
 
   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
   glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
