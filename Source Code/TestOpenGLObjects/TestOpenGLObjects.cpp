@@ -34,14 +34,16 @@ double initial_viewpoint_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
 // In the OpenGL coordinate system, zero orientation means that one is looking
 //  down the negative Z axis with positive Y up and positive X to the right. Here we $
 //  place the object where we can see it.
-double initial_object_position[3] = { 0.0, 0.0, - 1500.0 };
-double initial_object_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
+double initial_tool_position[3] = { 0.0, 0.0, -750.0 };
+double initial_tool_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
 
 // Dimensions of the room.
-double room_width = 1000.0;
-double room_height = 1000.0;
+double room_radius = 2000.0;
 double room_length = 6000.0;
 double wall_thickness = 10.0;
+
+double reference_bars = 5;
+double reference_bar_radius = 50.0;
 
 // A texture that is used to decorate the walls of the room.
 // This file has to be in the execution directory.
@@ -53,20 +55,49 @@ char *sky_texture_bitmap= "NightSky.bmp";
 // These hold the OpenGLObjects that are shared across the local routines.
 OpenGLWindow	*window;			// The window on the screen.
 Viewpoint		*viewpoint;			// The viewpoint into the virtual world.
+
 Assembly		*room;				// A walled room in the virtual world.
-Assembly		*Response;
-Assembly		*HandFeedback;
-Assembly		*Target;
+Assembly		*tool;				// An object that moves in the world.
+Slab			*sky;				// A background to be seen at the end of the tunnel.
+
+
+Assembly		*Target;			// Shows the target orientation.
+Assembly		*Response;			// Shows the final response.
+Assembly		*HandFeedback;		// Moves with the hand when providing visual feedback.
 Assembly		*LaserPointer;
 
 Texture			*wall_texture;		// The texture that is applied to the walls.
 Texture			*sky_texture;
-Assembly		*object;			// A 3D object that moves within the virtual room.
 	
-Cylinder *cylinder;
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Assembly *create_arrow ( double size ) {
+
+	Assembly *arrow = new Assembly();
+
+	Annulus *donut = new Annulus( 60.0, 10.0, size * .85, 20 );
+	donut->SetPosition( 0.0, 0.0, -1000.0 );
+	donut->SetAttitude( 0.0, 90.0, 0.0 );
+	donut->SetOrientation( 0.0, 0.0, 0.0 );
+	donut->SetColor( 0.7, 0.0, 0.0 );
+	arrow->AddComponent( donut );
+
+	TaperedAnnulus *tip = new TaperedAnnulus( 60.0, 20.0, 1.0, 0.05, 20 );
+	tip->SetAttitude( 0.0, 90.0, 0.0 );
+	tip->SetPosition( 0.0, 0.0, -1000.0 );
+	tip->SetOrientation( -size * 0.85 * 360.0, 0.0, 0.0 );
+	tip->SetColor( 0.7, 0.0, 0.0 );
+	arrow->AddComponent( tip );
+
+	Ellipsoid *base = new Ellipsoid ( 10.0, 10.0, 10.0 );
+	base->SetPosition( 60.0, 0.0, -1000.0 );
+	base->SetColor( 0.7, 0.0, 0.0 );
+	arrow->AddComponent( base );
+	arrow->SetAttitude( - 15.0, 0.0, 0.0 );
+
+	return arrow;
+
+}
 
 void create_objects( void ) {
 	
@@ -74,19 +105,23 @@ void create_objects( void ) {
 	Sphere *sphere;
 	Slab *slab;
 	Disk *disk;
+	Cylinder *cylinder;
 
 	Cylinder *tunnel;
-	Cylinder *reference;
-	Cylinder *errortunnel;
-	Slab *sky;
+	Cylinder *referenceBar;
+	Cylinder *errorTunnel;
+
+	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
+	sky = new Slab( 4000.0, 4000.0, 1.0 );
+	sky->SetPosition( 0.0, 0.0, - room_length );
+	sky->SetTexture(sky_texture);
 
 	// Create a room to put the object in.
 
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 2000, 4000 );
-	sky_texture = new Texture(sky_texture_bitmap,2000,2000);
-	
+
 	room = new Assembly();
 	room->SetColor( WHITE );
 
@@ -96,44 +131,38 @@ void create_objects( void ) {
 	//room->AddComponent( box );
 
 	//Tunnel Plus references
-	tunnel = new Cylinder( room_height, room_width, room_length );
+	tunnel = new Cylinder( room_radius, room_radius, 2.0 * room_length );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation(90,0.0,0.0);
 	room->AddComponent( tunnel );
 
-	for (int i=0;i<6; i++){ 
-		reference = new Cylinder( 50.0, 50.0, room_length );
-		reference->SetPosition(1000.0*sin(i/10.0*2*PI),1000.0*cos(i/10.0*2*PI),0.0);
-		reference->SetColor( (1.0-i/5.0), (1.0-i/5.0), (1.0-i/5.0), 255);
-		reference->SetTexture( wall_texture );
-		room->AddComponent(reference);
-		reference = new Cylinder( 50.0, 50.0, room_length );
-		reference->SetPosition(1000.0*-sin(i/10.0*2*PI),1000.0*cos(i/10.0*2*PI),0.0);
-		reference->SetColor( (1.0-i/5.0), (1.0-i/5.0), (1.0-i/5.0), 255);
-		reference->SetTexture( wall_texture );
-		room->AddComponent(reference);
+	for (int i=0; i < reference_bars; i++ ){ 
+		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
+		referenceBar->SetOffset( room_radius / 2.0, 0.0, 0.0 );
+		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
+		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
+		referenceBar->SetTexture( wall_texture );
+		room->AddComponent( referenceBar );
+		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
+		referenceBar->SetOffset( room_radius / 2.0, 0.0, 0.0 );
+		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
+		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
+		referenceBar->SetTexture( wall_texture );
+		room->AddComponent( referenceBar );
 	}
 
 	//Error Tunnel
-	errortunnel = new Cylinder( room_height, room_width, room_length );
-	errortunnel->SetColor( RED );
-	errortunnel->SetOrientation(PI/2,0.0,0.0);
+	errorTunnel = new Cylinder( room_radius, room_radius, room_length );
+	errorTunnel->SetColor( RED );
+	errorTunnel->SetOrientation(PI/2,0.0,0.0);
 	//room->AddComponent( errortunnel );
-
-
-	// A disk on the front wall, something to look at.
-	sky = new Slab( 2000.0, 2000.0, 1.0 );
-	sky->SetPosition( 0.0, 0.0, - room_length / 2.0  );
-	//disk->SetColor( ORANGE );
-	sky->SetTexture(sky_texture);
-	room->AddComponent( sky );
 
 	// Response
 	Response = new Assembly();
 	for (int trg=-2; trg<=2; trg++){
 		sphere = new Sphere(50);
-		sphere->SetPosition(0.0,0.0+(2000.0)/5*trg,0.0);
+		sphere->SetPosition( 0.0, 0.0 + (2000.0) / 5 * trg, 0.0 );
 		sphere->SetColor(100.0/255.0,(75.0+trg*25.0)/255.0,0);
 		Response->AddComponent(sphere);
 	}
@@ -190,58 +219,60 @@ void create_objects( void ) {
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create a simple object to look at.
-	object = new Assembly();
+	tool = new Assembly();
 
 	slab = new Slab( 150.0, 100.0, 10.0 );
 	slab->SetPosition( 0.0, 0.0, 10.0 );
 	slab->SetColor( BLUE );
-	object->AddComponent( slab );
+	tool->AddComponent( slab );
 
 	slab = new Slab( 150.0, 100.0, 10.0 );
 	slab->SetPosition( 0.0, 0.0, - 10.0 );
 	slab->SetColor( GREEN );
-	object->AddComponent( slab );
+	tool->AddComponent( slab );
 
 	sphere = new Sphere( 40.0 );
 	sphere->SetColor( RED );
-	object->AddComponent( sphere );
+	tool->AddComponent( sphere );
 
 	cylinder = new Cylinder( 10.0, 30.0, 60.0 );
-	cylinder->SetPosition( 0.0, 0.0, 0.0 );
+	cylinder->SetPosition( 0.0, 0.0, 30.0 );
 	cylinder->SetColor( YELLOW );
-	object->AddComponent( cylinder );
+	tool->AddComponent( cylinder );
 
 	cylinder = new Cylinder( 10.0, 10.0, 80.0 );
-	cylinder->SetPosition( 0.0, 0.0, 0.0 );
-	cylinder->SetOrientation( 0.0, - 90.0, 0.0 );
-	cylinder->SetColor( GREEN );
-	object->AddComponent( cylinder );
+	cylinder->SetPosition( 0.0, -40.0, 0.0 );
+	cylinder->SetOrientation( 0.0, -90.0, 0.0 );
+	cylinder->SetColor( ORANGE );
+	tool->AddComponent( cylinder );
 
 	// Initialize the position of the mobile object.
-	object->SetPosition( initial_object_position);
-	object->SetOrientation( initial_object_orientation );
+	tool->SetPosition( initial_tool_position);
+	tool->SetOrientation( initial_tool_orientation );
 
-	// A cylinder 'cause we are testing code to draw cylinders.
-	//cylinder = new Cylinder( 50.0, 50.0, 200.0 );
-	//cylinder->SetPosition( 0.0, - room_height / 8.0, - room_length / 8.0 );
-	//cylinder->SetOrientation( 0.0, 90.0, 0.0 );
-	// cylinder->SetColor( BLUE );
-	//cylinder->SetTexture( wall_texture, 5.0 );
-	//room->AddComponent( cylinder );
+	Assembly *rotator = new Assembly();
+	int arrows = 1;
+	for ( int i = 0; i < arrows; i++ ) {
+		Assembly *arrow = create_arrow( 1 / arrows );
+		arrow->SetOrientation( i * 360.0 / (double) arrows, 0.0, 0.0 );
+		rotator->AddComponent( arrow );
+	}
+	// room->AddComponent( rotator );
 
 }
 
 void render( void ) {
 
+	// Draw the sky.
+	sky->Draw();
+
 	// Draw the virtual room.
 	room->Draw();
-	Response->Draw();
-	HandFeedback->Draw();
-	Target->Draw();
-	Sleep( 10 );
 
 	// Draw the complex object at its current position. 
-	//object->Draw();
+	tool->Draw();
+
+	Sleep( 10 );
 
 }
 
@@ -316,6 +347,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Initialize the state of the GL graphics engine.
 	glUsefulInitializeDefault();
+	glUsefulDefaultSpecularLighting( 0.7 );
 
 	// Create the room and the moving object.
 	create_objects();
@@ -324,22 +356,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	for ( double a = 0.0; true; a += 0.05 ) {
 
 		// Oscillate the viewpoint.
-		double angle = 45.0 * cos( a );
+		double angle = 5.0 * cos( a );
+		viewpoint->SetOrientation( 0.0, 0.0, angle );
+		// Spin the tool.
+		tool->SetOrientation( 0.0, 0.0, 10.0 * a );
 
-		object->SetOrientation( angle, object->jVector );
-		object->SetPosition( initial_object_position );
-		viewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
-		cylinder->SetOrientation(  0.1 * angle, 45 + 0.1 * angle, 0.0 );
-		HandFeedback->SetOrientation(angle,0,0);
-		Response->SetOrientation(45.0,0,0);
-		window->Clear();
-
+		// Draw everything.
+		window->Clear( 0.0, 0.0, 0.0 );
 		glUsefulPrepareRendering();
 
 		if ( stereo ) {
 			viewpoint->Apply( window, LEFT_EYE );
 			render();
-
 			viewpoint->Apply( window, RIGHT_EYE );
 			render();
 		}
