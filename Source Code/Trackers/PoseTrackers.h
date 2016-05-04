@@ -15,11 +15,13 @@
 namespace PsyPhy {
 
 typedef struct {
-	PsyPhy::Vector3		position;
-	PsyPhy::Quaternion	orientation;
+	Vector3		position;
+	Quaternion	orientation;
 	bool		visible;
 	double		time;
 } TrackerPose;
+
+extern TrackerPose NullTrackerPose;
 
 class PoseTracker : public PsyPhy::VectorsMixin {
 

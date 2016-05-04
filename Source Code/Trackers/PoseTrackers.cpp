@@ -16,6 +16,8 @@
 
 using namespace PsyPhy;
 
+TrackerPose PsyPhy::NullTrackerPose = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}, true, 0.0};
+
 PoseTracker::~PoseTracker () {}
 
 // Boresight to a specified position and orientation.
