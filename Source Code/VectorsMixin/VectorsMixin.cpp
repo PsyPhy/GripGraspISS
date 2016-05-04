@@ -413,9 +413,8 @@ void VectorsMixin::SetRotationMatrix( Matrix3x3 result, double radians, const Ve
 
 }
 
-void VectorsMixin::QuaternionToMatrix( Matrix3x3 m, Quaternion q ) {
+void VectorsMixin::QuaternionToMatrix( Matrix3x3 m, const Quaternion q ) {
 
-	NormalizeQuaternion( q );
 	m[X][X] = 1 - 2.0 * q[Y] * q[Y] - 2.0 * q[Z] * q[Z];
 	m[Y][Y] = 1 - 2.0 * q[X] * q[X] - 2.0 * q[Z] * q[Z];
 	m[Z][Z] = 1 - 2.0 * q[X] * q[X] - 2.0 * q[Y] * q[Y];

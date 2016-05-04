@@ -105,7 +105,7 @@ public:
 
 	void RotateVector( Vector3 result, const Quaternion q, const Vector3 v );
 	void MatrixToQuaternion( Quaternion result, Matrix3x3 m );
-	void VectorsMixin::QuaternionToMatrix( Matrix3x3 result, Quaternion q );
+	void QuaternionToMatrix( Matrix3x3 result, const Quaternion q );
 
 	void QuaternionToCannonicalRotations( Vector3 rotations, Quaternion q );
 
