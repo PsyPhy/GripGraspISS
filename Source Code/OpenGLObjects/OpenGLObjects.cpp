@@ -916,6 +916,27 @@ Ellipsoid::Ellipsoid( double rxy, double rz, int sl, int st ) {
 
 }
 
+Ellipsoid::Ellipsoid( const Vector3 shape, int sl, int st ) {
+
+	quad = gluNewQuadric();
+
+	x_radius = shape[X];
+	y_radius = shape[Y];
+	z_radius = shape[Z];
+
+	max_radius = x_radius > y_radius ? x_radius : y_radius;
+	max_radius = max_radius > z_radius ? max_radius : z_radius;
+
+	x_distortion = x_radius / max_radius;
+	y_distortion = y_radius / max_radius;
+	z_distortion = z_radius / max_radius;
+
+	slices = sl;
+	stacks = st;
+
+	OpenGLObject();   // Do what every OpenGlObject does at creation.
+}
+
 void Ellipsoid::Draw( void ) {
 
   if ( ! enabled ) return;

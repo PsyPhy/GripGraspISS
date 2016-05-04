@@ -321,6 +321,9 @@ public:
   Ellipsoid( double xy_radius, double z_radius,
     int slices = DEFAULT_SLICES, int stacks = DEFAULT_STACKS );
 
+  Ellipsoid( const Vector3 shape, int slices = DEFAULT_SLICES, int stacks = DEFAULT_STACKS );
+
+
   void  Draw();
 
 };
