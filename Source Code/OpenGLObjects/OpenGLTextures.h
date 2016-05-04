@@ -23,7 +23,7 @@ private:
 //  GLuint	        texture[10];			        // Storage For ten Texture
   int texture_index;
   AUX_RGBImageRec *TextureImage;					// Storage Space For The Image
-  AUX_RGBImageRec *LoadBMP( char *bitmap_filename );
+  AUX_RGBImageRec *LoadBMP( const char *bitmap_filename );
   char bitmap_filename[256];
 
 protected:
@@ -39,8 +39,8 @@ public:
    *  texture is assigned to a given object (See GLObject::SetTexture()).
    */
   double u_length, v_length;  // Length of edge in user units.
-  Texture( char *filename, double x_length = 0.0, double y_length = 0.0 );
-  int LoadBitmap( char *filename );	// Load Bitmaps And Convert To Textures
+  Texture( const char *filename, double x_length = 0.0, double y_length = 0.0 );
+  int LoadBitmap( const char *filename );	// Load Bitmaps And Convert To Textures
   void Use();
   void Define();
 

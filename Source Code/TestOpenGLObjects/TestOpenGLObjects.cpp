@@ -45,8 +45,8 @@ double wall_thickness = 10.0;
 double reference_bars = 5;
 double reference_bar_radius = 50.0;
 
-// A texture that is used to decorate the walls of the room.
-// This file has to be in the execution directory.
+// Textures that are used to decorate certain objects.
+// These files have to be in the execution directory.
 char *wall_texture_bitmap = "lime.bmp";
 char *sky_texture_bitmap= "NightSky.bmp";
 

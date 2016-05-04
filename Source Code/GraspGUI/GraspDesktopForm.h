@@ -8,12 +8,54 @@ namespace GraspGUI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace Grasp;
 
 	/// <summary>
 	/// The main form for the Grasp GUI.
 	/// </summary>
 	public ref class GraspDesktop : public System::Windows::Forms::Form
 	{
+
+	private:
+
+		GraspGLObjects	*objectRenderer;
+		double coda_distance;
+
+		Assembly		*room;				// A walled room in the virtual world.
+		Assembly		*tool;				// An object that moves in the world.
+		Slab			*sky;				// A background to be seen at the end of the tunnel.
+
+		OpenGLWindow	*hmdWindow;			// The window on the app GUI.
+		Viewpoint		*hmdViewpoint;		// The viewpoint as seen by the subject.
+
+		OpenGLWindow	*workspaceWindow;			// The window on the app GUI.
+		Viewpoint		*workspaceViewpoint;		// A virtual view of the 3D work volume.
+
+		OpenGLWindow	*hmdDynamicWindow;			
+		OpenGLWindow	*hmdStaticWindow;			
+		OpenGLWindow	*toolDynamicWindow;			
+		OpenGLWindow	*toolStaticWindow;			
+		OpenGLWindow	*torsoDynamicWindow;			
+		OpenGLWindow	*torsoStaticWindow;		
+		Viewpoint		*codaViewpoint;
+
+		PsyPhy::Assembly		*object;
+		PsyPhy::Assembly		*head;
+		PsyPhy::Assembly		*torso;
+		PsyPhy::Texture			*wall_texture;
+
+		PsyPhy::Assembly		*side_room;
+		PsyPhy::Texture			*side_texture;
+
+		void InitializeAnimations( void );
+		void RefreshAnimations( void );
+		void KillAnimations( void );
+		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel,  HGLRC shared_hRC );
+		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
+			return( CreateOpenGLWindowInForm( panel, nullptr ) );
+		}
+
+
 	public:
 		GraspDesktop(void)
 		{
@@ -21,7 +63,13 @@ namespace GraspGUI {
 			InitializeComponent();
 
 			// Custom initializations.
+
 			InitializeAnimations();
+
+			hmdWindow->Activate();
+			objectRenderer = new GraspGLObjects();
+			objectRenderer->CreateObjects();
+
 			CreateRefreshTimer( 20 );
 
 		}
@@ -568,38 +616,6 @@ namespace GraspGUI {
 
 		}
 #pragma endregion
-
-	private:
-		PsyPhy::OpenGLWindow	*hmdWindow;			// The window on the app GUI.
-		PsyPhy::Viewpoint		*hmdViewpoint;		// The viewpoint as seen by the subject.
-
-		PsyPhy::OpenGLWindow	*workspaceWindow;			// The window on the app GUI.
-		PsyPhy::Viewpoint		*workspaceViewpoint;		// A virtual view of the 3D work volume.
-
-		PsyPhy::OpenGLWindow	*hmdDynamicWindow;			
-		PsyPhy::OpenGLWindow	*hmdStaticWindow;			
-		PsyPhy::OpenGLWindow	*toolDynamicWindow;			
-		PsyPhy::OpenGLWindow	*toolStaticWindow;			
-		PsyPhy::OpenGLWindow	*torsoDynamicWindow;			
-		PsyPhy::OpenGLWindow	*torsoStaticWindow;		
-		PsyPhy::Viewpoint		*codaViewpoint;
-
-		PsyPhy::Assembly		*room;
-		PsyPhy::Assembly		*object;
-		PsyPhy::Assembly		*head;
-		PsyPhy::Assembly		*torso;
-		PsyPhy::Texture			*wall_texture;
-
-		PsyPhy::Assembly		*side_room;
-		PsyPhy::Texture			*side_texture;
-
-		void InitializeAnimations( void );
-		void RefreshAnimations( void );
-		void KillAnimations( void );
-		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel,  HGLRC shared_hRC );
-		PsyPhy::OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
-			return( CreateOpenGLWindowInForm( panel, nullptr ) );
-		}
 
 
 	private: System::Windows::Forms::DialogResult MessageBox( String^ message, String^ caption, MessageBoxButtons buttons ) {

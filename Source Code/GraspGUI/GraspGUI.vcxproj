@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="GraspGLObjects.cpp" />
     <ClCompile Include="GraspGUI.cpp" />
     <ClCompile Include="GraspGUIAnimations.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -97,6 +98,7 @@
     <ClInclude Include="GraspDesktopForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="GraspGLObjects.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

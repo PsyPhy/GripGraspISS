@@ -31,7 +31,7 @@ static GLuint _next_texture = 0;
 /*************************************************************************************/
 
 
-Texture::Texture( char *filename, double u_length, double v_length ) {
+Texture::Texture( const char *filename, double u_length, double v_length ) {
 
 	strcpy( bitmap_filename, filename );
 	this->u_length = u_length;
@@ -54,7 +54,7 @@ void Texture::Use( void ) {
 /*************************************************************************************/
 
 // Loads A Bitmap Image
-AUX_RGBImageRec *Texture::LoadBMP(char *filename)		
+AUX_RGBImageRec *Texture::LoadBMP( const char *filename )		
 {
 	FILE *file=NULL;
 
@@ -76,7 +76,7 @@ AUX_RGBImageRec *Texture::LoadBMP(char *filename)
 
 /***********************************************************************************/
 
-int Texture::LoadBitmap( char *filename )							// Load Bitmaps And Convert To Textures
+int Texture::LoadBitmap( const char *filename )							// Load Bitmaps And Convert To Textures
 {
 	int Status=FALSE;									                  // Status Indicator
 	TextureImage = 0;                                   // Set The Pointer To NULL

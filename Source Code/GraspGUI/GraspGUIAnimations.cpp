@@ -9,7 +9,7 @@
 ///
 
 #include "stdafx.h"
-
+#include "GraspGLObjects.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
@@ -57,8 +57,9 @@ void GraspDesktop::InitializeAnimations( void ) {
 	double room_height = 2000.0;
 	double room_length = 8000.0;
 	double wall_thickness = 10.0;
-		
 
+	coda_distance = 2500;
+		
 	// Create a window and viewpoint to show what the subject is seeing.
 	hmdWindow = CreateOpenGLWindowInForm( hmdPanel);
 	hmdWindow->Activate();
@@ -75,8 +76,8 @@ void GraspDesktop::InitializeAnimations( void ) {
 	workspaceWindow->Activate();
 	workspaceWindow->Clear( 0.30, 0.50, 0.60 );
 	
- 	workspaceViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
-	workspaceViewpoint->SetPosition( 1000.0, 0.0, -500.0 );
+ 	workspaceViewpoint = new Viewpoint( 6.0, 50.0, 10.0, 10000.0);
+	workspaceViewpoint->SetPosition( 1950.0, 0.0, -1800.0 );
 	workspaceViewpoint->SetOrientation( 0.0, 0.0, -90.0 );
 
 	// Create windows to show the status of each of the tracked objects.
@@ -87,7 +88,7 @@ void GraspDesktop::InitializeAnimations( void ) {
 	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel, workspaceWindow->hRC );
 	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel, workspaceWindow->hRC );
  	codaViewpoint = new Viewpoint( 6.0, 5.0, 10.0, 10000.0);
-	codaViewpoint->SetPosition( 0.0, 0.0, - room_length / 2.0 );
+	codaViewpoint->SetPosition( 0.0, 0.0, - coda_distance );
 	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
 	// Initialize the state of the GL graphics engine.
@@ -223,17 +224,22 @@ void GraspDesktop::RefreshAnimations( void ) {
 	hmdWindow->Clear();
 	glUsefulPrepareRendering();
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
-	room->Draw();
-	object->Draw();
+	objectRenderer->DrawSky();
+	objectRenderer->DrawRoom();
+	objectRenderer->DrawTarget();
+	objectRenderer->DrawTool();
 	hmdWindow->Swap();
 
 	// Show what is going on from a fixed viewpoint into the 3D workspace.
 	workspaceWindow->Activate();
-	workspaceWindow->Clear();
+	workspaceWindow->Clear( 0.0, 0.0, 0.0 );
 	glUsefulPrepareRendering();
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
-	side_room->Draw();
-	object->Draw();
+	// side_room->Draw();
+	objectRenderer->DrawSky();
+	objectRenderer->DrawRoom();
+	objectRenderer->DrawTool();
+	objectRenderer->DrawTarget();
 	head->Draw();
 	torso->Draw();
 	workspaceWindow->Swap();
