@@ -77,7 +77,8 @@ public:
   virtual void  SetPosition( double x, double y, double z );
   void  GetPosition( Vector3 p );
 
-  virtual void  SetOrientation( Matrix3x3 m );
+  virtual void	SetOrientation( const Quaternion q );
+  virtual void  SetOrientation( const Matrix3x3 m );
   virtual void  SetOrientation( double angle, const Vector3 axis );
   virtual void  SetOrientation( double roll, double pitch, double yaw );
   void  GetOrientation( Matrix3x3 m );

@@ -112,7 +112,7 @@ void OpenGLObject::GetOffset( Vector3 p ) {
 // as defined by a 3D axis vector and a scalar angle in degrees.
 
 // Set the orientation of the object.
-void OpenGLObject::SetOrientation( Matrix3x3 m ) {
+void OpenGLObject::SetOrientation( const Matrix3x3 m ) {
 	int i, j;
 	CopyMatrix( orientation, m );
 	for ( i = 0; i < 3; i++ ) {
@@ -129,19 +129,22 @@ void OpenGLObject::SetOrientation( Matrix3x3 m ) {
 
 // Set the orientation of the object.
 void OpenGLObject::SetOrientation( double angle, const Vector3 axis ) {
+	Matrix3x3 m;
+	SetRotationMatrix( m, ToRadians( angle ), axis );
+	SetOrientation( m );
+}
 
-  Matrix3x3 m;
-
-  SetRotationMatrix( m, ToRadians( angle ), axis );
-  SetOrientation( m );
-
+// Set the orientation of the object.
+void OpenGLObject::SetOrientation( const Quaternion q ) {
+	Matrix3x3 m;
+	QuaternionToMatrix( m, q );
+	SetOrientation( m );
 }
 
 // Set the orientation of the object.
 void OpenGLObject::SetOrientation( double roll, double pitch, double yaw ) {
 
   double m[3][3];
-
   roll = ToRadians( roll );
   pitch = ToRadians( pitch );
   yaw = ToRadians( yaw );
