@@ -67,7 +67,8 @@ public:
   bool RunOnce( void );
   void Swap( void );
   void Clear( int color = WHITE );
-  void Clear( double r, double g, double b );
+  void Clear( double r, double g, double b, double alpha = 1.0 );
+  void Clear( float rgba[4] );
   void SetKeyboardCallback( void (*callback)( int key ) );
   void SetEventCallback( bool (*callback)( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) );
 

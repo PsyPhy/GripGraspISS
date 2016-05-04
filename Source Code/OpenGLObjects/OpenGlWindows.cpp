@@ -340,13 +340,18 @@ void OpenGLWindow::Clear( int c )
 	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 }
 
-/********************************************************************************/
-
-void OpenGLWindow::Clear( double r, double g, double b )
+void OpenGLWindow::Clear( double r, double g, double b, double alpha )
 {
-	glClearColor( (float) r, (float) g, (float) b, 1.0f );
+	glClearColor( (float) r, (float) g, (float) b, (float) alpha );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+}
+
+void OpenGLWindow::Clear( float rgba[] )
+{
+	glClearColor( rgba[0], rgba[1], rgba[2], rgba[3] );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClearColor( 0.0, 0.0, 0.0, 1.0 );
 }
 
 /********************************************************************************/
