@@ -21,10 +21,6 @@ namespace GraspGUI {
 		GraspGLObjects	*objectRenderer;
 		double coda_distance;
 
-		Assembly		*room;				// A walled room in the virtual world.
-		Assembly		*tool;				// An object that moves in the world.
-		Slab			*sky;				// A background to be seen at the end of the tunnel.
-
 		OpenGLWindow	*hmdWindow;			// The window on the app GUI.
 		Viewpoint		*hmdViewpoint;		// The viewpoint as seen by the subject.
 
@@ -38,14 +34,6 @@ namespace GraspGUI {
 		OpenGLWindow	*torsoDynamicWindow;			
 		OpenGLWindow	*torsoStaticWindow;		
 		Viewpoint		*codaViewpoint;
-
-		PsyPhy::Assembly		*object;
-		PsyPhy::Assembly		*head;
-		PsyPhy::Assembly		*torso;
-		PsyPhy::Texture			*wall_texture;
-
-		PsyPhy::Assembly		*side_room;
-		PsyPhy::Texture			*side_texture;
 
 		void InitializeAnimations( void );
 		void RefreshAnimations( void );

@@ -9,6 +9,7 @@
 ///
 
 #include "stdafx.h"
+#include "../Trackers/PoseTrackers.h"
 #include "GraspGLObjects.h"
 #include "GraspDesktopForm.h"
 
@@ -52,13 +53,7 @@ OpenGLWindow *GraspDesktop::CreateOpenGLWindowInForm( System::Windows::Forms::Pa
 // Initialize the objects used to show the status on the screen.
 void GraspDesktop::InitializeAnimations( void ) {
 
-	// Dimensions of the room.
-	double room_width = 1800.0;
-	double room_height = 2000.0;
-	double room_length = 8000.0;
-	double wall_thickness = 10.0;
-
-	coda_distance = 2500;
+	static double coda_distance = 2500.0;
 		
 	// Create a window and viewpoint to show what the subject is seeing.
 	hmdWindow = CreateOpenGLWindowInForm( hmdPanel);
@@ -87,147 +82,60 @@ void GraspDesktop::InitializeAnimations( void ) {
 	toolStaticWindow = CreateOpenGLWindowInForm( toolStaticPanel, workspaceWindow->hRC );
 	torsoDynamicWindow = CreateOpenGLWindowInForm( torsoDynamicPanel, workspaceWindow->hRC );
 	torsoStaticWindow = CreateOpenGLWindowInForm( torsoStaticPanel, workspaceWindow->hRC );
- 	codaViewpoint = new Viewpoint( 6.0, 5.0, 10.0, 10000.0);
+ 	codaViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 	codaViewpoint->SetPosition( 0.0, 0.0, - coda_distance );
 	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
 	// Initialize the state of the GL graphics engine.
 	glUsefulInitializeDefault();
 
-	// Local objects used to construct the OpenGLObject assemblies.
-	Sphere *sphere;
-	Slab *slab;
-	Box *box;
-	Disk *disk;
-	
-	// A texture that is used to decorate the walls of the room.
-	// This file has to be in the execution directory.
-	char *wall_texture_bitmap = "lime.bmp";
-
-
-	// Create a room to put the object in.
-
-	// The wall texture is 256 pixels wide by 512 high.
-	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
-	hmdWindow->Activate();
-	wall_texture = new Texture( wall_texture_bitmap, 2000, 4000 );
-
-	room = new Assembly();
-	room->SetColor( WHITE );
-
-	box = new Box( room_height, room_width, room_length );
-	box->SetColor( GRAY );
-	box->SetTexture( wall_texture );
-	room->AddComponent( box );
-
-	// A disk on the front wall, something to look at.
-	disk = new Disk( 750.0 );
-	disk->SetPosition( 0.0, 0.0, - room_length / 2.0 + wall_thickness );
-	disk->SetColor( ORANGE );
-	room->AddComponent( disk );
-
-	// The center of the room is at the origin.
-	room->SetPosition( 0.0, 0.0, 0.0 );
-	room->SetOrientation( 0.0, 0.0, 0.0 );
-
-	side_room = new Assembly();
-	side_room->SetColor( WHITE );
-
-	box = new Box( room_height, room_width, room_length );
-	box->SetColor( GRAY );
-	box->SetTexture( wall_texture );
-	side_room->AddComponent( box );
-
-	// Create a simple object to look at.
-	object = new Assembly();
-
-	slab = new Slab( 150.0, 100.0, 10.0 );
-	slab->SetPosition( 0.0, 0.0, 10.0 );
-	slab->SetColor( BLUE );
-	object->AddComponent( slab );
-
-	slab = new Slab( 150.0, 100.0, 10.0 );
-	slab->SetPosition( 0.0, 0.0, - 10.0 );
-	slab->SetColor( GREEN );
-	object->AddComponent( slab );
-
-	sphere = new Sphere( 40.0 );
-	sphere->SetColor( RED );
-	object->AddComponent( sphere );
-
-	Cylinder *cylinder = new Cylinder( 10.0, 30.0, 160.0 );
-	cylinder->SetPosition( 0.0, 0.0, 0.0 );
-	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
-	cylinder->SetColor( YELLOW );
-	object->AddComponent( cylinder );
-
-	cylinder = new Cylinder( 10.0, 10.0, 80.0 );
-	cylinder->SetPosition( 0.0, 0.0, 0.0 );
-	cylinder->SetOrientation( 0.0, - 90.0, 0.0 );
-	cylinder->SetColor( GREEN );
-	object->AddComponent( cylinder );
-
-	// Initialize the position of the mobile object.
-	object->SetAttitude( 0.0, 90.0, 0.0 );
-	object->SetPosition(  0.0, 0.0, 650.0 );
-	object->SetOrientation( 0.0, 0.0, 0.0 );
-
-	head = new Assembly();
-	sphere = new Sphere( 100.0 );
-	sphere->SetColor( .4f, 0.0f, .4f );
-	head->AddComponent( sphere );
-	sphere = new Sphere( 20.0 );
-	sphere->SetColor( 1.0f, 0.0f, .5f );
-	sphere->SetPosition( -50.0, 20.0, -100.0 );
-	head->AddComponent( sphere );
-	sphere = new Sphere( 20.0 );
-	sphere->SetColor( 1.0f, 0.0f, .5f );
-	sphere->SetPosition( 50.0, 20.0, -100.0 );
-	head->AddComponent( sphere );
-	cylinder = new Cylinder( 20.0, 5.0, 30.0 );	
-	cylinder->SetPosition( 0.0, -20.0, -100.0 );
-	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
-	cylinder->SetColor( YELLOW );
-	head->AddComponent( cylinder );
-	head->SetPosition(  0.0, 0.0, 0.0 );
-	head->SetOrientation( 0.0, 0.0, 0.0 );
-
-	torso = new Assembly();
-	slab = new Slab( 160.0, 200.0, 40.0 );
-	slab->SetColor( 0.1f, 0.4f, 0.0f );
-	torso->AddComponent( slab );
-	disk = new Disk( 50.0 );
-	disk->SetPosition( 0.0, 0.0, -40.0 );
-	disk->SetColor( 1.0f, 0.7f, 0.0f );
-	torso->AddComponent( disk );
-
 }
 
 // Draw the objects used to show the status on the screen.
 void GraspDesktop::RefreshAnimations( void ) {
-		
+
+	static float dynamic_object_background[4] = { 0.65f, 0.85f, 0.65f, 1.0f };
+	static float static_object_background[4] = { 0.65f, 0.65f, 0.85f, 1.0f };
+
+	TrackerPose head_pose;
+	TrackerPose hand_pose;
+	TrackerPose torso_pose;
+
+	// Need to handle vectors but we cannot mix in the VectorsMixin class.
+	// So I create an object here to handle it. 
+	static VectorsMixin vp;
+
+	// Simulate movements of the head and hand.
+	// This will later be handled by the tracker.
 	// Create an oscillating angle.
 	static double pseudo_time = 0.0;
-	double angle = 45.0 * cos( pseudo_time );
+	double angle = cos( pseudo_time );
 	pseudo_time += 0.05;
 
-	// Make the object move as if the hand is moving it.
-	object->SetOrientation( angle, object->kVector );
-	object->SetPosition( 0.0, 0.0, -750.0 );
-	head->SetOrientation( angle, object->kVector );
-	torso->SetPosition( 0.0, -220.0, 0.0 );
+	vp.SetQuaternion( head_pose.orientation, 0.1 * angle, vp.jVector );
+	vp.SetQuaternion( hand_pose.orientation, 0.2 * angle, vp.kVector );
 
-	// Simulate movements of the head and show what the subject is seeing.
-	hmdViewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
-	head->SetOrientation( 0.0, 0.0, 0.1 * angle );
+	// Head is at the origin.
+	vp.CopyVector( head_pose.position, vp.zeroVector );
+
+	// Place the hand at shoulder level.
+	static double arms_length = 700.0;
+	static double shoulder_drop = 300.0;
+	hand_pose.position[X] = 0.0;
+	hand_pose.position[Y] = - shoulder_drop;
+	hand_pose.position[Z] = - arms_length;
+
+	// Show what the subject is seeing.
 	hmdWindow->Activate();
 	hmdWindow->Clear();
 	glUsefulPrepareRendering();
+	hmdViewpoint->SetOrientation( head_pose.orientation );
+	hmdViewpoint->SetPosition( head_pose.position );
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
 	objectRenderer->DrawSky();
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTarget();
-	objectRenderer->DrawTool();
+	objectRenderer->DrawTool( &hand_pose );
 	hmdWindow->Swap();
 
 	// Show what is going on from a fixed viewpoint into the 3D workspace.
@@ -235,57 +143,50 @@ void GraspDesktop::RefreshAnimations( void ) {
 	workspaceWindow->Clear( 0.0, 0.0, 0.0 );
 	glUsefulPrepareRendering();
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
-	// side_room->Draw();
 	objectRenderer->DrawSky();
 	objectRenderer->DrawRoom();
-	objectRenderer->DrawTool();
+	objectRenderer->DrawTool( &hand_pose );
 	objectRenderer->DrawTarget();
-	head->Draw();
-	torso->Draw();
+	objectRenderer->DrawBody( &head_pose );
 	workspaceWindow->Swap();
 
 	hmdDynamicWindow->Activate();
-	hmdDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	hmdDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( hmdDynamicWindow, CYCLOPS );
-	head->Draw();
+	vp.CopyVector( head_pose.position, vp.zeroVector );
+	objectRenderer->DrawHead(  &head_pose );
 	hmdDynamicWindow->Swap();
 
 	toolDynamicWindow->Activate();
-	toolDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	toolDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( toolDynamicWindow, CYCLOPS );
-	object->Draw();
+	vp.CopyVector( hand_pose.position, vp.zeroVector );
+	objectRenderer->DrawTool( &hand_pose );
 	toolDynamicWindow->Swap();
 
 	torsoDynamicWindow->Activate();
-	torsoDynamicWindow->Clear( 0.8, 1.0, 1.0 );
+	torsoDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( torsoDynamicWindow, CYCLOPS );
-	torso->SetPosition( 0.0, 0.0, 0.0 );
-	torso->Draw();
+	objectRenderer->DrawTorso();
 	torsoDynamicWindow->Swap();
 
 	hmdStaticWindow->Activate();
-	hmdStaticWindow->Clear(1.0, 0.8, 1.0 );
+	hmdStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( hmdStaticWindow, CYCLOPS );
-	head->SetOrientation( 0.0, 0.0, 0.0 );
-	head->SetPosition( 0.0, 0.0, 0.0 );
-	head->Draw();
+	objectRenderer->DrawHead(  &NullTrackerPose );
 	hmdStaticWindow->Swap();
 
 	toolStaticWindow->Activate();
-	toolStaticWindow->Clear(1.0, 0.8, 1.0 );
+	toolStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( toolStaticWindow, CYCLOPS );
-	object->SetPosition( 0.0, 0.0, 0.0 );
-	object->SetOrientation( 0.0, 0.0, 0.0 );
-	object->Draw();
+	objectRenderer->DrawTool();
 	toolStaticWindow->Swap();
 
 	torsoStaticWindow->Activate();
-	torsoStaticWindow->Clear(1.0, 0.8, 1.0 );
+	torsoStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( torsoStaticWindow, CYCLOPS );
-	torso->SetOrientation( 0.0, 0.0, 0.0 );
-	torso->Draw();
+	objectRenderer->DrawTorso( &NullTrackerPose );
 	torsoStaticWindow->Swap();
-
 
 }
 
