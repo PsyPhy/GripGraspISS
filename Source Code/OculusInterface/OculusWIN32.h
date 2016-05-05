@@ -14,8 +14,11 @@
 #include "Kernel/OVR_System.h"
 #include "OVR_CAPI_GL.h"
 
+
 #include "GL/CAPI_GLE.h"
 #include "Extras/OVR_Math.h"
+
+
 
 //using namespace OVR;
 
@@ -421,4 +424,3 @@ struct OculusDisplayOGL
         OVR_DEBUG_LOG(("Message from OpenGL: %s\n", message));
     }
 };
-
