@@ -8,17 +8,17 @@
 using namespace OVR;
 using namespace Grasp;
 
+// Interface to OpenGL windows and HMD.
+static OculusDisplayOGL oculusDisplay;
+
+// Mapping and rendering in Oculus.
+static OculusMapper oculusMapper;
 
 void GraspVR::Initialize( HINSTANCE hinst ) {
 
-	// Interface to OpenGL windows and HMD.
-//	static OculusDisplayOGL oculusDisplay;
-
-	// Mapping and rendering in Oculus.
-//	static OculusMapper oculusMapper;
 
 	ovrResult result;
-#if 0
+
    // Initializes LibOVR, and the Rift
     OVR::System::Init();
     result = ovr_Initialize( nullptr );
@@ -30,5 +30,5 @@ void GraspVR::Initialize( HINSTANCE hinst ) {
 	// Initialize the interface to the Oculus HMD.
 	result = oculusMapper.Initialize( &oculusDisplay );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
-#endif
+
 }

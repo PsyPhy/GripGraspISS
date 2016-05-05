@@ -33,17 +33,52 @@ const Vector3 GraspGLObjects::head_shape = { 100.0, 150.0, 125.0 };
 // Torso shape is a slab with width, height and thickness.
 const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 
-const Vector3 GraspGLObjects::target_location = { 0.0, 2500.0, 0.0 };
+const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -3500.0 };
+const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -1500.0 };
+const double GraspGLObjects::prompt_radius = 160.0;
+
 const double GraspGLObjects::target_ball_radius = 100.0;
 const int GraspGLObjects::target_balls = 5;
-
 const double GraspGLObjects::finger_length = 100.0;
 
+// Set up the lighting and material properties.
+void GraspGLObjects::SetLighting( void ) {
+	
+	GLfloat fintensity = 0.75;
+	GLfloat ambient = fintensity;
+	GLfloat diffuse = fintensity;
+	GLfloat specular = fintensity / 2.0f;
+
+	// Light definition
+	GLfloat LightPosition[] = { 0.0, 0.0, 1000.0, 0.0 };
+	GLfloat LightAmbient[]  = { ambient, ambient, ambient, 1.0};
+	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
+	GLfloat LightSpecular[] = { specular, specular, specular, 1.0};
+
+	glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
+	glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
+	glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
+	glLightfv( GL_LIGHT0, GL_SPECULAR, LightSpecular );
+
+	glEnable(GL_LIGHT0);
+
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
+	glEnable( GL_BLEND );
+
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glClearColor( 1.0F, 1.0F, 1.0F, 0.0F );
+}
 void GraspGLObjects::CreateObjects( void ) {
+
 	CreateTextures();
 	sky = CreateSky();
 	room = CreateRoom();
+
 	target = CreateTarget();
+	target->SetPosition( target_location );
+	tiltPrompt = CreateTiltPrompt();
+	tiltPrompt->SetPosition( prompt_location );
+
 	tool = CreateTool();
 	head = CreateHead();
 	torso = CreateTorso();
@@ -101,7 +136,6 @@ Assembly *GraspGLObjects::CreateTarget( void ) {
 		sphere->SetColor(( 75.0 - abs(trg) * 10.0 ) / 255.0, 0.0, 0.0);
 		target->AddComponent( sphere );
 	}
-	target->SetPosition( 0.0, 0.0, -room_length / 2 + 50 );
 	return target;
 
 }
@@ -158,8 +192,6 @@ Assembly *GraspGLObjects::CreateHead( void ) {
 	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
 	cylinder->SetColor( YELLOW );
 	head->AddComponent( cylinder );
-	head->SetPosition(  0.0, 90.0, 0.0 );
-	head->SetOrientation( 0.0, 0.0, 0.0 );
 	return head;
 }
 
@@ -177,34 +209,82 @@ Assembly *GraspGLObjects::CreateTorso( void ) {
 
 }
 
+Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
+
+	Assembly *prompt = new Assembly();
+	
+	// Size of the circular arrow, where 1.0 = 360°.
+	static double size = 0.85;
+
+	Annulus *donut = new Annulus( prompt_radius, prompt_radius / 6.0, size, 20 );
+	donut->SetAttitude( 0.0, 90.0, 0.0 );
+	prompt->AddComponent( donut );
+
+	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, 20 );
+	tip->SetAttitude( 0.0, 90.0, 0.0 );
+	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
+	prompt->AddComponent( tip );
+
+	Ellipsoid *base = new Ellipsoid ( prompt_radius / 6.0, prompt_radius / 12.0, prompt_radius / 6.0 );
+	base->SetPosition( prompt_radius, 0.0, 0.0 );
+	prompt->AddComponent( base );
+	prompt->SetAttitude( - 15.0, 0.0, 0.0 );
+	prompt->SetColor( 0.5, 0.0, 0.4 );
+
+	return prompt;
+
+}
+
 void GraspGLObjects::DrawSky( void ) {
 	sky->Draw();
 }
 
-void GraspGLObjects::DrawRoom( void ) {
+void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
+	if ( pose != nullptr ) {
+		room->SetPosition( pose->position );
+		room->SetOrientation( pose->orientation );
+	}
 	room->Draw();
 }
 
-void GraspGLObjects::DrawTarget( void ) {
+void GraspGLObjects::DrawTarget( TrackerPose *pose ) {
+	if ( pose != nullptr ) {
+		target->SetPosition( pose->position );
+		target->SetOrientation( pose->orientation );
+	}
 	target->Draw();
 }
 
 void GraspGLObjects::DrawTool( TrackerPose *pose ) {
-	tool->SetPosition( pose->position );
-	tool->SetOrientation( pose->orientation );
+	if ( pose != nullptr ) {
+		tool->SetPosition( pose->position );
+		tool->SetOrientation( pose->orientation );
+	}
 	tool->Draw();
 }
 
 void GraspGLObjects::DrawHead( TrackerPose *pose ) {
-	head->SetPosition( pose->position );
-	head->SetOrientation( pose->orientation );
+	if ( pose != nullptr ) {
+		head->SetPosition( pose->position );
+		head->SetOrientation( pose->orientation );
+	}
 	head->Draw();
 }
 
 void GraspGLObjects::DrawTorso(  TrackerPose *pose  ) {
-	torso->SetPosition( pose->position );
-	torso->SetOrientation( pose->orientation );
+	if ( pose != nullptr ) {
+		torso->SetPosition( pose->position );
+		torso->SetOrientation( pose->orientation );
+	}
 	torso->Draw();
+}
+
+void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
+	if ( pose != nullptr ) {
+		tiltPrompt->SetPosition( pose->position );
+		tiltPrompt->SetOrientation( pose->orientation );
+	}
+	tiltPrompt->Draw();
 }
 
 void GraspGLObjects::DrawBody( TrackerPose *pose ) {

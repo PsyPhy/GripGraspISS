@@ -9,6 +9,20 @@
 ///
 
 #pragma once
+#include <gl/gl.h>
+#include <gl/glu.h>
+
+#include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
+#include "../OpenGLObjects/OpenGLWindows.h"
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
 
 #include "../Trackers/PoseTrackers.h"
 
@@ -37,6 +51,8 @@ namespace Grasp {
 			static const Vector3 torso_shape;
 
 			static const Vector3 target_location;
+			static const Vector3 prompt_location;
+			static const double prompt_radius;
 			static const double target_ball_radius;
 			static const int target_balls;
 			static const double finger_length;
@@ -51,6 +67,8 @@ namespace Grasp {
 			Assembly		*target;			// Shows the target orientation.
 			Assembly		*response;			// Shows the final response.
 			Assembly		*laserPointer;
+			Assembly		*tiltPrompt;
+
 			Assembly		*tool;				// An object that moves in the world.
 			Assembly		*sky;				// A background to be seen at the end of the tunnel.
 			Assembly		*room;
@@ -59,26 +77,30 @@ namespace Grasp {
 			Assembly		*torso;
 
 		public: 
+
 			GraspGLObjects( void ) {}
+
+			void CreateTextures( void );
+			void CreateObjects( void );
+			void SetLighting( void );
 
 			Assembly *CreateTool( void );
 			Assembly *CreateTarget( void );
+			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateSky( void );
 			Assembly *CreateHead( void );
 			Assembly *CreateTorso( void );
 
-			void CreateTextures( void );
-			void CreateObjects( void );
-
-			void DrawTarget( void );
-			void DrawTool( TrackerPose *pose = &NullTrackerPose );
-			void DrawRoom( void );
+			void DrawTarget( TrackerPose *pose = nullptr );
+			void DrawTiltPrompt( TrackerPose *pose = nullptr );
+			void DrawTool( TrackerPose *pose = nullptr );
+			void DrawRoom( TrackerPose *pose = nullptr );
 			void DrawSky( void );
 
-			void DrawHead( TrackerPose *pose = &NullTrackerPose );
-			void DrawTorso( TrackerPose *pose = &NullTrackerPose );
-			void DrawBody( TrackerPose *pose = &NullTrackerPose );
+			void DrawHead( TrackerPose *pose = nullptr );
+			void DrawTorso( TrackerPose *pose = nullptr );
+			void DrawBody( TrackerPose *pose = nullptr );
 
 		protected:
 			~GraspGLObjects() {}
