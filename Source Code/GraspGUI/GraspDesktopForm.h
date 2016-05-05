@@ -51,11 +51,11 @@ namespace GraspGUI {
 			InitializeComponent();
 
 			// Custom initializations.
-
 			InitializeAnimations();
 
 			hmdWindow->Activate();
 			objectRenderer = new GraspGLObjects();
+			objectRenderer->SetLighting();
 			objectRenderer->CreateObjects();
 
 			CreateRefreshTimer( 20 );
@@ -616,6 +616,10 @@ namespace GraspGUI {
 				 Close();
 			 }
 	private: System::Void LogonNext_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 // Inhibit activity on the menus.
+				 NavigatorGroupBox->Enabled = false;
+
 				 // Check that we have all the information that we need to proceed.
 				 if ( subjectListBox->SelectedIndex < 0 ) MessageBox( "Please select a User ID.", "GRASP@ISS", MessageBoxButtons::OK );
 				 else if ( !seatedRadioButton->Checked && !floatingRadioButton->Checked ) MessageBox( "Please select Seated or Quasi-Freefloating.", "GRASP@ISS", MessageBoxButtons::OK );
@@ -636,6 +640,8 @@ namespace GraspGUI {
 					 NavigatorGroupBox->Show();
 
 				 }
+				 NavigatorGroupBox->Enabled = true;
+
 
 			 }
 

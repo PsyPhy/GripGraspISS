@@ -11,10 +11,10 @@
 #include <tchar.h>
 #include <math.h>
 #include <time.h> 
+#include <process.h>
 
 #include <gl/gl.h>
 #include <gl/glu.h>
-
 
 #include "../Useful/Useful.h"
 #include "../Useful/fMessageBox.h"

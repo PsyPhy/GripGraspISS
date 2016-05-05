@@ -9,8 +9,13 @@
 ///
 
 #include "stdafx.h"
+
+#include <Windows.h>
+#include <mmsystem.h>
+
 #include "../Trackers/PoseTrackers.h"
-#include "GraspGLObjects.h"
+#include "../GraspVR/GraspVR.h"
+#include "../GraspVR/GraspGLObjects.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
@@ -87,9 +92,11 @@ void GraspDesktop::InitializeAnimations( void ) {
 	codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
 	// Initialize the state of the GL graphics engine.
+	// Some of this will be overridden by the object renderer.
 	glUsefulInitializeDefault();
-
+	glUsefulDefaultSpecularLighting( 0.75 );
 }
+
 
 // Draw the objects used to show the status on the screen.
 void GraspDesktop::RefreshAnimations( void ) {
@@ -99,9 +106,10 @@ void GraspDesktop::RefreshAnimations( void ) {
 
 	TrackerPose head_pose;
 	TrackerPose hand_pose;
-	TrackerPose torso_pose;
+	// TrackerPose torso_pose;
 
-	// Need to handle vectors but we cannot mix in the VectorsMixin class.
+	// Need to handle vectors but we cannot mix in the VectorsMixin class
+	// because of incompatibility, I think, with CLR.
 	// So I create an object here to handle it. 
 	static VectorsMixin vp;
 
@@ -135,6 +143,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	objectRenderer->DrawSky();
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTarget();
+	objectRenderer->DrawTiltPrompt();
 	objectRenderer->DrawTool( &hand_pose );
 	hmdWindow->Swap();
 
@@ -147,6 +156,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTool( &hand_pose );
 	objectRenderer->DrawTarget();
+	objectRenderer->DrawTiltPrompt();
 	objectRenderer->DrawBody( &head_pose );
 	workspaceWindow->Swap();
 
@@ -179,7 +189,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	toolStaticWindow->Activate();
 	toolStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( toolStaticWindow, CYCLOPS );
-	objectRenderer->DrawTool();
+	objectRenderer->DrawTool( &NullTrackerPose );
 	toolStaticWindow->Swap();
 
 	torsoStaticWindow->Activate();
