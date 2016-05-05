@@ -107,7 +107,7 @@ void glUsefulDefaultMaterial( void ) {
   // Material definition
   GLfloat MaterialAmbient[]   = { 0.0, 0.0, 0.0, 1.0};
   GLfloat MaterialDiffuse[]   = { 0.0, 0.0, 0.0, 1.0};
-  GLfloat MaterialSpecular[]  = { 0.90, 0.90, 0.90, 1.0};
+  GLfloat MaterialSpecular[]  = { 0.90f, 0.90f, 0.90f, 1.0f};
   GLfloat MaterialShininess[] = { 50.0 };
 
   glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
