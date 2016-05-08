@@ -18,27 +18,52 @@ namespace GraspGUI {
 
 	private:
 
+		// The GUI contains a number of OpenGLWindows used to show the state in 3D animations.
+	
 		GraspGLObjects	*objectRenderer;
-		double coda_distance;
 
-		OpenGLWindow	*hmdWindow;			// The window on the app GUI.
-		Viewpoint		*hmdViewpoint;		// The viewpoint as seen by the subject.
+		// An animation showing the scene as seen by the subject.
+		OpenGLWindow	*hmdWindow;			
+		Viewpoint		*hmdViewpoint;
 
-		OpenGLWindow	*workspaceWindow;			// The window on the app GUI.
-		Viewpoint		*workspaceViewpoint;		// A virtual view of the 3D work volume.
+		// A side view of the entire workspace.
+		OpenGLWindow	*workspaceWindow;		
+		Viewpoint		*workspaceViewpoint;	
 
+		// Individual windows used to show the state of each tracked object, as seen from
+		// the viewpoint of the Codas.
 		OpenGLWindow	*hmdDynamicWindow;			
-		OpenGLWindow	*hmdStaticWindow;			
 		OpenGLWindow	*toolDynamicWindow;			
-		OpenGLWindow	*toolStaticWindow;			
 		OpenGLWindow	*torsoDynamicWindow;			
-		OpenGLWindow	*torsoStaticWindow;		
+		double coda_distance;
 		Viewpoint		*codaViewpoint;
+
+		// Static views used to show the status of the tracked objects from a generic viewpoint
+		// with the object in the null pose.
+		OpenGLWindow	*hmdStaticWindow;			
+		OpenGLWindow	*toolStaticWindow;			
+		OpenGLWindow	*torsoStaticWindow;		
 
 		void InitializeAnimations( void );
 		void RefreshAnimations( void );
 		void KillAnimations( void );
+
+		// A timer to handle animations and screen refresh, and associated actions.
+		static Timer^ refreshTimer;
+		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			RefreshAnimations();
 		}
+		void CreateRefreshTimer( int interval ) {
+			refreshTimer = gcnew( System::Windows::Forms::Timer );
+			refreshTimer->Interval = interval;
+			refreshTimer->Tick += gcnew EventHandler( this, &GraspGUI::GraspDesktop::OnTimerElapsed );
+		}
+		void StartRefreshTimer( void ) {
+			refreshTimer->Start();
+		}
+		void StopRefreshTimer( void ) {
+			refreshTimer->Stop();
+		}		
 
 
 	public:
@@ -49,14 +74,6 @@ namespace GraspGUI {
 
 			// Custom initializations.
 			InitializeAnimations();
-
-			hmdWindow->Activate();
-			objectRenderer = new GraspGLObjects();
-			objectRenderer->SetLighting();
-			objectRenderer->CreateObjects();
-
-			CreateRefreshTimer( 20 );
-
 		}
 
 	protected:
@@ -76,21 +93,11 @@ namespace GraspGUI {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::GroupBox^  torsoStatusGroup;
 	private: System::Windows::Forms::Panel^  torsoDynamicPanel;
-
-
-
 	private: System::Windows::Forms::GroupBox^  toolStatusGroup;
 	private: System::Windows::Forms::Panel^  toolDynamicPanel;
-
-
 	private: System::Windows::Forms::GroupBox^  hmdStatusGroup;
-
 	private: System::Windows::Forms::Panel^  hmdDynamicPanel;
-
-
-
 	private: System::Windows::Forms::Panel^  hmdPanel;
-
 	private: System::Windows::Forms::GroupBox^  NavigatorGroupBox;
 	private: System::Windows::Forms::Label^  WelcomeLabel;
 	private: System::Windows::Forms::Button^  LogonNext;
@@ -106,17 +113,11 @@ namespace GraspGUI {
 	private: System::Windows::Forms::GroupBox^  ProgressBox;
 	private: System::Windows::Forms::ListBox^  stepListBox;
 	private: System::Windows::Forms::GroupBox^  groupBox6;
-
 	private: System::Windows::Forms::GroupBox^  groupBox7;
 	private: System::Windows::Forms::Panel^  columbusPanel;
 	private: System::Windows::Forms::Panel^  torsoStaticPanel;
-
-
 	private: System::Windows::Forms::Panel^  toolStaticPanel;
-
 	private: System::Windows::Forms::Panel^  hmdStaticPanel;
-
-
 
 	protected: 
 
@@ -643,12 +644,6 @@ namespace GraspGUI {
 			 }
 
 			 
-private:
-	static Timer^ refreshTimer;
-	void OnTimerElapsed( System::Object^ source, System::EventArgs^ e );
-	void CreateRefreshTimer( int interval );
-	void StartRefreshTimer( void );
-	void StopRefreshTimer( void );
 	private: System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
 				RefreshAnimations();
 				StartRefreshTimer();

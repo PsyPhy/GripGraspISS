@@ -16,25 +16,10 @@
 #include "../Trackers/PoseTrackers.h"
 #include "../GraspVR/GraspVR.h"
 #include "../GraspVR/GraspGLObjects.h"
+#include "OpenGLWindowsInForms.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
-using namespace PsyPhy;
-
-void GraspDesktop::OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-	RefreshAnimations();
-}
-void GraspDesktop::CreateRefreshTimer( int interval ) {
-	refreshTimer = gcnew( System::Windows::Forms::Timer );
-	refreshTimer->Interval = interval;
-	refreshTimer->Tick += gcnew EventHandler( this, &GraspGUI::GraspDesktop::OnTimerElapsed );
-}
-void GraspDesktop::StartRefreshTimer( void ) {
-	refreshTimer->Start();
-}
-void GraspDesktop::StopRefreshTimer( void ) {
-	refreshTimer->Stop();
-}
 
 
 // Initialize the objects used to show the status on the screen.
@@ -77,6 +62,18 @@ void GraspDesktop::InitializeAnimations( void ) {
 	// Some of this will be overridden by the object renderer.
 	glUsefulInitializeDefault();
 	glUsefulDefaultSpecularLighting( 0.75 );
+
+	// Create the OpenGLOjbects that are going to be displayed.
+	// If they use textures, those textures need to be preloaded into the OpenGL rendering context.
+	// We therefore activate the HMD window. Since the other windows share the same rendering 
+	//  context, this is sufficient for the RC state to be initialized for all windows.
+	hmdWindow->Activate();
+	objectRenderer = new GraspGLObjects();
+	objectRenderer->SetLighting();
+	objectRenderer->CreateObjects();
+
+	CreateRefreshTimer( 20 );
+
 }
 
 
