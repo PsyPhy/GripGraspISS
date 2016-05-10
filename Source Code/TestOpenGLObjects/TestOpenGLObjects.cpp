@@ -257,7 +257,7 @@ void create_objects( void ) {
 		arrow->SetOrientation( i * 360.0 / (double) arrows, 0.0, 0.0 );
 		rotator->AddComponent( arrow );
 	}
-	// room->AddComponent( rotator );
+	room->AddComponent( rotator );
 
 }
 
