@@ -1,4 +1,5 @@
 
+#include "../OculusInterface/OculusInterface.h"
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 

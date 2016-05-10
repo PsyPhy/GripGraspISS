@@ -13,9 +13,8 @@
 #include <Windows.h>
 #include <mmsystem.h>
 
-#include "../Trackers/PoseTrackers.h"
-#include "../GraspVR/GraspVR.h"
 #include "../GraspVR/GraspGLObjects.h"
+#include "../Trackers/PoseTrackers.h"
 #include "OpenGLWindowsInForms.h"
 #include "GraspDesktopForm.h"
 

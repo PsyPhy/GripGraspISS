@@ -13,12 +13,8 @@
 //  OVRRootPath.props. I could not figure out how to do it within VS2010.
 #include "Kernel/OVR_System.h"
 #include "OVR_CAPI_GL.h"
-
-
 #include "GL/CAPI_GLE.h"
 #include "Extras/OVR_Math.h"
-
-
 
 //using namespace OVR;
 
