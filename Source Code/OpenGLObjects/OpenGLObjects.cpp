@@ -1090,11 +1090,12 @@ void Cylinder::SetHeight( double height ) {
 
 /***************************************************************************/
 
-Annulus::Annulus( double axis_radius, double tube_radius, double length, int facets ) {
+Annulus::Annulus( double axis_radius, double tube_radius, double length, int slices, int facets ) {
 
   this->axis_radius = axis_radius;
   this->tube_radius = tube_radius;
   this->length = length;
+  this->slices = slices;
   this->facets = facets;
 
   OpenGLObject();   // Do what every OpenGlObject does at creation.
@@ -1105,7 +1106,7 @@ void Annulus::Draw( void ) {
 
 	double alpha, beta;
 	double deltaA = Pi / (double) facets;
-	double deltaB = Pi / (double) facets;
+	double deltaB = Pi / (double) slices;
 
 	if ( ! enabled ) return;
 	PrepDraw();
