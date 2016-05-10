@@ -24,10 +24,10 @@
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <CLRSupport>true</CLRSupport>
-    <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -66,6 +66,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(OVRSDKROOT)LibOVR/Include/;$(OVRSDKROOT)LibOVRKernel/Src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,6 +93,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OculusInterface\OculusInterface.vcxproj">
+      <Project>{44ec28d5-22d2-414a-9f40-1bf29ef832d9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
+      <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Useful\Useful.vcxproj">
+      <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
+      <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\GLAUX.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\GLU32.LIB">
+      <FileType>Document</FileType>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

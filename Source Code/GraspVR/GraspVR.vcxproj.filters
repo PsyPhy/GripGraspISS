@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Library Files">
+      <UniqueIdentifier>{ae84d780-0739-465b-820a-f85cfac30e1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraspVR.h">
@@ -31,5 +34,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\GLAUX.LIB">
+      <Filter>Library Files</Filter>
+    </Library>
+    <Library Include="..\Lib\GLU32.LIB">
+      <Filter>Library Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
