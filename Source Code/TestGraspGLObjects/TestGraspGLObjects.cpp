@@ -17,7 +17,7 @@
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../OpenGLObjects/OpenGLTextures.h"
 
-#include "../GraspVR/GraspGLObjects.h"
+#include <../GraspVR/GraspGLObjects.h>
 
 using namespace PsyPhy;
 using namespace Grasp;
