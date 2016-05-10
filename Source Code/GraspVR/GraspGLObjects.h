@@ -54,6 +54,7 @@ namespace Grasp {
 			static const Vector3 prompt_location;
 			static const double prompt_radius;
 			static const double target_ball_radius;
+			static const double target_ball_spacing;
 			static const int target_balls;
 			static const double finger_length;
 
