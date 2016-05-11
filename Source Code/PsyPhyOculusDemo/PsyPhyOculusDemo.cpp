@@ -28,7 +28,7 @@ Joe McIntyre
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaPoseTracker.h"
-#include "../Trackers/DualCodaPoseTracker.h"
+#include "../Trackers/CascadePoseTracker.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 
@@ -67,16 +67,19 @@ static bool useOVR = false;
 static bool usePsyPhy = true;
 static bool useCoda = true;
 
-// CodaRTnetTracker can handle up to 28 at 200 Hz.
+// CodaRTnetTracker can handle up to 28 at 200 Hz. But Grasp only uses 24.
 int nMarkers = 24;
+// Nominally, we have two CODA cx1 sensing units, but we can support up to 8.
+#define MAX_CODA_UNITS	8
+int nCodaUnits = 2;
+
 /*****************************************************************************/
 
 // Polling the CODA in the rendering loop can cause non-smooth updating.
 // Here we use a thread to get the CODA pose data in the background.
-#define N_CODAS 2
-bool lockCoda[N_CODAS] = { false, false };
+bool lockCoda[MAX_CODA_UNITS] = { false, false, false, false, false, false, false, false };
 bool stopMarkerGrabs = false;
-MarkerFrame codaBuffer[N_CODAS];
+MarkerFrame codaBuffer[MAX_CODA_UNITS];
 HANDLE threadHandle;
 
 void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
@@ -92,7 +95,7 @@ DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
 	MarkerFrame localFrame;
 
 	while ( !stopMarkerGrabs ) {
-		for ( int unit = 0; unit < N_CODAS; unit++ ) {
+		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 			coda->GetCurrentMarkerFrameUnit( localFrame, unit );
 			while ( lockCoda[unit] );
 			lockCoda[unit] = true;
@@ -113,7 +116,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 	// A buffer to hold the most recent frame of marker data.
 	MarkerFrame primaryMarkerFrame, secondaryMarkerFrame;
-	PsyPhy::CodaPoseTracker *primaryCodaPoseTracker, *secondaryCodaPoseTracker;
+	PsyPhy::CodaPoseTracker *primaryHeadPoseTracker, *secondaryHeadPoseTracker;
 	PsyPhy::CodaPoseTracker *primaryHandPoseTracker, *secondaryHandPoseTracker;
 	PsyPhy::DualCodaPoseTracker *handPoseTracker;
 
