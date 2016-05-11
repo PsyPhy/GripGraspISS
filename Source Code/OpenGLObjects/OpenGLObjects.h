@@ -388,11 +388,13 @@ public:
   double tube_radius;
   // The parameter 'length' varies from 0.0 to 1.0, where 1.0 is a full 360° annulus.
   double length;
-  int    facets;
+
+  int	slices;
+  int   facets;
 
   Annulus( double axis_radius = DEFAULT_RADIUS, 
 			double tube_radius = DEFAULT_RADIUS, 
-			double length = 1.0, int facets = DEFAULT_FACETS );
+			double length = 1.0, int slices = DEFAULT_SLICES, int facets = DEFAULT_FACETS );
   void  Draw();
 
 };
