@@ -38,6 +38,7 @@ namespace Grasp {
 			// These files have to be in the execution directory.
 			static const char *GraspGLObjects::wall_texture_bitmap;
 			static const char *GraspGLObjects::sky_texture_bitmap;
+			static const char *GraspGLObjects::references_texture_bitmap;
 			
 			// Dimensions of the room.
 			static const double GraspGLObjects::room_radius;
@@ -62,6 +63,7 @@ namespace Grasp {
 
 			Texture			*wall_texture;		// The texture that is applied to the walls.
 			Texture			*sky_texture;
+			Texture			*references_texture;
 
 		public:
 

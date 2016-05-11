@@ -47,7 +47,8 @@ double reference_bar_radius = 50.0;
 
 // Textures that are used to decorate certain objects.
 // These files have to be in the execution directory.
-char *wall_texture_bitmap = "lime.bmp";
+char *wall_texture_bitmap = "Rockwall.bmp";
+char *references_texture_bitmap = "Metal.bmp";
 char *sky_texture_bitmap= "NightSky.bmp";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
