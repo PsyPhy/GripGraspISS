@@ -63,8 +63,9 @@ namespace HTMLExperiment {
 			this->webBrowser1->Name = L"webBrowser1";
 			this->webBrowser1->Size = System::Drawing::Size(630, 355);
 			this->webBrowser1->TabIndex = 0;
-			this->webBrowser1->Url = (gcnew System::Uri(L"file:///e:/HandPrints.htm", System::UriKind::Absolute));
+			this->webBrowser1->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->webBrowser1->WebBrowserShortcutsEnabled = false;
+			this->webBrowser1->NewWindow += gcnew System::ComponentModel::CancelEventHandler(this, &Form1::webBrowser1_NewWindow);
 			// 
 			// Form1
 			// 
@@ -78,6 +79,9 @@ namespace HTMLExperiment {
 
 		}
 #pragma endregion
+	private: System::Void webBrowser1_NewWindow(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+			 webBrowser1->DocumentText = "<html><body>" + "<p><em><em>Welcome to Grasp</em></em></p>" + "</html></body>";
+			 }
 	};
 }
 

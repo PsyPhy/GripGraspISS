@@ -44,7 +44,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspVR", "GraspVR\GraspVR.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Grasp", "Grasp\Grasp.vcxproj", "{423DBCDB-EB88-4CFF-9B04-D863F2BDE835}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGraspGLObjects", "TestGraspGLObjects\TestGraspGLObjects.vcxproj", "{6F8E2FE1-CEC7-4DF5-A189-B0E812A4B399}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xTestGraspGLObjects", "TestGraspGLObjects\TestGraspGLObjects.vcxproj", "{6F8E2FE1-CEC7-4DF5-A189-B0E812A4B399}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspInstructionTypesetting", "GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj", "{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -206,6 +208,14 @@ Global
 		{6F8E2FE1-CEC7-4DF5-A189-B0E812A4B399}.Release|Win32.Build.0 = Release|Win32
 		{6F8E2FE1-CEC7-4DF5-A189-B0E812A4B399}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{6F8E2FE1-CEC7-4DF5-A189-B0E812A4B399}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.Debug|Win32.Build.0 = Debug|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.Release|Win32.ActiveCfg = Release|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.Release|Win32.Build.0 = Release|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
