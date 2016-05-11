@@ -1,6 +1,6 @@
 /*********************************************************************************/
 /*                                                                               */
-/*                             OculusCodaPoseTrackers.h                          */
+/*                              CascadePoseTrackers.h                            */
 /*                                                                               */
 /*********************************************************************************/
 
@@ -9,27 +9,25 @@
 #pragma once
 
 #include "../Trackers/PoseTrackers.h"
-#include "../Trackers/CodaPoseTracker.h"
+
+#define MAX_CASCADED_TRACKERS	8
 
 namespace PsyPhy {
 
-class DualCodaPoseTracker : public PoseTracker {
+class CascadePoseTracker : public PoseTracker {
 
 	private:
 
-		CodaPoseTracker	*primaryCoda;
-		CodaPoseTracker *secondaryCoda;
-
-		FILE *fp;
+		PoseTracker	*tracker[MAX_CASCADED_TRACKERS];
+		int nTrackers;
 
 	protected:
 
 	public:
 
-		TrackerPose currentState;
-
-		DualCodaPoseTracker( CodaPoseTracker *coda1, CodaPoseTracker *coda2 );
-		~DualCodaPoseTracker();
+		CascadePoseTracker( PoseTracker *tracker = nullptr );
+		int AddTracker( PoseTracker *tracker );
+		~CascadePoseTracker();
 
 		bool Initialize( void );
 		bool  Update( void );

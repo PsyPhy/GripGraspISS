@@ -78,9 +78,9 @@
     <ClInclude Include="Trackers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CascadePoseTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
-    <ClCompile Include="DualCodaPoseTracker.cpp" />
     <ClCompile Include="PoseTrackers.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
