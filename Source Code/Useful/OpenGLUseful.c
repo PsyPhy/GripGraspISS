@@ -103,20 +103,42 @@ void glUsefulAutoLighting( double intensity ) {
 /*********************************************************************************/
 
 void glUsefulDefaultMaterial( void ) {
+	glUsefulMatteMaterial();
+}
 
-  // Material definition
-  GLfloat MaterialAmbient[]   = { 0.0, 0.0, 0.0, 1.0};
-  GLfloat MaterialDiffuse[]   = { 0.0, 0.0, 0.0, 1.0};
-  GLfloat MaterialSpecular[]  = { 0.90f, 0.90f, 0.90f, 1.0f};
-  GLfloat MaterialShininess[] = { 50.0 };
+void glUsefulShinyMaterial( void ) {
 
-  glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
-  glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
-  glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, MaterialSpecular );
-  glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS, MaterialShininess );
+	// Material definition
+	GLfloat MaterialAmbient[]   = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat MaterialDiffuse[]   = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat MaterialSpecular[]  = { 0.90f, 0.90f, 0.90f, 1.0f};
+	GLfloat MaterialShininess[] = { 50.0 };
 
-  glEnable( GL_COLOR_MATERIAL );
-  glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, MaterialSpecular );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS, MaterialShininess );
+
+	glEnable( GL_COLOR_MATERIAL );
+	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+
+}
+
+void glUsefulMatteMaterial( void ) {
+
+	// Material definition
+	GLfloat MaterialAmbient[]   = { 0.9f, 0.9f, 0.9f, 1.0f };
+	GLfloat MaterialDiffuse[]   = { 0.9f, 0.9f, 0.9f, 1.0f };
+	GLfloat MaterialSpecular[]  = { 0.0f, 0.0f, 0.0f, 1.0f};
+	GLfloat MaterialShininess[] = { 0.0f };
+
+	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, MaterialSpecular );
+	glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS, MaterialShininess );
+
+	glEnable( GL_COLOR_MATERIAL );
+	glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
 
 }
 
