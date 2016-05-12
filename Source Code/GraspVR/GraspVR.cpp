@@ -20,11 +20,22 @@ static OculusDisplayOGL oculusDisplay;
 // Mapping and rendering in Oculus.
 static OculusMapper oculusMapper;
 
-// Subject's viewpoint. 
-// Not sure why this has to be a static variable. I hope to change that.
-// static OculusViewpoint *viewpoint;
-
 void GraspVR::Initialize( HINSTANCE hinst ) {
+
+	InitializeVR( hinst );
+	InitializeTrackers();
+
+}
+
+void GraspVR::InitializeTrackers( void ) {
+
+	// Create a pose tracker that uses only the Oculus.
+	hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
+	fAbortMessageOnCondition( !hmdTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
+
+}
+
+void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	ovrResult result;
 
@@ -41,10 +52,6 @@ void GraspVR::Initialize( HINSTANCE hinst ) {
 	result = oculusMapper.Initialize( &oculusDisplay );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
-	// Create a pose tracker that uses only the Oculus.
-	PsyPhy::PoseTracker *oculusPoseTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
-	fAbortMessageOnCondition( !oculusPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
-
 	// Set up a default GL rendering context.
 	glUsefulInitializeDefault();
 
@@ -53,7 +60,7 @@ void GraspVR::Initialize( HINSTANCE hinst ) {
 	// I don't fully understand the lighting thing, because when I set the intensity to 0
 	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
 	glUsefulAutoLighting( 0.0 );
-	glUsefulDefaultSpecularLighting( 0.7 );
+	glUsefulShinyMaterial();
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	// Our basic units are millimeters, so set the near and far accordingly.
@@ -82,8 +89,13 @@ void GraspVR::Release( void ) {
 // Draw the objects that are used during VR rendering.
 // Note that only those objects that are currently active are actually drawn.
 void GraspVR::Draw( void ) {
+
+	glUsefulDefaultSpecularLighting( 0.7 );
+	glUsefulMatteMaterial();
 	DrawSky();
 	DrawRoom();
+
+	glUsefulShinyMaterial();
 	DrawTarget();
 	DrawTiltPrompt();
 	DrawTool();

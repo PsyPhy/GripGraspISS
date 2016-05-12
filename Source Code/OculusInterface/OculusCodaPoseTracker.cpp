@@ -17,19 +17,21 @@
 
 using namespace PsyPhy;
 
-OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, CodaPoseTracker *coda1, CodaPoseTracker *coda2 ) {
+OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda ) {
+
 	oculusMapper = mapper;
-	primaryCoda = coda1;
-	secondaryCoda = coda2;
-	PoseTracker::PoseTracker();
+	absoluteTracker = coda;
+
 	// This constant deterimines how fast the inertially-computed pose will be driven
 	// toward the absolute pose taken from the CODA. A large number means that drift will be corrected slowly.
 	InertialWeighting = 10.0;
+
+	// Do what all PoseTrackers need to do.
+	PoseTracker::PoseTracker();
+
 }
 bool OculusCodaPoseTracker::Initialize( void ) { 
 	
-	ovrTrackingState sensorState = oculusMapper->ReadTrackingState();
-
 	// Initialize the pose of the tracker.
 	// In the final version this should be computed from the CODA contribution.
 	// For now, we just start from zero. Even if we leave it this way, it works,
@@ -38,6 +40,7 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 	CopyQuaternion( currentState.orientation, nullQuaternion );
 
 	// Need to have a reference time to compute the first delta in Update();
+	ovrTrackingState sensorState = oculusMapper->ReadTrackingState();
 	currentState.time = oculusMapper->sensorSampleTime;
 
 	// This pose tracker is always visible.
@@ -79,23 +82,18 @@ bool OculusCodaPoseTracker::Update( void ) {
 	MultiplyQuaternions( newQ, currentState.orientation, dQ );
 	CopyQuaternion( currentState.orientation, newQ );
 
-	// Read the absolute pose from the CODA tracker and take a step towards it.
+	// Read the absolute pose from the CODA tracker (or some other tracker) and take a step towards it.
 	// The step is achieved by taking a weighted average between the current inertial state and the CODA state.
 	// More weight is given to the inertial state to make it responsive to rapid movement.
-	// The preference is to compute the orientation with data from a single coda. We call one of them the primary
-	// unit and use it if available. If not, we try the second unit.
-	TrackerPose codaPose1, codaPose2;
-	if ( primaryCoda ) primaryCoda->GetCurrentPose( &codaPose1 );
-	if ( secondaryCoda ) secondaryCoda->GetCurrentPose( &codaPose2 );
-	if ( codaPose1.visible ) {
-		for ( int i = 0; i < 4; i++ ) currentState.orientation[i] = InertialWeighting * currentState.orientation[i] + codaPose1.orientation[i];
-		// fOutputDebugString( "Cycle %4d: Update from Primary.\n", cycle_counter );
+	TrackerPose absolutePose;
+	if ( absoluteTracker ) {
+		absoluteTracker->Update();
+		absoluteTracker->GetCurrentPose( &absolutePose );
+		if ( absolutePose.visible ) {
+			for ( int i = 0; i < 4; i++ ) currentState.orientation[i] = InertialWeighting * currentState.orientation[i] + absolutePose.orientation[i];
+		}
 	}
-	else if ( codaPose2.visible ) {
-		for ( int i = 0; i < 4; i++ ) currentState.orientation[i] = InertialWeighting * currentState.orientation[i] + codaPose2.orientation[i];
-		fOutputDebugString( "Cycle %4d: Update from Secondary.\n", cycle_counter );
-	}
-	else fOutputDebugString( "Cycle %4d: No CODA update.\n", cycle_counter );
+	else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
 	cycle_counter++;
 
 	// After the above, we have a weighted *SUM* of inertial and CODA data. This normalization effectively turns the
@@ -108,10 +106,9 @@ bool OculusCodaPoseTracker::Update( void ) {
 	currentState.visible = true;
 
 	// Output to a file for debugging.
-	fprintf( fp, "%s %s | %3d %7.3lf %s | %3d %7.3lf %s | %7.3lf %s\n", 
+	fprintf( fp, "%s %s | %3d %7.3lf %s | %7.3lf %s\n", 
 		qstr( dQ ), qstr( newQ ), 
-		(int) codaPose1.visible, codaPose1.time, qstr( codaPose1.orientation ), 
-		(int) codaPose2.visible, codaPose2.time, qstr( codaPose2.orientation ), 
+		(int) absolutePose.visible, absolutePose.time, qstr( absolutePose.orientation ), 
 		currentState.time, qstr( currentState.orientation ) 
 		);
 	return true; 

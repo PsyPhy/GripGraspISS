@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraspGLObjects.h" />
     <ClInclude Include="GraspVR.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>

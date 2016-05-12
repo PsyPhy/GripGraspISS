@@ -16,12 +16,13 @@
 using namespace PsyPhy;
 
 CascadePoseTracker::CascadePoseTracker( PoseTracker *tracker ) {
+	nTrackers = 0;
 	if ( tracker ) AddTracker( tracker );
 	PoseTracker::PoseTracker();
 }
 
 int CascadePoseTracker::AddTracker( PoseTracker *tracker ) {
-	fAbortMessageOnCondition( ( nTrackers < MAX_CASCADED_TRACKERS ), "CascadePoseTracker", "Too many cascaded trackers: %d", nTrackers + 1 );
+	fAbortMessageOnCondition( ( nTrackers >= MAX_CASCADED_TRACKERS ), "CascadePoseTracker", "Too many cascaded trackers: %d", nTrackers + 1 );
 	this->tracker[nTrackers] = tracker;
 	nTrackers++;
 	return( nTrackers );
@@ -37,8 +38,9 @@ bool CascadePoseTracker::Update( void ) {
 	// Here we just update each of the individual trackers.
 	// What we should do is perhaps align each tracker to the previous one
 	//  at each time step, whenever both members of the pair are available.
-	for ( int trk = 0; trk < nTrackers; trk++ ) tracker[trk]->Update();
-	return( true );
+	bool success = true;
+	for ( int trk = 0; trk < nTrackers; trk++ ) success &= tracker[trk]->Update();
+	return( success );
 }
 
 bool CascadePoseTracker::Quit( void ) { 

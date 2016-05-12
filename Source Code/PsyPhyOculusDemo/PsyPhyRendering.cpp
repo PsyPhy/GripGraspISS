@@ -50,7 +50,7 @@ void CreatePsyPhyObjects ( void ) {
 	room->AddComponent( box );
 
 	// A disk on the front wall, something to look at.
-	disk = new Disk( 5.0 );
+	disk = new Disk( 4.0 );
 	disk->SetPosition( 0.0, 0.0, 9.0 );
 	disk->SetColor( ORANGE );
 	room->AddComponent( disk );

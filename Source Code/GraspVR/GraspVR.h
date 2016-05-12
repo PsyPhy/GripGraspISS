@@ -15,10 +15,17 @@ namespace Grasp {
 
 	public:
 
+		PsyPhy::PoseTracker *hmdTracker;
+		PsyPhy::PoseTracker *handTracker;
+		PsyPhy::PoseTracker *chestTracker;
+
 		GraspVR( void ) {}
 		~GraspVR( void ) {}
 
 		void Initialize( HINSTANCE hinst );
+
+		void InitializeVR( HINSTANCE hinst );
+		void InitializeTrackers( void ) ;
 		
 
 		// Draw the objects that are used during VR.

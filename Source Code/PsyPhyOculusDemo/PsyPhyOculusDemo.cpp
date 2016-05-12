@@ -8,6 +8,10 @@ Joe McIntyre
 
 *****************************************************************************/
 
+// Flags to set the operating mode.
+static bool useOVR = false;		// OVR style rendering.
+static bool usePsyPhy = true;	// PsyPhy style rendering.
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <time.h>
@@ -42,6 +46,7 @@ Joe McIntyre
 PsyPhy::CodaRTnetTracker codaTracker;
 
 using namespace OVR;
+using namespace PsyPhy;
 
 // Interface to OpenGL windows and HMD.
 OculusDisplayOGL oculusDisplay;
@@ -63,12 +68,9 @@ void ViewpointSetPose ( PsyPhy::OculusViewpoint *viewpoint, ovrPosef pose ) {
 	viewpoint->SetAttitude( ori );
 };
 
-static bool useOVR = false;
-static bool usePsyPhy = true;
-static bool useCoda = true;
-
 // CodaRTnetTracker can handle up to 28 at 200 Hz. But Grasp only uses 24.
 int nMarkers = 24;
+
 // Nominally, we have two CODA cx1 sensing units, but we can support up to 8.
 #define MAX_CODA_UNITS	8
 int nCodaUnits = 2;
@@ -114,37 +116,9 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 {
 	ovrResult result;
 
-	// A buffer to hold the most recent frame of marker data.
-	MarkerFrame primaryMarkerFrame, secondaryMarkerFrame;
-	PsyPhy::CodaPoseTracker *primaryHeadPoseTracker, *secondaryHeadPoseTracker;
-	PsyPhy::CodaPoseTracker *primaryHandPoseTracker, *secondaryHandPoseTracker;
-	PsyPhy::DualCodaPoseTracker *handPoseTracker;
-
-	if ( useCoda ) {
-		// Create a PoseTracker that will compute the pose based on marker data and a rigid body model.
-		primaryCodaPoseTracker = new PsyPhy::CodaPoseTracker( &primaryMarkerFrame );
-		fAbortMessageOnCondition( !primaryCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing primaryCodaPoseTracker." );
-		primaryCodaPoseTracker->ReadModelMarkerPositions( "HMD.bdy" );
-		// Create a second PoseTracker that uses data from the secondary CODA unit.
-		secondaryCodaPoseTracker = new PsyPhy::CodaPoseTracker( &secondaryMarkerFrame );
-		fAbortMessageOnCondition( !secondaryCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing secondaryCodaPoseTracker." );
-		secondaryCodaPoseTracker->ReadModelMarkerPositions( "HMD.bdy" );
-		
-		// Create a PoseTracker that will compute the pose based on marker data and a rigid body model.
-		primaryHandPoseTracker = new PsyPhy::CodaPoseTracker( &primaryMarkerFrame );
-		fAbortMessageOnCondition( !primaryCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing primaryHandPoseTracker." );
-		primaryHandPoseTracker->ReadModelMarkerPositions( "Hand.bdy" );
-		// Create a second PoseTracker that uses data from the secondary CODA unit.
-		secondaryHandPoseTracker = new PsyPhy::CodaPoseTracker( &secondaryMarkerFrame );
-		fAbortMessageOnCondition( !secondaryHandPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing secondaryHandPoseTracker." );
-		secondaryHandPoseTracker->ReadModelMarkerPositions( "Hand.bdy" );
-		handPoseTracker = new PsyPhy::DualCodaPoseTracker( primaryHandPoseTracker, secondaryHandPoseTracker );
-		fAbortMessageOnCondition( !handPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing handPoseTracker." );
-
-	}
-	else {
-		//	PsyPhy::PoseTracker *handPoseTracker = new NullPoseTracker();
-	}
+	// Create a null tracker to be used when other trackers are not available.
+	PsyPhy::PoseTracker *nullPoseTracker = new PsyPhy::NullPoseTracker();
+	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
 	// Initialize the interface to the Oculus HMD.
 	result = oculusMapper.Initialize( platform );
@@ -154,18 +128,47 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	PsyPhy::PoseTracker *oculusPoseTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
 	fAbortMessageOnCondition( !oculusPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
 
-	// Create a pose tracker that combines Coda and Oculus data.
-	// For the moment OculusCodaPoseTracker is still in development and uses only Oculus gyro data.
-	// So we can go ahead and create it even if the useCoda flag is false.
-	PsyPhy::PoseTracker *oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, primaryCodaPoseTracker, secondaryCodaPoseTracker );
-	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+	// Buffers to hold the most recent frame of marker data.
+	MarkerFrame markerFrame[MAX_CASCADED_TRACKERS];
 
-	// Create a null tracker. This can be used to work in egocentric coordinates.
-	PsyPhy::PoseTracker *nullPoseTracker = new PsyPhy::NullPoseTracker();
-	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
+	// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
+	// We use one for each Coda unit, but we could use more.
+	CodaPoseTracker *hmdCodaPoseTracker[MAX_CASCADED_TRACKERS];
 
-	// Pick which PoseTracker to use.
-	PsyPhy::PoseTracker *headPoseTracker = oculusCodaPoseTracker;
+	// CascadePoseTrackers group together multiple PoseTrackers for the same entity.
+	// It sequentially tries to get the pose from one after another, stopping as soon as it gets one.
+	// We use this mechanism to combine the pose info from each coda unit, because it it better to
+	// compute the pose from markers positions measured by the same coda unit. Priority is therefore
+	// given to the first coda in the list. Others are used only as needed.
+	CascadePoseTracker *hmdCascadeTracker;
+
+	// For the HMD we can combine pose information from both the HMD and a Coda tracker.
+	OculusCodaPoseTracker *oculusCodaPoseTracker;
+
+	// Pointers to the PoseTrackers that are actually selected.
+	PoseTracker *hmdTracker;
+
+	if ( useCoda ) {
+
+		// Create PoseTrackers that 
+		hmdCascadeTracker = new CascadePoseTracker();
+		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+			hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing hmdCodaPoseTracker[%d].", unit );
+			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "HMD.bdy" );
+			hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+		}
+		// Create a pose tracker that combines Coda and Oculus data.
+		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
+		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+		// Pick which PoseTrackers to use.
+		hmdTracker = oculusCodaPoseTracker;
+	}
+	else {
+		// If we are not using the Coda, we can still use the Oculus to measure HMD movements.
+		hmdTracker = oculusPoseTracker;
+		// For now, we don't use any tracker other than the Coda-based trackers for the hand and torso.
+	}
 
     // Make the scene based on the OculusRoomTiny example.
 	// Call with 'true' to include GPU intensive object, 'false' to keep it simple.
@@ -187,8 +190,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
-		if ( platform->Key['B'] ) headPoseTracker->BoresightCurrent();
-		if ( platform->Key['U'] ) headPoseTracker->Unboresight();
+		if ( platform->Key['B'] ) hmdTracker->BoresightCurrent();
+		if ( platform->Key['U'] ) hmdTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
         if ( platform->Key[VK_LEFT] )  Yaw += 0.02f;
@@ -202,11 +205,10 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
         if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( +0.05f, 0, 0) );
         if ( platform->Key['A'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( -0.05f, 0, 0) );
 
-		if ( useCoda && platform->Key['C'] ) headPoseTracker = primaryCodaPoseTracker;
-		if ( useCoda && platform->Key['T'] ) headPoseTracker = secondaryCodaPoseTracker;
-		if ( platform->Key['O'] ) headPoseTracker = oculusPoseTracker;
-		if ( platform->Key['N'] ) headPoseTracker = nullPoseTracker;
-		if ( platform->Key['K'] ) headPoseTracker = oculusCodaPoseTracker;
+		if ( platform->Key['O'] ) hmdTracker = oculusPoseTracker;
+		if ( platform->Key['N'] ) hmdTracker = nullPoseTracker;
+		if ( platform->Key['C'] && useCoda ) hmdTracker = hmdTracker;
+		if ( platform->Key['K'] && useCoda ) hmdTracker = oculusCodaPoseTracker;
 
 		if ( platform->Key['V'] ) useOVR = true, usePsyPhy = false;
 		if ( platform->Key['P'] ) usePsyPhy = true, useOVR = false;
@@ -262,11 +264,13 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Get the current position of the CODA markers.
 			// codaTracker.GetCurrentMarkerFrameUnit( primaryMarkerFrame, 0 );
 			// codaTracker.GetCurrentMarkerFrameUnit( secondaryMarkerFrame, 1 );
-			GetMarkerFrameFromBackground( 0, &primaryMarkerFrame );
-			GetMarkerFrameFromBackground( 0, &secondaryMarkerFrame );
-
-			// Perform any periodic updating that the head tracker might require.
-			fAbortMessageOnCondition( !headPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
+			// GetMarkerFrameFromBackground( 0, &primaryMarkerFrame );
+			// GetMarkerFrameFromBackground( 0, &secondaryMarkerFrame );
+			for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+				GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
+			}
+			// Perform any periodic updating that the trackers might require.
+			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
 
 			// Set the baseline orientation of the viewpoint to the player's position.
 			PsyPhy::Vector3 pos;
@@ -280,9 +284,9 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 			// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
 			PsyPhy::TrackerPose headPose;
-			if ( !headPoseTracker->GetCurrentPose( &headPose ) ) {
+			if ( !hmdTracker->GetCurrentPose( &headPose ) ) {
 				static int pose_error_counter = 0;
-				fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
+				fOutputDebugString( "Error reading hmd pose tracker (%03d).\n", ++pose_error_counter );
 			}
 			else {
 				viewpoint->SetOffset( headPose.position );
@@ -343,21 +347,25 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus"), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
-	if ( useCoda ) codaTracker.StartAcquisition( 600.0 );
+	if ( useCoda ) {
+		
+		// Start continuous acquisition of Coda marker data for a maximum duration.
+		codaTracker.StartAcquisition( 600.0 );
 
-	DWORD threadID;
-	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
-
+		// Initiate real-time retrieval of CODA marker frames in a background thread 
+		// so that waiting for the frame to come back from the CODA does not slow down
+		// the rendering loop.
+		DWORD threadID;
+		stopMarkerGrabs = false;
+		threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
+	}
 
     // Call the main loop.
-	// Pass a pointer to Platform to give access to the HandleMessages() method and other parameters.
+	// Pass a pointer to oculusDisplay to give access to the HandleMessages() method and other parameters.
 	result = MainLoop( &oculusDisplay );
     fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus",  "An error occurred setting up the GL graphics window.\nIs the Oculus connected?");
 
-	stopMarkerGrabs = true;
-	WaitForSingleObject( threadHandle, INFINITE );
-
-	// Shutdown the Rift.
+	// We exited the main loop, so shutdown the Rift.
 	// I shut it down before halting the CODA just so that the HMD goes dark while the 
 	// CODA frames are being retrieved.
     ovr_Shutdown();
@@ -365,36 +373,44 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	oculusDisplay.CloseWindow();
 	oculusDisplay.ReleaseDevice();
 
-	// Halt the Coda acquisition.
-	if (useCoda ) codaTracker.StopAcquisition();
+	if ( useCoda ) {
 
-	// Output the CODA data to a file.
-	char *filename = "PsyPhyOculusDemo.mrk";
-	fOutputDebugString( "Writing CODA data to %s.\n", filename );
-	FILE *fp = fopen( filename, "w" );
-	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
+		// Halt the Coda real-time frame acquisition that is occuring in a background thread.
+		stopMarkerGrabs = true;
+		WaitForSingleObject( threadHandle, INFINITE );
+		// Halt the continuous Coda acquisition.
+		codaTracker.StopAcquisition();
 
-	fprintf( fp, "%s\n", filename );
-	fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
-	fprintf( fp, "Frame\tTime" );
-	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-		for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-		}
-	}
-	fprintf( fp, "\n" );
+		// Output the CODA data to a file.
+		char *filename = "PsyPhyOculusDemo.mrk";
+		fOutputDebugString( "Writing CODA data to %s.\n", filename );
+		FILE *fp = fopen( filename, "w" );
+		if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
 
-	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-		fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+		fprintf( fp, "%s\n", filename );
+		fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
+		fprintf( fp, "Frame\tTime" );
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+				fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
 			}
 		}
 		fprintf( fp, "\n" );
+
+		for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
+			fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+			for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+				for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
+					fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+					for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+				}
+			}
+			fprintf( fp, "\n" );
+		}
+		fclose( fp );
+		fOutputDebugString( "File %s closed.\n", filename );
+
 	}
-	fclose( fp );
-	fOutputDebugString( "File %s closed.\n", filename );
+
     return(0);
 }
