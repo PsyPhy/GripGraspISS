@@ -34,19 +34,17 @@ double initial_viewpoint_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
 // In the OpenGL coordinate system, zero orientation means that one is looking
 //  down the negative Z axis with positive Y up and positive X to the right. Here we $
 //  place the object where we can see it.
-double initial_tool_position[3] = { 0.0, 0.0, -750.0 };
-double initial_tool_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
+double initial_object_position[3] = { 0.0, 0.0, - 1500.0 };
+double initial_object_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
 
 // Dimensions of the room.
-double room_radius = 2000.0;
+double room_width = 1000.0;
+double room_height = 1000.0;
 double room_length = 6000.0;
 double wall_thickness = 10.0;
 
-double reference_bars = 5;
-double reference_bar_radius = 50.0;
-
-// Textures that are used to decorate certain objects.
-// These files have to be in the execution directory.
+// A texture that is used to decorate the walls of the room.
+// This file has to be in the execution directory.
 char *wall_texture_bitmap = "Rockwall.bmp";
 char *references_texture_bitmap = "Metal.bmp";
 char *sky_texture_bitmap= "NightSky.bmp";
@@ -56,73 +54,45 @@ char *sky_texture_bitmap= "NightSky.bmp";
 // These hold the OpenGLObjects that are shared across the local routines.
 OpenGLWindow	*window;			// The window on the screen.
 Viewpoint		*viewpoint;			// The viewpoint into the virtual world.
-
 Assembly		*room;				// A walled room in the virtual world.
-Assembly		*tool;				// An object that moves in the world.
-Slab			*sky;				// A background to be seen at the end of the tunnel.
-
-
-Assembly		*Target;			// Shows the target orientation.
-Assembly		*Response;			// Shows the final response.
-Assembly		*HandFeedback;		// Moves with the hand when providing visual feedback.
+Assembly		*Response;
+Assembly		*HandFeedback;
+Assembly		*Target;
 Assembly		*LaserPointer;
+Assembly		*CentralTarget;
 
 Texture			*wall_texture;		// The texture that is applied to the walls.
+Texture			*references_texture;
 Texture			*sky_texture;
+Assembly		*object;			// A 3D object that moves within the virtual room.
 	
+Cylinder *cylinder;
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-Assembly *create_arrow ( double size ) {
-
-	Assembly *arrow = new Assembly();
-
-	Annulus *donut = new Annulus( 60.0, 10.0, size * .85, 20 );
-	donut->SetPosition( 0.0, 0.0, -1000.0 );
-	donut->SetAttitude( 0.0, 90.0, 0.0 );
-	donut->SetOrientation( 0.0, 0.0, 0.0 );
-	donut->SetColor( 0.7, 0.0, 0.0 );
-	arrow->AddComponent( donut );
-
-	TaperedAnnulus *tip = new TaperedAnnulus( 60.0, 20.0, 1.0, 0.05, 20 );
-	tip->SetAttitude( 0.0, 90.0, 0.0 );
-	tip->SetPosition( 0.0, 0.0, -1000.0 );
-	tip->SetOrientation( -size * 0.85 * 360.0, 0.0, 0.0 );
-	tip->SetColor( 0.7, 0.0, 0.0 );
-	arrow->AddComponent( tip );
-
-	Ellipsoid *base = new Ellipsoid ( 10.0, 10.0, 10.0 );
-	base->SetPosition( 60.0, 0.0, -1000.0 );
-	base->SetColor( 0.7, 0.0, 0.0 );
-	arrow->AddComponent( base );
-	arrow->SetAttitude( - 15.0, 0.0, 0.0 );
-
-	return arrow;
-
-}
 
 void create_objects( void ) {
 	
 	// Local objects used to construct the OpenGLObject assemblies.
 	Sphere *sphere;
 	Slab *slab;
+	Box *box;
 	Disk *disk;
-	Cylinder *cylinder;
 
 	Cylinder *tunnel;
-	Cylinder *referenceBar;
-	Cylinder *errorTunnel;
-
-	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
-	sky = new Slab( 4000.0, 4000.0, 1.0 );
-	sky->SetPosition( 0.0, 0.0, - room_length );
-	sky->SetTexture(sky_texture);
+	Cylinder *reference;
+	Cylinder *errortunnel;
+	Slab *sky;
+	Disk *central_target;
 
 	// Create a room to put the object in.
 
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 2000, 4000 );
-
+	references_texture = new Texture( references_texture_bitmap,500,500);
+	sky_texture = new Texture(sky_texture_bitmap,2000,2000);
+	
 	room = new Assembly();
 	room->SetColor( WHITE );
 
@@ -132,38 +102,44 @@ void create_objects( void ) {
 	//room->AddComponent( box );
 
 	//Tunnel Plus references
-	tunnel = new Cylinder( room_radius, room_radius, 2.0 * room_length );
+	tunnel = new Cylinder( room_height, room_width, room_length );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation(90,0.0,0.0);
 	room->AddComponent( tunnel );
 
-	for (int i=0; i < reference_bars; i++ ){ 
-		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
-		referenceBar->SetOffset( room_radius / 2.0, 0.0, 0.0 );
-		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
-		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
-		referenceBar->SetTexture( wall_texture );
-		room->AddComponent( referenceBar );
-		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
-		referenceBar->SetOffset( room_radius / 2.0, 0.0, 0.0 );
-		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
-		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
-		referenceBar->SetTexture( wall_texture );
-		room->AddComponent( referenceBar );
+	for (int i=0;i<6; i++){ 
+		reference = new Cylinder( 50.0, 50.0, room_length );
+		reference->SetPosition(1000.0*sin(i/10.0*2*PI),1000.0*cos(i/10.0*2*PI),0.0);
+		reference->SetColor( (1.0-i/5.0), (1.0-i/5.0), (1.0-i/5.0), 255);
+		reference->SetTexture( references_texture );
+		room->AddComponent(reference);
+		reference = new Cylinder( 50.0, 50.0, room_length );
+		reference->SetPosition(1000.0*-sin(i/10.0*2*PI),1000.0*cos(i/10.0*2*PI),0.0);
+		reference->SetColor( (1.0-i/5.0), (1.0-i/5.0), (1.0-i/5.0), 255);
+		reference->SetTexture( references_texture );
+		room->AddComponent(reference);
 	}
 
 	//Error Tunnel
-	errorTunnel = new Cylinder( room_radius, room_radius, room_length );
-	errorTunnel->SetColor( RED );
-	errorTunnel->SetOrientation(PI/2,0.0,0.0);
+	errortunnel = new Cylinder( room_height, room_width, room_length );
+	errortunnel->SetColor( RED );
+	errortunnel->SetOrientation(PI/2,0.0,0.0);
 	//room->AddComponent( errortunnel );
+
+
+	// A disk on the front wall, something to look at.
+	sky = new Slab( 2000.0, 2000.0, 1.0 );
+	sky->SetPosition( 0.0, 0.0, - room_length / 2.0  );
+	//disk->SetColor( ORANGE );
+	sky->SetTexture(sky_texture);
+	room->AddComponent( sky );
 
 	// Response
 	Response = new Assembly();
 	for (int trg=-2; trg<=2; trg++){
 		sphere = new Sphere(50);
-		sphere->SetPosition( 0.0, 0.0 + (2000.0) / 5 * trg, 0.0 );
+		sphere->SetPosition(0.0,0.0+(2000.0)/5*trg,0.0);
 		sphere->SetColor(100.0/255.0,(75.0+trg*25.0)/255.0,0);
 		Response->AddComponent(sphere);
 	}
@@ -175,9 +151,12 @@ void create_objects( void ) {
 		sphere = new Sphere(50);
 		sphere->SetPosition(0.0,0.0+(1000.0-(-1000.0))/20*trg,0.0);
 		sphere->SetColor(100.0/255.0,(75.0+trg*25.0)/255.0,0);
-		cylinder = new Cylinder(50,50,200);
-		cylinder->SetPosition(0.0,0.0+(1000.0-(-1000.0))/20*trg,-200.0/2);
 		HandFeedback->AddComponent(sphere);
+		cylinder = new Cylinder(50,50,200);
+		cylinder->SetPosition(0.0,0.0+(1000.0-(-1000.0))/20*trg,-200.0);
+		cylinder->SetColor(100.0/255.0,(75.0+trg*25.0)/255.0,0);
+		//cylinder->SetTexture(wall_texture);
+		
 		HandFeedback->AddComponent(cylinder);
 		sphere = new Sphere(50);
 		sphere->SetPosition(0.0,0.0+(1000.0-(-1000.0))/20*trg,-200.0);
@@ -187,8 +166,10 @@ void create_objects( void ) {
 
 	//LaserPOinter
 	LaserPointer = new Assembly();
-	disk = new Disk(50);
-	disk->SetPosition(0.0, 0.0, (room_length-1000));
+	disk = new Disk(10);
+	disk->SetPosition(0.0, 0.0, (-room_length/2+1500));
+	disk->SetColor(GREEN);
+	LaserPointer->AddComponent(disk);
 
 	//Target
 	Target = new Assembly();
@@ -200,6 +181,14 @@ void create_objects( void ) {
 	}
 	Target->SetPosition(0.0,0.0, -room_length/2+50);
 
+	//central target
+	CentralTarget = new Assembly();
+	central_target = new Disk(40);
+	central_target->SetPosition(0.0, 0.0, 0.0);
+	central_target->SetColor(0.7,0.7,0.0,1.0);
+	CentralTarget->AddComponent(central_target);
+	CentralTarget->SetPosition(0.0, 0.0, -room_length/2+1.0);
+	CentralTarget->SetOrientation(0.0, 0.0, 0.0);
 
 	// The center of the room is at the origin.
 	room->SetPosition( 0.0, 0.0, 0.0 );
@@ -220,60 +209,59 @@ void create_objects( void ) {
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create a simple object to look at.
-	tool = new Assembly();
+	object = new Assembly();
 
 	slab = new Slab( 150.0, 100.0, 10.0 );
 	slab->SetPosition( 0.0, 0.0, 10.0 );
 	slab->SetColor( BLUE );
-	tool->AddComponent( slab );
+	object->AddComponent( slab );
 
 	slab = new Slab( 150.0, 100.0, 10.0 );
 	slab->SetPosition( 0.0, 0.0, - 10.0 );
 	slab->SetColor( GREEN );
-	tool->AddComponent( slab );
+	object->AddComponent( slab );
 
 	sphere = new Sphere( 40.0 );
 	sphere->SetColor( RED );
-	tool->AddComponent( sphere );
+	object->AddComponent( sphere );
 
 	cylinder = new Cylinder( 10.0, 30.0, 60.0 );
-	cylinder->SetPosition( 0.0, 0.0, 30.0 );
-	cylinder->SetColor( YELLOW );
-	tool->AddComponent( cylinder );
+	cylinder->SetPosition( 0.0, 0.0, 0.0 );
+	//cylinder->SetColor( YELLOW );
+	object->AddComponent( cylinder );
 
 	cylinder = new Cylinder( 10.0, 10.0, 80.0 );
-	cylinder->SetPosition( 0.0, -40.0, 0.0 );
-	cylinder->SetOrientation( 0.0, -90.0, 0.0 );
-	cylinder->SetColor( ORANGE );
-	tool->AddComponent( cylinder );
+	cylinder->SetPosition( 0.0, 0.0, 0.0 );
+	cylinder->SetOrientation( 0.0, - 90.0, 0.0 );
+	//cylinder->SetColor( GREEN );
+	object->AddComponent( cylinder );
 
 	// Initialize the position of the mobile object.
-	tool->SetPosition( initial_tool_position);
-	tool->SetOrientation( initial_tool_orientation );
+	object->SetPosition( initial_object_position);
+	object->SetOrientation( initial_object_orientation );
 
-	Assembly *rotator = new Assembly();
-	int arrows = 1;
-	for ( int i = 0; i < arrows; i++ ) {
-		Assembly *arrow = create_arrow( 1 / arrows );
-		arrow->SetOrientation( i * 360.0 / (double) arrows, 0.0, 0.0 );
-		rotator->AddComponent( arrow );
-	}
-	room->AddComponent( rotator );
+	// A cylinder 'cause we are testing code to draw cylinders.
+	/*cylinder = new Cylinder( 50.0, 50.0, 200.0 );
+	cylinder->SetPosition( 0.0, - room_height / 8.0, - room_length / 8.0 );
+	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
+	 cylinder->SetColor( BLUE );
+	cylinder->SetTexture( wall_texture, 5.0 );
+	room->AddComponent( cylinder );*/
 
 }
 
 void render( void ) {
 
-	// Draw the sky.
-	sky->Draw();
-
 	// Draw the virtual room.
 	room->Draw();
+	Response->Draw();
+	HandFeedback->Draw();
+	Target->Draw();
+	LaserPointer->Draw();
+	CentralTarget->Draw();
 
 	// Draw the complex object at its current position. 
-	tool->Draw();
-
-	Sleep( 10 );
+	//object->Draw();
 
 }
 
@@ -348,7 +336,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Initialize the state of the GL graphics engine.
 	glUsefulInitializeDefault();
-	glUsefulDefaultSpecularLighting( 0.7 );
 
 	// Create the room and the moving object.
 	create_objects();
@@ -357,18 +344,27 @@ int _tmain(int argc, _TCHAR* argv[])
 	for ( double a = 0.0; true; a += 0.05 ) {
 
 		// Oscillate the viewpoint.
-		double angle = 5.0 * cos( a );
-		viewpoint->SetOrientation( 0.0, 0.0, angle );
-		// Spin the tool.
-		tool->SetOrientation( 0.0, 0.0, 10.0 * a );
+		double angle = 45.0 * cos( a );
 
-		// Draw everything.
-		window->Clear( 0.0, 0.0, 0.0 );
+		object->SetOrientation( angle, object->jVector );
+		object->SetPosition( initial_object_position );
+		//viewpoint->SetOrientation( 0.0, 0.0, 0.1 * angle );
+		//cylinder->SetOrientation(  0.1 * angle, 45 + 0.1 * angle, 0.0 );
+		HandFeedback->SetOrientation(0.0,angle/1.0,angle/1.0);
+		LaserPointer->SetOrientation(0.0,angle/1.0,angle/1.0);
+		Response->SetOrientation(45.0,0,0);
+
+		viewpoint->SetPosition( angle/45.0*room_width, 0.0, 0.0 );
+		viewpoint->SetOrientation(  0.0, 0.0, -angle/1.0 );
+
+		window->Clear();
+
 		glUsefulPrepareRendering();
 
 		if ( stereo ) {
 			viewpoint->Apply( window, LEFT_EYE );
 			render();
+
 			viewpoint->Apply( window, RIGHT_EYE );
 			render();
 		}
@@ -384,6 +380,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	window->Destroy();
-	// fMessageBox( MB_OK, "TestOpenGLObjects", "Frame count: %d", frame_counter );
+	fMessageBox( MB_OK, "TestOpenGLObjects", "Frame count: %d", frame_counter );
 }
 

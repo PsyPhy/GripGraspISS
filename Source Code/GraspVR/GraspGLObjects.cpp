@@ -16,12 +16,13 @@ using namespace Grasp;
 
 // Textures that are used to decorate certain objects.
 // These files have to be in the execution directory.
-const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\lime.bmp";
-const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
+const char *GraspGLObjects::wall_texture_bitmap = "Rockwall.bmp";
+const char *GraspGLObjects::references_texture_bitmap = "Metal.bmp";
+const char *GraspGLObjects::sky_texture_bitmap= "NightSky.bmp";
 			
 // Dimensions of the room.
-const double GraspGLObjects::room_radius = 2000.0;
-const double GraspGLObjects::room_length = 6000.0;
+const double GraspGLObjects::room_radius = 1000.0;
+const double GraspGLObjects::room_length = 5000.0;
 const double GraspGLObjects::wall_thickness = 10.0;
 const double GraspGLObjects::reference_bars = 5;
 const double GraspGLObjects::reference_bar_radius = 50.0;
@@ -40,9 +41,11 @@ const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -1500.0 };
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
-const double GraspGLObjects::target_ball_spacing = 2000.0 / 7.5;
-const int GraspGLObjects::target_balls = 5;
-const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -3500.0 };
+const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
+const int GraspGLObjects::target_balls = 3;
+const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length/2.0 };
+
+const double GraspGLObjects::finger_ball_radius = 10.0;
 
 const double GraspGLObjects::finger_length = 100.0;
 
@@ -71,12 +74,13 @@ void GraspGLObjects::SetLighting( void ) {
 	glEnable( GL_BLEND );
 
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-	glClearColor( 1.0F, 1.0F, 1.0F, 0.0F );
+	glClearColor( 0.0F, 0.0F, 0.0F, 1.0F );
 }
 void GraspGLObjects::CreateObjects( void ) {
-
+	SetLighting();
 	CreateTextures();
 	sky = CreateSky();
+	dark_sky = CreateDarkSky();
 	room = CreateRoom();
 
 	target = CreateTarget();
@@ -85,6 +89,7 @@ void GraspGLObjects::CreateObjects( void ) {
 	tiltPrompt->SetPosition( prompt_location );
 
 	tool = CreateTool();
+	projectiles = CreateProjectiles();
 	head = CreateHead();
 	torso = CreateTorso();
 }
@@ -92,41 +97,56 @@ void GraspGLObjects::CreateTextures( void ) {
 	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
-	wall_texture = new Texture( wall_texture_bitmap, 2000, 4000 );
+	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
+	references_texture = new Texture( references_texture_bitmap, 500, 500 );
 }
 
 Assembly *GraspGLObjects::CreateSky( void ) {
 	Assembly *sky = new Assembly();
-	Box *box = new Box( room_radius * 2.2, room_radius * 2.2, room_length * 2.2 );
-	box->SetTexture( sky_texture );
-	sky->AddComponent( box );
+	//Box *box = new Box( room_radius * 2.2, room_radius * 2.2, room_length * 2.2 );
+	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
+	slab->SetTexture( sky_texture );
+	slab->SetPosition(0.0,0.0,-room_length/2.0);
+	sky->AddComponent( slab );
+	sky->SetColor(WHITE);
 	return( sky );
+}
+
+Assembly *GraspGLObjects::CreateDarkSky( void ) {
+	Assembly *dark_sky = new Assembly();
+	//Box *box = new Box( room_radius * 2.2, room_radius * 2.2, room_length * 2.2 );
+	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
+	slab->SetPosition(0.0,0.0,-room_length/2.0);
+	dark_sky->AddComponent( slab );
+	dark_sky->SetColor(BLACK);
+	dark_sky->enabled = false;
+	return( dark_sky );
 }
 
 Assembly *GraspGLObjects::CreateRoom( void ) {
 
 	Assembly *room = new Assembly();
-	room->SetColor( WHITE );
+	room->SetColor( BLACK );
 
 	//Tunnel Plus references
-	Cylinder *tunnel = new Cylinder( room_radius, room_radius, 2.0 * room_length );
+	Cylinder *tunnel = new Cylinder( room_radius, room_radius, room_length );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
 	room->AddComponent( tunnel );
 
 	for (int i=0; i < reference_bars; i++ ){ 
-		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, 2.0 * room_length );
+		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
 		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
-		referenceBar->SetTexture( wall_texture );
+		referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
-		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, 2.0 * room_length );
+		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius,  room_length );
 		referenceBar->SetOffset( room_radius - reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
-		referenceBar->SetTexture( wall_texture );
+		referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 	}
 	return room;
@@ -135,7 +155,7 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 Assembly *GraspGLObjects::CreateTarget( void ) {
 
 	Assembly *target = new Assembly();
-	for (int trg = - target_balls / 2; trg <= target_balls / 2; trg++ ){
+	for (int trg = - target_balls ; trg <= target_balls ; trg++ ){
 		Sphere *sphere = new Sphere( target_ball_radius );
 		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
 		sphere->SetColor(( 75.0 - abs(trg) * 10.0 ) / 255.0, 0.0, 0.0);
@@ -152,32 +172,33 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
 
 	// There are as many fingers as target balls. This could change.
-	static int fingers = target_balls;
+	static int fingers = target_balls-1;
 
 	// The fingers have a smaller radius than the target balls. When viewed from
 	// the subject's viewpoint they should subtend a similar amount of visual arc.
-	static double finger_radius = target_ball_radius / 2.0;
+	// I don't agree. In my opinion the hand feedback should have a dimension similar to hand in order to help the subject to "embody" it.
+	//static double finger_radius = target_ball_radius / 2.0;
 
 	// For some reason I set the spacing between fingers to be the same as the target ball radius.
 	// I don't remember why. This could change.
-	static double finger_spacing = target_ball_radius;
+	static double finger_spacing = finger_ball_radius*2;
 
-	for ( int trg = - target_balls / 2; trg <= fingers / 2; trg++ ){
+	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 
 		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
 		Assembly *finger = new Assembly();
-		Sphere *sphere = new Sphere( finger_radius );
+		Sphere *sphere = new Sphere( finger_ball_radius );
 		sphere->SetPosition( 0.0, 0.0, 0.0 );
 		finger->AddComponent( sphere );
-		Cylinder *cylinder = new Cylinder( finger_radius, finger_radius, finger_length );
+		Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
 		cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
 		finger->AddComponent( cylinder );
-		sphere = new Sphere( finger_radius );
+		sphere = new Sphere( finger_ball_radius );
 		sphere->SetPosition( 0.0, 0.0, - finger_length );
 		finger->AddComponent( sphere );
 
 		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
-		float color[4] = { 0.5f, 0.30f + (float) trg * 0.1f, 0.0f, 1.0f };
+		float color[4] = { 100.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		finger->SetColor( color );
 
 		// Space the fingers vertically.
@@ -185,6 +206,42 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 		tool->AddComponent( finger );
 	}
 	return tool;
+
+}
+
+Assembly *GraspGLObjects::CreateProjectiles( void ) {
+
+	Assembly *projectiles = new Assembly();
+
+	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
+
+	// There are as many fingers as target balls. This could change.
+	static int fingers = target_balls-1;
+
+	// The fingers have a smaller radius than the target balls. When viewed from
+	// the subject's viewpoint they should subtend a similar amount of visual arc.
+	// I don't agree. In my opinion the hand feedback should have a dimension similar to hand in order to help the subject to "embody" it.
+	//static double finger_radius = target_ball_radius / 2.0;
+
+	// For some reason I set the spacing between fingers to be the same as the target ball radius.
+	// I don't remember why. This could change.
+	static double finger_spacing = finger_ball_radius*2;
+
+	for ( int trg = - fingers; trg <= fingers ; trg++ ){
+
+		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
+		//Assembly *finger = new Assembly();
+		Sphere *sphere = new Sphere( finger_ball_radius );
+		sphere->SetPosition( 0.0, 0.0, 0.0 );
+		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
+		float color[4] = { 100.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
+		sphere->SetColor( color );
+		// Space the fingers vertically.
+		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
+		projectiles->AddComponent( sphere );
+		
+	}
+	return projectiles;
 
 }
 
@@ -225,6 +282,10 @@ void GraspGLObjects::DrawSky( void ) {
 	sky->Draw();
 }
 
+void GraspGLObjects::DrawDarkSky( void ) {
+	dark_sky->Draw();
+}
+
 void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
 	if ( pose != nullptr ) {
 		room->SetPosition( pose->position );
@@ -245,10 +306,21 @@ void GraspGLObjects::DrawTool( TrackerPose *pose ) {
 	if ( pose != nullptr ) {
 		tool->SetPosition( pose->position );
 		tool->SetOrientation( pose->orientation );
+	}else{
+		tool->SetPosition( 0.0, 0.0, -500.0 );
 	}
 	tool->Draw();
 }
 
+void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
+		if ( pose != nullptr ) {
+			projectiles->SetPosition( pose->position );
+			projectiles->SetOrientation( pose->orientation );
+		}else{
+			projectiles->SetPosition( 0.0, 0.0, -room_length/2.0 );
+		}
+		projectiles->Draw();
+}
 void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
 	if ( pose != nullptr ) {
 		tiltPrompt->SetPosition( pose->position );

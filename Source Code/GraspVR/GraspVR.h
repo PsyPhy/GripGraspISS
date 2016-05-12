@@ -11,6 +11,7 @@ namespace Grasp {
 	private:
 
 		PsyPhy::OculusViewpoint *viewpoint;
+
 		
 
 	public:

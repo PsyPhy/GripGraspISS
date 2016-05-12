@@ -74,6 +74,8 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	// Create all the necessary VR rendering objects.
 	CreateObjects();
 
+	Projectile_Timer=-1;
+
 }
 
 void GraspVR::Release( void ) {
@@ -90,15 +92,19 @@ void GraspVR::Release( void ) {
 // Note that only those objects that are currently active are actually drawn.
 void GraspVR::Draw( void ) {
 
+	// I am still trying to get specular reflections to work.
 	glUsefulDefaultSpecularLighting( 0.7 );
 	glUsefulMatteMaterial();
+
 	DrawSky();
+	DrawDarkSky();
 	DrawRoom();
 
 	glUsefulShinyMaterial();
 	DrawTarget();
 	DrawTiltPrompt();
 	DrawTool();
+	DrawProjectiles();
 }
 
 
@@ -108,6 +114,15 @@ void GraspVR::DebugLoop( void ) {
 	// Create a pose tracker that uses only the Oculus.
 	PsyPhy::PoseTracker *headPoseTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
 	fAbortMessageOnCondition( !headPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
+
+	//procedure to move the projectiles
+	if (Projectile_Timer>=0 && Projectile_Timer<=1000){
+		Projectile_Timer++;
+		Init_Projectile_Position[2]=Init_Projectile_Position[2]-1;
+		projectiles->SetPosition(Init_Projectile_Position);
+	}else{
+		Projectile_Timer=-1;
+	}
 
 	while ( oculusDisplay.HandleMessages() ) {
 
@@ -121,10 +136,23 @@ void GraspVR::DebugLoop( void ) {
 			target->enabled = false;
 			tool->enabled = false;
 			tiltPrompt->enabled = false;
+			dark_sky->enabled = false;
+			projectiles->enabled = false;
 		}
-		if ( oculusDisplay.Key['T'] ) target->enabled = true;
+		if ( oculusDisplay.Key['T'] ) {
+			target->enabled = true;
+			sky->enabled = false;
+			dark_sky->enabled = true;
+		}
 		if ( oculusDisplay.Key['H'] ) tool->enabled = true;
 		if ( oculusDisplay.Key['P'] ) tiltPrompt->enabled = true;
+
+		if ( oculusDisplay.Key[VK_SPACE]) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
+			projectiles->enabled = true;
+			Projectile_Timer=0;
+			CopyVector(Init_Projectile_Position,tool->position);
+			//projectiles->SetPosition(tool->position);
+		}
 
 		// Perform any periodic updating that the head tracker might require.
 		fAbortMessageOnCondition( !headPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
