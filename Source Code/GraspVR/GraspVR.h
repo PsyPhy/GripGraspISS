@@ -11,9 +11,13 @@ namespace Grasp {
 	private:
 
 		PsyPhy::OculusViewpoint *viewpoint;
+
 		
 
 	public:
+
+		int Projectile_Timer;
+		Vector3 Init_Projectile_Position;
 
 		GraspVR( void ) {}
 		~GraspVR( void ) {}

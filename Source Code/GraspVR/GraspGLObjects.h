@@ -55,6 +55,7 @@ namespace Grasp {
 			static const Vector3 prompt_location;
 			static const double prompt_radius;
 			static const double target_ball_radius;
+			static const double finger_ball_radius;
 			static const double target_ball_spacing;
 			static const int target_balls;
 			static const double finger_length;
@@ -73,7 +74,9 @@ namespace Grasp {
 			Assembly		*tiltPrompt;
 
 			Assembly		*tool;				// An object that moves in the world.
+			Assembly		*projectiles;
 			Assembly		*sky;				// A background to be seen at the end of the tunnel.
+			Assembly		*dark_sky;
 			Assembly		*room;
 
 			Assembly		*head;
@@ -88,18 +91,22 @@ namespace Grasp {
 			void SetLighting( void );
 
 			Assembly *CreateTool( void );
+			Assembly *CreateProjectiles(void);
 			Assembly *CreateTarget( void );
 			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateSky( void );
+			Assembly *CreateDarkSky( void );
 			Assembly *CreateHead( void );
 			Assembly *CreateTorso( void );
 
 			void DrawTarget( TrackerPose *pose = nullptr );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
 			void DrawTool( TrackerPose *pose = nullptr );
+			void DrawProjectiles(TrackerPose *pose = nullptr);
 			void DrawRoom( TrackerPose *pose = nullptr );
 			void DrawSky( void );
+			void DrawDarkSky( void);
 
 			void DrawHead( TrackerPose *pose = nullptr );
 			void DrawTorso( TrackerPose *pose = nullptr );

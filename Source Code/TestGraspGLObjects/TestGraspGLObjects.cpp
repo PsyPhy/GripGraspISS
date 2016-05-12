@@ -62,7 +62,7 @@ int _tmain(int argc, char *argv[])
 	objects = new GraspGLObjects();
 	objects->CreateObjects();
 
-	objects->tool->SetPosition( 0.0, -100.0, -1000.0 );
+	objects->tool->SetPosition( 0.0, 0.0, -1000.0 );
 	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
 
 	while ( true ) {
