@@ -11,6 +11,7 @@ Joe McIntyre
 // Flags to set the operating mode.
 static bool useOVR = false;		// OVR style rendering.
 static bool usePsyPhy = true;	// PsyPhy style rendering.
+static bool useCoda = false;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -134,6 +135,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
 	// We use one for each Coda unit, but we could use more.
 	CodaPoseTracker *hmdCodaPoseTracker[MAX_CASCADED_TRACKERS];
+	CodaPoseTracker *handCodaPoseTracker[MAX_CASCADED_TRACKERS];
+	CodaPoseTracker *chestCodaPoseTracker[MAX_CASCADED_TRACKERS];
 
 	// CascadePoseTrackers group together multiple PoseTrackers for the same entity.
 	// It sequentially tries to get the pose from one after another, stopping as soon as it gets one.
@@ -141,33 +144,51 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	// compute the pose from markers positions measured by the same coda unit. Priority is therefore
 	// given to the first coda in the list. Others are used only as needed.
 	CascadePoseTracker *hmdCascadeTracker;
+	CascadePoseTracker *handCascadeTracker;
+	CascadePoseTracker *chestCascadeTracker;
 
 	// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 	OculusCodaPoseTracker *oculusCodaPoseTracker;
 
 	// Pointers to the PoseTrackers that are actually selected.
 	PoseTracker *hmdTracker;
+	PoseTracker *handTracker;
+	PoseTracker *chestTracker;
 
 	if ( useCoda ) {
 
 		// Create PoseTrackers that 
 		hmdCascadeTracker = new CascadePoseTracker();
+		handCascadeTracker = new CascadePoseTracker();
+		chestCascadeTracker = new CascadePoseTracker();
 		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 			hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing hmdCodaPoseTracker[%d].", unit );
 			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "HMD.bdy" );
 			hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+			handCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+			fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing toolCodaPoseTracker[%d].", unit );
+			handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Hand.bdy" );
+			handCascadeTracker->AddTracker( handCodaPoseTracker[unit] );
+			chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+			fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing torsoCodaPoseTracker[%d].", unit );
+			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Chest.bdy" );
+			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
 		// Create a pose tracker that combines Coda and Oculus data.
 		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
 		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
 		// Pick which PoseTrackers to use.
 		hmdTracker = oculusCodaPoseTracker;
+		handTracker = handCascadeTracker;
+		chestTracker = chestCascadeTracker;
 	}
 	else {
 		// If we are not using the Coda, we can still use the Oculus to measure HMD movements.
 		hmdTracker = oculusPoseTracker;
 		// For now, we don't use any tracker other than the Coda-based trackers for the hand and torso.
+		handTracker = nullPoseTracker;
+		chestTracker =nullPoseTracker;
 	}
 
     // Make the scene based on the OculusRoomTiny example.
@@ -209,6 +230,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		if ( platform->Key['N'] ) hmdTracker = nullPoseTracker;
 		if ( platform->Key['C'] && useCoda ) hmdTracker = hmdTracker;
 		if ( platform->Key['K'] && useCoda ) hmdTracker = oculusCodaPoseTracker;
+		if ( platform->Key['H'] && useCoda ) hmdTracker = handTracker;
+		if ( platform->Key['T'] && useCoda ) hmdTracker = chestTracker;
 
 		if ( platform->Key['V'] ) useOVR = true, usePsyPhy = false;
 		if ( platform->Key['P'] ) usePsyPhy = true, useOVR = false;
@@ -271,6 +294,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			}
 			// Perform any periodic updating that the trackers might require.
 			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
+			fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
+			fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
 
 			// Set the baseline orientation of the viewpoint to the player's position.
 			PsyPhy::Vector3 pos;
