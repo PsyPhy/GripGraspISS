@@ -407,7 +407,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		codaTracker.StopAcquisition();
 
 		// Output the CODA data to a file.
-		char *filename = "PsyPhyOculusDemo.mrk";
+		char *filename = "Log\\PsyPhyOculusDemo.mrk";
 		fOutputDebugString( "Writing CODA data to %s.\n", filename );
 		FILE *fp = fopen( filename, "w" );
 		if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );

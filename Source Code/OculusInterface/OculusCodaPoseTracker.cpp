@@ -47,7 +47,7 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 	currentState.visible = true;
 
 	// Open a file to output some debugging info.
-	char *filename = "OculusCodaPoseTracker.pse";
+	char *filename = "Log\\OculusCodaPoseTracker.pse";
 	fp = fopen( filename, "w" );
 	if ( !fp ) {
 		fOutputDebugString( "Error opening %s for writing.\n", filename );
