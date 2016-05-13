@@ -288,5 +288,5 @@ $RECYCLE.BIN/
 *.pse
 *.suo
 *.suo
-Source Code/GRASPonISS.suo
-Source Code/GRASPonISS.suo
+*/*.suo
+
