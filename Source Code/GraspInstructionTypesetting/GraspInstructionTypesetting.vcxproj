@@ -48,6 +48,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="GraspWelcome.html" />
     <None Include="GraspWelcome.md" />
     <None Include="Makefile.mak" />
     <None Include="readme.txt" />

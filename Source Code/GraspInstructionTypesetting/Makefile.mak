@@ -2,9 +2,11 @@ all: GraspWelcome.html
 
 PANDOC=pandoc.exe
 
-GraspWelcome.html: GraspWelcome.md
+all: GraspWelcome.html Latex.html
 
-%.html : %.md
-	echo Joe
-	echo $< -> $@
-	$(PANDOC) $(PANDOC_OPTIONS) $(PANDOC_HTML_OPTIONS) -o $@ $<
+.SUFFIXES: .html .md .tex
+.md.html:
+	$(PANDOC) $(PANDOC_OPTIONS) $(PANDOC_HTML_OPTIONS) -o $@ $?
+
+.tex.html:
+	$(PANDOC) $(PANDOC_OPTIONS) $(PANDOC_LATEX_OPTIONS) -o $@ $?

@@ -4,5 +4,6 @@
     <None Include="readme.txt" />
     <None Include="Makefile.mak" />
     <None Include="GraspWelcome.md" />
+    <None Include="GraspWelcome.html" />
   </ItemGroup>
 </Project>
