@@ -32,20 +32,20 @@ namespace Grasp {
 
 		class GraspGLObjects : public VectorsMixin {
 
-		private:
+		protected:
 		
 			// Textures that are used to decorate certain objects.
 			// These files have to be in the execution directory.
-			static const char *GraspGLObjects::wall_texture_bitmap;
-			static const char *GraspGLObjects::sky_texture_bitmap;
-			static const char *GraspGLObjects::references_texture_bitmap;
+			static const char *wall_texture_bitmap;
+			static const char *sky_texture_bitmap;
+			static const char *references_texture_bitmap;
 			
 			// Dimensions of the room.
-			static const double GraspGLObjects::room_radius;
-			static const double GraspGLObjects::room_length;
-			static const double GraspGLObjects::wall_thickness;
-			static const double GraspGLObjects::reference_bars;
-			static const double GraspGLObjects::reference_bar_radius;
+			static const double room_radius;
+			static const double room_length;
+			static const double wall_thickness;
+			static const double reference_bars;
+			static const double reference_bar_radius;
 
 			// Dimensions of objects in the room.
 			static const Vector3 head_shape;
