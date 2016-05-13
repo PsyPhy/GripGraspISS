@@ -43,10 +43,9 @@ const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -1500.0 };
 const double GraspGLObjects::target_ball_radius = 100.0;
 const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
 const int GraspGLObjects::target_balls = 3;
-const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length/2.0 };
+const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
 
 const double GraspGLObjects::finger_ball_radius = 10.0;
-
 const double GraspGLObjects::finger_length = 100.0;
 
 // Set up the lighting and material properties.
@@ -76,9 +75,12 @@ void GraspGLObjects::SetLighting( void ) {
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glClearColor( 0.0F, 0.0F, 0.0F, 1.0F );
 }
+
 void GraspGLObjects::CreateObjects( void ) {
+
 	SetLighting();
 	CreateTextures();
+
 	sky = CreateSky();
 	dark_sky = CreateDarkSky();
 	room = CreateRoom();
@@ -103,7 +105,6 @@ void GraspGLObjects::CreateTextures( void ) {
 
 Assembly *GraspGLObjects::CreateSky( void ) {
 	Assembly *sky = new Assembly();
-	//Box *box = new Box( room_radius * 2.2, room_radius * 2.2, room_length * 2.2 );
 	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
 	slab->SetTexture( sky_texture );
 	slab->SetPosition(0.0,0.0,-room_length/2.0);
@@ -114,7 +115,6 @@ Assembly *GraspGLObjects::CreateSky( void ) {
 
 Assembly *GraspGLObjects::CreateDarkSky( void ) {
 	Assembly *dark_sky = new Assembly();
-	//Box *box = new Box( room_radius * 2.2, room_radius * 2.2, room_length * 2.2 );
 	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
 	slab->SetPosition(0.0,0.0,-room_length/2.0);
 	dark_sky->AddComponent( slab );
@@ -174,11 +174,6 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 	// There are as many fingers as target balls. This could change.
 	static int fingers = target_balls-1;
 
-	// The fingers have a smaller radius than the target balls. When viewed from
-	// the subject's viewpoint they should subtend a similar amount of visual arc.
-	// I don't agree. In my opinion the hand feedback should have a dimension similar to hand in order to help the subject to "embody" it.
-	//static double finger_radius = target_ball_radius / 2.0;
-
 	// For some reason I set the spacing between fingers to be the same as the target ball radius.
 	// I don't remember why. This could change.
 	static double finger_spacing = finger_ball_radius*2;
@@ -187,6 +182,7 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 
 		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
 		Assembly *finger = new Assembly();
+
 		Sphere *sphere = new Sphere( finger_ball_radius );
 		sphere->SetPosition( 0.0, 0.0, 0.0 );
 		finger->AddComponent( sphere );
@@ -214,29 +210,19 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 	Assembly *projectiles = new Assembly();
 
 	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
-
-	// There are as many fingers as target balls. This could change.
-	static int fingers = target_balls-1;
-
-	// The fingers have a smaller radius than the target balls. When viewed from
-	// the subject's viewpoint they should subtend a similar amount of visual arc.
-	// I don't agree. In my opinion the hand feedback should have a dimension similar to hand in order to help the subject to "embody" it.
-	//static double finger_radius = target_ball_radius / 2.0;
+	static int fingers = target_balls - 1;
 
 	// For some reason I set the spacing between fingers to be the same as the target ball radius.
 	// I don't remember why. This could change.
-	static double finger_spacing = finger_ball_radius*2;
+	static double finger_spacing = finger_ball_radius * 2;
 
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 
-		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
-		//Assembly *finger = new Assembly();
 		Sphere *sphere = new Sphere( finger_ball_radius );
-		sphere->SetPosition( 0.0, 0.0, 0.0 );
-		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
+		// Create a color that varies as a function of the ball's position.
 		float color[4] = { 100.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		sphere->SetColor( color );
-		// Space the fingers vertically.
+		// Space the balls vertically.
 		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		projectiles->AddComponent( sphere );
 		
