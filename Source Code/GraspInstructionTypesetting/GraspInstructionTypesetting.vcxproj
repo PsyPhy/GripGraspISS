@@ -39,7 +39,7 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake Makefile.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake Makefile.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>rm *.html</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>GraspInstructionTypesetting.exe</NMakeOutput>
