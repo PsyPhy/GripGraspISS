@@ -16,9 +16,9 @@ using namespace Grasp;
 
 // Textures that are used to decorate certain objects.
 // These files have to be in the execution directory.
-const char *GraspGLObjects::wall_texture_bitmap = "Rockwall.bmp";
-const char *GraspGLObjects::references_texture_bitmap = "Metal.bmp";
-const char *GraspGLObjects::sky_texture_bitmap= "NightSky.bmp";
+const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
+const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
+const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
