@@ -12,7 +12,7 @@ namespace Grasp {
 
 		PsyPhy::OculusViewpoint *viewpoint;
 
-		
+		int projectileCounter;
 
 	public:
 

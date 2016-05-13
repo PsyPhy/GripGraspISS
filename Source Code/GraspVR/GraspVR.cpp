@@ -74,7 +74,13 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	// Create all the necessary VR rendering objects.
 	CreateObjects();
 
-	Projectile_Timer=-1;
+	// Set the objects where they belong.
+	target->SetPosition( 0.0, 0.0, - room_length );
+	tool->SetPosition( 0.0, 0.0, - 200.0 );
+	tiltPrompt->SetPosition( 0.0, 0.0, - room_length / 2.0 );
+
+	// Initialize state of the projectile.
+	projectileCounter = -1;
 
 }
 
@@ -115,15 +121,7 @@ void GraspVR::DebugLoop( void ) {
 	PsyPhy::PoseTracker *headPoseTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
 	fAbortMessageOnCondition( !headPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
 
-	//procedure to move the projectiles
-	if (Projectile_Timer>=0 && Projectile_Timer<=1000){
-		Projectile_Timer++;
-		Init_Projectile_Position[2]=Init_Projectile_Position[2]-1;
-		projectiles->SetPosition(Init_Projectile_Position);
-	}else{
-		Projectile_Timer=-1;
-	}
-
+	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay.HandleMessages() ) {
 
 		// Boresight the Oculus tracker on 'B'.
@@ -150,11 +148,21 @@ void GraspVR::DebugLoop( void ) {
 		// Show the tilt prompt.
 		if ( oculusDisplay.Key['P'] ) tiltPrompt->Enable();
 
+		// Trigger the projectiles.
 		if ( oculusDisplay.Key[VK_SPACE]) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
-			projectiles->enabled = true;
-			Projectile_Timer=0;
-			CopyVector(Init_Projectile_Position,tool->position);
-			//projectiles->SetPosition(tool->position);
+			projectiles->Enable();
+			projectileCounter = 0;
+			projectiles->SetPosition( tool->position );
+		}
+		// If the projectiles have been triggered, move them forward in depth.
+		if ( projectileCounter >= 0 && projectileCounter <= 1000 ){
+			projectileCounter++;
+			projectiles->SetPosition( projectiles->position[X], projectiles->position[Y], projectiles->position[Z] - 10.0 );
+		}
+		// If the projectiles have reached the end of their trajectory, return them to the cocked state.
+		else{
+			projectileCounter = -1;
+			projectiles->Disable();
 		}
 
 		// Perform any periodic updating that the head tracker might require.
