@@ -2,7 +2,7 @@ all: GraspWelcome.html
 
 PANDOC=pandoc.exe
 
-all: GraspWelcome.html Latex.html
+all: GraspWelcome.html 
 
 .SUFFIXES: .html .md .tex
 .md.html:
