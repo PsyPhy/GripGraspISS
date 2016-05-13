@@ -131,21 +131,24 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay.Key['B'] ) headPoseTracker->BoresightCurrent();
 		if ( oculusDisplay.Key['U'] ) headPoseTracker->Unboresight();
 
-
+		// Disable drawing of all objects.
 		if ( oculusDisplay.Key['O'] ) {
-			target->enabled = false;
-			tool->enabled = false;
-			tiltPrompt->enabled = false;
-			dark_sky->enabled = false;
-			projectiles->enabled = false;
+			target->Disable();
+			tool->Disable();
+			tiltPrompt->Disable();
+			dark_sky->Disable();
+			projectiles->Disable();
 		}
+		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay.Key['T'] ) {
-			target->enabled = true;
-			sky->enabled = false;
-			dark_sky->enabled = true;
+			target->Enable();
+			sky->Disable();
+			dark_sky->Enable();
 		}
-		if ( oculusDisplay.Key['H'] ) tool->enabled = true;
-		if ( oculusDisplay.Key['P'] ) tiltPrompt->enabled = true;
+		// Show the hand/tool.
+		if ( oculusDisplay.Key['H'] ) tool->Enable();
+		// Show the tilt prompt.
+		if ( oculusDisplay.Key['P'] ) tiltPrompt->Enable();
 
 		if ( oculusDisplay.Key[VK_SPACE]) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
 			projectiles->enabled = true;
