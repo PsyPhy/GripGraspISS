@@ -287,6 +287,8 @@ void GraspGLObjects::DrawDarkSky( void ) {
 }
 
 void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
+	// If the caller has specified a pose, move the room to that pose first.
+	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
 		room->SetPosition( pose->position );
 		room->SetOrientation( pose->orientation );
@@ -295,6 +297,8 @@ void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
 }
 
 void GraspGLObjects::DrawTarget( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
 		target->SetPosition( pose->position );
 		target->SetOrientation( pose->orientation );
@@ -303,25 +307,28 @@ void GraspGLObjects::DrawTarget( TrackerPose *pose ) {
 }
 
 void GraspGLObjects::DrawTool( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
 		tool->SetPosition( pose->position );
 		tool->SetOrientation( pose->orientation );
-	}else{
-		tool->SetPosition( 0.0, 0.0, -500.0 );
 	}
 	tool->Draw();
 }
 
 void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
-		if ( pose != nullptr ) {
-			projectiles->SetPosition( pose->position );
-			projectiles->SetOrientation( pose->orientation );
-		}else{
-			projectiles->SetPosition( 0.0, 0.0, -room_length/2.0 );
-		}
-		projectiles->Draw();
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
+	if ( pose != nullptr ) {
+		projectiles->SetPosition( pose->position );
+		projectiles->SetOrientation( pose->orientation );
+	}
+	projectiles->Draw();
 }
+
 void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
 		tiltPrompt->SetPosition( pose->position );
 		tiltPrompt->SetOrientation( pose->orientation );
