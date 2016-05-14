@@ -10,7 +10,7 @@ using namespace PsyPhy;
 
 // A texture that is used to decorate the walls of the room.
 // This file has to be in the execution directory.
-char *wall_texture_bitmap_filename = "Bmp\\lime.bmp";
+char *wall_texture_bitmap_filename = "Bmp\\Rockwall.bmp";
 
 OculusViewpoint *viewpoint;
 Assembly	*tool;

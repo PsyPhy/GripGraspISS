@@ -9,9 +9,9 @@ Joe McIntyre
 *****************************************************************************/
 
 // Flags to set the operating mode.
-static bool useOVR = false;		// OVR style rendering.
-static bool usePsyPhy = true;	// PsyPhy style rendering.
-static bool useCoda = false;	// Do we have a Coda?
+bool useOVR = false;		// OVR style rendering.
+bool usePsyPhy = true;	// PsyPhy style rendering.
+bool useCoda = false;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -164,15 +164,15 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 			hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing hmdCodaPoseTracker[%d].", unit );
-			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "HMD.bdy" );
+			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
 			hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
 			handCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing toolCodaPoseTracker[%d].", unit );
-			handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Hand.bdy" );
+			handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
 			handCascadeTracker->AddTracker( handCodaPoseTracker[unit] );
 			chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing torsoCodaPoseTracker[%d].", unit );
-			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Chest.bdy" );
+			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
 			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
 		// Create a pose tracker that combines Coda and Oculus data.
