@@ -16,7 +16,17 @@
 #include "GL/CAPI_GLE.h"
 #include "Extras/OVR_Math.h"
 
+// Oculus had this in the include file, but that is bad practice because it gets included everywhere.
+// I comment it out here and qualify the names with OVR:: as needed.
 //using namespace OVR;
+
+// Here I define indices into the Button map of OculusDisplayOGL defined below.
+// It is a little dangerous because the names are so generic. But I don't see any
+// warnings about redefinitions as of yet.
+#define MOUSE_LEFT	1
+#define MOUSE_MIDDLE 2
+#define MOUSE_RIGHT 3
+
 
 #ifndef VALIDATE
     #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusWIN32", MB_ICONERROR | MB_OK); exit(-1); }
@@ -197,6 +207,7 @@ struct OculusDisplayOGL
     OVR::GLEContext         GLEContext;
     bool                    Running;
     bool                    Key[256];
+	bool					Button[256];	
     int                     WinSizeW;
     int                     WinSizeH;
     GLuint                  fboId;
@@ -207,6 +218,26 @@ struct OculusDisplayOGL
         OculusDisplayOGL *p = reinterpret_cast<OculusDisplayOGL *>(GetWindowLongPtr(hWnd, 0));
         switch (Msg)
         {
+
+		case WM_LBUTTONDOWN:
+			p->Button[MOUSE_LEFT] = true;
+			break;
+		case WM_LBUTTONUP:
+			p->Button[MOUSE_LEFT] = false;
+			break;
+		case WM_MBUTTONDOWN:
+			p->Button[MOUSE_MIDDLE] = true;
+			break;
+		case WM_MBUTTONUP:
+			p->Button[MOUSE_MIDDLE] = false;
+			break;
+		case WM_RBUTTONDOWN:
+			p->Button[MOUSE_RIGHT] = true;
+			break;
+		case WM_RBUTTONUP:
+			p->Button[MOUSE_RIGHT] = false;
+			break;
+
         case WM_KEYDOWN:
             p->Key[wParam] = true;
             break;
