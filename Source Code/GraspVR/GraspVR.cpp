@@ -134,7 +134,7 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay.Key['U'] ) headPoseTracker->Unboresight();
 
 		// Disable drawing of all objects.
-		if ( oculusDisplay.Key['O'] ) {
+		if ( oculusDisplay.Key[VK_SPACE] ) {
 			target->Disable();
 			tool->Disable();
 			tiltPrompt->Disable();
@@ -153,7 +153,7 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay.Key['P'] ) tiltPrompt->Enable();
 
 		// Trigger the projectiles.
-		if ( oculusDisplay.Key[VK_SPACE]) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
+		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] ) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
 			projectiles->Enable();
 			projectileCounter = 0;
 			projectiles->SetPosition( tool->position );
