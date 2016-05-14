@@ -215,9 +215,24 @@ struct OculusDisplayOGL
     GLuint                  fboId;
     HINSTANCE               hInstance;
 
+	static const int MARGIN = 100;
+	int       pointerLastX;
+	int       pointerLastY;
+	int       mouseDeltaX;
+	int       mouseDeltaY;
+
+
     static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
     {
         OculusDisplayOGL *p = reinterpret_cast<OculusDisplayOGL *>(GetWindowLongPtr(hWnd, 0));
+
+		// Variables used to handle mouse movements.
+		union {
+			unsigned long   param;
+			unsigned short  word[2];
+		} unpack;
+		int mouse_x, mouse_y;
+
         switch (Msg)
         {
 
@@ -246,6 +261,79 @@ struct OculusDisplayOGL
         case WM_KEYUP:
             p->Key[wParam] = false;
             break;
+
+		case WM_MOUSEMOVE:
+
+			// Here we handle movements of the mouse. We want to keep focus in the window so when the pointer gets close
+			// to the edge of the window, we warp it to the other edge. And we keep track of how much the mouse has moved
+			// in each direction. This can be used, for instance, to adjust values up and down. What I don't remember is 
+			// how the delta movements are reset to 0, if ever.
+
+			unpack.param = lParam;
+			mouse_x = unpack.word[0];
+			mouse_y = unpack.word[1];
+
+			// In my previous version the user had to press the Left button to affect the tracked delta movement of the mouse.
+			// Here I am experimenting between that and always tracking the movement in a way that depends if we requested
+			// fullscreen mode or not.
+			if ( wParam == MK_LBUTTON || p->fullscreen ) {
+
+				p->mouseDeltaX = mouse_x - p->pointerLastX;
+				p->mouseDeltaY = mouse_y - p->pointerLastY;
+
+				if ( mouse_x < MARGIN ) {
+					POINT point;
+					RECT rect;
+					GetCursorPos( &point );
+					GetWindowRect( hWnd, &rect );
+					int delta = rect.right - 2 * MARGIN - point.x;
+					p->pointerLastX += delta;
+					SetCursorPos( rect.right - 2 * MARGIN, point.y );
+					return 0;
+				}
+				if ( mouse_x > p->WinSizeW -  MARGIN ) {
+					POINT point;
+					RECT rect;
+					GetCursorPos( &point );
+					GetWindowRect( hWnd, &rect );
+					int delta = rect.left + 2 * MARGIN - point.x;
+					p->pointerLastX += delta;
+					SetCursorPos( rect.left + 2 * MARGIN, point.y );
+					return 0;
+				}
+
+				if ( mouse_y < MARGIN ) {
+					POINT point;
+					RECT rect;
+					GetCursorPos( &point );
+					GetWindowRect( hWnd, &rect );
+					int delta = rect.bottom - 2 * MARGIN - point.y;
+					p->pointerLastY += delta;
+					SetCursorPos( point.x, rect.bottom - 2 * MARGIN );
+					return 0;
+				}
+				if ( mouse_y > p->WinSizeH -  MARGIN ) {
+					POINT point;
+					RECT rect;
+					GetCursorPos( &point );
+					GetWindowRect( hWnd, &rect );
+					int delta = rect.top + 2 * MARGIN - point.y;
+					p->pointerLastY += delta;
+					SetCursorPos( point.x, rect.top + 2 * MARGIN );
+					return 0;
+				}
+
+				p->pointerLastX = mouse_x;
+				p->pointerLastY = mouse_y;
+
+			}
+			else {
+				p->pointerLastX = mouse_x;
+				p->pointerLastY = mouse_y;
+			}
+			return 0;
+			break;          
+
         case WM_DESTROY:
             p->Running = false;
             break;
