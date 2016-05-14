@@ -24,8 +24,8 @@ void OculusViewpoint::Apply( int eye ) {
 	// Set the size of the viewport into GL. The OVR system creates a bitmap of this size for each eye.
 	// Again, these constants are empirically drawn from a DK2 sample program.
 	// They could probably be retrieved via the OVR system.
-	int eye_buffer_width = 1162;
-	int eye_buffer_height = 1464;
+	int eye_buffer_width = oculusMapper->idealTextureSize.w;
+	int eye_buffer_height = oculusMapper->idealTextureSize.h;
 	double aspect = (double) eye_buffer_width / (double) eye_buffer_height;
 	
 	switch( eye ) {

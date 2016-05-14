@@ -1,5 +1,11 @@
 #define PRESUMED_SAME_FRAME_THRESHOLD 0.0025
 
+// Sets how many rendered pixels per actual screen pixel.
+// Set this to 1 for normal operation.
+// Set it to 0.5 if you are having trouble keeping up the frame rate.
+
+static const float pixelsPerDisplayPixel = 1.0f;
+
 class OculusMapper
 {
 
@@ -13,6 +19,7 @@ public:
     DepthBuffer			*eyeDepthBuffer[2];
     ovrGLTexture		*mirrorTexture;
     GLuint				 mirrorFBO;
+	ovrSizei			idealTextureSize;
 
 	ovrHmd				HMD;
 	ovrGraphicsLuid		luid;
@@ -53,7 +60,7 @@ public:
 		// Make eye render buffers
 		for (int eye = 0; eye < 2; ++eye)
 		{
-			ovrSizei idealTextureSize = ovr_GetFovTextureSize(HMD, ovrEyeType(eye), hmdDesc.DefaultEyeFov[eye], 1);
+			idealTextureSize = ovr_GetFovTextureSize(HMD, ovrEyeType(eye), hmdDesc.DefaultEyeFov[eye], pixelsPerDisplayPixel );
 			eyeRenderTexture[eye] = new TextureBuffer(HMD, true, true, idealTextureSize, 1, NULL, 1);
 			eyeDepthBuffer[eye]   = new DepthBuffer(eyeRenderTexture[eye]->GetSize(), 0);
 
