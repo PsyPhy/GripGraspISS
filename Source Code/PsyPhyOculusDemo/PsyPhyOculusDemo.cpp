@@ -122,7 +122,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper.Initialize( platform );
+	result = oculusMapper.Initialize( platform, false );
 	if ( OVR_FAILURE ( result ) ) return result;
 
 	// Create a pose tracker that uses only the Oculus.
@@ -369,7 +369,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
 
 	// Initialize the Oculus-enabled Windows platform.
-    fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus"), "PsyPhyOculus", "Failed to open window." );
+    fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", false ), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
 	if ( useCoda ) {

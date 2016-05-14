@@ -202,6 +202,8 @@ struct OculusDisplayOGL
     static const bool       UseDebugContext = false;
 
     HWND                    Window;
+	UINT					WindowStyle;
+	bool					fullscreen;
     HDC                     hDC;
     HGLRC                   WglContext;
     OVR::GLEContext         GLEContext;
@@ -259,6 +261,8 @@ struct OculusDisplayOGL
 
     OculusDisplayOGL() :
         Window(nullptr),
+		WindowStyle( WS_OVERLAPPEDWINDOW ),
+		fullscreen(false),
         hDC(nullptr),
         WglContext(nullptr),
         GLEContext(),
@@ -270,6 +274,7 @@ struct OculusDisplayOGL
     {
 		// Clear input
 		for (int i = 0; i < sizeof(Key) / sizeof(Key[0]); ++i) Key[i] = false;
+		for (int i = 0; i < sizeof(Button) / sizeof(Button[0]); ++i) Button[i] = false;
     }
 
     ~OculusDisplayOGL()
@@ -278,10 +283,15 @@ struct OculusDisplayOGL
         CloseWindow();
     }
 
-    bool InitWindow(HINSTANCE hInst, LPCWSTR title)
+    bool InitWindow( HINSTANCE hInst, LPCWSTR title, bool fullscreen )
     {
+
         hInstance = hInst;
         Running = true;
+
+		this->fullscreen = fullscreen;
+		if ( fullscreen ) WindowStyle = WS_POPUP;
+		else WindowStyle = WS_OVERLAPPEDWINDOW;
 
         WNDCLASSW wc;
         memset(&wc, 0, sizeof(wc));
@@ -292,8 +302,9 @@ struct OculusDisplayOGL
         wc.lpszClassName = L"ORT";
         RegisterClassW(&wc);
 
-        // adjust the window size and show at InitDevice time
-        Window = CreateWindowW(wc.lpszClassName, title, WS_OVERLAPPEDWINDOW, 0, 0, 0, 0, 0, 0, hInstance, 0);
+		// Create a window with no size.
+        // We will adjust the window size and show it in InitDevice().
+		Window = CreateWindowW(wc.lpszClassName, title, WindowStyle, 0, 0, 0, 0, 0, 0, hInstance, 0);
         if (!Window) return false;
 
         SetWindowLongPtr(Window, 0, LONG_PTR(this));
@@ -319,16 +330,16 @@ struct OculusDisplayOGL
     }
 
     // Note: currently there is no way to get GL to use the passed pLuid
-    bool InitDevice(int vpW, int vpH, const LUID* /*pLuid*/, bool windowed = true)
+    bool InitDevice( int vpW, int vpH, const LUID* pLuid = nullptr )
     {
-        WinSizeW = vpW;
-        WinSizeH = vpH;
 
-        RECT size = { 0, 0, vpW, vpH };
-        AdjustWindowRect(&size, WS_OVERLAPPEDWINDOW, false);
+		WinSizeW = vpW;
+		WinSizeH = vpH;
+
+        RECT size = { 0, 0, WinSizeW, WinSizeH };
+        AdjustWindowRect( &size, WindowStyle, false );
         const UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW;
-        if (!SetWindowPos(Window, nullptr, 0, 0, size.right - size.left, size.bottom - size.top, flags))
-            return false;
+        if ( !SetWindowPos(Window, nullptr, 0, 0, size.right - size.left, size.bottom - size.top, flags)) return false;
 
         PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARBFunc = nullptr;
         PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARBFunc = nullptr;

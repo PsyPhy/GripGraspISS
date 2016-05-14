@@ -39,17 +39,21 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	ovrResult result;
 
+	// Decide if we are in full screen mode or not.
+	// To avoid loosing focus by clicking outside the desktop window it is best to be in fullscreen mode.
+	static const bool fullscreen = true;
+
    // Initializes LibOVR, and the Rift
     OVR::System::Init();
     result = ovr_Initialize( nullptr );
     fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
 	// Initialize the Oculus-enabled Windows platform.
-	result = oculusDisplay.InitWindow( hinst, L"GraspVR");
+	result = oculusDisplay.InitWindow( hinst, L"GraspVR", fullscreen );
     fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper.Initialize( &oculusDisplay );
+	result = oculusMapper.Initialize( &oculusDisplay, fullscreen );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
 	// Set up a default GL rendering context.

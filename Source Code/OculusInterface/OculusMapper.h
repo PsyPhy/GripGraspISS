@@ -42,7 +42,7 @@ public:
 	~OculusMapper ()
 	{}
 
-	ovrResult Initialize ( OculusDisplayOGL *display ) {
+	ovrResult Initialize ( OculusDisplayOGL *display, bool fullscreen ) {
 
 		this->display = display;
 		this->HMD = HMD;
@@ -53,9 +53,17 @@ public:
 		hmdDesc = ovr_GetHmdDesc(HMD);
 
 		// Setup Window and Graphics
-		// Note: the mirror window can be any size, for this sample we use 1/2 the HMD resolution
-		ovrSizei windowSize = { hmdDesc.Resolution.w / 2, hmdDesc.Resolution.h / 2 };
-		if ( !display->InitDevice( windowSize.w, windowSize.h, reinterpret_cast<LUID*>(&luid)) ) return ovrError_Initialize;
+		ovrSizei windowSize;
+		if ( fullscreen ) {
+			windowSize.w = 1920;
+			windowSize.h = 1080;
+		}
+		else {
+			// Note: the mirror window can be any size, for this sample we use 1/2 the HMD resolution
+			windowSize.w = hmdDesc.Resolution.w / 2;
+			windowSize.h = hmdDesc.Resolution.h / 2;
+		}
+		if ( !display->InitDevice( windowSize.w, windowSize.h, reinterpret_cast<LUID*>(&luid) ) ) return ovrError_Initialize;
 
 		// Make eye render buffers
 		for (int eye = 0; eye < 2; ++eye)
