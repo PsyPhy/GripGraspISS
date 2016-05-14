@@ -23,9 +23,10 @@ const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
 const double GraspGLObjects::room_length = 5000.0;
-const double GraspGLObjects::wall_thickness = 10.0;
+const int GraspGLObjects::room_facets = 16;
 const double GraspGLObjects::reference_bars = 5;
 const double GraspGLObjects::reference_bar_radius = 50.0;
+const double GraspGLObjects::reference_bar_facets = 8;
 
 // Dimensions of objects in the room;
 
@@ -129,14 +130,14 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	room->SetColor( BLACK );
 
 	//Tunnel Plus references
-	Cylinder *tunnel = new Cylinder( room_radius, room_radius, room_length );
+	Cylinder *tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
 	room->AddComponent( tunnel );
 
 	for (int i=0; i < reference_bars; i++ ){ 
-		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length );
+		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length, reference_bar_facets );
 		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );

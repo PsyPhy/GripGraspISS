@@ -43,9 +43,10 @@ namespace Grasp {
 			// Dimensions of the room.
 			static const double room_radius;
 			static const double room_length;
-			static const double wall_thickness;
+			static const int room_facets;
 			static const double reference_bars;
 			static const double reference_bar_radius;
+			static const double reference_bar_facets;
 
 			// Dimensions of objects in the room.
 			static const Vector3 head_shape;
