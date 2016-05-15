@@ -27,6 +27,9 @@
 #define MOUSE_MIDDLE 2
 #define MOUSE_RIGHT 3
 
+#ifndef UNDEFINED
+#define UNDEFINED -1
+#endif 
 
 #ifndef VALIDATE
     #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusWIN32", MB_ICONERROR | MB_OK); exit(-1); }
@@ -220,6 +223,8 @@ struct OculusDisplayOGL
 	int       pointerLastY;
 	int       mouseDeltaX;
 	int       mouseDeltaY;
+	int       mouseCumulativeX;
+	int       mouseCumulativeY;
 
 
     static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
@@ -278,8 +283,16 @@ struct OculusDisplayOGL
 			// fullscreen mode or not.
 			if ( wParam == MK_LBUTTON || p->fullscreen ) {
 
+				// If this is the fist event we need to establish the reference point for mouseDeltaX and mouseDeltaY.
+				if ( p->pointerLastX == UNDEFINED ) {
+					p->pointerLastX = mouse_x;
+					p->pointerLastY = mouse_y;
+				}
+
 				p->mouseDeltaX = mouse_x - p->pointerLastX;
 				p->mouseDeltaY = mouse_y - p->pointerLastY;
+				p->mouseCumulativeX += p->mouseDeltaX;
+				p->mouseCumulativeY += p->mouseDeltaY;
 
 				if ( mouse_x < MARGIN ) {
 					POINT point;
@@ -348,6 +361,8 @@ struct OculusDisplayOGL
     }
 
     OculusDisplayOGL() :
+
+        hInstance(nullptr),
         Window(nullptr),
 		WindowStyle( WS_OVERLAPPEDWINDOW ),
 		fullscreen(false),
@@ -358,7 +373,13 @@ struct OculusDisplayOGL
         WinSizeW(0),
         WinSizeH(0),
         fboId(0),
-        hInstance(nullptr)
+		mouseDeltaX(0),
+		mouseDeltaY(0),
+		mouseCumulativeX(0),
+		mouseCumulativeY(0),
+		pointerLastX( UNDEFINED ),
+		pointerLastY( UNDEFINED )
+
     {
 		// Clear input
 		for (int i = 0; i < sizeof(Key) / sizeof(Key[0]); ++i) Key[i] = false;
