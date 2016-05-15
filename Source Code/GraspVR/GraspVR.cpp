@@ -43,6 +43,8 @@ static OculusMapper oculusMapper;
 
 void GraspVR::Initialize( HINSTANCE hinst ) {
 
+	renderer = new GraspGLObjects();
+
 	InitializeVR( hinst );
 	InitializeTrackers();
 
@@ -104,15 +106,18 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create all the necessary VR rendering objects.
-	CreateObjects();
+	renderer->CreateVRObjects();
+	// Set the objects that don't move they belong.
+	renderer->PlaceVRObjects();
 
-	// Set the objects where they belong.
-	target->SetPosition( 0.0, 0.0, - room_length );
-	tool->SetPosition( 0.0, 0.0, - 200.0 );
-	tiltPrompt->SetPosition( 0.0, 0.0, - room_length / 2.0 );
-
-	// Initialize state of the projectiles.
-	projectiles->Disable();
+	// Initialize state of the objects.
+	renderer->lightSky->Enable();
+	renderer->darkSky->Disable();
+	renderer->room->Enable();
+	renderer->target->Disable();
+	renderer->tiltPrompt->Disable();
+	renderer->tool->Disable();
+	renderer->projectiles->Disable();
 
 }
 
@@ -125,26 +130,6 @@ void GraspVR::Release( void ) {
 	oculusDisplay.ReleaseDevice();
 
 }
-
-// Draw the objects that are used during VR rendering.
-// Note that only those objects that are currently active are actually drawn.
-void GraspVR::Draw( void ) {
-
-	// I am still trying to get specular reflections to work.
-	glUsefulDefaultSpecularLighting( 0.7 );
-	glUsefulMatteMaterial();
-
-	DrawSky();
-	DrawDarkSky();
-	DrawRoom();
-
-	glUsefulShinyMaterial();
-	DrawTarget();
-	DrawTiltPrompt();
-	DrawTool();
-	DrawProjectiles();
-}
-
 
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
@@ -171,7 +156,7 @@ void GraspVR::DebugLoop( void ) {
 			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 		}
 		else {
-			tool->SetPose( handPose.pose );
+			renderer->tool->SetPose( handPose.pose );
 		}
 
 		// Boresight the Oculus tracker on 'B'.
@@ -181,39 +166,40 @@ void GraspVR::DebugLoop( void ) {
 
 		// Disable drawing of all objects.
 		if ( oculusDisplay.Key[VK_SPACE] ) {
-			target->Disable();
-			tool->Disable();
-			tiltPrompt->Disable();
-			dark_sky->Disable();
-			projectiles->Disable();
+			renderer->target->Disable();
+			renderer->tool->Disable();
+			renderer->tiltPrompt->Disable();
+			renderer->darkSky->Disable();
+			renderer->projectiles->Disable();
+			renderer->lightSky->Enable();
 		}
 		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay.Key['T'] ) {
-			target->Enable();
-			sky->Disable();
-			dark_sky->Enable();
+			renderer->target->Enable();
+			renderer->lightSky->Disable();
+			renderer->darkSky->Enable();
 		}
 		// Show the hand/tool.
-		if ( oculusDisplay.Key['H'] ) tool->Enable();
+		if ( oculusDisplay.Key['H'] ) renderer->tool->Enable();
 		// Show the tilt prompt.
-		if ( oculusDisplay.Key['P'] ) tiltPrompt->Enable();
+		if ( oculusDisplay.Key['P'] ) renderer->tiltPrompt->Enable();
 
 		// Trigger the projectiles, but only if it is not already triggered.
-		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !projectiles->enabled ) { 
+		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !renderer->projectiles->enabled ) { 
 			// Position the projectiles where the tool is now.
-			projectiles->SetPosition( tool->position );
-			projectiles->SetOrientation( tool->orientation );
+			renderer->projectiles->SetPosition( renderer->tool->position );
+			renderer->projectiles->SetOrientation( renderer->tool->orientation );
 			// Make the projectiles visible.
-			projectiles->Enable();
+			renderer->projectiles->Enable();
 			// Hide the tool.
-			tool->Disable();
+			renderer->tool->Disable();
 		}
-		else if ( projectiles->position[Z] < - room_length / 2.0 ) {
-			projectiles->Disable();
+		else if ( renderer->projectiles->position[Z] < renderer->target->position[Z] ) {
+			renderer->projectiles->Disable();
 		}
-		else if ( projectiles->enabled ) {
+		else if ( renderer->projectiles->enabled ) {
 			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
-			projectiles->SetPosition( projectiles->position[X], projectiles->position[Y], projectiles->position[Z] - 10.0 );
+			renderer->projectiles->SetPosition( renderer->projectiles->position[X], renderer->projectiles->position[Y], renderer->projectiles->position[Z] - 10.0 );
 		}
 
 		// Perform any periodic updating that the trackers might require.
@@ -233,7 +219,7 @@ void GraspVR::DebugLoop( void ) {
 			// Set up the viewing transformations.
 			viewpoint->Apply( eye );
 			// Draw the objects in the world.
-			Draw();
+			renderer->DrawVR();
 			// Take care of an Oculus bug.
 			oculusMapper.DeselectEye( eye );
  

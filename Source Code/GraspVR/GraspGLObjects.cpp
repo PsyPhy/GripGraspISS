@@ -77,25 +77,7 @@ void GraspGLObjects::SetLighting( void ) {
 	glClearColor( 0.0F, 0.0F, 0.0F, 1.0F );
 }
 
-void GraspGLObjects::CreateObjects( void ) {
 
-	SetLighting();
-	CreateTextures();
-
-	sky = CreateSky();
-	dark_sky = CreateDarkSky();
-	room = CreateRoom();
-
-	target = CreateTarget();
-	target->SetPosition( target_location );
-	tiltPrompt = CreateTiltPrompt();
-	tiltPrompt->SetPosition( prompt_location );
-
-	tool = CreateTool();
-	projectiles = CreateProjectiles();
-	head = CreateHead();
-	torso = CreateTorso();
-}
 void GraspGLObjects::CreateTextures( void ) {
 	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
 	// The wall texture is 256 pixels wide by 512 high.
@@ -258,19 +240,64 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 }
 
+void GraspGLObjects::CreateVRObjects( void ) {
+
+	SetLighting();
+	CreateTextures();
+
+	lightSky = CreateSky();
+	darkSky = CreateDarkSky();
+	room = CreateRoom();
+
+	target = CreateTarget();
+	target->SetPosition( target_location );
+	tiltPrompt = CreateTiltPrompt();
+	tiltPrompt->SetPosition( prompt_location );
+
+	tool = CreateTool();
+	projectiles = CreateProjectiles();
+}
+
+void GraspGLObjects::PlaceVRObjects( void ) {
+	target->SetPosition( 0.0, 0.0, - room_length );
+	tool->SetPosition( 0.0, 0.0, - 200.0 );
+	tiltPrompt->SetPosition( 0.0, 0.0, - room_length / 2.0 );
+}
+
+
+// Draw the objects that are used during VR rendering.
+// Note that only those objects that are currently active are actually drawn.
+void GraspGLObjects::DrawVR( void ) {
+
+	// I am still trying to get specular reflections to work.
+	glUsefulDefaultSpecularLighting( 0.7 );
+	glUsefulMatteMaterial();
+
+	DrawLightSky();
+	DrawDarkSky();
+	DrawRoom();
+
+	glUsefulShinyMaterial();
+	DrawTarget();
+	DrawTiltPrompt();
+	DrawTool();
+	DrawProjectiles();
+}
+
 // A set of routines that allows one to set the pose of the various objects and then draw them in 
 //  a single operation. This can be convenient, but it goes against the concept of objects having 
 //  a current, persistent state that includes its visibility and its pose. In many cases it will make
 //  more sense to access the objects directly with obj->SetPosition(), obj->SetOrientation(), obj->Draw(), etc.
 
+
 // Draw the sky, presumably alwas at the same position.
 // For Grasp, it might make more sense if it was attached to the room so that they tilt together.
-void GraspGLObjects::DrawSky( void ) {
-	sky->Draw();
+void GraspGLObjects::DrawLightSky( void ) {
+	lightSky->Draw();
 }
 
 void GraspGLObjects::DrawDarkSky( void ) {
-	dark_sky->Draw();
+	darkSky->Draw();
 }
 
 void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
@@ -364,6 +391,11 @@ Assembly *GraspGLObjects::CreateTorso( void ) {
 	torso->AddComponent( disk );
 	return torso;
 
+}
+
+void GraspGLObjects::CreateAuxiliaryObjects( void ) {
+	head = CreateHead();
+	torso = CreateTorso();
 }
 
 void GraspGLObjects::DrawHead( TrackerPose *pose ) {

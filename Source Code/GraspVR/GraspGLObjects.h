@@ -70,15 +70,17 @@ namespace Grasp {
 		public:
 
 			Assembly		*target;			// Shows the target orientation.
-			Assembly		*response;			// Shows the final response.
-			Assembly		*laserPointer;
 			Assembly		*tiltPrompt;
 
-			Assembly		*tool;				// An object that moves in the world.
-			Assembly		*projectiles;
-			Assembly		*sky;				// A background to be seen at the end of the tunnel.
-			Assembly		*dark_sky;
+			Assembly		*tool;				// An object that moves with the hand (or mouse in V-V).
+			// Assembly		*laserPointer;		// Shows the projection of where the tool is pointing. Not used yet.
+
+			Assembly		*projectiles;		// Object that flies out of the tool when triggered by the subject.
+			// Assembly		*response;			// Shows the final response. Not sure if this is to be used.
+
 			Assembly		*room;
+			Assembly		*lightSky;			// A background to be seen at the end of the tunnel.
+			Assembly		*darkSky;
 
 			Assembly		*head;
 			Assembly		*torso;
@@ -88,8 +90,14 @@ namespace Grasp {
 			GraspGLObjects( void ) {}
 
 			void CreateTextures( void );
-			void CreateObjects( void );
 			void SetLighting( void );
+
+			// Create all the objects needed for VR.
+			void CreateVRObjects( void );
+			// Place objects at default locations.
+			void PlaceVRObjects( void );
+			// Draw the VR objects. Only those that are currently active will be drawn.
+			void GraspGLObjects::DrawVR( void );
 
 			Assembly *CreateTool( void );
 			Assembly *CreateProjectiles(void);
@@ -98,17 +106,20 @@ namespace Grasp {
 			Assembly *CreateRoom( void );
 			Assembly *CreateSky( void );
 			Assembly *CreateDarkSky( void );
-			Assembly *CreateHead( void );
-			Assembly *CreateTorso( void );
 
 			void DrawTarget( TrackerPose *pose = nullptr );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
 			void DrawTool( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);
 			void DrawRoom( TrackerPose *pose = nullptr );
-			void DrawSky( void );
+			void DrawLightSky( void );
 			void DrawDarkSky( void);
 
+			// Objects that are not used for VR in the HMD, but may be used
+			// to create other 3D visual scenes.
+			void CreateAuxiliaryObjects( void );
+			Assembly *CreateHead( void );
+			Assembly *CreateTorso( void );
 			void DrawHead( TrackerPose *pose = nullptr );
 			void DrawTorso( TrackerPose *pose = nullptr );
 			void DrawBody( TrackerPose *pose = nullptr );

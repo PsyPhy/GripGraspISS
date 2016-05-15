@@ -60,7 +60,7 @@ int _tmain(int argc, char *argv[])
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	objects = new GraspGLObjects();
-	objects->CreateObjects();
+	objects->CreateVRObjects();
 
 	objects->tool->SetPosition( 0.0, 0.0, -1000.0 );
 	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
@@ -72,7 +72,7 @@ int _tmain(int argc, char *argv[])
 		glUsefulPrepareRendering();
 
 		viewpoint->Apply( window, CYCLOPS );
-		objects->DrawSky();
+		objects->DrawLightSky();
 		objects->DrawRoom();
 		objects->DrawTarget();
 		objects->DrawTiltPrompt();
