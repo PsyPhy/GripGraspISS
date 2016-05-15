@@ -6,6 +6,7 @@
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
+#include "../OculusInterface/MousePoseTrackers.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
 
@@ -13,6 +14,26 @@
 
 using namespace Grasp;
 using namespace PsyPhy;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// Parameters that can be set to tune the stimuli.
+//
+
+// How much the tool will turn for a given displacement of the mouse or trackball.
+const double GraspVR::mouseGain = - 0.001;
+// Where to place the tool when in V-V mode.
+Pose handPoseVV = {{0.0, 0.0, -200.0}, {0.0, 0.0, 0.0, 1.0}};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// Hardware Interface
+//
+
+// I don't remember why these are here as static global variables, instead of as 
+// static instance variables of the GraspVR class, but I don't want to spend time figuring it out.
 
 // Interface to OpenGL windows and HMD.
 static OculusDisplayOGL oculusDisplay;
@@ -32,6 +53,13 @@ void GraspVR::InitializeTrackers( void ) {
 	// Create a pose tracker that uses only the Oculus.
 	hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
 	fAbortMessageOnCondition( !hmdTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
+
+	// Create a mouse tracker to simulate movements of the hand.
+	handTracker = new PsyPhy::MouseRollPoseTracker( &oculusMapper, mouseGain );
+	// Set the position and orientation of the tool wrt the origin when in V-V mode.
+	// The MouseRollPoseTracker will then rotate the tool around this constant position.
+	handTracker->BoresightTo( handPoseVV );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
 
 }
 
@@ -121,12 +149,30 @@ void GraspVR::Draw( void ) {
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
 	
-	// Create a pose tracker that uses only the Oculus.
-	PsyPhy::PoseTracker *headPoseTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
-	fAbortMessageOnCondition( !headPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
-
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay.HandleMessages() ) {
+
+		// Get the position and orientation of the head and add them to the Player position and orientation.
+		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
+		// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
+		TrackerPose headPose;
+		if ( !hmdTracker->GetCurrentPose( headPose ) ) {
+			static int pose_error_counter = 0;
+			fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
+		}
+		else {
+			viewpoint->SetPose( headPose.pose );
+		}
+
+		// Track movements of the hand marker array.
+		TrackerPose handPose;
+		if ( !handTracker->GetCurrentPose( handPose ) ) {
+			static int pose_error_counter = 0;
+			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
+		}
+		else {
+			tool->SetPose( handPose.pose );
+		}
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -170,21 +216,10 @@ void GraspVR::DebugLoop( void ) {
 			projectiles->SetPosition( projectiles->position[X], projectiles->position[Y], projectiles->position[Z] - 10.0 );
 		}
 
-		// Perform any periodic updating that the head tracker might require.
-		fAbortMessageOnCondition( !headPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
+		// Perform any periodic updating that the trackers might require.
+		fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
+		fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
 		
-		// Get the position and orientation of the head and add them to the Player position and orientation.
-		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
-		// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-		PsyPhy::TrackerPose headPose;
-		if ( !headPoseTracker->GetCurrentPose( &headPose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
-		}
-		else {
-			viewpoint->SetOffset( headPose.position );
-			viewpoint->SetAttitude( headPose.orientation );
-		}
 
 		// Prepare the GL graphics state for drawing in a way that is compatible 
 		//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 

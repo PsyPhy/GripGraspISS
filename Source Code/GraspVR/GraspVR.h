@@ -10,15 +10,16 @@ namespace Grasp {
 
 	private:
 
-		PsyPhy::OculusViewpoint *viewpoint;
-
-		int projectileCounter;
-
 	public:
 
-		PsyPhy::PoseTracker *hmdTracker;
-		PsyPhy::PoseTracker *handTracker;
-		PsyPhy::PoseTracker *chestTracker;
+		static const double mouseGain;
+		static Pose trackerPoseVV;
+
+		OculusViewpoint *viewpoint;
+
+		PoseTracker *hmdTracker;
+		PoseTracker *handTracker;
+		PoseTracker *chestTracker;
 
 		GraspVR( void ) {}
 		~GraspVR( void ) {}
