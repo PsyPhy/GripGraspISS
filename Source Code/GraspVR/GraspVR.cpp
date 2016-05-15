@@ -130,8 +130,8 @@ void GraspVR::DebugLoop( void ) {
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
-		if ( oculusDisplay.Key['B'] ) headPoseTracker->BoresightCurrent();
-		if ( oculusDisplay.Key['U'] ) headPoseTracker->Unboresight();
+		if ( oculusDisplay.Key['B'] ) hmdTracker->Boresight();
+		if ( oculusDisplay.Key['U'] ) hmdTracker->Unboresight();
 
 		// Disable drawing of all objects.
 		if ( oculusDisplay.Key[VK_SPACE] ) {

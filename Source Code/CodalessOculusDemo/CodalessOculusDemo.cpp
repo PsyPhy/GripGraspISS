@@ -86,7 +86,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
-		if ( platform->Key['B'] ) headPoseTracker->BoresightCurrent();
+		if ( platform->Key['B'] ) headPoseTracker->Boresight();
 		if ( platform->Key['U'] ) headPoseTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
