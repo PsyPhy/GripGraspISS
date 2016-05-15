@@ -83,8 +83,8 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	tool->SetPosition( 0.0, 0.0, - 200.0 );
 	tiltPrompt->SetPosition( 0.0, 0.0, - room_length / 2.0 );
 
-	// Initialize state of the projectile.
-	projectileCounter = -1;
+	// Initialize state of the projectiles.
+	projectiles->Disable();
 
 }
 
@@ -152,21 +152,22 @@ void GraspVR::DebugLoop( void ) {
 		// Show the tilt prompt.
 		if ( oculusDisplay.Key['P'] ) tiltPrompt->Enable();
 
-		// Trigger the projectiles.
-		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] ) { // I used the spacebar because with this interface I cannot find the way to recover the mouse inputs yet
-			projectiles->Enable();
-			projectileCounter = 0;
+		// Trigger the projectiles, but only if it is not already triggered.
+		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !projectiles->enabled ) { 
+			// Position the projectiles where the tool is now.
 			projectiles->SetPosition( tool->position );
+			projectiles->SetOrientation( tool->orientation );
+			// Make the projectiles visible.
+			projectiles->Enable();
+			// Hide the tool.
+			tool->Disable();
 		}
-		// If the projectiles have been triggered, move them forward in depth.
-		if ( projectileCounter >= 0 && projectileCounter <= 1000 ){
-			projectileCounter++;
-			projectiles->SetPosition( projectiles->position[X], projectiles->position[Y], projectiles->position[Z] - 10.0 );
-		}
-		// If the projectiles have reached the end of their trajectory, return them to the cocked state.
-		else{
-			projectileCounter = -1;
+		else if ( projectiles->position[Z] < - room_length / 2.0 ) {
 			projectiles->Disable();
+		}
+		else if ( projectiles->enabled ) {
+			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
+			projectiles->SetPosition( projectiles->position[X], projectiles->position[Y], projectiles->position[Z] - 10.0 );
 		}
 
 		// Perform any periodic updating that the head tracker might require.
