@@ -27,11 +27,12 @@ void OculusViewpoint::Apply( int eye ) {
 	int eye_buffer_width = oculusMapper->idealTextureSize.w;
 	int eye_buffer_height = oculusMapper->idealTextureSize.h;
 	double aspect = (double) eye_buffer_width / (double) eye_buffer_height;
-	
+	// Use crop to speed up rendering. Not a nice solution.
+	int crop = 0;	
 	switch( eye ) {
 
 	case LEFT_EYE:
-		glViewport( 0, 0, eye_buffer_width, eye_buffer_height );
+		glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective( fov, aspect, nearest, farthest );
@@ -39,7 +40,7 @@ void OculusViewpoint::Apply( int eye ) {
 		break;
 
 	case  RIGHT_EYE:
-		glViewport( 0, 0, eye_buffer_width, eye_buffer_height );
+		glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective( fov, aspect, nearest, farthest );

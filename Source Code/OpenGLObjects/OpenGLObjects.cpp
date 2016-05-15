@@ -996,7 +996,7 @@ Cylinder::Cylinder( double top_radius, double bottom_radius, double height, int 
 void Cylinder::Draw( void ) {
 
 	double angle;
-	double deltaA = Pi / 30.0;
+	double deltaA = 2.0 * Pi / facets;
 
 	double x1, x2, x3, x4;
 	double y1, y2, y3, y4;

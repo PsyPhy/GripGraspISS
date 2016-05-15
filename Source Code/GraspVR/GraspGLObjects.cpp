@@ -23,7 +23,7 @@ const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
 const double GraspGLObjects::room_length = 5000.0;
-const int GraspGLObjects::room_facets = 16;
+const int GraspGLObjects::room_facets = 32;
 const double GraspGLObjects::reference_bars = 5;
 const double GraspGLObjects::reference_bar_radius = 50.0;
 const double GraspGLObjects::reference_bar_facets = 8;
@@ -68,7 +68,7 @@ void GraspGLObjects::SetLighting( void ) {
 	glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
 	glLightfv( GL_LIGHT0, GL_SPECULAR, LightSpecular );
 
-	glEnable(GL_LIGHT0);
+	glEnable( GL_LIGHT0 );
 
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
 	glEnable( GL_BLEND );
@@ -106,10 +106,10 @@ void GraspGLObjects::CreateTextures( void ) {
 
 Assembly *GraspGLObjects::CreateSky( void ) {
 	Assembly *sky = new Assembly();
-	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
-	slab->SetTexture( sky_texture );
-	slab->SetPosition(0.0,0.0,-room_length/2.0);
-	sky->AddComponent( slab );
+	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
+	patch->SetTexture( sky_texture );
+	patch->SetPosition(0.0,0.0,-room_length/2.0);
+	sky->AddComponent( patch );
 	sky->SetColor(WHITE);
 	return( sky );
 }
