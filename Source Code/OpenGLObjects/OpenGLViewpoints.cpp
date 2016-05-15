@@ -136,6 +136,12 @@ void Viewpoint::SetOrientation( double roll, double pitch, double yaw ) {
 
 }
 
+void Viewpoint::SetPose( Pose &pose ) {
+	SetPosition( pose.position );
+	SetOrientation( pose.orientation );
+}
+
+
 /********************************************************************************/
 
 // Viewpoints set the inverse as the rotation matrix.

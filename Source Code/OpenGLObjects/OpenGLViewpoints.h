@@ -61,6 +61,7 @@ public:
   void SetOrientation( Quaternion q );
   void SetOrientation( double angle, const double axis[3] );
   void SetOrientation( double roll, double pitch, double yaw );
+  void SetPose( Pose &pose );
 
   void SetOffset( double p[3] );
   void SetOffset( double x, double y, double z );
