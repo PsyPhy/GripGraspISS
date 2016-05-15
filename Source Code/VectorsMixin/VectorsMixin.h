@@ -54,6 +54,7 @@ public:
 	void CopyVector( Vector3f  destination, const Vector3f  source );
 
 	void CopyQuaternion( Quaternion destination, const Quaternion source );
+	void CopyPose( Pose &destination, const Pose &source );
 
 	void AddVectors( Vector3f result, const Vector3 a, const Vector3 b );
 	void AddVectors( Vector3f result, const Vector3f a, const Vector3f b );

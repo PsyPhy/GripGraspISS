@@ -169,6 +169,11 @@ void OpenGLObject::GetOrientation( Matrix3x3 m ) {
   CopyMatrix( m, orientation );
 }
 
+void OpenGLObject::SetPose( Pose &pose ) {
+	SetPosition( pose.position );
+	SetOrientation( pose.orientation );
+}
+
 // Set the attitude of an object when it is at it's zero orientation.
 
 void OpenGLObject::SetAttitude( Matrix3x3 m ) {

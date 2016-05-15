@@ -16,13 +16,13 @@
 
 using namespace PsyPhy;
 
-TrackerPose PsyPhy::NullTrackerPose = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}, true, 0.0};
+TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, true, 0.0};
 
 PoseTracker::~PoseTracker () {}
 
-// Boresight to a specified position and orientation.
-void PoseTracker::Boresight( TrackerPose *pose ) {
-	CopyTrackerPose( &nullPose, pose );
+// Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
+void PoseTracker::BoresightAt( const Pose &pose ) {
+	CopyPose( nullPose, pose );
 	nullPose.orientation[X] *= -1.0;
 	nullPose.orientation[Y] *= -1.0;
 	nullPose.orientation[Z] *= -1.0;
@@ -30,10 +30,20 @@ void PoseTracker::Boresight( TrackerPose *pose ) {
 }
 
 // Boresight so that the current position and orientation is the null position and orientation.
-bool PoseTracker::BoresightCurrent( void ) {
-	TrackerPose pose;
+bool PoseTracker::Boresight( void ) {
+	TrackerPose tpose;
 	bool success;
-	if ( success = GetCurrentPoseIntrinsic( &pose ) ) Boresight( &pose );
+	if ( success = GetCurrentPoseIntrinsic( tpose ) ) BoresightAt( tpose.pose );
+	return success;
+}
+
+// Boresight so that the current pose is now the specified pose.
+bool PoseTracker::BoresightTo( const Pose &pose ) {
+	bool success;
+	if ( success = Boresight() ) {
+		MultiplyQuaternions( nullPose.orientation, nullPose.orientation, pose.orientation );
+		AddVectors( nullPose.position, nullPose.position, pose.position );
+	}
 	return success;
 }
 
@@ -45,42 +55,44 @@ void PoseTracker::Unboresight( void ) {
 
 bool PoseTracker::GetCurrentPosition( Vector3 position ) {
 	TrackerPose pose;
-	GetCurrentPose( &pose );
-	CopyVector( position, pose.position );
+	GetCurrentPose( pose );
+	CopyVector( position, pose.pose.position );
 	return( pose.visible );
 }
 bool PoseTracker::GetCurrentOrientation( Quaternion orientation ) {
-	TrackerPose pose;
-	GetCurrentPose( &pose );
-	CopyVector( orientation, pose.orientation );
+	TrackerPose tpose;
+	GetCurrentPose( tpose );
+	CopyVector( orientation, tpose.pose.orientation );
+	return( tpose.visible );
+}
+bool PoseTracker::GetCurrentPose( TrackerPose &pose ) {
+	TrackerPose intrinsic_pose;
+	GetCurrentPoseIntrinsic( intrinsic_pose );
+	MultiplyQuaternions( pose.pose.orientation,  nullPose.orientation, intrinsic_pose.pose.orientation );
+	AddVectors( pose.pose.position, intrinsic_pose.pose.position, nullPose.position );
+	pose.visible = intrinsic_pose.visible;
+	pose.time = intrinsic_pose.time;
 	return( pose.visible );
 }
-bool PoseTracker::GetCurrentPose( TrackerPose *pose ) {
-	TrackerPose intrinsic_pose;
-	GetCurrentPoseIntrinsic( &intrinsic_pose );
-	MultiplyQuaternions( pose->orientation,  nullPose.orientation, intrinsic_pose.orientation );
-	AddVectors( pose->position, intrinsic_pose.position, nullPose.position );
-	pose->visible = intrinsic_pose.visible;
-	pose->time = intrinsic_pose.time;
-	return( pose->visible );
-}
 
-void PoseTracker::CopyTrackerPose( TrackerPose *destination, TrackerPose *source ) {
-	destination->time = source->time;
-	destination->visible = source->visible;
-	CopyVector( destination->position, source->position );
-	CopyQuaternion( destination->orientation, source->orientation );
+void PoseTracker::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
+	destination.time = source.time;
+	destination.visible = source.visible;
+	CopyVector( destination.pose.position, source.pose.position );
+	CopyQuaternion( destination.pose.orientation, source.pose.orientation );
 };
-bool PoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
-	return( false );
+
+// If GetCurrentPoseIntrinsic() does not get redefined by an inheriting class, just return a nonvisible pose.
+bool PoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
+	pose.visible = false;
+	return( pose.visible );
 }
 
-bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
-	CopyVector( pose->position, zeroVector );
-	CopyQuaternion( pose->orientation, nullQuaternion );
-	pose->visible = true;
-	pose->time = 0.0;
-	return( pose->visible );
+bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
+	CopyPose( pose.pose, nullPose );
+	pose.visible = true;
+	pose.time = 0.0;
+	return( pose.visible );
 }
 
 

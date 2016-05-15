@@ -16,7 +16,7 @@ bool CodaPoseTracker::Initialize( void ) { return true; }
 bool CodaPoseTracker::Update( void ) { return true; }
 bool CodaPoseTracker::Quit( void ) { return true; }
 
-bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) { 
+bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) { 
 
 	Vector3		selected_model[MAX_MARKERS];
 	Vector3		selected_actual[MAX_MARKERS];
@@ -58,15 +58,15 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose *pose ) {
 	if ( validated_markers < visible_markers ) fOutputDebugString( "Rejected %d markers.\n", visible_markers - validated_markers );
 
 	// ComputeRigidBodyPose() does it all!
-	pose->visible = ComputeRigidBodyPose( pose->position, pose->orientation, validated_model, validated_actual, validated_markers, nullptr );
+	pose.visible = ComputeRigidBodyPose( pose.pose.position, pose.pose.orientation, validated_model, validated_actual, validated_markers, nullptr );
 
 	// Convert CODA position in mm to position in meters.
-	ScaleVector( pose->position, pose->position, 0.001 );
+	ScaleVector( pose.pose.position, pose.pose.position, 0.001 );
 	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
 	// I don't know what that will be, yet, so I set the time to zero.
-	pose->time = 0.0;
+	pose.time = 0.0;
 	// returns whether or not the rigid body is visible.
-	return( pose->visible );
+	return( pose.visible );
 
 }
 

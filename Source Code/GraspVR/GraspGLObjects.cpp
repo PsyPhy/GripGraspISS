@@ -276,9 +276,9 @@ void GraspGLObjects::DrawDarkSky( void ) {
 void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
 	// If the caller has specified a pose, move the room to that pose first.
 	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		room->SetPosition( pose->position );
-		room->SetOrientation( pose->orientation );
+	if ( pose != static_cast<TrackerPose *>( nullptr ) ) {
+		room->SetPosition( pose->pose.position );
+		room->SetOrientation( pose->pose.orientation );
 	}
 	room->Draw();
 }
@@ -287,8 +287,8 @@ void GraspGLObjects::DrawTarget( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		target->SetPosition( pose->position );
-		target->SetOrientation( pose->orientation );
+		target->SetPosition( pose->pose.position );
+		target->SetOrientation( pose->pose.orientation );
 	}
 	target->Draw();
 }
@@ -297,8 +297,8 @@ void GraspGLObjects::DrawTool( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		tool->SetPosition( pose->position );
-		tool->SetOrientation( pose->orientation );
+		tool->SetPosition( pose->pose.position );
+		tool->SetOrientation( pose->pose.orientation );
 	}
 	tool->Draw();
 }
@@ -307,8 +307,8 @@ void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		projectiles->SetPosition( pose->position );
-		projectiles->SetOrientation( pose->orientation );
+		projectiles->SetPosition( pose->pose.position );
+		projectiles->SetOrientation( pose->pose.orientation );
 	}
 	projectiles->Draw();
 }
@@ -317,8 +317,8 @@ void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		tiltPrompt->SetPosition( pose->position );
-		tiltPrompt->SetOrientation( pose->orientation );
+		tiltPrompt->SetPosition( pose->pose.position );
+		tiltPrompt->SetOrientation( pose->pose.orientation );
 	}
 	tiltPrompt->Draw();
 }
@@ -368,23 +368,23 @@ Assembly *GraspGLObjects::CreateTorso( void ) {
 
 void GraspGLObjects::DrawHead( TrackerPose *pose ) {
 	if ( pose != nullptr ) {
-		head->SetPosition( pose->position );
-		head->SetOrientation( pose->orientation );
+		head->SetPosition( pose->pose.position );
+		head->SetOrientation( pose->pose.orientation );
 	}
 	head->Draw();
 }
 
 void GraspGLObjects::DrawTorso(  TrackerPose *pose  ) {
 	if ( pose != nullptr ) {
-		torso->SetPosition( pose->position );
-		torso->SetOrientation( pose->orientation );
+		torso->SetPosition( pose->pose.position );
+		torso->SetOrientation( pose->pose.orientation );
 	}
 	torso->Draw();
 }
 
 void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 	Vector3 torso_position;
-	CopyVector( torso_position, pose->position );
+	CopyVector( torso_position, pose->pose.position );
 	torso_position[Y] -= (head_shape[Y] + torso_shape[Y] / 2.0);
 	torso->SetPosition( torso_position );
 	torso->SetOrientation( nullQuaternion );

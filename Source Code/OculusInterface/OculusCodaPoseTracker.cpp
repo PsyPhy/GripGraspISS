@@ -36,8 +36,7 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 	// In the final version this should be computed from the CODA contribution.
 	// For now, we just start from zero. Even if we leave it this way, it works,
 	// because the drift correction will eventually drive the current state to the CODA pose.
-	CopyVector( currentState.position, zeroVector );
-	CopyQuaternion( currentState.orientation, nullQuaternion );
+	CopyPose( currentState.pose, nullPose );
 
 	// Need to have a reference time to compute the first delta in Update();
 	ovrTrackingState sensorState = oculusMapper->ReadTrackingState();
@@ -79,8 +78,8 @@ bool OculusCodaPoseTracker::Update( void ) {
 
 	// Make one integration step using the computed finite rotation.
 	Quaternion newQ;
-	MultiplyQuaternions( newQ, currentState.orientation, dQ );
-	CopyQuaternion( currentState.orientation, newQ );
+	MultiplyQuaternions( newQ, currentState.pose.orientation, dQ );
+	CopyQuaternion( currentState.pose.orientation, newQ );
 
 	// Read the absolute pose from the CODA tracker (or some other tracker) and take a step towards it.
 	// The step is achieved by taking a weighted average between the current inertial state and the CODA state.
@@ -88,9 +87,9 @@ bool OculusCodaPoseTracker::Update( void ) {
 	TrackerPose absolutePose;
 	if ( absoluteTracker ) {
 		absoluteTracker->Update();
-		absoluteTracker->GetCurrentPose( &absolutePose );
+		absoluteTracker->GetCurrentPose( absolutePose );
 		if ( absolutePose.visible ) {
-			for ( int i = 0; i < 4; i++ ) currentState.orientation[i] = InertialWeighting * currentState.orientation[i] + absolutePose.orientation[i];
+			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
 		}
 	}
 	else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
@@ -101,15 +100,18 @@ bool OculusCodaPoseTracker::Update( void ) {
 	// This is approximately good for orientations that are close together. Formally, we should use slerp if we want
 	// a true weighted average in rotation space with constant rotation velocity, but that is not so important here
 	// and the formulas here are much simpler.
-	NormalizeQuaternion( currentState.orientation );
+	NormalizeQuaternion( currentState.pose.orientation );
+
+	// The time of this pose is the time of the sample of the intertial data.
 	currentState.time = time;
+	// This tracker is presumed to always be visible.
 	currentState.visible = true;
 
 	// Output to a file for debugging.
 	fprintf( fp, "%s %s | %3d %7.3lf %s | %7.3lf %s\n", 
 		qstr( dQ ), qstr( newQ ), 
-		(int) absolutePose.visible, absolutePose.time, qstr( absolutePose.orientation ), 
-		currentState.time, qstr( currentState.orientation ) 
+		(int) absolutePose.visible, absolutePose.time, qstr( absolutePose.pose.orientation ), 
+		currentState.time, qstr( currentState.pose.orientation ) 
 		);
 	return true; 
 
@@ -119,16 +121,9 @@ bool OculusCodaPoseTracker::Quit( void ) {
 	return true; 
 }
 
-bool OculusCodaPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose ) { 
-	
-	CopyVector( pose->position, currentState.position );
-	CopyQuaternion( pose->orientation, currentState.orientation );
-	pose->time = currentState.time;
-	// We assume that the pose is always available for this tracker.
-	pose->visible = true;
-
-	return true; 
-
+bool OculusCodaPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
+	CopyTrackerPose( pose, currentState );
+	return pose.visible; 
 }
 
 

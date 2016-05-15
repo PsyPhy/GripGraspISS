@@ -64,6 +64,11 @@ void VectorsMixin::CopyQuaternion( Quaternion destination, const Quaternion sour
 	destination[M] = source[M];
 }
 
+void VectorsMixin::CopyPose( Pose &destination, const Pose &source ) {
+	CopyVector( destination.position, source.position );
+	CopyQuaternion( destination.orientation, source.orientation );
+}
+
 void VectorsMixin::AddVectors( Vector3 result, const Vector3f a, const Vector3f b ) {
 	result[X] = (double) ( a[X] + b[X] );
 	result[Y] = (double) ( a[Y] + b[Y] );

@@ -15,8 +15,7 @@
 namespace PsyPhy {
 
 typedef struct {
-	Vector3		position;
-	Quaternion	orientation;
+	Pose		pose;
 	bool		visible;
 	double		time;
 } TrackerPose;
@@ -29,8 +28,7 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 	protected:
 
-		TrackerPose		nullPose;
-
+		Pose		nullPose;
 
 	public:
 
@@ -44,22 +42,26 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 		virtual bool  Update( void ){ return true; };
 		virtual bool Quit( void ){ return true; };
 
-		virtual void Boresight( TrackerPose *pose );
-		virtual bool BoresightCurrent( void );
+		// Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
+		virtual void BoresightAt( const Pose &pose );
+		// Boresight so that the current pose becomes the specified pose.
+		virtual bool BoresightTo( const Pose &pose );
+		// Boresight so that the current pose becomes the null pose.
+		virtual bool Boresight( void );
 		virtual void Unboresight( void );
 		 
 		virtual bool GetCurrentPosition( PsyPhy::Vector3 position );
 		virtual bool GetCurrentOrientation( PsyPhy::Quaternion orientation );
-		virtual bool GetCurrentPose( TrackerPose *pose );
-		virtual bool GetCurrentPoseIntrinsic( TrackerPose *pose );
-		void CopyTrackerPose( TrackerPose *destination, TrackerPose *source ) ;
+		virtual bool GetCurrentPose( TrackerPose &pose );
+		virtual bool GetCurrentPoseIntrinsic( TrackerPose &pose );
+		void CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) ;
 
 };
 
 class NullPoseTracker : public PoseTracker {
 
 public:
-	bool GetCurrentPoseIntrinsic( TrackerPose *pose );
+	bool GetCurrentPoseIntrinsic( TrackerPose &pose );
 };
 
 };

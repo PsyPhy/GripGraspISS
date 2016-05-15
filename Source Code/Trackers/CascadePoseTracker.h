@@ -32,7 +32,7 @@ class CascadePoseTracker : public PoseTracker {
 		bool Initialize( void );
 		bool  Update( void );
 		bool Quit( void );
-		bool GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose );
+		bool GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose );
 
 };
 

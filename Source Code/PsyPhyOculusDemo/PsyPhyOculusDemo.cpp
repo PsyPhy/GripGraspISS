@@ -211,7 +211,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
-		if ( platform->Key['B'] ) hmdTracker->BoresightCurrent();
+		if ( platform->Key['B'] ) hmdTracker->Boresight();
 		if ( platform->Key['U'] ) hmdTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
@@ -309,14 +309,11 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 			// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
 			PsyPhy::TrackerPose headPose;
-			if ( !hmdTracker->GetCurrentPose( &headPose ) ) {
+			if ( !hmdTracker->GetCurrentPose( headPose ) ) {
 				static int pose_error_counter = 0;
 				fOutputDebugString( "Error reading hmd pose tracker (%03d).\n", ++pose_error_counter );
 			}
-			else {
-				viewpoint->SetOffset( headPose.position );
-				viewpoint->SetAttitude( headPose.orientation );
-			}
+			else viewpoint->SetPose( headPose.pose );
 
 			// Prepare the GL graphics state for drawing in a way that is compatible 
 			//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 

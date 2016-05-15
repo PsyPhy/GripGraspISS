@@ -83,6 +83,8 @@ public:
   virtual void  SetOrientation( double roll, double pitch, double yaw );
   void  GetOrientation( Matrix3x3 m );
 
+  virtual void SetPose( Pose &pose );
+
   void  SetAttitude( Matrix3x3 m );
   void  SetAttitude( double angle, const Vector3 axis );
   void  SetAttitude( double roll, double pitch, double yaw );

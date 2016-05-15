@@ -12,6 +12,7 @@
 
 #include "OculusInterface.h"
 #include "OculusPoseTracker.h"
+
 #include "../Useful//Useful.h"
 
 using namespace PsyPhy;
@@ -24,21 +25,23 @@ bool OculusPoseTracker::Initialize( void ) { return true; }
 bool OculusPoseTracker::Update( void ) { return true; }
 bool OculusPoseTracker::Quit( void ) { return true; }
 
-bool OculusPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose ) { 
+bool OculusPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	
 	ovrPosef ovrHeadPose = oculusMapper->ReadHeadPose();
 
-	pose->position[X] = ovrHeadPose.Position.x;
-	pose->position[Y] = ovrHeadPose.Position.y;
-	pose->position[Z] = ovrHeadPose.Position.z;
-	pose->orientation[X] = ovrHeadPose.Orientation.x;
-	pose->orientation[Y] = ovrHeadPose.Orientation.y;
-	pose->orientation[Z] = ovrHeadPose.Orientation.z;
-	pose->orientation[M] = ovrHeadPose.Orientation.w;
-	// We assume that the pose is always obtained for this tracker.
-	pose->visible = true;
+	pose.pose.position[X] = ovrHeadPose.Position.x;
+	pose.pose.position[Y] = ovrHeadPose.Position.y;
+	pose.pose.position[Z] = ovrHeadPose.Position.z;
+	pose.pose.orientation[X] = ovrHeadPose.Orientation.x;
+	pose.pose.orientation[Y] = ovrHeadPose.Orientation.y;
+	pose.pose.orientation[Z] = ovrHeadPose.Orientation.z;
+	pose.pose.orientation[M] = ovrHeadPose.Orientation.w;
+	// Timestamp the sample.
 
-	return true; 
+	// We assume that the pose is always obtained for this tracker.
+	pose.visible = true;
+
+	return pose.visible; 
 
 }
 

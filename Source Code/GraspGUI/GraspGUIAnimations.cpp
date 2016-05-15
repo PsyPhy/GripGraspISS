@@ -98,25 +98,25 @@ void GraspDesktop::RefreshAnimations( void ) {
 	double angle = cos( pseudo_time );
 	pseudo_time += 0.05;
 
-	vp.SetQuaternion( head_pose.orientation, 0.1 * angle, vp.jVector );
-	vp.SetQuaternion( hand_pose.orientation, 0.2 * angle, vp.kVector );
+	vp.SetQuaternion( head_pose.pose.orientation, 0.1 * angle, vp.jVector );
+	vp.SetQuaternion( hand_pose.pose.orientation, 0.2 * angle, vp.kVector );
 
 	// Head is at the origin.
-	vp.CopyVector( head_pose.position, vp.zeroVector );
+	vp.CopyVector( head_pose.pose.position, vp.zeroVector );
 
 	// Place the hand at shoulder level.
 	static double arms_length = 700.0;
 	static double shoulder_drop = 300.0;
-	hand_pose.position[X] = 0.0;
-	hand_pose.position[Y] = - shoulder_drop;
-	hand_pose.position[Z] = - arms_length;
+	hand_pose.pose.position[X] = 0.0;
+	hand_pose.pose.position[Y] = - shoulder_drop;
+	hand_pose.pose.position[Z] = - arms_length;
 
 	// Show what the subject is seeing.
 	hmdWindow->Activate();
 	hmdWindow->Clear();
 	glUsefulPrepareRendering();
-	hmdViewpoint->SetOrientation( head_pose.orientation );
-	hmdViewpoint->SetPosition( head_pose.position );
+	hmdViewpoint->SetOrientation( head_pose.pose.orientation );
+	hmdViewpoint->SetPosition( head_pose.pose.position );
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
 	objectRenderer->DrawSky();
 	objectRenderer->DrawRoom();
@@ -141,14 +141,14 @@ void GraspDesktop::RefreshAnimations( void ) {
 	hmdDynamicWindow->Activate();
 	hmdDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( hmdDynamicWindow, CYCLOPS );
-	vp.CopyVector( head_pose.position, vp.zeroVector );
+	vp.CopyVector( head_pose.pose.position, vp.zeroVector );
 	objectRenderer->DrawHead(  &head_pose );
 	hmdDynamicWindow->Swap();
 
 	toolDynamicWindow->Activate();
 	toolDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( toolDynamicWindow, CYCLOPS );
-	vp.CopyVector( hand_pose.position, vp.zeroVector );
+	vp.CopyVector( hand_pose.pose.position, vp.zeroVector );
 	objectRenderer->DrawTool( &hand_pose );
 	toolDynamicWindow->Swap();
 

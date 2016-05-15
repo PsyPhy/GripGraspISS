@@ -47,25 +47,21 @@ bool CascadePoseTracker::Quit( void ) {
 	return true; 
 }
 
-bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose *pose ) { 
+bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	static int cycle_counter = 0;
 	TrackerPose component_pose;
 	component_pose.visible = false;
 	component_pose.time = 0.0;
 	for ( int trk = 0; trk < nTrackers; trk++ ) {
-		tracker[trk]->GetCurrentPose( &component_pose );
+		tracker[trk]->GetCurrentPose( component_pose );
 		if ( component_pose.visible ) {
-			CopyVector( pose->position, component_pose.position );
-			CopyQuaternion( pose->orientation, component_pose.orientation );
-			pose->time = component_pose.time;
-			pose->visible = component_pose.visible;
+			CopyTrackerPose( pose, component_pose );
 			fOutputDebugString( "%8d Component Tracker %d\n", cycle_counter, trk );
 			break;
 		}
 	}
 	cycle_counter++;
-	return pose->visible; 
-
+	return pose.visible; 
 }
 
 
