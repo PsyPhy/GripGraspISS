@@ -256,18 +256,18 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	room->AddComponent( darkSky );
 
 	target = CreateTarget();
-	target->SetPosition( target_location );
 	tiltPrompt = CreateTiltPrompt();
-	tiltPrompt->SetPosition( prompt_location );
 
 	tool = CreateTool();
 	projectiles = CreateProjectiles();
 }
 
+// Place objects at default locations.
 void GraspGLObjects::PlaceVRObjects( void ) {
-	target->SetPosition( 0.0, 0.0, - room_length );
-	tool->SetPosition( 0.0, 0.0, - 200.0 );
-	tiltPrompt->SetPosition( 0.0, 0.0, - room_length / 2.0 );
+	lightSky->SetPosition( sky_location );
+	darkSky->SetPosition( sky_location );
+	target->SetPosition( target_location );
+	tiltPrompt->SetPosition( prompt_location );
 }
 
 

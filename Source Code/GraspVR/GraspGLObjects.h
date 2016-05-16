@@ -53,6 +53,7 @@ namespace Grasp {
 			static const Vector3 torso_shape;
 
 			static const Vector3 target_location;
+			static const Vector3 sky_location;
 			static const Vector3 prompt_location;
 			static const double prompt_radius;
 			static const double target_ball_radius;

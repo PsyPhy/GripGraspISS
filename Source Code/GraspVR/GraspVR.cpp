@@ -107,7 +107,6 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	// Create all the necessary VR rendering objects.
 	renderer->CreateVRObjects();
-	// Set the objects that don't move they belong.
 	renderer->PlaceVRObjects();
 
 	// Initialize state of the objects.
