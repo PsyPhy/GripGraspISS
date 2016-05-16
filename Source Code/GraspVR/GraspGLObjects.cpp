@@ -295,15 +295,18 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 
-		Sphere *sphere = new Sphere( finger_ball_radius );
+		//Sphere *sphere = new Sphere( finger_ball_radius*1.0 );
+		Sphere *sphere = new Sphere( finger_ball_radius*8.0 );
 		// Create a color that varies as a function of the ball's position.
 		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		sphere->SetColor( color );
 		// Space the balls vertically.
-		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
+		//sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
+		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
 		projectiles->AddComponent( sphere );
 		
 	}
+
 	return projectiles;
 
 }
