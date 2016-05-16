@@ -6,6 +6,12 @@
     <None Include="GraspWelcome.html" />
     <None Include="GraspWelcome.md" />
     <None Include="Michele.md" />
+    <None Include="V-V1.md" />
+    <None Include="V-V2.md" />
+    <None Include="V-V3.md" />
+    <None Include="V-V4.md" />
+    <None Include="V-V5.md" />
+    <None Include="V-V6.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
