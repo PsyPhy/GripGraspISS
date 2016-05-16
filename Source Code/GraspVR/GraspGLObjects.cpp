@@ -22,7 +22,10 @@ const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
-const double GraspGLObjects::room_length = 5000.0;
+
+const double GraspGLObjects::room_length = 6000.0;
+//const double GraspGLObjects::wall_thickness = 10.0;
+
 const int GraspGLObjects::room_facets = 32;
 const double GraspGLObjects::reference_bars = 5;
 const double GraspGLObjects::reference_bar_radius = 50.0;
@@ -79,6 +82,9 @@ void GraspGLObjects::SetLighting( void ) {
 }
 
 
+	laserPointer = CreateLaserPointer();
+	disk_target = CreateDiskTarget();
+	glasses = CreateGlasses();
 void GraspGLObjects::CreateTextures( void ) {
 	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
 	// The wall texture is 256 pixels wide by 512 high.
@@ -141,12 +147,70 @@ Assembly *GraspGLObjects::CreateTarget( void ) {
 	for (int trg = - target_balls ; trg <= target_balls ; trg++ ){
 		Sphere *sphere = new Sphere( target_ball_radius );
 		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
-		sphere->SetColor(( 75.0 - abs(trg) * 10.0 ) / 255.0, 0.0, 0.0);
+		sphere->SetColor(( 255.0 - abs(trg) * 50.0 ) / 255.0, 0.0, 0.0);
 		target->AddComponent( sphere );
 	}
 	return target;
 
 }
+
+Assembly *GraspGLObjects::CreateDiskTarget( void ) {
+
+	Assembly *disk_target = new Assembly();
+	
+		Sphere *sphere = new Sphere( target_ball_radius );
+		sphere->SetPosition( 0.0, 0.0, -room_length/2.0+10 );
+		sphere->SetColor(1.0, 165.0/255.0, 0.0);
+		disk_target->AddComponent( sphere );
+	return disk_target;
+
+}
+
+Assembly *GraspGLObjects::CreateGlasses(void){
+	double glass_width=100;
+	double glass_height=60.0;
+	double glass_thickness=5.0;
+
+	Assembly *glasses = new Assembly();
+	glasses->SetColor(WHITE);
+
+	Slab *slab_u = new Slab(glass_width, glass_thickness, 0.1);
+	slab_u->SetPosition(0.0, glass_height/2.0, -100.0);
+	glasses->AddComponent(slab_u);
+
+	Slab *slab_d = new Slab(glass_width, glass_thickness, 0.1);
+	slab_d->SetPosition(0.0, -glass_height/2.0, -100.0);
+	glasses->AddComponent(slab_d);
+
+	Slab *slab_l = new Slab(glass_thickness, glass_height-(glass_thickness), 0.1);
+	slab_l->SetPosition(-(glass_width/2.0-glass_thickness/2.0), 0.0, -100.0);
+	glasses->AddComponent(slab_l);
+
+	Slab *slab_r = new Slab(glass_thickness, glass_height-(glass_thickness), 0.1);
+	slab_r->SetPosition((glass_width/2.0-glass_thickness/2.0), 0.0, -100.0);
+	glasses->AddComponent(slab_r);
+
+	return glasses;
+}
+
+void GraspGLObjects::ColorGlasses( double error ) {
+	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
+	if (error<epsilon*0.2){//GREEN
+		glasses->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
+	}else{
+		if (error>(2*epsilon)){//RED
+			glasses->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
+		}else{
+			if (error>epsilon){//Yellow->red
+				glasses->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
+			}else{ //green->yellow
+				glasses->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
+			}
+		}
+	}
+
+}
+
 
 Assembly *GraspGLObjects::CreateTool( void ) {
 
@@ -188,6 +252,36 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 
 }
 
+Assembly * GraspGLObjects::CreateLaserPointer( void ) {
+	
+	Assembly *laserPointer = new Assembly();
+
+	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
+	//sphere->SetColor( RED );
+	sphere->SetPosition( 0.0, 0.0, -(room_length/2.0-1000.0) );
+	laserPointer->AddComponent( sphere );
+
+	return laserPointer;
+}
+
+void GraspGLObjects::ColorLaserPointer( double error ) {
+	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
+	if (error<epsilon*0.2){//GREEN
+		laserPointer->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 1.0);
+	}else{
+		if (error>(2*epsilon)){//RED
+			laserPointer->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 1.0);
+		}else{
+			if (error>epsilon){//Yellow->red
+				laserPointer->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 1.0);
+			}else{ //green->yellow
+				laserPointer->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 1.0);
+			}
+		}
+	}
+
+}
+
 Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
 	Assembly *projectiles = new Assembly();
@@ -203,7 +297,7 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
 		Sphere *sphere = new Sphere( finger_ball_radius );
 		// Create a color that varies as a function of the ball's position.
-		float color[4] = { 100.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
+		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		sphere->SetColor( color );
 		// Space the balls vertically.
 		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
@@ -346,6 +440,16 @@ void GraspGLObjects::DrawTool( TrackerPose *pose ) {
 	tool->Draw();
 }
 
+void GraspGLObjects::DrawLaserPointer( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
+	if ( pose != nullptr ) {
+		laserPointer->SetPosition( pose->position );
+		laserPointer->SetOrientation( pose->orientation );
+	}
+	laserPointer->Draw();
+}
+
 void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
@@ -366,6 +470,13 @@ void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
 	tiltPrompt->Draw();
 }
 
+void GraspGLObjects::DrawGlasses(  TrackerPose *pose  ) {
+	if ( pose != nullptr ) {
+		glasses->SetPosition( pose->position );
+		glasses->SetOrientation( pose->orientation );
+	}
+	glasses->Draw();
+}
 
 // The following objects are not used during the Grasp protocol and are not seen by the subject.
 // Rather, these objects are used in the GraspGUI and elswhere to visualize the subject's pose.
