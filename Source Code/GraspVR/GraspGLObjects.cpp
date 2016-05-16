@@ -45,6 +45,7 @@ const double GraspGLObjects::target_ball_radius = 100.0;
 const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
 const int GraspGLObjects::target_balls = 3;
 const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
+const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
@@ -90,20 +91,19 @@ Assembly *GraspGLObjects::CreateSky( void ) {
 	Assembly *sky = new Assembly();
 	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
 	patch->SetTexture( sky_texture );
-	patch->SetPosition(0.0,0.0,-room_length/2.0);
 	sky->AddComponent( patch );
 	sky->SetColor(WHITE);
 	return( sky );
 }
 
 Assembly *GraspGLObjects::CreateDarkSky( void ) {
-	Assembly *dark_sky = new Assembly();
-	Slab *slab = new Slab(room_radius * 2.2, room_radius * 2.2, 2.2);
-	slab->SetPosition(0.0,0.0,-room_length/2.0);
-	dark_sky->AddComponent( slab );
-	dark_sky->SetColor(BLACK);
-	dark_sky->enabled = false;
-	return( dark_sky );
+	Assembly *sky = new Assembly();
+	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
+	patch->SetTexture( sky_texture );
+	sky->AddComponent( patch );
+	sky->SetColor( BLACK );
+	sky->enabled = false;
+	return( sky );
 }
 
 Assembly *GraspGLObjects::CreateRoom( void ) {
@@ -245,9 +245,15 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	SetLighting();
 	CreateTextures();
 
+	room = CreateRoom();
 	lightSky = CreateSky();
 	darkSky = CreateDarkSky();
-	room = CreateRoom();
+	// Only one sky should be enabled at a time, so we disable darkSky at this point.
+	darkSky->Disable();
+	// The skies get attached to the room so that they move (tilt) with it.
+	// This means that you don't actually have to draw the skies explicitly.
+	room->AddComponent( lightSky );
+	room->AddComponent( darkSky );
 
 	target = CreateTarget();
 	target->SetPosition( target_location );
@@ -273,8 +279,11 @@ void GraspGLObjects::DrawVR( void ) {
 	glUsefulDefaultSpecularLighting( 0.7 );
 	glUsefulMatteMaterial();
 
-	DrawLightSky();
-	DrawDarkSky();
+	// Because the skies are attached to the room, one need not draw them explicitly.
+	// I leave these lines here in comments, though, to remind us that they will be drawn.
+	// If we ever decide not to attach them to the room, these lines should be uncommented.
+	// DrawLightSky();
+	// DrawDarkSky();
 	DrawRoom();
 
 	glUsefulShinyMaterial();
@@ -290,8 +299,9 @@ void GraspGLObjects::DrawVR( void ) {
 //  more sense to access the objects directly with obj->SetPosition(), obj->SetOrientation(), obj->Draw(), etc.
 
 
-// Draw the sky, presumably alwas at the same position.
-// For Grasp, it might make more sense if it was attached to the room so that they tilt together.
+// Draw the sky, presumably always at the same position.
+// For Grasp, it might make more sense if it is attached to the room so that they tilt together.
+// If so, these routines need not be called explicitly. See comments above.
 void GraspGLObjects::DrawLightSky( void ) {
 	lightSky->Draw();
 }
