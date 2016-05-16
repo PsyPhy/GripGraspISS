@@ -31,8 +31,9 @@ namespace Grasp {
 
 		void Initialize( HINSTANCE hinst );
 
-		void InitializeVR( HINSTANCE hinst );
-		void InitializeTrackers( void ) ;
+		virtual void InitializeVR( HINSTANCE hinst );
+		virtual void InitializeTrackers( void ) ;
+		void UpdateTrackers( void );
 	
 		ProjectileState HandleProjectiles( void );
 		// A rendering loop that allows one to toggle on and off the various VR objects.

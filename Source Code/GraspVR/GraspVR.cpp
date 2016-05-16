@@ -22,9 +22,9 @@ using namespace PsyPhy;
 //
 
 // How much the tool will turn for a given displacement of the mouse or trackball.
-const double GraspVR::mouseGain = - 0.001;
+double GraspVR::mouseGain = - 0.001;
 // Where to place the tool when in V-V mode.
-Pose handPoseVV = {{0.0, 0.0, -200.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspVR::handPoseVV = {{0.0, 0.0, -200.0}, {0.0, 0.0, 0.0, 1.0}};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,11 +58,46 @@ void GraspVR::InitializeTrackers( void ) {
 
 	// Create a mouse tracker to simulate movements of the hand.
 	handTracker = new PsyPhy::MouseRollPoseTracker( &oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing MouseRollPoseTracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
 	// The MouseRollPoseTracker will then rotate the tool around this constant position.
 	handTracker->BoresightTo( handPoseVV );
-	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
 
+}
+
+
+void GraspVR::UpdateTrackers( void ) {
+
+		// Perform any periodic updating that the trackers might require.
+		fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
+		fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
+
+		// Get the position and orientation of the head and add them to the Player position and orientation.
+		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
+		// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
+		TrackerPose headPose;
+		if ( !hmdTracker->GetCurrentPose( headPose ) ) {
+			static int pose_error_counter = 0;
+			fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
+		}
+		else {
+			viewpoint->SetPose( headPose.pose );
+		}
+
+		// Track movements of the hand marker array.
+		TrackerPose handPose;
+		if ( !handTracker->GetCurrentPose( handPose ) ) {
+			static int pose_error_counter = 0;
+			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
+		}
+		else {
+			renderer->tool->SetPose( handPose.pose );
+		}
+
+		// Boresight the Oculus tracker on 'B'.
+		// This will only affect the PsyPhy rendering.
+		if ( oculusDisplay.Key['B'] ) hmdTracker->Boresight();
+		if ( oculusDisplay.Key['U'] ) hmdTracker->Unboresight();
 }
 
 void GraspVR::InitializeVR( HINSTANCE hinst ) {
@@ -162,25 +197,12 @@ void GraspVR::DebugLoop( void ) {
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay.HandleMessages() ) {
 
-		// Get the position and orientation of the head and add them to the Player position and orientation.
-		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
-		// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-		TrackerPose headPose;
-		if ( !hmdTracker->GetCurrentPose( headPose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
-		}
-		else {
-			viewpoint->SetPose( headPose.pose );
-		}
+		// Update pose of tracked objects, including the viewpoint.
+		UpdateTrackers();
 
 		// Handle triggering and moving the projectiles.
 		HandleProjectiles();
 
-		// Boresight the Oculus tracker on 'B'.
-		// This will only affect the PsyPhy rendering.
-		if ( oculusDisplay.Key['B'] ) hmdTracker->Boresight();
-		if ( oculusDisplay.Key['U'] ) hmdTracker->Unboresight();
 
 		// Disable drawing of all objects.
 		if ( oculusDisplay.Key[VK_SPACE] ) {
