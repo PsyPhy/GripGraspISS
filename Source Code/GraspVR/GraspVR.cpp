@@ -130,6 +130,32 @@ void GraspVR::Release( void ) {
 
 }
 
+ProjectileState GraspVR::HandleProjectiles( void ) {
+	
+		// Trigger the projectiles, but only if it is not already triggered.
+		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !renderer->projectiles->enabled ) { 
+			// Position the projectiles where the tool is now.
+			renderer->projectiles->SetPosition( renderer->tool->position );
+			renderer->projectiles->SetOrientation( renderer->tool->orientation );
+			// Make the projectiles visible.
+			renderer->projectiles->Enable();
+			// Hide the tool.
+			renderer->tool->Disable();
+			return( running );
+		}
+		else if ( renderer->projectiles->position[Z] < renderer->darkSky->position[Z] ) {
+			renderer->projectiles->Disable();
+			return( miss );
+		}
+		else if ( renderer->projectiles->enabled ) {
+			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
+			renderer->projectiles->SetPosition( renderer->projectiles->position[X], renderer->projectiles->position[Y], renderer->projectiles->position[Z] - 10.0 );
+			return( running );
+		}
+		else return( cocked );
+
+}
+
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
 	
@@ -148,15 +174,8 @@ void GraspVR::DebugLoop( void ) {
 			viewpoint->SetPose( headPose.pose );
 		}
 
-		// Track movements of the hand marker array.
-		TrackerPose handPose;
-		if ( !handTracker->GetCurrentPose( handPose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
-		}
-		else {
-			renderer->tool->SetPose( handPose.pose );
-		}
+		// Handle triggering and moving the projectiles.
+		HandleProjectiles();
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -182,29 +201,6 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay.Key['H'] ) renderer->tool->Enable();
 		// Show the tilt prompt.
 		if ( oculusDisplay.Key['P'] ) renderer->tiltPrompt->Enable();
-
-		// Trigger the projectiles, but only if it is not already triggered.
-		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !renderer->projectiles->enabled ) { 
-			// Position the projectiles where the tool is now.
-			renderer->projectiles->SetPosition( renderer->tool->position );
-			renderer->projectiles->SetOrientation( renderer->tool->orientation );
-			// Make the projectiles visible.
-			renderer->projectiles->Enable();
-			// Hide the tool.
-			renderer->tool->Disable();
-		}
-		else if ( renderer->projectiles->position[Z] < renderer->target->position[Z] ) {
-			renderer->projectiles->Disable();
-		}
-		else if ( renderer->projectiles->enabled ) {
-			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
-			renderer->projectiles->SetPosition( renderer->projectiles->position[X], renderer->projectiles->position[Y], renderer->projectiles->position[Z] - 10.0 );
-		}
-
-		// Perform any periodic updating that the trackers might require.
-		fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
-		fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
-		
 
 		// Prepare the GL graphics state for drawing in a way that is compatible 
 		//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 

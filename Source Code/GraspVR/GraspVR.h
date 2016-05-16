@@ -4,6 +4,9 @@
 #include "GraspGLObjects.h"
 
 namespace Grasp {
+			
+	// Possible states of the projectiles.
+	typedef enum { cocked, running, hit, miss } ProjectileState;
 
 	class GraspVR : public VectorsMixin
 	{
@@ -31,6 +34,7 @@ namespace Grasp {
 		void InitializeVR( HINSTANCE hinst );
 		void InitializeTrackers( void ) ;
 	
+		ProjectileState HandleProjectiles( void );
 		// A rendering loop that allows one to toggle on and off the various VR objects.
 		void DebugLoop( void );
 		void Release( void );
