@@ -134,7 +134,7 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	return room;
 }
 
-Assembly *GraspGLObjects::CreateTarget( void ) {
+Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
 
 	Assembly *target = new Assembly();
 	for (int trg = - target_balls ; trg <= target_balls ; trg++ ){
@@ -147,15 +147,13 @@ Assembly *GraspGLObjects::CreateTarget( void ) {
 
 }
 
-Assembly *GraspGLObjects::CreateDiskTarget( void ) {
+Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
-	Assembly *disk_target = new Assembly();
-	
+	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( target_ball_radius );
-	sphere->SetPosition( 0.0, 0.0, -room_length/2.0+10 );
 	sphere->SetColor(1.0, 165.0/255.0, 0.0);
-	disk_target->AddComponent( sphere );
-	return disk_target;
+	target->AddComponent( sphere );
+	return target;
 
 }
 
@@ -346,8 +344,8 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	room->AddComponent( starrySky );
 	room->AddComponent( darkSky );
 
-	target = CreateTarget();
-	disk_target = CreateDiskTarget();
+	orientationTarget = CreateOrientationTarget();
+	positionOnlyTarget = CreatePositionOnlyTarget();
 	tiltPrompt = CreateTiltPrompt();
 
 	tool = CreateTool();
@@ -359,7 +357,8 @@ void GraspGLObjects::CreateVRObjects( void ) {
 void GraspGLObjects::PlaceVRObjects( void ) {
 	starrySky->SetPosition( sky_location );
 	darkSky->SetPosition( sky_location );
-	target->SetPosition( target_location );
+	orientationTarget->SetPosition( target_location );
+	positionOnlyTarget->SetPosition( target_location );
 	tiltPrompt->SetPosition( prompt_location );
 }
 
@@ -386,9 +385,11 @@ void GraspGLObjects::DrawVR( void ) {
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
 
-	DrawTarget();
+	DrawOrientationTarget();
+	DrawPositionOnlyTarget();
 	DrawTiltPrompt();
 	DrawTool();
+	DrawLaserPointer();
 	DrawProjectiles();
 
 }
@@ -420,16 +421,24 @@ void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
 	room->Draw();
 }
 
-void GraspGLObjects::DrawTarget( TrackerPose *pose ) {
+void GraspGLObjects::DrawOrientationTarget( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		target->SetPosition( pose->pose.position );
-		target->SetOrientation( pose->pose.orientation );
+		orientationTarget->SetPosition( pose->pose.position );
+		orientationTarget->SetOrientation( pose->pose.orientation );
 	}
-	target->Draw();
+	orientationTarget->Draw();
 }
-
+void GraspGLObjects::DrawPositionOnlyTarget( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
+	if ( pose != nullptr ) {
+		positionOnlyTarget->SetPosition( pose->pose.position );
+		positionOnlyTarget->SetOrientation( pose->pose.orientation );
+	}
+	positionOnlyTarget->Draw();
+}
 void GraspGLObjects::DrawTool( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.

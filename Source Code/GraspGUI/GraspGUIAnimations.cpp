@@ -120,7 +120,8 @@ void GraspDesktop::RefreshAnimations( void ) {
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
 	objectRenderer->DrawStarrySky();
 	objectRenderer->DrawRoom();
-	objectRenderer->DrawTarget();
+	objectRenderer->DrawOrientationTarget();
+	objectRenderer->DrawPositionOnlyTarget();
 	objectRenderer->DrawTiltPrompt();
 	objectRenderer->DrawTool( &hand_pose );
 	hmdWindow->Swap();
@@ -133,7 +134,8 @@ void GraspDesktop::RefreshAnimations( void ) {
 	objectRenderer->DrawStarrySky();
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTool( &hand_pose );
-	objectRenderer->DrawTarget();
+	objectRenderer->DrawOrientationTarget();
+	objectRenderer->DrawPositionOnlyTarget();
 	objectRenderer->DrawTiltPrompt();
 	objectRenderer->DrawBody( &head_pose );
 	workspaceWindow->Swap();

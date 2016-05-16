@@ -70,10 +70,9 @@ namespace Grasp {
 
 		public:
 
-			Assembly		*target;			// Shows the target orientation.
-			Assembly		*disk_target;		// Shows the center of the target location.
+			Assembly		*orientationTarget;			// Shows the target orientation.
+			Assembly		*positionOnlyTarget;		// Shows the center of the target location.
 
-	//		Assembly		*response;			// Shows the final response.
 			Assembly		*tiltPrompt;
 
 			Assembly		*tool;				// An object that moves in the world.
@@ -106,8 +105,8 @@ namespace Grasp {
 
 			Assembly *CreateTool( void );
 			Assembly *CreateProjectiles(void);
-			Assembly *CreateTarget( void );
-			Assembly *CreateDiskTarget( void );
+			Assembly *CreateOrientationTarget( void );
+			Assembly *CreatePositionOnlyTarget( void );
 			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
@@ -118,7 +117,8 @@ namespace Grasp {
 			void ColorLaserPointer( double error );
 			void ColorGlasses( double error );
 
-			void DrawTarget( TrackerPose *pose = nullptr );
+			void DrawOrientationTarget( TrackerPose *pose = nullptr );
+			void DrawPositionOnlyTarget(  TrackerPose *pose = nullptr  );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
 			void DrawTool( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);
@@ -126,7 +126,6 @@ namespace Grasp {
 			void DrawStarrySky( void );
 			void DrawDarkSky( void);
 			void DrawLaserPointer( TrackerPose *pose = nullptr );
-			void DrawDiskTarget( void );
 			void DrawGlasses( TrackerPose *pose = nullptr );
 
 			// Objects that are not used for VR in the HMD, but may be used

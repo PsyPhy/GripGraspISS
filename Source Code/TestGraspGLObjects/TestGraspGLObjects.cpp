@@ -70,7 +70,8 @@ int _tmain(int argc, char *argv[])
 	objects->starrySky->Enable();
 	objects->darkSky->Disable();
 	objects->room->Enable();
-	objects->target->Enable();
+	objects->orientationTarget->Enable();
+	objects->positionOnlyTarget->Disable();
 	objects->tiltPrompt->Disable();
 	objects->tool->Disable();
 	objects->projectiles->Disable();

@@ -159,7 +159,8 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->starrySky->Enable();
 	renderer->darkSky->Disable();
 	renderer->room->Enable();
-	renderer->target->Disable();
+	renderer->orientationTarget->Disable();
+	renderer->positionOnlyTarget->Disable();
 	renderer->tiltPrompt->Disable();
 	renderer->tool->Disable();
 	renderer->projectiles->Disable();
@@ -234,7 +235,8 @@ void GraspVR::DebugLoop( void ) {
 
 		// Disable drawing of all objects.
 		if ( oculusDisplay.Key[VK_SPACE] ) {
-			renderer->target->Disable();
+			renderer->orientationTarget->Disable();
+			renderer->positionOnlyTarget->Disable();
 			renderer->tool->Disable();
 			renderer->tiltPrompt->Disable();
 			renderer->projectiles->Disable();
@@ -243,7 +245,7 @@ void GraspVR::DebugLoop( void ) {
 		}
 		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay.Key['T'] ) {
-			renderer->target->Enable();
+			renderer->orientationTarget->Enable();
 			renderer->starrySky->Disable();
 			renderer->darkSky->Enable();
 		}
