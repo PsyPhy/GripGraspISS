@@ -1386,7 +1386,7 @@ void Circle::Draw( void ) {
 
 // A rectangular hole in a disk.
 
-Hole::Hole( double radius, double width, double height ) {
+Hole::Hole( double radius, double width, double height, int facets ) {
 
   this->radius = radius;
   this->width = width;
