@@ -80,6 +80,7 @@ namespace Grasp {
 			// Assembly		*response;			// Shows the final response. Not sure if this is to be used.
 
 			Assembly		*room;
+			Cylinder		*tunnel;			// Part of the room, but it allows us to access it directly to change its color.
 			Assembly		*lightSky;			// A background to be seen at the end of the tunnel.
 			Assembly		*darkSky;
 

@@ -112,7 +112,7 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	room->SetColor( BLACK );
 
 	//Tunnel Plus references
-	Cylinder *tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
+	tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
