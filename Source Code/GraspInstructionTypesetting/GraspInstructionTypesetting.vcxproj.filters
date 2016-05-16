@@ -3,7 +3,10 @@
   <ItemGroup>
     <None Include="readme.txt" />
     <None Include="Makefile.mak" />
-    <None Include="GraspWelcome.md" />
     <None Include="GraspWelcome.html" />
+    <None Include="GraspWelcome.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PsyPhyMDmacros.h" />
   </ItemGroup>
 </Project>
