@@ -275,8 +275,9 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 // Note that only those objects that are currently active are actually drawn.
 void GraspGLObjects::DrawVR( void ) {
 
-	// I am still trying to get specular reflections to work.
 	glUsefulDefaultSpecularLighting( 0.7 );
+
+	// Draw the room with non-shiny material.
 	glUsefulMatteMaterial();
 
 	// Because the skies are attached to the room, one need not draw them explicitly.
@@ -286,11 +287,16 @@ void GraspGLObjects::DrawVR( void ) {
 	// DrawDarkSky();
 	DrawRoom();
 
+	// Draw the other objects with the hopes of seeing specular reflections. 
+	// I am still trying to get specular reflections to work.
+	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
+
 	DrawTarget();
 	DrawTiltPrompt();
 	DrawTool();
 	DrawProjectiles();
+
 }
 
 // A set of routines that allows one to set the pose of the various objects and then draw them in 
