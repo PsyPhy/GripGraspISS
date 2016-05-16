@@ -241,7 +241,7 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 		finger->AddComponent( sphere );
 
 		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
-		float color[4] = { 100.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
+		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		finger->SetColor( color );
 
 		// Space the fingers vertically.
