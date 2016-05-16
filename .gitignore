@@ -284,11 +284,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # PsyPhy specific ignores
+*.html
 *.mrk
 *.pse
 *.suo
-*.suo
-*/*.suo
-"Source Code/GRASPonISS.suo"
-*.suo
-*.html
