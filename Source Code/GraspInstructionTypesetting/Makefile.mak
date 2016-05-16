@@ -5,7 +5,7 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 # This should be a list of all the HTML files that you want to generate.
-all: GraspWelcome.html
+all: GraspWelcome.html Joe.html
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe
@@ -19,5 +19,5 @@ PREPROCESSOR=cl.exe
 PREPROCESSOR_OPTIONS=/EP /FI PsyPhyMDmacros.h
 
 .SUFFIXES: .html .md .tex
-.mdx.html:
+.md.html:
 	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS) $? | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
