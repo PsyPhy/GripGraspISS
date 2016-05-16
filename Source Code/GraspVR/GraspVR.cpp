@@ -92,6 +92,7 @@ void GraspVR::UpdateTrackers( void ) {
 		}
 		else {
 			viewpoint->SetPose( headPose.pose );
+			renderer->glasses->SetPose( headPose.pose );
 		}
 
 		// Track movements of the hand marker array.

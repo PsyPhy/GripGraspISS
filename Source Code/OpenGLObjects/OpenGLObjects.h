@@ -476,8 +476,9 @@ public:
   double  radius;
   double  width;
   double  height;
+  int     facets;
 
-  Hole( double radius = DEFAULT_RADIUS, double width = 1.0, double height = 1.0 );
+  Hole( double radius = DEFAULT_RADIUS, double width = 1.0, double height = 1.0, int facets = DEFAULT_FACETS );
   void SetRadius( double value );
 
   void  Draw();

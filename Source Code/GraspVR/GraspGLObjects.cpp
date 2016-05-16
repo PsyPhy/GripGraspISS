@@ -157,29 +157,15 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 }
 
-Assembly *GraspGLObjects::CreateGlasses(void){
-	double glass_width=100;
-	double glass_height=60.0;
-	double glass_thickness=5.0;
+Assembly *GraspGLObjects::CreateGlasses( void ) {
+
+	static double visor_radius = 140.0;
 
 	Assembly *glasses = new Assembly();
 	glasses->SetColor(WHITE);
-
-	Slab *slab_u = new Slab(glass_width, glass_thickness, 0.1);
-	slab_u->SetPosition(0.0, glass_height/2.0, -100.0);
-	glasses->AddComponent(slab_u);
-
-	Slab *slab_d = new Slab(glass_width, glass_thickness, 0.1);
-	slab_d->SetPosition(0.0, -glass_height/2.0, -100.0);
-	glasses->AddComponent(slab_d);
-
-	Slab *slab_l = new Slab(glass_thickness, glass_height-(glass_thickness), 0.1);
-	slab_l->SetPosition(-(glass_width/2.0-glass_thickness/2.0), 0.0, -100.0);
-	glasses->AddComponent(slab_l);
-
-	Slab *slab_r = new Slab(glass_thickness, glass_height-(glass_thickness), 0.1);
-	slab_r->SetPosition((glass_width/2.0-glass_thickness/2.0), 0.0, -100.0);
-	glasses->AddComponent(slab_r);
+	Hole *hole = new Hole( visor_radius, room_radius, room_radius, 8 );
+	glasses->AddComponent( hole );
+	glasses->SetOffset( 0.0, 0.0, -200.0 );
 
 	return glasses;
 }
@@ -335,6 +321,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	room = CreateRoom();
 	glasses = CreateGlasses();
+	ColorGlasses( 0.0 );
 	starrySky = CreateStarrySky();
 	darkSky = CreateDarkSky();
 	// Only one sky should be enabled at a time, so we disable darkSky at this point.
@@ -360,6 +347,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	tiltPrompt->SetPosition( prompt_location );
+	glasses->SetPosition( 0.0, 0.0, 0.0 );
 }
 
 
