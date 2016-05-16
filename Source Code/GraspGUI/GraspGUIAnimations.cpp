@@ -118,7 +118,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	hmdViewpoint->SetOrientation( head_pose.pose.orientation );
 	hmdViewpoint->SetPosition( head_pose.pose.position );
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
-	objectRenderer->DrawLightSky();
+	objectRenderer->DrawStarrySky();
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTarget();
 	objectRenderer->DrawTiltPrompt();
@@ -130,7 +130,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	workspaceWindow->Clear( 0.0, 0.0, 0.0 );
 	glUsefulPrepareRendering();
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
-	objectRenderer->DrawLightSky();
+	objectRenderer->DrawStarrySky();
 	objectRenderer->DrawRoom();
 	objectRenderer->DrawTool( &hand_pose );
 	objectRenderer->DrawTarget();

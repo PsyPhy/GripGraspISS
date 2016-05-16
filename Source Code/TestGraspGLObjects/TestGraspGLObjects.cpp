@@ -67,15 +67,16 @@ int _tmain(int argc, char *argv[])
 	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
 
 	// Initialize state of the objects.
-	objects->lightSky->Enable();
+	objects->starrySky->Enable();
 	objects->darkSky->Disable();
 	objects->room->Enable();
 	objects->target->Enable();
 	objects->tiltPrompt->Disable();
-	objects->tool->Enable();
+	objects->tool->Disable();
 	objects->projectiles->Disable();
 
-	objects->tunnel->SetColor( RED );
+	objects->tunnel->SetColor( GRAY );
+	objects->ColorGlasses( 1.0 );
 
 	while ( true ) {
 

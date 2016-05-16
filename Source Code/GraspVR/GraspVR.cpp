@@ -156,7 +156,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->PlaceVRObjects();
 
 	// Initialize state of the objects.
-	renderer->lightSky->Enable();
+	renderer->starrySky->Enable();
 	renderer->darkSky->Disable();
 	renderer->room->Enable();
 	renderer->target->Disable();
@@ -238,13 +238,13 @@ void GraspVR::DebugLoop( void ) {
 			renderer->tool->Disable();
 			renderer->tiltPrompt->Disable();
 			renderer->projectiles->Disable();
-			renderer->lightSky->Enable();
+			renderer->starrySky->Enable();
 			renderer->darkSky->Disable();
 		}
 		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay.Key['T'] ) {
 			renderer->target->Enable();
-			renderer->lightSky->Disable();
+			renderer->starrySky->Disable();
 			renderer->darkSky->Enable();
 		}
 		// Show the hand/tool.

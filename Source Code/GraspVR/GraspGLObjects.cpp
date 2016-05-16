@@ -22,10 +22,7 @@ const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
-
 const double GraspGLObjects::room_length = 6000.0;
-//const double GraspGLObjects::wall_thickness = 10.0;
-
 const int GraspGLObjects::room_facets = 32;
 const double GraspGLObjects::reference_bars = 5;
 const double GraspGLObjects::reference_bar_radius = 50.0;
@@ -47,6 +44,7 @@ const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -1500.0 };
 const double GraspGLObjects::target_ball_radius = 100.0;
 const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
 const int GraspGLObjects::target_balls = 3;
+
 const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
 const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 
@@ -81,10 +79,6 @@ void GraspGLObjects::SetLighting( void ) {
 	glClearColor( 0.0F, 0.0F, 0.0F, 1.0F );
 }
 
-
-	laserPointer = CreateLaserPointer();
-	disk_target = CreateDiskTarget();
-	glasses = CreateGlasses();
 void GraspGLObjects::CreateTextures( void ) {
 	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
 	// The wall texture is 256 pixels wide by 512 high.
@@ -93,7 +87,7 @@ void GraspGLObjects::CreateTextures( void ) {
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
 }
 
-Assembly *GraspGLObjects::CreateSky( void ) {
+Assembly *GraspGLObjects::CreateStarrySky( void ) {
 	Assembly *sky = new Assembly();
 	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
 	patch->SetTexture( sky_texture );
@@ -105,7 +99,6 @@ Assembly *GraspGLObjects::CreateSky( void ) {
 Assembly *GraspGLObjects::CreateDarkSky( void ) {
 	Assembly *sky = new Assembly();
 	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
-	patch->SetTexture( sky_texture );
 	sky->AddComponent( patch );
 	sky->SetColor( BLACK );
 	sky->enabled = false;
@@ -158,10 +151,10 @@ Assembly *GraspGLObjects::CreateDiskTarget( void ) {
 
 	Assembly *disk_target = new Assembly();
 	
-		Sphere *sphere = new Sphere( target_ball_radius );
-		sphere->SetPosition( 0.0, 0.0, -room_length/2.0+10 );
-		sphere->SetColor(1.0, 165.0/255.0, 0.0);
-		disk_target->AddComponent( sphere );
+	Sphere *sphere = new Sphere( target_ball_radius );
+	sphere->SetPosition( 0.0, 0.0, -room_length/2.0+10 );
+	sphere->SetColor(1.0, 165.0/255.0, 0.0);
+	disk_target->AddComponent( sphere );
 	return disk_target;
 
 }
@@ -343,25 +336,28 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	CreateTextures();
 
 	room = CreateRoom();
-	lightSky = CreateSky();
+	glasses = CreateGlasses();
+	starrySky = CreateStarrySky();
 	darkSky = CreateDarkSky();
 	// Only one sky should be enabled at a time, so we disable darkSky at this point.
 	darkSky->Disable();
 	// The skies get attached to the room so that they move (tilt) with it.
 	// This means that you don't actually have to draw the skies explicitly.
-	room->AddComponent( lightSky );
+	room->AddComponent( starrySky );
 	room->AddComponent( darkSky );
 
 	target = CreateTarget();
+	disk_target = CreateDiskTarget();
 	tiltPrompt = CreateTiltPrompt();
 
 	tool = CreateTool();
+	laserPointer = CreateLaserPointer();
 	projectiles = CreateProjectiles();
 }
 
 // Place objects at default locations.
 void GraspGLObjects::PlaceVRObjects( void ) {
-	lightSky->SetPosition( sky_location );
+	starrySky->SetPosition( sky_location );
 	darkSky->SetPosition( sky_location );
 	target->SetPosition( target_location );
 	tiltPrompt->SetPosition( prompt_location );
@@ -383,6 +379,7 @@ void GraspGLObjects::DrawVR( void ) {
 	// DrawLightSky();
 	// DrawDarkSky();
 	DrawRoom();
+	DrawGlasses();
 
 	// Draw the other objects with the hopes of seeing specular reflections. 
 	// I am still trying to get specular reflections to work.
@@ -405,8 +402,8 @@ void GraspGLObjects::DrawVR( void ) {
 // Draw the sky, presumably always at the same position.
 // For Grasp, it might make more sense if it is attached to the room so that they tilt together.
 // If so, these routines need not be called explicitly. See comments above.
-void GraspGLObjects::DrawLightSky( void ) {
-	lightSky->Draw();
+void GraspGLObjects::DrawStarrySky( void ) {
+	starrySky->Draw();
 }
 
 void GraspGLObjects::DrawDarkSky( void ) {
@@ -447,8 +444,8 @@ void GraspGLObjects::DrawLaserPointer( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		laserPointer->SetPosition( pose->position );
-		laserPointer->SetOrientation( pose->orientation );
+		laserPointer->SetPosition( pose->pose.position );
+		laserPointer->SetOrientation( pose->pose.orientation );
 	}
 	laserPointer->Draw();
 }
@@ -475,8 +472,8 @@ void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
 
 void GraspGLObjects::DrawGlasses(  TrackerPose *pose  ) {
 	if ( pose != nullptr ) {
-		glasses->SetPosition( pose->position );
-		glasses->SetOrientation( pose->orientation );
+		glasses->SetPosition( pose->pose.position );
+		glasses->SetOrientation( pose->pose.orientation );
 	}
 	glasses->Draw();
 }

@@ -71,24 +71,24 @@ namespace Grasp {
 		public:
 
 			Assembly		*target;			// Shows the target orientation.
-			Assembly		*response;			// Shows the final response.
-			Assembly		*laserPointer;
+			Assembly		*disk_target;		// Shows the center of the target location.
+
+	//		Assembly		*response;			// Shows the final response.
 			Assembly		*tiltPrompt;
 
 			Assembly		*tool;				// An object that moves in the world.
-			Assembly		*projectiles;
-			Assembly		*disk_target;
-			Assembly		*sky;				// A background to be seen at the end of the tunnel.
-			Assembly		*dark_sky;
+			Assembly		*laserPointer;		// A point drawn at a long distance along the axis of the tool/hand.
+			Assembly		*projectiles;		// These can be shot out of the tool.
+			Assembly		*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
+
 			Assembly		*room;
 			Cylinder		*tunnel;			// Part of the room, but it allows us to access it directly to change its color.
-			Assembly		*lightSky;			// A background to be seen at the end of the tunnel.
+			Assembly		*starrySky;			// Backgrounds that can be seen at the end of the tunnel.
 			Assembly		*darkSky;
 
 			Assembly		*head;
 			Assembly		*torso;
 
-			Assembly		*glasses;
 
 		public: 
 
@@ -110,7 +110,7 @@ namespace Grasp {
 			Assembly *CreateDiskTarget( void );
 			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateRoom( void );
-			Assembly *CreateSky( void );
+			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
 			Assembly *CreateLaserPointer(void);
 			Assembly *CreateGlasses(void);
@@ -123,7 +123,7 @@ namespace Grasp {
 			void DrawTool( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);
 			void DrawRoom( TrackerPose *pose = nullptr );
-			void DrawLightSky( void );
+			void DrawStarrySky( void );
 			void DrawDarkSky( void);
 			void DrawLaserPointer( TrackerPose *pose = nullptr );
 			void DrawDiskTarget( void );
