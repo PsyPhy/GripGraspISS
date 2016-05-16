@@ -61,9 +61,21 @@ int _tmain(int argc, char *argv[])
 
 	objects = new GraspGLObjects();
 	objects->CreateVRObjects();
+	objects->PlaceVRObjects();
 
-	objects->tool->SetPosition( 0.0, 0.0, -1000.0 );
+	objects->tool->SetPosition( 0.0, 0.0, -200.0 );
 	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
+
+	// Initialize state of the objects.
+	objects->lightSky->Enable();
+	objects->darkSky->Disable();
+	objects->room->Enable();
+	objects->target->Enable();
+	objects->tiltPrompt->Disable();
+	objects->tool->Enable();
+	objects->projectiles->Disable();
+
+	objects->tunnel->SetColor( RED );
 
 	while ( true ) {
 
@@ -72,11 +84,7 @@ int _tmain(int argc, char *argv[])
 		glUsefulPrepareRendering();
 
 		viewpoint->Apply( window, CYCLOPS );
-		objects->DrawLightSky();
-		objects->DrawRoom();
-		objects->DrawTarget();
-		objects->DrawTiltPrompt();
-		objects->DrawTool();
+		objects->DrawVR();
 
 		window->Swap();
 

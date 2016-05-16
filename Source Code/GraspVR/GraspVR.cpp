@@ -25,6 +25,10 @@ using namespace PsyPhy;
 double GraspVR::mouseGain = - 0.001;
 // Where to place the tool when in V-V mode.
 Pose GraspVR::handPoseVV = {{0.0, 0.0, -200.0}, {0.0, 0.0, 0.0, 1.0}};
+// How much the torso will turn for each press of an arrow key.
+double GraspVR::arrowGain = - 0.01;
+// Simulate the position of the torso of the subject.
+Pose GraspVR::chestPoseSim = {{0.0, -200.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,8 +47,6 @@ static OculusMapper oculusMapper;
 
 void GraspVR::Initialize( HINSTANCE hinst ) {
 
-	renderer = new GraspGLObjects();
-
 	InitializeVR( hinst );
 	InitializeTrackers();
 
@@ -62,6 +64,14 @@ void GraspVR::InitializeTrackers( void ) {
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
 	// The MouseRollPoseTracker will then rotate the tool around this constant position.
 	handTracker->BoresightTo( handPoseVV );
+
+	// Create a arrow key tracker to simulate movements of the hand.
+	chestTracker = new PsyPhy::ArrowsRollPoseTracker( &oculusMapper, arrowGain );
+	fAbortMessageOnCondition( !chestTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing ArrowRollPoseTracker." );
+	// Set the position and orientation of the chest wrt the origin when in V-V mode.
+	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
+	chestTracker->BoresightTo( chestPoseSim );
+
 
 }
 
@@ -141,6 +151,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create all the necessary VR rendering objects.
+	renderer = new GraspGLObjects();
 	renderer->CreateVRObjects();
 	renderer->PlaceVRObjects();
 
@@ -191,8 +202,20 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 
 }
 
+double GraspVR::SetDesiredHeadRoll( double roll_angle ) {
+	desiredHeadRoll = roll_angle;
+	return( desiredHeadRoll );
+}
+double GraspVR::SetDesiredHandRoll( double roll_angle ) {
+	desiredHandRoll = roll_angle;
+	return( desiredHandRoll );
+}
+
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
+
+	SetDesiredHeadRoll( 20.0 );
+	SetDesiredHandRoll( -35.0 );
 	
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay.HandleMessages() ) {
@@ -203,15 +226,20 @@ void GraspVR::DebugLoop( void ) {
 		// Handle triggering and moving the projectiles.
 		HandleProjectiles();
 
+		// Prompt the subject to achieve the desired head orientation.
+
+		//
+		// Handle other key presses.
+		//
 
 		// Disable drawing of all objects.
 		if ( oculusDisplay.Key[VK_SPACE] ) {
 			renderer->target->Disable();
 			renderer->tool->Disable();
 			renderer->tiltPrompt->Disable();
-			renderer->darkSky->Disable();
 			renderer->projectiles->Disable();
 			renderer->lightSky->Enable();
+			renderer->darkSky->Disable();
 		}
 		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay.Key['T'] ) {
