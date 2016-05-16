@@ -1391,6 +1391,7 @@ Hole::Hole( double radius, double width, double height, int facets ) {
   this->radius = radius;
   this->width = width;
   this->height = height;
+  this->facets = facets;
 
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
@@ -1402,18 +1403,19 @@ void Hole::SetRadius( double value ) {
 
 void Hole::Draw( void ) {
 
-  double     rx, ry, angle, angle_step = Pi / 128.0;
+  double     rx, ry, angle, angle_step = 0.5 * Pi / (double) facets;
   if ( ! enabled ) return;
   PrepDraw();
   
   glBegin( GL_POLYGON );
   glVertex2f( width, height );
   glVertex2f( width, 0.0 );
-  for ( angle = - angle_step; angle <= 0.5 * Pi + angle_step; angle += angle_step ) {
+  for ( angle = 0.0; angle < 0.5 * Pi; angle += angle_step ) {
     rx = radius * cos( angle );
     ry = radius * sin( angle );
     glVertex2f( rx, ry );
   }  
+  glVertex2f( 0.0, radius );
   glVertex2f( 0.0, height );
   glVertex2f( width, height );
   glEnd();
@@ -1421,11 +1423,12 @@ void Hole::Draw( void ) {
   glBegin( GL_POLYGON );
   glVertex2f( - width, height );
   glVertex2f( 0.0, height );
-  for ( angle = 0.5 * Pi - angle_step; angle <= Pi + angle_step; angle += angle_step ) {
+  for ( angle = 0.5 * Pi; angle < Pi; angle += angle_step ) {
     rx = radius * cos( angle );
     ry = radius * sin( angle );
     glVertex2f( rx, ry );
   }  
+  glVertex2f( - radius, 0.0 );
   glVertex2f( - width, 0.0 );
   glVertex2f( - width, height );
   glEnd();
@@ -1433,11 +1436,12 @@ void Hole::Draw( void ) {
   glBegin( GL_POLYGON );
   glVertex2f( - width, - height );
   glVertex2f( - width, 0.0 );
-  for ( angle = Pi - angle_step; angle <= 1.5 * Pi + angle_step; angle += angle_step ) {
+  for ( angle = Pi; angle <= 1.5 * Pi; angle += angle_step ) {
     rx = radius * cos( angle );
     ry = radius * sin( angle );
     glVertex2f( rx, ry );
   }  
+  glVertex2f( 0.0, - radius );
   glVertex2f( 0.0, - height );
   glVertex2f( - width, - height );
   glEnd();
@@ -1445,11 +1449,12 @@ void Hole::Draw( void ) {
   glBegin( GL_POLYGON );
   glVertex2f( width, - height );
   glVertex2f( 0.0, - height );
-  for ( angle = 1.5 * Pi - angle_step; angle <= 2.0 * Pi + angle_step; angle += angle_step ) {
+  for ( angle = 1.5 * Pi; angle < 2.0 * Pi; angle += angle_step ) {
     rx = radius * cos( angle );
     ry = radius * sin( angle );
     glVertex2f( rx, ry );
   }  
+  glVertex2f( radius, 0.0 );
   glVertex2f( width, 0.0 );
   glVertex2f( width, - height );
   glEnd();
