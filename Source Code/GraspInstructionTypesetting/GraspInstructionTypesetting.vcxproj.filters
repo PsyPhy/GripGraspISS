@@ -5,6 +5,7 @@
     <None Include="Makefile.mak" />
     <None Include="GraspWelcome.html" />
     <None Include="GraspWelcome.md" />
+    <None Include="Michele.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

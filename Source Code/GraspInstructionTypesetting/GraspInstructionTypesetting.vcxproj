@@ -51,6 +51,7 @@
     <None Include="GraspWelcome.html" />
     <None Include="GraspWelcome.md" />
     <None Include="Makefile.mak" />
+    <None Include="Michele.md" />
     <None Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
