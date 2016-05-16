@@ -12,6 +12,12 @@
     <None Include="V-V4.md" />
     <None Include="V-V5.md" />
     <None Include="V-V6.md" />
+    <None Include="V-K1.md" />
+    <None Include="V-K2.md" />
+    <None Include="V-K3.md" />
+    <None Include="V-K4.md" />
+    <None Include="V-K5.md" />
+    <None Include="V-K6.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

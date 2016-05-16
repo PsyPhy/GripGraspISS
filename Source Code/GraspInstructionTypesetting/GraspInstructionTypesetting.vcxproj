@@ -53,6 +53,12 @@
     <None Include="Makefile.mak" />
     <None Include="Michele.md" />
     <None Include="readme.txt" />
+    <None Include="V-K1.md" />
+    <None Include="V-K2.md" />
+    <None Include="V-K3.md" />
+    <None Include="V-K4.md" />
+    <None Include="V-K5.md" />
+    <None Include="V-K6.md" />
     <None Include="V-V1.md" />
     <None Include="V-V2.md" />
     <None Include="V-V3.md" />

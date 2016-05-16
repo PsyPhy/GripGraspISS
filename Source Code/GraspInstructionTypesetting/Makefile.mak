@@ -5,7 +5,7 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 # This should be a list of all the HTML files that you want to generate.
-all: GraspWelcome.html V-V1.html V-V2.html V-V3.html V-V4.html V-V5.html V-V6.html
+all: GraspWelcome.html V-V1.html V-V2.html V-V3.html V-V4.html V-V5.html V-V6.html V-K1.html V-K2.html V-K3.html V-K4.html V-K5.html V-K6.html
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe
