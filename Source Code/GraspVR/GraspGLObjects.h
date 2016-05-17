@@ -72,6 +72,7 @@ namespace Grasp {
 
 			Assembly		*orientationTarget;			// Shows the target orientation.
 			Assembly		*positionOnlyTarget;		// Shows the center of the target location.
+			Assembly		*response;
 
 			Assembly		*tiltPrompt;
 
@@ -107,6 +108,7 @@ namespace Grasp {
 			Assembly *CreateProjectiles(void);
 			Assembly *CreateOrientationTarget( void );
 			Assembly *CreatePositionOnlyTarget( void );
+			Assembly *CreateResponse( void );
 			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
@@ -114,11 +116,13 @@ namespace Grasp {
 			Assembly *CreateLaserPointer(void);
 			Assembly *CreateGlasses(void);
 
+			void SetColorByError( OpenGLObject *object, double error );
 			void ColorLaserPointer( double error );
 			void ColorGlasses( double error );
 
 			void DrawOrientationTarget( TrackerPose *pose = nullptr );
 			void DrawPositionOnlyTarget(  TrackerPose *pose = nullptr  );
+			void DrawResponse(  TrackerPose *pose = nullptr  );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
 			void DrawTool( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);

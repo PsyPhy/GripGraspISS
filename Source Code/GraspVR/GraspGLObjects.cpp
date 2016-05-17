@@ -144,7 +144,21 @@ Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
 		target->AddComponent( sphere );
 	}
 	return target;
+}
 
+Assembly *GraspGLObjects::CreateResponse( void ) {
+	static int fingers = target_balls - 1;
+	static double finger_spacing = target_ball_radius;
+	Assembly *projectiles = new Assembly();
+	for ( int trg = - fingers; trg <= fingers ; trg++ ){
+		Sphere *sphere = new Sphere( target_ball_radius * 0.75 );
+		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
+		sphere->SetColor( color );
+		// Space the balls vertically.
+		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
+		projectiles->AddComponent( sphere );
+	}
+	return projectiles;
 }
 
 Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
@@ -262,24 +276,17 @@ void GraspGLObjects::ColorLaserPointer( double error ) {
 Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
 	Assembly *projectiles = new Assembly();
-
-	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
 	static int fingers = target_balls - 1;
-
-	// For some reason I set the spacing between fingers to be the same as the target ball radius.
-	// I don't remember why. This could change.
 	static double finger_spacing = finger_ball_radius * 2;
 
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 
-		//Sphere *sphere = new Sphere( finger_ball_radius*1.0 );
-		Sphere *sphere = new Sphere( finger_ball_radius*8.0 );
+		Sphere *sphere = new Sphere( finger_ball_radius*1.0 );
 		// Create a color that varies as a function of the ball's position.
 		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
 		sphere->SetColor( color );
 		// Space the balls vertically.
-		//sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
-		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
+		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		projectiles->AddComponent( sphere );
 		
 	}
@@ -287,7 +294,6 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 	return projectiles;
 
 }
-
 Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 	Assembly *prompt = new Assembly();
@@ -333,6 +339,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	orientationTarget = CreateOrientationTarget();
 	positionOnlyTarget = CreatePositionOnlyTarget();
+	response = CreateResponse();
 	tiltPrompt = CreateTiltPrompt();
 
 	tool = CreateTool();
@@ -346,6 +353,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	darkSky->SetPosition( sky_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
+	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	tiltPrompt->SetPosition( prompt_location );
 	glasses->SetPosition( 0.0, 0.0, 0.0 );
 }
@@ -375,6 +383,7 @@ void GraspGLObjects::DrawVR( void ) {
 
 	DrawOrientationTarget();
 	DrawPositionOnlyTarget();
+	DrawResponse();
 	DrawTiltPrompt();
 	DrawTool();
 	DrawLaserPointer();
@@ -417,6 +426,16 @@ void GraspGLObjects::DrawOrientationTarget( TrackerPose *pose ) {
 		orientationTarget->SetOrientation( pose->pose.orientation );
 	}
 	orientationTarget->Draw();
+}
+
+void GraspGLObjects::DrawResponse( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
+	if ( pose != nullptr ) {
+		response->SetPosition( pose->pose.position );
+		response->SetOrientation( pose->pose.orientation );
+	}
+	response->Draw();
 }
 void GraspGLObjects::DrawPositionOnlyTarget( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.

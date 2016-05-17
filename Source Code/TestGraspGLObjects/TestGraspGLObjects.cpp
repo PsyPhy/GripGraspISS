@@ -66,12 +66,15 @@ int _tmain(int argc, char *argv[])
 	objects->tool->SetPosition( 0.0, 0.0, -200.0 );
 	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
 
+	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
+
 	// Initialize state of the objects.
 	objects->starrySky->Enable();
 	objects->darkSky->Disable();
 	objects->room->Enable();
 	objects->orientationTarget->Enable();
 	objects->positionOnlyTarget->Disable();
+	objects->response->Enable();
 	objects->tiltPrompt->Disable();
 	objects->tool->Disable();
 	objects->projectiles->Disable();
