@@ -173,35 +173,37 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 Assembly *GraspGLObjects::CreateGlasses( void ) {
 
-	static double visor_radius = 140.0;
+	static double visor_radius = 150.0;
 
 	Assembly *glasses = new Assembly();
 	glasses->SetColor(WHITE);
 	Hole *hole = new Hole( visor_radius, room_radius, room_radius, 8 );
 	glasses->AddComponent( hole );
-	glasses->SetOffset( 0.0, 0.0, -200.0 );
+	glasses->SetOffset( 0.0, 0.0, -230.0 );
 
 	return glasses;
 }
 
-void GraspGLObjects::ColorGlasses( double error ) {
+void GraspGLObjects::SetColorByError( OpenGLObject *object, double error ) {
 	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
 	if (error<epsilon*0.2){//GREEN
-		glasses->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
-	}else{
+		object->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
+	} else {
 		if (error>(2*epsilon)){//RED
-			glasses->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
-		}else{
+			object->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
+		} else {
 			if (error>epsilon){//Yellow->red
-				glasses->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
-			}else{ //green->yellow
-				glasses->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
+				object->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
+			} else { //green->yellow
+				object->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
 			}
 		}
 	}
-
 }
 
+void GraspGLObjects::ColorGlasses( double error ) {
+	SetColorByError( glasses, error );
+}
 
 Assembly *GraspGLObjects::CreateTool( void ) {
 
@@ -256,22 +258,10 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 }
 
 void GraspGLObjects::ColorLaserPointer( double error ) {
-	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
-	if (error<epsilon*0.2){//GREEN
-		laserPointer->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 1.0);
-	}else{
-		if (error>(2*epsilon)){//RED
-			laserPointer->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 1.0);
-		}else{
-			if (error>epsilon){//Yellow->red
-				laserPointer->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 1.0);
-			}else{ //green->yellow
-				laserPointer->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 1.0);
-			}
-		}
-	}
-
+	SetColorByError( laserPointer, error );
 }
+
+
 
 Assembly *GraspGLObjects::CreateProjectiles( void ) {
 

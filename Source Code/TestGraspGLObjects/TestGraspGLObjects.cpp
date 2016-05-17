@@ -53,7 +53,7 @@ int _tmain(int argc, char *argv[])
 	*      that I give for the model room here are in mm.
 	*  100.0 to 10000.0  depth clipping planes - making this smaller would improve the depth resolution.
 	*/
-	viewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
+	viewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
 
 	// Initial viewpoint is at the center of the room in the null orientation.
 	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
@@ -80,7 +80,7 @@ int _tmain(int argc, char *argv[])
 	objects->projectiles->Disable();
 
 	objects->tunnel->SetColor( GRAY );
-	objects->ColorGlasses( 1.0 );
+	objects->ColorGlasses( 10.0 );
 
 	while ( true ) {
 
