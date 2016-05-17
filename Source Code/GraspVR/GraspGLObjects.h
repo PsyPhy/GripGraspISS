@@ -77,6 +77,7 @@ namespace Grasp {
 			Assembly		*tiltPrompt;
 
 			Assembly		*tool;				// An object that moves in the world.
+			Assembly		*kktool;
 			Assembly		*laserPointer;		// A point drawn at a long distance along the axis of the tool/hand.
 			Assembly		*projectiles;		// These can be shot out of the tool.
 			Assembly		*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
@@ -105,6 +106,7 @@ namespace Grasp {
 			void GraspGLObjects::DrawVR( void );
 
 			Assembly *CreateTool( void );
+			Assembly *CreateKKTool( void );
 			Assembly *CreateProjectiles(void);
 			Assembly *CreateOrientationTarget( void );
 			Assembly *CreatePositionOnlyTarget( void );
@@ -125,6 +127,7 @@ namespace Grasp {
 			void DrawResponse(  TrackerPose *pose = nullptr  );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
 			void DrawTool( TrackerPose *pose = nullptr );
+			void DrawKKTool( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);
 			void DrawRoom( TrackerPose *pose = nullptr );
 			void DrawStarrySky( void );

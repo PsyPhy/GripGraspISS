@@ -97,12 +97,13 @@ Assembly *GraspGLObjects::CreateStarrySky( void ) {
 }
 
 Assembly *GraspGLObjects::CreateDarkSky( void ) {
-	Assembly *sky = new Assembly();
+	Assembly *darkSky = new Assembly();
 	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
-	sky->AddComponent( patch );
-	sky->SetColor( BLACK );
-	sky->enabled = false;
-	return( sky );
+	patch->SetTexture( sky_texture );// there is something strange if I dont put the texture the ligthing of the whole tunnel changes
+	darkSky->AddComponent( patch );
+	darkSky->SetColor( BLACK );
+	darkSky->enabled = false;
+	return( darkSky );
 }
 
 Assembly *GraspGLObjects::CreateRoom( void ) {
@@ -187,15 +188,19 @@ Assembly *GraspGLObjects::CreateGlasses( void ) {
 void GraspGLObjects::SetColorByError( OpenGLObject *object, double error ) {
 	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
 	if (error<epsilon*0.2){//GREEN
-		object->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
+		//object->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
+		object->SetColor(0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5);
 	} else {
 		if (error>(2*epsilon)){//RED
-			object->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
+			//object->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
+			object->SetColor(255.0/255.0, 0.0/255.0,  0.0/255.0, 0.5);
 		} else {
 			if (error>epsilon){//Yellow->red
-				object->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
+				//object->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
+				object->SetColor(200.0/255.0, (200.0*(1-(error-epsilon)/(2*epsilon-epsilon))+0.0)/255.0,  0.0/255.0, 0.5);
 			} else { //green->yellow
-				object->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
+				//object->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
+				object->SetColor((200.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+0.0)/255.0, 200.0/255.0,  0.0/255.0, 0.5);
 			}
 		}
 	}
@@ -242,6 +247,46 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 		tool->AddComponent( finger );
 	}
 	return tool;
+
+}
+
+Assembly *GraspGLObjects::CreateKKTool( void ) {
+
+	Assembly *kktool = new Assembly();
+
+	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
+
+	// There are as many fingers as target balls. This could change.
+	//static int fingers = target_balls-1;
+
+	// For some reason I set the spacing between fingers to be the same as the target ball radius.
+	// I don't remember why. This could change.
+	//static double finger_spacing = finger_ball_radius*2;
+
+	//for ( int trg = - fingers; trg <= fingers ; trg++ ){
+
+		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
+		Assembly *finger = new Assembly();
+
+		Sphere *sphere = new Sphere( finger_ball_radius );
+		sphere->SetPosition( 0.0, 0.0, 0.0 );
+		finger->AddComponent( sphere );
+		Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
+		cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
+		finger->AddComponent( cylinder );
+		sphere = new Sphere( finger_ball_radius );
+		sphere->SetPosition( 0.0, 0.0, - finger_length );
+		finger->AddComponent( sphere );
+
+		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
+		//float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
+		finger->SetColor( 0.5, 0.5, 0.5, 1.0 );
+
+		// Space the fingers vertically.
+		finger->SetPosition( 0.0, 0.0, 0.0 );
+		kktool->AddComponent( finger );
+	//}
+	return kktool;
 
 }
 
@@ -321,7 +366,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	starrySky = CreateStarrySky();
 	darkSky = CreateDarkSky();
 	// Only one sky should be enabled at a time, so we disable darkSky at this point.
-	darkSky->Disable();
+	//darkSky->Disable();
 	// The skies get attached to the room so that they move (tilt) with it.
 	// This means that you don't actually have to draw the skies explicitly.
 	room->AddComponent( starrySky );
@@ -333,6 +378,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	tiltPrompt = CreateTiltPrompt();
 
 	tool = CreateTool();
+	kktool = CreateKKTool();
 	laserPointer = CreateLaserPointer();
 	projectiles = CreateProjectiles();
 }
@@ -376,6 +422,7 @@ void GraspGLObjects::DrawVR( void ) {
 	DrawResponse();
 	DrawTiltPrompt();
 	DrawTool();
+	DrawKKTool();
 	DrawLaserPointer();
 	DrawProjectiles();
 
@@ -444,6 +491,16 @@ void GraspGLObjects::DrawTool( TrackerPose *pose ) {
 		tool->SetOrientation( pose->pose.orientation );
 	}
 	tool->Draw();
+}
+
+void GraspGLObjects::DrawKKTool( TrackerPose *pose ) {
+	// If the caller has specified a pose, move to that pose first.
+	// Otherwise, just draw it at it's current pose.
+	if ( pose != nullptr ) {
+		kktool->SetPosition( pose->pose.position );
+		kktool->SetOrientation( pose->pose.orientation );
+	}
+	kktool->Draw();
 }
 
 void GraspGLObjects::DrawLaserPointer( TrackerPose *pose ) {
