@@ -6,6 +6,7 @@
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/CodaRTnetTracker.h"
 #include "../OculusInterface/MousePoseTrackers.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
@@ -52,28 +53,6 @@ void GraspVR::Initialize( HINSTANCE hinst ) {
 
 }
 
-void GraspVR::InitializeTrackers( void ) {
-
-	// Create a pose tracker that uses only the Oculus.
-	hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
-	fAbortMessageOnCondition( !hmdTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
-
-	// Create a mouse tracker to simulate movements of the hand.
-	handTracker = new PsyPhy::MouseRollPoseTracker( &oculusMapper, mouseGain );
-	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing MouseRollPoseTracker." );
-	// Set the position and orientation of the tool wrt the origin when in V-V mode.
-	// The MouseRollPoseTracker will then rotate the tool around this constant position.
-	handTracker->BoresightTo( handPoseVV );
-
-	// Create a arrow key tracker to simulate movements of the hand.
-	chestTracker = new PsyPhy::ArrowsRollPoseTracker( &oculusMapper, arrowGain );
-	fAbortMessageOnCondition( !chestTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing ArrowRollPoseTracker." );
-	// Set the position and orientation of the chest wrt the origin when in V-V mode.
-	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
-	chestTracker->BoresightTo( chestPoseSim );
-
-
-}
 
 
 void GraspVR::UpdateTrackers( void ) {
@@ -118,7 +97,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	ovrResult result;
 
 	// Decide if we are in full screen mode or not.
-	// To avoid loosing focus by clicking outside the desktop window it is best to be in fullscreen mode.
+	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
 	static const bool fullscreen = true;
 
    // Initializes LibOVR, and the Rift
@@ -309,4 +288,105 @@ void GraspVR::DebugLoop( void ) {
 	}
 
 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GraspSIM is a version of GraspVR that uses only the Oculus and simulated trackers.
+
+void GraspSIM::InitializeTrackers( void ) {
+
+	// Create a pose tracker that uses only the Oculus.
+	hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
+	fAbortMessageOnCondition( !hmdTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
+
+	// Create a mouse tracker to simulate movements of the hand.
+	handTracker = new PsyPhy::MouseRollPoseTracker( &oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing MouseRollPoseTracker." );
+	// Set the position and orientation of the tool wrt the origin when in V-V mode.
+	// The MouseRollPoseTracker will then rotate the tool around this constant position.
+	handTracker->BoresightTo( handPoseVV );
+
+	// Create a arrow key tracker to simulate movements of the hand.
+	chestTracker = new PsyPhy::ArrowsRollPoseTracker( &oculusMapper, arrowGain );
+	fAbortMessageOnCondition( !chestTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing ArrowRollPoseTracker." );
+	// Set the position and orientation of the chest wrt the origin when in V-V mode.
+	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
+	chestTracker->BoresightTo( chestPoseSim );
+}
+
+// GraspDEX is any version of GraspVR that uses the coda. 
+// NB It does not define the hmd, hand and chest tracker. That should be done in another flavor built on this one.
+void GraspDEX::InitializeTrackers( void ) {
+
+	// Create PoseTrackers that 
+	hmdCascadeTracker = new CascadePoseTracker();
+	handCascadeTracker = new CascadePoseTracker();
+	chestCascadeTracker = new CascadePoseTracker();
+	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+		hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+		fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
+		hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
+		hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+		handCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+		fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing toolCodaPoseTracker[%d].", unit );
+		handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
+		handCascadeTracker->AddTracker( handCodaPoseTracker[unit] );
+		chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+		fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing torsoCodaPoseTracker[%d].", unit );
+		chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
+		chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
+	}
+	// Create a pose tracker that combines Coda and Oculus data.
+	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
+	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+
+}
+
+void GraspDEX::UpdateTrackers( void ) {
+
+	// Declare this lone function that is provided in Grasp.cpp.
+	void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination );
+
+	// Get the current position of the CODA markers.
+	// codaTracker.GetCurrentMarkerFrameUnit( primaryMarkerFrame, 0 );
+	// codaTracker.GetCurrentMarkerFrameUnit( secondaryMarkerFrame, 1 );
+	// GetMarkerFrameFromBackground( 0, &primaryMarkerFrame );
+	// GetMarkerFrameFromBackground( 0, &secondaryMarkerFrame );
+	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+		GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
+	}
+
+	GraspVR::UpdateTrackers();
+
+}
+
+
+
+
+
+// A flavor of GraspDEX (GraspVR) used to perform Grasp protocols with CODA hand tracking. 
+// It uses the OculusCodaPoseTracker for the head and a mouse tracker for the hand.
+void GraspVK::InitializeTrackers( void ) {
+	GraspDEX::InitializeTrackers();
+	// Pick which PoseTrackers to use.
+	hmdTracker = oculusCodaPoseTracker;
+	handTracker = handCascadeTracker;
+	handTracker->BoresightTo( handPoseVV );
+	chestTracker = chestCascadeTracker;
+	
+}
+
+// A flavor of GraspDEX (GraspVR) designed for performing the V-V protocol. 
+// It uses the OculusCodaPoseTracker for the head and a mouse tracker for the hand.
+void GraspVV::InitializeTrackers( void ) {
+	GraspDEX::InitializeTrackers();
+	// Pick which PoseTrackers to use.
+	hmdTracker = oculusCodaPoseTracker;
+	// Create a mouse tracker to simulate movements of the hand.
+	handTracker = new PsyPhy::MouseRollPoseTracker( &oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing MouseRollPoseTracker." );
+	// Set the position and orientation of the tool wrt the origin when in V-V mode.
+	// The MouseRollPoseTracker will then rotate the tool around this constant position.
+	handTracker->BoresightTo( handPoseVV );
 }

@@ -1,3 +1,4 @@
+#pragma once 
 
 #include "../OculusInterface/OculusInterface.h"
 #include "../OpenGLObjects/OpenGLObjects.h"

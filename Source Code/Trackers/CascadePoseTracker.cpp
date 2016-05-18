@@ -56,7 +56,7 @@ bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) {
 		tracker[trk]->GetCurrentPose( component_pose );
 		if ( component_pose.visible ) {
 			CopyTrackerPose( pose, component_pose );
-			fOutputDebugString( "%8d Component Tracker %d\n", cycle_counter, trk );
+			fOutputDebugString( "%8d Component Tracker %d %s\n", cycle_counter, trk, qstr( pose.pose.orientation ) );
 			break;
 		}
 	}
