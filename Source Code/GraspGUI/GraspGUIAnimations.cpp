@@ -32,7 +32,7 @@ void GraspDesktop::InitializeAnimations( void ) {
 	hmdWindow->Clear( 0.50, 0.50, 0.60 );
 
  	hmdViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
-	hmdViewpoint->SetPosition( 0.0, 0.0, 0.0 );
+	hmdViewpoint->SetPosition( 200.0, 0.0, 0.0 );
 	hmdViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create a window and viewpoint to observe what is going on in the workspace.
@@ -43,7 +43,7 @@ void GraspDesktop::InitializeAnimations( void ) {
 	workspaceWindow->Clear( 0.30, 0.50, 0.60 );
 	
  	workspaceViewpoint = new Viewpoint( 6.0, 50.0, 10.0, 10000.0);
-	workspaceViewpoint->SetPosition( 1950.0, 0.0, -1800.0 );
+	workspaceViewpoint->SetPosition( 950.0, 0.0, -1800.0 );
 	workspaceViewpoint->SetOrientation( 0.0, 0.0, -90.0 );
 
 	// Create windows to show the status of each of the tracked objects.
@@ -70,6 +70,7 @@ void GraspDesktop::InitializeAnimations( void ) {
 	objectRenderer = new GraspGLObjects();
 	objectRenderer->SetLighting();
 	objectRenderer->CreateVRObjects();
+	objectRenderer->CreateAuxiliaryObjects();
 
 	CreateRefreshTimer( 20 );
 
@@ -107,7 +108,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	// Place the hand at shoulder level.
 	static double arms_length = 700.0;
 	static double shoulder_drop = 300.0;
-	hand_pose.pose.position[X] = 0.0;
+	hand_pose.pose.position[X] = 200.0;
 	hand_pose.pose.position[Y] = - shoulder_drop;
 	hand_pose.pose.position[Z] = - arms_length;
 
@@ -118,12 +119,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	hmdViewpoint->SetOrientation( head_pose.pose.orientation );
 	hmdViewpoint->SetPosition( head_pose.pose.position );
 	hmdViewpoint->Apply( hmdWindow, CYCLOPS );
-	objectRenderer->DrawStarrySky();
-	objectRenderer->DrawRoom();
-	objectRenderer->DrawOrientationTarget();
-	objectRenderer->DrawPositionOnlyTarget();
-	objectRenderer->DrawTiltPrompt();
-	objectRenderer->DrawTool( &hand_pose );
+	objectRenderer->DrawVR();
 	hmdWindow->Swap();
 
 	// Show what is going on from a fixed viewpoint into the 3D workspace.
@@ -133,7 +129,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
 	objectRenderer->DrawStarrySky();
 	objectRenderer->DrawRoom();
-	objectRenderer->DrawTool( &hand_pose );
+	objectRenderer->DrawHand( &hand_pose );
 	objectRenderer->DrawOrientationTarget();
 	objectRenderer->DrawPositionOnlyTarget();
 	objectRenderer->DrawTiltPrompt();
@@ -151,7 +147,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	toolDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( toolDynamicWindow, CYCLOPS );
 	vp.CopyVector( hand_pose.pose.position, vp.zeroVector );
-	objectRenderer->DrawTool( &hand_pose );
+	objectRenderer->DrawHand( &hand_pose );
 	toolDynamicWindow->Swap();
 
 	torsoDynamicWindow->Activate();
@@ -169,7 +165,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	toolStaticWindow->Activate();
 	toolStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( toolStaticWindow, CYCLOPS );
-	objectRenderer->DrawTool( &NullTrackerPose );
+	objectRenderer->DrawHand( &NullTrackerPose );
 	toolStaticWindow->Swap();
 
 	torsoStaticWindow->Activate();

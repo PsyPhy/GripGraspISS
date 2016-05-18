@@ -24,7 +24,7 @@ using namespace PsyPhy;
 // How much the tool will turn for a given displacement of the mouse or trackball.
 double GraspVR::mouseGain = - 0.001;
 // Where to place the tool when in V-V mode.
-Pose GraspVR::handPoseVV = {{0.0, 0.0, -200.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspVR::handPoseVV = {{100.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspVR::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -93,6 +93,7 @@ void GraspVR::UpdateTrackers( void ) {
 		else {
 			viewpoint->SetPose( headPose.pose );
 			renderer->glasses->SetPose( headPose.pose );
+			HandleHeadAlignment();
 		}
 
 		// Track movements of the hand marker array.
@@ -102,7 +103,8 @@ void GraspVR::UpdateTrackers( void ) {
 			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 		}
 		else {
-			renderer->tool->SetPose( handPose.pose );
+			renderer->hand->SetPose( handPose.pose );
+			HandleHandAlignment();
 		}
 
 		// Boresight the Oculus tracker on 'B'.
@@ -163,7 +165,9 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
 	renderer->tiltPrompt->Disable();
-	renderer->tool->Disable();
+	renderer->vTool->Disable();
+	renderer->kTool->Disable();
+	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
 
 }
@@ -183,12 +187,10 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 		// Trigger the projectiles, but only if it is not already triggered.
 		if ( oculusDisplay.Key[VK_RETURN] || oculusDisplay.Button[MOUSE_LEFT] && !renderer->projectiles->enabled ) { 
 			// Position the projectiles where the tool is now.
-			renderer->projectiles->SetPosition( renderer->tool->position );
-			renderer->projectiles->SetOrientation( renderer->tool->orientation );
+			renderer->projectiles->SetPosition( renderer->hand->position );
+			renderer->projectiles->SetOrientation( renderer->hand->orientation );
 			// Make the projectiles visible.
 			renderer->projectiles->Enable();
-			// Hide the tool.
-			renderer->tool->Disable();
 			return( running );
 		}
 		else if ( renderer->projectiles->position[Z] < renderer->darkSky->position[Z] ) {
@@ -197,7 +199,11 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 		}
 		else if ( renderer->projectiles->enabled ) {
 			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
-			renderer->projectiles->SetPosition( renderer->projectiles->position[X], renderer->projectiles->position[Y], renderer->projectiles->position[Z] - 10.0 );
+			Vector3 aim, new_position;
+			MultiplyVector( aim, kVector, renderer->hand->orientation );
+			ScaleVector( aim, aim, -10.0 );
+			AddVectors( new_position, renderer->projectiles->position, aim );
+			renderer->projectiles->SetPosition( new_position );
 			return( running );
 		}
 		else return( cocked );
@@ -206,13 +212,20 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 
 double GraspVR::SetDesiredHeadRoll( double roll_angle ) {
 	desiredHeadRoll = roll_angle;
+	SetQuaternion( desiredHeadOrientation, desiredHeadRoll, kVector );
 	return( desiredHeadRoll );
 }
+Alignment GraspVR::HandleHeadAlignment( void ) {
+	return( renderer->ColorGlasses( desiredHeadRoll ) ? aligned : misaligned );
+}
+
 double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 	desiredHandRoll = roll_angle;
 	return( desiredHandRoll );
 }
-
+Alignment GraspVR::HandleHandAlignment( void ) {
+	return( renderer->ColorKK( desiredHandRoll ) ? aligned : misaligned );
+}
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
 
@@ -238,9 +251,12 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay.Key[VK_SPACE] ) {
 			renderer->orientationTarget->Disable();
 			renderer->positionOnlyTarget->Disable();
-			renderer->tool->Disable();
+			renderer->kkTool->Disable();
+			renderer->vTool->Disable();
+			renderer->kTool->Disable();
 			renderer->tiltPrompt->Disable();
 			renderer->projectiles->Disable();
+			renderer->response->Disable();
 			renderer->starrySky->Enable();
 			renderer->darkSky->Disable();
 		}
@@ -251,7 +267,22 @@ void GraspVR::DebugLoop( void ) {
 			renderer->darkSky->Enable();
 		}
 		// Show the hand/tool.
-		if ( oculusDisplay.Key['H'] ) renderer->tool->Enable();
+		if ( oculusDisplay.Key['H'] ) {
+			renderer->vTool->Enable();
+			renderer->kTool->Disable();
+			renderer->kkTool->Disable();
+		}
+		if ( oculusDisplay.Key['K'] ) {
+			renderer->vTool->Disable();
+			renderer->kTool->Disable();
+			renderer->kkTool->Enable();
+		}
+		if ( oculusDisplay.Key['J'] ) {
+			renderer->vTool->Disable();
+			renderer->kTool->Enable();
+			renderer->kkTool->Disable();
+		}
+
 		// Show the tilt prompt.
 		if ( oculusDisplay.Key['P'] ) renderer->tiltPrompt->Enable();
 

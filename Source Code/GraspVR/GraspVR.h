@@ -24,7 +24,9 @@ namespace Grasp {
 		static Pose chestPoseSim;
 
 		double desiredHeadRoll;
+		Quaternion desiredHeadOrientation;
 		double desiredHandRoll;
+		Quaternion desiredHandOrientation;
 
 		OculusViewpoint *viewpoint;
 

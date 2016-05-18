@@ -62,16 +62,10 @@ int _tmain(int argc, char *argv[])
 	objects = new GraspGLObjects();
 	objects->CreateVRObjects();
 	objects->PlaceVRObjects();
-
-	objects->tool->SetPosition( 0.0, 0.0, -200.0 );
-	objects->tool->SetOrientation( 40.0, 0.0, 0.0 );
 	
-	objects->kktool->SetPosition( 25.0, -25.0, -200.0 );
-	objects->kktool->SetOrientation( 0.0, -1.0, -1.0 );
-	
-	objects->laserPointer->SetPosition(25.0, -25.0, -200.0 );
-	objects->laserPointer->SetOrientation( 0.0, -1.0, -1.0 );
-
+	objects->hand->SetPosition( 25.0, -25.0, -200.0 );
+	objects->hand->SetOrientation( 0.0, -1.0, -1.0 );
+		
 	objects->tiltPrompt->SetOrientation(110.0, 0.0, 0.0);
 
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
@@ -86,12 +80,10 @@ int _tmain(int argc, char *argv[])
 	objects->positionOnlyTarget->Disable();
 	objects->response->Enable();
 	objects->tiltPrompt->Disable();
-	objects->tool->Disable();
-
-	objects->kktool->Enable();
+	objects->vTool->Enable();
+	objects->kTool->Disable();
+	objects->kkTool->Disable();
 	objects->projectiles->Disable();
-	objects->laserPointer->Disable();
-
 
 	objects->tunnel->SetColor( GRAY );
 	objects->ColorGlasses( 0.0 );

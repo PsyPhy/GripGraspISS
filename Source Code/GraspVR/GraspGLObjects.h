@@ -21,6 +21,7 @@
 #include "../OpenGLObjects/OpenGLColors.h"
 #include "../OpenGLObjects/OpenGLWindows.h"
 #include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLYoke.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../OpenGLObjects/OpenGLTextures.h"
 
@@ -62,6 +63,9 @@ namespace Grasp {
 			static const int target_balls;
 			static const double finger_length;
 
+			static const double headRollTolerance;
+			static const double kkTolerance;
+
 		protected:
 
 			Texture			*wall_texture;		// The texture that is applied to the walls.
@@ -76,16 +80,18 @@ namespace Grasp {
 
 			Assembly		*tiltPrompt;
 
-			Assembly		*tool;				// An object that moves in the world.
-			Assembly		*kktool;
-			Assembly		*laserPointer;		// A point drawn at a long distance along the axis of the tool/hand.
+			Yoke			*hand;				// An collection of objects that move with the hand.
+			Assembly		*vTool;				// Full-fledged tool. One can see its orientation.
+			Assembly		*kTool;				// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
+			Assembly		*kkTool;			// A tool that is used to drive the hand to the target orientation in K-K.
+
 			Assembly		*projectiles;		// These can be shot out of the tool.
-			Assembly		*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
 
 			Assembly		*room;
 			Cylinder		*tunnel;			// Part of the room, but it allows us to access it directly to change its color.
 			Assembly		*starrySky;			// Backgrounds that can be seen at the end of the tunnel.
 			Assembly		*darkSky;
+			Assembly		*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
 
 			Assembly		*head;
 			Assembly		*torso;
@@ -105,9 +111,12 @@ namespace Grasp {
 			// Draw the VR objects. Only those that are currently active will be drawn.
 			void GraspGLObjects::DrawVR( void );
 
-			Assembly *CreateTool( void );
-			Assembly *CreateKKTool( void );
+			Assembly *CreateVisualTool( void );
+			Assembly *CreateKinestheticTool( void );
+			Assembly *CreateLaserPointer(void);
 			Assembly *CreateProjectiles(void);
+			Yoke	 *CreateHand(void);
+
 			Assembly *CreateOrientationTarget( void );
 			Assembly *CreatePositionOnlyTarget( void );
 			Assembly *CreateResponse( void );
@@ -115,24 +124,21 @@ namespace Grasp {
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
-			Assembly *CreateLaserPointer(void);
 			Assembly *CreateGlasses(void);
 
-			void SetColorByError( OpenGLObject *object, double error );
-			void ColorLaserPointer( double error );
-			void ColorGlasses( double error );
+			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double epsilon );
+			bool ColorKK( double desired_angle );
+			bool ColorGlasses( double desired_angle );
 
 			void DrawOrientationTarget( TrackerPose *pose = nullptr );
 			void DrawPositionOnlyTarget(  TrackerPose *pose = nullptr  );
 			void DrawResponse(  TrackerPose *pose = nullptr  );
 			void DrawTiltPrompt( TrackerPose *pose = nullptr );
-			void DrawTool( TrackerPose *pose = nullptr );
-			void DrawKKTool( TrackerPose *pose = nullptr );
+			void DrawHand( TrackerPose *pose = nullptr );
 			void DrawProjectiles(TrackerPose *pose = nullptr);
 			void DrawRoom( TrackerPose *pose = nullptr );
 			void DrawStarrySky( void );
 			void DrawDarkSky( void);
-			void DrawLaserPointer( TrackerPose *pose = nullptr );
 			void DrawGlasses( TrackerPose *pose = nullptr );
 
 			// Objects that are not used for VR in the HMD, but may be used

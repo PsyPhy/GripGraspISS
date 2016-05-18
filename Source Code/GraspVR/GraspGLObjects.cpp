@@ -51,6 +51,9 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
+const double GraspGLObjects::headRollTolerance = 10.0;	// Tolerance around desired head tilt, in degrees.
+const double GraspGLObjects::kkTolerance = 5.0;			// Tolerance for hand orientation in K-K.
+
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
 	
@@ -153,8 +156,7 @@ Assembly *GraspGLObjects::CreateResponse( void ) {
 	Assembly *projectiles = new Assembly();
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 		Sphere *sphere = new Sphere( target_ball_radius * 0.75 );
-		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
-		sphere->SetColor( color );
+		sphere->SetColor( 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0f)/255.0f , 0.0f, 1.0f  );
 		// Space the balls vertically.
 		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
 		projectiles->AddComponent( sphere );
@@ -185,49 +187,42 @@ Assembly *GraspGLObjects::CreateGlasses( void ) {
 	return glasses;
 }
 
-void GraspGLObjects::SetColorByError( OpenGLObject *object, double error ) {
-	double epsilon=0.1/3.14*180; // it does not seem to work properly but I have no way to testing in an effective way
-	if (error<epsilon*0.2){//GREEN
-		//object->SetColor(100.0/255.0, 255.0/255.0,  100.0/255.0, 0.5);
-		object->SetColor(0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5);
-	} else {
-		if (error>(2*epsilon)){//RED
-			//object->SetColor(200.0/255.0, 100.0/255.0,  100.0/255.0, 0.5);
-			object->SetColor(255.0/255.0, 0.0/255.0,  0.0/255.0, 0.5);
-		} else {
-			if (error>epsilon){//Yellow->red
-				//object->SetColor(200.0/255.0, (100.0*(1-error-epsilon)/(2*epsilon-epsilon)+100.0)/255.0,  100.0/255.0, 0.5);
-				object->SetColor(200.0/255.0, (200.0*(1-(error-epsilon)/(2*epsilon-epsilon))+0.0)/255.0,  0.0/255.0, 0.5);
-			} else { //green->yellow
-				//object->SetColor((55.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+145.0)/255.0, 200.0/255.0,  100.0/255.0, 0.5);
-				object->SetColor((200.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+0.0)/255.0, 200.0/255.0,  0.0/255.0, 0.5);
-			}
-		}
+bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angle, double epsilon ) {
+
+	static double transparency = 0.75;
+	Vector3 rotated;
+	MultiplyVector( rotated, iVector, object->orientation );
+	double error = ToDegrees( atan2( rotated[Y], rotated[X] ) );
+	if ( rotated[X] < 0.0 ) {
+		// Error is more than 90°. Clamp to red and return false to say out of tolerance zone.
+		object->SetColor( 1.0, 0.0, 0.0, transparency );
+		return( false );
 	}
+	// This simple formula goes nicely from gree to yellow to red as the angle increases.
+	double green = rotated[X] * rotated[X] * rotated[X] * rotated[X];
+	double red = 1 - green;
+	object->SetColor( red, green, 0.0, 0.75 );
+	// Indicate if we are in the tolerance zone or not.
+	return( abs( error ) < epsilon );
 }
 
-void GraspGLObjects::ColorGlasses( double error ) {
-	SetColorByError( glasses, error );
+bool GraspGLObjects::ColorGlasses( double roll_angle ) {
+	return ( SetColorByRollError( glasses, roll_angle, headRollTolerance ) );
 }
 
-Assembly *GraspGLObjects::CreateTool( void ) {
+Assembly *GraspGLObjects::CreateVisualTool( void ) {
 
 	Assembly *tool = new Assembly();
 
 	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
-
 	// There are as many fingers as target balls. This could change.
 	static int fingers = target_balls-1;
-
-	// For some reason I set the spacing between fingers to be the same as the target ball radius.
-	// I don't remember why. This could change.
 	static double finger_spacing = finger_ball_radius*2;
 
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
 
 		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
 		Assembly *finger = new Assembly();
-
 		Sphere *sphere = new Sphere( finger_ball_radius );
 		sphere->SetPosition( 0.0, 0.0, 0.0 );
 		finger->AddComponent( sphere );
@@ -239,74 +234,64 @@ Assembly *GraspGLObjects::CreateTool( void ) {
 		finger->AddComponent( sphere );
 
 		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
-		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
-		finger->SetColor( color );
+		finger->SetColor( 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0f)/255.0f , 0.0f, 1.0f  );
 
 		// Space the fingers vertically.
 		finger->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		tool->AddComponent( finger );
 	}
+	// Add a laser pointer to the end.
+	Assembly *laser = CreateLaserPointer();
+	// This laser is always on and always the same color.
+	laser->SetColor( RED );
+	tool->AddComponent( laser );
 	return tool;
-
 }
 
-Assembly *GraspGLObjects::CreateKKTool( void ) {
+Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 
-	Assembly *kktool = new Assembly();
-
-	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
-
-	// There are as many fingers as target balls. This could change.
-	//static int fingers = target_balls-1;
-
-	// For some reason I set the spacing between fingers to be the same as the target ball radius.
-	// I don't remember why. This could change.
-	//static double finger_spacing = finger_ball_radius*2;
-
-	//for ( int trg = - fingers; trg <= fingers ; trg++ ){
-
-		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
-		Assembly *finger = new Assembly();
-
-		Sphere *sphere = new Sphere( finger_ball_radius );
-		sphere->SetPosition( 0.0, 0.0, 0.0 );
-		finger->AddComponent( sphere );
-		Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
-		cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
-		finger->AddComponent( cylinder );
-		sphere = new Sphere( finger_ball_radius );
-		sphere->SetPosition( 0.0, 0.0, - finger_length );
-		finger->AddComponent( sphere );
-
-		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
-		//float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
-		finger->SetColor( 0.5, 0.5, 0.5, 1.0 );
-
-		// Space the fingers vertically.
-		finger->SetPosition( 0.0, 0.0, 0.0 );
-		kktool->AddComponent( finger );
-	//}
-	return kktool;
+	Assembly *finger = new Assembly();
+	Sphere *sphere = new Sphere( finger_ball_radius );
+	sphere->SetPosition( 0.0, 0.0, 0.0 );
+	finger->AddComponent( sphere );
+	Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
+	cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
+	finger->AddComponent( cylinder );
+	sphere = new Sphere( finger_ball_radius );
+	sphere->SetPosition( 0.0, 0.0, - finger_length );
+	finger->AddComponent( sphere );
+	// Add a laser pointer to the end.
+	Assembly *laser = CreateLaserPointer();
+	finger->AddComponent( laser );
+	// Set a default color. I like blue.
+	// In K-K color will be varied according to the orientation error.
+	finger->SetColor( 0.0, 0.0, 1.0, 1.0 );
+	return finger;
 
 }
 
 Assembly * GraspGLObjects::CreateLaserPointer( void ) {
-	
 	Assembly *laserPointer = new Assembly();
-
 	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
-	//sphere->SetColor( RED );
 	sphere->SetPosition( 0.0, 0.0, -(room_length/2.0-1000.0) );
 	laserPointer->AddComponent( sphere );
-
 	return laserPointer;
 }
 
-void GraspGLObjects::ColorLaserPointer( double error ) {
-	SetColorByError( laserPointer, error );
+bool GraspGLObjects::ColorKK( double error ) {
+	return( SetColorByRollError( kkTool, error, kkTolerance ) );
 }
 
-
+// Group all the elements that move with the hand into a single entity.
+// Each component will be activated or deactivated separately, but their pose will be set
+// jointly by accessing the hand object.
+Yoke *GraspGLObjects::CreateHand( void ) {
+	hand = new Yoke();
+	hand->AddComponent( vTool );
+	hand->AddComponent( kTool );
+	hand->AddComponent( kkTool );
+	return( hand );
+}
 
 Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
@@ -318,8 +303,7 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 
 		Sphere *sphere = new Sphere( finger_ball_radius*1.0 );
 		// Create a color that varies as a function of the ball's position.
-		float color[4] = { 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0)/255.0f , 0.0f, 1.0f };//(75.0f + (float) trg * 25.0f)/255.0f
-		sphere->SetColor( color );
+		sphere->SetColor( 200.0f/255.0f, (75.0f + float(trg) * 75.0f / 2.0f ) / 255.0f , 0.0f, 1.0f );
 		// Space the balls vertically.
 		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		projectiles->AddComponent( sphere );
@@ -376,11 +360,16 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	positionOnlyTarget = CreatePositionOnlyTarget();
 	response = CreateResponse();
 	tiltPrompt = CreateTiltPrompt();
-
-	tool = CreateTool();
-	kktool = CreateKKTool();
-	laserPointer = CreateLaserPointer();
 	projectiles = CreateProjectiles();
+
+	// Orientated tool used when responding with full visual feedback.
+	vTool = CreateVisualTool();
+	// A tool that allows one to point, but does not show the roll orientation.
+	kTool = CreateKinestheticTool();
+	// Same as the above, but this one we use when presenting a kinesthetic target in K-K.
+	kkTool = CreateKinestheticTool();
+	// Collect all the things that may be attached to the hand.
+	hand = CreateHand();
 }
 
 // Place objects at default locations.
@@ -421,9 +410,7 @@ void GraspGLObjects::DrawVR( void ) {
 	DrawPositionOnlyTarget();
 	DrawResponse();
 	DrawTiltPrompt();
-	DrawTool();
-	DrawKKTool();
-	DrawLaserPointer();
+	DrawHand();
 	DrawProjectiles();
 
 }
@@ -483,34 +470,14 @@ void GraspGLObjects::DrawPositionOnlyTarget( TrackerPose *pose ) {
 	}
 	positionOnlyTarget->Draw();
 }
-void GraspGLObjects::DrawTool( TrackerPose *pose ) {
+void GraspGLObjects::DrawHand( TrackerPose *pose ) {
 	// If the caller has specified a pose, move to that pose first.
 	// Otherwise, just draw it at it's current pose.
 	if ( pose != nullptr ) {
-		tool->SetPosition( pose->pose.position );
-		tool->SetOrientation( pose->pose.orientation );
+		hand->SetPosition( pose->pose.position );
+		hand->SetOrientation( pose->pose.orientation );
 	}
-	tool->Draw();
-}
-
-void GraspGLObjects::DrawKKTool( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		kktool->SetPosition( pose->pose.position );
-		kktool->SetOrientation( pose->pose.orientation );
-	}
-	kktool->Draw();
-}
-
-void GraspGLObjects::DrawLaserPointer( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		laserPointer->SetPosition( pose->pose.position );
-		laserPointer->SetOrientation( pose->pose.orientation );
-	}
-	laserPointer->Draw();
+	hand->Draw();
 }
 
 void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
