@@ -519,18 +519,19 @@ void VectorsMixin::SetQuaterniond( Quaternion result, double degrees, const Vect
 	SetQuaternion( result, degrees * pi / 180.0, axis );
 }
 
-double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
-
-	Quaternion interim;
+double VectorsMixin::QuaternionDifference( Quaternion result, const Quaternion q1, const Quaternion q2 ) {
 	Quaternion conjugate;
 	double angle;
-
 	// Compute q1 q2*.
 	conjugate[M] = q2[M]; ScaleVector( conjugate, q2, -1.0 );
-	MultiplyQuaternions( interim, q1, conjugate );
-	angle = 2.0 * atan2( VectorNorm( interim ), interim[M] );
-
+	MultiplyQuaternions( result, q1, conjugate );
+	angle = 2.0 * atan2( VectorNorm( result ), result[M] );
 	return( angle );
+}
+
+double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
+	Quaternion discard;
+	return( QuaternionDifference( discard, q1, q2 ) );
 
 }
 

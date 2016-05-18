@@ -76,7 +76,6 @@ public:
 	double VectorNorm( const Vector3 vector );
 	void   NormalizeVector( Vector3 v );
 	double DotProduct( const Vector3 v1, const Vector3 v2 );
-	double AngleBetween( const Quaternion q1, const Quaternion q2 );
 	void   ComputeCrossProduct( Vector3 result, const Vector3 v1, const Vector3 v2 );
 
 	void CopyMatrix( Matrix3x3 destination, const Matrix3x3 source );
@@ -101,7 +100,9 @@ public:
 	void SetQuaterniond( Quaternion result, double degrees, const Vector3 axis );
 	void NormalizeQuaternion( Quaternion q );
 	void MultiplyQuaternions( Quaternion result, const Quaternion q1, const Quaternion q2 );
-
+	double QuaternionDifference(  Quaternion result, const Quaternion q1, const Quaternion q2 );
+	double AngleBetween( const Quaternion q1, const Quaternion q2 );
+	
 	void SetRotationMatrix( Matrix3x3 result, double radians, const Vector3 axis );
 
 	void RotateVector( Vector3 result, const Quaternion q, const Vector3 v );
