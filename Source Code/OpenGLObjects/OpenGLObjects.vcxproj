@@ -121,6 +121,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="OpenGLYoke.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="OpenGLColors.h" />
     <ClInclude Include="OpenGLObjects.h" />
+    <ClInclude Include="OpenGLYoke.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

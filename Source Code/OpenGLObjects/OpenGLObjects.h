@@ -69,9 +69,9 @@ public:
 
   OpenGLObject( void );
 
-  void  PrepDraw();
+  virtual void  PrepDraw();
   virtual void  Draw();
-  void  FinishDraw();
+  virtual void  FinishDraw();
 
   virtual void  SetPosition( const Vector3 p );
   virtual void  SetPosition( double x, double y, double z );
@@ -93,7 +93,7 @@ public:
   virtual void  SetOffset( const Vector3 p );
   virtual void  SetOffset( double x, double y, double z );
   void  GetOffset( Vector3 p );
- 
+
   void SetColor( GLfloat c[4] );
   void SetColor( float r, float g, float b, float a = 1.0 );
   void SetColor( double r, double g, double b, double a = 1.0 ) { 
@@ -137,12 +137,10 @@ public:
 
 class Assembly : public OpenGLObject {
 
-private:
+protected:
 
   OpenGLObject  *component[MAX_COMPONENTS];
   int components;
-
-protected:
 
 public:
 
