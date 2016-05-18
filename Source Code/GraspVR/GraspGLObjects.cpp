@@ -197,7 +197,7 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 	// but for the moment we assume that pitch and yaw will be small.
 	MultiplyVector( rotated, iVector, object->orientation );
 	double error = ToDegrees( atan2( rotated[Y], rotated[X] ) );
-	fOutputDebugString( "%s\n", vstr( rotated ) );
+	// fOutputDebugString( "%s\n", vstr( rotated ) );
 	if ( rotated[X] < 0.0 ) {
 		// Error is more than 90°. Clamp to red and return false to say out of tolerance zone.
 		object->SetColor( 1.0, 0.0, 0.0, transparency );
@@ -209,7 +209,7 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 	double hypotenuse = sqrt( rotated[X] * rotated[X] + rotated[Y] * rotated[Y] );
 	double green = abs( rotated[X] ) / hypotenuse;
 	double red = abs( rotated[Y] ) / hypotenuse;
-	fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
+	// fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
 	object->SetColor( red, green, 0.0, 0.75 );
 	// Indicate if we are in the tolerance zone or not.
 	return( abs( error ) < epsilon );

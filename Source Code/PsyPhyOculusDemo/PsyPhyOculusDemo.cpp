@@ -11,7 +11,7 @@ Joe McIntyre
 // Flags to set the operating mode.
 bool useOVR = false;		// OVR style rendering.
 bool usePsyPhy = true;	// PsyPhy style rendering.
-bool useCoda = false;	// Do we have a Coda?
+bool useCoda = true;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -166,10 +166,12 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing hmdCodaPoseTracker[%d].", unit );
 			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
 			hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+
 			handCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing toolCodaPoseTracker[%d].", unit );
 			handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
 			handCascadeTracker->AddTracker( handCodaPoseTracker[unit] );
+
 			chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing torsoCodaPoseTracker[%d].", unit );
 			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
@@ -207,7 +209,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
     {
 		
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-        static float Yaw( 3.14159f );  
+        static float Yaw( 0.0 );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
