@@ -234,7 +234,7 @@ void VectorsMixin::OrthonormalizeMatrix( Matrix3x3 result, Matrix3x3 m ) {
 
 }
 
-void VectorsMixin::MultiplyVector( Vector3 result, Vector3 v, const Matrix3x3 m ) {
+void VectorsMixin::MultiplyVector( Vector3 result, const Vector3 v, const Matrix3x3 m ) {
 	// I represent vectors as row vectors so that a matrix is an array of rows.
 	// Therefore we normally do right multiplies.
 	for ( int i = 0; i < 3; i++ ) {
@@ -243,7 +243,7 @@ void VectorsMixin::MultiplyVector( Vector3 result, Vector3 v, const Matrix3x3 m 
 	}
 }
 
-void VectorsMixin::MultiplyVector( Vector3 result, Vector3f v, const Matrix3x3 m ) {
+void VectorsMixin::MultiplyVector( Vector3 result, const Vector3f v, const Matrix3x3 m ) {
 	// I represent vectors as row vectors so that a matrix is an array of rows.
 	// Therefore we normally do right multiplies.
 	for ( int i = 0; i < 3; i++ ) {
@@ -252,7 +252,7 @@ void VectorsMixin::MultiplyVector( Vector3 result, Vector3f v, const Matrix3x3 m
 	}
 }
 
-void VectorsMixin::MultiplyVector( Vector3f result, Vector3f v, const Matrix3x3 m ) {
+void VectorsMixin::MultiplyVector( Vector3f result, const Vector3f v, const Matrix3x3 m ) {
 	// I represent vectors as row vectors so that a matrix is an array of rows.
 	// Therefore we normally do right multiplies.
 	for ( int i = 0; i < 3; i++ ) {
@@ -261,7 +261,7 @@ void VectorsMixin::MultiplyVector( Vector3f result, Vector3f v, const Matrix3x3 
 	}
 }
 
-void VectorsMixin::MultiplyVector( Vector3f result, Vector3 v, const Matrix3x3 m ) {
+void VectorsMixin::MultiplyVector( Vector3f result, const Vector3 v, const Matrix3x3 m ) {
 	// I represent vectors as row vectors so that a matrix is an array of rows.
 	// Therefore we normally do right multiplies.
 	for ( int i = 0; i < 3; i++ ) {

@@ -89,10 +89,10 @@ public:
 	double InvertMatrix( Matrix3x3 result, const Matrix3x3 m );
 	void OrthonormalizeMatrix( Matrix3x3 result, Matrix3x3 m );
 
-	void MultiplyVector( Vector3 result, Vector3 v, const Matrix3x3 m );
-	void MultiplyVector( Vector3 result, Vector3f v, const Matrix3x3 m );
-	void MultiplyVector( Vector3f result, Vector3f v, const Matrix3x3 m );
-	void MultiplyVector( Vector3f result, Vector3 v, const Matrix3x3 m );
+	void MultiplyVector( Vector3 result, const Vector3 v, const Matrix3x3 m );
+	void MultiplyVector( Vector3 result, const Vector3f v, const Matrix3x3 m );
+	void MultiplyVector( Vector3f result, const Vector3f v, const Matrix3x3 m );
+	void MultiplyVector( Vector3f result, const Vector3 v, const Matrix3x3 m );
 
 	void CrossVectors( Matrix3x3 result, const Vector3 left[], const Vector3 right[], int rows );
 	void BestFitTransformation( Matrix3x3 result, const Vector3 input[], const Vector3 output[], int rows );
