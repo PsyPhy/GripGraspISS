@@ -46,3 +46,20 @@ void fAbortMessageOnCondition( int condition, const char *caption, const char *f
 		exit( -1 );
 	}
 }
+
+void fAbortMessage( const char *caption, const char *format, ... ) {
+
+	va_list args;
+	int items;
+
+	// The character buffer is really long so that there is little chance of overrunning it.
+	char message[10240];
+	
+	va_start(args, format);
+	items = vsprintf(message, format, args);
+	va_end(args);
+
+	MessageBox( NULL, message, caption, MB_OK | MB_ICONEXCLAMATION );
+	exit( -1 );
+
+}
