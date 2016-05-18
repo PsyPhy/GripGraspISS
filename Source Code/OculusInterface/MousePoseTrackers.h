@@ -42,8 +42,10 @@ class MousePoseTracker : public PoseTracker {
 // You can change the gain and change the direction by setting the gain to be negative.
 class MouseRollPoseTracker : public MousePoseTracker {
 public:
+		Vector3 eulerAngles;
 		MouseRollPoseTracker( OculusMapper *ptr = nullptr, double gain = 1.0 );
 		~MouseRollPoseTracker();
+		bool Update( void );
 		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
 };
 

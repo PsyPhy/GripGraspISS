@@ -33,12 +33,28 @@ double MousePoseTracker::GetTime( void ) {
 MouseRollPoseTracker::MouseRollPoseTracker( OculusMapper *mapper, double gain ) {
 	oculusMapper = mapper;
 	this->gain = gain;
+	CopyVector( eulerAngles, zeroVector );
 	MousePoseTracker::MousePoseTracker( mapper, gain );
+}
+
+bool MouseRollPoseTracker::Update ( void ) {
+	if ( oculusMapper->display->Key[VK_LEFT] ) eulerAngles[YAW] -= gain;
+	if ( oculusMapper->display->Key[VK_RIGHT] ) eulerAngles[YAW] += gain;
+	if ( oculusMapper->display->Key[VK_UP] ) eulerAngles[PITCH] -= gain;
+	if ( oculusMapper->display->Key[VK_DOWN] ) eulerAngles[PITCH] += gain;
+	return true;
 }
 
 bool MouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	CopyVector( pose.pose.position, zeroVector );
-	SetQuaternion( pose.pose.orientation, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
+	Quaternion rollQ, pitchQ, yawQ;
+	Quaternion intermediateQ;
+
+	SetQuaternion( rollQ, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
+	SetQuaternion( pitchQ, eulerAngles[PITCH], iVector );
+	MultiplyQuaternions( intermediateQ, rollQ, pitchQ );
+	SetQuaternion( yawQ, eulerAngles[YAW], jVector );
+	MultiplyQuaternions( pose.pose.orientation, yawQ, intermediateQ );
 	pose.time = GetTime();
 	pose.visible = true;
 	return pose.visible;
