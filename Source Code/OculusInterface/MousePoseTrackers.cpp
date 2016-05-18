@@ -52,7 +52,7 @@ bool MouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 
 	SetQuaternion( rollQ, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
 	SetQuaternion( pitchQ, eulerAngles[PITCH], iVector );
-	MultiplyQuaternions( intermediateQ, rollQ, pitchQ );
+	MultiplyQuaternions( intermediateQ, pitchQ, rollQ );
 	SetQuaternion( yawQ, eulerAngles[YAW], jVector );
 	MultiplyQuaternions( pose.pose.orientation, yawQ, intermediateQ );
 	pose.time = GetTime();
