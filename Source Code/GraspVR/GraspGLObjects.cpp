@@ -191,16 +191,25 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 
 	static double transparency = 0.75;
 	Vector3 rotated;
+	// Rotate the unit vector in the X direction by the orientation of the object.
+	// Then compute the orientation of that vector in the frontal (XY) plane.
+	// This calculation becomes ill conditioned as the yaw angle approaches 90°,
+	// but for the moment we assume that pitch and yaw will be small.
 	MultiplyVector( rotated, iVector, object->orientation );
 	double error = ToDegrees( atan2( rotated[Y], rotated[X] ) );
+	fOutputDebugString( "%s\n", vstr( rotated ) );
 	if ( rotated[X] < 0.0 ) {
 		// Error is more than 90°. Clamp to red and return false to say out of tolerance zone.
 		object->SetColor( 1.0, 0.0, 0.0, transparency );
 		return( false );
 	}
+	// @Michele
 	// This simple formula goes nicely from gree to yellow to red as the angle increases.
-	double green = rotated[X] * rotated[X] * rotated[X] * rotated[X];
-	double red = 1 - green;
+	// But please replace it with the calculation of a set of color values based on the angular error computed above.
+	double hypotenuse = sqrt( rotated[X] * rotated[X] + rotated[Y] * rotated[Y] );
+	double green = abs( rotated[X] ) / hypotenuse;
+	double red = abs( rotated[Y] ) / hypotenuse;
+	fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
 	object->SetColor( red, green, 0.0, 0.75 );
 	// Indicate if we are in the tolerance zone or not.
 	return( abs( error ) < epsilon );
