@@ -297,7 +297,12 @@ void GraspVR::DebugLoop( void ) {
 void GraspSIM::InitializeTrackers( void ) {
 
 	// Create a pose tracker that uses only the Oculus.
-	hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
+	
+	// This one uses the full Oculus tracker, incuding drift compensation with gravity.
+	// hmdTracker = new PsyPhy::OculusPoseTracker( &oculusMapper );
+	// The next one uses our own inertial implementation, but we do not give it an absolute tracker for
+	//  drift compensation. It works pretty well when it's only for orientation tracking.
+	hmdTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
 	fAbortMessageOnCondition( !hmdTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing OculusPoseTracker." );
 
 	// Create a mouse tracker to simulate movements of the hand.
@@ -337,9 +342,16 @@ void GraspDEX::InitializeTrackers( void ) {
 		chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
 		chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 	}
+
+	/////////////////////////////////////// TO BE TESTED ////////////////////////////////////////////////////////////
+	fAbortMessageOnCondition( !hmdCascadeTracker->Initialize(), "GraspVR", "Error initializing hmdCascadeTracker." );
+	fAbortMessageOnCondition( !handCascadeTracker->Initialize(), "GraspVR", "Error initializing handCascadeTracker." );
+	fAbortMessageOnCondition( !chestCascadeTracker->Initialize(), "GraspVR", "Error initializing chestCascadeTracker." );
+	/////////////////////////////////////// TO BE TESTED ////////////////////////////////////////////////////////////
+
 	// Create a pose tracker that combines Coda and Oculus data.
 	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
-	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
 }
 

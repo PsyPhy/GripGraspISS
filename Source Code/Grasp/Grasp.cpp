@@ -73,7 +73,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	UNREFERENCED_PARAMETER( lpCmdLine );
 
-	bool useCoda = true;
+	bool useCoda = false;
+	GraspVR	*vr;
 
 	if ( useCoda ) {
 
@@ -89,9 +90,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		DWORD threadID;
 		stopMarkerGrabs = false;
 		threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
+
+		// Choose a GraspVR combination for V-V using the DEX trackers.
+		vr = new GraspVV();
 	}
 
-	GraspVR *vr = new GraspVK();
+	else vr = new GraspSIM();
 
 	vr->Initialize( hInstance );
 	vr->DebugLoop();

@@ -30,6 +30,9 @@ int CascadePoseTracker::AddTracker( PoseTracker *tracker ) {
 
 
 bool CascadePoseTracker::Initialize( void ) { 
+	// We assume that the array of component trackers has already been initialized
+	//  and so we only initialize ourself. That means simply doing what every other
+	//  PoseTracker does at initialization.
 	PoseTracker::Initialize();
 	return true; 
 }

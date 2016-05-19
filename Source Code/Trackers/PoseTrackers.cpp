@@ -18,8 +18,6 @@ using namespace PsyPhy;
 
 TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, true, 0.0};
 
-PoseTracker::~PoseTracker () {}
-
 // Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
 void PoseTracker::BoresightAt( const Pose &pose ) {
 	CopyPose( nullPose, pose );

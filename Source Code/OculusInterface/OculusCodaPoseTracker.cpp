@@ -28,10 +28,12 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();
-
 }
 bool OculusCodaPoseTracker::Initialize( void ) { 
 	
+	// NB We assume that the absolute tracker has already been initialized.
+	// Otherwise we would want to do that here. 
+
 	// Initialize the pose of the tracker.
 	// In the final version this should be computed from the CODA contribution.
 	// For now, we just start from zero. Even if we leave it this way, it works,

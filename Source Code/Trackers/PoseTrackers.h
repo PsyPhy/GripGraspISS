@@ -36,7 +36,7 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 			CopyQuaternion( nullPose.orientation, nullQuaternion );
 			CopyVector( nullPose.position, zeroVector );
 		}
-		~PoseTracker ();
+		~PoseTracker (){};
 
 		virtual bool Initialize( void ){ return true; };
 		virtual bool  Update( void ){ return true; };
