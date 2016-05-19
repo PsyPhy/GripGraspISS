@@ -1,4 +1,4 @@
-#define PRESUMED_SAME_FRAME_THRESHOLD 0.01
+#define PRESUMED_SAME_FRAME_THRESHOLD 0.0025
 
 // Sets how many rendered pixels per actual screen pixel.
 // Set this to 1 for normal operation.

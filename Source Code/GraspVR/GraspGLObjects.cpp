@@ -60,10 +60,10 @@ void GraspGLObjects::SetLighting( void ) {
 	GLfloat fintensity = 0.75;
 	GLfloat ambient = fintensity;
 	GLfloat diffuse = fintensity;
-	GLfloat specular = fintensity / 2.0f;
+	GLfloat specular = fintensity;
 
 	// Light definition
-	GLfloat LightPosition[] = { 0.0, 0.0, 1000.0, 0.0 };
+	GLfloat LightPosition[] = { 0.0, 0.0, -1000.0, 0.0 };
 	GLfloat LightAmbient[]  = { ambient, ambient, ambient, 1.0};
 	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
 	GLfloat LightSpecular[] = { specular, specular, specular, 1.0};
@@ -135,6 +135,12 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 		referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 	}
+
+	Sphere *sphere = new Sphere( target_ball_radius );
+	sphere->SetPosition( 0.0, 0.0, room_length / 2.0 );
+	sphere->SetColor( RED );
+	room->AddComponent( sphere );
+
 	return room;
 }
 
@@ -350,6 +356,7 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 void GraspGLObjects::CreateVRObjects( void ) {
 
+	glUsefulInitializeDefault();
 	SetLighting();
 	CreateTextures();
 
@@ -397,7 +404,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 // Note that only those objects that are currently active are actually drawn.
 void GraspGLObjects::DrawVR( void ) {
 
-	glUsefulDefaultSpecularLighting( 0.7 );
+	SetLighting();
 
 	// Draw the room with non-shiny material.
 	glUsefulMatteMaterial();

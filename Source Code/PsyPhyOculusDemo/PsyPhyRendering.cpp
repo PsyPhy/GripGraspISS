@@ -31,7 +31,7 @@ void CreatePsyPhyObjects ( void ) {
 	// Auto lighting is used to avoid giving a reference from directional lighting.
 	// I don't fully understand the lighting thing, because when I set the intensity to 0
 	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
-	glUsefulAutoLighting( 0.0 );
+	glUsefulDefaultSpecularLighting( 0.7 );
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	viewpoint = new OculusViewpoint( &oculusMapper );
@@ -51,7 +51,7 @@ void CreatePsyPhyObjects ( void ) {
 
 	// A disk on the front wall, something to look at.
 	disk = new Disk( 4.0 );
-	disk->SetPosition( 0.0, 0.0, 9.0 );
+	disk->SetPosition( 0.0, 0.0, - 9.0 );
 	disk->SetColor( ORANGE );
 	room->AddComponent( disk );
 
@@ -75,7 +75,7 @@ void CreatePsyPhyObjects ( void ) {
 	cylinder->SetOrientation( -90.0, cylinder->jVector );
 	tool->AddComponent( cylinder );
 
-	tool->SetPosition( 0.0, 0.0, 5.0 );
+	tool->SetPosition( 0.0, 0.0, 4.0 );
 
 }
 

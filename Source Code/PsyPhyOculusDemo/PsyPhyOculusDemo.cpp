@@ -11,7 +11,7 @@ Joe McIntyre
 // Flags to set the operating mode.
 bool useOVR = false;		// OVR style rendering.
 bool usePsyPhy = true;	// PsyPhy style rendering.
-bool useCoda = true;	// Do we have a Coda?
+bool useCoda = false;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -209,7 +209,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
     {
 		
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-        static float Yaw( 0.0 );  
+        static float Yaw( 3.14159f );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -222,7 +222,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
         // Keyboard inputs to adjust player position. The forward, backward, leftward and rightward steps
 		//  are taken relative to the current viewing orientation of the subjec.
-        static OVR::Vector3f PlayerPosition( 0.0f, 0.0f, -5.0f );
+        static OVR::Vector3f PlayerPosition( 0.0f, 0.0f, 0.0f );
         if ( platform->Key['W'] || platform->Key[VK_UP] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, -0.05f) );
         if ( platform->Key['S'] || platform->Key[VK_DOWN] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, +0.05f) );
         if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( +0.05f, 0, 0) );
@@ -315,7 +315,13 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				static int pose_error_counter = 0;
 				fOutputDebugString( "Error reading hmd pose tracker (%03d).\n", ++pose_error_counter );
 			}
-			else viewpoint->SetPose( headPose.pose );
+			else {
+				// The position and orientation of the viewpoint is first set by the player position.
+				// So we use the offset and attitude to turn the viewpoint according to the tracker
+				//  with respect to the player's position.
+				viewpoint->SetOffset( headPose.pose.position );
+				viewpoint->SetAttitude( headPose.pose.orientation );
+			}
 
 			// Prepare the GL graphics state for drawing in a way that is compatible 
 			//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 

@@ -25,11 +25,11 @@
 void glUsefulDefaultSpecularLighting( double intensity ) {
 
 	GLfloat fintensity = (GLfloat) intensity;
-	GLfloat ambient = fintensity / 1.0f;
-	GLfloat diffuse = fintensity / 1.0f;
+	GLfloat ambient = fintensity;
+	GLfloat diffuse = fintensity;
 
 	// Light definition
-	GLfloat LightPosition[] = { 0.0, 0.0, 1000.0, 0.0 };
+	GLfloat LightPosition[] = { 0.0, 0.0, 1.0, 0.0 };
 	GLfloat LightAmbient[]  = { ambient, ambient, ambient, 1.0};
 	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
 	GLfloat LightSpecular[] = { fintensity, fintensity, fintensity, 1.0};
