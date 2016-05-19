@@ -113,8 +113,11 @@ public:
 
 	void Initialize( void );
 	int  Update( void );
+	void Quit( void );
+
 	void StartAcquisition( float max_duration );
 	void StopAcquisition( void );
+	void AbortAcquisition( void );
 	bool CheckAcquisitionOverrun( void );
 
 	bool GetAcquisitionState( void );

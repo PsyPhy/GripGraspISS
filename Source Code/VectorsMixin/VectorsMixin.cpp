@@ -105,8 +105,6 @@ void VectorsMixin::AddVectors( Vector3f result, const Vector3f a, const Vector3f
 	result[Z] = a[Z] + b[Z];
 }
 
-
-
 void VectorsMixin::SubtractVectors( Vector3 result, const Vector3 a, const Vector3 b ) {
 	result[X] = a[X] - b[X];
 	result[Y] = a[Y] - b[Y];

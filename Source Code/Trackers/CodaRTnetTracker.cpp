@@ -174,6 +174,20 @@ int CodaRTnetTracker::Update( void ) {
 	return( 0 );
 }
 
+void CodaRTnetTracker::Quit( void ) {
+
+	AbortAcquisition();
+
+#ifdef ALWAYS_SHUTDOWN
+	OutputDebugString( "Shutting down ... " );
+	cl.stopSystem();
+	OutputDebugString( "OK.\n" );
+#else
+	OutputDebugString( "Quitting CodaRTnetTracker but leaving RTnet runnning." );
+#endif
+
+}
+
 /*********************************************************************************/
 
 void CodaRTnetTracker::StartAcquisition( float max_duration ) {
@@ -186,6 +200,15 @@ void CodaRTnetTracker::StartAcquisition( float max_duration ) {
 }
 
 bool CodaRTnetTracker::CheckAcquisitionOverrun( void ) { return overrun; }
+
+void CodaRTnetTracker::AbortAcquisition( void ) {
+	// Attempt to halt an ongoing aquisition. 
+	// Does not care if it was actually acquiring or not.
+	// Does not retrieve the data.
+	OutputDebugString( "Aborting acquisition ..." );
+	cl.stopAcq();
+	OutputDebugString( "OK.\n" );
+}
 
 void CodaRTnetTracker::StopAcquisition( void ) {
 	// stop acquisition if still in progress
