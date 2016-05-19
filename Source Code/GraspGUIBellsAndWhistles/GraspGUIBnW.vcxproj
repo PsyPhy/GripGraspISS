@@ -11,10 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{41BBF00C-DF99-4192-A876-D57C22ECFD53}</ProjectGuid>
+    <ProjectGuid>{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}</ProjectGuid>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>GraspGUI</RootNamespace>
+    <ProjectName>GraspGUIBnW</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -90,6 +91,8 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GraspGUI.cpp" />
+    <ClCompile Include="GraspGUIAnimations.cpp" />
+    <ClCompile Include="OpenGLWindowsInForms.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -99,6 +102,7 @@
     <ClInclude Include="GraspDesktopForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="OpenGLWindowsInForms.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

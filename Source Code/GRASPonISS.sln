@@ -48,6 +48,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xTestGraspGLObjects", "Test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspInstructionTypesetting", "GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj", "{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspGUIBnW", "GraspGUIBellsAndWhistles\GraspGUIBnW.vcxproj", "{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -216,6 +218,14 @@ Global
 		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.Release|Win32.Build.0 = Release|Win32
 		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.Debug|Win32.Build.0 = Debug|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.Release|Win32.ActiveCfg = Release|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.Release|Win32.Build.0 = Release|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

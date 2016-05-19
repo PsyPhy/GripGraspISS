@@ -1,6 +1,7 @@
 // GraspGUI.cpp : main project file.
 
 #include "stdafx.h"
+#include "../GraspVR/GraspGLObjects.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
