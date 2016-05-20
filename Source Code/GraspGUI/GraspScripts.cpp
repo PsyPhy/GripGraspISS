@@ -178,8 +178,61 @@ void GraspDesktop::ParseInstructionFile( String ^filename ) {
 void GraspDesktop::RunPages( void ) {
 	currentPage = 0;
 	nextButton->Enabled = true;
+	nextButton->Visible = true;
 	previousButton->Enabled = false;
+	previousButton->Visible = true;
 	instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/" + pageList[currentPage]->file );
 }
 
+System::Void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	if ( currentPage >= nPages - 1 ) {
+		// End of this set of instructions.
+		nextButton->Enabled = false;
+		previousButton->Enabled = false;
+		nextButton->Visible = false;
+		previousButton->Visible = false;
+		SelectNextTask();
+	}
+	else {
+		currentPage++;
+		previousButton->Enabled = true;
+		instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/" + pageList[currentPage]->file );
+	}
+}
+System::Void GraspDesktop::SelectNextTask ( void ) {
+	if ( taskListBox->SelectedIndex >= nTasks - 1 ) {
+		MessageBox( "GRASP@ISS", "Protocol Completed",  MessageBoxButtons::OK );
+		taskListBox->ClearSelected();
+		protocolListBox->ClearSelected();
+		subjectListBox->ClearSelected();
+		seatedRadioButton->Checked = false;
+		floatingRadioButton->Checked = false;
+		instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/GraspReady.html" );
+	}
+	taskListBox->SelectedIndex = taskListBox->SelectedIndex + 1;
+	instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/GraspReady.html" );
+}
 
+System::Void GraspDesktop::previousButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	if ( currentPage > 0 ) {
+		currentPage--;
+		instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/" + pageList[currentPage]->file );
+	}
+	if ( currentPage == 0 ) previousButton->Enabled = false;
+
+}
+
+System::Void GraspDesktop::RunTask( String^ command ) {
+	char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( command ).ToPointer();
+	String^ msg = "       Running GRASP\n"
+		+ "\n  Subject:   " + subjectListBox->SelectedItem->ToString()
+		+ "\n Posture:   " + ( seatedRadioButton->Checked ? seatedRadioButton->Text : floatingRadioButton->Text )
+		+ "\nProtocol:   " + protocolListBox->SelectedItem->ToString()
+		+ "\n     Task:   " + taskListBox->SelectedItem->ToString()
+		+ "\n  Command:   " + command;
+	MessageBox( msg, "GRASP@ISS", MessageBoxButtons::OK );
+	system( cmd );
+	system( "bin\\WinSCP.com /command \"open ftp://administrator:dex@10.80.12.103\" \"cd DATA1\" \"cd DATA\" \"cd glog\" \"ls\" \"put scripts\\*\" \"exit\" & pause" );
+
+	Marshal::FreeHGlobal( IntPtr( cmd ) );
+}

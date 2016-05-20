@@ -49,7 +49,8 @@ namespace Grasp {
 		virtual void InitializeVR( HINSTANCE hinst );
 		virtual void InitializeTrackers( void ) = 0;
 		virtual void UpdateTrackers( void );
-	
+		virtual void Release( void );
+
 		ProjectileState HandleProjectiles( void );
 		double SetDesiredHeadRoll( double roll_angle );
 		Alignment HandleHeadAlignment( void );
@@ -58,7 +59,6 @@ namespace Grasp {
 
 		// A rendering loop that allows one to toggle on and off the various VR objects.
 		void DebugLoop( void );
-		void Release( void );
 
 	};
 
@@ -77,6 +77,11 @@ namespace Grasp {
 
 		static const int nMarkers = 24;
 		static const int nCodaUnits = 2;
+
+
+		// A device that records 3D marker positions.
+		// Those marker positions will also drive the 6dof pose trackers.
+		CodaRTnetTracker codaTracker;
 
 		// Buffers to hold the most recent frame of marker data.
 		MarkerFrame markerFrame[MAX_CASCADED_TRACKERS];
@@ -101,6 +106,8 @@ namespace Grasp {
 
 		virtual void InitializeTrackers( void );
 		virtual void UpdateTrackers( void );
+		virtual void Release( void );
+
 		GraspDEX( void ) {}
 		~GraspDEX( void ) {}
 	};

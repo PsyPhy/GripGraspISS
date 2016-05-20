@@ -65,6 +65,7 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
 	// I don't know what that will be, yet, so I set the time to zero.
 	pose.time = 0.0;
+	fOutputDebugString( "CodaPoseTracker Intrinsic %s\n", ( pose.visible ? "Visible" : "Invisible" ));
 	// returns whether or not the rigid body is visible.
 	return( pose.visible );
 

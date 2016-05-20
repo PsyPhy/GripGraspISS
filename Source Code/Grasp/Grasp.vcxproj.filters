@@ -11,10 +11,12 @@
   <ItemGroup>
     <ClInclude Include="Grasp.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="GraspTelemetry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Grasp.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="GraspTelemetry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\codaRTNetProtocol.lib">

@@ -234,6 +234,7 @@ namespace GraspGUI {
 			this->taskListBox->Name = L"taskListBox";
 			this->taskListBox->Size = System::Drawing::Size(512, 328);
 			this->taskListBox->TabIndex = 5;
+			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
 			// ProtocolGroupBox
 			// 
@@ -338,6 +339,7 @@ namespace GraspGUI {
 			this->previousButton->TabIndex = 4;
 			this->previousButton->Text = L"<< Back";
 			this->previousButton->UseVisualStyleBackColor = true;
+			this->previousButton->Visible = false;
 			this->previousButton->Click += gcnew System::EventHandler(this, &GraspDesktop::previousButton_Click);
 			// 
 			// nextButton
@@ -352,6 +354,7 @@ namespace GraspGUI {
 			this->nextButton->TabIndex = 3;
 			this->nextButton->Text = L"Next >>";
 			this->nextButton->UseVisualStyleBackColor = true;
+			this->nextButton->Visible = false;
 			this->nextButton->Click += gcnew System::EventHandler(this, &GraspDesktop::nextButton_Click);
 			// 
 			// groupBox1
@@ -472,6 +475,10 @@ namespace GraspGUI {
 				 // system( "bin\\WinSCP.com /command \"open ftp://administrator:dex@10.80.12.103\" \"cd DATA1\" \"cd DATA\" \"cd glog\" \"ls\" \"get *\" \"exit\" & pause" );
 			 }
 
+
+	private: System::Void RunTask( String^ command );
+
+
 	private: System::Void LogonGo_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Inhibit activity on the menus.
@@ -485,6 +492,7 @@ namespace GraspGUI {
 				 // If all is good, go on to do the specified task.
 				 else {
 					 // Run the task.
+					 instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/GraspRunning.html" );
 					 int task = taskListBox->SelectedIndex;
 					 String^ cmd = ( seatedRadioButton->Checked ?  taskList[task]->seatedCmd : taskList[task]->floatingCmd );
 					 if ( cmd->EndsWith( ".gsp" )) {
@@ -492,13 +500,8 @@ namespace GraspGUI {
 						 RunPages();
 					 }
 					 else {
-						 String^ msg = "       Running GRASP\n"
-							 + "\n  Subject:   " + subjectListBox->SelectedItem->ToString()
-							 + "\n Posture:   " + ( seatedRadioButton->Checked ? seatedRadioButton->Text : floatingRadioButton->Text )
-							 + "\nProtocol:   " + protocolListBox->SelectedItem->ToString()
-							 + "\n     Task:   " + taskListBox->SelectedItem->ToString()
-							 + "\n  Command:   " + cmd;
-						 MessageBox( msg, "GRASP@ISS", MessageBoxButtons::OK );
+						 RunTask( cmd );
+						 SelectNextTask();
 					 }
 
 					 // Return to the Navigator.
@@ -507,27 +510,12 @@ namespace GraspGUI {
 				 }
 				 NavigatorGroupBox->Enabled = true;
 			 }
-	private: System::Void nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
-				 if ( currentPage >= nPages - 1 ) {
-					 nextButton->Enabled = false;
-					 previousButton->Enabled = false;
-					 taskListBox->SelectedIndex = taskListBox->SelectedIndex + 1;
-					 instructionViewer->Navigate( "about:blank" );
-				 }
-				 else {
-					 currentPage++;
-					 previousButton->Enabled = true;
-					 instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/" + pageList[currentPage]->file );
-				 }
-			 }
-	private: System::Void previousButton_Click(System::Object^  sender, System::EventArgs^  e) {
-				 if ( currentPage > 0 ) {
-					 currentPage--;
-					 instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/" + pageList[currentPage]->file );
-				 }
-				 if ( currentPage == 0 ) previousButton->Enabled = false;
-
-			 }
-	};
+	private: System::Void nextButton_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void previousButton_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void GraspDesktop::SelectNextTask ( void );
+	private: System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			 	instructionViewer->Navigate( "C:/Users/Joe/Desktop/GRASPonISS/Instructions/GraspReady.html" );
+}
+};
 }
 
