@@ -9,18 +9,18 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Source Files\Library Files">
+      <UniqueIdentifier>{c7858116-62b8-4bfd-94a4-e7c99eb5d8af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Library Files">
-      <UniqueIdentifier>{c7858116-62b8-4bfd-94a4-e7c99eb5d8af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
     <None Include="app.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -33,40 +33,43 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GraspScripts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="GraspDesktopForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraspDesktopForm.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GraspDesktopForm.resX">
-      <Filter>Resource Files</Filter>
+      <Filter>Source Files\Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\GLAUX.LIB">
-      <Filter>Library Files</Filter>
+      <Filter>Source Files\Library Files</Filter>
     </Library>
     <Library Include="..\Lib\GLU32.LIB">
-      <Filter>Library Files</Filter>
+      <Filter>Source Files\Library Files</Filter>
     </Library>
     <Library Include="..\Lib\glut32.lib">
-      <Filter>Library Files</Filter>
+      <Filter>Source Files\Library Files</Filter>
     </Library>
     <Library Include="..\Lib\OPENGL32.LIB">
-      <Filter>Library Files</Filter>
+      <Filter>Source Files\Library Files</Filter>
     </Library>
   </ItemGroup>
 </Project>

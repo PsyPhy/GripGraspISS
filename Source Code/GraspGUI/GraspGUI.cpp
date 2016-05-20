@@ -1,6 +1,8 @@
 // GraspGUI.cpp : main project file.
 
 #include "stdafx.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
@@ -16,3 +18,6 @@ int main( array<System::String ^> ^args )
 	Application::Run( gcnew GraspDesktop() );
 	return 0;
 }
+
+
+
