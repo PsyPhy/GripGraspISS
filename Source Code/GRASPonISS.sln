@@ -50,6 +50,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspInstructionTypesetting
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspGUIBnW", "GraspGUIBellsAndWhistles\GraspGUIBnW.vcxproj", "{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScripts", "GraspScripts\GraspScripts.vcxproj", "{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaskProcessUnitTester", "TaskProcessUnitTester\TaskProcessUnitTester.vcxproj", "{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -226,6 +230,22 @@ Global
 		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.Release|Win32.Build.0 = Release|Win32
 		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.Debug|Win32.ActiveCfg = Debug|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.Debug|Win32.Build.0 = Debug|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.Release|Win32.ActiveCfg = Release|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.Release|Win32.Build.0 = Release|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.Debug|Win32.ActiveCfg = Debug|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.Debug|Win32.Build.0 = Debug|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.Release|Win32.ActiveCfg = Release|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.Release|Win32.Build.0 = Release|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

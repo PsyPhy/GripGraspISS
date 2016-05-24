@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\V-V">
+      <UniqueIdentifier>{08d1137d-a221-492a-80ae-e9074d967e29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.txt" />
+    <None Include="GraspNominalSessions.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Subjects.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="V-Vseated.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="V-Vfloating.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="InstallSeated.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Makefile.mak">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="InstallFloating.gsp">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

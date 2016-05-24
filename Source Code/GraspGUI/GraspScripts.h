@@ -25,7 +25,7 @@ namespace GraspGUI {
 		int	    number;		// This is the subject number passed by DEX to the ground.
 		String^ file;		// The name of the file containing the sessions that this subject might do.
 
-		Subject( int number, char *id, char *session_file, char *name ) {
+		Subject( int number, char *id, char *name, char *session_file ) {
 			this->number = number;
 			this->ID = gcnew String( id );
 			this->name = gcnew String( name );
@@ -38,11 +38,13 @@ namespace GraspGUI {
 	public:
 		int	    number;		// This is the protocol number passed by DEX to the ground.
 		String^ name;		// The full name that appears in the GUI menu.
-		String^ file;		// The name of the file containing the tasks in this protocol.
+		String^ seated;		// The name of the file containing the tasks in this protocol.
+		String^ floating;	// The name of the file containing the tasks in this protocol.
 
-		Protocol( int number, char *task_file, char *name ) {
+		Protocol( int number, char *name, char *seated_file, char *floating_file ) {
 			this->name = gcnew String( name );
-			this->file = gcnew String( task_file );
+			this->seated = gcnew String( seated_file );
+			this->floating = gcnew String( floating_file );
 			this->number = number;
 		}
 		~Protocol(){}
@@ -52,27 +54,28 @@ namespace GraspGUI {
 	public:
 		int	    number;
 		String^ name;
-		String^ seatedCmd;
-		String^ floatingCmd;
+		String^ file;
 
-		Task( int number, char *seated_task_cmd, char *floating_task_cmd, char *name ) {
+		Task( int number, char *task_file, char *name ) {
 			this->number = number;
-			this->seatedCmd = gcnew String( seated_task_cmd );
-			this->floatingCmd = gcnew String( floating_task_cmd );
 			this->name = gcnew String( name );
+			this->file = gcnew String( task_file );
 		}
 		~Task(){}
 	};
-	public ref class Page {
+	public ref class Step {
 	public:
 		int	    number;
-		String^ file;
+		String^ instruction;
+		String^	ready;
+		String^ running;
+		array<String ^> ^exit;
 
-		Page( int number, char *file ) {
-			this->number = number;
-			this->file = gcnew String( file );
-		}
-		~Page(){}
+		String^ command;
+		bool	isCommand;
+
+		Step( void ) {}
+		~Step(){}
 	};
 };
 
