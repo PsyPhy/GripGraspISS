@@ -26,10 +26,13 @@ namespace GraspGUI {
 
 		array<GraspGUI::Subject ^> ^subjectList;
 		int nSubjects;
+		int currentSubject;
 		array<GraspGUI::Protocol ^> ^protocolList;
 		int nProtocols;
+		int currentProtocol;
 		array<GraspGUI::Task ^> ^taskList;
 		int nTasks;
+		int currentTask;
 		array<GraspGUI::Step ^> ^stepList;
 		int nSteps;
 		int currentStep;
@@ -75,10 +78,13 @@ namespace GraspGUI {
 			//  the arrays as actual lists with dynamic size, but I don't remember how.
 			subjectList = gcnew array<GraspGUI::Subject ^>(MAX_SUBJECTS);
 			nSubjects = 0;
+			currentSubject = -1;
 			protocolList = gcnew array<GraspGUI::Protocol ^>(MAX_PROTOCOLS);
 			nProtocols = 0;
+			currentProtocol = -1;
 			taskList = gcnew array<GraspGUI::Task ^>(MAX_TASKS);
 			nTasks = 0;
+			currentTask = -1;
 			stepList = gcnew array<GraspGUI::Step ^>(MAX_STEPS);
 			nSteps = 0;
 			currentStep = 0;
@@ -632,9 +638,20 @@ namespace GraspGUI {
 		}
 
 		System::Void subjectListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			// If the subject that is selected already is clicked, do nothing.
+			if ( subjectListBox->SelectedIndex == currentSubject ) return;
+			// Check if a task is running and if so, request confirmation.
+			else if ( currentStep > 0 ) {
+				System::Windows::Forms::DialogResult response;				
+				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
+				if ( response == System::Windows::Forms::DialogResult::No ) {
+					subjectListBox->SelectedIndex = currentSubject;
+					return;
+				}
+			}
+			currentSubject = subjectListBox->SelectedIndex;
 			seatedRadioButton->Checked = false;
 			floatingRadioButton->Checked = false;
-			currentSubject = subjectListBox->SelectedIndex;
 			protocolListBox->Items->Clear();
 			taskListBox->Items->Clear();
 			ShowLogon();
@@ -649,6 +666,18 @@ namespace GraspGUI {
 		}
 
 		System::Void protocolListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			// If the protocol that is selected already is clicked, do nothing.
+			if ( protocolListBox->SelectedIndex == currentProtocol ) return;
+			// Check if a task is running and if so, request confirmation.
+			else if ( currentStep > 0 ) {
+				System::Windows::Forms::DialogResult response;				
+				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
+				if ( response == System::Windows::Forms::DialogResult::No ) {
+					protocolListBox->SelectedIndex = currentProtocol;
+					return;
+				}
+			}
+			currentProtocol = protocolListBox->SelectedIndex;
 			// Try to parse the protocol file, but only if the subject has already been selected.
 			if ( subjectListBox->SelectedIndex < 0 ) ShowLogon();
 			else {
@@ -663,6 +692,18 @@ namespace GraspGUI {
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			// If the task that is selected already is clicked, do nothing.
+			if ( taskListBox->SelectedIndex == currentTask ) return;
+			// Check if a task is running and if so, request confirmation.
+			else if ( currentStep > 0 ) {
+				System::Windows::Forms::DialogResult response;				
+				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
+				if ( response == System::Windows::Forms::DialogResult::No ) {
+					taskListBox->SelectedIndex = currentTask;
+					return;
+				}
+			}
+			currentTask = taskListBox->SelectedIndex;
 			stepHeaderTextBox->Text = taskListBox->Text;
 			ParseTaskFile( scriptDirectory + taskList[taskListBox->SelectedIndex]->file );
 			ShowStep();
@@ -697,6 +738,7 @@ namespace GraspGUI {
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
 
-	};
+	
+};
 }
 
