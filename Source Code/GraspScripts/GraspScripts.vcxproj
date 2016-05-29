@@ -51,6 +51,7 @@
     <None Include="InstallFloating.tsk" />
     <None Include="InstallSeated.tsk" />
     <None Include="K-Kfloating.pcl" />
+    <None Include="K-Kinstructions.tsk" />
     <None Include="K-Kseated.pcl" />
     <None Include="Maintenance.pcl" />
     <None Include="readme.txt" />

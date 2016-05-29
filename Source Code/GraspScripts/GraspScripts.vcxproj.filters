@@ -60,5 +60,8 @@
     <None Include="Maintenance.pcl">
       <Filter>Generic</Filter>
     </None>
+    <None Include="K-Kinstructions.tsk">
+      <Filter>K-K</Filter>
+    </None>
   </ItemGroup>
 </Project>

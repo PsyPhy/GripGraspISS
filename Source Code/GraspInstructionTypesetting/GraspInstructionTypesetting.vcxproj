@@ -56,6 +56,14 @@
     <None Include="InstallLocker.md" />
     <None Include="InstallSeated1.md" />
     <None Include="InstallSeated2.md" />
+    <None Include="K-K1.md" />
+    <None Include="K-K2.md" />
+    <None Include="K-K3.md" />
+    <None Include="K-K4.md" />
+    <None Include="K-K5.md" />
+    <None Include="K-K6.md" />
+    <None Include="K-KFloatingProtocolReady.md" />
+    <None Include="K-KSeatedProtocolReady.md" />
     <None Include="NotYetImplemented.md" />
     <None Include="ProtocolFinished.md" />
     <None Include="StepErrorFinish.md" />

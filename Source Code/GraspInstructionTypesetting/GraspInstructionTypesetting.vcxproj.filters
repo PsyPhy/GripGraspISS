@@ -105,6 +105,30 @@
     <None Include="CodaAlignSeated.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="K-K1.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-K2.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-K3.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-K4.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-K5.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-K6.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KFloatingProtocolReady.md">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KSeatedProtocolReady.md">
+      <Filter>K-K</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
@@ -122,8 +146,8 @@
     <Filter Include="Install">
       <UniqueIdentifier>{86b0f248-f2a9-4ac8-ba09-5bafd9e635ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Protocols">
-      <UniqueIdentifier>{819f9c7d-8d6d-4a1d-8959-f6cac6ad8e2d}</UniqueIdentifier>
+    <Filter Include="K-K">
+      <UniqueIdentifier>{7ac64dd4-c20b-4abd-9f8b-92783f2313bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
