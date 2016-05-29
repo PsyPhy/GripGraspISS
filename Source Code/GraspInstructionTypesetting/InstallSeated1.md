@@ -1,4 +1,4 @@
-HEADER( __Installation in Seated __ )
+HEADER( __Installation__ )
 
 - Install for *__seated__* operations - Step __1__
 

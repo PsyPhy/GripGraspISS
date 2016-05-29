@@ -38,44 +38,58 @@ namespace GraspGUI {
 	public:
 		int	    number;		// This is the protocol number passed by DEX to the ground.
 		String^ name;		// The full name that appears in the GUI menu.
-		String^ seated;		// The name of the file containing the tasks in this protocol.
-		String^ floating;	// The name of the file containing the tasks in this protocol.
+		String^ file;		// The name of the file containing the tasks in this protocol.
 
-		Protocol( int number, char *name, char *seated_file, char *floating_file ) {
+		Protocol( int number, char *name, char *protocol_file ) {
 			this->name = gcnew String( name );
-			this->seated = gcnew String( seated_file );
-			this->floating = gcnew String( floating_file );
+			this->file = gcnew String( protocol_file );
 			this->number = number;
 		}
 		~Protocol(){}
+	};
+
+	public ref class Step {
+	public:
+		int	    number;
+		String^ type;
+
+		// A step may simply be an INSTRUCTION to be displayed.
+		// In that case, we have simply the name of the HTML file with the instruction.
+		String^ instruction;
+
+		// If instead the step involves invoking an external command, then the 
+		// step is made up of the command string, to be exectued by a call to system(),
+		// a instruction screen (html) to be displayed when the step is ready to be run,
+		// another while it is running and then an array of html files to be displayed
+		// depending on the exit code from the executed command.
+		String^ command;
+		String^	ready;
+		String^ running;
+		array<String ^> ^exit;
+
+		// A flag to indicate if the step is a command step or an instruction step.
+		bool	isCommand;
+
+		Step( void ) {}
+		~Step(){}
 	};
 
 	public ref class Task {
 	public:
 		int	    number;
 		String^ name;
-		String^ file;
+		String^ type;
 
-		Task( int number, char *task_file, char *name ) {
+		String^ task_file;
+		Step^	isolated_step;
+
+		Task( int number, char *type, char *name ) {
 			this->number = number;
+			this->type = gcnew String( type );
 			this->name = gcnew String( name );
-			this->file = gcnew String( task_file );
 		}
 		~Task(){}
 	};
-	public ref class Step {
-	public:
-		int	    number;
-		String^ instruction;
-		String^	ready;
-		String^ running;
-		array<String ^> ^exit;
 
-		String^ command;
-		bool	isCommand;
-
-		Step( void ) {}
-		~Step(){}
-	};
 };
 

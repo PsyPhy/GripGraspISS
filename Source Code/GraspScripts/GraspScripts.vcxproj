@@ -38,6 +38,7 @@
     <NMakeBuildCommandLine>nmake makefile.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake makefile.mak</NMakeReBuildCommandLine>
     <NMakeOutput>install</NMakeOutput>
+    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
@@ -45,14 +46,22 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="GraspNominalSessions.gsp" />
-    <None Include="InstallFloating.gsp" />
-    <None Include="InstallSeated.gsp" />
+    <None Include="GraspMaintenanceSessions.sss" />
+    <None Include="GraspNominalSessions.sss" />
+    <None Include="InstallFloating.tsk" />
+    <None Include="InstallSeated.tsk" />
+    <None Include="K-Kfloating.pcl" />
+    <None Include="K-Kseated.pcl" />
+    <None Include="Maintenance.pcl" />
     <None Include="readme.txt" />
-    <None Include="Subjects.gsp" />
+    <None Include="Subjects.sbj" />
     <None Include="Makefile.mak" />
-    <None Include="V-Vfloating.gsp" />
-    <None Include="V-Vseated.gsp" />
+    <None Include="V-Kfloating.pcl" />
+    <None Include="V-Kinstructions.tsk" />
+    <None Include="V-Kseated.pcl" />
+    <None Include="V-Vfloating.pcl" />
+    <None Include="V-Vinstructions.tsk" />
+    <None Include="V-Vseated.pcl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">

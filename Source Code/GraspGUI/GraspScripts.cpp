@@ -95,15 +95,16 @@ void GraspDesktop::ParseSessionFile( String^ filename ) {
 	FILE *fp = fopen( fn, "r" );
 	fAbortMessageOnCondition( !fp, "GraspDesktop", "Error opening %s for reading.", fn );
 	protocolListBox->Items->Clear();
+	nProtocols = 0;
 	while ( fgets( linebuffer, sizeof( linebuffer ), fp ) ) {
 		OutputDebugString( linebuffer );
 		tokens = ParseLine( token, linebuffer );
 		if ( token[0][0] == '#' ) fOutputDebugString( "Comment: %s\n", linebuffer );
-		else if ( tokens == 4 ) {
+		else if ( tokens == 3 ) {
 			fAbortMessageOnCondition( nProtocols == MAX_PROTOCOLS, "GraspGUI", "Too many items (n > %d) in session file %s.", MAX_SESSIONS, fn );
 			int number;
 			sscanf( token[0], "%d", &number );
-			protocolList[nProtocols] = gcnew Protocol( number, token[1], token[2], token[3] );
+			protocolList[nProtocols] = gcnew Protocol( number, token[1], token[2] );
 			protocolListBox->Items->Add( protocolList[nProtocols]->name );
 			nProtocols++;
 		}
@@ -131,11 +132,41 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 		OutputDebugString( linebuffer );
 		tokens = ParseLine( token, linebuffer );
 		if ( token[0][0] == '#' ) fOutputDebugString( "Comment: %s\n", linebuffer );
-		else if ( tokens == 3 ) {
+		else if ( tokens > 2 || tokens < MAX_TOKENS ) {
 			fAbortMessageOnCondition( nSubjects == MAX_TASKS, "GraspGUI", "Too many items (n > %d) in protocol file %s.", MAX_PROTOCOLS, fn );
 			int number;
 			sscanf( token[0], "%d", &number );
 			taskList[nTasks] = gcnew Task( number, token[1], token[2] );
+			if ( !strcmp( token[1], "SCRIPT" ) ) {
+				// Record the info about the script file.
+				taskList[nTasks]->task_file = gcnew String( token[3] );
+			}
+			else {
+				// Create a record of a single-step task.
+				// This means recording all the information that defines a step.
+				taskList[nTasks]->isolated_step = gcnew Step();
+				if ( !strcmp( token[1], "INSTRUCTION" ) ) {
+					taskList[nTasks]->isolated_step->type = "INSTRUCTION";
+					taskList[nTasks]->isolated_step->instruction = gcnew String( token[3] );
+				}
+				else if ( !strcmp( token[1], "COMMAND" ) ) {
+					taskList[nTasks]->isolated_step->type = "COMMAND";
+					taskList[nTasks]->isolated_step->command = gcnew String( token[3] );
+					if ( tokens < 5 ) taskList[nTasks]->isolated_step->ready = gcnew String( "StepReady.html" );
+					else taskList[nTasks]->isolated_step->ready = gcnew String( token[4] );
+					if ( tokens < 6 ) taskList[nTasks]->isolated_step->running = gcnew String( "StepRunning.html" );
+					else taskList[nTasks]->isolated_step->running = gcnew String( token[5] );
+					if ( tokens < 7 ) {
+						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( 2 );
+						taskList[nTasks]->isolated_step->exit[0] = gcnew String( "StepNormalFinish.html" );
+						taskList[nTasks]->isolated_step->exit[1] = gcnew String( "StepErrorFinish.html" );
+					}
+					else {
+						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( tokens - 5 );
+						for ( int i = 6, j = 0; i < tokens; i++, j++ ) taskList[nTasks]->isolated_step->exit[j] = gcnew String( token[i] );
+					}
+				}
+			}
 			taskListBox->Items->Add( taskList[nTasks]->name );
 			nTasks++;
 		}
@@ -156,6 +187,7 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 
 	FILE *fp = fopen( fn, "r" );
 	fAbortMessageOnCondition( !fp, "GraspDesktop", "Error opening %s for reading.", fn );
+
 	nSteps = 0;
 	while ( fgets( linebuffer, sizeof( linebuffer ), fp ) ) {
 		OutputDebugString( linebuffer );
@@ -168,14 +200,16 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 			int number;
 			sscanf( token[0], "%d", &number );
 			stepList[nSteps]->number = number;
-			stepList[nSteps]->command = gcnew String( token[1] );
-			if ( !stepList[nSteps]->command->CompareTo( "INSTRUCTION" ) ) stepList[nSteps]->instruction = gcnew String( token[2] );
-			else {
-				stepList[nSteps]->ready = gcnew String( token[2] );
-				stepList[nSteps]->running = gcnew String( token[3] );
+			stepList[nSteps]->type = gcnew String(  token[1] );
+			if ( !stepList[nSteps]->type->CompareTo( "INSTRUCTION" ) ) stepList[nSteps]->instruction = gcnew String( token[2] );
+			else if ( !stepList[nSteps]->type->CompareTo( "COMMAND" ) ) {
+				stepList[nSteps]->command = gcnew String( token[2] );
+				stepList[nSteps]->ready = gcnew String( token[3] );
+				stepList[nSteps]->running = gcnew String( token[4] );
 				stepList[nSteps]->exit = gcnew array<String ^>( tokens - 4 );
-				for ( int i = 4, j = 0; i < tokens; i++, j++ ) stepList[nSteps]->exit[j] = gcnew String( token[i] );
+				for ( int i = 5, j = 0; i < tokens; i++, j++ ) stepList[nSteps]->exit[j] = gcnew String( token[i] );
 			}
+			else fAbortMessage( "GraspGUI", "Unrecognized step type (%s) in task file %s.", token[1], fn );
 			nSteps++;
 		}
 		else fAbortMessageOnCondition( (tokens != 0), "GraspGUI", "Invalid number of tokens (%d) in task file.\n\n  %s", tokens, linebuffer );
@@ -184,7 +218,7 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 	Marshal::FreeHGlobal( IntPtr(fn) );
 }
 
-System::Void GraspDesktop::previousButton_Click(System::Object^  sender, System::EventArgs^  e) {
+void GraspDesktop::previousButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	if ( currentStep > 0 ) {
 		currentStep--;
 		ShowStep();
@@ -192,18 +226,9 @@ System::Void GraspDesktop::previousButton_Click(System::Object^  sender, System:
 	if ( currentStep == 0 ) previousButton->Enabled = false;
 }
 
-System::Void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
-	if ( verifyNext ) {
-		System::Windows::Forms::DialogResult response;
-		response = MessageBox( "Are you sure you want to continue without executing step?", "GraspGUI", MessageBoxButtons::YesNo );
-		if ( response == System::Windows::Forms::DialogResult::No ) return;
-	}
+void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	if ( currentStep >= nSteps - 1 ) {
 		// End of this set of instructions.
-		nextButton->Enabled = false;
-		previousButton->Enabled = false;
-		nextButton->Visible = false;
-		previousButton->Visible = false;
 		SelectNextTask();
 	}
 	else {
@@ -212,64 +237,90 @@ System::Void GraspDesktop::nextButton_Click(System::Object^  sender, System::Eve
 		ShowStep();
 	}
 }
+
+void GraspDesktop::skipButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	if ( verifyNext ) {
+		System::Windows::Forms::DialogResult response;
+		response = MessageBox( "Are you sure you want to continue without executing step?", "Grasp@ISS", MessageBoxButtons::YesNo );
+		if ( response == System::Windows::Forms::DialogResult::No ) return;
+		normalNavigationGroupBox->Visible = true;
+		normalNavigationGroupBox->Enabled = true;
+	}
+	nextButton_Click( sender, e );
+}
+
 void GraspDesktop::SelectNextTask ( void ) {
 	if ( taskListBox->SelectedIndex >= nTasks - 1 ) {
-		MessageBox( "GRASP@ISS", "Protocol Completed",  MessageBoxButtons::OK );
-		taskListBox->Items->Clear();
-		protocolListBox->Items->Clear();
-		subjectListBox->Items->Clear();
-		seatedRadioButton->Checked = false;
-		floatingRadioButton->Checked = false;
-		ShowLogon();
+		MessageBox( "Protocol Completed.\nLogging off.",   "GRASP@ISS", MessageBoxButtons::OK );
+		taskListBox->Items->Clear(); currentTask = -1;
+		protocolListBox->Items->Clear(); currentProtocol = -1;
+		subjectListBox->SelectedIndex = -1; currentSubject = -1;
 	}
-	else taskListBox->SelectedIndex = taskListBox->SelectedIndex + 1;
-	ShowStep();
+	else {
+		taskListBox->SelectedIndex = taskListBox->SelectedIndex + 1;
+	}
 }
 
 void GraspDesktop::ShowStep( void ) {
 	stepCounterTextBox->Text = (currentStep+1).ToString() + "/" + nSteps.ToString();
-	errorNavigationGroupBox->Visible = false;
-	errorNavigationGroupBox->Enabled = false;
+	// If we are doing a ShowStep, then make sure that the navigation buttons are enabled.
 	normalNavigationGroupBox->Visible = true;
 	normalNavigationGroupBox->Enabled = true;
-	nextButton->Enabled = true;
-	nextButton->Visible = true;
+	// Previous button is only active if we are not in the first step.
 	previousButton->Enabled = (currentStep > 0);
 	previousButton->Visible = true;
-	if ( !stepList[currentStep]->command->CompareTo( "INSTRUCTION" ) ) {
-		startButton->Enabled = false;
-		startButton->Visible = false;
+	// Hide all the navigation buttons by default.
+	// The appropriate ones will then be rendered visible below.
+	errorNavigationGroupBox->Visible = false;
+	errorNavigationGroupBox->Enabled = false;
+	commandNavigationGroupBox->Visible = false;
+	commandNavigationGroupBox->Enabled = false;
+	// We have to use a indirect method to launch an external command to allow
+	// the event loop to run appropriately. The cueStepCommand tells the event
+	// loop to execute a command on the next loop. The Execute button will set this to
+	// true at the appropriate time, when a command has been cued, but by default it should be false.
+	cueStepCommand = false;
+	// Handle the step definition, depending on whether it is a command or an instruction.
+	if ( !stepList[currentStep]->type->CompareTo( "INSTRUCTION" ) ) {
+		// Show the instruction.
 		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->instruction );
+		// No need to ask for verification if user tries to skip to the next page.
 		verifyNext = false;
-		stepCompletionCode = 0;
 	}
 	else {
-		startButton->Enabled = true;
-		startButton->Visible = true;
-		cueStepCommand = false;
+		// Enable the "Execute", "Skip" and "Previous" buttons.
+		commandNavigationGroupBox->Visible = true;
+		commandNavigationGroupBox->Enabled = true;
+		// Hide the normal navigation buttons.
+		normalNavigationGroupBox->Visible = false;
+		normalNavigationGroupBox->Enabled = false;
+		// Ask for verification if user tries to skip to the next page before executing the command.
 		verifyNext = true;
+		// Show the 'ready' page for the command.
 		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->ready );
 	}
 }
 
 void GraspDesktop::startButton_Click(System::Object^  sender, System::EventArgs^  e) {
-		startButton->Enabled = false;
-		startButton->Visible = false;
-		verifyNext = false;
-		stepCompletionCode = 0;
-		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
-		// Tell the system to run the command when the page has finished loading.
-		cueStepCommand = true;
+	// Disable the navigation buttons while we are running.
+	// This is perhaps not necessary, as the event loop will stop while the command is running.
+	commandNavigationGroupBox->Enabled = true;
+	// The user has executed the command, so we don't need to ask for verification any longer.
+	verifyNext = false;
+	// Show the 'running' page.
+	instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
+	// Tell the system to run the command when the page has finished loading.
+	cueStepCommand = true;
 }
 
 // Trigger commands as needed after allowing the html viewer to fully load files.
 void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, System::Windows::Forms::WebBrowserDocumentCompletedEventArgs^  e) {
+		// Make sure that the windows have refreshed  before executing the command.
+		Refresh();
+		Application::DoEvents();
 		if ( cueStepCommand ) {
 			// Don't trigger again on the next DocumentCompleted event.
 			cueStepCommand = false;
-			// Make sure that the windows have refreshed  before executing the command.
-			Refresh();
-			Application::DoEvents();
 			// Run the command.
 			// For the moment, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe to simulate running the command.
 			char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + "TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
@@ -283,18 +334,27 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			int exit_possibilities = stepList[currentStep]->exit->Length;
 			// If the exit code is higher than the highest defined return page, default to the highest defined return page.
 			int exit_choice = min( exit_possibilities - 1, abs( return_code ) );
-			// Show the corresponding page.
-			instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
+			// Hide the buttons used to initiate a command.
+			commandNavigationGroupBox->Enabled = false;
+			commandNavigationGroupBox->Visible = false;
 			// If the return code was negative, display the error code and show the navigation buttons that 
 			// allow to proceed appropriately in the case of an error exit.
 			if ( return_code < 0 ) {
 				errorCodeTextBox->Text = return_code.ToString();
 				errorNavigationGroupBox->Enabled = true;
 				errorNavigationGroupBox->Visible = true;
+				// Make sure that the normal navigation buttons are hidden.
+				// I think they already are, but to be sure I do it again.
+				normalNavigationGroupBox->Visible = false;
+				normalNavigationGroupBox->Enabled = false;
 			}
-			// Note that if the error code was non-negative, the buttons that are usually visible
-			// remain visible and are appropriate to allow proceeding following a normal exit.
+			else {
+				normalNavigationGroupBox->Visible = true;
+				normalNavigationGroupBox->Enabled = true;
+			}
 
+			// Show the corresponding page.
+			instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
 		}
 }
 
@@ -327,16 +387,13 @@ void GraspDesktop::restartButton_Click(System::Object^  sender, System::EventArg
 
 void GraspDesktop::ShowLogon( void ) {
 	stepCounterTextBox->Text = "";
+	stepHeaderTextBox->Text = "";
 	errorNavigationGroupBox->Visible = false;
 	errorNavigationGroupBox->Enabled = false;
-	normalNavigationGroupBox->Visible = true;
-	normalNavigationGroupBox->Enabled = true;
-	nextButton->Enabled = false;
-	nextButton->Visible = false;
-	previousButton->Enabled = false;
-	previousButton->Visible = false;
-	startButton->Enabled = false;
-	startButton->Visible = false;
+	commandNavigationGroupBox->Visible = false;
+	commandNavigationGroupBox->Enabled = false;
+	normalNavigationGroupBox->Visible = false;
+	normalNavigationGroupBox->Enabled = false;
 	instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
 }
 

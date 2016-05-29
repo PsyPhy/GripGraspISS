@@ -47,10 +47,16 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="CodaAlignFloating.md" />
+    <None Include="CodaAlignSeated.md" />
+    <None Include="CodaInstallationCheckFloating.md" />
+    <None Include="CodaInstallationCheckSeated.md" />
     <None Include="InstallFloating1.md" />
     <None Include="InstallFloating2.md" />
+    <None Include="InstallLocker.md" />
     <None Include="InstallSeated1.md" />
     <None Include="InstallSeated2.md" />
+    <None Include="NotYetImplemented.md" />
     <None Include="ProtocolFinished.md" />
     <None Include="StepErrorFinish.md" />
     <None Include="StepFinished.md" />
@@ -67,12 +73,16 @@
     <None Include="V-K4.md" />
     <None Include="V-K5.md" />
     <None Include="V-K6.md" />
+    <None Include="V-KFloatingProtocolReady.md" />
+    <None Include="V-KSeatedProtocolReady.md" />
     <None Include="V-V1.md" />
     <None Include="V-V2.md" />
     <None Include="V-V3.md" />
     <None Include="V-V4.md" />
     <None Include="V-V5.md" />
     <None Include="V-V6.md" />
+    <None Include="V-VFloatingProtocolReady.md" />
+    <None Include="V-VSeatedProtocolReady.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

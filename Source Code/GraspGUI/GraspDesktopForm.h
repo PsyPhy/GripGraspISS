@@ -36,8 +36,6 @@ namespace GraspGUI {
 		array<GraspGUI::Step ^> ^stepList;
 		int nSteps;
 		int currentStep;
-		// Record the completion code.
-		int stepCompletionCode;
 		// Keep track of whether the tasks was executed or not.
 		// If the command was not executed, then verify before allowing the 
 		// user to skip to the next step.
@@ -49,6 +47,12 @@ namespace GraspGUI {
 		// run in order to be able to see the pages. This flag allows us to "cue up" the 
 		// command, run the event loop until everything is visible, and then run the command.
 		bool cueStepCommand;
+	private: System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
+	private: System::Windows::Forms::TextBox^  errorCodeTextBox;
+	private: System::Windows::Forms::Label^  errorCodeLabel;
+	private: System::Windows::Forms::Button^  retryButton;
+	private: System::Windows::Forms::Button^  restartButton;
+	private: System::Windows::Forms::Button^  ignoreButton;
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static Timer^ refreshTimer;
@@ -88,7 +92,6 @@ namespace GraspGUI {
 			stepList = gcnew array<GraspGUI::Step ^>(MAX_STEPS);
 			nSteps = 0;
 			currentStep = 0;
-			stepCompletionCode = 0;
 			cueStepCommand = false;
 
 			// It is convenient to define the root directory and predefine the various subdirectories.
@@ -127,11 +130,9 @@ namespace GraspGUI {
 	private: System::Windows::Forms::ListBox^  taskListBox;
 	private: System::Windows::Forms::GroupBox^  protocolGroupBox;
 	private: System::Windows::Forms::ListBox^  protocolListBox;
-	private: System::Windows::Forms::RadioButton^  floatingRadioButton;
-	private: System::Windows::Forms::RadioButton^  seatedRadioButton;
+
 	private: System::Windows::Forms::Button^  statusButton;
 	private: System::Windows::Forms::Button^  quitButton;
-
 
 	private: System::Windows::Forms::GroupBox^  instructionsGroupBox;
 	private: System::Windows::Forms::WebBrowser^  instructionViewer;
@@ -141,17 +142,20 @@ namespace GraspGUI {
 	private: System::Windows::Forms::TextBox^  stepHeaderTextBox;
 
 	private: System::Windows::Forms::GroupBox^  normalNavigationGroupBox;
-	private: System::Windows::Forms::Button^  startButton;
+
 	private: System::Windows::Forms::Button^  previousButton;
 	private: System::Windows::Forms::Button^  nextButton;
-	private: System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
-	private: System::Windows::Forms::Button^  retryButton;
-	private: System::Windows::Forms::Button^  restartButton;
-	private: System::Windows::Forms::TextBox^  errorCodeTextBox;
-	private: System::Windows::Forms::Label^  errorCodeLabel;
+
+	private: System::Windows::Forms::GroupBox^  commandNavigationGroupBox;
+	private: System::Windows::Forms::Button^  executeButton;
+	private: System::Windows::Forms::Button^  execBackButton;
+	private: System::Windows::Forms::Button^  execSkipButton;
 
 
-	private: System::Windows::Forms::Button^  ignoreButton;
+
+
+
+
 
 
 	protected: 
@@ -175,8 +179,6 @@ namespace GraspGUI {
 			this->taskGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->taskListBox = (gcnew System::Windows::Forms::ListBox());
 			this->protocolGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->floatingRadioButton = (gcnew System::Windows::Forms::RadioButton());
-			this->seatedRadioButton = (gcnew System::Windows::Forms::RadioButton());
 			this->protocolListBox = (gcnew System::Windows::Forms::ListBox());
 			this->subjectGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->subjectListBox = (gcnew System::Windows::Forms::ListBox());
@@ -187,8 +189,11 @@ namespace GraspGUI {
 			this->retryButton = (gcnew System::Windows::Forms::Button());
 			this->restartButton = (gcnew System::Windows::Forms::Button());
 			this->ignoreButton = (gcnew System::Windows::Forms::Button());
+			this->commandNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->executeButton = (gcnew System::Windows::Forms::Button());
+			this->execBackButton = (gcnew System::Windows::Forms::Button());
+			this->execSkipButton = (gcnew System::Windows::Forms::Button());
 			this->normalNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->startButton = (gcnew System::Windows::Forms::Button());
 			this->previousButton = (gcnew System::Windows::Forms::Button());
 			this->nextButton = (gcnew System::Windows::Forms::Button());
 			this->stepHeaderGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -202,6 +207,7 @@ namespace GraspGUI {
 			this->subjectGroupBox->SuspendLayout();
 			this->instructionsGroupBox->SuspendLayout();
 			this->errorNavigationGroupBox->SuspendLayout();
+			this->commandNavigationGroupBox->SuspendLayout();
 			this->normalNavigationGroupBox->SuspendLayout();
 			this->stepHeaderGroupBox->SuspendLayout();
 			this->htmlGroupBox->SuspendLayout();
@@ -230,7 +236,7 @@ namespace GraspGUI {
 			// 
 			this->statusButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->statusButton->ForeColor = System::Drawing::SystemColors::ActiveCaption;
+			this->statusButton->ForeColor = System::Drawing::SystemColors::HotTrack;
 			this->statusButton->Location = System::Drawing::Point(316, 895);
 			this->statusButton->Margin = System::Windows::Forms::Padding(4);
 			this->statusButton->Name = L"statusButton";
@@ -244,7 +250,7 @@ namespace GraspGUI {
 			// 
 			this->quitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->quitButton->ForeColor = System::Drawing::SystemColors::ActiveCaption;
+			this->quitButton->ForeColor = System::Drawing::SystemColors::HotTrack;
 			this->quitButton->Location = System::Drawing::Point(124, 895);
 			this->quitButton->Margin = System::Windows::Forms::Padding(4);
 			this->quitButton->Name = L"quitButton";
@@ -275,8 +281,6 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->taskListBox->FormattingEnabled = true;
 			this->taskListBox->ItemHeight = 36;
-			this->taskListBox->Items->AddRange(gcnew cli::array< System::Object^  >(13) {L"Installation", L"Tracker Alignment", L"Readiness Check", 
-				L"Block 1", L"Block 2", L"Block 3", L"Block 4", L"Pause", L"Block 5", L"Block 6", L"Block 7", L"Block 8", L"(end of protocol)"});
 			this->taskListBox->Location = System::Drawing::Point(11, 34);
 			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskListBox->Name = L"taskListBox";
@@ -286,8 +290,6 @@ namespace GraspGUI {
 			// 
 			// protocolGroupBox
 			// 
-			this->protocolGroupBox->Controls->Add(this->floatingRadioButton);
-			this->protocolGroupBox->Controls->Add(this->seatedRadioButton);
 			this->protocolGroupBox->Controls->Add(this->protocolListBox);
 			this->protocolGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -301,47 +303,16 @@ namespace GraspGUI {
 			this->protocolGroupBox->Text = L"Protocol";
 			this->protocolGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::ProtocolGroupBox_Enter);
 			// 
-			// floatingRadioButton
-			// 
-			this->floatingRadioButton->AutoSize = true;
-			this->floatingRadioButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->floatingRadioButton->Location = System::Drawing::Point(191, 40);
-			this->floatingRadioButton->Margin = System::Windows::Forms::Padding(4);
-			this->floatingRadioButton->Name = L"floatingRadioButton";
-			this->floatingRadioButton->Size = System::Drawing::Size(280, 40);
-			this->floatingRadioButton->TabIndex = 7;
-			this->floatingRadioButton->TabStop = true;
-			this->floatingRadioButton->Text = L"Quasi-Freefloating";
-			this->floatingRadioButton->UseVisualStyleBackColor = true;
-			// 
-			// seatedRadioButton
-			// 
-			this->seatedRadioButton->AutoSize = true;
-			this->seatedRadioButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->seatedRadioButton->Location = System::Drawing::Point(32, 40);
-			this->seatedRadioButton->Margin = System::Windows::Forms::Padding(4);
-			this->seatedRadioButton->Name = L"seatedRadioButton";
-			this->seatedRadioButton->Size = System::Drawing::Size(129, 40);
-			this->seatedRadioButton->TabIndex = 6;
-			this->seatedRadioButton->TabStop = true;
-			this->seatedRadioButton->Text = L"Seated";
-			this->seatedRadioButton->UseVisualStyleBackColor = true;
-			this->seatedRadioButton->CheckedChanged += gcnew System::EventHandler(this, &GraspDesktop::seatedRadioButton_CheckedChanged);
-			// 
 			// protocolListBox
 			// 
 			this->protocolListBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->protocolListBox->FormattingEnabled = true;
 			this->protocolListBox->ItemHeight = 36;
-			this->protocolListBox->Items->AddRange(gcnew cli::array< System::Object^  >(4) {L"Visual - Manual", L"Visual - Visual", L"Manual - Manual", 
-				L"Utilities"});
-			this->protocolListBox->Location = System::Drawing::Point(11, 96);
+			this->protocolListBox->Location = System::Drawing::Point(11, 31);
 			this->protocolListBox->Margin = System::Windows::Forms::Padding(4);
 			this->protocolListBox->Name = L"protocolListBox";
-			this->protocolListBox->Size = System::Drawing::Size(508, 148);
+			this->protocolListBox->Size = System::Drawing::Size(508, 220);
 			this->protocolListBox->TabIndex = 5;
 			this->protocolListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::protocolListBox_SelectedIndexChanged);
 			// 
@@ -366,11 +337,9 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->subjectListBox->FormattingEnabled = true;
 			this->subjectListBox->ItemHeight = 36;
-			this->subjectListBox->Items->AddRange(gcnew cli::array< System::Object^  >(14) {L"Subject 1", L"Subject 2", L"Subject 3", 
-				L"Subject 4", L"Subject 5", L"Subject 6", L"Subject 7", L"Subject 8", L"Subject 9", L"Subject 10", L"Subject 11", L"Subject 12", 
-				L"Demo", L"Maintenance"});
 			this->subjectListBox->Location = System::Drawing::Point(11, 34);
 			this->subjectListBox->Margin = System::Windows::Forms::Padding(4);
+			this->subjectListBox->MultiColumn = true;
 			this->subjectListBox->Name = L"subjectListBox";
 			this->subjectListBox->Size = System::Drawing::Size(512, 148);
 			this->subjectListBox->TabIndex = 5;
@@ -379,6 +348,7 @@ namespace GraspGUI {
 			// instructionsGroupBox
 			// 
 			this->instructionsGroupBox->Controls->Add(this->errorNavigationGroupBox);
+			this->instructionsGroupBox->Controls->Add(this->commandNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->normalNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->stepHeaderGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->htmlGroupBox);
@@ -403,7 +373,7 @@ namespace GraspGUI {
 			this->errorNavigationGroupBox->Location = System::Drawing::Point(14, 878);
 			this->errorNavigationGroupBox->Name = L"errorNavigationGroupBox";
 			this->errorNavigationGroupBox->Size = System::Drawing::Size(556, 68);
-			this->errorNavigationGroupBox->TabIndex = 15;
+			this->errorNavigationGroupBox->TabIndex = 18;
 			this->errorNavigationGroupBox->TabStop = false;
 			this->errorNavigationGroupBox->Visible = false;
 			// 
@@ -430,7 +400,7 @@ namespace GraspGUI {
 			// 
 			this->retryButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->retryButton->Location = System::Drawing::Point(221, 17);
+			this->retryButton->Location = System::Drawing::Point(441, 17);
 			this->retryButton->Margin = System::Windows::Forms::Padding(4);
 			this->retryButton->Name = L"retryButton";
 			this->retryButton->Size = System::Drawing::Size(104, 44);
@@ -443,7 +413,7 @@ namespace GraspGUI {
 			// 
 			this->restartButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->restartButton->Location = System::Drawing::Point(445, 17);
+			this->restartButton->Location = System::Drawing::Point(221, 17);
 			this->restartButton->Margin = System::Windows::Forms::Padding(4);
 			this->restartButton->Name = L"restartButton";
 			this->restartButton->Size = System::Drawing::Size(104, 44);
@@ -465,9 +435,58 @@ namespace GraspGUI {
 			this->ignoreButton->UseVisualStyleBackColor = true;
 			this->ignoreButton->Click += gcnew System::EventHandler(this, &GraspDesktop::ignoreButton_Click);
 			// 
+			// commandNavigationGroupBox
+			// 
+			this->commandNavigationGroupBox->Controls->Add(this->executeButton);
+			this->commandNavigationGroupBox->Controls->Add(this->execBackButton);
+			this->commandNavigationGroupBox->Controls->Add(this->execSkipButton);
+			this->commandNavigationGroupBox->Location = System::Drawing::Point(14, 878);
+			this->commandNavigationGroupBox->Name = L"commandNavigationGroupBox";
+			this->commandNavigationGroupBox->Size = System::Drawing::Size(556, 68);
+			this->commandNavigationGroupBox->TabIndex = 17;
+			this->commandNavigationGroupBox->TabStop = false;
+			// 
+			// executeButton
+			// 
+			this->executeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->executeButton->Location = System::Drawing::Point(418, 17);
+			this->executeButton->Margin = System::Windows::Forms::Padding(4);
+			this->executeButton->Name = L"executeButton";
+			this->executeButton->Size = System::Drawing::Size(127, 44);
+			this->executeButton->TabIndex = 14;
+			this->executeButton->Text = L"Execute";
+			this->executeButton->UseVisualStyleBackColor = true;
+			this->executeButton->Click += gcnew System::EventHandler(this, &GraspDesktop::startButton_Click);
+			// 
+			// execBackButton
+			// 
+			this->execBackButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->execBackButton->Location = System::Drawing::Point(12, 17);
+			this->execBackButton->Margin = System::Windows::Forms::Padding(4);
+			this->execBackButton->Name = L"execBackButton";
+			this->execBackButton->Size = System::Drawing::Size(127, 44);
+			this->execBackButton->TabIndex = 13;
+			this->execBackButton->Text = L"<< Back";
+			this->execBackButton->UseVisualStyleBackColor = true;
+			this->execBackButton->Click += gcnew System::EventHandler(this, &GraspDesktop::previousButton_Click);
+			// 
+			// execSkipButton
+			// 
+			this->execSkipButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->execSkipButton->Location = System::Drawing::Point(147, 17);
+			this->execSkipButton->Margin = System::Windows::Forms::Padding(4);
+			this->execSkipButton->Name = L"execSkipButton";
+			this->execSkipButton->Size = System::Drawing::Size(127, 44);
+			this->execSkipButton->TabIndex = 12;
+			this->execSkipButton->Text = L"Skip >>";
+			this->execSkipButton->UseVisualStyleBackColor = true;
+			this->execSkipButton->Click += gcnew System::EventHandler(this, &GraspDesktop::skipButton_Click);
+			// 
 			// normalNavigationGroupBox
 			// 
-			this->normalNavigationGroupBox->Controls->Add(this->startButton);
 			this->normalNavigationGroupBox->Controls->Add(this->previousButton);
 			this->normalNavigationGroupBox->Controls->Add(this->nextButton);
 			this->normalNavigationGroupBox->Location = System::Drawing::Point(14, 878);
@@ -475,19 +494,6 @@ namespace GraspGUI {
 			this->normalNavigationGroupBox->Size = System::Drawing::Size(556, 68);
 			this->normalNavigationGroupBox->TabIndex = 12;
 			this->normalNavigationGroupBox->TabStop = false;
-			// 
-			// startButton
-			// 
-			this->startButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->startButton->Location = System::Drawing::Point(215, 17);
-			this->startButton->Margin = System::Windows::Forms::Padding(4);
-			this->startButton->Name = L"startButton";
-			this->startButton->Size = System::Drawing::Size(127, 44);
-			this->startButton->TabIndex = 14;
-			this->startButton->Text = L"Start";
-			this->startButton->UseVisualStyleBackColor = true;
-			this->startButton->Click += gcnew System::EventHandler(this, &GraspDesktop::startButton_Click);
 			// 
 			// previousButton
 			// 
@@ -506,7 +512,6 @@ namespace GraspGUI {
 			// 
 			// nextButton
 			// 
-			this->nextButton->Enabled = false;
 			this->nextButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nextButton->Location = System::Drawing::Point(418, 17);
@@ -516,7 +521,6 @@ namespace GraspGUI {
 			this->nextButton->TabIndex = 12;
 			this->nextButton->Text = L"Next >>";
 			this->nextButton->UseVisualStyleBackColor = true;
-			this->nextButton->Visible = false;
 			this->nextButton->Click += gcnew System::EventHandler(this, &GraspDesktop::nextButton_Click);
 			// 
 			// stepHeaderGroupBox
@@ -550,6 +554,7 @@ namespace GraspGUI {
 			this->stepHeaderTextBox->Name = L"stepHeaderTextBox";
 			this->stepHeaderTextBox->Size = System::Drawing::Size(434, 34);
 			this->stepHeaderTextBox->TabIndex = 0;
+			this->stepHeaderTextBox->Text = L"yyyygggg";
 			// 
 			// htmlGroupBox
 			// 
@@ -579,7 +584,7 @@ namespace GraspGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
-			this->ClientSize = System::Drawing::Size(1194, 988);
+			this->ClientSize = System::Drawing::Size(1194, 975);
 			this->Controls->Add(this->instructionsGroupBox);
 			this->Controls->Add(this->navigatorGroupBox);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -595,11 +600,11 @@ namespace GraspGUI {
 			this->navigatorGroupBox->ResumeLayout(false);
 			this->taskGroupBox->ResumeLayout(false);
 			this->protocolGroupBox->ResumeLayout(false);
-			this->protocolGroupBox->PerformLayout();
 			this->subjectGroupBox->ResumeLayout(false);
 			this->instructionsGroupBox->ResumeLayout(false);
 			this->errorNavigationGroupBox->ResumeLayout(false);
 			this->errorNavigationGroupBox->PerformLayout();
+			this->commandNavigationGroupBox->ResumeLayout(false);
 			this->normalNavigationGroupBox->ResumeLayout(false);
 			this->stepHeaderGroupBox->ResumeLayout(false);
 			this->stepHeaderGroupBox->PerformLayout();
@@ -616,7 +621,6 @@ namespace GraspGUI {
 		System::Void SubjectGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
 		System::Void ProtocolGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
 		System::Void TaskGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
-
 		System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {}
 
 		// Here I create my own MessageBox method. So far I am using the standard MessageBox, but
@@ -624,17 +628,24 @@ namespace GraspGUI {
 		System::Windows::Forms::DialogResult MessageBox( String^ message, String^ caption, MessageBoxButtons buttons ) {
 			return( MessageBox::Show( message, caption, buttons ) );
 		}
+
 		System::Void CancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			// Close the form and exit without any further fanfare.
 			Close();
 		}
 
 		System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
+			stepHeaderTextBox->Text = "";
+			// The text box used to hold the header is clipping descenders on lowercase letters.
+			// From the internet I found that one needs to turn AutoSize off to change the height.
+			// Since I can't do that in the designer, I do it here.
+			stepHeaderTextBox->AutoSize = false;
+			stepHeaderTextBox->Height = 36;
 			instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
 			subjectListBox->Items->Clear();
 			protocolListBox->Items->Clear();
 			taskListBox->Items->Clear();
-			ParseSubjectFile( scriptDirectory + "Subjects.gsp" );
+			ParseSubjectFile( scriptDirectory + "Subjects.sbj" );
 		}
 
 		System::Void subjectListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -644,68 +655,86 @@ namespace GraspGUI {
 			else if ( currentStep > 0 ) {
 				System::Windows::Forms::DialogResult response;				
 				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
-				if ( response == System::Windows::Forms::DialogResult::No ) {
+				if ( response == System::Windows::Forms::DialogResult::Yes ) {
 					subjectListBox->SelectedIndex = currentSubject;
 					return;
 				}
 			}
 			currentSubject = subjectListBox->SelectedIndex;
-			seatedRadioButton->Checked = false;
-			floatingRadioButton->Checked = false;
-			protocolListBox->Items->Clear();
-			taskListBox->Items->Clear();
-			ShowLogon();
-		}
-
-		System::Void seatedRadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			// Try to show the session file, but only if the subject has already been selected.
-			protocolListBox->Items->Clear();
-			taskListBox->Items->Clear();
-			if ( subjectListBox->SelectedIndex >= 0 ) ParseSessionFile( scriptDirectory + subjectList[ subjectListBox->SelectedIndex ]->file );
+			if ( currentSubject >= 0 ) {
+				ParseSessionFile( scriptDirectory + subjectList[currentSubject]->file );
+				currentProtocol = -1;
+				taskListBox->Items->Clear(); currentTask = -1;
+			}
 			ShowLogon();
 		}
 
 		System::Void protocolListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			// If the protocol that is selected already is clicked, do nothing.
-			if ( protocolListBox->SelectedIndex == currentProtocol ) return;
-			// Check if a task is running and if so, request confirmation.
-			else if ( currentStep > 0 ) {
-				System::Windows::Forms::DialogResult response;				
-				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
+			// if ( protocolListBox->SelectedIndex == currentProtocol ) return;
+			// Check if the subject was supposed to execute a command and if so, verify that
+			// they really want to leave the current step without doing so.
+			if ( verifyNext || currentStep > 0 ) {
+				System::Windows::Forms::DialogResult response;
+				response = MessageBox( "Are you sure you want to interrupt the current step?", "Grasp@ISS", MessageBoxButtons::YesNo );
 				if ( response == System::Windows::Forms::DialogResult::No ) {
 					protocolListBox->SelectedIndex = currentProtocol;
 					return;
 				}
+				verifyNext = false;
+				normalNavigationGroupBox->Visible = true;
+				normalNavigationGroupBox->Enabled = true;
+				commandNavigationGroupBox->Visible = false;
+				commandNavigationGroupBox->Enabled = false;
 			}
 			currentProtocol = protocolListBox->SelectedIndex;
-			// Try to parse the protocol file, but only if the subject has already been selected.
-			if ( subjectListBox->SelectedIndex < 0 ) ShowLogon();
-			else {
-				taskListBox->Items->Clear();
-				int item_index = protocolListBox->SelectedIndex;
-				if ( seatedRadioButton->Checked ) ParseProtocolFile( scriptDirectory + protocolList[item_index]->seated );
-				else ParseProtocolFile( scriptDirectory + protocolList[item_index]->floating );
-				// Preselect the first task in the newly selected protocol.
-				taskListBox->SelectedIndex = 0;
-				ShowStep();
-			}
+			ParseProtocolFile( scriptDirectory + protocolList[currentProtocol]->file );
+			// Preselect the first task in the newly selected protocol.
+			stepHeaderTextBox->Text = taskListBox->Text;
+			currentStep = 0;
+			currentTask = 0;
+			taskListBox->SelectedIndex = 0; 
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			// If the task that is selected already is clicked, do nothing.
-			if ( taskListBox->SelectedIndex == currentTask ) return;
-			// Check if a task is running and if so, request confirmation.
-			else if ( currentStep > 0 ) {
-				System::Windows::Forms::DialogResult response;				
-				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
+			// Check if the subject was supposed to execute a command and if so, verify that
+			// they really want to leave the current step without doing so.
+			if ( verifyNext || ( currentStep > 0 && currentStep < nSteps - 1 ) ) {
+				System::Windows::Forms::DialogResult response;
+				response = MessageBox( "Are you sure you want to interrupt the current step?", "Grasp@ISS", MessageBoxButtons::YesNo );
 				if ( response == System::Windows::Forms::DialogResult::No ) {
 					taskListBox->SelectedIndex = currentTask;
 					return;
 				}
+				verifyNext = false;
+				normalNavigationGroupBox->Visible = true;
+				normalNavigationGroupBox->Enabled = true;
+				commandNavigationGroupBox->Visible = false;
+				commandNavigationGroupBox->Enabled = false;
 			}
 			currentTask = taskListBox->SelectedIndex;
 			stepHeaderTextBox->Text = taskListBox->Text;
-			ParseTaskFile( scriptDirectory + taskList[taskListBox->SelectedIndex]->file );
+			if (  !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SCRIPT" ) ) {
+				// Read a series of steps from a script file.
+				ParseTaskFile( scriptDirectory + taskList[taskListBox->SelectedIndex]->task_file );
+			}
+			else {
+				// Create a task with a single step and use the info from the task entry to define the step.
+				stepList[0] = gcnew Step();
+				stepList[0]->number = 1;
+				stepList[0]->type = taskList[taskListBox->SelectedIndex]->type;
+				if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "INSTRUCTION" ) ) {
+					 stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
+				}
+				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) ) {
+					 stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
+					 stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
+					 stepList[0]->running = taskList[taskListBox->SelectedIndex]->isolated_step->running;
+					 stepList[0]->exit = taskList[taskListBox->SelectedIndex]->isolated_step->exit;
+				}
+				nSteps = 1;
+			}
+			currentStep = 0;
 			ShowStep();
 		}
 
@@ -730,6 +759,7 @@ namespace GraspGUI {
 		void ShowStep( void );
 		void ShowLogon( void );
 		void nextButton_Click(System::Object^  sender, System::EventArgs^  e);
+		void skipButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void previousButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void startButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void SelectNextTask ( void );
@@ -737,7 +767,6 @@ namespace GraspGUI {
 		void retryButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
-
 	
 };
 }

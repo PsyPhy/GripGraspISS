@@ -75,6 +75,36 @@
     <None Include="InstallFloating2.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="CodaInstallationCheckSeated.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="CodaInstallationCheckFloating.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="CodaAlignFloating.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="InstallLocker.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="V-VFloatingProtocolReady.md">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-VSeatedProtocolReady.md">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-KFloatingProtocolReady.md">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-KSeatedProtocolReady.md">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="NotYetImplemented.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="CodaAlignSeated.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
