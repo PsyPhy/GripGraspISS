@@ -1,4 +1,4 @@
-HEADER( __Visual-Visual while <br>Seated__ )
+HEADER( __Visual-Visual <br> while Seated__ )
 
 CENTER( It would be nice to have a single image that recalls what V-V is in this initial page. )
 

@@ -227,7 +227,7 @@ namespace GraspGUI {
 			this->navigatorGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->navigatorGroupBox->Name = L"navigatorGroupBox";
 			this->navigatorGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->navigatorGroupBox->Size = System::Drawing::Size(566, 952);
+			this->navigatorGroupBox->Size = System::Drawing::Size(620, 952);
 			this->navigatorGroupBox->TabIndex = 5;
 			this->navigatorGroupBox->TabStop = false;
 			this->navigatorGroupBox->Text = L"Navigator";
@@ -237,7 +237,7 @@ namespace GraspGUI {
 			this->statusButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->statusButton->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->statusButton->Location = System::Drawing::Point(316, 895);
+			this->statusButton->Location = System::Drawing::Point(343, 895);
 			this->statusButton->Margin = System::Windows::Forms::Padding(4);
 			this->statusButton->Name = L"statusButton";
 			this->statusButton->Size = System::Drawing::Size(127, 44);
@@ -251,7 +251,7 @@ namespace GraspGUI {
 			this->quitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->quitButton->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->quitButton->Location = System::Drawing::Point(124, 895);
+			this->quitButton->Location = System::Drawing::Point(151, 895);
 			this->quitButton->Margin = System::Windows::Forms::Padding(4);
 			this->quitButton->Name = L"quitButton";
 			this->quitButton->Size = System::Drawing::Size(127, 44);
@@ -269,7 +269,7 @@ namespace GraspGUI {
 			this->taskGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskGroupBox->Name = L"taskGroupBox";
 			this->taskGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->taskGroupBox->Size = System::Drawing::Size(536, 378);
+			this->taskGroupBox->Size = System::Drawing::Size(599, 378);
 			this->taskGroupBox->TabIndex = 7;
 			this->taskGroupBox->TabStop = false;
 			this->taskGroupBox->Text = L"Task";
@@ -284,7 +284,7 @@ namespace GraspGUI {
 			this->taskListBox->Location = System::Drawing::Point(11, 34);
 			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskListBox->Name = L"taskListBox";
-			this->taskListBox->Size = System::Drawing::Size(512, 328);
+			this->taskListBox->Size = System::Drawing::Size(580, 328);
 			this->taskListBox->TabIndex = 5;
 			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
@@ -297,7 +297,7 @@ namespace GraspGUI {
 			this->protocolGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->protocolGroupBox->Name = L"protocolGroupBox";
 			this->protocolGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->protocolGroupBox->Size = System::Drawing::Size(536, 260);
+			this->protocolGroupBox->Size = System::Drawing::Size(599, 260);
 			this->protocolGroupBox->TabIndex = 6;
 			this->protocolGroupBox->TabStop = false;
 			this->protocolGroupBox->Text = L"Protocol";
@@ -312,7 +312,7 @@ namespace GraspGUI {
 			this->protocolListBox->Location = System::Drawing::Point(11, 31);
 			this->protocolListBox->Margin = System::Windows::Forms::Padding(4);
 			this->protocolListBox->Name = L"protocolListBox";
-			this->protocolListBox->Size = System::Drawing::Size(508, 220);
+			this->protocolListBox->Size = System::Drawing::Size(580, 220);
 			this->protocolListBox->TabIndex = 5;
 			this->protocolListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::protocolListBox_SelectedIndexChanged);
 			// 
@@ -325,7 +325,7 @@ namespace GraspGUI {
 			this->subjectGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->subjectGroupBox->Name = L"subjectGroupBox";
 			this->subjectGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->subjectGroupBox->Size = System::Drawing::Size(536, 198);
+			this->subjectGroupBox->Size = System::Drawing::Size(599, 198);
 			this->subjectGroupBox->TabIndex = 5;
 			this->subjectGroupBox->TabStop = false;
 			this->subjectGroupBox->Text = L"User ID";
@@ -333,6 +333,7 @@ namespace GraspGUI {
 			// 
 			// subjectListBox
 			// 
+			this->subjectListBox->ColumnWidth = 192;
 			this->subjectListBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->subjectListBox->FormattingEnabled = true;
@@ -341,7 +342,7 @@ namespace GraspGUI {
 			this->subjectListBox->Margin = System::Windows::Forms::Padding(4);
 			this->subjectListBox->MultiColumn = true;
 			this->subjectListBox->Name = L"subjectListBox";
-			this->subjectListBox->Size = System::Drawing::Size(512, 148);
+			this->subjectListBox->Size = System::Drawing::Size(580, 148);
 			this->subjectListBox->TabIndex = 5;
 			this->subjectListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::subjectListBox_SelectedIndexChanged);
 			// 
@@ -353,9 +354,9 @@ namespace GraspGUI {
 			this->instructionsGroupBox->Controls->Add(this->stepHeaderGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->htmlGroupBox);
 			this->instructionsGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->instructionsGroupBox->Location = System::Drawing::Point(598, 13);
+			this->instructionsGroupBox->Location = System::Drawing::Point(650, 13);
 			this->instructionsGroupBox->Name = L"instructionsGroupBox";
-			this->instructionsGroupBox->Size = System::Drawing::Size(584, 952);
+			this->instructionsGroupBox->Size = System::Drawing::Size(620, 952);
 			this->instructionsGroupBox->TabIndex = 7;
 			this->instructionsGroupBox->TabStop = false;
 			this->instructionsGroupBox->Text = L"Instructions";
@@ -372,7 +373,7 @@ namespace GraspGUI {
 			this->errorNavigationGroupBox->ForeColor = System::Drawing::Color::DarkMagenta;
 			this->errorNavigationGroupBox->Location = System::Drawing::Point(14, 878);
 			this->errorNavigationGroupBox->Name = L"errorNavigationGroupBox";
-			this->errorNavigationGroupBox->Size = System::Drawing::Size(556, 68);
+			this->errorNavigationGroupBox->Size = System::Drawing::Size(591, 68);
 			this->errorNavigationGroupBox->TabIndex = 18;
 			this->errorNavigationGroupBox->TabStop = false;
 			this->errorNavigationGroupBox->Visible = false;
@@ -381,7 +382,7 @@ namespace GraspGUI {
 			// 
 			this->errorCodeTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->errorCodeTextBox->Location = System::Drawing::Point(114, 20);
+			this->errorCodeTextBox->Location = System::Drawing::Point(124, 20);
 			this->errorCodeTextBox->Name = L"errorCodeTextBox";
 			this->errorCodeTextBox->Size = System::Drawing::Size(100, 38);
 			this->errorCodeTextBox->TabIndex = 16;
@@ -400,7 +401,7 @@ namespace GraspGUI {
 			// 
 			this->retryButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->retryButton->Location = System::Drawing::Point(441, 17);
+			this->retryButton->Location = System::Drawing::Point(480, 19);
 			this->retryButton->Margin = System::Windows::Forms::Padding(4);
 			this->retryButton->Name = L"retryButton";
 			this->retryButton->Size = System::Drawing::Size(104, 44);
@@ -413,7 +414,7 @@ namespace GraspGUI {
 			// 
 			this->restartButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->restartButton->Location = System::Drawing::Point(221, 17);
+			this->restartButton->Location = System::Drawing::Point(240, 17);
 			this->restartButton->Margin = System::Windows::Forms::Padding(4);
 			this->restartButton->Name = L"restartButton";
 			this->restartButton->Size = System::Drawing::Size(104, 44);
@@ -426,7 +427,7 @@ namespace GraspGUI {
 			// 
 			this->ignoreButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->ignoreButton->Location = System::Drawing::Point(333, 17);
+			this->ignoreButton->Location = System::Drawing::Point(360, 17);
 			this->ignoreButton->Margin = System::Windows::Forms::Padding(4);
 			this->ignoreButton->Name = L"ignoreButton";
 			this->ignoreButton->Size = System::Drawing::Size(104, 44);
@@ -442,7 +443,7 @@ namespace GraspGUI {
 			this->commandNavigationGroupBox->Controls->Add(this->execSkipButton);
 			this->commandNavigationGroupBox->Location = System::Drawing::Point(14, 878);
 			this->commandNavigationGroupBox->Name = L"commandNavigationGroupBox";
-			this->commandNavigationGroupBox->Size = System::Drawing::Size(556, 68);
+			this->commandNavigationGroupBox->Size = System::Drawing::Size(591, 68);
 			this->commandNavigationGroupBox->TabIndex = 17;
 			this->commandNavigationGroupBox->TabStop = false;
 			// 
@@ -450,7 +451,7 @@ namespace GraspGUI {
 			// 
 			this->executeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->executeButton->Location = System::Drawing::Point(418, 17);
+			this->executeButton->Location = System::Drawing::Point(449, 17);
 			this->executeButton->Margin = System::Windows::Forms::Padding(4);
 			this->executeButton->Name = L"executeButton";
 			this->executeButton->Size = System::Drawing::Size(127, 44);
@@ -491,7 +492,7 @@ namespace GraspGUI {
 			this->normalNavigationGroupBox->Controls->Add(this->nextButton);
 			this->normalNavigationGroupBox->Location = System::Drawing::Point(14, 878);
 			this->normalNavigationGroupBox->Name = L"normalNavigationGroupBox";
-			this->normalNavigationGroupBox->Size = System::Drawing::Size(556, 68);
+			this->normalNavigationGroupBox->Size = System::Drawing::Size(591, 68);
 			this->normalNavigationGroupBox->TabIndex = 12;
 			this->normalNavigationGroupBox->TabStop = false;
 			// 
@@ -514,7 +515,7 @@ namespace GraspGUI {
 			// 
 			this->nextButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->nextButton->Location = System::Drawing::Point(418, 17);
+			this->nextButton->Location = System::Drawing::Point(457, 17);
 			this->nextButton->Margin = System::Windows::Forms::Padding(4);
 			this->nextButton->Name = L"nextButton";
 			this->nextButton->Size = System::Drawing::Size(127, 44);
@@ -527,10 +528,10 @@ namespace GraspGUI {
 			// 
 			this->stepHeaderGroupBox->Controls->Add(this->stepCounterTextBox);
 			this->stepHeaderGroupBox->Controls->Add(this->stepHeaderTextBox);
-			this->stepHeaderGroupBox->Location = System::Drawing::Point(14, 22);
+			this->stepHeaderGroupBox->Location = System::Drawing::Point(14, 26);
 			this->stepHeaderGroupBox->Margin = System::Windows::Forms::Padding(0);
 			this->stepHeaderGroupBox->Name = L"stepHeaderGroupBox";
-			this->stepHeaderGroupBox->Size = System::Drawing::Size(557, 67);
+			this->stepHeaderGroupBox->Size = System::Drawing::Size(591, 67);
 			this->stepHeaderGroupBox->TabIndex = 6;
 			this->stepHeaderGroupBox->TabStop = false;
 			// 
@@ -561,7 +562,7 @@ namespace GraspGUI {
 			this->htmlGroupBox->Controls->Add(this->instructionViewer);
 			this->htmlGroupBox->Location = System::Drawing::Point(14, 92);
 			this->htmlGroupBox->Name = L"htmlGroupBox";
-			this->htmlGroupBox->Size = System::Drawing::Size(557, 787);
+			this->htmlGroupBox->Size = System::Drawing::Size(591, 787);
 			this->htmlGroupBox->TabIndex = 5;
 			this->htmlGroupBox->TabStop = false;
 			// 
@@ -584,7 +585,7 @@ namespace GraspGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
-			this->ClientSize = System::Drawing::Size(1194, 975);
+			this->ClientSize = System::Drawing::Size(1282, 975);
 			this->Controls->Add(this->instructionsGroupBox);
 			this->Controls->Add(this->navigatorGroupBox);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
