@@ -1,8 +1,7 @@
-HEADER( __Visual-Kinesthetic while <br>Seated__ )
+HEADER( __Visual-Kinesthetic <br> while Seated__ )
 
-CENTER( It would be nice to have a single image that recalls what V-K is in this initial page. )
+HEADER( Ready to Start IMAGE( Figures_Instructions/go-arrow.bmp, 200 ) )
 
-CENTER( IMAGE( Figures_Instructions/go-arrow.bmp, 300 ) )
-HEADER( Ready to Start )
+It would be nice to have a single image that recalls what V-K is in this initial page, rather than just this generic image and message.
  
-HEADER( Press IMAGE( Figures_Instructions/gui-next-button.tiff, 180 ) to continue. )
+CENTER( Press IMAGE( Figures_Instructions/gui-next-button.tiff, 120 ) to continue. )

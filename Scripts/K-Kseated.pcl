@@ -1,5 +1,5 @@
 # Protocol Definition: Visual Stimulus to Kinesthetic Response 
-300; INSTRUCTION; Introduction; K-KFloatingProtocolReady.html
+300; INSTRUCTION; Introduction; K-KSeatedProtocolReady.html
 301; SCRIPT; Preparation; InstallSeated.tsk
 302; COMMAND; Align Tracker; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 303; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
