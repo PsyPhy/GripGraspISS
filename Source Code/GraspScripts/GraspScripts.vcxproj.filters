@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="V-V">
+      <UniqueIdentifier>{08d1137d-a221-492a-80ae-e9074d967e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generic">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="V-K">
+      <UniqueIdentifier>{5792fd5e-73db-4026-8132-a208a64927da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="K-K">
+      <UniqueIdentifier>{67105474-cc8f-4da1-b284-d5bc66f613a6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.txt" />
+    <None Include="Makefile.mak" />
+    <None Include="V-Vfloating.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-Vseated.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="GraspNominalSessions.sss">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="InstallFloating.tsk">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="InstallSeated.tsk">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="Subjects.sbj">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="V-Vinstructions.tsk">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-Kfloating.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-Kinstructions.tsk">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-Kseated.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="GraspMaintenanceSessions.sss">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="K-Kseated.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-Kfloating.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="Maintenance.pcl">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="K-Kinstructions.tsk">
+      <Filter>K-K</Filter>
+    </None>
+  </ItemGroup>
+</Project>

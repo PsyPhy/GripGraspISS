@@ -37,6 +37,7 @@ namespace HTMLExperiment {
 	private: System::Windows::Forms::WebBrowser^  webBrowser1;
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
 	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::LinkLabel^  linkLabel1;
 	protected: 
 
 	private:
@@ -55,20 +56,19 @@ namespace HTMLExperiment {
 			this->webBrowser1 = (gcnew System::Windows::Forms::WebBrowser());
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->linkLabel1 = (gcnew System::Windows::Forms::LinkLabel());
 			this->SuspendLayout();
 			// 
 			// webBrowser1
 			// 
 			this->webBrowser1->AllowWebBrowserDrop = false;
-			this->webBrowser1->IsWebBrowserContextMenuEnabled = false;
-			this->webBrowser1->Location = System::Drawing::Point(1, 52);
+			this->webBrowser1->Location = System::Drawing::Point(11, 52);
 			this->webBrowser1->MinimumSize = System::Drawing::Size(20, 20);
 			this->webBrowser1->Name = L"webBrowser1";
 			this->webBrowser1->ScrollBarsEnabled = false;
-			this->webBrowser1->Size = System::Drawing::Size(559, 651);
+			this->webBrowser1->Size = System::Drawing::Size(540, 755);
 			this->webBrowser1->TabIndex = 0;
 			this->webBrowser1->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
-			this->webBrowser1->WebBrowserShortcutsEnabled = false;
 			this->webBrowser1->NewWindow += gcnew System::ComponentModel::CancelEventHandler(this, &Form1::webBrowser1_NewWindow);
 			// 
 			// openFileDialog1
@@ -85,16 +85,28 @@ namespace HTMLExperiment {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &Form1::Go);
 			// 
+			// linkLabel1
+			// 
+			this->linkLabel1->AutoSize = true;
+			this->linkLabel1->Location = System::Drawing::Point(18, 17);
+			this->linkLabel1->Name = L"linkLabel1";
+			this->linkLabel1->Size = System::Drawing::Size(72, 17);
+			this->linkLabel1->TabIndex = 2;
+			this->linkLabel1->TabStop = true;
+			this->linkLabel1->Text = L"linkLabel1";
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(562, 705);
+			this->ClientSize = System::Drawing::Size(562, 817);
+			this->Controls->Add(this->linkLabel1);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->webBrowser1);
 			this->Name = L"Form1";
 			this->Text = L"Grasp Instructions Previewer";
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion

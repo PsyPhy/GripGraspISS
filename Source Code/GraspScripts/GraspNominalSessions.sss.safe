@@ -1,0 +1,7 @@
+# The different scientific protocols
+101; Visual-Visual       Seated; V-Vseated.pcl
+102; Visual-Manual     Seated; V-Kseated.pcl
+103; Manual-Manual   Seated; K-Kseated.pcl
+104; Visual-Visual       Quasi-Freefloating; V-Vfloating.pcl
+105; Visual-Manual     Quasi-Freefloating; V-Kfloating.pcl
+106; Manual-Manual   Quasi-Freefloating; K-Kfloating.pcl

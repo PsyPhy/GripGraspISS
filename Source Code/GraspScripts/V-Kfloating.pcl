@@ -1,0 +1,8 @@
+# Protocol Definition: Visual Stimulus to Kinesthetic Response 
+300; INSTRUCTION; Introduction; V-KFloatingProtocolReady.html
+301; SCRIPT; Preparation; InstallFloating.tsk
+302; COMMAND; Align Tracker; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+303; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
+304; COMMAND; Visual-Kinesthetic Block 1; Grasp -VtoK GraspSequence1.txt
+305; COMMAND; Visual-Kinesthetic Block 2; Grasp -VtoK GraspSequence2.txt
+306; INSTRUCTION; End of Protocol; ProtocolFinished.html

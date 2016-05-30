@@ -127,6 +127,9 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GraspScripts\GraspScripts.vcxproj">
+      <Project>{06fb1c1d-0fe6-4fb8-91b1-7ddda4165782}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspVR\GraspVR.vcxproj">
       <Project>{266170c2-0878-422f-a262-d1023c084b26}</Project>
     </ProjectReference>

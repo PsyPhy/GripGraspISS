@@ -25,7 +25,7 @@ namespace GraspGUI {
 		int	    number;		// This is the subject number passed by DEX to the ground.
 		String^ file;		// The name of the file containing the sessions that this subject might do.
 
-		Subject( int number, char *id, char *session_file, char *name ) {
+		Subject( int number, char *id, char *name, char *session_file ) {
 			this->number = number;
 			this->ID = gcnew String( id );
 			this->name = gcnew String( name );
@@ -40,39 +40,56 @@ namespace GraspGUI {
 		String^ name;		// The full name that appears in the GUI menu.
 		String^ file;		// The name of the file containing the tasks in this protocol.
 
-		Protocol( int number, char *task_file, char *name ) {
+		Protocol( int number, char *name, char *protocol_file ) {
 			this->name = gcnew String( name );
-			this->file = gcnew String( task_file );
+			this->file = gcnew String( protocol_file );
 			this->number = number;
 		}
 		~Protocol(){}
+	};
+
+	public ref class Step {
+	public:
+		int	    number;
+		String^ type;
+
+		// A step may simply be an INSTRUCTION to be displayed.
+		// In that case, we have simply the name of the HTML file with the instruction.
+		String^ instruction;
+
+		// If instead the step involves invoking an external command, then the 
+		// step is made up of the command string, to be exectued by a call to system(),
+		// a instruction screen (html) to be displayed when the step is ready to be run,
+		// another while it is running and then an array of html files to be displayed
+		// depending on the exit code from the executed command.
+		String^ command;
+		String^	ready;
+		String^ running;
+		array<String ^> ^exit;
+
+		// A flag to indicate if the step is a command step or an instruction step.
+		bool	isCommand;
+
+		Step( void ) {}
+		~Step(){}
 	};
 
 	public ref class Task {
 	public:
 		int	    number;
 		String^ name;
-		String^ seatedCmd;
-		String^ floatingCmd;
+		String^ type;
 
-		Task( int number, char *seated_task_cmd, char *floating_task_cmd, char *name ) {
+		String^ task_file;
+		Step^	isolated_step;
+
+		Task( int number, char *type, char *name ) {
 			this->number = number;
-			this->seatedCmd = gcnew String( seated_task_cmd );
-			this->floatingCmd = gcnew String( floating_task_cmd );
+			this->type = gcnew String( type );
 			this->name = gcnew String( name );
 		}
 		~Task(){}
 	};
-	public ref class Page {
-	public:
-		int	    number;
-		String^ file;
 
-		Page( int number, char *file ) {
-			this->number = number;
-			this->file = gcnew String( file );
-		}
-		~Page(){}
-	};
 };
 

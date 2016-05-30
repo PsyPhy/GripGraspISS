@@ -5,5 +5,5 @@ CENTER( IMAGE(Figures_Instructions/GraspLOGO.jpg, 400) )
 In the menus to the left:
 
 - Choose your User ID.
-- Select a posture and a protocol.
-- Press [Next >>>] to launch the protocol.
+- Select a posture and then a protocol.
+- Use the windows and buttons at the right to execute each task in order.
