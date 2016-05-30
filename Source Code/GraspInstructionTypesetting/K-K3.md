@@ -1,7 +1,7 @@
-HEADER( *__K-K Step 3__* )
+HEADER( *__Step 3: Tilt the Head__* )
 
-- If you keep the tool green long enough, the tunnel turns red.
-- Tilt laterally your head in the direction of the circular arrow until the tunnel turns green.
+- When the target dissappears, lower your arm to your side.
+- If the tunnel turns red or an circular arrow appears, tilt  your head laterally in the direction of the  arrow until the tunnel turns green.
 
 CENTER( IMAGE(Figures_Instructions/K-K/K-K.005.jpg, 300) )
 CENTER( IMAGE(Figures_Instructions/K-K/K-K.006.jpg, 300) )

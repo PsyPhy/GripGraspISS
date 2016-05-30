@@ -1,8 +1,8 @@
-HEADER( *__K-K Step 2__* )
+HEADER( *__Step 2: Acquire Target__* )
 
-- Once your head is aligned with your body, a disk-target will appear.
-- Rais your arm until the poiter is within the disk-target.
-- Turn your hand until the pointer and the tool are green.
+- Once your head is aligned with your body, a disk-shaped target will appear.
+- Raise your arm and point until the laser-pointer falls on the target.
+- Roll your hand until the pointer and the tool turn bright green.
 - Memorise the corresponding hand orientation.
 
 CENTER( IMAGE(Figures_Instructions/K-K/K-K.003.jpg, 300) )

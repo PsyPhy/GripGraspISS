@@ -1,4 +1,4 @@
-HEADER( *__K-K Step 5__* )
+HEADER( *__Step 5: Record Response__* )
 
 - Click on the right mouse button to validate your response once you think your hand is aligned with the memorised target.
 
