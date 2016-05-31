@@ -13,6 +13,8 @@
 #include "stdafx.h"
 #include "PoseTrackers.h"
 #include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 
 using namespace PsyPhy;
 
@@ -28,11 +30,23 @@ void PoseTracker::BoresightAt( const Pose &pose ) {
 }
 
 // Boresight so that the current position and orientation is the null position and orientation.
-bool PoseTracker::Boresight( void ) {
+bool PoseTracker::Boresight( int retry_count ) {
 	TrackerPose tpose;
 	bool success;
-	if ( success = GetCurrentPoseIntrinsic( tpose ) ) BoresightAt( tpose.pose );
-	return success;
+	for ( int i = 0; i < retry_count; i++ ) {
+		success = GetCurrentPoseIntrinsic( tpose );
+		if ( success ) {
+			BoresightAt( tpose.pose );
+			return( success );
+		}
+		// If we did not get a valid position, sleep a little and try again.
+		Sleep( 20 );
+		// Need to allow an update before trying to get the latest position.
+		// Not sure how to handle errors in Update() so just abort for now if it happens.
+		fAbortMessageOnCondition( !Update(), "PoseTrackers", "Error executing Update() on retry count %d", i );
+	}
+	fOutputDebugString( "Boresight() failed after %d retry attempts.\n", retry_count );
+	return( success );
 }
 
 // Boresight so that the current pose is now the specified pose.

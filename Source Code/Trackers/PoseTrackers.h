@@ -54,7 +54,7 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 		// Boresight so that the current pose becomes the specified pose.
 		virtual bool BoresightTo( const Pose &pose );
 		// Boresight so that the current pose becomes the null pose.
-		virtual bool Boresight( void );
+		virtual bool Boresight( int retry_count = 5 );
 		virtual void Unboresight( void );
 		 
 		virtual bool GetCurrentPosition( PsyPhy::Vector3 position );
