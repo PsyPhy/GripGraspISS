@@ -48,11 +48,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xTestGraspGLObjects", "Test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspInstructionTypesetting", "GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj", "{F238FC55-FF73-4094-8BDE-F14A39B1DB0A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspGUIBnW", "GraspGUIBellsAndWhistles\GraspGUIBnW.vcxproj", "{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zzGraspGUIBnW", "GraspGUIBellsAndWhistles\GraspGUIBnW.vcxproj", "{B487A9CA-0F57-426C-B2C5-A4FE3DC49C2C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScripts", "GraspScripts\GraspScripts.vcxproj", "{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaskProcessUnitTester", "TaskProcessUnitTester\TaskProcessUnitTester.vcxproj", "{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignToRigidBody", "AlignToRigidBody\AlignToRigidBody.vcxproj", "{2229366E-D549-4CB7-B0CD-483FEB80276E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -246,6 +248,14 @@ Global
 		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.Release|Win32.Build.0 = Release|Win32
 		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{13F2B16B-AE29-4CB4-9D50-0B6B9CE94738}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.Debug|Win32.Build.0 = Debug|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.Release|Win32.ActiveCfg = Release|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.Release|Win32.Build.0 = Release|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{2229366E-D549-4CB7-B0CD-483FEB80276E}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
