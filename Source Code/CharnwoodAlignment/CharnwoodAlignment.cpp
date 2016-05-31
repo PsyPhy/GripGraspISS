@@ -2,23 +2,13 @@
 //
 
 #include "stdafx.h"
-//
-#include <stdio.h>
-#include <stdlib.h>
-#include <tchar.h>
-#include <math.h>
-#include <time.h>
 
-#include <windows.h>
-#include <mmsystem.h>
-
-#define _CRT_SECURE_NO_WARNINGS
-#include <time.h>
+// Some convenient routines for outputing debug messages.
 #include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
-#include "../Trackers/CodaPoseTracker.h"
 
 using namespace PsyPhy;
 
@@ -29,17 +19,60 @@ CodaRTnetTracker codaTracker;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	bool confirm = true;
+	
+	MarkerFrame localFrame[2];
 
-	fprintf( stderr, "%s started.\n\n", argv[0] );
+	int origin = 1;
+	int x_minus = 1;
+	int x_plus = 0;
+	int y_minus = 2;
+	int y_plus = 0;
 
-	// Initialize the connection to the CODA tracking system.
-	fprintf( stderr, "Initializing CODA system ..." );
+
+	fprintf( stderr, "Initializing CODA ..." );
 	codaTracker.Initialize();
 	fprintf( stderr, "OK.\n" );
+	fprintf( stderr, "Starting acquisition ... " );
+	codaTracker.StartAcquisition( 600.0 );
+	fprintf( stderr, "OK.\n\n" );
 
-	codaTracker.PerformAlignment( 1, 1, 0, 2, 1, true );
+	//
+	// Run a loop to show the visibility of the markers.
+	// 
+	while ( _kbhit() == 0 ) {
+		for ( int unit = 0; unit < 2; unit++ ) {
+			codaTracker.GetCurrentMarkerFrameUnit( localFrame[unit], unit );
+			fprintf( stderr, "Unit %d: ", unit );
+			if ( localFrame[unit].marker[origin].visibility ) fprintf( stderr, "O" );
+			else fprintf( stderr, "." );
+			fprintf( stderr, "  " );
+			if ( localFrame[unit].marker[x_minus].visibility ) fprintf( stderr, "O" );
+			else fprintf( stderr, "." );
+			if ( localFrame[unit].marker[x_plus].visibility ) fprintf( stderr, "O" );
+			else fprintf( stderr, "." );
+			fprintf( stderr, "  " );
+			if ( localFrame[unit].marker[y_minus].visibility ) fprintf( stderr, "O" );
+			else fprintf( stderr, "." );
+			if ( localFrame[unit].marker[y_plus].visibility ) fprintf( stderr, "O" );
+			else fprintf( stderr, "." );
+			fprintf( stderr, "    " );
+		}
+		fprintf( stderr, "\n" );
 
+	}
+	int key = _getch(); // Clear the _kbhit().
+	codaTracker.AbortAcquisition();
+
+	// Perform the alignment if the key was an 'A'.
+	if ( key == 'a' || key == 'A' ) {
+		fprintf( stderr, "Performing alignment O: %d X: %d->%d Y: %d->%d ... ", origin, x_minus, x_plus, y_minus, y_plus );
+		codaTracker.PerformAlignment( origin, x_minus, x_plus, y_minus, y_plus, true );
+		fprintf( stderr, "OK.\n" );
+	}
+
+	fprintf( stderr, "\nCharnwoodAlignment terminated. Press <Return> to close window.\n" );
+	_getch();
 	return 0;
+
 }
 
