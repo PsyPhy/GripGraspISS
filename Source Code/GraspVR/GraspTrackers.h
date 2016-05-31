@@ -109,9 +109,9 @@ namespace Grasp {
 
 	public:
 
-		virtual void Initialize( void );
-		virtual void Update( void );
-		virtual void Release( void );
+		void Initialize( void );
+		void Update( void );
+		void Release( void );
 
 		GraspDexTrackers( OculusMapper *mapper ) {
 				oculusMapper = mapper;

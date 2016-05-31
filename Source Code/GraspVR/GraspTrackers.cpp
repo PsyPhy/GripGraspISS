@@ -32,7 +32,7 @@ using namespace Grasp;
 // How much the tool will turn for a given displacement of the mouse or trackball.
 double GraspTrackers::mouseGain = - 0.001;
 // Where to place the tool when in V-V mode.
-Pose GraspTrackers::handPoseVV = {{100.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspTrackers::handPoseVV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -78,10 +78,12 @@ DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
 }
 
 void GraspTrackers::Update( void ) {
-	hmdTracker->Update();
-	handTracker->Update();
-	chestTracker->Update();
-	mouseTracker->Update();
+	// Perform any periodic updating that the trackers might require.
+	fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
+	fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
+	fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
+	fAbortMessageOnCondition( !mouseTracker->Update(), "PsyPhyOculusDemo", "Error updating mouse pose tracker." );
+
 }
 
 void GraspTrackers::Release( void ) {
@@ -143,12 +145,27 @@ void GraspDexTrackers::Initialize( void ) {
 	// Create a tracker to control the orientation via the mouse.
 	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
+	mouseRollTracker->BoresightTo( handPoseVV );
 
 	// Now assign the trackers to each body part.
 	hmdTracker = oculusCodaPoseTracker;
 	handTracker = handCascadeTracker;
 	chestTracker = chestCascadeTracker;
 	mouseTracker = mouseRollTracker;
+	// And place the virtual hand at a fixed position to be used in the V-V protocol.
+	mouseTracker->BoresightTo( handPoseVV );
+	
+	////
+	//// We are not yet tracking positions, so we need to position the hand appropriately.
+	//// Here I boresight the hand tracker to the fixed position as well. But this is
+	////  temporary and should be removed when we start tracking 3D positions as well.
+
+	//// Give the trackers a chance to get started.
+	//Sleep( 200 );
+	//// Allow them to update.
+	//Update();
+	//// And set the hand position to a fixed position.
+	//handTracker->BoresightTo( handPoseVV );
 
 }
 

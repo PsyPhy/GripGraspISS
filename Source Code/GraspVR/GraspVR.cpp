@@ -31,11 +31,7 @@ void GraspVR::InitializeTrackers( void ) {
 
 void GraspVR::UpdateTrackers( void ) {
 
-		// Perform any periodic updating that the trackers might require.
-		fAbortMessageOnCondition( !trackers->hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
-		fAbortMessageOnCondition( !trackers->handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
-		fAbortMessageOnCondition( !trackers->chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
-		fAbortMessageOnCondition( !trackers->mouseTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
+	trackers->Update();
 
 		// Get the position and orientation of the head and add them to the Player position and orientation.
 		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
