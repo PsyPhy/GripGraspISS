@@ -71,6 +71,8 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CascadePoseTracker.h" />
+    <ClInclude Include="CodaPoseTracker.h" />
     <ClInclude Include="CodaRTnetTracker.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="PoseTrackers.h" />
