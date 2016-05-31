@@ -26,11 +26,6 @@ class MousePoseTracker : public PoseTracker {
 		MousePoseTracker( OculusMapper *ptr = nullptr, double gain = 1.0 );
 		~MousePoseTracker() {}
 
-		virtual bool Initialize( void ) {
-			return true;
-		}
-		virtual bool Update( void );
-		virtual bool Quit( void );
 		virtual bool GetCurrentPoseIntrinsic( TrackerPose *pose ) { return true; }
 		virtual double GetTime( void );
 

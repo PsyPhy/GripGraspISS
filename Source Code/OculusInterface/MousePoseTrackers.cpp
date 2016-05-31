@@ -18,8 +18,6 @@ MousePoseTracker::MousePoseTracker( OculusMapper *ptr, double gain ) {
 	this->gain = gain;
 	PoseTracker();
 }
-bool MousePoseTracker::Update( void ) { return true; }
-bool MousePoseTracker::Quit( void ) { return true; }
 
 // Define a common method to determine the timestamp for all MousePoseTrackers.
 double MousePoseTracker::GetTime( void ) { 

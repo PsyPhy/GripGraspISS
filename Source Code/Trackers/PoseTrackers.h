@@ -29,18 +29,25 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 	protected:
 
 		Pose		nullPose;
+		bool		initialized;
 
 	public:
 
-		PoseTracker() {
+		PoseTracker() : initialized(false) {
 			CopyQuaternion( nullPose.orientation, nullQuaternion );
 			CopyVector( nullPose.position, zeroVector );
 		}
 		~PoseTracker (){};
 
-		virtual bool Initialize( void ){ return true; };
+		virtual bool Initialize( void ){ 
+			initialized = true;
+			return true; 
+		};			
 		virtual bool  Update( void ){ return true; };
-		virtual bool Quit( void ){ return true; };
+		virtual bool Release( void ){ 
+			initialized = false;
+			return true; 
+		};
 
 		// Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
 		virtual void BoresightAt( const Pose &pose );

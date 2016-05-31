@@ -12,9 +12,12 @@
 
 using namespace PsyPhy;
 
+// This may seem strange, but a CodaPoseTracker does not need to do anything to
+//  initialize, update or release. The work is done by the CodaTracker that 
+//  is presumed to fill in the marker buffers each time.
 bool CodaPoseTracker::Initialize( void ) { return true; }
 bool CodaPoseTracker::Update( void ) { return true; }
-bool CodaPoseTracker::Quit( void ) { return true; }
+bool CodaPoseTracker::Release( void ) { return true; }
 
 bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) { 
 

@@ -31,8 +31,11 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 }
 bool OculusCodaPoseTracker::Initialize( void ) { 
 	
-	// NB We assume that the absolute tracker has already been initialized.
-	// Otherwise we would want to do that here. 
+	// Only initialize once.
+	if ( initialized ) return true;
+
+	// Initialize the connected absolute tracker.
+	absoluteTracker->Initialize();
 
 	// Initialize the pose of the tracker.
 	// In the final version this should be computed from the CODA contribution.
@@ -118,8 +121,10 @@ bool OculusCodaPoseTracker::Update( void ) {
 	return true; 
 
 }
-bool OculusCodaPoseTracker::Quit( void ) { 
+bool OculusCodaPoseTracker::Release( void ) { 
+	absoluteTracker->Release();
 	fclose( fp );
+	initialized = false;
 	return true; 
 }
 

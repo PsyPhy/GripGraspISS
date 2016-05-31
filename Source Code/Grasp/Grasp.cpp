@@ -23,9 +23,22 @@
 using namespace PsyPhy;
 using namespace Grasp;
 
-/*****************************************************************************/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-extern int nMarkers;
+//
+// Hardware Interface
+//
+
+// I don't remember why these are here as static global variables, instead of as 
+// static instance variables of the GraspVR class, but I don't want to spend time figuring it out.
+
+// Interface to OpenGL windows and HMD.
+static OculusDisplayOGL _oculusDisplay;
+
+// Mapping and rendering in Oculus.
+static OculusMapper _oculusMapper;
+
+/*****************************************************************************/
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -36,16 +49,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( lpCmdLine );
 
 	bool useCoda = false;
-	GraspVR	*vr;
 
-	ConnectToDex();
+	GraspVR	*vr;
+	GraspTrackers *trackers;
+
+	// ConnectToDex();
 
 	if ( useCoda ) {
-		// Choose a GraspVR combination for V-V using the DEX trackers.
-		vr = new GraspVK();
+		GraspDexTrackers *dex_trackers = new GraspDexTrackers( &_oculusMapper );
+		trackers = dex_trackers;
 	}
-
-	else vr = new GraspSIM();
+	else {
+		GraspSimTrackers *sim_trackers = new GraspSimTrackers( &_oculusMapper );
+		trackers = sim_trackers;
+	}
+	
+	vr = new GraspVR( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
 
 	vr->Initialize( hInstance );
 	vr->DebugLoop();

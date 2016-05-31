@@ -30,11 +30,13 @@ int CascadePoseTracker::AddTracker( PoseTracker *tracker ) {
 
 
 bool CascadePoseTracker::Initialize( void ) { 
-	// We assume that the array of component trackers has already been initialized
-	//  and so we only initialize ourself. That means simply doing what every other
-	//  PoseTracker does at initialization.
-	PoseTracker::Initialize();
-	return true; 
+	// Only initialize once.
+	if ( initialized ) return true;
+	// Initialize the components one-by-one. 
+	// Overall success requires that all be successful.
+	initialized = true;
+	for ( int trk = 0; trk < nTrackers; trk++ ) initialized &= tracker[trk]->Initialize();
+	return( initialized );
 }
 
 bool CascadePoseTracker::Update( void ) { 
@@ -46,7 +48,8 @@ bool CascadePoseTracker::Update( void ) {
 	return( success );
 }
 
-bool CascadePoseTracker::Quit( void ) { 
+bool CascadePoseTracker::Release( void ) { 
+	for ( int trk = 0; trk < nTrackers; trk++ ) tracker[trk]->Release();
 	return true; 
 }
 
