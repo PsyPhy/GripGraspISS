@@ -48,7 +48,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	UNREFERENCED_PARAMETER( lpCmdLine );
 
-	bool useCoda = true;
+	bool useCoda = false;
 
 	GraspVR	*vr;
 	GraspTrackers *trackers;

@@ -152,7 +152,7 @@ void CodaRTnetTracker::Initialize( void ) {
 	}
 	catch(NetworkException& exNet)
 	{
-		print_network_error(exNet);
+		print_network_error( exNet );
 		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
 		MessageBox( NULL, "DexRTnet() failed.\n(NetworkException& exNet)", "CodaRTnetTracker", MB_OK );
 		exit( -1 );
@@ -385,12 +385,13 @@ bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int select
 		{
 			cl.monitorAcqBuffer();
 		}
-		catch(DeviceStatusArray& array)
+		catch( DeviceStatusArray& array )
 		{
+			OutputDebugString( "Caught ( DeviceStatusArray& array ) " );
 			// If an error occured, output some debug info the debug screen.
 			// Other than that, this is a fatal error so we exit.
 			print_devicestatusarray_errors(array);
-			OutputDebugString( "Caught (DeviceStatusArray& array)\n" );
+			OutputDebugString( "\n" );
 			exit( -1 );
 		}
 	}
@@ -577,55 +578,54 @@ void CodaRTnetTracker::print_devicestatusarray_errors(const DeviceStatusArray& a
 // @param exNet Network exception object thrown from RTNetClient or DataStream
 void CodaRTnetTracker::print_network_error(const NetworkException& exNet)
 {
-	fOutputDebugString( "Network error: ");
-	switch (exNet.errorcode)
+	switch ( exNet.errorcode )
 	{
 	case CODANET_OK:
-		fOutputDebugString( "CODANET_OK: NO ERROR CODE WAS PRODUCED");
+		fOutputDebugString( "Network error: CODANET_OK: NO ERROR CODE WAS PRODUCED ");
 		break;
 		
 	case CODANET_SOCKETERROR_BROKEN:
-		fOutputDebugString( "CODANET_SOCKETERROR_BROKEN");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_BROKEN ");
 		break;
 		
 	case CODANET_SOCKETERROR_WINDOWSDLL:
-		fOutputDebugString( "CODANET_SOCKETERROR_WINDOWSDLL");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_WINDOWSDLL ");
 		break;
 		
 	case CODANET_SOCKETERROR_CREATE:
-		fOutputDebugString( "CODANET_SOCKETERROR_CREATE");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_CREATE ");
 		break;
 		
 	case CODANET_SOCKETERROR_HOSTNAME:
-		fOutputDebugString( "CODANET_SOCKETERROR_HOSTNAME");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_HOSTNAME ");
 		break;
 		
 	case CODANET_SOCKETERROR_CONNECT:
-		fOutputDebugString( "CODANET_SOCKETERROR_CONNECT");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_CONNECT ");
 		break;
 		
 	case CODANET_SOCKETERROR_TCPOPTIONS:
-		fOutputDebugString( "CODANET_SOCKETERROR_TCPOPTIONS");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_TCPOPTIONS ");
 		break;
 		
 	case CODANET_CLIENTPROTOCOLERROR_BADNUMSTATUS:
-		fOutputDebugString( "CODANET_CLIENTPROTOCOLERROR_BADNUMSTATUS");
+		fOutputDebugString( "Network error: CODANET_CLIENTPROTOCOLERROR_BADNUMSTATUS ");
 		break;
 		
 	case CODANET_SOCKETERROR_STREAMCREATE:
-		fOutputDebugString( "CODANET_SOCKETERROR_STREAMCREATE");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_STREAMCREATE ");
 		break;
 		
 	case CODANET_SOCKETERROR_STREAMPORT:
-		fOutputDebugString( "CODANET_SOCKETERROR_STREAMPORT");
+		fOutputDebugString( "Network error: CODANET_SOCKETERROR_STREAMPORT ");
 		break;
 		
 	case CODANET_CLIENTPROTOCOLERROR_TOOBIG:
-		fOutputDebugString( "CODANET_CLIENTPROTOCOLERROR_TOOBIG");
+		fOutputDebugString( "Network error: CODANET_CLIENTPROTOCOLERROR_TOOBIG ");
 		break;
 		
 	default:
-		fOutputDebugString( "UNKNOWN ERROR CODE %u", codanet_getlasterror());
+		fOutputDebugString( "Network error: UNKNOWN ERROR CODE %u ", codanet_getlasterror());
 		break;
 	}
 	
