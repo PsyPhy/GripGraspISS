@@ -1,6 +1,4 @@
 #include "stdafx.h"
-
-using namespace PsyPhy;
 	
 // Create an OpenGLObjects window that is embedded in a Windows::Form.
 // To use, create a panel in the form and then pass the reference to that panel to this routine.
@@ -9,7 +7,7 @@ using namespace PsyPhy;
 
 namespace PsyPhy {
 
-OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, HGLRC shared_hRC ) {
+	OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, HGLRC shared_hRC ) {
 
 	HWND	parent;
 	OpenGLWindow *window;
