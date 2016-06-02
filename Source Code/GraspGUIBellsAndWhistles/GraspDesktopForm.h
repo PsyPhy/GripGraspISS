@@ -49,7 +49,7 @@ namespace GraspGUI {
 		void KillAnimations( void );
 
 		// A timer to handle animations and screen refresh, and associated actions.
-		static Timer^ refreshTimer;
+		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 			RefreshAnimations();
 		}
