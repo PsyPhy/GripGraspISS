@@ -55,6 +55,7 @@ public:
 		// Setup Window and Graphics
 		ovrSizei windowSize;
 		if ( fullscreen ) {
+			// We should read the screen size somehow.
 			windowSize.w = 1920;
 			windowSize.h = 1080;
 		}
@@ -192,12 +193,13 @@ public:
 
         // Set up positional data.
         ovrViewScaleDesc viewScaleDesc;
-        viewScaleDesc.HmdSpaceToWorldScaleInMeters = 1.0f;
+        viewScaleDesc.HmdSpaceToWorldScaleInMeters = 0.001f;
         viewScaleDesc.HmdToEyeViewOffset[0] = ViewOffset[0];
         viewScaleDesc.HmdToEyeViewOffset[1] = ViewOffset[1];
 
         ovrLayerEyeFov ld;
-        ld.Header.Type  = ovrLayerType_EyeFov;
+ //       ld.Header.Type  = ovrLayerType_EyeFov;
+        ld.Header.Type  = ovrLayerType_Direct; 
         ld.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;   // Because OpenGL.
 
         for (int eye = 0; eye < 2; ++eye)
@@ -207,8 +209,7 @@ public:
             ld.Fov[eye]          = hmdDesc.DefaultEyeFov[eye];
             ld.RenderPose[eye]   = EyeRenderPose[eye];
             ld.SensorSampleTime  = sensorSampleTime;
-        }
-		
+       } 	
         ovrLayerHeader *layers = &ld.Header;
         ovrResult result = ovr_SubmitFrame( HMD, 0, &viewScaleDesc, &layers, 1 );
         // exit the rendering loop if submit returns an error

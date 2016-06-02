@@ -214,6 +214,11 @@ void GraspVR::DebugLoop( void ) {
 			renderer->response->Disable();
 			renderer->starrySky->Enable();
 			renderer->darkSky->Disable();
+			renderer->room->Disable();
+		}
+		// Show the room.
+		if ( oculusDisplay->Key['R'] ) {
+			renderer->room->Enable();
 		}
 		// Show the target and the target-specific sky behind it.
 		if ( oculusDisplay->Key['T'] ) {
@@ -260,7 +265,9 @@ void GraspVR::DebugLoop( void ) {
         }
 
         // Do distortion rendering, Present and flush/sync
-		oculusMapper->BlastIt();
+		ovrResult result = oculusMapper->BlastIt();
+		if ( result ) fOutputDebugString( "ovrResult %d\n", result );
+
 	}
 
 
