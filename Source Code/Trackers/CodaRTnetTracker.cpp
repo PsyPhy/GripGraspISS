@@ -176,15 +176,17 @@ int CodaRTnetTracker::Update( void ) {
 
 void CodaRTnetTracker::Quit( void ) {
 
-	AbortAcquisition();
-
 #ifdef ALWAYS_SHUTDOWN
 	OutputDebugString( "Shutting down ... " );
 	cl.stopSystem();
-	OutputDebugString( "OK.\n" );
 #else
-	OutputDebugString( "Quitting CodaRTnetTracker but leaving RTnet runnning." );
+	OutputDebugString( "Quitting CodaRTnetTracker but leaving RTnet runnning ..." );
 #endif
+	OutputDebugString( "closing stream ... " );
+	cl.closeDataStream( stream );
+	OutputDebugString( "disconnecting ... " );
+	cl.disconnect();
+	OutputDebugString( "OK.\n" );
 
 }
 
