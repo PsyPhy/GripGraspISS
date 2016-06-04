@@ -32,8 +32,9 @@ public:
 	double				sensorSampleTime;
 
 	bool	isVisible;
+	bool	mirrorOn;
 
-	OculusMapper () : mirrorFBO( 0 ) , HMD( nullptr ) , display( nullptr ) , isVisible( true )
+	OculusMapper () : mirrorFBO( 0 ) , HMD( nullptr ) , display( nullptr ) , isVisible( true ), mirrorOn( false )
 	{
 		eyeRenderTexture[0] = eyeRenderTexture[1] = nullptr;
 		eyeDepthBuffer[0] = eyeDepthBuffer[1] = nullptr;
@@ -42,14 +43,13 @@ public:
 	~OculusMapper ()
 	{}
 
-	ovrResult Initialize ( OculusDisplayOGL *display, bool fullscreen ) {
+	ovrResult Initialize ( OculusDisplayOGL *display, bool mirrorOn, bool fullscreen ) {
 
 		this->display = display;
-		this->HMD = HMD;
+		this->mirrorOn = mirrorOn;
 
 		ovrResult result = ovr_Create( &HMD, &luid );
 		if ( !OVR_SUCCESS( result) ) return result;
-
 		hmdDesc = ovr_GetHmdDesc(HMD);
 
 		// Setup Window and Graphics
@@ -72,7 +72,6 @@ public:
 			idealTextureSize = ovr_GetFovTextureSize(HMD, ovrEyeType(eye), hmdDesc.DefaultEyeFov[eye], pixelsPerDisplayPixel );
 			eyeRenderTexture[eye] = new TextureBuffer(HMD, true, true, idealTextureSize, 1, NULL, 1);
 			eyeDepthBuffer[eye]   = new DepthBuffer(eyeRenderTexture[eye]->GetSize(), 0);
-
 			if ( !eyeRenderTexture[eye]->TextureSet ) return ovrError_MemoryAllocationFailure;
 		}
 
@@ -198,10 +197,13 @@ public:
         viewScaleDesc.HmdToEyeViewOffset[1] = ViewOffset[1];
 
         ovrLayerEyeFov ld;
- //       ld.Header.Type  = ovrLayerType_EyeFov;
-        ld.Header.Type  = ovrLayerType_Direct; 
-        ld.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;   // Because OpenGL.
-
+		// Here I am playing with the layer type to see how we might increase the frame rate.
+		// Pick EyeFov for distortion-cancelling and asyncronous time warp.
+		// Direct will instead map directly without distortion correction.
+        //ld.Header.Type  = ovrLayerType_EyeFov;
+		ld.Header.Type  = ovrLayerType_Direct; 
+ 
+		ld.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;   // Because OpenGL.
         for (int eye = 0; eye < 2; ++eye)
         {
             ld.ColorTexture[eye] = eyeRenderTexture[eye]->TextureSet;
@@ -210,6 +212,7 @@ public:
             ld.RenderPose[eye]   = EyeRenderPose[eye];
             ld.SensorSampleTime  = sensorSampleTime;
        } 	
+		ld.ColorTexture[1] = nullptr;
         ovrLayerHeader *layers = &ld.Header;
         ovrResult result = ovr_SubmitFrame( HMD, 0, &viewScaleDesc, &layers, 1 );
         // exit the rendering loop if submit returns an error
@@ -217,19 +220,21 @@ public:
 
         isVisible = (result == ovrSuccess);
 
-        // Blit mirror texture to back buffer
-        glBindFramebuffer( GL_READ_FRAMEBUFFER, mirrorFBO );
-        glBindFramebuffer( GL_DRAW_FRAMEBUFFER, 0 );
-        GLint w = mirrorTexture->OGL.Header.TextureSize.w;
-        GLint h = mirrorTexture->OGL.Header.TextureSize.h;
-        glBlitFramebuffer(0, h, w, 0,
-                          0, 0, w, h,
-                          GL_COLOR_BUFFER_BIT, GL_NEAREST);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+		if ( mirrorOn ) {
+			// Blit mirror texture to back buffer
+			glBindFramebuffer( GL_READ_FRAMEBUFFER, mirrorFBO );
+			glBindFramebuffer( GL_DRAW_FRAMEBUFFER, 0 );
+			GLint w = mirrorTexture->OGL.Header.TextureSize.w;
+			GLint h = mirrorTexture->OGL.Header.TextureSize.h;
+			glBlitFramebuffer(0, h, w, 0,
+							  0, 0, w, h,
+							  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-        SwapBuffers( display->hDC );
+			SwapBuffers( display->hDC );
+		}
 
-		return ovrSuccess;
+		return result;
 	}
 
 };

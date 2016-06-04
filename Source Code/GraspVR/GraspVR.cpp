@@ -83,7 +83,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
     fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper->Initialize( oculusDisplay, fullscreen );
+	result = oculusMapper->Initialize( oculusDisplay, true, fullscreen );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
 	// Set up a default GL rendering context.

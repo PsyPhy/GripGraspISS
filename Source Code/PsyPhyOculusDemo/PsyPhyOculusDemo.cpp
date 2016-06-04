@@ -122,7 +122,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper.Initialize( platform, false );
+	result = oculusMapper.Initialize( platform, true, false );
 	if ( OVR_FAILURE ( result ) ) return result;
 
 	// Create a pose tracker that uses only the Oculus.

@@ -28,7 +28,7 @@ void OculusViewpoint::Apply( int eye ) {
 	int eye_buffer_height = oculusMapper->idealTextureSize.h;
 	double aspect = (double) eye_buffer_width / (double) eye_buffer_height;
 	// Use crop to speed up rendering. Not a nice solution.
-	int crop = 0;	
+	int crop = 200;	
 	switch( eye ) {
 
 	case LEFT_EYE:
