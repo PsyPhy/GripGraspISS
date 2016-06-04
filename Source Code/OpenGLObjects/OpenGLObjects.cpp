@@ -239,15 +239,6 @@ bool OpenGLObject::IsEnabled( void ) { return( enabled ); }
 //  by 3 rgb values, or by an index into a predefined color
 //  table. Defined values in the table are found in OpenGLColors.h.
 
-void OpenGLObject::SetColor( float c[4] ) {
-
-  color[0] = c[0];
-  color[1] = c[1];
-  color[2] = c[2];
-  color[3] = c[3];
-
-}
-
 void OpenGLObject::SetColor( float r, float g, float b, float a ) {
 
   color[0] = r;
@@ -255,6 +246,10 @@ void OpenGLObject::SetColor( float r, float g, float b, float a ) {
   color[2] = b;
   color[3] = a;
 
+}
+
+void OpenGLObject::SetColor( float c[4] ) {
+	SetColor( c[0], c[1], c[2], c[3] );
 }
 
 void OpenGLObject::SetColor( int index ) {
