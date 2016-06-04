@@ -30,46 +30,46 @@
 
 namespace Grasp {
 
-		using namespace PsyPhy;
+	using namespace PsyPhy;
 
-		class GraspTrackers : public VectorsMixin {
+	class GraspTrackers : public VectorsMixin {
 
-		protected:
-			static double mouseGain;
-			static Pose handPoseVV;
-			static double arrowGain;
-			static Pose chestPoseSim;
-			OculusMapper	*oculusMapper;
+	protected:
+		static double	mouseGain;
+		static Pose		handPoseVV;
+		static double	arrowGain;
+		static Pose		chestPoseSim;
+		OculusMapper	*oculusMapper;
 
-		public: 
+	public: 
 
-			PoseTracker *hmdTracker;
-			PoseTracker *handTracker;
-			PoseTracker *chestTracker;
-			PoseTracker *mouseTracker;
+		PoseTracker *hmdTracker;
+		PoseTracker *handTracker;
+		PoseTracker *chestTracker;
+		PoseTracker *mouseTracker;
 
-			GraspTrackers() {}
-			virtual void Initialize( void ) = 0;
-			virtual void Update( void );
-			virtual void Release( void );
+		GraspTrackers() {}
+		virtual void Initialize( void ) = 0;
+		virtual void Update( void );
+		virtual void Release( void );
 
-		protected:
-			~GraspTrackers() {}
+	protected:
+		~GraspTrackers() {}
 
-		};
+	};
 
-		class GraspSimTrackers : public GraspTrackers {
-		public:
+	class GraspSimTrackers : public GraspTrackers {
+	public:
 
-			// We will need a mouse tracker of some kind to do the V-V protocol.
-			MouseRollPoseTracker *mouseRollTracker;
+		// We will need a mouse tracker of some kind to do the V-V protocol.
+		MouseRollPoseTracker *mouseRollTracker;
 
-			virtual void Initialize( void );
-			GraspSimTrackers( OculusMapper *mapper ) {
-				oculusMapper = mapper;
-			}
-			~GraspSimTrackers( void ) {}
-		};
+		virtual void Initialize( void );
+		GraspSimTrackers( OculusMapper *mapper ) {
+			oculusMapper = mapper;
+		}
+		~GraspSimTrackers( void ) {}
+	};
 
 
 	class GraspDexTrackers : public GraspTrackers {
@@ -114,8 +114,8 @@ namespace Grasp {
 		void Release( void );
 
 		GraspDexTrackers( OculusMapper *mapper ) {
-				oculusMapper = mapper;
-			}
+			oculusMapper = mapper;
+		}
 		~GraspDexTrackers( void ) {}
 	};
 
