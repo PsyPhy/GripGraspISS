@@ -32,6 +32,13 @@ private:
 	char *serverAddress;
 	unsigned int serverPort;
 
+	// Information to allow FTP to the server.
+	// We use this to manipulate the alignment transformations.
+	char *serverLogonID;
+	char *serverPassword;
+	char *codaCalDirectory;
+	char *codaAlignmentFilename;
+
 	// Marker tracker device.
 	const int cx1Device;	// Should be the CX1
 
@@ -89,10 +96,15 @@ public:
 
 	CodaRTnetTracker( void ) : 
 		// Host address and UDP port for the Coda RTnet server.
-		// serverAddress("192.168.5.61"), 
 	    // The following addresss is for the RTnet server on DEX via the ETD port.
 		serverAddress( "10.80.12.103" ),
 		serverPort(10111), 
+
+		// FTP parameters
+		serverLogonID( "administrator" ),
+		serverPassword( "dex" ),
+		codaCalDirectory( "CodaMotion\\RTNet\\Binaries\\" ),
+		codaAlignmentFilename( "codaRTModuleCX1-Alignment.dat" ),
 
 		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
 		coda_mode( CODANET_CODA_MODE_200, 1, false ), 
@@ -129,6 +141,7 @@ public:
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
+	void	AnnulAlignment( void );
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 

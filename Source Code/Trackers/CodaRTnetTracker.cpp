@@ -534,6 +534,39 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 	else return( response );
 }
 
+void  CodaRTnetTracker::AnnulAlignment( void ) {
+	char command_line[10240];
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
+	OutputDebugString( command_line );
+	OutputDebugString( "\n" );
+	system( command_line );
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"rm %s%s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename  );
+	OutputDebugString( command_line );
+	OutputDebugString( "\n" );
+	system( command_line );
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
+	OutputDebugString( command_line );
+	OutputDebugString( "\n" );
+	system( command_line );
+
+	// Create a local copy of the alignment file and then send it to the CODA server.
+	FILE *fp = fopen( codaAlignmentFilename, "w" );
+	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening calibration file %s for writing.", codaAlignmentFilename );
+	fprintf( fp, "Alignment file line 1\n" );
+	fprintf( fp, "Alignment file line 2\n" );
+	fclose( fp );
+
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
+	OutputDebugString( command_line );
+	OutputDebugString( "\n" );
+	system( command_line );
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
+	OutputDebugString( command_line );
+	OutputDebugString( "\n" );
+	system( command_line );
+
+}
+
 /*********************************************************************************/
 
 void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
