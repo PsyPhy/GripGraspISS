@@ -88,7 +88,7 @@ void GraspDesktop::ParseSessionFile( String^ filename ) {
 	static char linebuffer[10240];
 	int tokens;
 	char *token[MAX_TOKENS];
-	// Converst the String filename into a char *.
+	// Convert the String filename into a char *.
 	// Don't forget to free it when exiting.
 	char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( filename ).ToPointer();
 

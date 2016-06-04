@@ -151,13 +151,6 @@ namespace GraspGUI {
 	private: System::Windows::Forms::Button^  execBackButton;
 	private: System::Windows::Forms::Button^  execSkipButton;
 
-
-
-
-
-
-
-
 	protected: 
 
 	private:
