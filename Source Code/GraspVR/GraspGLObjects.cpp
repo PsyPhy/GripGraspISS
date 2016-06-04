@@ -51,7 +51,7 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
-const double GraspGLObjects::headRollTolerance = 10.0;	// Tolerance around desired head tilt, in degrees.
+const double GraspGLObjects::headRollTolerance = 5.0;	// Tolerance around desired head tilt, in degrees.
 const double GraspGLObjects::kkTolerance = 5.0;			// Tolerance for hand orientation in K-K.
 
 // Set up the lighting and material properties.
@@ -191,8 +191,9 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 	return glasses;
 }
 
-bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angle, double epsilon ) {
+bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double epsilon ) {
 
+#if 0
 	static double transparency = 0.75;
 	Vector3 rotated;
 	// Rotate the unit vector in the X direction by the orientation of the object.
@@ -200,13 +201,14 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 	// This calculation becomes ill conditioned as the yaw angle approaches 90°,
 	// but for the moment we assume that pitch and yaw will be small.
 	MultiplyVector( rotated, iVector, object->orientation );
-	double error = ToDegrees( atan2( rotated[Y], rotated[X] ) );
+	double error = fabs( roll_angle - ToDegrees( atan2( rotated[Y], rotated[X] ) ));
 	// fOutputDebugString( "%s\n", vstr( rotated ) );
 	if ( rotated[X] < 0.0 ) {
 		// Error is more than 90°. Clamp to red and return false to say out of tolerance zone.
 		object->SetColor( 1.0, 0.0, 0.0, transparency );
 		return( false );
 	}
+
 	// @Michele
 	// This simple formula goes nicely from gree to yellow to red as the angle increases.
 	// But please replace it with the calculation of a set of color values based on the angular error computed above.
@@ -215,8 +217,42 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 	double red = abs( rotated[Y] ) / hypotenuse;
 	// fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
 	object->SetColor( red, green, 0.0, 0.75 );
-	// Indicate if we are in the tolerance zone or not.
-	return( abs( error ) < epsilon );
+#endif
+	// Compute the roll angle of the object that is being followed.
+	// I got this off of a web site. It seems to work for gaze close to straight ahead,
+	// but I'm not sure that it will work well for pitch or yaw far from zero.
+	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
+	// Compute the error with respect to the desired roll angle.
+	double error = fabs( desired_roll_angle - object_roll_angle );
+	fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
+
+	// Michele's code
+	//
+	// There are a number of things that I do not know how to explain:
+	//  Why epsilon * 0.2 and not simply epsilon to be in the good zone?
+	//  Is epsilon in radians or in degrees?
+	//  Why divide everything by 255.0? 
+	//  Why 2*epsilon - epsilon and not just epsilon?
+	//  Why + 0.0?
+	//  Are all of the 0.2 the same? I mean, if I change one, do I have to change all of them? 
+	//  Idem for the transparency. Should they all be kept the same?
+	if ( error < epsilon * 0.2 ){//GREEN
+		object->SetColor(0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5);
+		return(true);
+	} else {
+		if ( error > ( 2 * epsilon ) ){//RED
+			object->SetColor(255.0/255.0, 0.0/255.0,  0.0/255.0, 0.5);
+		} else {
+			if ( error > epsilon ){//Yellow->red
+				object->SetColor(200.0/255.0, (200.0*(1-(error-epsilon)/(2*epsilon-epsilon))+0.0)/255.0,  0.0/255.0, 0.5);
+			} 
+			else { //green->yellow
+				object->SetColor((200.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+0.0)/255.0, 200.0/255.0,  0.0/255.0, 0.5);
+			}
+		}
+		return(false);
+	}
+
 }
 
 bool GraspGLObjects::ColorGlasses( double roll_angle ) {
