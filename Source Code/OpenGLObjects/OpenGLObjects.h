@@ -137,7 +137,7 @@ public:
 
 class Assembly : public OpenGLObject {
 
-protected:
+public:
 
   OpenGLObject  *component[MAX_COMPONENTS];
   int components;

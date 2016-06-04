@@ -25,11 +25,33 @@
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../OpenGLObjects/OpenGLTextures.h"
 
+#include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/PoseTrackers.h"
 
 namespace Grasp {
 
-		using namespace PsyPhy;
+	using namespace PsyPhy;
+
+	class MarkerStructureGLObject : public PsyPhy::Assembly {
+	
+		public:
+
+			// A buffer that holds the model for the rigid body.
+			// Each element is the number and the 3D position of a marker with respect
+			//  to the control point of the rigid body when in the null pose.
+			struct {
+				int		id;
+				Vector3	position;
+			} modelMarker[MAX_MARKERS];
+			int nModelMarkers;
+
+		public:
+			MarkerStructureGLObject( char *model_filename = NULL );
+			~MarkerStructureGLObject( void ){}
+
+			void AddBar( int marker1, int marker2 );
+			void ShowVisibility( MarkerFrame &marker_frame );
+	};
 
 		class GraspGLObjects : public VectorsMixin {
 
@@ -96,6 +118,11 @@ namespace Grasp {
 			Assembly		*head;
 			Assembly		*torso;
 
+			MarkerStructureGLObject		*hmdStructure;
+			MarkerStructureGLObject		*handStructure;
+			MarkerStructureGLObject		*chestStructure;
+
+
 
 		public: 
 
@@ -146,6 +173,14 @@ namespace Grasp {
 			void CreateAuxiliaryObjects( void );
 			Assembly *CreateHead( void );
 			Assembly *CreateTorso( void );
+
+			// Create an assembly that has spheres at the location of each marker,
+			// as defined by a rigid body definition file.
+			MarkerStructureGLObject *CreateRigidBodyMarkerStructure( char *rigid_body_model_file );
+			MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_file );
+			MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model_file );
+			MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *model_file );
+
 			void DrawHead( TrackerPose *pose = nullptr );
 			void DrawTorso( TrackerPose *pose = nullptr );
 			void DrawBody( TrackerPose *pose = nullptr );

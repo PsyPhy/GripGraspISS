@@ -55,38 +55,39 @@ int _tmain(int argc, char *argv[])
 	*/
 	viewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
 
-	// Initial viewpoint is at the center of the room in the null orientation.
-	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
-	viewpoint->SetOrientation(15.0, 0.0, 0.0 );
+	viewpoint->SetPosition( 0.0, 0.0, -800.0 );
+	viewpoint->SetOrientation(0.0, 0.0, 180.0 );
 
 	objects = new GraspGLObjects();
 	objects->CreateVRObjects();
 	objects->PlaceVRObjects();
-	
+	objects->CreateAuxiliaryObjects();
 	objects->hand->SetPosition( 25.0, -25.0, -200.0 );
 	objects->hand->SetOrientation( 0.0, -1.0, -1.0 );
 		
 	objects->tiltPrompt->SetOrientation(110.0, 0.0, 0.0);
-
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
-
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
 
 	// Initialize state of the objects.
 	objects->starrySky->Disable();
 	objects->darkSky->Enable();
 	objects->room->Enable();
-	objects->orientationTarget->Enable();
+	objects->orientationTarget->Disable();
 	objects->positionOnlyTarget->Disable();
-	objects->response->Enable();
+	objects->response->Disable();
 	objects->tiltPrompt->Disable();
-	objects->vTool->Enable();
+	objects->vTool->Disable();
 	objects->kTool->Disable();
 	objects->kkTool->Disable();
 	objects->projectiles->Disable();
+	objects->glasses->Disable();
 
 	objects->tunnel->SetColor( GRAY );
 	objects->ColorGlasses( 0.0 );
+
+	objects->chestStructure->SetOrientation( 0.0, 0.0, 0.0 );
+	objects->hmdStructure->SetPosition( 0.0, 0.0, 0.0 );
 
 	while ( true ) {
 
@@ -96,6 +97,9 @@ int _tmain(int argc, char *argv[])
 
 		viewpoint->Apply( window, CYCLOPS );
 		objects->DrawVR();
+		//objects->hmdStructure->Draw();
+		//objects->handStructure->Draw();
+		objects->chestStructure->Draw();
 
 		window->Swap();
 
