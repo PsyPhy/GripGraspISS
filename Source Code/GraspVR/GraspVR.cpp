@@ -33,34 +33,31 @@ void GraspVR::UpdateTrackers( void ) {
 
 	trackers->Update();
 
-		// Get the position and orientation of the head and add them to the Player position and orientation.
-		// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
-		// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-		TrackerPose headPose;
-		if ( !trackers->hmdTracker->GetCurrentPose( headPose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
-		}
-		else {
-			viewpoint->SetPose( headPose.pose );
-			renderer->glasses->SetPose( headPose.pose );
-			HandleHeadAlignment();
-		}
+	// Get the position and orientation of the head and update the viewpoint accordingly.
+	// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
+	// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
+	TrackerPose headPose;
+	if ( !trackers->hmdTracker->GetCurrentPose( headPose ) ) {
+		static int pose_error_counter = 0;
+		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
+	}
+	else {
+		viewpoint->SetPose( headPose.pose );
+		renderer->glasses->SetPose( headPose.pose );
+		HandleHeadAlignment();
+	}
 
-		// Track movements of the hand marker array.
-		TrackerPose handPose;
-		if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
-		}
-		else {
-			renderer->hand->SetPose( handPose.pose );
-			HandleHandAlignment();
-		}
+	// Track movements of the hand marker array.
+	TrackerPose handPose;
+	if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
+		static int pose_error_counter = 0;
+		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
+	}
+	else {
+		renderer->hand->SetPose( handPose.pose );
+		HandleHandAlignment();
+	}
 
-		// Boresight the HMD tracker on 'B'.
-		if ( oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
-		if ( oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
 }
 
 void GraspVR::ReleaseTrackers( void ) {}
@@ -73,14 +70,14 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
 	static const bool fullscreen = true;
 
-   // Initializes LibOVR, and the Rift
-    OVR::System::Init();
-    result = ovr_Initialize( nullptr );
-    fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
+	// Initializes LibOVR, and the Rift
+	OVR::System::Init();
+	result = ovr_Initialize( nullptr );
+	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
 	// Initialize the Oculus-enabled Windows platform.
 	result = oculusDisplay->InitWindow( hinst, L"GraspVR", fullscreen );
-    fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
+	fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
 
 	// Initialize the interface to the Oculus HMD.
 	result = oculusMapper->Initialize( oculusDisplay, true, fullscreen );
@@ -121,6 +118,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->kTool->Disable();
 	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
+	currentProjectileState = cocked;
 
 }
 
@@ -131,37 +129,61 @@ void GraspVR::Release( void ) {
 
 	// Shutdown the Rift.
 	ovr_Shutdown();
-    OVR::System::Destroy();
+	OVR::System::Destroy();
 	oculusDisplay->CloseWindow();
 	oculusDisplay->ReleaseDevice();
 
 }
 
+ProjectileState GraspVR::TriggerProjectiles( void ) {
+	// Position the projectiles where the tool is now.
+	renderer->projectiles->SetPosition( renderer->hand->position );
+	renderer->projectiles->SetOrientation( renderer->hand->orientation );
+	// Make the projectiles visible.
+	renderer->projectiles->Enable();
+	return( currentProjectileState = running );
+}
+
 ProjectileState GraspVR::HandleProjectiles( void ) {
-	
-		// Trigger the projectiles, but only if it is not already triggered.
-		if ( oculusDisplay->Key[VK_RETURN] || oculusDisplay->Button[MOUSE_LEFT] && !renderer->projectiles->enabled ) { 
-			// Position the projectiles where the tool is now.
-			renderer->projectiles->SetPosition( renderer->hand->position );
-			renderer->projectiles->SetOrientation( renderer->hand->orientation );
-			// Make the projectiles visible.
-			renderer->projectiles->Enable();
-			return( running );
+
+	switch ( currentProjectileState ) {
+
+	case running:
+		if ( renderer->projectiles->position[Z] < renderer->darkSky->position[Z] ) {
+			// Normally here we would decide if it is a hit or a miss and set the state 
+			// accordingly. For the moment, everything is a miss.
+			currentProjectileState = miss;
 		}
-		else if ( renderer->projectiles->position[Z] < renderer->darkSky->position[Z] ) {
-			renderer->projectiles->Disable();
-			return( miss );
-		}
-		else if ( renderer->projectiles->enabled ) {
+		else {
 			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
 			Vector3 aim, new_position;
 			MultiplyVector( aim, kVector, renderer->hand->orientation );
 			ScaleVector( aim, aim, -20.0 );
 			AddVectors( new_position, renderer->projectiles->position, aim );
 			renderer->projectiles->SetPosition( new_position );
-			return( running );
+			currentProjectileState = running;
 		}
-		else return( cocked );
+		break;
+
+	case miss:
+	case hit:
+		// We might want to animate the hit or the miss situations, but for now we just 
+		// hide the projectiles and transition to the cocked state, ready for the next shot.
+		renderer->projectiles->Disable();
+		currentProjectileState = cocked;
+		break;
+
+	case cocked:
+		// We are waiting for the trigger, so just stay in this state.
+		currentProjectileState = cocked;
+		break;
+
+	default:
+		fAbortMessage( "GraspVR", "Unrecognized projectile state: %d", currentProjectileState );
+		break;
+
+	}
+	return( currentProjectileState );
 
 }
 
@@ -186,17 +208,23 @@ void GraspVR::DebugLoop( void ) {
 
 	SetDesiredHeadRoll( 20.0 );
 	SetDesiredHandRoll( -35.0 );
-	
+
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 
+		// Boresight the HMD tracker on 'B'.
+		if ( oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
+		if ( oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
+
 		// Handle triggering and moving the projectiles.
+		if ( ( oculusDisplay->Key[VK_RETURN] || oculusDisplay->Button[MOUSE_LEFT] ) && currentProjectileState == cocked ) TriggerProjectiles();
 		HandleProjectiles();
 
 		// Prompt the subject to achieve the desired head orientation.
+		HandleHeadAlignment();
 
 		//
 		// Handle other key presses.
@@ -254,19 +282,19 @@ void GraspVR::DebugLoop( void ) {
 		for (int eye = 0; eye < 2; ++eye) {
 
 			// Get ready to draw into one of the eyes.
- 			oculusMapper->SelectEye( eye );
+			oculusMapper->SelectEye( eye );
 			// Set up the viewing transformations.
 			viewpoint->Apply( eye );
 			// Draw the objects in the world.
 			renderer->DrawVR();
 			// Take care of an Oculus bug.
 			oculusMapper->DeselectEye( eye );
- 
-        }
 
-        // Do distortion rendering, Present and flush/sync
+		}
+
+		// Do distortion rendering, Present and flush/sync
 		ovrResult result = oculusMapper->BlastIt();
-		if ( result ) fOutputDebugString( "ovrResult %d\n", result );
+		fOutputDebugString( "BlastIt() returns: %d\n", result );
 
 	}
 

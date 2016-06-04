@@ -32,6 +32,20 @@ namespace Grasp {
 
 	using namespace PsyPhy;
 
+	class Glasses : public PsyPhy::Assembly {
+
+	public:
+
+		Hole	*frame;
+		Hole	*blinders;
+
+		Glasses( double inner_radius, double outer_radius, double width, double height, int facets );
+		~Glasses( void );
+		// Override SetColor so that the blinders are always black.
+		void SetColor( float r, float g, float b, float a );
+
+	};
+
 	class MarkerStructureGLObject : public PsyPhy::Assembly {
 	
 		public:
@@ -113,7 +127,7 @@ namespace Grasp {
 			Cylinder		*tunnel;			// Part of the room, but it allows us to access it directly to change its color.
 			Assembly		*starrySky;			// Backgrounds that can be seen at the end of the tunnel.
 			Assembly		*darkSky;
-			Assembly		*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
+			Glasses			*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
 
 			Assembly		*head;
 			Assembly		*torso;
@@ -151,7 +165,7 @@ namespace Grasp {
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
-			Assembly *CreateGlasses(void);
+			Glasses  *CreateGlasses(void);
 
 			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double epsilon );
 			bool ColorKK( double desired_angle );

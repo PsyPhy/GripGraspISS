@@ -117,7 +117,7 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	//Tunnel Plus references
 	tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
 	tunnel->SetColor( WHITE );
-//	tunnel->SetTexture( wall_texture );
+	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
 	room->AddComponent( tunnel );
 
@@ -180,16 +180,14 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 }
 
-Assembly *GraspGLObjects::CreateGlasses( void ) {
+Glasses *GraspGLObjects::CreateGlasses( void ) {
 
-	static double visor_radius = 150.0;
-
-	Assembly *glasses = new Assembly();
-	glasses->SetColor(WHITE);
-	Hole *hole = new Hole( visor_radius, room_radius, room_radius, 8 );
-	glasses->AddComponent( hole );
+	static double visor_radius = 200.0;
+	// Create a circular portal to look through to avoid visual cues about the egocentric reference frame.
+	Glasses *glasses = new Glasses( visor_radius - 20.0, visor_radius, room_radius, room_radius, 16 );
+	// The glasses will be positioned at the same place as the head based on the tracker.
+	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
 	glasses->SetOffset( 0.0, 0.0, -230.0 );
-
 	return glasses;
 }
 
@@ -222,7 +220,9 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_angl
 }
 
 bool GraspGLObjects::ColorGlasses( double roll_angle ) {
-	return ( SetColorByRollError( glasses, roll_angle, headRollTolerance ) );
+	// Color will be set according to the difference between the desired and measured head angles.
+	bool is_aligned =  SetColorByRollError( glasses, roll_angle, headRollTolerance );
+	return ( is_aligned );
 }
 
 Assembly *GraspGLObjects::CreateVisualTool( void ) {
@@ -753,5 +753,26 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	plate->SetColor( 1.0, 0., 0.0, 0.35 );
 
 	return( structure );
+}
+
+Glasses::Glasses( double inner_radius, double outer_radius, double width, double height, int facets ) {
+
+	// Create a black mask with a circular hole to look through.
+	// The idea is that it should be big enough to mask out to the edges of the visual scene.
+	blinders = new Hole( outer_radius, width, height, facets );
+	blinders->SetColor( BLACK );
+	AddComponent( blinders );
+	// Now create a frame around the portal. In the Grasp experiment, this frame can change colors
+	//  in order to reflect the orientation of the head. I also think that having concentric circular
+	//  borders, rather than a single black edge, further reduces the saliencey of the non-circular HMD viewing frustrum.
+	frame = new Hole( inner_radius, width, height, facets );
+	frame->SetOffset( 0.0, 0.0, - 20.0 );
+	AddComponent( frame );
+}
+
+// Override SetColor so that the blinders are always black.
+void Glasses::SetColor( float r, float g, float b, float a = 1.0 ) {
+	Assembly::SetColor( r, g, b, a );
+	blinders->SetColor( BLACK );
 }
 
