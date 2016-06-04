@@ -44,7 +44,6 @@ void GraspVR::UpdateTrackers( void ) {
 	else {
 		viewpoint->SetPose( headPose.pose );
 		renderer->glasses->SetPose( headPose.pose );
-		HandleHeadAlignment();
 	}
 
 	// Track movements of the hand marker array.
@@ -55,7 +54,6 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		renderer->hand->SetPose( handPose.pose );
-		HandleHandAlignment();
 	}
 
 }
@@ -111,6 +109,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->starrySky->Enable();
 	renderer->darkSky->Disable();
 	renderer->room->Enable();
+	renderer->response->Disable();
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
 	renderer->tiltPrompt->Disable();
@@ -118,6 +117,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->kTool->Disable();
 	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
+
 	currentProjectileState = cocked;
 
 }
@@ -136,6 +136,7 @@ void GraspVR::Release( void ) {
 }
 
 ProjectileState GraspVR::TriggerProjectiles( void ) {
+	if ( currentProjectileState != cocked ) return( currentProjectileState );
 	// Position the projectiles where the tool is now.
 	renderer->projectiles->SetPosition( renderer->hand->position );
 	renderer->projectiles->SetOrientation( renderer->hand->orientation );
@@ -203,6 +204,38 @@ double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 Alignment GraspVR::HandleHandAlignment( void ) {
 	return( renderer->ColorKK( desiredHandRoll ) ? aligned : misaligned );
 }
+
+double  GraspVR::SetTargetOrientation( double roll_angle ) {
+	renderer->orientationTarget->SetOrientation( roll_angle, 0.0, 0.0 );
+	return( roll_angle );
+}
+
+
+void GraspVR::Render( void ) {
+
+	// Prepare the GL graphics state for drawing in a way that is compatible 
+	//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
+	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
+	//  do this just once at the beginning, e.g. in CreateObjects.
+	glUsefulPrepareRendering();
+	for (int eye = 0; eye < 2; ++eye) {
+
+		// Get ready to draw into one of the eyes.
+		oculusMapper->SelectEye( eye );
+		// Set up the viewing transformations.
+		viewpoint->Apply( eye );
+		// Draw the objects in the world.
+		renderer->DrawVR();
+		// Take care of an Oculus bug.
+		oculusMapper->DeselectEye( eye );
+
+	}
+
+	// Do distortion rendering, Present and flush/sync
+	ovrResult result = oculusMapper->BlastIt();
+	fOutputDebugString( "BlastIt() returns: %d\n", result );
+}
+
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
 
@@ -274,28 +307,7 @@ void GraspVR::DebugLoop( void ) {
 		// Show the tilt prompt.
 		if ( oculusDisplay->Key['P'] ) renderer->tiltPrompt->Enable();
 
-		// Prepare the GL graphics state for drawing in a way that is compatible 
-		//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
-		//  case other GL stuff is going on elsewhere. Otherwise, we could probably
-		//  do this just once at the beginning, e.g. in CreateObjects.
-		glUsefulPrepareRendering();
-		for (int eye = 0; eye < 2; ++eye) {
-
-			// Get ready to draw into one of the eyes.
-			oculusMapper->SelectEye( eye );
-			// Set up the viewing transformations.
-			viewpoint->Apply( eye );
-			// Draw the objects in the world.
-			renderer->DrawVR();
-			// Take care of an Oculus bug.
-			oculusMapper->DeselectEye( eye );
-
-		}
-
-		// Do distortion rendering, Present and flush/sync
-		ovrResult result = oculusMapper->BlastIt();
-		fOutputDebugString( "BlastIt() returns: %d\n", result );
-
+		Render();
 	}
 
 

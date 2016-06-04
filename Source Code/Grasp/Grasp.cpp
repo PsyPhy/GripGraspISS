@@ -1,12 +1,6 @@
 // Grasp.cpp : Defines the entry point for the application.
 //
 #include "stdafx.h"
-//// Interface to the Oculus and Windows
-//#include "../Trackers/CodaRTnetTracker.h"
-//#include "../OculusInterface/OculusViewpoint.h"
-//#include "../GraspVR/GraspGLObjects.h"
-//#include "../GraspVR/GraspVR.h"
-
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
@@ -18,6 +12,7 @@
 #include "../Trackers/CodaRTnetTracker.h"
 
 #include "../GraspVR/GraspVR.h"
+#include "GraspTaskManagers.h"
 #include "GraspTelemetry.h"
 
 using namespace PsyPhy;
@@ -50,8 +45,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	bool useCoda = false;
 
-	GraspVR	*vr;
-	GraspTrackers *trackers;
+	GraspTaskManager	*grasp;
+	GraspTrackers		*trackers;
 
 	// ConnectToDex();
 
@@ -64,11 +59,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		trackers = sim_trackers;
 	}
 	
-	vr = new GraspVR( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
+	grasp = new GraspTaskManager( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
 
-	vr->Initialize( hInstance );
-	vr->DebugLoop();
-	vr->Release();
+	grasp->Initialize( hInstance );
+	grasp->RunTrialBlock();
+	grasp->Release();
 
 #if 0 
 	This needs to be moved.

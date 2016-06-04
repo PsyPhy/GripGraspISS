@@ -13,11 +13,13 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="GraspTelemetry.h" />
     <ClInclude Include="..\GraspVR\GraspTrackers.h" />
+    <ClInclude Include="GraspTaskManagers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Grasp.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="GraspTelemetry.cpp" />
+    <ClCompile Include="GraspTaskManagers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\codaRTNetProtocol.lib">

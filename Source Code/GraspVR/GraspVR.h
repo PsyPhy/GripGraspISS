@@ -6,6 +6,7 @@
 
 #include "../Trackers/CodaPoseTracker.h"
 #include "../Trackers/CascadePoseTracker.h"
+
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
@@ -24,8 +25,6 @@ namespace Grasp {
 
 	public:
 
-
-
 		HINSTANCE			hInstance;
 		OculusDisplayOGL	*oculusDisplay;
 		OculusMapper		*oculusMapper;
@@ -34,7 +33,7 @@ namespace Grasp {
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
 
-		GraspVR( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs  )  : 
+		GraspVR( HINSTANCE instance = nullptr, OculusDisplayOGL *display = nullptr, OculusMapper *mapper = nullptr, GraspTrackers *trkrs = nullptr )  : 
 			desiredHeadRoll( 20.0 ), 
 			desiredHandRoll( -35.0 ),
 			currentProjectileState( cocked )
@@ -59,6 +58,9 @@ namespace Grasp {
 		// Clean up when finished.
 		virtual void ReleaseTrackers( void );
 
+		// Draw everything and output to the display.
+		void GraspVR::Render( void );
+
 		// A rendering loop that allows one to toggle on and off the various VR objects
 		// using key presses, used mostly for debugging.
 		void DebugLoop( void );
@@ -67,7 +69,7 @@ namespace Grasp {
 	//	State information and routines to handle behaviors from inside a rendering loop.
 	//
 
-	private:
+	protected:
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
@@ -89,6 +91,7 @@ namespace Grasp {
 		// Set the parameters for the above behaviors. They are exposed to the public.
 		double SetDesiredHandRoll( double roll_angle );
 		double SetDesiredHeadRoll( double roll_angle );
+		double SetTargetOrientation( double roll_angle );
 
 	};
 
