@@ -1,6 +1,8 @@
 // GraspTaskManagers.h
 //
 
+#define MAX_GRASP_TRIALS 64
+
 namespace Grasp {
 
 	typedef enum { NullState, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
@@ -11,6 +13,30 @@ namespace Grasp {
 
 	public:
 
+		// List of paramters for each trial.
+		struct {
+			double	targetHeadTilt;
+			double	targetHeadTiltTolerance;
+			double	targetHeadTiltDuration;
+			double	targetOrientation;
+			double	targetPresentationDuration;
+			double	responseHeadTilt;
+			double	responseHeadTiltTolerance;
+			double	responseHeadTiltDuration;
+			double	conflictGain;
+			bool	provideFeedback;
+		} trialParameters[MAX_GRASP_TRIALS];
+		int nTrials;
+		int currentTrial;
+		int retriesRemaining;
+		int SetMaxRetries( int max_retries ) {
+			retriesRemaining = max_retries;
+		}
+		int LoadTrialParameters( char *filename );
+		void RepeatTrial( int trial );
+		int RunTrialBlock( char *filename );
+
+		// State Machine
 		GraspTrialState previousState, currentState, nextState;
 		bool UpdateStateMachine( void );
 
@@ -67,13 +93,11 @@ namespace Grasp {
 		virtual void ExitTrialInterrupted( void );
 
 	public:
-		GraspTaskManager( void ) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2) {}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs  ) {
 			GraspVR::Initialize( instance, display, mapper, trkrs );
 		}
-
-		int RunTrialBlock( void );
 
 	};
 

@@ -90,13 +90,78 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 
 }
 
+int GraspTaskManager::LoadTrialParameters( char *filename ) {
 
-int GraspTaskManager::RunTrialBlock( void ) {
+	char line[2048];
+	FILE *fp = fopen( filename, "r" );
+	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for read.", filename );
+	while ( fgets( line, sizeof( line ), fp ) ) {
+		// Strip off trailing newline.
+		// if ( strlen( line ) > 0 ) line[strlen( line ) - 1] = 0;
+		int feedback;
+		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %d",
+			&trialParameters[nTrials].targetHeadTilt,
+			&trialParameters[nTrials].targetHeadTiltTolerance,
+			&trialParameters[nTrials].targetHeadTiltDuration,
+			&trialParameters[nTrials].targetOrientation,
+			&trialParameters[nTrials].targetPresentationDuration,
+			&trialParameters[nTrials].responseHeadTilt,
+			&trialParameters[nTrials].responseHeadTiltTolerance,
+			&trialParameters[nTrials].responseHeadTiltDuration,
+			&trialParameters[nTrials].conflictGain,
+			&feedback );
+
+		if ( items == 10 ) {
+			if ( nTrials >= MAX_GRASP_TRIALS ) {
+				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
+			}
+			else {
+				// A valid set of paramters. Add it to the list of trials.
+				trialParameters[nTrials].provideFeedback = ( feedback != 0 );
+				nTrials++;
+			}
+		}
+		else if ( items > 0 ) {
+			fOutputDebugString( "Error reading parameter list after item %d.\n", items );
+			fOutputDebugString( line );
+		}
+		else {
+			fOutputDebugString( "Comment line: %s", line );
+		}
+	}
+	fclose( fp );
+	return( nTrials );
+}
+
+// The following may be called if there is an anomaly during a trial so as 
+// to repreat it at the end of the block. 
+void GraspTaskManager::RepeatTrial( int trial ) {
+	// Don't repeat more than allowed.
+	if ( retriesRemaining <= 0 ) {
+		fOutputDebugString( "Max number of retries exceeded.\n" );
+		return;
+	}
+	// If there is no room in the list, don't repeat any more either.
+	if ( nTrials >= MAX_GRASP_TRIALS ) {
+		fOutputDebugString( "Repeat would exceed max number of trials (%d).\n", MAX_GRASP_TRIALS );
+		return;
+	}
+	// Copy the parameters of the specified trial to the end of the list.
+	memcpy( (void *) &trialParameters[nTrials], (void *) &trialParameters[trial], sizeof( trialParameters[nTrials] ) );
+	// Show that the list has been extended.
+	nTrials++;
+	// Count down how many more retries are allowed.
+	retriesRemaining--;
+	fOutputDebugString( "Trial %d will be repeated. Retries remaining: %d\n", trial, retriesRemaining );
+}
+
+int GraspTaskManager::RunTrialBlock( char *filename ) {
 
 	// Load the trial parameters.
-	// We probably want to read a parameter file to define the sequence of stimuli.
-	SetDesiredHandRoll( -35.0 );
-	SetTargetOrientation( 17.5 );
+	int trials = LoadTrialParameters( filename );
+	fAbortMessageOnCondition( ( trials <= 0 ), "GraspTaskManager", "No valid trials loaded from file %s." );
+	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, filename );
+	currentTrial = 0;
 
 	// Initialize the state machine.
 	previousState = NullState;
@@ -152,10 +217,15 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	// TODO: Decide what should be the visual conditions when the realignment occurs. Perhaps
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
+	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
+	// In the future it should send this info to ground.
+	fOutputDebugString( "Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
+		currentTrial, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
+
 	// The desired orientation of the head is upright (0°).
-	SetDesiredHeadRoll( 0.0 );
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
-	TimerSet( stateTimer, 5.0 ); 
+	TimerSet( stateTimer,  trialParameters[currentTrial].targetHeadTiltDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
 	// Here we just update the visual feedback about the head orientation
@@ -176,7 +246,8 @@ void GraspTaskManager::ExitStraightenHead( void ) {}
 // The target is diplayed to the subejct.
 // Here don't actually display anything, but the derived classes will.
 void GraspTaskManager::EnterPresentTarget( void ) {
-	TimerSet( stateTimer, 3.0 ); 
+	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
+	TimerSet( stateTimer, trialParameters[currentTrial].targetPresentationDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
@@ -202,13 +273,12 @@ void GraspTaskManager::EnterTiltHead( void ) {
 	TimerSet( stateTimer, 5.0 ); 
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
-	SetDesiredHeadRoll( -35.0 );
-	// Show the arrow that indicates the required direction of 
+	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
+	// We should show the arrow that indicates the required direction of 
 	// head tilt from the current orientation.
 	// This needs work, because it means measuring the current tilt of the
 	// head and compare it to the desired tilt. This could perhaps be
 	// built into HandleHeadAlignment().
-	renderer->tiltPrompt->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateTiltHead( void ) { 
 	// Update the visual feedback about the head tilt.
@@ -222,7 +292,6 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
 	// Remove the prompt about which way to tilt.
-	renderer->tiltPrompt->Disable();
 }
 
 // ObtainResponse
@@ -278,10 +347,12 @@ void GraspTaskManager::EnterTrialCompleted( void ) {
 	TimerSet( stateTimer, 1.0 ); 
 }
 GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) { 
-	// After timer runs out, move on to the next trial.
-	// What we really should do is set the parameters for the next trial,
-	// or signal to end the state machine if all trials are done.
-	if ( TimerTimeout( stateTimer ) ) return( StraightenHead ); 
+	// After timer runs out, move on to the next trial or exit.
+	if ( TimerTimeout( stateTimer ) ) {
+		currentTrial++;
+		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		else return( ExitStateMachine );
+	}
 	// Otherwise, continue in this state.
 	return( currentState );
 }
@@ -302,7 +373,16 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 	// After timer runs out, move on to the next trial.
 	// What we really should do is set the parameters for the next trial,
 	// or signal to end the state machine if all trials are done.
-	if ( TimerTimeout( stateTimer ) ) return( StraightenHead ); 
+	if ( TimerTimeout( stateTimer ) ) {
+		// If retry count has not been exceeded and if there is room
+		//  copy the current trial paramters to the end of the list
+		//  of trials to be performed.
+		RepeatTrial( currentTrial ); 
+		// Move on to the next trial.
+		currentTrial++;
+		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		else return( ExitStateMachine );
+	}
 	// Otherwise, continue in this state.
 	return( currentState );
 }

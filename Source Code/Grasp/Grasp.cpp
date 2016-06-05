@@ -55,7 +55,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	grasp = new VtoV();
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
-	grasp->RunTrialBlock();
+	grasp->RunTrialBlock( "Seq\\TestGraspSequence.seq" );
 	grasp->Release();
 
 #if 0 
