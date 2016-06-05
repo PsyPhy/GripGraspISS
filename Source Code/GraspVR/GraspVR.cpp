@@ -18,12 +18,11 @@
 using namespace Grasp;
 using namespace PsyPhy;
 
-void GraspVR::Initialize( HINSTANCE hinst ) {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	InitializeVR( hinst );
-	InitializeTrackers();
-
-}
+//
+// Trackers 
+//
 
 void GraspVR::InitializeTrackers( void ) {
 	trackers->Initialize();
@@ -59,6 +58,12 @@ void GraspVR::UpdateTrackers( void ) {
 }
 
 void GraspVR::ReleaseTrackers( void ) {}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+// VR 
+//
 
 void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
@@ -113,6 +118,8 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
 	renderer->tiltPrompt->Disable();
+	renderer->successIndicator->Disable();
+	renderer->timeoutIndicator->Disable();
 	renderer->vTool->Disable();
 	renderer->kTool->Disable();
 	renderer->kkTool->Disable();
@@ -136,7 +143,7 @@ void GraspVR::Release( void ) {
 }
 
 ProjectileState GraspVR::TriggerProjectiles( void ) {
-	if ( currentProjectileState != cocked ) return( currentProjectileState );
+	if ( currentProjectileState == running ) return( currentProjectileState );
 	// Position the projectiles where the tool is now.
 	renderer->projectiles->SetPosition( renderer->hand->position );
 	renderer->projectiles->SetOrientation( renderer->hand->orientation );
@@ -193,16 +200,16 @@ double GraspVR::SetDesiredHeadRoll( double roll_angle ) {
 	SetQuaternion( desiredHeadOrientation, desiredHeadRoll, kVector );
 	return( desiredHeadRoll );
 }
-Alignment GraspVR::HandleHeadAlignment( void ) {
-	return( renderer->ColorGlasses( desiredHeadRoll ) ? aligned : misaligned );
+bool GraspVR::HandleHeadAlignment( void ) {
+	return( renderer->ColorGlasses( desiredHeadRoll ) );
 }
 
 double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 	desiredHandRoll = roll_angle;
 	return( desiredHandRoll );
 }
-Alignment GraspVR::HandleHandAlignment( void ) {
-	return( renderer->ColorKK( desiredHandRoll ) ? aligned : misaligned );
+bool GraspVR::HandleHandAlignment( void ) {
+	return( renderer->ColorKK( desiredHandRoll ) );
 }
 
 double  GraspVR::SetTargetOrientation( double roll_angle ) {
@@ -309,7 +316,6 @@ void GraspVR::DebugLoop( void ) {
 
 		Render();
 	}
-
 
 }
 

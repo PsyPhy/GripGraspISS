@@ -1379,7 +1379,7 @@ void Circle::Draw( void ) {
 
 /********************************************************************************/
 
-// A rectangular hole in a disk.
+// A circular hole in a rectangular plate.
 
 Hole::Hole( double radius, double width, double height, int facets ) {
 
@@ -1459,7 +1459,7 @@ void Hole::Draw( void ) {
 
 /***************************************************************************/
 
-// A rectangle with a hole in it.
+// A rectangle with a rectangular hole in it.
 
 WindowFrame::WindowFrame( double width, double height, double thickness ) {
 

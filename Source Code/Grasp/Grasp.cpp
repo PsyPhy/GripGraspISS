@@ -50,18 +50,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	// ConnectToDex();
 
-	if ( useCoda ) {
-		GraspDexTrackers *dex_trackers = new GraspDexTrackers( &_oculusMapper );
-		trackers = dex_trackers;
-	}
-	else {
-		GraspSimTrackers *sim_trackers = new GraspSimTrackers( &_oculusMapper );
-		trackers = sim_trackers;
-	}
+	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
+	else trackers = new GraspSimTrackers( &_oculusMapper );
 	
-	grasp = new GraspTaskManager( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
-
-	grasp->Initialize( hInstance );
+	grasp = new VtoV();
+	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
 	grasp->RunTrialBlock();
 	grasp->Release();
 

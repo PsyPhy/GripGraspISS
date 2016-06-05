@@ -126,13 +126,15 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
-//		referenceBar->SetTexture( references_texture );
+		// The texturing on the bars is commented out for the moment because it lengthens the rendering time too much.
+		// referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius,  room_length );
 		referenceBar->SetOffset( room_radius - reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
-//		referenceBar->SetTexture( references_texture );
+		// See above.
+		// referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 	}
 
@@ -221,6 +223,8 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	// Compute the roll angle of the object that is being followed.
 	// I got this off of a web site. It seems to work for gaze close to straight ahead,
 	// but I'm not sure that it will work well for pitch or yaw far from zero.
+	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
+	// We need a reliable method for computing the roll angle independent from pitch and yaw.
 	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
 	// Compute the error with respect to the desired roll angle.
 	double error = fabs( desired_roll_angle - object_roll_angle );
@@ -371,7 +375,7 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	// Size of the circular arrow, where 1.0 = 360°.
 	static double size = 0.85;
 
-	Annulus *donut = new Annulus( prompt_radius, prompt_radius / 6.0, size, 60, 20 );
+	Annulus *donut = new Annulus( prompt_radius, prompt_radius / 6.0, size, 20, 20 );
 	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
@@ -388,6 +392,24 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 	return prompt;
 
+}
+
+Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
+	Assembly	*assembly = new Assembly();
+	Sphere		*sphere = new Sphere( prompt_radius );
+	sphere->SetColor( GREEN );
+	assembly->AddComponent( sphere );
+	return assembly;
+}
+
+Assembly *GraspGLObjects::CreateTimeoutIndicator( void ) {
+	// For the moment the indicator for a timeout is just a magenta 
+	// sphere. I would like to create something that is more intuitive.
+	Assembly	*assembly = new Assembly();
+	Sphere		*sphere = new Sphere( prompt_radius );
+	sphere->SetColor( MAGENTA );
+	assembly->AddComponent( sphere );
+	return assembly;
 }
 
 void GraspGLObjects::CreateVRObjects( void ) {
@@ -412,6 +434,8 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	positionOnlyTarget = CreatePositionOnlyTarget();
 	response = CreateResponse();
 	tiltPrompt = CreateTiltPrompt();
+	successIndicator = CreateSuccessIndicator();
+	timeoutIndicator = CreateTimeoutIndicator();
 	projectiles = CreateProjectiles();
 
 	// Orientated tool used when responding with full visual feedback.
@@ -432,6 +456,8 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	tiltPrompt->SetPosition( prompt_location );
+	successIndicator->SetPosition( prompt_location );
+	timeoutIndicator->SetPosition( prompt_location );
 	glasses->SetPosition( 0.0, 0.0, 0.0 );
 }
 
@@ -462,6 +488,9 @@ void GraspGLObjects::DrawVR( void ) {
 	DrawPositionOnlyTarget();
 	DrawResponse();
 	DrawTiltPrompt();
+	// I am going to start phasing out the DrawXXX() routines.
+	successIndicator->Draw();
+	timeoutIndicator->Draw();
 	DrawHand();
 	DrawProjectiles();
 

@@ -15,9 +15,6 @@ namespace Grasp {
 			
 	// Possible states of the projectiles.
 	typedef enum { cocked, triggered, running, hit, miss } ProjectileState;
-	// Possible state when driving toward a desired orientation.
-	typedef enum { aligned, misaligned } Alignment;
-
 
 	class GraspVR : public VectorsMixin
 	{
@@ -33,20 +30,25 @@ namespace Grasp {
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
 
-		GraspVR( HINSTANCE instance = nullptr, OculusDisplayOGL *display = nullptr, OculusMapper *mapper = nullptr, GraspTrackers *trkrs = nullptr )  : 
+		GraspVR( void )  : 
 			desiredHeadRoll( 20.0 ), 
 			desiredHandRoll( -35.0 ),
-			currentProjectileState( cocked )
-			{
+			currentProjectileState( cocked ),
+			hInstance( nullptr ),
+			oculusDisplay( nullptr ),
+			oculusMapper( nullptr ),
+			trackers( nullptr ) {}
+
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
 				hInstance = instance;
 				oculusDisplay = display;
 				oculusMapper = mapper;
 				trackers = trkrs;
-			}
-		~GraspVR( void ) {}
-
-		void Initialize( HINSTANCE hinst );
+				InitializeVR( hInstance );
+				InitializeTrackers();
+		}
 		void Release( void );
+		~GraspVR( void ) {}
 
 		// Create the necessary VR objects.
 		virtual void InitializeVR( HINSTANCE hinst );
@@ -74,11 +76,11 @@ namespace Grasp {
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
 		Quaternion		desiredHandOrientation;			// Converted into a quaternion for convenience.
-		Alignment		HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
+		bool			HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
 
 		double			desiredHeadRoll;
 		Quaternion		desiredHeadOrientation;
-		Alignment		HandleHeadAlignment( void );
+		bool			HandleHeadAlignment( void );
 
 		// Drives movements of the projectiles.
 

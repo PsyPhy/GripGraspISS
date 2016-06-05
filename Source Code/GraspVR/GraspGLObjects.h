@@ -116,6 +116,9 @@ namespace Grasp {
 
 			Assembly		*tiltPrompt;
 
+			Assembly		*successIndicator;			// Shown briefly to indicate successful completion of a trial.
+			Assembly		*timeoutIndicator;			// Shown when the subject takes too long to do something.
+
 			Yoke			*hand;				// An collection of objects that move with the hand.
 			Assembly		*vTool;				// Full-fledged tool. One can see its orientation.
 			Assembly		*kTool;				// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
@@ -162,6 +165,8 @@ namespace Grasp {
 			Assembly *CreatePositionOnlyTarget( void );
 			Assembly *CreateResponse( void );
 			Assembly *CreateTiltPrompt( void );
+			Assembly *CreateSuccessIndicator( void );
+			Assembly *CreateTimeoutIndicator( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
