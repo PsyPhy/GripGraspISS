@@ -228,20 +228,17 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
 	// Compute the error with respect to the desired roll angle.
 	double error = fabs( desired_roll_angle - object_roll_angle );
-	fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
+	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
 
-	// Michele's code
+	// Michele's formula for the color transitions.
 	//
 	// There are a number of things that I do not know how to explain:
 	//  Why epsilon * 0.2 and not simply epsilon to be in the good zone?
-	//  Is epsilon in radians or in degrees?
-	//  Why divide everything by 255.0? 
-	//  Why 2*epsilon - epsilon and not just epsilon?
+	//  Why (2*epsilon - epsilon) and not just epsilon?
 	//  Why + 0.0?
-	//  Are all of the 0.2 the same? I mean, if I change one, do I have to change all of them? 
-	//  Idem for the transparency. Should they all be kept the same?
+	//  Why all the divides by 255? 
 	if ( error < epsilon * 0.2 ){//GREEN
-		object->SetColor(0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5);
+		object->SetColor( 0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5 );
 		return(true);
 	} else {
 		if ( error > ( 2 * epsilon ) ){//RED

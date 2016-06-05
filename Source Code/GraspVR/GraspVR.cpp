@@ -195,8 +195,9 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 
 }
 
-double GraspVR::SetDesiredHeadRoll( double roll_angle ) {
-	desiredHeadRoll = roll_angle;
+double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
+	desiredHeadRoll = desired_roll_angle;
+	desiredHeadRollTolerance = tolerance;
 	SetQuaternion( desiredHeadOrientation, desiredHeadRoll, kVector );
 	return( desiredHeadRoll );
 }
@@ -240,14 +241,11 @@ void GraspVR::Render( void ) {
 
 	// Do distortion rendering, Present and flush/sync
 	ovrResult result = oculusMapper->BlastIt();
-	fOutputDebugString( "BlastIt() returns: %d\n", result );
+	// fOutputDebugString( "BlastIt() returns: %d\n", result );
 }
 
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
-
-	SetDesiredHeadRoll( 20.0 );
-	SetDesiredHandRoll( -35.0 );
 
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {

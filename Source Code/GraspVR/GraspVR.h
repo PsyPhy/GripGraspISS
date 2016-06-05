@@ -79,6 +79,7 @@ namespace Grasp {
 		bool			HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
 
 		double			desiredHeadRoll;
+		double			desiredHeadRollTolerance;		// Ignored for the moment.
 		Quaternion		desiredHeadOrientation;
 		bool			HandleHeadAlignment( void );
 
@@ -92,7 +93,7 @@ namespace Grasp {
 
 		// Set the parameters for the above behaviors. They are exposed to the public.
 		double SetDesiredHandRoll( double roll_angle );
-		double SetDesiredHeadRoll( double roll_angle );
+		double SetDesiredHeadRoll( double roll_angle, double tolerance );
 		double SetTargetOrientation( double roll_angle );
 
 	};
