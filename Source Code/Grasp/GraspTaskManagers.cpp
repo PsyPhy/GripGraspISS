@@ -315,6 +315,7 @@ void  GraspTaskManager::ExitTrialInterrupted( void ) {
 /// VtoV
 
 void VtoV::EnterPresentTarget( void ) {
+	// The target is displayed visually.
 	renderer->orientationTarget->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
@@ -327,15 +328,16 @@ void  VtoV::ExitPresentTarget( void ) {
 }
 
 void VtoV::EnterObtainResponse( void ) {
-	// Show the hand without showing its orientation.
-	renderer->kTool->Enable();
+	// Show the visual representation of the hand that is driven 
+	//  by the mouse or buttons.
+	renderer->vTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }
 
 void VtoV::ExitObtainResponse( void ) {
-	// Show the hand without showing its orientation.
-	renderer->kTool->Disable();
+	// Hide the hand.
+	renderer->vTool->Disable();
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }
