@@ -41,9 +41,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	int       nCmdShow)
 {
 	UNREFERENCED_PARAMETER( hPrevInstance );
-	UNREFERENCED_PARAMETER( lpCmdLine );
-
+	
 	bool useCoda = false;
+	enum { doVtoV, doVtoK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining } paradigm = doVtoV;
+
+	char sequence_filename[FILENAME_MAX];
+	char output_filename_root[FILENAME_MAX];
+
+	// Parse the command line.
+	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
+	if ( strstr( lpCmdLine, "--coda" ) ) useCoda = true;
+	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
+	if ( char *ptr = strstr( lpCmdLine, "--sequence=" ) ) sscanf( ptr, "--sequence=%s", sequence_filename );
+	if ( char *ptr = strstr( lpCmdLine, "--output=" ) ) sscanf( ptr, "--output=%s", output_filename_root );
 
 	GraspTaskManager	*grasp;
 	GraspTrackers		*trackers;
@@ -53,9 +63,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
 	else trackers = new GraspSimTrackers( &_oculusMapper );
 	
-	grasp = new VtoV();
+	switch ( paradigm ) {
+
+	case doVtoV:
+	default:
+		grasp = new VtoV();
+		break;
+
+	}
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
-	grasp->RunTrialBlock( "Seq\\TestGraspSequence.seq" );
+	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 
 #if 0 

@@ -155,13 +155,21 @@ void GraspTaskManager::RepeatTrial( int trial ) {
 	fOutputDebugString( "Trial %d will be repeated. Retries remaining: %d\n", trial, retriesRemaining );
 }
 
-int GraspTaskManager::RunTrialBlock( char *filename ) {
+int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filename_root ) {
 
 	// Load the trial parameters.
-	int trials = LoadTrialParameters( filename );
-	fAbortMessageOnCondition( ( trials <= 0 ), "GraspTaskManager", "No valid trials loaded from file %s." );
-	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, filename );
+	int trials = LoadTrialParameters( sequence_filename );
+	fAbortMessageOnCondition( ( trials <= 0 ), "GraspTaskManager", "No valid trials loaded from file %s.", sequence_filename );
+	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
 	currentTrial = 0;
+
+	// Open a file for storing the responses.
+	sprintf( responseFilename, "%s.rsp", output_filename_root );
+	fp = fopen( responseFilename, "w" );
+	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
+	// Ouput a header.
+	fprintf( fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; conflictGain; feedback (0 or 1); time; response\n" );
+
 
 	// Initialize the state machine.
 	previousState = NullState;
@@ -216,6 +224,23 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	// TODO: Need to establish a new CODA reference frame around the chest marker structure.
 	// TODO: Decide what should be the visual conditions when the realignment occurs. Perhaps
 	//  we need to avoid sudden jumps of the tunnel orientation.
+
+	// Output the parameters of this trial to the response file.
+	fprintf( fp, "%d; %5.2f; %5.2f; %5.2f; %6.2f; %5.2f; %6.2f; %5.2f; %5.2f; %5.2f; %d",
+		currentTrial,
+		trialParameters[currentTrial].targetHeadTilt,
+		trialParameters[currentTrial].targetHeadTiltTolerance,
+		trialParameters[currentTrial].targetHeadTiltDuration,
+		trialParameters[currentTrial].targetOrientation,
+		trialParameters[currentTrial].targetPresentationDuration,
+		trialParameters[currentTrial].responseHeadTilt,
+		trialParameters[currentTrial].responseHeadTiltTolerance,
+		trialParameters[currentTrial].responseHeadTiltDuration,
+		trialParameters[currentTrial].conflictGain,
+		trialParameters[currentTrial].provideFeedback );
+	// Make sure that this information gets written right away to facilitate degugging if we crash.
+	// Note that we do not output a \n in the above. The line will be completed by the response.
+	fflush( fp );
 
 	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
 	// In the future it should send this info to ground.
@@ -307,7 +332,11 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( !HandleHeadAlignment() ) return( TrialInterrupted );
 	// Handle triggering and moving the projectiles.
-	if ( oculusDisplay->Button[MOUSE_LEFT] ) return( ProvideFeedback );
+	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
+		// Record the response.
+		fprintf( fp, "%f; %s\n", 0.0, renderer->vTool->mstr( renderer->vTool->orientation ) );
+		return( ProvideFeedback );
+	}
 	if ( TimerTimeout( stateTimer ) ) return( ExitStateMachine ); 
 	// Otherwise, continue in this state.
 	return( currentState );
@@ -364,6 +393,7 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 // Provide an indication that the trial was completed successfully.
 // Then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
+	fprintf( fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
 	renderer->timeoutIndicator->Enable();
 	// Show it for a fixed time.

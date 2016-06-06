@@ -34,7 +34,10 @@ namespace Grasp {
 		}
 		int LoadTrialParameters( char *filename );
 		void RepeatTrial( int trial );
-		int RunTrialBlock( char *filename );
+		int RunTrialBlock( char *sequence_filename, char *output_filename_root );
+
+		FILE *fp;
+		char responseFilename[FILENAME_MAX];
 
 		// State Machine
 		GraspTrialState previousState, currentState, nextState;
@@ -94,9 +97,14 @@ namespace Grasp {
 
 	public:
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2) {}
+		~GraspTaskManager(){}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs  ) {
 			GraspVR::Initialize( instance, display, mapper, trkrs );
+		}
+		void Release( void ) {
+			GraspVR::Release();
+			if ( fp ) fclose( fp );
 		}
 
 	};
