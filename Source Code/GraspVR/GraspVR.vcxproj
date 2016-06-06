@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraspGLObjects.h" />
+    <ClInclude Include="GraspTrackers.h" />
     <ClInclude Include="GraspVR.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>

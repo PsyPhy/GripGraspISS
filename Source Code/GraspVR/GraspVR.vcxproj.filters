@@ -9,6 +9,7 @@
     <ClInclude Include="GraspGLObjects.h" />
     <ClInclude Include="GraspVR.h" />
     <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="GraspTrackers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGLObjects.cpp" />

@@ -82,7 +82,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\GraspVR\GraspTrackers.h" />
     <ClInclude Include="Grasp.h" />
     <ClInclude Include="GraspTaskManagers.h" />
     <ClInclude Include="GraspTelemetry.h" />

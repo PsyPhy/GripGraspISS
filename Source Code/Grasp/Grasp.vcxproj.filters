@@ -13,7 +13,6 @@
     <ClInclude Include="Grasp.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="GraspTelemetry.h" />
-    <ClInclude Include="..\GraspVR\GraspTrackers.h" />
     <ClInclude Include="GraspTaskManagers.h" />
   </ItemGroup>
   <ItemGroup>
