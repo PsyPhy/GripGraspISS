@@ -220,12 +220,14 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	// fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
 	object->SetColor( red, green, 0.0, 0.75 );
 #endif
+
 	// Compute the roll angle of the object that is being followed.
 	// I got this off of a web site. It seems to work for gaze close to straight ahead,
 	// but I'm not sure that it will work well for pitch or yaw far from zero.
 	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
 	// We need a reliable method for computing the roll angle independent from pitch and yaw.
 	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
+
 	// Compute the error with respect to the desired roll angle.
 	double error = fabs( desired_roll_angle - object_roll_angle );
 	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );

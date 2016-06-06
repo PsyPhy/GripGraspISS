@@ -1,0 +1,16 @@
+	double object_roll_angle2 = - ToDegrees( atan2( object->orientation[1][0], object->orientation[1][1] ) );
+	double d1 = sqrt( object->orientation[0][1] * object->orientation[0][1] + object->orientation[0][0] * object->orientation[0][0] );
+	double d2 = sqrt( object->orientation[1][0] * object->orientation[1][0] + object->orientation[1][1] * object->orientation[1][1] );
+	double object_roll_angle;
+	if ( d1 > d2 ) object_roll_angle = object_roll_angle1;
+	else object_roll_angle = object_roll_angle2;
+	fOutputDebugString( "1: %6.2f %3.2f   2: %6.2f %3.2f  %s \n", object_roll_angle1, d1, object_roll_angle2, d2, object->mstr( object->orientation ) );
+
+	Vector3 cross, gaze, right;
+	MultiplyVector( gaze, kVector, object->orientation );
+	ComputeCrossProduct( cross, kVector, gaze );
+	double angle = asin( VectorNorm( cross ) );
+	Matrix3x3 roll_pitch;
+	SetRotationMatrix( roll_pitch, angle, cross );
+	MultiplyVector( right, iVector, roll_pitch );
+	double object_roll_angle = ToDegrees( acos( DotProduct( right, iVector ) ) );
