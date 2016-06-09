@@ -100,7 +100,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	// Our basic units are millimeters, so set the near and far accordingly.
-	viewpoint = new OculusViewpoint( oculusMapper, 6.0, 106.0, 100.0, 10000.0 );
+	viewpoint = new OculusViewpoint( oculusMapper, 6.0, 1.0, 10000.0 );
 
 	// Set the player's position and orientation to the null position and orientation.
 	// Note that the head tracking will be applied relative to this pose.

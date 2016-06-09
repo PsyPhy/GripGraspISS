@@ -126,15 +126,15 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
-		// The texturing on the bars is commented out for the moment because it lengthens the rendering time too much.
-		// referenceBar->SetTexture( references_texture );
+		// The texturing on the bars may be commented out for the moment because it lengthens the rendering time too much.
+		referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius,  room_length );
 		referenceBar->SetOffset( room_radius - reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
 		// See above.
-		// referenceBar->SetTexture( references_texture );
+		referenceBar->SetTexture( references_texture );
 		room->AddComponent( referenceBar );
 	}
 
@@ -184,12 +184,9 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 Glasses *GraspGLObjects::CreateGlasses( void ) {
 
-	static double visor_radius = 200.0;
+	static double visor_radius = 350.0;
 	// Create a circular portal to look through to avoid visual cues about the egocentric reference frame.
-	Glasses *glasses = new Glasses( visor_radius - 20.0, visor_radius, room_radius, room_radius, 16 );
-	// The glasses will be positioned at the same place as the head based on the tracker.
-	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
-	glasses->SetOffset( 0.0, 0.0, -230.0 );
+	Glasses *glasses = new Glasses( visor_radius - 70.0, visor_radius, room_radius, room_radius, 16 );
 	return glasses;
 }
 
@@ -457,6 +454,9 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	tiltPrompt->SetPosition( prompt_location );
 	successIndicator->SetPosition( prompt_location );
 	timeoutIndicator->SetPosition( prompt_location );
+	// The glasses will be positioned at the same place as the head based on the tracker.
+	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
+	glasses->SetOffset( 0.0, 0.0, -400.0 );
 	glasses->SetPosition( 0.0, 0.0, 0.0 );
 }
 
@@ -787,7 +787,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model
 
 MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *model_file ) {
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
-	double vertices[4][2];
+	double vertices[8][2];
 
 	vertices[0][X] = structure->modelMarker[1].position[X];
 	vertices[0][Y] = structure->modelMarker[1].position[Y];
@@ -801,7 +801,6 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	plate->SetColor( 1.0, 1.0, 0.0, 0.35 );
 	plate->SetPosition( 0.0, 0.0, ( structure->modelMarker[1].position[Z] + structure->modelMarker[5].position[Z] + structure->modelMarker[2].position[Z] + structure->modelMarker[6].position[Z] )/ 4.0 + STRUCTURE_BAR_RADIUS );
 	structure->AddComponent( plate );
-
 
 	vertices[0][X] = structure->modelMarker[0].position[X];
 	vertices[0][Y] = structure->modelMarker[0].position[Y];

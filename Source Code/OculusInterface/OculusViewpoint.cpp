@@ -10,10 +10,12 @@
 
 using namespace PsyPhy;
 
-OculusViewpoint::OculusViewpoint( OculusMapper *oculusMapper, double ipd, double fov, double nearest, double farthest  ) {
+OculusViewpoint::OculusViewpoint( OculusMapper *oculusMapper, double ipd, double nearest, double farthest  ) {
 	this->oculusMapper = oculusMapper;
 	this->ipd = ipd;
-	this->fov = fov;
+	// An OculusViewpoint is going to define the viewing frustum based on the characteristics of the 
+	// device. So we set the more standard fov to zero to see what happens.
+	this->fov = 0.0;
 	this->nearest = nearest;
 	this->farthest = farthest;
 	Viewpoint( ipd, fov, nearest, farthest );
@@ -36,7 +38,7 @@ void OculusViewpoint::Apply( int eye ) {
 	glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum( - nearest * left_tan, nearest * right_tan, - nearest * down_tan, nearest * up_tan, nearest, farthest );
+	glFrustum( - left_tan, right_tan, - down_tan, up_tan, nearest, farthest );
 
 	switch( eye ) {
 
