@@ -22,6 +22,9 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\Bdy\Chest.bdy" />
+    <None Include="..\..\Bdy\Hand.bdy" />
+    <None Include="..\..\Bdy\HMD.bdy" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlignToRigidBodyGUI.cpp">

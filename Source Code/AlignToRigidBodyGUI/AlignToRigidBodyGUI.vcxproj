@@ -54,7 +54,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
@@ -81,6 +81,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Bdy\Chest.bdy" />
+    <None Include="..\..\Bdy\Hand.bdy" />
+    <None Include="..\..\Bdy\HMD.bdy" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
@@ -114,6 +117,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
       <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
     </ProjectReference>
