@@ -177,6 +177,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
 			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
+
 		// Create a pose tracker that combines Coda and Oculus data.
 		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
 		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
@@ -193,23 +194,22 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		chestTracker =nullPoseTracker;
 	}
 
-    // Make the scene based on the OculusRoomTiny example.
+	// Make the scene based on the OculusRoomTiny example.
 	// Call with 'true' to include GPU intensive object, 'false' to keep it simple.
 	// The intensive object appears to be a partition wall of some sort that cuts
 	//  the room -- and the table -- in two. On the Perspectives machine it causes the 
 	//  table to flicker.
-    Scene *roomScene = new Scene( false );
+	Scene *roomScene = new Scene( false );
 
 	// Create the scene and objects for the PsyPhy rendering system.
 	CreatePsyPhyObjects();
 
-    // Main loop
-    bool isVisible = true;
-    while ( platform->HandleMessages() )
-    {
-		
+	// Main loop
+	bool isVisible = true;
+	while ( platform->HandleMessages() ) {
+
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-        static float Yaw( 3.14159f );  
+		static float Yaw( 3.14159f );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -217,16 +217,16 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		if ( platform->Key['U'] ) hmdTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
-        if ( platform->Key[VK_LEFT] )  Yaw += 0.02f;
-        if ( platform->Key[VK_RIGHT] ) Yaw -= 0.02f;
+		if ( platform->Key[VK_LEFT] )  Yaw += 0.02f;
+		if ( platform->Key[VK_RIGHT] ) Yaw -= 0.02f;
 
-        // Keyboard inputs to adjust player position. The forward, backward, leftward and rightward steps
+		// Keyboard inputs to adjust player position. The forward, backward, leftward and rightward steps
 		//  are taken relative to the current viewing orientation of the subjec.
-        static OVR::Vector3f PlayerPosition( 0.0f, 0.0f, 0.0f );
-        if ( platform->Key['W'] || platform->Key[VK_UP] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, -0.05f) );
-        if ( platform->Key['S'] || platform->Key[VK_DOWN] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, +0.05f) );
-        if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( +0.05f, 0, 0) );
-        if ( platform->Key['A'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( -0.05f, 0, 0) );
+		static OVR::Vector3f PlayerPosition( 0.0f, 0.0f, 0.0f );
+		if ( platform->Key['W'] || platform->Key[VK_UP] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, -0.05f) );
+		if ( platform->Key['S'] || platform->Key[VK_DOWN] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, +0.05f) );
+		if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( +0.05f, 0, 0) );
+		if ( platform->Key['A'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( -0.05f, 0, 0) );
 
 		if ( platform->Key['O'] ) hmdTracker = oculusPoseTracker;
 		if ( platform->Key['N'] ) hmdTracker = nullPoseTracker;
@@ -237,54 +237,52 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		if ( platform->Key['V'] ) useOVR = true, usePsyPhy = false;
 		if ( platform->Key['P'] ) usePsyPhy = true, useOVR = false;
-															
+
 		// Place the viewpoint at the height specified by the Oculus configuration manager.
 		// If the origin of our tracker reference frame is at zero height, this is not necessary
 		//  because the tracker will put the viewpoint at the proper, measured height.
 		// PlayerPosition.y = ovr_GetFloat( oculusMapper.HMD, OVR_KEY_EYE_HEIGHT, PlayerPosition.y);
 
 		// Animate the cube.
-        static float cubeClock = 0;
-        roomScene->Models[0]->Pos = OVR::Vector3f(9 * sin( cubeClock ), 3, 9 * cos( cubeClock += 0.015f ) );
+		static float cubeClock = 0;
+		roomScene->Models[0]->Pos = OVR::Vector3f(9 * sin( cubeClock ), 3, 9 * cos( cubeClock += 0.015f ) );
 
 		// Animate the sphere.
 		static double toolP = 0.0;
 		tool->SetOrientation( toolP, toolP, - toolP );
 		toolP += 1.0;
 
-        if ( isVisible && useOVR )
-        {
+		if ( isVisible && useOVR ) {
 			// Read the predicted state of the Oculus head tracker.
 			ovrPosef ovrHeadPose = oculusMapper.ReadHeadPose();
 
-            for (int eye = 0; eye < 2; ++eye)
-            {
+			for (int eye = 0; eye < 2; ++eye)
+			{
 				Matrix4f	view;
 				Matrix4f	projection;
 
 				// Compute the player's orientation transform in the world.
 				// The reference point for the viewing pose is determined by the 
 				//  player's yaw angle and position that are controlled by the keyboard.
-                Matrix4f PlayerOrientation = Matrix4f::RotationY( Yaw );
+				Matrix4f PlayerOrientation = Matrix4f::RotationY( Yaw );
 
 				// Get ready to draw into one of the eyes.
- 				oculusMapper.SelectEye( eye );
+				oculusMapper.SelectEye( eye );
 
 				// Get the viewing pose and projection matrices based on the programmed player's
 				//  position and orientation and the sensed position and orientation of the HMD.
 				oculusMapper.GetEyeProjections( eye, PlayerPosition,  PlayerOrientation, &view, &projection );
 
-                // Render the world using the Oculus rendering routines.
+				// Render the world using the Oculus rendering routines.
 				roomScene->Render( view, projection );
 
 				// There is some cleaning up that has to be done after the view for each eye is drawn.
 				oculusMapper.DeselectEye( eye );
- 			}
+			}
 		}
 
 		// Render the world using the PsyPhy 3D modelling routines.
-		if ( isVisible && usePsyPhy )
-        {
+		if ( isVisible && usePsyPhy ) {
 
 			// Get the current position of the CODA markers.
 			// codaTracker.GetCurrentMarkerFrameUnit( primaryMarkerFrame, 0 );
@@ -330,34 +328,35 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			glUsefulPrepareRendering();
 
 			for (int eye = 0; eye < 2; ++eye)
-            {
+			{
 
 				// Get ready to draw into one of the eyes.
- 				oculusMapper.SelectEye( eye );
+				oculusMapper.SelectEye( eye );
 				// Set up the viewing transformations.
 				viewpoint->Apply( eye );
 				// Draw the objects in the world.
 				DrawPsyPhyObjects();
 				// Take care of an Oculus bug.
 				oculusMapper.DeselectEye( eye );
- 
-          }
-        }
 
-        // Do distortion rendering, Present and flush/sync
+			}
+		}
+
+		// Do distortion rendering, Present and flush/sync
 		result = oculusMapper.BlastIt();
-        isVisible = (result == ovrSuccess);
+		isVisible = (result == ovrSuccess);
+		if ( !OVR_SUCCESS( result ) ) break;
 
-   }
+	}
 
-    delete roomScene;
-    oculusMapper.Release();
+	delete roomScene;
+	oculusMapper.Release();
 
-    // Return a flag saying whether a retry should be attempted or not.
+	// Return a flag saying whether a retry should be attempted or not.
 	// If retryCreate is true on entry, then signal for retry in all cases.
 	// If the result is not success, but is ovrError_DisplayLost, then signal for a retry as well.
 	// Otherwise, return a flag signalling what error occured.
-    return  result;
+	return result;
 
 }
 
@@ -368,17 +367,19 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	// Initialize the connection to the CODA tracking system.
 	if ( useCoda ) codaTracker.Initialize();
 
-   // Initializes LibOVR, and the Rift
-    OVR::System::Init();
-    ovrResult result = ovr_Initialize( nullptr );
-    fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
+	// Initializes LibOVR, and the Rift
+#ifdef USE_OCULUS_O_8
+	OVR::System::Init();
+#endif
+	ovrResult result = ovr_Initialize( nullptr );
+	fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
 
 	// Initialize the Oculus-enabled Windows platform.
-    fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", false ), "PsyPhyOculus", "Failed to open window." );
+	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", false ), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
 	if ( useCoda ) {
-		
+
 		// Start continuous acquisition of Coda marker data for a maximum duration.
 		codaTracker.StartAcquisition( 600.0 );
 
@@ -390,16 +391,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
 	}
 
-    // Call the main loop.
-	// Pass a pointer to oculusDisplay to give access to the HandleMessages() method and other parameters.
-	result = MainLoop( &oculusDisplay );
-    fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus",  "An error occurred setting up the GL graphics window.\nIs the Oculus connected?");
+	// Call the main loop.
+	MainLoop( &oculusDisplay );
 
 	// We exited the main loop, so shutdown the Rift.
 	// I shut it down before halting the CODA just so that the HMD goes dark while the 
 	// CODA frames are being retrieved.
-    ovr_Shutdown();
-    OVR::System::Destroy();
+	ovr_Shutdown();
+#ifdef USE_OCULUS_0_8
+	OVR::System::Destroy();
+#endif
 	oculusDisplay.CloseWindow();
 	oculusDisplay.ReleaseDevice();
 
@@ -442,5 +443,5 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
 	}
 
-    return(0);
+	return(0);
 }

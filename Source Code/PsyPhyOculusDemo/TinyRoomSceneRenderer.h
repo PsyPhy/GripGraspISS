@@ -33,7 +33,7 @@ struct ShaderFill
         {
             GLchar msg[1024];
             glGetProgramInfoLog(program, sizeof(msg), 0, msg);
-            OVR_DEBUG_LOG(("Linking shaders failed: %s\n", msg));
+            fOutputDebugString("Linking shaders failed: %s\n", msg);
         }
     }
 
@@ -273,7 +273,7 @@ struct Scene
             GLchar msg[1024];
             glGetShaderInfoLog(shader, sizeof(msg), 0, msg);
             if (msg[0]) {
-                OVR_DEBUG_LOG(("Compiling shader failed: %s\n", msg));
+                fOutputDebugString( "Compiling shader failed: %s\n", msg );
             }
             return 0;
         }

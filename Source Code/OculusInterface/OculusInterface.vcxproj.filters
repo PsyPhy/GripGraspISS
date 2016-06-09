@@ -2,18 +2,37 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="OculusInterface.h" />
-    <ClInclude Include="OculusMapper.h" />
-    <ClInclude Include="OculusWIN32.h" />
     <ClInclude Include="OculusViewpoint.h" />
     <ClInclude Include="MousePoseTrackers.h" />
+    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
+      <Filter>CAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
+      <Filter>CAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="OculusMapper.v1.3.h" />
+    <ClInclude Include="OculusMapper.v0.8.h" />
+    <ClInclude Include="OculusWIN32.v0.8.h" />
+    <ClInclude Include="OculusWIN32.v1.3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="..\..\..\ovr_sdk_win_1.3.0_public\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
+      <Filter>CAPI</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OculusPoseTracker.cpp" />
     <ClCompile Include="OculusViewpoint.cpp" />
     <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="MousePoseTrackers.cpp" />
+    <ClCompile Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
+      <Filter>CAPI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CAPI">
+      <UniqueIdentifier>{5a6e913d-d24a-4d0a-8e47-af4e3c222529}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

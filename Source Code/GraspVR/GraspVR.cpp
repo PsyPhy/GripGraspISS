@@ -74,7 +74,9 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	static const bool fullscreen = true;
 
 	// Initializes LibOVR, and the Rift
+#ifdef USE_OCULUS_O_8
 	OVR::System::Init();
+#endif
 	result = ovr_Initialize( nullptr );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
@@ -136,7 +138,9 @@ void GraspVR::Release( void ) {
 
 	// Shutdown the Rift.
 	ovr_Shutdown();
+#ifdef USE_OCULUS_0_8
 	OVR::System::Destroy();
+#endif
 	oculusDisplay->CloseWindow();
 	oculusDisplay->ReleaseDevice();
 

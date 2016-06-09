@@ -181,7 +181,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
 
    // Initializes LibOVR, and the Rift
-    OVR::System::Init();
+#ifdef USE_OCULUS_O_8
+	OVR::System::Init();
+#endif
     ovrResult result = ovr_Initialize( nullptr );
     fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
 
@@ -197,7 +199,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	// I shut it down before halting the CODA just so that the HMD goes dark while the 
 	// CODA frames are being retrieved.
     ovr_Shutdown();
-    OVR::System::Destroy();
+  #ifdef USE_OCULUS_0_8
+	OVR::System::Destroy();
+#endif
 	oculusDisplay.CloseWindow();
 	oculusDisplay.ReleaseDevice();
 

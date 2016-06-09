@@ -75,7 +75,9 @@ bool OculusCodaPoseTracker::Update( void ) {
 	// Compute a finite step rotation from gyro measurements and elapsed time.
 	// I use here a full quaternion to compute the finite rotation. There are 
 	// other linearization methods that can be used, but I don't see an advantage to using them here.
-	Vector3 rate = { sensorState.RawSensorData.Gyro.x, sensorState.RawSensorData.Gyro.y, sensorState.RawSensorData.Gyro.z };
+	// Vector3 rate = { sensorState.RawSensorData.Gyro.x, sensorState.RawSensorData.Gyro.y, sensorState.RawSensorData.Gyro.z };
+	Vector3 rate = { sensorState.HeadPose.AngularVelocity.x, sensorState.HeadPose.AngularVelocity.y, sensorState.HeadPose.AngularVelocity.z };
+
 	Vector3 delta;
 	ScaleVector( delta, rate, delta_time / 2.0 );
 	Quaternion dQ = { delta[0], delta[1], delta[2], 0.0 };

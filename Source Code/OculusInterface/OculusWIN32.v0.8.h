@@ -11,10 +11,9 @@
 // The path is set via the user macro $(OVRSDKROOT) and via the property pages
 //  in the VS2010 project files. I was able to modify $(OVRSDKROOT) by editing 
 //  OVRRootPath.props. I could not figure out how to do it within VS2010.
-#include "Kernel/OVR_System.h"
-#include "OVR_CAPI_GL.h"
 #include "GL/CAPI_GLE.h"
 #include "Extras/OVR_Math.h"
+#include "OVR_CAPI_GL.h"
 
 // Oculus had this in the include file, but that is bad practice because it gets included everywhere.
 // I comment it out here and qualify the names with OVR:: as needed.

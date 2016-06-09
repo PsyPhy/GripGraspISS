@@ -19,10 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp" />
     <ClCompile Include="PsyPhyOculusDemo.cpp" />
     <ClCompile Include="PsyPhyRendering.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h" />
+    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h" />
     <ClInclude Include="TinyRoomSceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +267,7 @@
     </Manifest>
     <Link>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>$(OVRSDKROOT)LibOVRKernel/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVRKernel.lib;$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

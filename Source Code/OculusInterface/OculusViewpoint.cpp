@@ -22,36 +22,33 @@ OculusViewpoint::OculusViewpoint( OculusMapper *oculusMapper, double ipd, double
 void OculusViewpoint::Apply( int eye ) {
 
 	// Set the size of the viewport into GL. The OVR system creates a bitmap of this size for each eye.
-	// Again, these constants are empirically drawn from a DK2 sample program.
-	// They could probably be retrieved via the OVR system.
 	int eye_buffer_width = oculusMapper->idealTextureSize.w;
 	int eye_buffer_height = oculusMapper->idealTextureSize.h;
 	double aspect = (double) eye_buffer_width / (double) eye_buffer_height;
 	// Use crop to speed up rendering. Not a nice solution.
-	int crop = 200;	
+	int crop = 0;	
+
+	double up_tan = oculusMapper->hmdDesc.DefaultEyeFov[eye].UpTan;
+	double down_tan = oculusMapper->hmdDesc.DefaultEyeFov[eye].DownTan;
+	double left_tan = oculusMapper->hmdDesc.DefaultEyeFov[eye].LeftTan;
+	double right_tan = oculusMapper->hmdDesc.DefaultEyeFov[eye].RightTan;
+
+	glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum( - nearest * left_tan, nearest * right_tan, - nearest * down_tan, nearest * up_tan, nearest, farthest );
+
 	switch( eye ) {
 
 	case LEFT_EYE:
-		glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective( fov, aspect, nearest, farthest );
-		glTranslated( +ipd / 2, 0.0, 0.0 );
+		glTranslated( + ipd / 2, 0.0, 0.0 );
 		break;
 
 	case  RIGHT_EYE:
-		glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective( fov, aspect, nearest, farthest );
-		glTranslated( -ipd / 2, 0.0, 0.0 );
+		glTranslated(  - ipd / 2, 0.0, 0.0 );
 		break;
 
 	default:
-		glViewport( 0, 0, eye_buffer_width, eye_buffer_height );
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective( fov, aspect, nearest, farthest );
 		break;
 
 	}
