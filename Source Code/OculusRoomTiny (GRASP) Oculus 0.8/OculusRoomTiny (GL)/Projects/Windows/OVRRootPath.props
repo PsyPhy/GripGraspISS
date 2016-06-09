@@ -2,17 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OVRSDKROOT0_8>../../../OculusSDKv0.8/</OVRSDKROOT0_8>
-    <OVRSDKROOT>../../../OculusSDKv1.3/OculusSDK/</OVRSDKROOT>
+    <OVRSDKROOT>../../../../../../../OculusSDKv0.8/</OVRSDKROOT>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
-  <ItemGroup>
-    <BuildMacro Include="OVRSDKROOT0_8">
-      <Value>$(OVRSDKROOT0_8)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
- </ItemGroup>
   <ItemGroup>
     <BuildMacro Include="OVRSDKROOT">
       <Value>$(OVRSDKROOT)</Value>

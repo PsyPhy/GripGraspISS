@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
+      <Filter>CAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\GraspOculusRoomTiny.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
+      <Filter>CAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
+      <Filter>CAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Win32_GLAppUtil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CAPI">
+      <UniqueIdentifier>{5385148a-0ec4-47d4-8338-28f1fd1c4075}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
