@@ -237,7 +237,7 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	//  Why + 0.0?
 	//  Why all the divides by 255? 
 	if ( error < epsilon * 0.2 ){//GREEN
-		object->SetColor( 0.0/255.0, 255.0/255.0,  0.0/255.0, 0.5 );
+		object->SetColor( 0.0/255.0, 255.0/255.0,  200.0/255.0, 0.5 );
 		return(true);
 	} else {
 		if ( error > ( 2 * epsilon ) ){//RED
