@@ -58,7 +58,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
@@ -127,6 +127,9 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspScripts\GraspScripts.vcxproj">
       <Project>{06fb1c1d-0fe6-4fb8-91b1-7ddda4165782}</Project>
     </ProjectReference>

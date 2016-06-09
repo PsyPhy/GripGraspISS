@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraspScripts.h"
+#include "../DexServices/DexServices.h"
 
 namespace GraspGUI {
 
@@ -18,6 +19,8 @@ namespace GraspGUI {
 	{
 
 	private:
+
+		Grasp::DexServices	*dex;
 
 		String^	rootDirectory;
 		String^ execDirectory;
@@ -47,17 +50,16 @@ namespace GraspGUI {
 		// run in order to be able to see the pages. This flag allows us to "cue up" the 
 		// command, run the event loop until everything is visible, and then run the command.
 		bool cueStepCommand;
-	private: System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
-	private: System::Windows::Forms::TextBox^  errorCodeTextBox;
-	private: System::Windows::Forms::Label^  errorCodeLabel;
-	private: System::Windows::Forms::Button^  retryButton;
-	private: System::Windows::Forms::Button^  restartButton;
-	private: System::Windows::Forms::Button^  ignoreButton;
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-			// RefreshAnimations();
+			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
+			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
+			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
+			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+			dex->SendTaskInfo( subjectID, currentProtocol, currentTask, currentStep );
+			fOutputDebugString( "dex->SendTaskInfo( %d, %d, %d, %d );\n", subjectID, protocolID, taskID, stepID );
 		}
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
@@ -91,7 +93,7 @@ namespace GraspGUI {
 			currentTask = -1;
 			stepList = gcnew array<GraspGUI::Step ^>(MAX_STEPS);
 			nSteps = 0;
-			currentStep = 0;
+			currentStep = -1;
 			cueStepCommand = false;
 
 			// It is convenient to define the root directory and predefine the various subdirectories.
@@ -150,6 +152,13 @@ namespace GraspGUI {
 	private: System::Windows::Forms::Button^  executeButton;
 	private: System::Windows::Forms::Button^  execBackButton;
 	private: System::Windows::Forms::Button^  execSkipButton;
+
+	private: System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
+	private: System::Windows::Forms::TextBox^  errorCodeTextBox;
+	private: System::Windows::Forms::Label^  errorCodeLabel;
+	private: System::Windows::Forms::Button^  retryButton;
+	private: System::Windows::Forms::Button^  restartButton;
+	private: System::Windows::Forms::Button^  ignoreButton;
 
 	protected: 
 
@@ -640,6 +649,15 @@ namespace GraspGUI {
 			protocolListBox->Items->Clear();
 			taskListBox->Items->Clear();
 			ParseSubjectFile( scriptDirectory + "Subjects.sbj" );
+
+			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
+			fOutputDebugString( "Connecting to DEX ... " );
+			dex = new Grasp::DexServices();
+			dex->Connect();
+			fOutputDebugString( "OK.\n" );
+			CreateRefreshTimer( 1000 );
+			StartRefreshTimer();
+
 		}
 
 		System::Void subjectListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {

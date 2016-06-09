@@ -18,7 +18,6 @@
   <ItemGroup>
     <ClCompile Include="Grasp.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="GraspTelemetry.cpp" />
     <ClCompile Include="GraspTaskManagers.cpp" />
   </ItemGroup>
   <ItemGroup>
