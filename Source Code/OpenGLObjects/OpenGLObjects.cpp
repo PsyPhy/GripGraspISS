@@ -951,14 +951,11 @@ void Ellipsoid::Draw( void ) {
 }
 /********************************************************************************/
 
-Disk::Disk( double outer, double inner, int sl, int lps ) {
+Disk::Disk( double outer_radius, double inner_radius, int slices ) {
 
-  quad = gluNewQuadric();
-
-  outer_radius = outer;
-  inner_radius = inner;
-  slices = sl;
-  loops = lps;
+  this->outer_radius = outer_radius;
+  this->inner_radius = inner_radius;
+  this->slices = slices;
 
   OpenGLObject();   // Do what every OpenGlObject does at creation.
 
@@ -966,10 +963,77 @@ Disk::Disk( double outer, double inner, int sl, int lps ) {
 
 void Disk::Draw( void ) {
 
-  if ( ! enabled ) return;
-  PrepDraw();
-  gluDisk( quad, inner_radius, outer_radius, slices, loops );
-  FinishDraw();
+	if ( ! enabled ) return;
+	PrepDraw();
+	double deltaA = Pi / (double) slices;
+
+	if ( texture ) {
+
+		GLfloat u1, u2, u3, u4, v1, v2, v3, v4;
+		GLfloat x1, x2, x3, x4, y1, y2, y3, y4;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		glEnable( GL_TEXTURE_2D );
+		texture->Use();
+		for ( double angle = 0.0; angle <= 2.0 * Pi; angle += deltaA  ){
+
+			x1 = outer_radius * cos( angle );
+			x2 = outer_radius * cos( angle + deltaA );
+			x3 = inner_radius * cos( angle + deltaA );
+			x4 = inner_radius * cos( angle );
+			y1 = outer_radius * sin( angle );
+			y2 = outer_radius * sin( angle + deltaA );
+			y3 = outer_radius * sin( angle + deltaA );
+			y4 = outer_radius * sin( angle );
+
+			u1 = 0.5 + 0.5 * x1 / outer_radius;
+			u2 = 0.5 + 0.5 * x2 / outer_radius;
+			u3 = 0.5 + 0.5 * x3 / outer_radius;
+			u4 = 0.5 + 0.5 * x4 / outer_radius;
+
+			v1 = 0.5 + 0.5 * y1 / outer_radius;
+			v2 = 0.5 + 0.5 * y2 / outer_radius;
+			v3 = 0.5 + 0.5 * y3 / outer_radius;
+			v4 = 0.5 + 0.5 * y4 / outer_radius;
+
+			glBegin(GL_QUADS);
+			glNormal3d( 0.0, 0.0, 1.0 );
+			glTexCoord2f( u1, v1 ); glVertex3d( x1, y1, 0.0 );
+			glTexCoord2f( u2, v2 ); glVertex3d( x2, y2, 0.0 );
+			glTexCoord2f( u3, v3 ); glVertex3d( x3, y3, 0.0 );
+			glTexCoord2f( u4, v4 ); glVertex3d( x4, y4, 0.0 );
+			glEnd();
+
+		}
+	}
+	else {
+		GLfloat x1, x2, x3, x4, y1, y2, y3, y4;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		double deltaA = Pi / 16.0;
+		for ( double angle = 0.0; angle <= 2.0 * Pi; angle += deltaA ){
+
+			x1 = outer_radius * cos( angle );
+			x2 = outer_radius * cos( angle + deltaA );
+			x3 = inner_radius * cos( angle + deltaA );
+			x4 = inner_radius * cos( angle );
+			y1 = outer_radius * sin( angle );
+			y2 = outer_radius * sin( angle + deltaA );
+			y3 = outer_radius * sin( angle + deltaA );
+			y4 = outer_radius * sin( angle );
+
+			glBegin(GL_QUADS);
+			glNormal3d( 0.0, 0.0, 1.0 );
+			glVertex3d( x1, y1, 0.0 );
+			glVertex3d( x2, y2, 0.0 );
+			glVertex3d( x3, y3, 0.0 );
+			glVertex3d( x4, y4, 0.0 );
+			glEnd();
+
+		}
+	}
+
+	FinishDraw();
 
 }
 

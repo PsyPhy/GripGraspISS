@@ -341,11 +341,8 @@ public:
   double inner_radius;
   double outer_radius;
   int    slices;
-  int    loops;
-  GLUquadric *quad;
-
-  Disk( double outer_radius = DEFAULT_RADIUS, double inner_radius = 0.0, 
-    int slices = DEFAULT_SLICES, int loops = DEFAULT_STACKS );
+ 
+  Disk( double outer_radius = DEFAULT_RADIUS, double inner_radius = 0.0,  int slices = DEFAULT_SLICES );
 
   void  Draw();
   void SetRadius( double outer_radius, double inner_radius = 0.0 );
