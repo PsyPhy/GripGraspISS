@@ -63,7 +63,7 @@ void GraspGLObjects::SetLighting( void ) {
 	GLfloat specular = fintensity;
 
 	// Light definition
-	GLfloat LightPosition[] = { 0.0, 0.0, -1000.0, 0.0 };
+	GLfloat LightPosition[] = { 0.0, 0.0, 1000.0, 0.0 };
 	GLfloat LightAmbient[]  = { ambient, ambient, ambient, 1.0};
 	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
 	GLfloat LightSpecular[] = { specular, specular, specular, 1.0};
