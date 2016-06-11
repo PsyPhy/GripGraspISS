@@ -364,6 +364,7 @@ GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) {
 }
 void  GraspTaskManager::ExitProvideFeedback( void ) {
 	renderer->orientationTarget->Disable();
+	renderer->projectiles->Disable();
 }
 
 // TrialCompleted
@@ -451,3 +452,34 @@ void VtoV::ExitObtainResponse( void ) {
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }
+
+/// VtoK
+
+void VtoVK::EnterPresentTarget( void ) {
+	// The target is displayed visually.
+	renderer->orientationTarget->Enable();
+	// Do all the default actions as well.
+	GraspTaskManager::EnterPresentTarget();
+}
+void  VtoVK::ExitPresentTarget( void ) {
+	// Hide the visible target.
+	renderer->orientationTarget->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitPresentTarget();
+}
+
+void VtoVK::EnterObtainResponse( void ) {
+	// Show the visual representation of the hand that is driven 
+	//  by the mouse or buttons.
+	renderer->kTool->Enable();
+	// Do all the default actions as well.
+	GraspTaskManager::EnterObtainResponse();
+}
+
+void VtoVK::ExitObtainResponse( void ) {
+	// Hide the hand.
+	renderer->kTool->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitObtainResponse();
+}
+

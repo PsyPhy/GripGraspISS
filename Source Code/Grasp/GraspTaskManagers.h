@@ -116,6 +116,13 @@ namespace Grasp {
 		void EnterObtainResponse( void );
 		void ExitObtainResponse( void );
 	};
+	// V-V protocol. 
+	class VtoVK : public GraspTaskManager {
+		void EnterPresentTarget( void );
+		void ExitPresentTarget( void );
+		void EnterObtainResponse( void );
+		void ExitObtainResponse( void );
+	};
 
 };
 
