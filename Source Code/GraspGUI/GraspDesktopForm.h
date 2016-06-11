@@ -651,12 +651,12 @@ namespace GraspGUI {
 			ParseSubjectFile( scriptDirectory + "Subjects.sbj" );
 
 			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
-			fOutputDebugString( "Connecting to DEX ... " );
-			dex = new Grasp::DexServices();
-			dex->Connect();
-			fOutputDebugString( "OK.\n" );
-			CreateRefreshTimer( 1000 );
-			StartRefreshTimer();
+			//fOutputDebugString( "Connecting to DEX ... " );
+			//dex = new Grasp::DexServices();
+			//dex->Connect();
+			//fOutputDebugString( "OK.\n" );
+			//CreateRefreshTimer( 1000 );
+			//StartRefreshTimer();
 
 		}
 
