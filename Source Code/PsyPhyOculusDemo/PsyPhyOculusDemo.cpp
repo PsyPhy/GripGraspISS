@@ -11,7 +11,7 @@ Joe McIntyre
 // Flags to set the operating mode.
 bool useOVR = false;		// OVR style rendering.
 bool usePsyPhy = true;	// PsyPhy style rendering.
-bool useCoda = false;	// Do we have a Coda?
+bool useCoda = true;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -209,7 +209,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	while ( platform->HandleMessages() ) {
 
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-		static float Yaw( 3.14159f );  
+		static float Yaw( 0.0f );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -230,7 +230,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		if ( platform->Key['O'] ) hmdTracker = oculusPoseTracker;
 		if ( platform->Key['N'] ) hmdTracker = nullPoseTracker;
-		if ( platform->Key['C'] && useCoda ) hmdTracker = hmdTracker;
+		if ( platform->Key['C'] && useCoda ) hmdTracker = hmdCascadeTracker;
 		if ( platform->Key['K'] && useCoda ) hmdTracker = oculusCodaPoseTracker;
 		if ( platform->Key['H'] && useCoda ) hmdTracker = handTracker;
 		if ( platform->Key['T'] && useCoda ) hmdTracker = chestTracker;
