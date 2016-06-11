@@ -260,8 +260,7 @@ struct OculusDisplayOGL
 	int       mouseCumulativeY;
 
 
-	static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
-	{
+	static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam) {
 		OculusDisplayOGL *p = reinterpret_cast<OculusDisplayOGL *>(GetWindowLongPtr(hWnd, 0));
 
 		// Variables used to handle mouse movements.

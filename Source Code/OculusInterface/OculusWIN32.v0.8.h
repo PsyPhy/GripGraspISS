@@ -15,6 +15,9 @@
 #include "Extras/OVR_Math.h"
 #include "OVR_CAPI_GL.h"
 
+#include "../Useful/fOutputDebugString.h"
+
+
 // Oculus had this in the include file, but that is bad practice because it gets included everywhere.
 // I comment it out here and qualify the names with OVR:: as needed.
 //using namespace OVR;
@@ -526,7 +529,7 @@ struct OculusDisplayOGL
             glDebugMessageCallbackARB(DebugGLCallback, NULL);
             if (glGetError())
             {
-                OVR_DEBUG_LOG(("glDebugMessageCallbackARB failed."));
+                fOutputDebugString("glDebugMessageCallbackARB failed.");
             }
 
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
@@ -567,6 +570,6 @@ struct OculusDisplayOGL
 
     static void GLAPIENTRY DebugGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
     {
-        OVR_DEBUG_LOG(("Message from OpenGL: %s\n", message));
+        fOutputDebugString( "Message from OpenGL: %s\n", message );
     }
 };
