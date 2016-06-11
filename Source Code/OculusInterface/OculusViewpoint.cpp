@@ -38,7 +38,7 @@ void OculusViewpoint::Apply( int eye ) {
 	glViewport( crop, crop, eye_buffer_width - crop * 2, eye_buffer_height - crop * 2 );
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum( - left_tan, right_tan, - down_tan, up_tan, nearest, farthest );
+	glFrustum( - nearest * left_tan, nearest * right_tan, - nearest * down_tan, nearest * up_tan, nearest, farthest );
 
 	switch( eye ) {
 
