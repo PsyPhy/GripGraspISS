@@ -71,11 +71,6 @@ namespace Grasp {
 
 		protected:
 		
-			// Textures that are used to decorate certain objects.
-			// These files have to be in the execution directory.
-			static const char *wall_texture_bitmap;
-			static const char *sky_texture_bitmap;
-			static const char *references_texture_bitmap;
 			
 			// Dimensions of the room.
 			static const double room_radius;
@@ -104,42 +99,52 @@ namespace Grasp {
 
 		protected:
 
-			Texture			*wall_texture;		// The texture that is applied to the walls.
-			Texture			*sky_texture;
-			Texture			*references_texture;
+			// Textures that are used to decorate certain objects.
+			// These files have to be in the execution directory.
+			Texture			*wall_texture;				// The texture that is applied to the walls.
+			static const char *wall_texture_bitmap;
+			Texture			*references_texture;		// The bars that run along the tunnel walls are textured as well.
+			static const char *references_texture_bitmap;
+			Texture			*sky_texture;				// A starry sky.
+			static const char *sky_texture_bitmap;
+			Texture			*timeout_texture;			// Messages that are placed on a moving disk to give feedback to the subject
+			static const char *timeout_texture_bitmap;	// in a way that avoids establishing a reference frame based on the orientation 
+			Texture			*head_misalign_texture;		// of the text.
+			static const char *head_misalign_texture_bitmap;
+
 
 		public:
 
-			Assembly		*orientationTarget;			// Shows the target orientation.
-			Assembly		*positionOnlyTarget;		// Shows the center of the target location.
-			Assembly		*response;
+			Assembly		*orientationTarget;		// Shows the target orientation.
+			Assembly		*positionOnlyTarget;	// Shows the center of the target location. Allows subject to aim without showing the target orientation.
+			Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
+			Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
 
-			Assembly		*tiltPrompt;
+			Yoke			*hud;					// Collection of objects that move with the head.
+			Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
+			Assembly		*tiltPrompt;			// Shows the subject which direction to turn the head when the error is large.
+			Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial.
+			Assembly		*timeoutIndicator;		// Shown when the subject takes too long to do something.
+			Assembly		*headMisalignIndicator;	// Shown when the subject does not maintain the desired head tilt.
+			Assembly		*vTool;					// Full-fledged tool. One can see its orientation.
 
-			Assembly		*successIndicator;			// Shown briefly to indicate successful completion of a trial.
-			Assembly		*timeoutIndicator;			// Shown when the subject takes too long to do something.
+			Yoke			*hand;					// An collection of objects that move with the hand.
+			Assembly		*kTool;					// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
+			Assembly		*vkTool;				// A tool that shows the hand's orientation. Used in V-VK and K-VK or in training for K-K.
+			Assembly		*kkTool;				// A tool that is used to drive the hand to the target orientation in K-K.
 
-			Yoke			*hand;				// An collection of objects that move with the hand.
-			Assembly		*vTool;				// Full-fledged tool. One can see its orientation.
-			Assembly		*kTool;				// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
-			Assembly		*kkTool;			// A tool that is used to drive the hand to the target orientation in K-K.
-
-			Assembly		*projectiles;		// These can be shot out of the tool.
-
-			Assembly		*room;
-			Cylinder		*tunnel;			// Part of the room, but it allows us to access it directly to change its color.
-			Assembly		*starrySky;			// Backgrounds that can be seen at the end of the tunnel.
+			Assembly		*room;					// A collection of objects that make up the fixed visual environment.
+			Cylinder		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
+			Assembly		*starrySky;				// Backgrounds that can be seen at the end of the tunnel.
 			Assembly		*darkSky;
-			Glasses			*glasses;			// A frame around the viewport into the virtual scene that moves with the head.
 
+			// Objects used in third-person views of the virtual world.
 			Assembly		*head;
 			Assembly		*torso;
-
+			// Representations of the CODA marker structures.
 			MarkerStructureGLObject		*hmdStructure;
 			MarkerStructureGLObject		*handStructure;
 			MarkerStructureGLObject		*chestStructure;
-
-
 
 		public: 
 
@@ -160,6 +165,7 @@ namespace Grasp {
 			Assembly *CreateLaserPointer(void);
 			Assembly *CreateProjectiles(void);
 			Yoke	 *CreateHand(void);
+			Yoke	 *CreateHUD(void);
 
 			Assembly *CreateOrientationTarget( void );
 			Assembly *CreatePositionOnlyTarget( void );
@@ -176,17 +182,6 @@ namespace Grasp {
 			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double epsilon );
 			bool ColorKK( double desired_angle );
 			bool ColorGlasses( double desired_angle );
-
-			void DrawOrientationTarget( TrackerPose *pose = nullptr );
-			void DrawPositionOnlyTarget(  TrackerPose *pose = nullptr  );
-			void DrawResponse(  TrackerPose *pose = nullptr  );
-			void DrawTiltPrompt( TrackerPose *pose = nullptr );
-			void DrawHand( TrackerPose *pose = nullptr );
-			void DrawProjectiles(TrackerPose *pose = nullptr);
-			void DrawRoom( TrackerPose *pose = nullptr );
-			void DrawStarrySky( void );
-			void DrawDarkSky( void);
-			void DrawGlasses( TrackerPose *pose = nullptr );
 
 			// Objects that are not used for VR in the HMD, but may be used
 			// to create other 3D visual scenes.

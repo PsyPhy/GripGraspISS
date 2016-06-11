@@ -19,6 +19,8 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
+const char *GraspGLObjects::timeout_texture_bitmap = "Bmp\\Timeout.bmp";
+const char *GraspGLObjects::head_misalign_texture_bitmap = "Bmp\\Headtilted.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -38,7 +40,7 @@ const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 // We may want to use a circular arrow to indicate to the subject which
 //  way to tilt the head, in addition to color cues.
 const double GraspGLObjects::prompt_radius = 160.0;
-const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -1500.0 };
+const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -500.0 };
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
@@ -88,6 +90,9 @@ void GraspGLObjects::CreateTextures( void ) {
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
+	timeout_texture = new Texture( timeout_texture_bitmap );
+	head_misalign_texture = new Texture( head_misalign_texture_bitmap );
+
 }
 
 Assembly *GraspGLObjects::CreateStarrySky( void ) {
@@ -337,11 +342,28 @@ bool GraspGLObjects::ColorKK( double error ) {
 // Each component will be activated or deactivated separately, but their pose will be set
 // jointly by accessing the hand object.
 Yoke *GraspGLObjects::CreateHand( void ) {
-	hand = new Yoke();
-	hand->AddComponent( vTool );
+	Yoke *hand = new Yoke();
 	hand->AddComponent( kTool );
+	hand->AddComponent( vkTool );
 	hand->AddComponent( kkTool );
 	return( hand );
+}
+
+Yoke *GraspGLObjects::CreateHUD( void ) {
+	Yoke *yoke = new Yoke();
+		
+	// The glasses will be positioned at the same place as the head based on the tracker.
+	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
+	glasses->SetOffset( 0.0, 0.0, -400.0 );
+	yoke->AddComponent( glasses );
+	timeoutIndicator->SetOffset( prompt_location );
+	yoke->AddComponent( timeoutIndicator );
+	headMisalignIndicator->SetOffset( prompt_location );
+	yoke->AddComponent( headMisalignIndicator );
+	vTool->SetOffset( 0.0, 0.0, -200.0 );
+	yoke->AddComponent( vTool );
+	return( yoke );
+
 }
 
 Assembly *GraspGLObjects::CreateProjectiles( void ) {
@@ -447,19 +469,25 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	orientationTarget = CreateOrientationTarget();
 	positionOnlyTarget = CreatePositionOnlyTarget();
 	response = CreateResponse();
+
 	tiltPrompt = CreateTiltPrompt();
 	successIndicator = CreateSuccessIndicator();
 	timeoutIndicator = CreateTimeoutIndicator();
+	headMisalignIndicator = CreateHeadMisalignIndicator();
 	projectiles = CreateProjectiles();
 
-	// Orientated tool used when responding with full visual feedback.
+	// Orientated tool used when responding with only visual feedback (e.g. V-V).
 	vTool = CreateVisualTool();
+	// Orientated tool that allows visual feedback of the hand's orientation.
+	vkTool = CreateVisualTool();
 	// A tool that allows one to point, but does not show the roll orientation.
 	kTool = CreateKinestheticTool();
 	// Same as the above, but this one we use when presenting a kinesthetic target in K-K.
 	kkTool = CreateKinestheticTool();
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
+	// And to the gaze.
+	hud = CreateHUD();
 }
 
 // Place objects at default locations.
@@ -469,13 +497,6 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
-	tiltPrompt->SetPosition( prompt_location );
-	successIndicator->SetPosition( prompt_location );
-	timeoutIndicator->SetPosition( prompt_location );
-	// The glasses will be positioned at the same place as the head based on the tracker.
-	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
-	glasses->SetOffset( 0.0, 0.0, -400.0 );
-	glasses->SetPosition( 0.0, 0.0, 0.0 );
 }
 
 
@@ -493,118 +514,28 @@ void GraspGLObjects::DrawVR( void ) {
 	// If we ever decide not to attach them to the room, these lines should be uncommented.
 	// DrawLightSky();
 	// DrawDarkSky();
-	DrawRoom();
-	DrawGlasses();
+	room->Draw();
+	glasses->Draw();
 
 	// Draw the other objects with the hopes of seeing specular reflections. 
 	// I am still trying to get specular reflections to work.
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
 
-	DrawOrientationTarget();
-	DrawPositionOnlyTarget();
-	DrawResponse();
-	DrawTiltPrompt();
-	// I am going to start phasing out the DrawXXX() routines.
+	orientationTarget->Draw();
+	positionOnlyTarget->Draw();
+	response->Draw();
+	tiltPrompt->Draw();
 	successIndicator->Draw();
 	timeoutIndicator->Draw();
-	DrawHand();
-	DrawProjectiles();
-
-}
-
-// A set of routines that allows one to set the pose of the various objects and then draw them in 
-//  a single operation. This can be convenient, but it goes against the concept of objects having 
-//  a current, persistent state that includes its visibility and its pose. In many cases it will make
-//  more sense to access the objects directly with obj->SetPosition(), obj->SetOrientation(), obj->Draw(), etc.
-
-
-// Draw the sky, presumably always at the same position.
-// For Grasp, it might make more sense if it is attached to the room so that they tilt together.
-// If so, these routines need not be called explicitly. See comments above.
-void GraspGLObjects::DrawStarrySky( void ) {
-	starrySky->Draw();
-}
-
-void GraspGLObjects::DrawDarkSky( void ) {
-	darkSky->Draw();
-}
-
-void GraspGLObjects::DrawRoom( TrackerPose *pose ) {
-	// If the caller has specified a pose, move the room to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != static_cast<TrackerPose *>( nullptr ) ) {
-		room->SetPosition( pose->pose.position );
-		room->SetOrientation( pose->pose.orientation );
-	}
-	room->Draw();
-}
-
-void GraspGLObjects::DrawOrientationTarget( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		orientationTarget->SetPosition( pose->pose.position );
-		orientationTarget->SetOrientation( pose->pose.orientation );
-	}
-	orientationTarget->Draw();
-}
-
-void GraspGLObjects::DrawResponse( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		response->SetPosition( pose->pose.position );
-		response->SetOrientation( pose->pose.orientation );
-	}
-	response->Draw();
-}
-void GraspGLObjects::DrawPositionOnlyTarget( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		positionOnlyTarget->SetPosition( pose->pose.position );
-		positionOnlyTarget->SetOrientation( pose->pose.orientation );
-	}
-	positionOnlyTarget->Draw();
-}
-void GraspGLObjects::DrawHand( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		hand->SetPosition( pose->pose.position );
-		hand->SetOrientation( pose->pose.orientation );
-	}
-	hand->Draw();
-}
-
-void GraspGLObjects::DrawProjectiles( TrackerPose *pose ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		projectiles->SetPosition( pose->pose.position );
-		projectiles->SetOrientation( pose->pose.orientation );
-	}
+	headMisalignIndicator->Draw();
+	vTool->Draw();
+	kTool->Draw();
+	kkTool->Draw();
 	projectiles->Draw();
+
 }
 
-void GraspGLObjects::DrawTiltPrompt(  TrackerPose *pose  ) {
-	// If the caller has specified a pose, move to that pose first.
-	// Otherwise, just draw it at it's current pose.
-	if ( pose != nullptr ) {
-		tiltPrompt->SetPosition( pose->pose.position );
-		tiltPrompt->SetOrientation( pose->pose.orientation );
-	}
-	tiltPrompt->Draw();
-}
-
-void GraspGLObjects::DrawGlasses(  TrackerPose *pose  ) {
-	if ( pose != nullptr ) {
-		glasses->SetPosition( pose->pose.position );
-		glasses->SetOrientation( pose->pose.orientation );
-	}
-	glasses->Draw();
-}
 
 // The following objects are not used during the Grasp protocol and are not seen by the subject.
 // Rather, these objects are used in the GraspGUI and elswhere to visualize the subject's pose.
