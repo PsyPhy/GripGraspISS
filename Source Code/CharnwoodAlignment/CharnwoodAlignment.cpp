@@ -22,11 +22,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	MarkerFrame localFrame[2];
 
-	int origin = 1;
-	int x_minus = 1;
-	int x_plus = 0;
+	int origin = 2;
+	int x_minus = 0;
+	int x_plus = 1;
 	int y_minus = 2;
-	int y_plus = 0;
+	int y_plus = 1;
 
 
 	fprintf( stderr, "Initializing CODA ..." );
