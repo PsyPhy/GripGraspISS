@@ -82,6 +82,7 @@ namespace Grasp {
 		double			desiredHeadRollTolerance;		// Ignored for the moment.
 		Quaternion		desiredHeadOrientation;
 		bool			HandleHeadAlignment( void );
+		void			HandleSpinningPrompts( void );
 
 		// Drives movements of the projectiles.
 

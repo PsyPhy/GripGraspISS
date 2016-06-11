@@ -402,9 +402,27 @@ Assembly *GraspGLObjects::CreateTimeoutIndicator( void ) {
 	// For the moment the indicator for a timeout is just a magenta 
 	// sphere. I would like to create something that is more intuitive.
 	Assembly	*assembly = new Assembly();
-	Sphere		*sphere = new Sphere( prompt_radius );
-	sphere->SetColor( MAGENTA );
-	assembly->AddComponent( sphere );
+	Disk		*surface;
+	
+	surface = new Disk( 120.0, 0.0, 128 );
+	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface->SetTexture( timeout_texture );
+	assembly->AddComponent( surface );
+
+	return assembly;
+}
+
+Assembly *GraspGLObjects::CreateHeadMisalignIndicator( void ) {
+	// For the moment the indicator for a timeout is just a magenta 
+	// sphere. I would like to create something that is more intuitive.
+	Assembly	*assembly = new Assembly();
+	Disk		*surface;
+	
+	surface = new Disk( 120.0, 0.0, 128 );
+	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface->SetTexture( head_misalign_texture );
+	assembly->AddComponent( surface );
+
 	return assembly;
 }
 
