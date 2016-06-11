@@ -42,7 +42,7 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		viewpoint->SetPose( headPose.pose );
-		renderer->glasses->SetPose( headPose.pose );
+		renderer->hud->SetPose( headPose.pose );
 	}
 
 	// Track movements of the hand marker array.
@@ -165,6 +165,7 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 			// Normally here we would decide if it is a hit or a miss and set the state 
 			// accordingly. For the moment, everything is a miss.
 			currentProjectileState = miss;
+			renderer->projectiles->Disable();
 		}
 		else {
 			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
@@ -181,7 +182,6 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 	case hit:
 		// We might want to animate the hit or the miss situations, but for now we just 
 		// hide the projectiles and transition to the cocked state, ready for the next shot.
-		renderer->projectiles->Disable();
 		currentProjectileState = cocked;
 		break;
 
@@ -217,6 +217,11 @@ bool GraspVR::HandleHandAlignment( void ) {
 	return( renderer->ColorKK( desiredHandRoll ) );
 }
 
+void GraspVR::HandleSpinningPrompts( void ) {
+	static double angle = 39.0;
+	renderer->timeoutIndicator->SetOrientation( angle, 0.0, 0.0 );
+	angle += 1.0;
+}
 double  GraspVR::SetTargetOrientation( double roll_angle ) {
 	renderer->orientationTarget->SetOrientation( roll_angle, 0.0, 0.0 );
 	return( roll_angle );
@@ -232,14 +237,10 @@ void GraspVR::Render( void ) {
 	glUsefulPrepareRendering();
 	for (int eye = 0; eye < 2; ++eye) {
 
-		// Get ready to draw into one of the eyes.
-		oculusMapper->SelectEye( eye );
 		// Set up the viewing transformations.
 		viewpoint->Apply( eye );
 		// Draw the objects in the world.
 		renderer->DrawVR();
-		// Take care of an Oculus bug.
-		oculusMapper->DeselectEye( eye );
 
 	}
 

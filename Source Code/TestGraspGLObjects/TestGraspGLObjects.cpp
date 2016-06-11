@@ -42,21 +42,17 @@ int _tmain(int argc, char *argv[])
 	}  
 	window->Activate();
 
-	// Initialize the state of the GL graphics engine.
-	glUsefulInitializeDefault();
-	glUsefulDefaultSpecularLighting( 0.7 );
-
-  /* 
+   /* 
 	* Define a viewing projection with:
 	*  45° vertical field-of-view - horizontal fov will be determined by window aspect ratio.
 	*  60 mm inter-pupilary distance - the units don't matter to OpenGL, but all the dimensions
 	*      that I give for the model room here are in mm.
 	*  100.0 to 10000.0  depth clipping planes - making this smaller would improve the depth resolution.
 	*/
-	viewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
+	viewpoint = new Viewpoint( 6.0, 80.0, 10.0, 10000.0);
 
-	viewpoint->SetPosition( 0.0, 0.0, -800.0 );
-	viewpoint->SetOrientation(0.0, 0.0, 180.0 );
+	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
+	viewpoint->SetOrientation(0.0, 0.0, 0.0 );
 
 	objects = new GraspGLObjects();
 	objects->CreateVRObjects();
@@ -73,21 +69,25 @@ int _tmain(int argc, char *argv[])
 	objects->starrySky->Disable();
 	objects->darkSky->Enable();
 	objects->room->Enable();
-	objects->orientationTarget->Disable();
+	objects->orientationTarget->Enable();
 	objects->positionOnlyTarget->Disable();
-	objects->response->Disable();
+	objects->response->Enable();
 	objects->tiltPrompt->Disable();
-	objects->vTool->Disable();
+	objects->vTool->Enable();
 	objects->kTool->Disable();
 	objects->kkTool->Disable();
 	objects->projectiles->Disable();
-	objects->glasses->Disable();
+	objects->glasses->Enable();
+	objects->successIndicator->Disable();
+	objects->timeoutIndicator->Disable();
+	objects->headMisalignIndicator->Enable();
 
 	objects->tunnel->SetColor( GRAY );
 	objects->ColorGlasses( 0.0 );
 
-	objects->chestStructure->SetOrientation( 0.0, 0.0, 0.0 );
-	objects->hmdStructure->SetPosition( 0.0, 0.0, 0.0 );
+	objects->chestStructure->SetPosition( 0.0, -200.0, -500.0 );
+	objects->handStructure->SetPosition( 0.0, 0.0, -500.0 );
+	objects->hmdStructure->SetPosition( 0.0, 200.0, -500.0 );
 
 	while ( true ) {
 
@@ -99,11 +99,24 @@ int _tmain(int argc, char *argv[])
 		objects->DrawVR();
 		//objects->hmdStructure->Draw();
 		//objects->handStructure->Draw();
-		objects->chestStructure->Draw();
+		//objects->chestStructure->Draw();
 
 		window->Swap();
 
 		if ( ! window->RunOnce() ) break;
+
+		static double yaw_time = 0.0;
+		double yaw =  30.0 * sin( yaw_time );
+		yaw_time += 0.002;
+
+		viewpoint->SetOrientation( 0.0, 0.0, yaw );
+
+		objects->hud->SetOrientation( 0.0, 0.0, yaw );
+
+		static double angle = 39.0;
+		objects->timeoutIndicator->SetAttitude( - angle, 0.0, 0.0 );
+		objects->headMisalignIndicator->SetAttitude( - angle, 0.0, 0.0 );
+		angle += 0.2;
 
 	}
 
