@@ -11,7 +11,7 @@ Joe McIntyre
 // Flags to set the operating mode.
 bool useOVR = false;		// OVR style rendering.
 bool usePsyPhy = true;	// PsyPhy style rendering.
-bool useCoda = true;	// Do we have a Coda?
+bool useCoda = false;	// Do we have a Coda?
 
 #define _CRT_SECURE_NO_WARNINGS
 

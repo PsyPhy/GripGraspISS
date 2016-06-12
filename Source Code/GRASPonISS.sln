@@ -56,13 +56,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignToRigidBody", "AlignTo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignToRigidBodyGUI", "AlignToRigidBodyGUI\AlignToRigidBodyGUI.vcxproj", "{A924A357-A3F0-4A47-A8B7-CBCF3FE6E3B0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GL) Oculus 1.3", "..\..\OculusSDKv1.3\OculusSDK\Samples\OculusRoomTiny\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GLj).vcxproj", "{94D029BE-8EF3-41FC-A977-E81BECB77C9A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (Oculus 1.3 Do Not Edit)", "..\..\OculusSDKv1.3\OculusSDK\Samples\OculusRoomTiny\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GLj).vcxproj", "{94D029BE-8EF3-41FC-A977-E81BECB77C9A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DexServices", "DexServices\DexServices.vcxproj", "{8EE947DF-D3D6-4548-88D1-2DD46EAB049B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GRASP) Oculus 0.8", "OculusRoomTiny (GRASP) Oculus 0.8\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL).vcxproj", "{396D645E-3224-433C-AFBA-6EF6919A2214}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GRASP - Oculus 0.8)", "OculusRoomTiny (GRASP) Oculus 0.8\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL).vcxproj", "{396D645E-3224-433C-AFBA-6EF6919A2214}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GRASP) Oculus 1.3", "OculusRoomTiny (GRASP) Oculus 1.3\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL) Oculus 1.3.vcxproj", "{52D46297-0F00-4547-8BD9-9A784B045BFA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GRASP - Oculus 1.3)", "OculusRoomTiny (GRASP) Oculus 1.3\OculusRoomTiny (GL)\Projects\Windows\VS2010\OculusRoomTiny (GL) Oculus 1.3.vcxproj", "{52D46297-0F00-4547-8BD9-9A784B045BFA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScreenshots", "GraspScreenshots\GraspScreenshots.vcxproj", "{3CB4C789-1C1B-4673-88FD-C161257D4C9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -296,6 +298,14 @@ Global
 		{52D46297-0F00-4547-8BD9-9A784B045BFA}.Release|Win32.Build.0 = Release|Win32
 		{52D46297-0F00-4547-8BD9-9A784B045BFA}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{52D46297-0F00-4547-8BD9-9A784B045BFA}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.Debug|Win32.Build.0 = Debug|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.Release|Win32.ActiveCfg = Release|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.Release|Win32.Build.0 = Release|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

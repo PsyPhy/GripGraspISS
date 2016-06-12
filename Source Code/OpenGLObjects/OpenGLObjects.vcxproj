@@ -122,6 +122,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="OpenGLYoke.cpp" />
+    <ClCompile Include="SaveBitmap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Useful\Useful.vcxproj">

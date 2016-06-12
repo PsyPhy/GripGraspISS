@@ -1,6 +1,13 @@
 /********************************************************************************/
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <windows.h>
+#include <mmsystem.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <tchar.h>
+#include <math.h>
+#include <time.h> 
 #include "../Useful/OpenGLUseful.h"
 #include "OpenGLWindows.h"
 
@@ -359,6 +366,29 @@ void OpenGLWindow::Clear( float rgba[] )
 void OpenGLWindow::Swap( void )
 {
 	SwapBuffers( hDC );
+}
+
+/********************************************************************************/
+
+void	SaveBitmap( const char *szFilename, HBITMAP hBitmap );
+
+void OpenGLWindow::SaveAsBMP( const char *filename )
+{
+	// Presumably we just did a swap. 
+	// Sleep a little to be sure that the bitmap has been updated.
+	Sleep( 500 );
+
+	HDC		hBmpFileDC = CreateCompatibleDC( hDC );
+	HBITMAP	hBmpFileBitmap = CreateCompatibleBitmap( hDC, width, height );
+	HBITMAP hOldBitmap = (HBITMAP) SelectObject( hBmpFileDC, hBmpFileBitmap );
+	BitBlt( hBmpFileDC, 0, 0, width, height, hDC, 0, 0, SRCCOPY | CAPTUREBLT );
+	SelectObject( hBmpFileDC, hOldBitmap );
+	
+	SaveBitmap( filename, hBmpFileBitmap );
+
+	DeleteDC( hBmpFileDC );
+	DeleteObject( hBmpFileBitmap );
+
 }
 
 /********************************************************************************/

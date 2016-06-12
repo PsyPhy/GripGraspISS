@@ -66,6 +66,7 @@ public:
   void Activate( void );
   bool RunOnce( void );
   void Swap( void );
+  void SaveAsBMP( const char *filename );
   void Clear( int color = WHITE );
   void Clear( double r, double g, double b, double alpha = 1.0 );
   void Clear( float rgba[4] );
@@ -73,7 +74,6 @@ public:
   void SetEventCallback( bool (*callback)( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) );
 
   int GetInput( double timeout = -1.0 );
-  int Sleep( double seconds );
 
   int MouseDeltaX( void );
   int MouseDeltaY( void );
