@@ -122,6 +122,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->tiltPrompt->Disable();
 	renderer->successIndicator->Disable();
 	renderer->timeoutIndicator->Disable();
+	renderer->headMisalignIndicator->Disable();
 	renderer->vTool->Disable();
 	renderer->kTool->Disable();
 	renderer->kkTool->Disable();
@@ -237,10 +238,16 @@ void GraspVR::Render( void ) {
 	glUsefulPrepareRendering();
 	for (int eye = 0; eye < 2; ++eye) {
 
+		// Get ready to draw into one of the eyes.
+		oculusMapper->SelectEye( eye );
+
 		// Set up the viewing transformations.
 		viewpoint->Apply( eye );
 		// Draw the objects in the world.
 		renderer->DrawVR();
+
+		// Take care of an Oculus bug.
+		oculusMapper->DeselectEye( eye );
 
 	}
 
