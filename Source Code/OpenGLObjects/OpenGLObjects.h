@@ -85,6 +85,7 @@ public:
 
   virtual void SetPose( Pose &pose );
 
+  void	SetAttitude( const Quaternion q );
   void  SetAttitude( Matrix3x3 m );
   void  SetAttitude( double angle, const Vector3 axis );
   void  SetAttitude( double roll, double pitch, double yaw );

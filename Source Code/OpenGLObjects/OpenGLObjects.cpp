@@ -224,6 +224,13 @@ void OpenGLObject::SetAttitude( double roll, double pitch, double yaw ) {
 
 }
 
+// Set the orientation of the object.
+void OpenGLObject::SetAttitude( const Quaternion q ) {
+	Matrix3x3 m;
+	QuaternionToMatrix( m, q );
+	SetOrientation( m );
+}
+
 void OpenGLObject::GetAttitude( Matrix3x3 m ) {
   CopyMatrix( m, attitude );
 }
