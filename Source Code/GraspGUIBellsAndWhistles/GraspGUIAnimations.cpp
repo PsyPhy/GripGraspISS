@@ -127,12 +127,13 @@ void GraspDesktop::RefreshAnimations( void ) {
 	workspaceWindow->Clear( 0.0, 0.0, 0.0 );
 	glUsefulPrepareRendering();
 	workspaceViewpoint->Apply( workspaceWindow, CYCLOPS );
-	objectRenderer->DrawStarrySky();
-	objectRenderer->DrawRoom();
-	objectRenderer->DrawHand( &hand_pose );
-	objectRenderer->DrawOrientationTarget();
-	objectRenderer->DrawPositionOnlyTarget();
-	objectRenderer->DrawTiltPrompt();
+	objectRenderer->starrySky->Draw();
+	objectRenderer->room->Draw();
+	objectRenderer->hand->SetPose( hand_pose.pose );
+	objectRenderer->hand->Draw();
+	objectRenderer->orientationTarget->Draw();
+	objectRenderer->positionOnlyTarget->Draw();
+	objectRenderer->tiltPrompt->Draw();
 	objectRenderer->DrawBody( &head_pose );
 	workspaceWindow->Swap();
 
@@ -147,7 +148,8 @@ void GraspDesktop::RefreshAnimations( void ) {
 	toolDynamicWindow->Clear( dynamic_object_background );
 	codaViewpoint->Apply( toolDynamicWindow, CYCLOPS );
 	vp.CopyVector( hand_pose.pose.position, vp.zeroVector );
-	objectRenderer->DrawHand( &hand_pose );
+	objectRenderer->hand->SetPose( hand_pose.pose );
+	objectRenderer->hand->Draw();
 	toolDynamicWindow->Swap();
 
 	torsoDynamicWindow->Activate();
@@ -165,7 +167,8 @@ void GraspDesktop::RefreshAnimations( void ) {
 	toolStaticWindow->Activate();
 	toolStaticWindow->Clear( static_object_background );
 	codaViewpoint->Apply( toolStaticWindow, CYCLOPS );
-	objectRenderer->DrawHand( &NullTrackerPose );
+	objectRenderer->hand->SetPose( NullTrackerPose.pose );
+	objectRenderer->hand->Draw();
 	toolStaticWindow->Swap();
 
 	torsoStaticWindow->Activate();
