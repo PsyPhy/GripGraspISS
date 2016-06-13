@@ -96,6 +96,8 @@ namespace Grasp {
 
 			static const double headRollTolerance;
 			static const double kkTolerance;
+			static const double errorColorMapEpsilon;
+			static const double errorColorMapTransparency;
 
 		protected:
 
@@ -179,7 +181,7 @@ namespace Grasp {
 			Assembly *CreateDarkSky( void );
 			Glasses  *CreateGlasses(void);
 
-			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double epsilon );
+			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double tolerance, double epsilon );
 			bool ColorKK( double desired_angle );
 			bool ColorGlasses( double desired_angle );
 

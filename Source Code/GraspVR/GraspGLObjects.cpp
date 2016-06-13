@@ -53,8 +53,10 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
-const double GraspGLObjects::headRollTolerance = 5.0;	// Tolerance around desired head tilt, in degrees.
-const double GraspGLObjects::kkTolerance = 5.0;			// Tolerance for hand orientation in K-K.
+const double GraspGLObjects::headRollTolerance = 5.0;		// Tolerance around desired head tilt, in degrees.
+const double GraspGLObjects::kkTolerance = 5.0;				// Tolerance for hand orientation in K-K.
+const double GraspGLObjects::errorColorMapEpsilon = 10.0;	// Deterimines how quickly an object changes color according to orientation error.
+const double GraspGLObjects::errorColorMapTransparency = 0.5;
 
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
@@ -195,7 +197,7 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 	return glasses;
 }
 
-bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double epsilon ) {
+bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double tolerance, double epsilon ) {
 
 #if 0
 	static double transparency = 0.75;
@@ -229,10 +231,12 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
 	// We need a reliable method for computing the roll angle independent from pitch and yaw.
 	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
-
 	// Compute the error with respect to the desired roll angle.
 	double error = fabs( desired_roll_angle - object_roll_angle );
+
+#if 0
 	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
+
 
 	// Michele's formula for the color transitions.
 	//
@@ -257,12 +261,38 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 		}
 		return(false);
 	}
+#endif
+
+	if ( error < tolerance ){//GREEN
+		// If we are within the defined tolerance the color is simply green.
+		// In a future version, perhaps it should turn towards yellow when approaching the edges.
+		double fade = pow( error / tolerance / 2.0, 2 );;
+		object->SetColor( fade, 1.0,  0.0, errorColorMapTransparency );
+		return(true);
+	} else {
+		// Colors will change as one moves farther from the edge of the good zone.
+		double from_edge = error - tolerance;
+		if ( from_edge < epsilon ) {
+			// Go from cyan right at the edge to blue.
+			double fade = from_edge / epsilon;
+			object->SetColor( 0.0, 1.0 - fade, 1.0, errorColorMapTransparency );
+		}
+		else if ( from_edge < 2.0 * epsilon ) {
+			// Go from blue to magenta.
+			double fade = ( from_edge - epsilon ) / epsilon;
+			object->SetColor( fade, 0.0, 1.0, errorColorMapTransparency );
+		}
+		// If more than 2 epsilons, the color is magenta (because ESA does not like red).
+		else object->SetColor( 1.0, 0.0, 1.0, errorColorMapTransparency );
+
+		return(false);
+	}
 
 }
 
 bool GraspGLObjects::ColorGlasses( double roll_angle ) {
 	// Color will be set according to the difference between the desired and measured head angles.
-	bool is_aligned =  SetColorByRollError( glasses, roll_angle, headRollTolerance );
+	bool is_aligned =  SetColorByRollError( glasses, roll_angle, headRollTolerance, errorColorMapEpsilon );
 	return ( is_aligned );
 }
 
@@ -335,7 +365,7 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 }
 
 bool GraspGLObjects::ColorKK( double error ) {
-	return( SetColorByRollError( kkTool, error, kkTolerance ) );
+	return( SetColorByRollError( kkTool, error, kkTolerance, errorColorMapEpsilon ) );
 }
 
 // Group all the elements that move with the hand into a single entity.

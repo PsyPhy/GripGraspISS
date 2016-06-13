@@ -213,7 +213,14 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 	return( desiredHeadRoll );
 }
 bool GraspVR::HandleHeadAlignment( void ) {
-	return( renderer->ColorGlasses( desiredHeadRoll ) );
+	static int good_countdown = CYCLES_TO_BE_GOOD;
+	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
+	if ( renderer->ColorGlasses( desiredHeadRoll ) ) return( --good_countdown <= 0 );
+	// If head alignment has been lost, reset the counter and return false.
+	else {
+		good_countdown = CYCLES_TO_BE_GOOD;
+		return false;
+	}
 }
 
 double GraspVR::SetDesiredHandRoll( double roll_angle ) {
