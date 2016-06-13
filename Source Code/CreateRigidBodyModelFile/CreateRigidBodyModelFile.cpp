@@ -34,14 +34,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool confirm = false;
 
 	for ( int arg = 1; arg < argc; arg++ ) {
-		if ( !strcmp( argv[arg], "-confirm" ) ) confirm = true;
+		if ( !strcmp( argv[arg], "--confirm" ) ) confirm = true;
 		else {
 			sscanf( argv[arg], "%d", &mrk_list[mrk_list_length] );
 			mrk_list_length++;
 		}
 	}
 
-	fprintf( stderr, "%s started.\n\n", argv[0] );
+	fprintf( stderr, "\n%s started.\n", argv[0] );
 
 	// Initialize the connection to the CODA tracking system.
 	fprintf( stderr, "Initializing CODA system ..." );
@@ -70,7 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Output the model to a file via stdout.
 	codaPoseTracker->WriteModelMarkerPositions( stdout );
 
-	if ( confirm ) fMessageBox( MB_OK, "CreateRigidBodyModelFile", "Model Creation Succeeded.\n\n  nMarkers = %d", mrk_list_length );
+	if ( confirm ) fMessageBox( MB_OK, "CreateRigidBodyModelFile", "Model Creation Succeeded.\nMarkers = %d\n\n", mrk_list_length );
 
 	return 0;
 }
