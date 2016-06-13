@@ -41,8 +41,14 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
+		TrackerPose mousePose;
 		viewpoint->SetPose( headPose.pose );
 		renderer->hud->SetPose( headPose.pose );
+		if ( !trackers->mouseTracker->GetCurrentPose( mousePose ) ) {
+			static int pose_error_counter = 0;
+			fOutputDebugString( "Error reading mouse pose tracker (%03d).\n", ++pose_error_counter );
+		}
+		else renderer->vTool->SetAttitude( mousePose.pose.orientation );
 	}
 
 	// Track movements of the hand marker array.

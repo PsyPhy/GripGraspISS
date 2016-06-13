@@ -106,12 +106,13 @@ int _tmain(int argc, char *argv[])
 		if ( ! window->RunOnce() ) break;
 
 		static double yaw_time = 0.0;
-		double yaw =  30.0 * sin( yaw_time );
+		double yaw =  90.0 * sin( yaw_time );
 		yaw_time += 0.002;
 
-		viewpoint->SetOrientation( 0.0, 0.0, yaw );
+		viewpoint->SetOrientation( yaw, 0.0, 0.0 );
+		objects->hud->SetOrientation( yaw, 0.0, 0.0 );
 
-		objects->hud->SetOrientation( 0.0, 0.0, yaw );
+		objects->ColorGlasses( 0.0 );
 
 		static double angle = 39.0;
 		objects->timeoutIndicator->SetAttitude( - angle, 0.0, 0.0 );
