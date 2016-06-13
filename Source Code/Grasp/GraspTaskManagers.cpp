@@ -10,6 +10,9 @@
 using namespace Grasp;
 using namespace PsyPhy;
 
+// Defined constants
+const double GraspTaskManager::indicatorDisplayDuration = 1.0;	// Time to show success and error indicators.
+
 //
 // A state machine to run through the different state of a block of trials.
 // On entry, the current state is compared to the previous state.
@@ -76,6 +79,12 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		if ( nextState != currentState ) ExitTrialInterrupted();
 		break;
 
+	case Timeout:
+
+		if ( currentState != previousState ) EnterTimeout();
+		nextState = UpdateTimeout();
+		if ( nextState != currentState ) ExitTimeout();
+		break;
 
 	}
 	
@@ -99,7 +108,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 		// Strip off trailing newline.
 		// if ( strlen( line ) > 0 ) line[strlen( line ) - 1] = 0;
 		int feedback;
-		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %d",
+		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %d",
 			&trialParameters[nTrials].targetHeadTilt,
 			&trialParameters[nTrials].targetHeadTiltTolerance,
 			&trialParameters[nTrials].targetHeadTiltDuration,
@@ -108,10 +117,11 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 			&trialParameters[nTrials].responseHeadTilt,
 			&trialParameters[nTrials].responseHeadTiltTolerance,
 			&trialParameters[nTrials].responseHeadTiltDuration,
+			&trialParameters[nTrials].responseTimeout,
 			&trialParameters[nTrials].conflictGain,
 			&feedback );
 
-		if ( items == 10 ) {
+		if ( items == 11 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
 				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
 			}
@@ -236,6 +246,7 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 		trialParameters[currentTrial].responseHeadTilt,
 		trialParameters[currentTrial].responseHeadTiltTolerance,
 		trialParameters[currentTrial].responseHeadTiltDuration,
+		trialParameters[currentTrial].responseTimeout,
 		trialParameters[currentTrial].conflictGain,
 		trialParameters[currentTrial].provideFeedback );
 	// Make sure that this information gets written right away to facilitate degugging if we crash.
@@ -253,16 +264,9 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	TimerSet( stateTimer,  trialParameters[currentTrial].targetHeadTiltDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
-	// Here we just update the visual feedback about the head orientation
-	// with resppect to the desired head orientation. 
-	HandleHeadAlignment();
-	// Had the fixed time run out? If so, move on to present the target.
-	// We should probably check if the head is properly aligned and do
-	// do something different if not. Also, if the duration is fixed, it would 
-	// be good to give to the subject a very clear indication when the correct head orientation 
-	// has been achieved. Otherwise, there is a tendancy to try and improve the orientation until
-	// you get a reaction.
-	if ( TimerTimeout( stateTimer ) ) return( PresentTarget ); 
+	// Update the feedback about the head orientation wrt the desired head orientation.
+	// If the head alignment is satisfactory, move on to the next state.
+	if ( HandleHeadAlignment() ) return( PresentTarget ); 
 	else return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {}
@@ -294,8 +298,9 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 // The subject is guided to a new tilt orientation of the head.
 // Conflict may be added during the motion.
 void GraspTaskManager::EnterTiltHead( void ) {
-	// Set a timeout to accomplish the task.
-	TimerSet( stateTimer, 5.0 ); 
+	// Set a fixed duration for this state.
+	// Even if the desired head tilt is achieved, we stay here until the time is up.
+	TimerSet( stateTimer, trialParameters[currentTrial].responseHeadTiltDuration ); 
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
 	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
@@ -307,12 +312,9 @@ void GraspTaskManager::EnterTiltHead( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateTiltHead( void ) { 
 	// Update the visual feedback about the head tilt.
-	bool aligned = HandleHeadAlignment();
+	HandleHeadAlignment();
 	// Stay in this state a fixed time.
-	if ( TimerTimeout( stateTimer ) ) {
-		if ( aligned ) return( ObtainResponse ); 
-		else return( TrialInterrupted );
-	}
+	if ( TimerTimeout( stateTimer ) ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
@@ -323,7 +325,7 @@ void  GraspTaskManager::ExitTiltHead( void ) {
 // The subject reproduces the remembered orientation.
 void GraspTaskManager::EnterObtainResponse( void ) {
 	// Set a timeout timer to limit the time allowed to respond.
-	TimerSet( stateTimer, 20.0 ); 
+	TimerSet( stateTimer, trialParameters[currentTrial].responseTimeout ); 
 	// Show where to aim without showing the target orientation.
 	renderer->positionOnlyTarget->Enable();
 }
@@ -337,7 +339,7 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 		fprintf( fp, "%f; %s\n", 0.0, renderer->vTool->mstr( renderer->vTool->orientation ) );
 		return( ProvideFeedback );
 	}
-	if ( TimerTimeout( stateTimer ) ) return( ExitStateMachine ); 
+	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
 	// Otherwise, continue in this state.
 	return( currentState );
 }
@@ -374,7 +376,7 @@ void GraspTaskManager::EnterTrialCompleted( void ) {
 	// Show the success indicator.
 	renderer->successIndicator->Enable();
 	// Show it for a fixed time.
-	TimerSet( stateTimer, 1.0 ); 
+	TimerSet( stateTimer, indicatorDisplayDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
@@ -391,14 +393,14 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 }
 
 // TrialInterrupted
-// Provide an indication that the trial was completed successfully.
-// Then move on to next trial, or exit the sequence.
+// Occurs when the required head tilt is not maintained.
+// Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
 	fprintf( fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
-	renderer->timeoutIndicator->Enable();
+	renderer->headMisalignIndicator->Enable();
 	// Show it for a fixed time.
-	TimerSet( stateTimer, 1.0 ); 
+	TimerSet( stateTimer, indicatorDisplayDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// After timer runs out, move on to the next trial.
@@ -418,6 +420,33 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialInterrupted( void ) {
+	renderer->headMisalignIndicator->Disable();
+}
+
+// Timeout
+// Provide an indication that the subject took too long to respond.
+// Wait for a button press, then move on to next trial, or exit the sequence.
+void GraspTaskManager::EnterTimeout( void ) {
+	fprintf( fp, "%f; timeout\n", 0.0 );
+	// Show the success indicator.
+	renderer->timeoutIndicator->Enable();
+}
+GraspTrialState GraspTaskManager::UpdateTimeout( void ) { 
+	// When the subject presses a button, move on..
+	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
+		// If retry count has not been exceeded and if there is room
+		//  copy the current trial paramters to the end of the list
+		//  of trials to be performed.
+		RepeatTrial( currentTrial ); 
+		// Move on to the next trial.
+		currentTrial++;
+		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		else return( ExitStateMachine );
+	}
+	// Otherwise, continue in this state.
+	return( currentState );
+}
+void  GraspTaskManager::ExitTimeout( void ) {
 	renderer->timeoutIndicator->Disable();
 }
 
