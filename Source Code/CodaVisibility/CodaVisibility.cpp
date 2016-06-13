@@ -27,11 +27,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	MarkerFrame localFrame[2];
 
-	int origin = 1;
-	int x_minus = 1;
-	int x_plus = 0;
-	int y_minus = 2;
-	int y_plus = 0;
+	int origin = 0;
+	int x_minus = 0;
+	int x_plus = 1;
+	int y_minus = 0;
+	int y_plus = 2;
 
 
 	fprintf( stderr, "Initializing CODA ..." );
@@ -68,7 +68,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			else {
 				fprintf( stderr, "." );
-				fOutputDebugString( "xxx.xx " );
 			}
 			if ( ((mrk+1) % 8) == 0 ) {
 				fprintf( stderr, " (%3.0lf) ", ( count ? sum / (double) count : 999.0 ) );
