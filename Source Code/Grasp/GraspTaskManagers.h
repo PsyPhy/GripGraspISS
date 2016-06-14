@@ -105,15 +105,13 @@ namespace Grasp {
 		virtual void ExitTimeout( void );
 
 	public:
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2), fp(NULL) {}
 		~GraspTaskManager(){}
-
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs  ) {
 			GraspVR::Initialize( instance, display, mapper, trkrs );
 		}
 		void Release( void ) {
 			GraspVR::Release();
-			if ( fp ) fclose( fp );
 		}
 
 	};
@@ -125,7 +123,7 @@ namespace Grasp {
 		void EnterObtainResponse( void );
 		void ExitObtainResponse( void );
 	};
-	// V-V protocol. 
+	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
 		void EnterPresentTarget( void );
 		void ExitPresentTarget( void );

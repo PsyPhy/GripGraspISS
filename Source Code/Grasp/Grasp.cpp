@@ -75,41 +75,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
 	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
+	trackers->WriteDataFiles( output_filename_root );
 
-#if 0 
-	This needs to be moved.
-	if ( useCoda ) {
-
-		// Output the CODA data to a file.
-		char *filename = "Log\\PsyPhyOculusDemo.mrk";
-		fOutputDebugString( "Writing CODA data to %s.\n", filename );
-		FILE *fp = fopen( filename, "w" );
-		if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
-
-		fprintf( fp, "%s\n", filename );
-		fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
-		fprintf( fp, "Frame\tTime" );
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-			}
-		}
-		fprintf( fp, "\n" );
-
-		for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-			fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
-			for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-				for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-					fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-					for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
-				}
-			}
-			fprintf( fp, "\n" );
-		}
-		fclose( fp );
-		fOutputDebugString( "File %s closed.\n", filename );
-	}
-#endif
 }
 
 

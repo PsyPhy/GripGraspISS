@@ -206,6 +206,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		if ( this->UpdateStateMachine() ) break;
 
 	}
+	if ( fp ) fclose( fp );
+	fp = NULL;
 
 	return 0;
 

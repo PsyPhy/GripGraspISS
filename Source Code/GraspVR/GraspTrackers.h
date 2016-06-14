@@ -52,6 +52,7 @@ namespace Grasp {
 		virtual void Initialize( void ) = 0;
 		virtual void Update( void );
 		virtual void Release( void );
+		virtual void WriteDataFiles( char *filename_root ){};
 
 	protected:
 		~GraspTrackers() {}
@@ -112,6 +113,7 @@ namespace Grasp {
 		void Initialize( void );
 		void Update( void );
 		void Release( void );
+		void WriteDataFiles( char *filename_root );
 
 		GraspDexTrackers( OculusMapper *mapper ) {
 			oculusMapper = mapper;

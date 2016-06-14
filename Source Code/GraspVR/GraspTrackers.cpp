@@ -183,15 +183,49 @@ void GraspDexTrackers::Update( void ) {
 
 void GraspDexTrackers::Release( void ) {
 
+	// Do what all flavors of GraspTrackers do.
+	GraspTrackers::Release();
+
 	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
 	stopMarkerGrabs = true;
 	WaitForSingleObject( threadHandle, INFINITE );
 	// Halt the continuous Coda acquisition.
-	codaTracker.AbortAcquisition();
+	codaTracker.StopAcquisition();
 
-	// Do what all flavors of GraspTrackers do.
-	GraspTrackers::Release();
+}
 
+void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
+
+	// Output the CODA data to a file.
+	char filename[MAX_PATH];
+	strncpy( filename, filename_root, sizeof( filename ) );
+	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
+	fOutputDebugString( "Writing CODA data to %s.\n", filename );
+	FILE *fp = fopen( filename, "w" );
+	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
+
+	fprintf( fp, "%s\n", filename );
+	fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
+	fprintf( fp, "Frame\tTime" );
+	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+		for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
+			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+		}
+	}
+	fprintf( fp, "\n" );
+
+	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
+		fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
+		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
+				fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+			}
+		}
+		fprintf( fp, "\n" );
+	}
+	fclose( fp );
+	fOutputDebugString( "File %s closed.\n", filename );
 }
 
 
