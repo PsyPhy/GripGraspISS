@@ -83,7 +83,7 @@ int _tmain(int argc, char *argv[])
 	objects->headMisalignIndicator->Enable();
 
 	objects->tunnel->SetColor( GRAY );
-	objects->ColorGlasses( 0.0 );
+	objects->ColorGlasses( 0.0, 5.0, 15.0 );
 
 	objects->chestStructure->SetPosition( 0.0, -200.0, -500.0 );
 	objects->handStructure->SetPosition( 0.0, 0.0, -500.0 );
@@ -112,7 +112,7 @@ int _tmain(int argc, char *argv[])
 		viewpoint->SetOrientation( yaw, 0.0, 0.0 );
 		objects->hud->SetOrientation( yaw, 0.0, 0.0 );
 
-		objects->ColorGlasses( 0.0 );
+		objects->ColorGlasses( 0.0, 5.0, 15.0 );
 
 		static double angle = 39.0;
 		objects->timeoutIndicator->SetAttitude( - angle, 0.0, 0.0 );
