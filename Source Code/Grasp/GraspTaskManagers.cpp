@@ -267,6 +267,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
 	if ( HandleHeadAlignment() ) return( PresentTarget ); 
+	else if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
 	else return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {}
@@ -400,13 +401,10 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	// Show the success indicator.
 	renderer->headMisalignIndicator->Enable();
 	// Show it for a fixed time.
-	TimerSet( stateTimer, indicatorDisplayDuration ); 
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
-	// After timer runs out, move on to the next trial.
-	// What we really should do is set the parameters for the next trial,
-	// or signal to end the state machine if all trials are done.
-	if ( TimerTimeout( stateTimer ) ) {
+	// Show the message until the subject presses a button.
+	if ( oculusDisplay->Button[MOUSE_LEFT] ) {		
 		// If retry count has not been exceeded and if there is room
 		//  copy the current trial paramters to the end of the list
 		//  of trials to be performed.
@@ -417,6 +415,7 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
+	HandleSpinningPrompts();
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialInterrupted( void ) {
@@ -444,6 +443,7 @@ GraspTrialState GraspTaskManager::UpdateTimeout( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
+	HandleSpinningPrompts();
 	return( currentState );
 }
 void  GraspTaskManager::ExitTimeout( void ) {
