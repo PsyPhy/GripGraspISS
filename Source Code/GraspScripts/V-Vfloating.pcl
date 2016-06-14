@@ -1,8 +1,8 @@
 # Protocol Definition: Visual Stimulus to Visual Response 
-200; INSTRUCTION; Introduction; V-VFloatingProtocolReady.html
-201; SCRIPT; Preparation; InstallFloating.tsk
-202; COMMAND; Align Tracker; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-203; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-204; COMMAND; Visual-Visual Block 1; Grasp -VtoV GraspSequence1.txt
-205; COMMAND; Visual-Visual Block 2; Grasp -VtoV GraspSequence2.txt
-206; INSTRUCTION; End of Protocol; ProtocolFinished.html
+401; INSTRUCTION; Introduction; V-VFloatingProtocolReady.html
+402; SCRIPT; Preparation; InstallFloating.tsk
+403; COMMAND; Align Tracker; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+404; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
+405; COMMAND; Visual-Visual Block 1; Grasp --VtoV --sequence=GraspSequence1.txt --output=
+406; COMMAND; Visual-Visual Block 2; Grasp --VtoV --sequence=GraspSequence2.txt --output=
+407; INSTRUCTION; End of Protocol; ProtocolFinished.html
