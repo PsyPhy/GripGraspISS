@@ -52,7 +52,11 @@ int _tmain(int argc, char *argv[])
 		CodaPoseTracker *codaPoseTracker = new CodaPoseTracker( &avgFrame );
 		codaPoseTracker->ReadModelMarkerPositions( body_file );
 		codaPoseTracker->GetCurrentPose( pose );
-		fprintf( stderr, "Unit: %d Position: %s   Orientation: %s\n", unit, codaPoseTracker->vstr( pose.pose.position ), codaPoseTracker->qstr( pose.pose.orientation ) );
+		PsyPhy::Matrix3x3 rotation_matrix;
+		codaPoseTracker->QuaternionToMatrix( rotation_matrix, pose.pose.orientation );
+		fprintf( stderr, "Unit: %d Position: %s\n", unit, codaPoseTracker->vstr( pose.pose.position ));
+		fprintf( stderr, "         Orientation: %s\n", codaPoseTracker->qstr( pose.pose.orientation ));
+		fprintf( stderr, "         Orientation: %s\n", codaPoseTracker->mstr( rotation_matrix ));
 
 	}
 

@@ -26,7 +26,6 @@ int main(array<System::String ^> ^args)
 
 	// Create the main window and run it
 	Application::Run(gcnew SingleObjectForm( model_file, alignment_file, marker_file ));
-	// Create the main window and run it
-	Application::Run(gcnew MultiObjectAlignForm());
-return 0;
+
+	return 0;
 }

@@ -504,6 +504,13 @@ int CodaRTnetTracker::GetNumberOfCodas( void ) {
 	return( nUnits );
 }
 
+void CodaRTnetTracker::GetAlignment( void ) {
+	// Get what are the alignment transformations before doing the alignment.
+	// This is just for debugging. Set a breakpoint to see the results.
+	DeviceInfoUnitCoordSystem pre_xforms;
+	cl.getDeviceInfo( pre_xforms );
+}
+
 int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
 
 	// Get what are the alignment transformations before doing the alignment.
@@ -536,35 +543,57 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 
 void  CodaRTnetTracker::AnnulAlignment( void ) {
 	char command_line[10240];
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
-	OutputDebugString( command_line );
-	OutputDebugString( "\n" );
-	system( command_line );
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"rm %s%s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename  );
-	OutputDebugString( command_line );
-	OutputDebugString( "\n" );
-	system( command_line );
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
-	OutputDebugString( command_line );
-	OutputDebugString( "\n" );
-	system( command_line );
 
-	// Create a local copy of the alignment file and then send it to the CODA server.
+	// Create a local copy of a null alignment file and then send it to the CODA server.
 	FILE *fp = fopen( codaAlignmentFilename, "w" );
-	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening calibration file %s for writing.", codaAlignmentFilename );
-	fprintf( fp, "Alignment file line 1\n" );
-	fprintf( fp, "Alignment file line 2\n" );
+	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", codaAlignmentFilename );
+	fprintf( fp, "Dummy calibration file sent to clobber current alignment.\n" );
 	fclose( fp );
-
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
-	OutputDebugString( command_line );
-	OutputDebugString( "\n" );
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
 	system( command_line );
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"dir %s\" \"exit\" & pause", serverLogonID, serverPassword, serverAddress, codaCalDirectory  );
-	OutputDebugString( command_line );
-	OutputDebugString( "\n" );
-	system( command_line );
+	sprintf( command_line, "del %s",  codaAlignmentFilename );
 
+}
+
+// Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
+//  compute the alignment file that the CODA uses to align the units and send it to the server.
+void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
+	char command_line[10240];
+	Matrix3x3 rotation_matrix, transpose_matrix;
+	Vector3 offset;
+	// Open a file locally to accept the alignment information.
+	FILE *fp = fopen( "codaRTModuleCX1-Alignment.dat", "w" );
+	// This is an apparent header line.
+	fprintf( fp, "[CODA System Alignment]\n" );
+	// A block of parameters for each unit.
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		// The pose gives us the orientation as a quaternion. 
+		// CODA wants it as a rotation matrix.
+		QuaternionToMatrix( rotation_matrix, pose[unit].orientation );
+		// The offset that the CODA appears to use is the computed from the measured offset
+		// in intrinsic coordinates transformed by the inverse rotation (transpose).
+		// NB The transpose may come from the fact that I use row vectors.
+		// In any case, I came up with this by trial and error.
+		TransposeMatrix( transpose_matrix, rotation_matrix );
+		MultiplyVector( offset, pose[unit].position, transpose_matrix );
+		// The serial numbers are recorded in the alignment file, so I need to put them here (I think).
+		// But I don't know how to get the serial numbers from the CODA units that are connected.
+		// So here I am hard coding the serial numbers from the GRIP science model. I will have to see
+		//  what happens when we move to other hardware.
+		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=3008\n", unit );
+		else fprintf( fp, "CX1SerialNumber%d=3009\n", unit );
+		// Note the negative signs for the offset. Again, trial and error.
+		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[X],  - offset[Y], - offset[Z] );
+		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation_matrix[X][X] , rotation_matrix[X][Y] , rotation_matrix[X][Z] );
+		fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation_matrix[Y][X] , rotation_matrix[Y][Y] , rotation_matrix[Y][Z] );
+		fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation_matrix[Z][X] , rotation_matrix[Z][Y] , rotation_matrix[Z][Z] );
+
+	}
+	fclose( fp );
+	// Here we send the new alignment file to the CODA server. 
+	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
+	system( command_line );
+	// We could clean up after ourselves by deleting the local file or moving it to a log location. For now I just leave it.
 }
 
 /*********************************************************************************/

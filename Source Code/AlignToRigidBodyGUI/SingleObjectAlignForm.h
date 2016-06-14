@@ -88,8 +88,6 @@ namespace AlignToRigidBodyGUI {
 			alignmentObject1->Draw();
 			vrWindow1->Swap();
 
-
-			fOutputDebugString( "AlignToRigidBodyGUI: refresh %d\n", count++ );
 		}
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
@@ -103,14 +101,11 @@ namespace AlignToRigidBodyGUI {
 			refreshTimer->Stop();
 		}		
 
-
-
 	private:
 		System::Windows::Forms::GroupBox^	vrGroupBox2;
 		System::Windows::Forms::Panel^		vrPanel2;
 		System::Windows::Forms::GroupBox^	vrGroupBox1;
 		System::Windows::Forms::Panel^		vrPanel1;
-
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
 
@@ -217,15 +212,14 @@ namespace AlignToRigidBodyGUI {
 
 		}
 #pragma endregion
+
 	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) Close();
 			 }
 
-
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
-
 
 				 // Create a window and viewpoint to show what the subject is seeing.
 				 vrWindow1 = PsyPhy::CreateOpenGLWindowInForm( vrPanel1);
@@ -251,15 +245,13 @@ namespace AlignToRigidBodyGUI {
 				 coda->Initialize();
 				 coda->StartAcquisition( 600.0 );
 
+				 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
 				 CreateRefreshTimer( 300 );
 				 StartRefreshTimer();
 
 			 }
 
-	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-				 StopRefreshTimer();
-				 coda->Quit();
-			 }
+	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { }
 	private: System::Void alignButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Show the Form as being inactive.
@@ -268,42 +260,84 @@ namespace AlignToRigidBodyGUI {
 				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
 				 StopRefreshTimer();
 				 // Stop the ongoing acquisition and discard the recorded data.
-				 coda->AbortAcquisition();
-				 // Unfortunately, we have to shutdown and restart to do a new acquisition.
+				 coda->AbortAcquisition();	
+				// Unfortunately, we have to shutdown and restart to do a new acquisition.
 				 coda->Quit();
 
-				 // Annul the previous alignment.
+				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 coda->AnnulAlignment();
 
 				 // Restart and acquire a short burst of marker data to be use in the alignment.
 				 coda->Initialize();
 				 fprintf( stderr, "Starting acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
-				 fprintf( stderr, "OK.\nAcquiring ... " );
-				 while ( coda->GetAcquisitionState() ) Sleep( 20 );
+				 fprintf( stderr, "OK.\nAcquiring " );
+				 // Just wait for the acquisition to finish.
+				 while ( coda->GetAcquisitionState() ) {
+					 fprintf( stderr, "." );
+					 Sleep( 20 );
+				 }
 				 coda->StopAcquisition();
 				 fprintf( stderr, "OK.\n\n" );
+				 coda->Quit();
+
+				 // TODO: We should log the raw marker data here.
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
 				 MarkerFrame avgFrame;
-				 TrackerPose pose;
+				 TrackerPose tracker_pose;
+				 Pose poses[MAX_UNITS];
 				 CodaPoseTracker *codaPoseTracker = new CodaPoseTracker( &avgFrame );
+				 // The name of the model file is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 codaPoseTracker->ReadModelMarkerPositions( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
+
+				 for ( int unit = 0; unit < coda->nUnits; unit++ ) {
+					 // Compute the average marker positions for the acquired sample.
+					 coda->ComputeAverageMarkerFrame( avgFrame, coda->recordedMarkerFrames[unit], coda->nFrames );
+					 // Compute the pose of the rigid body from the average acquired sample.
+					 // This may seem strange that we are calling "GetCurrentPose()" when the CODA is not running, but
+					 // codaPoseTracker assumes that the linked MarkerFrame has been filled and so it does not actually acquire anything.
+					 // Instead, it computes the current pose from the average marker frame computed just above.
+					 codaPoseTracker->GetCurrentPose( tracker_pose );
+					 // We need to assemble the poses from each CODA unit into a single list to be passed to SetAlignmentFromPoses().
+					 coda->CopyPose( poses[unit], tracker_pose.pose );
+				 }
+				 // This does the real work.
+				 coda->SetAlignmentFromPoses( poses );
+
+				 // TODO: We should log the alignment information to a file.
+
+				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
+				 coda->Initialize();
+				 fprintf( stderr, "Starting acquisition ... " );
+				 coda->StartAcquisition( 3.0 );
+				 fprintf( stderr, "OK.\nAcquiring " );
+				 // Just wait for the acquisition to finish.
+				 while ( coda->GetAcquisitionState() ) {
+					 fprintf( stderr, "." );
+					 Sleep( 20 );
+				 }
+				 coda->StopAcquisition();
+				 fprintf( stderr, "OK.\n\n" );
+				 coda->Quit();
+
+				 // TODO: We should log the newly aligned marker data as well.
+
+				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.
+				 // We should get position zero and null orientation in each case.
 				 for ( int unit = 0; unit < coda->nUnits; unit++ ) {
 					 // Compute the average marker positions for the acquired sample.
 					 coda->ComputeAverageMarkerFrame( avgFrame, coda->recordedMarkerFrames[unit], coda->nFrames );
 					 // Set the position of the model markers from the average acquired sample.
-					 codaPoseTracker->GetCurrentPose( pose );
-					 fOutputDebugString( "Unit: %d Position: %s   Orientation: %s\n", unit, codaPoseTracker->vstr( pose.pose.position ), codaPoseTracker->qstr( pose.pose.orientation ) );
-					 fprintf( stderr, "Unit: %d Position: %s   Orientation: %s\n", unit, codaPoseTracker->vstr( pose.pose.position ), codaPoseTracker->qstr( pose.pose.orientation ) );
-					 fflush( stderr );
+					 codaPoseTracker->GetCurrentPose( tracker_pose );
+					 // Show the computed pose.
+					 fOutputDebugString( "New Pose: %s %s\n", codaPoseTracker->vstr( tracker_pose.pose.position ), codaPoseTracker->qstr( tracker_pose.pose.orientation ) );
 				 }
 
-
-				 // Close the form. The FormCLosing handler will take care of shutting down the CODA.
+				 // Close the form. 
 				 Close();
 
 			 }

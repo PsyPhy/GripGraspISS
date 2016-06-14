@@ -141,7 +141,10 @@ public:
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
+	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS] );
 	void	AnnulAlignment( void );
+	void	GetAlignment( void );
+
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
