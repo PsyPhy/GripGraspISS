@@ -6,6 +6,7 @@
 namespace GraspGUI {
 
 	using namespace System;
+	using namespace System::IO;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
@@ -25,6 +26,7 @@ namespace GraspGUI {
 		String^	rootDirectory;
 		String^ execDirectory;
 		String^ scriptDirectory;
+		String^ resultsDirectory;
 		String^ instructionsDirectory;
 
 		array<GraspGUI::Subject ^> ^subjectList;
@@ -99,6 +101,10 @@ namespace GraspGUI {
 			// It is convenient to define the root directory and predefine the various subdirectories.
 			// The web browser tool used to display instructions requires the full path to the file.
 			// So here we constuct the path to the current (root) directory and to the instructions.
+
+			SYSTEMTIME st;
+			GetSystemTime( &st );
+
 			char root_string[MAX_PATH];
 			int bytes = GetCurrentDirectory( sizeof( root_string ), root_string );
 			fAbortMessageOnCondition( bytes > MAX_PATH, "GraspGUI", "Path to current directory is too long." );
@@ -106,9 +112,20 @@ namespace GraspGUI {
 			instructionsDirectory = rootDirectory + "Instructions\\";
 			scriptDirectory =  rootDirectory + "Scripts\\";
 			execDirectory =  rootDirectory + "bin\\";
+			char datestr[MAX_PATH];
+			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
+			String ^dateString = gcnew String( datestr );
+			resultsDirectory = rootDirectory + "Results\\" +  dateString + "\\";
+		   try {
+			   if ( !Directory::Exists( resultsDirectory ) ) Directory::CreateDirectory( resultsDirectory );
+			}
+			catch ( Exception^ e ) 
+			{
+				fAbortMessage( "GraspGUI", "Error creating results directory." );
+			}
 
 			// Standard Windows Forms initialization.
-			InitializeComponent();
+ 			InitializeComponent();
 
 			// Initialize what buttons are visible.
 			ShowLogon();
