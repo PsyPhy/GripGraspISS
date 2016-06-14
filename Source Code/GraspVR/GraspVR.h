@@ -39,6 +39,8 @@ namespace Grasp {
 			hInstance( nullptr ),
 			oculusDisplay( nullptr ),
 			oculusMapper( nullptr ),
+			desiredHeadRollSweetZone( 2.0 ),
+			desiredHandRollSweetZone( 2.0 ),
 			trackers( nullptr ) {}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
@@ -77,13 +79,17 @@ namespace Grasp {
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
+		double			desiredHandRollSweetZone;
+		double			desiredHandRollTolerance;		
 		Quaternion		desiredHandOrientation;			// Converted into a quaternion for convenience.
 		bool			HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
 
 		double			desiredHeadRoll;
-		double			desiredHeadRollTolerance;		// Ignored for the moment.
+		double			desiredHeadRollSweetZone;
+		double			desiredHeadRollTolerance;		
 		Quaternion		desiredHeadOrientation;
 		bool			HandleHeadAlignment( void );
+
 		void			HandleSpinningPrompts( void );
 
 		// Drives movements of the projectiles.

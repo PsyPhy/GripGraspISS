@@ -53,9 +53,6 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
-const double GraspGLObjects::headRollTolerance = 5.0;		// Tolerance around desired head tilt, in degrees.
-const double GraspGLObjects::kkTolerance = 5.0;				// Tolerance for hand orientation in K-K.
-const double GraspGLObjects::errorColorMapEpsilon = 10.0;	// Deterimines how quickly an object changes color according to orientation error.
 const double GraspGLObjects::errorColorMapTransparency = 0.5;
 
 // Set up the lighting and material properties.
@@ -197,33 +194,7 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 	return glasses;
 }
 
-bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double tolerance, double epsilon ) {
-
-#if 0
-	static double transparency = 0.75;
-	Vector3 rotated;
-	// Rotate the unit vector in the X direction by the orientation of the object.
-	// Then compute the orientation of that vector in the frontal (XY) plane.
-	// This calculation becomes ill conditioned as the yaw angle approaches 90°,
-	// but for the moment we assume that pitch and yaw will be small.
-	MultiplyVector( rotated, iVector, object->orientation );
-	double error = fabs( roll_angle - ToDegrees( atan2( rotated[Y], rotated[X] ) ));
-	// fOutputDebugString( "%s\n", vstr( rotated ) );
-	if ( rotated[X] < 0.0 ) {
-		// Error is more than 90°. Clamp to red and return false to say out of tolerance zone.
-		object->SetColor( 1.0, 0.0, 0.0, transparency );
-		return( false );
-	}
-
-	// @Michele
-	// This simple formula goes nicely from gree to yellow to red as the angle increases.
-	// But please replace it with the calculation of a set of color values based on the angular error computed above.
-	double hypotenuse = sqrt( rotated[X] * rotated[X] + rotated[Y] * rotated[Y] );
-	double green = abs( rotated[X] ) / hypotenuse;
-	double red = abs( rotated[Y] ) / hypotenuse;
-	// fOutputDebugString( "%s  r: %.3lf g: %.3lf %f\n", vstr( rotated ), red, green, error );
-	object->SetColor( red, green, 0.0, 0.75 );
-#endif
+bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double sweet_zone, double tolerance ) {
 
 	// Compute the roll angle of the object that is being followed.
 	// I got this off of a web site. It seems to work for gaze close to straight ahead,
@@ -263,36 +234,36 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	}
 #endif
 
-	if ( error < tolerance ){//GREEN
-		// If we are within the defined tolerance the color is simply green.
-		// In a future version, perhaps it should turn towards yellow when approaching the edges.
-		double fade = pow( error / tolerance / 2.0, 2 );;
-		object->SetColor( fade, 1.0,  0.0, errorColorMapTransparency );
-		return(true);
+	if ( error < sweet_zone ){
+		// If we are within the sweet zone, the color is more cyan than green.
+		// This makes it easier for the subject to recognize when the head is properly aligned.
+		// But one need not be in the sweet zone for the orientation to be considered good.
+		// If the orientation is within tolerance, it is good as well. This means that the color
+		// starts to change before leaving the tolerance zone (assuming that tolerance > sweet ).
+		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
 	} else {
-		// Colors will change as one moves farther from the edge of the good zone.
-		double from_edge = error - tolerance;
-		if ( from_edge < epsilon ) {
-			// Go from cyan right at the edge to blue.
-			double fade = from_edge / epsilon;
-			object->SetColor( 0.0, 1.0 - fade, 1.0, errorColorMapTransparency );
+		// Colors will change as one moves farther from the center.
+		if ( error < tolerance ) {
+			// Go from green at the center to yellow at the limit of the tolerance zone.
+			double fade = error / tolerance;
+			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
 		}
-		else if ( from_edge < 2.0 * epsilon ) {
-			// Go from blue to magenta.
-			double fade = ( from_edge - epsilon ) / epsilon;
-			object->SetColor( fade, 0.0, 1.0, errorColorMapTransparency );
+		else if ( error < 2.0 * tolerance ) {
+			// Go from yellow to red.
+			double fade = ( error - tolerance ) / tolerance;
+			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
-		// If more than 2 epsilons, the color is magenta (because ESA does not like red).
-		else object->SetColor( 1.0, 0.0, 1.0, errorColorMapTransparency );
-
-		return(false);
+		// If more than 2 epsilons, the color is red.
+		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
+
+	return( error < tolerance );
 
 }
 
-bool GraspGLObjects::ColorGlasses( double roll_angle ) {
+bool GraspGLObjects::ColorGlasses( double roll_angle, double sweet_zone, double tolerance ) {
 	// Color will be set according to the difference between the desired and measured head angles.
-	bool is_aligned =  SetColorByRollError( glasses, roll_angle, headRollTolerance, errorColorMapEpsilon );
+	bool is_aligned =  SetColorByRollError( glasses, roll_angle, sweet_zone, tolerance );
 	return ( is_aligned );
 }
 
@@ -364,8 +335,8 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 	return laserPointer;
 }
 
-bool GraspGLObjects::ColorKK( double error ) {
-	return( SetColorByRollError( kkTool, error, kkTolerance, errorColorMapEpsilon ) );
+bool GraspGLObjects::ColorKK( double error, double sweet_zone, double tolerance ) {
+	return( SetColorByRollError( kkTool, error, sweet_zone, tolerance ) );
 }
 
 // Group all the elements that move with the hand into a single entity.
@@ -486,7 +457,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	room = CreateRoom();
 	glasses = CreateGlasses();
-	ColorGlasses( 0.0 );
+	glasses->SetColor( 0.5, 0.5, 0.5, 0.5 );
 	starrySky = CreateStarrySky();
 	darkSky = CreateDarkSky();
 	// Only one sky should be enabled at a time, so we disable darkSky at this point.
