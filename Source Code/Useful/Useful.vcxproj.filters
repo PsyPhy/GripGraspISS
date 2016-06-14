@@ -30,6 +30,9 @@
     <ClCompile Include="OpenGLUseful.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="timeofday.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fMessageBox.h">
