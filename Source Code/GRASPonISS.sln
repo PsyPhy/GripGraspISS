@@ -66,6 +66,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zOculusRoomTiny (GRASP - Oc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScreenshots", "GraspScreenshots\GraspScreenshots.vcxproj", "{3CB4C789-1C1B-4673-88FD-C161257D4C9C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstallStandaloneGrasp", "InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj", "{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -306,6 +308,14 @@ Global
 		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.Release|Win32.Build.0 = Release|Win32
 		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{3CB4C789-1C1B-4673-88FD-C161257D4C9C}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.Debug|Win32.Build.0 = Debug|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.Release|Win32.ActiveCfg = Release|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.Release|Win32.Build.0 = Release|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

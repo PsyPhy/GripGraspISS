@@ -88,6 +88,8 @@ namespace Grasp {
 			static const Vector3 sky_location;
 			static const Vector3 prompt_location;
 			static const double prompt_radius;
+			static const double visor_radius;
+
 			static const double target_ball_radius;
 			static const double finger_ball_radius;
 			static const double target_ball_spacing;
@@ -131,6 +133,9 @@ namespace Grasp {
 			Assembly		*kTool;					// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
 			Assembly		*vkTool;				// A tool that shows the hand's orientation. Used in V-VK and K-VK or in training for K-K.
 			Assembly		*kkTool;				// A tool that is used to drive the hand to the target orientation in K-K.
+
+			OpenGLObject	*selectedTool;			// Used by the projectile handler. Sometimes the tool is at the hand, but when doing V-V it
+													// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
 
 			Assembly		*room;					// A collection of objects that make up the fixed visual environment.
 			Cylinder		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.

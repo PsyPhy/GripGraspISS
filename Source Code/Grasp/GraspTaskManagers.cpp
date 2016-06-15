@@ -30,6 +30,21 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 	// is here in the UpdateStateMachine() method of the derived class, plus whatever extra is needed.
 	switch ( currentState ) {
 
+	case StartBlock:
+
+		if ( currentState != previousState ) EnterStartBlock();
+		nextState = UpdateStartBlock();
+		if ( nextState != currentState ) ExitStartBlock();
+		break;
+	
+	case StartTrial:
+
+		if ( currentState != previousState ) EnterStartTrial();
+		nextState = UpdateStartTrial();
+		if ( nextState != currentState ) ExitStartTrial();
+		break;
+	
+
 	case StraightenHead:
 
 		if ( currentState != previousState ) EnterStraightenHead();
@@ -180,10 +195,12 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	// Ouput a header.
 	fprintf( fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; conflictGain; feedback (0 or 1); time; response\n" );
 
+	// Call the paradigm-specific preparation, if any.
+	Prepare();
 
 	// Initialize the state machine.
 	previousState = NullState;
-	currentState = StraightenHead;
+	currentState = StartBlock;
 
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {
@@ -224,10 +241,33 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 //  balls on the screen. But the other state handlers can probably stay the same.
 //
 
+// StartBlock
+// Wait until the subject is in the HMD and ready to start.
+void GraspTaskManager::EnterStartBlock( void ) {
+	// The desired orientation of the head is upright (0°). This is not essential, but it allows us to show the colors already.
+	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
+	// Show the "Press to continue." indicator.
+	// For the moment that indicator does not exist, so I use the success indicator.
+	renderer->successIndicator->Enable();
+}
+GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
+	// Modulate the halo color, even though it does not matter, so
+	// that the subject gets into that mode of operation.
+	HandleHeadAlignment();
+	// When the subject clicks a button, we move on to start the first trial
+	if ( oculusDisplay->Button[MOUSE_LEFT]  ||  oculusDisplay->Button[MOUSE_MIDDLE] ||  oculusDisplay->Button[MOUSE_RIGHT] ) return( StartTrial );
+	// Otherwise, continue in this state.
+	return( currentState );
+}
+void  GraspTaskManager::ExitStartBlock( void ) {
+	renderer->successIndicator->Disable();
+}
+
 //
-// StraightenHead
-// The subject is guided to align the head with the body axis.
-void GraspTaskManager::EnterStraightenHead( void ) { 
+// StartTrial
+// Set the new trial parameters. This is where conflict should get turned off or on.
+void GraspTaskManager::EnterStartTrial( void ) { 
+
 	// Align with the local reference frame of the subject.
 	// Here we just align with the absolute refererence frame, but
 	// in Quasi-Freefloating we will want to align the visual reference frame
@@ -251,16 +291,44 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 		trialParameters[currentTrial].responseTimeout,
 		trialParameters[currentTrial].conflictGain,
 		trialParameters[currentTrial].provideFeedback );
+
 	// Make sure that this information gets written right away to facilitate degugging if we crash.
 	// Note that we do not output a \n in the above. The line will be completed by the response.
 	fflush( fp );
 
+	// Turn off lots of visual cues in preparation for starting up the conflict.
+	renderer->room->Disable();
+
+	// The desired orientation of the head to the specified head orientation.
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+
+	// Set the conflict gain.
+
+	// The blanking period has a fixed duration. We should define a constant somewhere.
+	TimerSet( stateTimer,  1.0 ); 
+	TimerSet( auxStateTimer, 2.0 );
+
 	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
 	// In the future it should send this info to ground.
-	fOutputDebugString( "Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
+	fOutputDebugString( "Starting Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
 		currentTrial, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
 
-	// The desired orientation of the head is upright (0°).
+}
+GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
+	// Update the feedback about the head orientation wrt the desired head orientation.
+	HandleHeadAlignment(); 
+	if ( TimerTimeout( auxStateTimer ) ) return( StraightenHead );
+	if ( TimerTimeout( stateTimer ) ) renderer->room->Enable();
+	return( currentState );
+}
+void GraspTaskManager::ExitStartTrial( void ) {}
+
+
+//
+// StraightenHead
+// The subject is guided to align the head with the body axis.
+void GraspTaskManager::EnterStraightenHead( void ) { 
+	// The desired orientation of the head to the specified head orientation.
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
 	TimerSet( stateTimer,  trialParameters[currentTrial].targetHeadTiltDuration ); 
@@ -339,7 +407,8 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// Handle triggering and moving the projectiles.
 	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
 		// Record the response.
-		fprintf( fp, "%f; %s\n", 0.0, renderer->vTool->mstr( renderer->vTool->orientation ) );
+		fprintf( fp, "%f; %s\n", 0.0, renderer->vTool->mstr( renderer->selectedTool->orientation ) );
+		fOutputDebugString( "Response: %f; %s\n", 0.0, renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
 	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
@@ -385,10 +454,11 @@ GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) {
 	// After timer runs out, move on to the next trial or exit.
 	if ( TimerTimeout( stateTimer ) ) {
 		currentTrial++;
-		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		if ( currentTrial < nTrials ) return( StartTrial ); 
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
+	HandleHeadAlignment();
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialCompleted( void ) {
@@ -413,10 +483,11 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 		RepeatTrial( currentTrial ); 
 		// Move on to the next trial.
 		currentTrial++;
-		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		if ( currentTrial < nTrials ) return( StartTrial ); 
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
+	HandleHeadAlignment();
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -441,10 +512,11 @@ GraspTrialState GraspTaskManager::UpdateTimeout( void ) {
 		RepeatTrial( currentTrial ); 
 		// Move on to the next trial.
 		currentTrial++;
-		if ( currentTrial < nTrials ) return( StraightenHead ); 
+		if ( currentTrial < nTrials ) return( StartTrial ); 
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
+	HandleHeadAlignment();
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -484,7 +556,7 @@ void VtoV::ExitObtainResponse( void ) {
 	GraspTaskManager::ExitObtainResponse();
 }
 
-/// VtoK
+/// VtoVK
 
 void VtoVK::EnterPresentTarget( void ) {
 	// The target is displayed visually.
@@ -502,15 +574,95 @@ void  VtoVK::ExitPresentTarget( void ) {
 void VtoVK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
-	renderer->kTool->Enable();
+	renderer->vkTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }
 
 void VtoVK::ExitObtainResponse( void ) {
 	// Hide the hand.
+	renderer->vkTool->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitObtainResponse();
+}
+
+/// VtoK
+
+void VtoK::EnterPresentTarget( void ) {
+	// The target is displayed visually.
+	renderer->orientationTarget->Enable();
+	// Do all the default actions as well.
+	GraspTaskManager::EnterPresentTarget();
+}
+void  VtoK::ExitPresentTarget( void ) {
+	// Hide the visible target.
+	renderer->orientationTarget->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitPresentTarget();
+}
+
+void VtoK::EnterObtainResponse( void ) {
+	// Show the visual representation of the hand that is driven 
+	//  by the mouse or buttons.
+	renderer->kTool->Enable();
+	// Do all the default actions as well.
+	GraspTaskManager::EnterObtainResponse();
+}
+
+void VtoK::ExitObtainResponse( void ) {
+	// Hide the hand.
 	renderer->kTool->Disable();
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }
 
+/// KtoK
+
+void KtoK::EnterPresentTarget( void ) {
+	// Do all the default actions as well.
+	GraspTaskManager::EnterPresentTarget();
+	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
+	// But the orientation will be reflected by the color.
+	renderer->kkTool->Enable();
+}
+
+GraspTrialState KtoK::UpdatePresentTarget( void ) { 
+
+	// Update the visual feedback about the head tilt and see if 
+	// the head is still aligned as needed.
+	if ( !HandleHeadAlignment() ) return( TrialInterrupted );
+
+	static int good_counter = 10;
+	if ( !HandleHandAlignment() ) good_counter = 10;
+	else {
+		good_counter--;
+		if ( good_counter <= 0 ) return( TiltHead );
+	}
+
+	// If we haven't returned based on some condition above, continue in
+	// this state for the next cycle.
+	return( currentState );
+}
+
+
+void  KtoK::ExitPresentTarget( void ) {
+	// Hide the tool showing the orientation of the hand via color.
+	renderer->kkTool->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitPresentTarget();
+}
+
+void KtoK::EnterObtainResponse( void ) {
+	// Show the visual representation of the hand that is driven 
+	//  by the mouse or buttons.
+	renderer->vkTool->Enable();
+	// Do all the default actions as well.
+	GraspTaskManager::EnterObtainResponse();
+}
+
+void KtoK::ExitObtainResponse( void ) {
+	// Hide the hand.
+	renderer->vkTool->Disable();
+	// Do all the default actions as well.
+	GraspTaskManager::ExitObtainResponse();
+}

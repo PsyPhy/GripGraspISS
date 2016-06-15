@@ -323,7 +323,8 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			cueStepCommand = false;
 			// Run the command.
 			// For the moment, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe to simulate running the command.
-			char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + "TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
+	//		char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + "TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
+			char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + stepList[currentStep]->command ).ToPointer();
 			int return_code = system( cmd );
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 			// Map exit codes to the results pages defined in the step definition.

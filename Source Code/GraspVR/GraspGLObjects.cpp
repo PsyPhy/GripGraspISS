@@ -40,7 +40,9 @@ const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 // We may want to use a circular arrow to indicate to the subject which
 //  way to tilt the head, in addition to color cues.
 const double GraspGLObjects::prompt_radius = 160.0;
-const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -500.0 };
+const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
+const double GraspGLObjects::visor_radius = 320.0;
+
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
@@ -115,16 +117,17 @@ Assembly *GraspGLObjects::CreateDarkSky( void ) {
 
 Assembly *GraspGLObjects::CreateRoom( void ) {
 
-	Assembly *room = new Assembly();
-	room->SetColor( BLACK );
+	Assembly *structure = new Assembly();
+	structure->SetColor( BLACK );
 
-	//Tunnel Plus references
+	// Tunnel
 	tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
 	tunnel->SetColor( WHITE );
 	tunnel->SetTexture( wall_texture );
 	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
-	room->AddComponent( tunnel );
+	structure->AddComponent( tunnel );
 
+	// Reference Bars 
 	for (int i=0; i < reference_bars; i++ ){ 
 		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length, reference_bar_facets );
 		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
@@ -132,22 +135,22 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
 		// The texturing on the bars may be commented out for the moment because it lengthens the rendering time too much.
 		referenceBar->SetTexture( references_texture );
-		room->AddComponent( referenceBar );
+		structure->AddComponent( referenceBar );
 		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius,  room_length );
 		referenceBar->SetOffset( room_radius - reference_bar_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
 		// See above.
 		referenceBar->SetTexture( references_texture );
-		room->AddComponent( referenceBar );
+		structure->AddComponent( referenceBar );
 	}
 
 	Sphere *sphere = new Sphere( target_ball_radius );
 	sphere->SetPosition( 0.0, 0.0, room_length / 2.0 );
 	sphere->SetColor( RED );
-	room->AddComponent( sphere );
+	structure->AddComponent( sphere );
 
-	return room;
+	return structure;
 }
 
 Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
@@ -188,7 +191,6 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 Glasses *GraspGLObjects::CreateGlasses( void ) {
 
-	static double visor_radius = 350.0;
 	// Create a circular portal to look through to avoid visual cues about the egocentric reference frame.
 	Glasses *glasses = new Glasses( visor_radius - 70.0, visor_radius, room_radius, room_radius, 16 );
 	return glasses;
@@ -344,8 +346,8 @@ bool GraspGLObjects::ColorKK( double error, double sweet_zone, double tolerance 
 // jointly by accessing the hand object.
 Yoke *GraspGLObjects::CreateHand( void ) {
 	Yoke *hand = new Yoke();
-	hand->AddComponent( kTool );
 	hand->AddComponent( vkTool );
+	hand->AddComponent( kTool );
 	hand->AddComponent( kkTool );
 	return( hand );
 }
@@ -489,12 +491,15 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	hand = CreateHand();
 	// And to the gaze.
 	hud = CreateHUD();
+	// By default, the tool used to shoot the projectiles is the one at the hand.
+	selectedTool = hand;
 }
 
 // Place objects at default locations.
 void GraspGLObjects::PlaceVRObjects( void ) {
 	starrySky->SetPosition( sky_location );
 	darkSky->SetPosition( sky_location );
+	successIndicator->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
@@ -532,6 +537,7 @@ void GraspGLObjects::DrawVR( void ) {
 	headMisalignIndicator->Draw();
 	vTool->Draw();
 	kTool->Draw();
+	vkTool->Draw();
 	kkTool->Draw();
 	projectiles->Draw();
 

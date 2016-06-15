@@ -5,7 +5,7 @@
 
 namespace Grasp {
 
-	typedef enum { NullState, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
+	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
 					ProvideFeedback, TrialCompleted, TrialInterrupted, Timeout,
 					ExitStateMachine } GraspTrialState;
 
@@ -38,6 +38,7 @@ namespace Grasp {
 		}
 		int LoadTrialParameters( char *filename );
 		void RepeatTrial( int trial );
+		virtual void Prepare( void ) {}
 		int RunTrialBlock( char *sequence_filename, char *output_filename_root );
 
 		FILE *fp;
@@ -47,14 +48,27 @@ namespace Grasp {
 		GraspTrialState previousState, currentState, nextState;
 		bool UpdateStateMachine( void );
 
-		// A general purpose timer used by multiple states.
+		// General purpose timers used by multiple states.
 		::Timer stateTimer;	
+		::Timer auxStateTimer;
 
 		// 
 		// Now define the handlers for each possible GraspTrialState.
 		// All of these methods are declared virtual, with the expectation
 		// that they will be overridden by derived classes.
 		//
+
+		// StraightenHead
+		// The subject is guided to align the head with the body axis.
+		virtual void EnterStartBlock( void );
+		virtual GraspTrialState UpdateStartBlock( void );
+		virtual void ExitStartBlock( void );
+
+		// StartTrial
+		// The subject is guided to align the head with the body axis.
+		virtual void EnterStartTrial( void );
+		virtual GraspTrialState UpdateStartTrial( void );
+		virtual void ExitStartTrial( void );
 
 		// StraightenHead
 		// The subject is guided to align the head with the body axis.
@@ -118,6 +132,7 @@ namespace Grasp {
 
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
+		void Prepare( void ) { renderer->selectedTool = renderer->vTool; }
 		void EnterPresentTarget( void );
 		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
@@ -125,11 +140,30 @@ namespace Grasp {
 	};
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
 		void EnterPresentTarget( void );
 		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
 		void ExitObtainResponse( void );
 	};
+	// V-K protocol. 
+	class VtoK : public GraspTaskManager {
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		void EnterPresentTarget( void );
+		void ExitPresentTarget( void );
+		void EnterObtainResponse( void );
+		void ExitObtainResponse( void );
+	};
+	// K-K protocol. 
+	class KtoK : public GraspTaskManager {
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		void EnterPresentTarget( void );
+		GraspTrialState UpdatePresentTarget( void );
+		void ExitPresentTarget( void );
+		void EnterObtainResponse( void );
+		void ExitObtainResponse( void );
+	};
+
 
 };
 
