@@ -1,9 +1,9 @@
 # Protocol Definition: Visual Stimulus to Kinesthetic Response 
 501; INSTRUCTION; Introduction; V-KFloatingProtocolReady.html
 502; SCRIPT; Preparation; InstallFloating.tsk
-503; COMMAND; Align Tracker; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+503; COMMAND; Align Tracker; AlignToRigidBodyGUI.exe Bdy\Chest.bdy; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 504; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-505; COMMAND; Practice Trials; Grasp --VtoK --sequence=GraspSequence1.txt --output=
-506; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=GraspSequence2.txt --output=
-507; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=GraspSequence2.txt --output=
+505; COMMAND; Practice Trials; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
+506; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
+507; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
 599; INSTRUCTION; End of Protocol; ProtocolFinished.html
