@@ -53,6 +53,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( strstr( lpCmdLine, "--coda" ) ) useCoda = true;
 	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
 	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
+	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
 	if ( char *ptr = strstr( lpCmdLine, "--sequence=" ) ) sscanf( ptr, "--sequence=%s", sequence_filename );
 	if ( char *ptr = strstr( lpCmdLine, "--output=" ) ) sscanf( ptr, "--output=%s", output_filename_root );
 
@@ -66,6 +67,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	switch ( paradigm ) {
 
+	case doVtoVK:
+		grasp = new VtoVK();
+		break;
+
+	case doVtoK:
+		grasp = new VtoVK();
+		break;
+
+	case doKtoK:
+		grasp = new KtoK();
+		break;
+
 	case doVtoV:
 	default:
 		grasp = new VtoV();
@@ -75,7 +88,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
 	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
-	trackers->WriteDataFiles( output_filename_root );
+//	trackers->WriteDataFiles( output_filename_root );
+
+	exit( 0 );
 
 }
 

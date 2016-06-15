@@ -190,7 +190,7 @@ void GraspDexTrackers::Release( void ) {
 	stopMarkerGrabs = true;
 	WaitForSingleObject( threadHandle, INFINITE );
 	// Halt the continuous Coda acquisition.
-	codaTracker.StopAcquisition();
+	codaTracker.AbortAcquisition();
 
 }
 
