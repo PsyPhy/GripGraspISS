@@ -1,8 +1,9 @@
-# Protocol Definition: Visual Stimulus to Visual Response 
+# Protocol Definition: Visual Target to Visual Response 
 101; INSTRUCTION; Introduction; V-VSeatedProtocolReady.html
 102; SCRIPT; Preparation; InstallSeated.tsk
 103; COMMAND; Align Tracker; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 104; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-105; COMMAND; Visual-Visual Block 1; Grasp --VtoV --sequence=GraspSequence1.txt --output=
-106; COMMAND; Visual-Visual Block 2; Grasp --VtoV --sequence=GraspSequence2.txt --output=
-107; INSTRUCTION; End of Protocol; ProtocolFinished.html
+105; COMMAND; Practice Trials; Grasp --VtoV --sequence=GraspSequence1.txt --output=
+106; COMMAND; Experiment Trials Block 1; Grasp --VtoV --sequence=GraspSequence2.txt --output=
+107; COMMAND; Experiment Trials Block 2; Grasp --VtoV --sequence=GraspSequence2.txt --output=
+199; INSTRUCTION; End of Protocol; ProtocolFinished.html

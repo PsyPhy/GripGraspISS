@@ -3,6 +3,7 @@
 502; SCRIPT; Preparation; InstallFloating.tsk
 503; COMMAND; Align Tracker; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 504; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-505; COMMAND; Visual-Visual Block 1; Grasp --VtoK --sequence=GraspSequence1.txt --output=
-506; COMMAND; Visual-Visual Block 2; Grasp --VtoK --sequence=GraspSequence2.txt --output=
-507; INSTRUCTION; End of Protocol; ProtocolFinished.html
+505; COMMAND; Practice Trials; Grasp --VtoK --sequence=GraspSequence1.txt --output=
+506; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=GraspSequence2.txt --output=
+507; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=GraspSequence2.txt --output=
+599; INSTRUCTION; End of Protocol; ProtocolFinished.html
