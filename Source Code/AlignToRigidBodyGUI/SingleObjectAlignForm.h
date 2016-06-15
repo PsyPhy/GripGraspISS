@@ -216,7 +216,10 @@ namespace AlignToRigidBodyGUI {
 	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
-				 if ( response == System::Windows::Forms::DialogResult::Yes ) Close();
+				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
+					 // coda->Quit();
+					 Close();
+				 }
 			 }
 
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
