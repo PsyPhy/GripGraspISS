@@ -105,7 +105,7 @@ void GraspDesktop::ParseSessionFile( String^ filename ) {
 			int number;
 			sscanf( token[0], "%d", &number );
 			protocolList[nProtocols] = gcnew Protocol( number, token[1], token[2] );
-			protocolListBox->Items->Add( protocolList[nProtocols]->name );
+			protocolListBox->Items->Add( protocolList[nProtocols]->number + " " + protocolList[nProtocols]->name );
 			nProtocols++;
 		}
 		else fAbortMessageOnCondition( (tokens != 0), "GraspGUI", "Invalid number of tokens (%d) in session file.\n\n  %s", tokens, linebuffer );
@@ -167,7 +167,7 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 					}
 				}
 			}
-			taskListBox->Items->Add( taskList[nTasks]->name );
+			taskListBox->Items->Add( taskList[nTasks]->number + " " + taskList[nTasks]->name );
 			nTasks++;
 		}
 		else fAbortMessageOnCondition( (tokens != 0), "GraspGUI", "Invalid number of tokens (%d) in protocol file.\n\n  %s", tokens, linebuffer );

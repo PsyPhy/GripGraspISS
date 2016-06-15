@@ -52,6 +52,8 @@ namespace GraspGUI {
 		// run in order to be able to see the pages. This flag allows us to "cue up" the 
 		// command, run the event loop until everything is visible, and then run the command.
 		bool cueStepCommand;
+	private: System::Windows::Forms::ComboBox^  protocolListBox;
+
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static Timer^ refreshTimer;
@@ -148,7 +150,7 @@ namespace GraspGUI {
 	private: System::Windows::Forms::GroupBox^  taskGroupBox;
 	private: System::Windows::Forms::ListBox^  taskListBox;
 	private: System::Windows::Forms::GroupBox^  protocolGroupBox;
-	private: System::Windows::Forms::ListBox^  protocolListBox;
+
 
 	private: System::Windows::Forms::Button^  statusButton;
 	private: System::Windows::Forms::Button^  quitButton;
@@ -198,7 +200,7 @@ namespace GraspGUI {
 			this->taskGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->taskListBox = (gcnew System::Windows::Forms::ListBox());
 			this->protocolGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->protocolListBox = (gcnew System::Windows::Forms::ListBox());
+			this->protocolListBox = (gcnew System::Windows::Forms::ComboBox());
 			this->subjectGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->subjectListBox = (gcnew System::Windows::Forms::ListBox());
 			this->instructionsGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -284,11 +286,11 @@ namespace GraspGUI {
 			this->taskGroupBox->Controls->Add(this->taskListBox);
 			this->taskGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->taskGroupBox->Location = System::Drawing::Point(13, 501);
+			this->taskGroupBox->Location = System::Drawing::Point(13, 361);
 			this->taskGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskGroupBox->Name = L"taskGroupBox";
 			this->taskGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->taskGroupBox->Size = System::Drawing::Size(599, 378);
+			this->taskGroupBox->Size = System::Drawing::Size(599, 518);
 			this->taskGroupBox->TabIndex = 7;
 			this->taskGroupBox->TabStop = false;
 			this->taskGroupBox->Text = L"Task";
@@ -296,14 +298,14 @@ namespace GraspGUI {
 			// 
 			// taskListBox
 			// 
-			this->taskListBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->taskListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskListBox->FormattingEnabled = true;
-			this->taskListBox->ItemHeight = 36;
+			this->taskListBox->ItemHeight = 37;
 			this->taskListBox->Location = System::Drawing::Point(11, 34);
 			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskListBox->Name = L"taskListBox";
-			this->taskListBox->Size = System::Drawing::Size(580, 328);
+			this->taskListBox->Size = System::Drawing::Size(580, 448);
 			this->taskListBox->TabIndex = 5;
 			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
@@ -316,23 +318,23 @@ namespace GraspGUI {
 			this->protocolGroupBox->Margin = System::Windows::Forms::Padding(4);
 			this->protocolGroupBox->Name = L"protocolGroupBox";
 			this->protocolGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->protocolGroupBox->Size = System::Drawing::Size(599, 260);
+			this->protocolGroupBox->Size = System::Drawing::Size(599, 116);
 			this->protocolGroupBox->TabIndex = 6;
 			this->protocolGroupBox->TabStop = false;
-			this->protocolGroupBox->Text = L"Protocol";
+			this->protocolGroupBox->Text = L"Paradigm";
 			this->protocolGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::ProtocolGroupBox_Enter);
 			// 
 			// protocolListBox
 			// 
-			this->protocolListBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->protocolListBox->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->protocolListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->protocolListBox->FormattingEnabled = true;
-			this->protocolListBox->ItemHeight = 36;
-			this->protocolListBox->Location = System::Drawing::Point(11, 31);
-			this->protocolListBox->Margin = System::Windows::Forms::Padding(4);
+			this->protocolListBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) {L"Please select a User ID ..."});
+			this->protocolListBox->Location = System::Drawing::Point(11, 51);
 			this->protocolListBox->Name = L"protocolListBox";
-			this->protocolListBox->Size = System::Drawing::Size(580, 220);
-			this->protocolListBox->TabIndex = 5;
+			this->protocolListBox->Size = System::Drawing::Size(579, 45);
+			this->protocolListBox->TabIndex = 6;
 			this->protocolListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::protocolListBox_SelectedIndexChanged);
 			// 
 			// subjectGroupBox
@@ -352,16 +354,16 @@ namespace GraspGUI {
 			// 
 			// subjectListBox
 			// 
-			this->subjectListBox->ColumnWidth = 192;
-			this->subjectListBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->subjectListBox->ColumnWidth = 186;
+			this->subjectListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->subjectListBox->FormattingEnabled = true;
-			this->subjectListBox->ItemHeight = 36;
+			this->subjectListBox->ItemHeight = 37;
 			this->subjectListBox->Location = System::Drawing::Point(11, 34);
 			this->subjectListBox->Margin = System::Windows::Forms::Padding(4);
 			this->subjectListBox->MultiColumn = true;
 			this->subjectListBox->Name = L"subjectListBox";
-			this->subjectListBox->Size = System::Drawing::Size(580, 148);
+			this->subjectListBox->Size = System::Drawing::Size(580, 152);
 			this->subjectListBox->TabIndex = 5;
 			this->subjectListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::subjectListBox_SelectedIndexChanged);
 			// 
@@ -574,7 +576,6 @@ namespace GraspGUI {
 			this->stepHeaderTextBox->Name = L"stepHeaderTextBox";
 			this->stepHeaderTextBox->Size = System::Drawing::Size(434, 34);
 			this->stepHeaderTextBox->TabIndex = 0;
-			this->stepHeaderTextBox->Text = L"yyyygggg";
 			// 
 			// htmlGroupBox
 			// 
@@ -663,7 +664,8 @@ namespace GraspGUI {
 			stepHeaderTextBox->Height = 36;
 			instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
 			subjectListBox->Items->Clear();
-			protocolListBox->Items->Clear();
+			protocolListBox->Items->Clear(); 
+			protocolListBox->Items->Add( "Please select a User ID ..." );
 			taskListBox->Items->Clear();
 			ParseSubjectFile( scriptDirectory + "Subjects.sbj" );
 
