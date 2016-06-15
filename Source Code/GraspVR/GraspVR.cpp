@@ -237,7 +237,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	static double angle = 39.0;
 	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->headMisalignIndicator->SetAttitude( angle, 0.0, 0.0 );
-angle += 1.0;
+	angle -= 1.0;
 }
 double  GraspVR::SetTargetOrientation( double roll_angle ) {
 	renderer->orientationTarget->SetOrientation( roll_angle, 0.0, 0.0 );
