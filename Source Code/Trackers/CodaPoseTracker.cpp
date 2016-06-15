@@ -69,7 +69,7 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
 	// I don't know what that will be, yet, so I set the time to zero.
 	pose.time = 0.0;
-	fOutputDebugString( "CodaPoseTracker Intrinsic %s\n", ( pose.visible ? "Visible" : "Occluded" ));
+	//	fOutputDebugString( "CodaPoseTracker Intrinsic %s\n", ( pose.visible ? "Visible" : "Occluded" ));
 	// returns whether or not the rigid body is visible.
 	return( pose.visible );
 
@@ -97,10 +97,15 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 }
 
 void CodaPoseTracker::WriteModelMarkerPositions( FILE *fp ) {
+	    
+	SYSTEMTIME  st;
+    GetSystemTime( &st );
+
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		fprintf( fp, "%d\t%8.3f\t%8.3f\t%8.3f\n", modelMarker[mrk].id, modelMarker[mrk].position[X], modelMarker[mrk].position[Y], modelMarker[mrk].position[Z] );
 	}
 	fprintf( fp, "\n;;; Rigid Body Model File\n" );
+	fprintf( fp, ";;; Created %d/%02d/%02d %02dh%02dm%02ds GMT\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 }
 
 void CodaPoseTracker::ReadModelMarkerPositions( FILE *fp ) {
