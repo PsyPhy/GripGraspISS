@@ -133,6 +133,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->headMisalignIndicator->Disable();
 	renderer->vTool->Disable();
 	renderer->kTool->Disable();
+	renderer->vkTool->Disable();
 	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
 
@@ -158,8 +159,15 @@ void GraspVR::Release( void ) {
 ProjectileState GraspVR::TriggerProjectiles( void ) {
 	if ( currentProjectileState == running ) return( currentProjectileState );
 	// Position the projectiles where the tool is now.
-	renderer->projectiles->SetPosition( renderer->hand->position );
-	renderer->projectiles->SetOrientation( renderer->hand->orientation );
+	// Since I set the object to be at the same place as the head tracker and then use the offset 
+	//  parameter to place it in front of the eyes, I need to take into account both the tools
+	//  position and orientation and its offset and attitude. I should probably make a more
+	//  general function to compute the world position and orientation of compound objects.
+	renderer->projectiles->SetOrientation( renderer->selectedTool->orientation );
+	Vector3 offset, world;
+	MultiplyVector( offset, renderer->selectedTool->offset, renderer->selectedTool->orientation );
+	AddVectors( world, renderer->selectedTool->position, offset );
+	renderer->projectiles->SetPosition( world );
 	// Make the projectiles visible.
 	renderer->projectiles->Enable();
 	return( currentProjectileState = running );
@@ -177,9 +185,10 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 			renderer->projectiles->Disable();
 		}
 		else {
-			// If the projectiles have been triggered and have not reached their destination, move them forward in depth.
+			// If the projectiles have been triggered and have not reached their destination, move
+			//  them forward along the line projecting out along the axis of the hand.
 			Vector3 aim, new_position;
-			MultiplyVector( aim, kVector, renderer->hand->orientation );
+			MultiplyVector( aim, kVector, renderer->selectedTool->orientation );
 			ScaleVector( aim, aim, -20.0 );
 			AddVectors( new_position, renderer->projectiles->position, aim );
 			renderer->projectiles->SetPosition( new_position );
