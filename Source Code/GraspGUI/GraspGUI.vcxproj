@@ -89,7 +89,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GraspGUI.cpp" />
     <ClCompile Include="GraspScripts.cpp" />
     <ClCompile Include="stdafx.cpp">

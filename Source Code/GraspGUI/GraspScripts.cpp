@@ -322,9 +322,12 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Don't trigger again on the next DocumentCompleted event.
 			cueStepCommand = false;
 			// Run the command.
-			// For the moment, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe to simulate running the command.
-	//		char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + "TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
-			char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + stepList[currentStep]->command ).ToPointer();
+			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
+			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
+			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
+			char *cmd;
+			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "bin\\TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
+			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + stepList[currentStep]->command ).ToPointer();
 			int return_code = system( cmd );
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 			// Map exit codes to the results pages defined in the step definition.
