@@ -123,6 +123,7 @@ namespace GraspGUI {
 			}
 			catch ( Exception^ e ) 
 			{
+				e = e;
 				fAbortMessage( "GraspGUI", "Error creating results directory." );
 			}
 

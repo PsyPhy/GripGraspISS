@@ -41,8 +41,11 @@
     <NMakeCleanCommandLine>del /Q *.html</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeOutput>GraspInstructionTypesetting.exe</NMakeOutput>
+    <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>NMake Makefile.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake Makefile.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

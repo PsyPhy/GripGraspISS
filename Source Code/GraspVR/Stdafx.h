@@ -2,11 +2,11 @@
 // or project specific include files that are used frequently,
 // but are changed infrequently
 
-// Disable warnings about unsafe functions.
-#define _CRT_SECURE_NO_WARNINGS
 
 #pragma once
 
+// Disable warnings about unsafe functions.
+#define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 #include <mmsystem.h>
 

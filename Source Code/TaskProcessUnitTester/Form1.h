@@ -237,6 +237,7 @@ namespace TaskProcessUnitTester {
 					 exit( number );
 				 }
 				 catch (FormatException ^e) {
+					 e = e; // Ingore the unused variable. There must be a better way.
 					 MessageBox::Show( "Value is not an integer.", "TaskProcessUnitTester", MessageBoxButtons::OK );
 				 }
 			 }

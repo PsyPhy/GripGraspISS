@@ -71,11 +71,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		fprintf( stderr, "%s %s\n", codaTracker.vstr( localFrame[0].marker[0].position), codaTracker.vstr( localFrame[1].marker[0].position ));
 
 	}
-	int key = getch(); // Clear the _kbhit().
+	int key = _getch(); // Clear the _kbhit().
 	codaTracker.AbortAcquisition();
 
 	fprintf( stderr, "\nCodaVisibility terminated. Press <Return> to close window.\n" );
-	getch();
+	_getch();
 
 	return 0;
 }

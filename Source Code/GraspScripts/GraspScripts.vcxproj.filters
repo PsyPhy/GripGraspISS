@@ -16,8 +16,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="readme.txt" />
-    <None Include="Makefile.mak" />
     <None Include="V-Vfloating.pcl">
       <Filter>V-V</Filter>
     </None>
@@ -63,5 +61,6 @@
     <None Include="K-Kinstructions.tsk">
       <Filter>K-K</Filter>
     </None>
+    <None Include="GraspScripts.mak" />
   </ItemGroup>
 </Project>
