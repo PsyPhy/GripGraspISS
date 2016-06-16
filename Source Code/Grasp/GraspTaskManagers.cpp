@@ -624,6 +624,9 @@ void KtoK::EnterPresentTarget( void ) {
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
 	// But the orientation will be reflected by the color.
 	renderer->kkTool->Enable();
+	// The desired orientation of the head to the specified head orientation.
+	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation );
+
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 

@@ -2,6 +2,6 @@
 01; INSTRUCTION; InstallSeated1.html
 02; INSTRUCTION; InstallSeated2.html
 03; INSTRUCTION; InstallLocker.html
-04; COMMAND; CodaInstallationCheck.exe -seated -hmd -chest -tool; CodaInstallationCheckSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+04; COMMAND; TaskProcessUnitTester.exe CodaInstallationCheck.exe -seated -hmd -chest -tool; CodaInstallationCheckSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 05; INSTRUCTION; TaskFinished.html
 

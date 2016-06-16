@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 101; INSTRUCTION; Introduction; V-VSeatedProtocolReady.html
 102; SCRIPT; Preparation; InstallSeated.tsk
-103; COMMAND; Align Tracker; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+103; COMMAND; Align Tracker; AlignToRigidBodyGUI.exe Bdy\Hand.bdy; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 104; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
 105; COMMAND; Practice Trials; Grasp --VtoV --coda --sequence=Seq\HeadStraightGraspSequence.seq --output=VtoV
 106; COMMAND; Experiment Trials Block 1; Grasp --VtoV --coda --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1 

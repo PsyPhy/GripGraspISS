@@ -41,6 +41,7 @@ namespace Grasp {
 			oculusMapper( nullptr ),
 			desiredHeadRollSweetZone( 2.0 ),
 			desiredHandRollSweetZone( 2.0 ),
+			desiredHandRollTolerance( 15.0 ),
 			trackers( nullptr ) {}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {

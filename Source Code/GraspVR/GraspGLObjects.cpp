@@ -309,14 +309,15 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 
 Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 
+	static const double hand_radius = finger_ball_radius * 2.5;
 	Assembly *finger = new Assembly();
-	Sphere *sphere = new Sphere( finger_ball_radius );
+	Sphere *sphere = new Sphere( hand_radius );
 	sphere->SetPosition( 0.0, 0.0, 0.0 );
 	finger->AddComponent( sphere );
-	Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
+	Cylinder *cylinder = new Cylinder( hand_radius, hand_radius, finger_length );
 	cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
 	finger->AddComponent( cylinder );
-	sphere = new Sphere( finger_ball_radius );
+	sphere = new Sphere( hand_radius );
 	sphere->SetPosition( 0.0, 0.0, - finger_length );
 	finger->AddComponent( sphere );
 	// Add a laser pointer to the end.

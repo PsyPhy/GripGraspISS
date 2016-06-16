@@ -97,7 +97,8 @@ bool OculusCodaPoseTracker::Update( void ) {
 		absoluteTracker->GetCurrentPose( absolutePose );
 		if ( absolutePose.visible ) {
 			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
-			CopyVector( currentState.pose.position, absolutePose.pose.position );
+			// CopyVector( currentState.pose.position, absolutePose.pose.position );
+			CopyVector( currentState.pose.position, zeroVector );
 		}
 		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
 	}

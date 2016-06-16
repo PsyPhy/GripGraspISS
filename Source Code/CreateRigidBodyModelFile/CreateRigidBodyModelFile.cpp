@@ -63,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	fprintf( stderr, "OK.\n" );
 
 	// Compute the average marker positions for the acquired sample.
-	codaTracker.ComputeAverageMarkerFrame( avgFrame, codaTracker.recordedMarkerFrames[0], codaTracker.nFrames );
+	codaTracker.ComputeAverageMarkerFrame( avgFrame, codaTracker.recordedMarkerFrames[1], codaTracker.nFrames );
 	// Set the position of the model markers from the average acquired sample.
 	CodaPoseTracker *codaPoseTracker = new CodaPoseTracker( nullptr );
 	codaPoseTracker->SetModelMarkerPositions( mrk_list_length, mrk_list, &avgFrame );
