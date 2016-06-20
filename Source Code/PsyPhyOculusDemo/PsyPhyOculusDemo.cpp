@@ -183,6 +183,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		// Create a pose tracker that combines Coda and Oculus data.
 		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
+		//oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
 		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
 		// Pick which PoseTrackers to use.
 		hmdTracker = oculusCodaPoseTracker;
@@ -413,8 +414,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		stopMarkerGrabs = true;
 		WaitForSingleObject( threadHandle, INFINITE );
 		// Halt the continuous Coda acquisition.
-		codaTracker.StopAcquisition();
-
+		codaTracker.AbortAcquisition();
+#if 0
 		// Output the CODA data to a file.
 		char *filename = "Log\\PsyPhyOculusDemo.mrk";
 		fOutputDebugString( "Writing CODA data to %s.\n", filename );
@@ -443,8 +444,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		}
 		fclose( fp );
 		fOutputDebugString( "File %s closed.\n", filename );
+#endif
 
 	}
-
 	return(0);
 }

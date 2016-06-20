@@ -35,7 +35,7 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 	if ( initialized ) return true;
 
 	// Initialize the connected absolute tracker.
-	absoluteTracker->Initialize();
+	if ( absoluteTracker ) absoluteTracker->Initialize();
 
 	// Initialize the pose of the tracker.
 	// In the final version this should be computed from the CODA contribution.
@@ -96,12 +96,14 @@ bool OculusCodaPoseTracker::Update( void ) {
 		absoluteTracker->Update();
 		absoluteTracker->GetCurrentPose( absolutePose );
 		if ( absolutePose.visible ) {
+			fOutputDebugString( "Cycle %4d: %s  %s  %s\n", cycle_counter, qstr( dQ ), qstr( currentState.pose.orientation ), qstr( absolutePose.pose.orientation ) );
 			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
 			// CopyVector( currentState.pose.position, absolutePose.pose.position );
 			CopyVector( currentState.pose.position, zeroVector );
 		}
 		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
 	}
+	else fOutputDebugString( "Cycle %4d: No absolute tracker.\n", cycle_counter );
 	cycle_counter++;
 
 	// After the above, we have a weighted *SUM* of inertial and CODA data. This normalization effectively turns the
@@ -126,7 +128,7 @@ bool OculusCodaPoseTracker::Update( void ) {
 
 }
 bool OculusCodaPoseTracker::Release( void ) { 
-	absoluteTracker->Release();
+	if ( absoluteTracker ) absoluteTracker->Release();
 	fclose( fp );
 	initialized = false;
 	return true; 
