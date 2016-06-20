@@ -22,7 +22,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	MarkerFrame localFrame[2];
 
-	int origin = 2;
+	int origin = 0;
 	int x_minus = 0;
 	int x_plus = 1;
 	int y_minus = 2;

@@ -41,7 +41,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	fprintf( stderr, "\n%s started.\n", argv[0] );
+	fprintf( stderr, "%s started.\n", argv[0] );
 
 	// Initialize the connection to the CODA tracking system.
 	fprintf( stderr, "Initializing CODA system ..." );
