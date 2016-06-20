@@ -56,8 +56,8 @@ bool CascadePoseTracker::Release( void ) {
 bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	static int cycle_counter = 0;
 	TrackerPose component_pose;
-	component_pose.visible = false;
-	component_pose.time = 0.0;
+	pose.visible = false;
+	pose.time = 0.0;
 	for ( int trk = 0; trk < nTrackers; trk++ ) {
 		tracker[trk]->GetCurrentPose( component_pose );
 		if ( component_pose.visible ) {
