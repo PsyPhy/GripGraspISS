@@ -131,6 +131,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->successIndicator->Disable();
 	renderer->timeoutIndicator->Disable();
 	renderer->headMisalignIndicator->Disable();
+	renderer->readyToStartIndicator->Disable();
 	renderer->vTool->Disable();
 	renderer->kTool->Disable();
 	renderer->vkTool->Disable();
@@ -246,6 +247,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	static double angle = 39.0;
 	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->headMisalignIndicator->SetAttitude( angle, 0.0, 0.0 );
+	renderer->readyToStartIndicator->SetAttitude( angle, 0.0, 0.0 );
 	angle -= 1.0;
 }
 double  GraspVR::SetTargetOrientation( double roll_angle ) {

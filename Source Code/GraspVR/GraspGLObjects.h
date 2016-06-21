@@ -112,6 +112,8 @@ namespace Grasp {
 			static const char *timeout_texture_bitmap;	// in a way that avoids establishing a reference frame based on the orientation 
 			Texture			*head_misalign_texture;		// of the text.
 			static const char *head_misalign_texture_bitmap;
+			Texture			*ready_to_start_texture;		// of the text.
+			static const char *ready_texture_bitmap;
 
 
 		public:
@@ -127,6 +129,7 @@ namespace Grasp {
 			Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial.
 			Assembly		*timeoutIndicator;		// Shown when the subject takes too long to do something.
 			Assembly		*headMisalignIndicator;	// Shown when the subject does not maintain the desired head tilt.
+			Assembly		*readyToStartIndicator;	// Prompt the subject to press a button when ready.
 			Assembly		*vTool;					// Full-fledged tool. One can see its orientation.
 
 			Yoke			*hand;					// An collection of objects that move with the hand.
@@ -178,6 +181,7 @@ namespace Grasp {
 			Assembly *CreateSuccessIndicator( void );
 			Assembly *CreateTimeoutIndicator( void );
 			Assembly *CreateHeadMisalignIndicator( void );
+			Assembly *CreateReadyToStartIndicator( void );
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );

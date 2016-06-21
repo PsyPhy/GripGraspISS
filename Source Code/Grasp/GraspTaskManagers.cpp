@@ -247,20 +247,21 @@ void GraspTaskManager::EnterStartBlock( void ) {
 	// The desired orientation of the head is upright (0°). This is not essential, but it allows us to show the colors already.
 	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
-	// For the moment that indicator does not exist, so I use the success indicator.
-	renderer->successIndicator->Enable();
+	renderer->readyToStartIndicator->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
 	// Modulate the halo color, even though it does not matter, so
 	// that the subject gets into that mode of operation.
 	HandleHeadAlignment();
+	// Make the prompt spin to avoid creating a reference frame.
+	HandleSpinningPrompts();
 	// When the subject clicks a button, we move on to start the first trial
 	if ( oculusDisplay->Button[MOUSE_LEFT]  ||  oculusDisplay->Button[MOUSE_MIDDLE] ||  oculusDisplay->Button[MOUSE_RIGHT] ) return( StartTrial );
 	// Otherwise, continue in this state.
 	return( currentState );
 }
 void  GraspTaskManager::ExitStartBlock( void ) {
-	renderer->successIndicator->Disable();
+	renderer->readyToStartIndicator->Disable();
 }
 
 //

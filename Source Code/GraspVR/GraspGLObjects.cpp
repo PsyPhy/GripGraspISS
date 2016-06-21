@@ -19,8 +19,9 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
-const char *GraspGLObjects::timeout_texture_bitmap = "Bmp\\Timeout.bmp";
-const char *GraspGLObjects::head_misalign_texture_bitmap = "Bmp\\Headtilted.bmp";
+const char *GraspGLObjects::timeout_texture_bitmap = "Bmp\\TimeLimit.bmp";
+const char *GraspGLObjects::head_misalign_texture_bitmap = "Bmp\\HeadMisalignment.bmp";
+const char *GraspGLObjects::ready_texture_bitmap = "Bmp\\ReadyToStart.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -93,6 +94,7 @@ void GraspGLObjects::CreateTextures( void ) {
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
 	timeout_texture = new Texture( timeout_texture_bitmap );
 	head_misalign_texture = new Texture( head_misalign_texture_bitmap );
+	ready_to_start_texture = new Texture( ready_texture_bitmap );
 
 }
 
@@ -364,6 +366,8 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( timeoutIndicator );
 	headMisalignIndicator->SetOffset( prompt_location );
 	yoke->AddComponent( headMisalignIndicator );
+	readyToStartIndicator->SetOffset( prompt_location );
+	yoke->AddComponent( readyToStartIndicator );
 	vTool->SetOffset( 0.0, 0.0, -200.0 );
 	yoke->AddComponent( vTool );
 	return( yoke );
@@ -424,6 +428,20 @@ Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
 	return assembly;
 }
 
+Assembly *GraspGLObjects::CreateReadyToStartIndicator( void ) {
+	// For the moment the indicator for a timeout is just a magenta 
+	// sphere. I would like to create something that is more intuitive.
+	Assembly	*assembly = new Assembly();
+	Disk		*surface;
+	
+	surface = new Disk( 120.0, 0.0, 128 );
+	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface->SetTexture( ready_to_start_texture );
+	assembly->AddComponent( surface );
+
+	return assembly;
+}
+
 Assembly *GraspGLObjects::CreateTimeoutIndicator( void ) {
 	// For the moment the indicator for a timeout is just a magenta 
 	// sphere. I would like to create something that is more intuitive.
@@ -478,6 +496,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	successIndicator = CreateSuccessIndicator();
 	timeoutIndicator = CreateTimeoutIndicator();
 	headMisalignIndicator = CreateHeadMisalignIndicator();
+	readyToStartIndicator = CreateReadyToStartIndicator();
 	projectiles = CreateProjectiles();
 
 	// Orientated tool used when responding with only visual feedback (e.g. V-V).
@@ -536,6 +555,7 @@ void GraspGLObjects::DrawVR( void ) {
 	successIndicator->Draw();
 	timeoutIndicator->Draw();
 	headMisalignIndicator->Draw();
+	readyToStartIndicator->Draw();
 	vTool->Draw();
 	kTool->Draw();
 	vkTool->Draw();
