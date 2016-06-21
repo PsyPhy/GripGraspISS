@@ -68,6 +68,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScreenshots", "GraspSc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstallStandaloneGrasp", "InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj", "{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspScriptCrawler", "GraspScriptCrawler\GraspScriptCrawler.vcxproj", "{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -316,6 +318,14 @@ Global
 		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.Release|Win32.Build.0 = Release|Win32
 		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
 		{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}.ReleaseStatic|Win32.Build.0 = Release|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.Debug|Win32.Build.0 = Debug|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.DebugStatic|Win32.ActiveCfg = Debug|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.DebugStatic|Win32.Build.0 = Debug|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.Release|Win32.ActiveCfg = Release|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.Release|Win32.Build.0 = Release|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.ReleaseStatic|Win32.ActiveCfg = Release|Win32
+		{0ABFD2FF-F7BC-42FD-B70A-F16B90242941}.ReleaseStatic|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
