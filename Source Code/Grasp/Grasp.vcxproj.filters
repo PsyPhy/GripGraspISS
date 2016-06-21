@@ -8,6 +8,7 @@
   <ItemGroup>
     <None Include="ReadMe.txt" />
     <None Include="..\..\Seq\TestGraspSequence.seq" />
+    <None Include="..\..\Seq\HeadStraightGraspSequence.seq" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />

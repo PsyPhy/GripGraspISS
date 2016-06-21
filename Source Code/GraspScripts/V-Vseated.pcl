@@ -3,7 +3,7 @@
 102; SCRIPT; Preparation; InstallSeated.tsk
 103; COMMAND; Align Tracker; AlignToRigidBodyGUI.exe Bdy\Hand.bdy; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 104; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-105; COMMAND; Practice Trials; Grasp --VtoV --coda --sequence=Seq\HeadStraightGraspSequence.seq --output=VtoV
-106; COMMAND; Experiment Trials Block 1; Grasp --VtoV --coda --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1 
-107; COMMAND; Experiment Trials Block 2; Grasp --VtoV --coda --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2 
+105; COMMAND; Practice Trials; Grasp --VtoV --sequence=Seq\DemoGraspSequence.seq --output=VtoV
+106; COMMAND; Experiment Trials Block 1; Grasp --VtoV --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1 
+107; COMMAND; Experiment Trials Block 2; Grasp --VtoV --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2 
 199; INSTRUCTION; End of Protocol; ProtocolFinished.html
