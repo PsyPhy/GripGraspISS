@@ -1,6 +1,7 @@
 ### Keep the GRASP top level execution environment curent.
 
-install: ..\Debug\Grasp.exe InstallGrasp.mak
+EXECUTABLES = ..\Debug\Grasp.exe  ..\Debug\AlignToRigidBody.exe ..\Debug\GraspGUI.exe  ..\Debug\TaskProcessUnitTester.exe  ..\Debug\CreateRigidBodyModelFile.exe
+install: $(EXECUTABLES) InstallGrasp.mak  
 	copy ..\Debug\Grasp.exe ..\..\bin
 	copy ..\Debug\GraspGUI.exe ..\..\bin
 	copy ..\Debug\AlignToRigidBody.exe ..\..\bin
