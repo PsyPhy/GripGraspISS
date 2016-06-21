@@ -993,15 +993,15 @@ void Disk::Draw( void ) {
 			y3 = outer_radius * sin( angle + deltaA );
 			y4 = outer_radius * sin( angle );
 
-			u1 = 0.5 + 0.5 * x1 / outer_radius;
-			u2 = 0.5 + 0.5 * x2 / outer_radius;
-			u3 = 0.5 + 0.5 * x3 / outer_radius;
-			u4 = 0.5 + 0.5 * x4 / outer_radius;
+			u1 = 0.5 + 0.45 * x1 / outer_radius;
+			u2 = 0.5 + 0.45 * x2 / outer_radius;
+			u3 = 0.5 + 0.45 * x3 / outer_radius;
+			u4 = 0.5 + 0.45 * x4 / outer_radius;
 
-			v1 = 0.5 + 0.5 * y1 / outer_radius;
-			v2 = 0.5 + 0.5 * y2 / outer_radius;
-			v3 = 0.5 + 0.5 * y3 / outer_radius;
-			v4 = 0.5 + 0.5 * y4 / outer_radius;
+			v1 = 0.5 + 0.45 * y1 / outer_radius;
+			v2 = 0.5 + 0.45 * y2 / outer_radius;
+			v3 = 0.5 + 0.45 * y3 / outer_radius;
+			v4 = 0.5 + 0.45 * y4 / outer_radius;
 
 			glBegin(GL_QUADS);
 			glNormal3d( 0.0, 0.0, 1.0 );
