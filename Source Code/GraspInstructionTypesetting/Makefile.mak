@@ -5,8 +5,11 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
+
 install: Grasp.html
 	copy *.html $(INSTRUCTIONS_DESTINATION)
+	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any errors from the mkdir command.
+	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
 	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions & echo Ignoring any errors from the mkdir command.
 	copy Figures_Instructions\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions
 	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V & echo Ignoring any errors from the mkdir command.
@@ -24,6 +27,7 @@ ALL_HTML=GraspWelcome.html NotYetImplemented.html Invalid.html \
 	InstallSeated1.html InstallSeated2.html InstallFloating1.html InstallFloating2.html \
 	CodaInstallationCheckSeated.html CodaInstallationCheckFloating.html InstallLocker.html \
 	CodaAlignFloating.html CodaAlignSeated.html \
+	01StraightenHead.html 02TargetK.html 02TargetV.html 03TiltHead.html 04RespondK.html 04RespondV.html 05Feedback.html \
 	V-VFloatingProtocolReady.html V-VSeatedProtocolReady.html V-V1.html V-V2.html V-V3.html V-V4.html V-V5.html V-V6.html \
 	V-KFloatingProtocolReady.html V-KSeatedProtocolReady.html V-K1.html V-K2.html V-K3.html V-K4.html V-K5.html V-K6.html \
 	K-KFloatingProtocolReady.html K-KSeatedProtocolReady.html K-K1.html K-K2.html K-K3.html K-K4.html K-K5.html K-K6.html 

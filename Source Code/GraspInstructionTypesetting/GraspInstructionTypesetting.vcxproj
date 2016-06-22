@@ -50,6 +50,13 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="01StraightenHead.md" />
+    <None Include="02TargetK.md" />
+    <None Include="02TargetV.md" />
+    <None Include="03TiltHead.md" />
+    <None Include="04RespondK.md" />
+    <None Include="04RespondV.md" />
+    <None Include="05Feedback.md" />
     <None Include="CodaAlignFloating.md" />
     <None Include="CodaAlignSeated.md" />
     <None Include="CodaInstallationCheckFloating.md" />

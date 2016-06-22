@@ -129,6 +129,13 @@
     <None Include="K-KSeatedProtocolReady.md">
       <Filter>K-K</Filter>
     </None>
+    <None Include="01StraightenHead.md" />
+    <None Include="02TargetK.md" />
+    <None Include="03TiltHead.md" />
+    <None Include="04RespondK.md" />
+    <None Include="05Feedback.md" />
+    <None Include="02TargetV.md" />
+    <None Include="04RespondV.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
