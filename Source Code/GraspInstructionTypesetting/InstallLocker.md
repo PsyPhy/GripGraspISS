@@ -8,4 +8,4 @@ Ensure that the locker door is closed and latched:
 
 CENTER( IMAGE( Figures_Instructions/LockerClosed.bmp, 240 ) )
 
-CENTER ( Press IMAGE( Figures_Instructions/gui-next-button.tiff, 120 ) to continue. )
+CENTER ( Press __'Next'__ to continue. )

@@ -7,5 +7,5 @@ CENTER( *A picture showing the configuration of the <br> equipment would be good
 The system will check if the CODA sensors are properly installed and if the HMD, tool 
 and chest markers are positioned appropriately.
  
-CENTER( Press IMAGE( Figures_Instructions/gui-execute-button.tiff, 120 ) to perform check. )
+CENTER( Press __'Execute'__ to perform check. )
 

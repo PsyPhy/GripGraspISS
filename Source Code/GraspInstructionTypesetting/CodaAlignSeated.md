@@ -10,5 +10,5 @@ Ready to perform the alignment procedure for the 3D tracker.
 
 - Confirm that the HMD, tool and chest markers are positioned properly on the chair.
  
-CENTER( Press IMAGE( Figures_Instructions/gui-execute-button.tiff, 120 ) to perform alignment. )
+CENTER( Press __'Execute'__ to perform alignment. )
 
