@@ -1,5 +1,5 @@
-HEADER( __Action Terminated__ )
+HEADER( __Subsession Terminated__ )
 
 CENTER( IMAGE(Figures_Instructions/finish-line.png, 300) )
  
-CENTER( Press __'Next'__ to exit. )
+HEADER( Press __'Next'__ to exit. )

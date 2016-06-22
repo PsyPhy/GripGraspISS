@@ -136,6 +136,10 @@
     <None Include="05Feedback.md" />
     <None Include="02TargetV.md" />
     <None Include="04RespondV.md" />
+    <None Include="V-VIntro.md" />
+    <None Include="V-KIntro.md" />
+    <None Include="K-KIntro.md" />
+    <None Include="StepReadyFloating.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

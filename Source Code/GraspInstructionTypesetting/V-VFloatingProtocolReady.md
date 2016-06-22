@@ -1,7 +1,8 @@
-HEADER( __Visual-Visual <br> in Quasi-Freefloating__ )
+HEADER(__Visual-Visual in Freefloating__)
+- Visual Target IMAGE( Pictures/VTarget.jpg, 200 )
 
-HEADER( Ready to Start IMAGE( Figures_Instructions/go-arrow.bmp, 200 ) )
+- Visual Response IMAGE( Pictures/ValidateResponseV.jpg, 200 )
 
-It would be nice to have a single image that recalls what V-V is <br> in this initial page, rather than just this generic image and message.
+- Quasi-Freefloating IMAGE( Pictures/Floating.jpg, 120 )
  
-CENTER( Press __'Next'__ to continue. )
+HEADER( Press __'Next'__ to continue. )

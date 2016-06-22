@@ -1,9 +1,7 @@
 # Protocol Definition: Visual Stimulus to Kinesthetic Response 
-301; INSTRUCTION; Introduction; K-KSeatedProtocolReady.html
-302; SCRIPT; Preparation; InstallSeated.tsk
-303; COMMAND; Align Tracker; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-304; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
-305; COMMAND; Practice Trials; Grasp --KtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-306; COMMAND; Experiment Trials Block 1; Grasp --KtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-307; COMMAND; Experiment Trials Block 2; Grasp --KtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-399; INSTRUCTION; End of Protocol; ProtocolFinished.html
+301; SCRIPT; Preparation; K-KprepareSeated.tsk
+302; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
+303; COMMAND; Practice Trials; Grasp --KtoK --sequence=Seq\DemoGraspSequence.seq --output=KtoK; StepReadySeated.html
+304; COMMAND; Experiment Trials Block 1; Grasp --KtoK --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1 ; StepReadySeated.html
+305; COMMAND; Experiment Trials Block 2; Grasp --KtoK --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2 ; StepReadySeated.html
+399; INSTRUCTION; End of Subsession; ProtocolFinished.html

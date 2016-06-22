@@ -1,9 +1,7 @@
-# Protocol Definition: Visual Stimulus to Kinesthetic Response 
-501; INSTRUCTION; Introduction; V-KFloatingProtocolReady.html
-502; SCRIPT; Preparation; InstallFloating.tsk
-503; COMMAND; Align Tracker; AlignToRigidBodyGUI.exe Bdy\Chest.bdy; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-504; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-505; COMMAND; Practice Trials; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-506; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-507; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-599; INSTRUCTION; End of Protocol; ProtocolFinished.html
+# Protocol Definition: Visual Target to Visual Response 
+501; SCRIPT; Preparation; V-KprepareFloating.tsk
+502; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
+503; COMMAND; Practice Trials; Grasp --VtoK --sequence=Seq\DemoGraspSequence.seq --output=VtoK; StepReadyFloating.html
+504; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1; StepReadyFloating.html
+505; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2; StepReadyFloating.html
+599; INSTRUCTION; End of Subsession; ProtocolFinished.html

@@ -25,12 +25,6 @@
     <None Include="GraspNominalSessions.sss">
       <Filter>Generic</Filter>
     </None>
-    <None Include="InstallFloating.tsk">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="InstallSeated.tsk">
-      <Filter>Generic</Filter>
-    </None>
     <None Include="Subjects.sbj">
       <Filter>Generic</Filter>
     </None>
@@ -62,5 +56,23 @@
       <Filter>K-K</Filter>
     </None>
     <None Include="GraspScripts.mak" />
+    <None Include="V-VprepareSeated.tsk">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-VprepareFloating.tsk">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-KprepareFloating.tsk">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-KprepareSeated.tsk">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="K-KprepareFloating.tsk">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KprepareSeated.tsk">
+      <Filter>K-K</Filter>
+    </None>
   </ItemGroup>
 </Project>

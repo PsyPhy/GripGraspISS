@@ -26,7 +26,8 @@ ALL_HTML=GraspWelcome.html NotYetImplemented.html Invalid.html \
 	TaskFinished.html ProtocolFinished.html \
 	InstallSeated1.html InstallSeated2.html InstallFloating1.html InstallFloating2.html \
 	CodaInstallationCheckSeated.html CodaInstallationCheckFloating.html InstallLocker.html \
-	CodaAlignFloating.html CodaAlignSeated.html \
+	CodaAlignFloating.html CodaAlignSeated.html StepReadySeated.html StepReadyFloating.html \
+	V-VIntro.html K-KIntro.html V-KIntro.html \
 	01StraightenHead.html 02TargetK.html 02TargetV.html 03TiltHead.html 04RespondK.html 04RespondV.html 05Feedback.html \
 	V-VFloatingProtocolReady.html V-VSeatedProtocolReady.html V-V1.html V-V2.html V-V3.html V-V4.html V-V5.html V-V6.html \
 	V-KFloatingProtocolReady.html V-KSeatedProtocolReady.html V-K1.html V-K2.html V-K3.html V-K4.html V-K5.html V-K6.html \

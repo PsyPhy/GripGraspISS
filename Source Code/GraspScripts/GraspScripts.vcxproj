@@ -52,19 +52,23 @@
   <ItemGroup>
     <None Include="GraspMaintenanceSessions.sss" />
     <None Include="GraspNominalSessions.sss" />
-    <None Include="InstallFloating.tsk" />
-    <None Include="InstallSeated.tsk" />
     <None Include="K-Kfloating.pcl" />
     <None Include="K-Kinstructions.tsk" />
+    <None Include="K-KprepareFloating.tsk" />
+    <None Include="K-KprepareSeated.tsk" />
     <None Include="K-Kseated.pcl" />
     <None Include="Maintenance.pcl" />
     <None Include="Subjects.sbj" />
     <None Include="GraspScripts.mak" />
     <None Include="V-Kfloating.pcl" />
     <None Include="V-Kinstructions.tsk" />
+    <None Include="V-KprepareFloating.tsk" />
+    <None Include="V-KprepareSeated.tsk" />
     <None Include="V-Kseated.pcl" />
     <None Include="V-Vfloating.pcl" />
     <None Include="V-Vinstructions.tsk" />
+    <None Include="V-VprepareFloating.tsk" />
+    <None Include="V-VprepareSeated.tsk" />
     <None Include="V-Vseated.pcl" />
   </ItemGroup>
   <ItemGroup>

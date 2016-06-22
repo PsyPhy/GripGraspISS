@@ -1,9 +1,7 @@
-# Protocol Definition: Visual Stimulus to Kinesthetic Response 
-201; INSTRUCTION; Introduction; V-KSeatedProtocolReady.html
-202; SCRIPT; Preparation; InstallSeated.tsk
-203; COMMAND; Align Tracker; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-204; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-205; COMMAND; Practice Trials; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-206; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-207; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=seq\HeadStraightGraspSequence.txt --output=
-299; INSTRUCTION; End of Protocol; ProtocolFinished.html
+# Protocol Definition: Visual Target to Visual Response 
+201; SCRIPT; Preparation; V-KprepareSeated.tsk
+202; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
+203; COMMAND; Practice Trials; Grasp --VtoK --sequence=Seq\DemoGraspSequence.seq --output=VtoK; StepReadySeated.html
+204; COMMAND; Experiment Trials Block 1; Grasp --VtoK --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1 ; StepReadySeated.html
+205; COMMAND; Experiment Trials Block 2; Grasp --VtoK --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2 ; StepReadySeated.html
+299; INSTRUCTION; End of Subsession; ProtocolFinished.html

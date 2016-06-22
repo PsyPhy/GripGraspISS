@@ -1,0 +1,5 @@
+# Instructions and commands to guide the installation for the seated posture.
+01; INSTRUCTION; V-VIntro.html
+02; COMMAND; AlignToRigidBodyGUI.exe Bdy\Chest.bdy; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+03; INSTRUCTION; TaskFinished.html
+

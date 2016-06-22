@@ -73,6 +73,7 @@
     <None Include="K-K5.md" />
     <None Include="K-K6.md" />
     <None Include="K-KFloatingProtocolReady.md" />
+    <None Include="K-KIntro.md" />
     <None Include="K-KSeatedProtocolReady.md" />
     <None Include="NotYetImplemented.md" />
     <None Include="ProtocolFinished.md" />
@@ -80,6 +81,7 @@
     <None Include="StepFinished.md" />
     <None Include="StepNormalFinish.md" />
     <None Include="StepReady.md" />
+    <None Include="StepReadyFloating.md" />
     <None Include="StepRunning.md" />
     <None Include="GraspWelcome.md" />
     <None Include="Makefile.mak" />
@@ -92,6 +94,7 @@
     <None Include="V-K5.md" />
     <None Include="V-K6.md" />
     <None Include="V-KFloatingProtocolReady.md" />
+    <None Include="V-KIntro.md" />
     <None Include="V-KSeatedProtocolReady.md" />
     <None Include="V-V1.md" />
     <None Include="V-V2.md" />
@@ -100,6 +103,7 @@
     <None Include="V-V5.md" />
     <None Include="V-V6.md" />
     <None Include="V-VFloatingProtocolReady.md" />
+    <None Include="V-VIntro.md" />
     <None Include="V-VSeatedProtocolReady.md" />
   </ItemGroup>
   <ItemGroup>

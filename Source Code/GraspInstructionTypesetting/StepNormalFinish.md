@@ -2,4 +2,4 @@ HEADER( __Action Completed Normally__ )
 
 CENTER( IMAGE(Figures_Instructions/ok-button-green.png, 240) )
  
-CENTER( Press IMAGE( Figures_Instructions/gui-next-button.tiff, 120 ) to continue. )
+HEADER( Press __'Next'__ to continue. )

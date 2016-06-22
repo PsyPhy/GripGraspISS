@@ -215,6 +215,7 @@ namespace GraspGUI {
 			this->restartButton = (gcnew System::Windows::Forms::Button());
 			this->ignoreButton = (gcnew System::Windows::Forms::Button());
 			this->commandNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->unitTestingMode = (gcnew System::Windows::Forms::CheckBox());
 			this->executeButton = (gcnew System::Windows::Forms::Button());
 			this->execBackButton = (gcnew System::Windows::Forms::Button());
 			this->execSkipButton = (gcnew System::Windows::Forms::Button());
@@ -226,7 +227,6 @@ namespace GraspGUI {
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->htmlGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
-			this->unitTestingMode = (gcnew System::Windows::Forms::CheckBox());
 			this->navigatorGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
 			this->protocolGroupBox->SuspendLayout();
@@ -326,7 +326,7 @@ namespace GraspGUI {
 			this->protocolGroupBox->Size = System::Drawing::Size(599, 97);
 			this->protocolGroupBox->TabIndex = 6;
 			this->protocolGroupBox->TabStop = false;
-			this->protocolGroupBox->Text = L"Paradigm";
+			this->protocolGroupBox->Text = L"Subsession";
 			this->protocolGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::ProtocolGroupBox_Enter);
 			// 
 			// protocolListBox
@@ -474,6 +474,17 @@ namespace GraspGUI {
 			this->commandNavigationGroupBox->TabIndex = 17;
 			this->commandNavigationGroupBox->TabStop = false;
 			// 
+			// unitTestingMode
+			// 
+			this->unitTestingMode->AutoSize = true;
+			this->unitTestingMode->Location = System::Drawing::Point(311, 31);
+			this->unitTestingMode->Name = L"unitTestingMode";
+			this->unitTestingMode->Size = System::Drawing::Size(113, 24);
+			this->unitTestingMode->TabIndex = 15;
+			this->unitTestingMode->Text = L"unit testing";
+			this->unitTestingMode->UseVisualStyleBackColor = true;
+			this->unitTestingMode->Visible = false;
+			// 
 			// executeButton
 			// 
 			this->executeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -605,17 +616,6 @@ namespace GraspGUI {
 			this->instructionViewer->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
-			// 
-			// unitTestingMode
-			// 
-			this->unitTestingMode->AutoSize = true;
-			this->unitTestingMode->Location = System::Drawing::Point(311, 31);
-			this->unitTestingMode->Name = L"unitTestingMode";
-			this->unitTestingMode->Size = System::Drawing::Size(113, 24);
-			this->unitTestingMode->TabIndex = 15;
-			this->unitTestingMode->Text = L"unit testing";
-			this->unitTestingMode->UseVisualStyleBackColor = true;
-			this->unitTestingMode->Visible = false;
 			// 
 			// GraspDesktop
 			// 
