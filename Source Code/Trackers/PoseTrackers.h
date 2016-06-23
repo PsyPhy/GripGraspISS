@@ -49,6 +49,8 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 			return true; 
 		};
 
+		// Transform such that the null pose in intrinsic coordinates gives the specified pose.
+		virtual void OffsetTo( const Pose &pose );
 		// Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
 		virtual void BoresightAt( const Pose &pose );
 		// Boresight so that the current pose becomes the specified pose.
