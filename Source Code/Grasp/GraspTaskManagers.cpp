@@ -621,6 +621,8 @@ void VtoK::ExitObtainResponse( void ) {
 /// KtoK
 
 void KtoK::EnterPresentTarget( void ) {
+	// Show the subject where to point.
+	renderer->positionOnlyTarget->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
@@ -628,7 +630,6 @@ void KtoK::EnterPresentTarget( void ) {
 	renderer->kkTool->Enable();
 	// The desired orientation of the head to the specified head orientation.
 	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation );
-
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 
@@ -651,6 +652,8 @@ GraspTrialState KtoK::UpdatePresentTarget( void ) {
 
 
 void  KtoK::ExitPresentTarget( void ) {
+	// Hide target position.
+	renderer->positionOnlyTarget->Disable();
 	// Hide the tool showing the orientation of the hand via color.
 	renderer->kkTool->Disable();
 	// Do all the default actions as well.
