@@ -205,7 +205,11 @@ bool GraspGLObjects::SetColorByRollError( OpenGLObject *object, double desired_r
 	// but I'm not sure that it will work well for pitch or yaw far from zero.
 	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
 	// We need a reliable method for computing the roll angle independent from pitch and yaw.
-	double object_roll_angle = ToDegrees( atan2( object->orientation[0][1], object->orientation[0][0] ) );
+
+	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+	//  orientation here match the orientation of the visual target. But I don't know if this one was 
+	//  wrong or the other one. We should check.
+	double object_roll_angle = ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] ) );
 	// Compute the error with respect to the desired roll angle.
 	double error = fabs( desired_roll_angle - object_roll_angle );
 
