@@ -21,11 +21,11 @@ int main(array<System::String ^> ^args)
 	String ^model_file = args->Length >= 2 ? args[1] : gcnew String( "Bdy\\Chest.bdy" );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
-	DexServices *dex = new DexServices();
-	dex->Connect();
+	//DexServices *dex = new DexServices();
+	//dex->Connect();
 
 	// Create the main window and run it
 	Application::Run(gcnew SingleObjectForm( model_file, alignment_file, marker_file ));
+	return( Environment::ExitCode );
 
-	return 0;
 }

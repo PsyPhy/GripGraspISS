@@ -26,6 +26,9 @@ namespace AlignToRigidBodyGUI {
 	{
 
 	protected:
+
+		bool									noCoda;
+
 		PsyPhy::OpenGLWindow					*vrWindow1, *vrWindow2;
 		PsyPhy::Viewpoint						*codaViewpoint;
 		Grasp::MarkerStructureGLObject			*alignmentObject1;
@@ -36,6 +39,12 @@ namespace AlignToRigidBodyGUI {
 
 		String^ modelFile;
 		String^ alignmentFile;
+	private: System::Windows::Forms::TextBox^  instructionsTextBox;
+	protected: 
+
+	protected: 
+
+	protected: 
 		String^ markerFile;
 
 	public:
@@ -48,6 +57,8 @@ namespace AlignToRigidBodyGUI {
 			modelFile = model_file;
 			alignmentFile = alignment_file;
 			markerFile = marker_file;
+
+			noCoda = false;
 
 		}
 
@@ -128,6 +139,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrPanel2 = (gcnew System::Windows::Forms::Panel());
 			this->vrGroupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
 			this->SuspendLayout();
@@ -136,7 +148,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(342, 241);
+			this->alignButton->Location = System::Drawing::Point(351, 403);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
@@ -149,7 +161,7 @@ namespace AlignToRigidBodyGUI {
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(71, 241);
+			this->cancelButton->Location = System::Drawing::Point(80, 403);
 			this->cancelButton->Name = L"cancelButton";
 			this->cancelButton->Size = System::Drawing::Size(159, 56);
 			this->cancelButton->TabIndex = 3;
@@ -160,7 +172,7 @@ namespace AlignToRigidBodyGUI {
 			// vrGroupBox2
 			// 
 			this->vrGroupBox2->Controls->Add(this->vrPanel2);
-			this->vrGroupBox2->Location = System::Drawing::Point(293, 12);
+			this->vrGroupBox2->Location = System::Drawing::Point(302, 174);
 			this->vrGroupBox2->Name = L"vrGroupBox2";
 			this->vrGroupBox2->Size = System::Drawing::Size(256, 223);
 			this->vrGroupBox2->TabIndex = 5;
@@ -177,7 +189,7 @@ namespace AlignToRigidBodyGUI {
 			// vrGroupBox1
 			// 
 			this->vrGroupBox1->Controls->Add(this->vrPanel1);
-			this->vrGroupBox1->Location = System::Drawing::Point(22, 12);
+			this->vrGroupBox1->Location = System::Drawing::Point(31, 174);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
 			this->vrGroupBox1->Size = System::Drawing::Size(256, 223);
 			this->vrGroupBox1->TabIndex = 4;
@@ -191,13 +203,26 @@ namespace AlignToRigidBodyGUI {
 			this->vrPanel1->Size = System::Drawing::Size(235, 186);
 			this->vrPanel1->TabIndex = 0;
 			// 
+			// instructionsTextBox
+			// 
+			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->instructionsTextBox->Location = System::Drawing::Point(44, 25);
+			this->instructionsTextBox->Multiline = true;
+			this->instructionsTextBox->Name = L"instructionsTextBox";
+			this->instructionsTextBox->Size = System::Drawing::Size(503, 126);
+			this->instructionsTextBox->TabIndex = 6;
+			this->instructionsTextBox->Text = L"Verify that all markers are visible in each Tracker Camera view and then press \'A" 
+				L"lign\'.";
+			// 
 			// SingleObjectForm
 			// 
 			this->AcceptButton = this->alignButton;
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(570, 306);
+			this->ClientSize = System::Drawing::Size(570, 474);
+			this->Controls->Add(this->instructionsTextBox);
 			this->Controls->Add(this->vrGroupBox2);
 			this->Controls->Add(this->vrGroupBox1);
 			this->Controls->Add(this->cancelButton);
@@ -209,6 +234,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox2->ResumeLayout(false);
 			this->vrGroupBox1->ResumeLayout(false);
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -218,22 +244,26 @@ namespace AlignToRigidBodyGUI {
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
 					 // coda->Quit();
+					 Environment::ExitCode = -1;
 					 Close();
 				 }
 			 }
 
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-				 // Create a window and viewpoint to show what the subject is seeing.
+				 // Create windows and viewpoints to show what the CODA units are seeing.
 				 vrWindow1 = PsyPhy::CreateOpenGLWindowInForm( vrPanel1);
 				 vrWindow2 = PsyPhy::CreateOpenGLWindowInForm( vrPanel2, vrWindow1->hRC );
 
+				 // Create the OpenGLObjects that depict the marker array structure.
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
 				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
+				 // Create a viewpoint that looks at the origin from the negative Z axis.
+				 // This is where the CODAs are with respect to the workspace.
 				 codaViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 				 codaViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 				 codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
@@ -242,6 +272,12 @@ namespace AlignToRigidBodyGUI {
 				 // Some of this will be overridden by the object renderer.
 				 glUsefulInitializeDefault();
 				 glUsefulDefaultSpecularLighting( 0.75 );
+
+				 // When debugging without the CODA, just quit.
+				 if ( noCoda ) {
+					 instructionsTextBox->Text = instructionsTextBox->Text + " (noCoda debug mode)";
+					 return;
+				 }
 
 				 // Create and start up the CODA tracker.
 				 coda = new CodaRTnetTracker();
@@ -256,6 +292,12 @@ namespace AlignToRigidBodyGUI {
 
 	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { }
 	private: System::Void alignButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 // If in noCoda debug mode, signal to close the form and then return to skip initiating the CODA system.
+				 if ( noCoda ) {
+					 Close();
+					 return;
+				 }
 
 				 // Show the Form as being inactive.
 				 Enabled = false;
@@ -344,6 +386,6 @@ namespace AlignToRigidBodyGUI {
 				 Close();
 
 			 }
-	};
+};
 }
 
