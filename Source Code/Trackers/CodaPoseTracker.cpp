@@ -64,11 +64,14 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	pose.visible = ComputeRigidBodyPose( pose.pose.position, pose.pose.orientation, validated_model, validated_actual, validated_markers, nullptr );
 
 	// Scale the position. This can be used to convert the intrinsic mm to meters.
-	ScaleVector( pose.pose.position, pose.pose.position, positionScaleFactor );
+	// ScaleVector( pose.pose.position, pose.pose.position, positionScaleFactor );
+	// For the moment do not track positions, just orientations.
+	ScaleVector( pose.pose.position, pose.pose.position, 0.0 );
 
 	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
-	// I don't know what that will be, yet, so I set the time to zero.
-	pose.time = 0.0;
+	// For the moment I use the time of the marker frame.
+	pose.time = frame->time;
+
 	//	fOutputDebugString( "CodaPoseTracker Intrinsic %s\n", ( pose.visible ? "Visible" : "Occluded" ));
 	// returns whether or not the rigid body is visible.
 	return( pose.visible );

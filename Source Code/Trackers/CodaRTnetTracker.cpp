@@ -580,8 +580,8 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
 		// But I don't know how to get the serial numbers from the CODA units that are connected.
 		// So here I am hard coding the serial numbers from the GRIP science model. I will have to see
 		//  what happens when we move to other hardware.
-		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=3008\n", unit );
-		else fprintf( fp, "CX1SerialNumber%d=3009\n", unit );
+		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=3006\n", unit );
+		else fprintf( fp, "CX1SerialNumber%d=3007\n", unit );
 		// Note the negative signs for the offset. Again, trial and error.
 		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[X],  - offset[Y], - offset[Z] );
 		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation_matrix[X][X] , rotation_matrix[X][Y] , rotation_matrix[X][Z] );
