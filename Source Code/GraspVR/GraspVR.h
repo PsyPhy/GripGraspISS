@@ -11,7 +11,7 @@
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
 
-#define CYCLES_TO_BE_GOOD	5	// Number of cycles that the head alignment has to be within tolerance to be considered good.
+#define CYCLES_TO_BE_GOOD	45	// Number of cycles that the head alignment has to be within tolerance to be considered good.
 
 namespace Grasp {
 			
