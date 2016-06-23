@@ -22,12 +22,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	MarkerFrame localFrame[2];
 
-	int origin = 0;
-	int x_minus = 0;
-	int x_plus = 1;
-	int y_minus = 2;
-	int y_plus = 1;
+	//int origin = 0;
+	//int x_minus = 0;
+	//int x_plus = 1;
+	//int y_minus = 2;
+	//int y_plus = 1;
 
+	int origin = 16;
+	int x_minus = 16;
+	int x_plus = 17;
+	int y_minus = 17;
+	int y_plus = 18;
 
 	fprintf( stderr, "Initializing CODA ..." );
 	codaTracker.Initialize();
