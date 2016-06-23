@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 401; SCRIPT; Preparation; V-VprepareFloating.tsk
 402; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-403; COMMAND; Practice Trials; Grasp --VtoV --sequence=Seq\DemoGraspSequence.seq --output=VtoV; StepReadyFloating.html
-404; COMMAND; Experiment Trials Block 1; Grasp --VtoV --sequence=Seq\HeadStraightGraspSequence.seq --output=tst1; StepReadyFloating.html
-405; COMMAND; Experiment Trials Block 2; Grasp --VtoV --sequence=Seq\HeadTiltGraspSequence.seq --output=tst2; StepReadyFloating.html
+403; COMMAND; Practice Trials; Executables\Grasp --VtoV --sequence=Sequences\DemoGraspSequence.seq --output=VtoV; StepReadyFloating.html
+404; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoV --sequence=Sequences\HeadStraightGraspSequence.seq --output=tst1; StepReadyFloating.html
+405; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoV --sequence=Sequences\HeadTiltGraspSequence.seq --output=tst2; StepReadyFloating.html
 499; INSTRUCTION; End of Subsession; ProtocolFinished.html

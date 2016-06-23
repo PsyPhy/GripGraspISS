@@ -1,5 +1,5 @@
 # Instructions and commands to guide the installation for the floating posture.
 01; INSTRUCTION; V-VIntro.html
-02; COMMAND; AlignToRigidBodyGUI.exe Bdy\Chest.bdy; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+02; COMMAND; Executables\AlignToRigidBodyGUI.exe Bdy\Chest.bdy; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
 03; INSTRUCTION; TaskFinished.html
 

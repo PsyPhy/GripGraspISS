@@ -327,7 +327,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
 			char *cmd;
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "bin\\TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
-			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( execDirectory + stepList[currentStep]->command ).ToPointer();
+			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( stepList[currentStep]->command ).ToPointer();
 			int return_code = system( cmd );
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 			// Map exit codes to the results pages defined in the step definition.
