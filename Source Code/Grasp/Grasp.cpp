@@ -42,7 +42,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	
-	bool useCoda = true;
+	bool useCoda = false;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining } paradigm = doVtoV;
 
 	char sequence_filename[FILENAME_MAX];

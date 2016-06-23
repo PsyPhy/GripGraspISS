@@ -321,13 +321,21 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		if ( cueStepCommand ) {
 			// Don't trigger again on the next DocumentCompleted event.
 			cueStepCommand = false;
+			// Create an output filename.
+			SYSTEMTIME st;
+			GetSystemTime( &st );
+			char datetimestr[MAX_PATH];
+			sprintf( datetimestr, "%02d%02d%02d.%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+			String ^dateTimeString = gcnew String( datetimestr );
+
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
 			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
+			String ^cmdline =  stepList[currentStep]->command + resultsDirectory + "\\" + subjectList[currentSubject]->ID + "." + dateTimeString;
 			char *cmd;
-			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "bin\\TaskProcessUnitTester.exe " + stepList[currentStep]->command ).ToPointer();
-			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( stepList[currentStep]->command ).ToPointer();
+			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
+			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 			int return_code = system( cmd );
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 			// Map exit codes to the results pages defined in the step definition.
