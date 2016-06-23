@@ -31,8 +31,10 @@ using namespace Grasp;
 
 // How much the tool will turn for a given displacement of the mouse or trackball.
 double GraspTrackers::mouseGain = - 0.001;
-// Where to place the tool when in V-V mode.
-Pose GraspTrackers::handPoseVV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
+// Where to place the tool when in V response mode.
+Pose GraspTrackers::handPoseV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
+// Where to place the tool when in K response mode.
+Pose GraspTrackers::handPoseK = {{100.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -145,27 +147,28 @@ void GraspDexTrackers::Initialize( void ) {
 	// Create a tracker to control the orientation via the mouse.
 	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
-	mouseRollTracker->BoresightTo( handPoseVV );
 
 	// Now assign the trackers to each body part.
 	hmdTracker = oculusCodaPoseTracker;
 	handTracker = handCascadeTracker;
 	chestTracker = chestCascadeTracker;
 	mouseTracker = mouseRollTracker;
-	// And place the virtual hand at a fixed position to be used in the V-V protocol.
-	mouseTracker->BoresightTo( handPoseVV );
 	
+	// Place the hand at a constant position relative to the origin.
+	mouseTracker->OffsetTo( handPoseV );
+	handTracker->OffsetTo( handPoseK );
+
 	////
 	//// We are not yet tracking positions, so we need to position the hand appropriately.
 	//// Here I boresight the hand tracker to the fixed position as well. But this is
 	////  temporary and should be removed when we start tracking 3D positions as well.
 
-	//// Give the trackers a chance to get started.
-	//Sleep( 200 );
-	//// Allow them to update.
-	//Update();
-	//// And set the hand position to a fixed position.
-	//handTracker->BoresightTo( handPoseVV );
+	// Give the trackers a chance to get started.
+	Sleep( 200 );
+	// Allow them to update.
+	Update();
+	// And set the hand position to a fixed position.
+	handTracker->BoresightTo( handPoseK );
 
 }
 
@@ -251,10 +254,11 @@ void GraspSimTrackers::Initialize( void ) {
 	fAbortMessageOnCondition( !mouseRollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
 	// The MouseRollPoseTracker will then rotate the tool around this constant position.
-	mouseRollTracker->BoresightTo( handPoseVV );
+	mouseRollTracker->BoresightTo( handPoseV );
 	// The mouse tracker, used in V-V, is the mouse tracker. 
 	mouseTracker = mouseRollTracker;
 	// The hand tracker is also the mouse tracker to simulate the other protocols.
+	// But this is problematic because it is going to put the hand along the line of sight.
 	handTracker = mouseRollTracker;
 
 	// Create a arrow key tracker to simulate movements of the hand.

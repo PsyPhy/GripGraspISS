@@ -36,7 +36,8 @@ namespace Grasp {
 
 	protected:
 		static double	mouseGain;
-		static Pose		handPoseVV;
+		static Pose		handPoseV;
+		static Pose		handPoseK;
 		static double	arrowGain;
 		static Pose		chestPoseSim;
 		OculusMapper	*oculusMapper;
