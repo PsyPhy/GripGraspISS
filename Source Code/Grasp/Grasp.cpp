@@ -42,7 +42,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	
-	bool useCoda = false;
+	bool useCoda = true;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining } paradigm = doVtoV;
 
 	char sequence_filename[FILENAME_MAX];
@@ -50,7 +50,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	// Parse the command line.
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
-	if ( strstr( lpCmdLine, "--coda" ) ) useCoda = true;
+	if ( strstr( lpCmdLine, "--ncoda" ) ) useCoda = false;
 	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
 	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
 	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
