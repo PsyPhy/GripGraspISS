@@ -262,6 +262,7 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 }
 void  GraspTaskManager::ExitStartBlock( void ) {
 	renderer->readyToStartIndicator->Disable();
+	TimerStart( blockTimer );
 }
 
 //
@@ -408,8 +409,8 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// Handle triggering and moving the projectiles.
 	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
 		// Record the response.
-		fprintf( fp, "%f; %s\n", 0.0, renderer->vTool->mstr( renderer->selectedTool->orientation ) );
-		fOutputDebugString( "Response: %f; %s\n", 0.0, renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->vTool->mstr( renderer->selectedTool->orientation ) );
+		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
 	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 

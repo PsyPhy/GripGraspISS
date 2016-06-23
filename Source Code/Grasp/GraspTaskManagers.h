@@ -51,6 +51,7 @@ namespace Grasp {
 		// General purpose timers used by multiple states.
 		::Timer stateTimer;	
 		::Timer auxStateTimer;
+		::Timer blockTimer;
 
 		// 
 		// Now define the handlers for each possible GraspTrialState.
