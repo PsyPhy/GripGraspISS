@@ -300,14 +300,14 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 	// Turn off lots of visual cues in preparation for starting up the conflict.
 	renderer->room->Disable();
-
-	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	// Make sure that the head tilt prompt is not still present.
+	renderer->tiltPrompt->Disable();
 
 	// Set the conflict gain.
 
 	// The blanking period has a fixed duration. We should define a constant somewhere.
 	TimerSet( stateTimer,  1.0 ); 
+	// Stay in the state a little longer after the room comes back on.
 	TimerSet( auxStateTimer, 2.0 );
 
 	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
@@ -317,13 +317,14 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 }
 GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
-	// Update the feedback about the head orientation wrt the desired head orientation.
-	HandleHeadAlignment(); 
 	if ( TimerTimeout( auxStateTimer ) ) return( StraightenHead );
 	if ( TimerTimeout( stateTimer ) ) renderer->room->Enable();
 	return( currentState );
 }
-void GraspTaskManager::ExitStartTrial( void ) {}
+void GraspTaskManager::ExitStartTrial( void ) {
+	// The desired orientation of the head to the specified head orientation.
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+}
 
 
 //
