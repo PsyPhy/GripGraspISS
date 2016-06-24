@@ -24,6 +24,12 @@ using namespace PsyPhy;
 // Constants
 //
 
+// Number of cycles that the head alignment has to be within tolerance to be considered good.
+const int GraspVR::cyclesToBeGood = 45;
+
+// Transparency of objects that change color according to roll angle.
+// It is important that the halo (glasses) be transparent. The kkTool will be transparent
+//  too as a side effect, but that's not so important.
 const double GraspVR::errorColorMapTransparency = 0.5;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +307,7 @@ bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_ang
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
 	desiredHeadRollTolerance = tolerance;
-	headGoodCycles = CYCLES_TO_BE_GOOD;
+	headGoodCycles = cyclesToBeGood;
 	return( desiredHeadRoll );
 }
 bool GraspVR::HandleHeadAlignment( void ) {
@@ -309,14 +315,14 @@ bool GraspVR::HandleHeadAlignment( void ) {
 	if ( SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance ) ) return( --headGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		headGoodCycles = CYCLES_TO_BE_GOOD;
+		headGoodCycles = cyclesToBeGood;
 		return false;
 	}
 }
 
 double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 	desiredHandRoll = roll_angle;
-	handGoodCycles = CYCLES_TO_BE_GOOD;
+	handGoodCycles = cyclesToBeGood;
 	return( desiredHandRoll );
 }
 bool GraspVR::HandleHandAlignment( void ) {
@@ -324,7 +330,7 @@ bool GraspVR::HandleHandAlignment( void ) {
 	if ( SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance ) ) return( --handGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		handGoodCycles = CYCLES_TO_BE_GOOD;
+		handGoodCycles = cyclesToBeGood;
 		return false;
 	}
 }

@@ -11,8 +11,6 @@
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
 
-#define CYCLES_TO_BE_GOOD	45	// Number of cycles that the head alignment has to be within tolerance to be considered good.
-
 namespace Grasp {
 			
 	// Possible states of the projectiles.
@@ -24,6 +22,7 @@ namespace Grasp {
 	private:
 
 		// Count down of how many cycles that the orientation has been good.
+		static const int cyclesToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		int	headGoodCycles;
 		int handGoodCycles;
 
@@ -47,8 +46,8 @@ namespace Grasp {
 			desiredHandRoll( -35.0 ),
 			desiredHandRollSweetZone( 2.0 ),
 			desiredHandRollTolerance( 5.0 ),
-			handGoodCycles( CYCLES_TO_BE_GOOD ),
-			headGoodCycles( CYCLES_TO_BE_GOOD ),
+			handGoodCycles( cyclesToBeGood ),
+			headGoodCycles( cyclesToBeGood ),
 			trackers( nullptr ) {}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
