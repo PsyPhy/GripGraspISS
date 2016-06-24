@@ -12,6 +12,9 @@
 #include "../OculusInterface/OculusViewpoint.h"
 
 namespace Grasp {
+
+	// Possible state of head or hand alignment with reference.
+	typedef enum { aligned, misaligned, transitioning } AlignmentStatus;
 			
 	// Possible states of the projectiles.
 	typedef enum { cocked, triggered, running, hit, miss } ProjectileState;
@@ -23,8 +26,11 @@ namespace Grasp {
 
 		// Count down of how many cycles that the orientation has been good.
 		static const int cyclesToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static const int cyclesToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		int	headGoodCycles;
+		int headBadCycles;
 		int handGoodCycles;
+		int handBadCycles;
 
 	public:
 
@@ -86,19 +92,19 @@ namespace Grasp {
 
 		// Use color to guide the subject to a specified roll angle.
 		static const double errorColorMapTransparency;
-		bool SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance );
+		bool SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance, bool use_arrow );
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
 		double			desiredHandRollSweetZone;
 		double			desiredHandRollTolerance;		
-		bool			HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
+		AlignmentStatus	HandleHandAlignment( bool use_arrow );	// On each iteration of the rendering loop update the feedback.
 
 		// Prompt the subject to achieve the desired head orientation.
 		double			desiredHeadRoll;
 		double			desiredHeadRollSweetZone;
 		double			desiredHeadRollTolerance;		
-		bool			HandleHeadAlignment( void );
+		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
 		void			HandleSpinningPrompts( void );

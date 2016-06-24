@@ -252,7 +252,7 @@ void GraspTaskManager::EnterStartBlock( void ) {
 GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
 	// Modulate the halo color, even though it does not matter, so
 	// that the subject gets into that mode of operation.
-	HandleHeadAlignment();
+	HandleHeadAlignment( false );
 	// Make the prompt spin to avoid creating a reference frame.
 	HandleSpinningPrompts();
 	// When the subject clicks a button, we move on to start the first trial
@@ -339,7 +339,7 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
-	if ( HandleHeadAlignment() ) return( PresentTarget ); 
+	if ( aligned == HandleHeadAlignment( true ) ) return( PresentTarget ); 
 	else if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
 	else return( currentState );
 }
@@ -355,7 +355,7 @@ void GraspTaskManager::EnterPresentTarget( void ) {
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
-	if ( !HandleHeadAlignment() ) return( TrialInterrupted );
+	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 	// Stay in this state for a fixed time.
 	// Nominally, the next step is to tilt the head prior to responding.
 	if ( TimerTimeout( stateTimer ) ) return( TiltHead ); 
@@ -386,9 +386,13 @@ void GraspTaskManager::EnterTiltHead( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateTiltHead( void ) { 
 	// Update the visual feedback about the head tilt.
-	HandleHeadAlignment();
+	AlignmentStatus status = HandleHeadAlignment( true );
 	// Stay in this state a fixed time.
 	if ( TimerTimeout( stateTimer ) ) return( ObtainResponse ); 
+	// Allow an operator to force a move forward. This can be used in a training situation
+	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
+	//  succeeds in a short amount of time.
+	if ( oculusDisplay->Key['G'] && status == aligned ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
@@ -406,7 +410,7 @@ void GraspTaskManager::EnterObtainResponse( void ) {
 GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) { 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed. Interrupt the trial if not.
-	if ( !HandleHeadAlignment() ) return( TrialInterrupted );
+	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 	// Handle triggering and moving the projectiles.
 	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
 		// Record the response.
@@ -419,6 +423,8 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	return( currentState );
 }
 void  GraspTaskManager::ExitObtainResponse( void ) {
+	// Make sure that the head tilt prompt is not still present.
+	renderer->tiltPrompt->Disable();
 	renderer->positionOnlyTarget->Disable();
 }
 
@@ -461,7 +467,7 @@ GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
-	HandleHeadAlignment();
+	// HandleHeadAlignment();
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialCompleted( void ) {
@@ -490,7 +496,7 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
-	HandleHeadAlignment();
+	// HandleHeadAlignment();
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -519,7 +525,7 @@ GraspTrialState GraspTaskManager::UpdateTimeout( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
-	HandleHeadAlignment();
+	// HandleHeadAlignment();
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -637,14 +643,10 @@ GraspTrialState KtoK::UpdatePresentTarget( void ) {
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
-	if ( !HandleHeadAlignment() ) return( TrialInterrupted );
+	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 
-	static int good_counter = 10;
-	if ( !HandleHandAlignment() ) good_counter = 10;
-	else {
-		good_counter--;
-		if ( good_counter <= 0 ) return( TiltHead );
-	}
+	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
+	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
 
 	// If we haven't returned based on some condition above, continue in
 	// this state for the next cycle.
