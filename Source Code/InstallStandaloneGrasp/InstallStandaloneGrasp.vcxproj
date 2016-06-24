@@ -63,8 +63,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake InstallGrasp.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake InstallGrasp.mak</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>NMake InstallGraspRelease.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake InstallGraspRelease.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

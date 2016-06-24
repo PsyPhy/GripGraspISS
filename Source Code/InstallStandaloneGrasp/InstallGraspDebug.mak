@@ -7,4 +7,4 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\Debug\AlignToRigidBodyGUI.exe ..\..\Executables
 	copy ..\Debug\TaskProcessUnitTester.exe ..\..\Executables
 	copy ..\Debug\CreateRigidBodyModelFile.exe ..\..\Executables
-	echo %date% %time% > $@
+	echo Debug %date% %time% > $@
