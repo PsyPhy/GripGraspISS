@@ -1189,19 +1189,19 @@ void Annulus::Draw( void ) {
 
 		vertex[0][X] = axis_radius + tube_radius * cos( alpha - deltaA );
 		vertex[0][Y] = tube_radius * sin( alpha - deltaA );
-		vertex[0][Z] = 0.0;
+		vertex[0][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( - deltaB / 2.0 );
 
 		vertex[1][X] = axis_radius + tube_radius * cos( alpha + deltaA );
 		vertex[1][Y] = tube_radius * sin( alpha + deltaA );
-		vertex[1][Z] = 0.0;
+		vertex[1][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( - deltaB / 2.0 );
 
 		vertex[2][X] = axis_radius + tube_radius * cos( alpha + deltaA );
 		vertex[2][Y] = tube_radius * sin( alpha + deltaA );
-		vertex[2][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( deltaB );
+		vertex[2][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( deltaB / 2.0 );
 
 		vertex[3][X] = axis_radius + tube_radius * cos( alpha - deltaA );
 		vertex[3][Y] = tube_radius * sin( alpha - deltaA );
-		vertex[3][Z] = sqrt( vertex[3][X] * vertex[3][X] + vertex[3][Y] * vertex[3][Y] ) * sin( deltaB );
+		vertex[3][Z] = sqrt( vertex[3][X] * vertex[3][X] + vertex[3][Y] * vertex[3][Y] ) * sin( deltaB / 2.0 );
 
 		normal[3][X] = normal[0][X] = cos( alpha - deltaA );
 		normal[3][Y] = normal[0][Y] = sin( alpha - deltaA );
@@ -1214,7 +1214,7 @@ void Annulus::Draw( void ) {
 		for ( beta = 0.0; beta < length * 2.0 * Pi; beta += deltaB ) {
 
 			Quaternion rotation;
-			SetQuaternion( rotation, - beta, jVector );
+			SetQuaternion( rotation, - beta - deltaB / 2.0, jVector );
 
 			glBegin(GL_QUADS);
 			for ( int v = 0; v < 4; v++ ) {
