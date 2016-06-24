@@ -21,6 +21,14 @@ using namespace PsyPhy;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
+// Constants
+//
+
+const double GraspVR::errorColorMapTransparency = 0.5;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
 // Trackers 
 //
 
@@ -218,34 +226,105 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 
 }
 
+// Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
+bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double sweet_zone, double tolerance ) {
+
+	// Compute the roll angle of the object that is being followed.
+	// I got this off of a web site. It seems to work for gaze close to straight ahead,
+	// but I'm not sure that it will work well for pitch or yaw far from zero.
+	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
+	// We need a reliable method for computing the roll angle independent from pitch and yaw.
+
+	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+	//  orientation here match the orientation of the visual target. But I don't know if this one was 
+	//  wrong or the other one. We should check.
+	double object_roll_angle = ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] ) );
+	// Compute the error with respect to the desired roll angle.
+	double error = fabs( desired_roll_angle - object_roll_angle );
+
+#if 0
+	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
+
+
+	// Michele's formula for the color transitions.
+	//
+	// There are a number of things that I do not know how to explain:
+	//  Why epsilon * 0.2 and not simply epsilon to be in the good zone?
+	//  Why (2*epsilon - epsilon) and not just epsilon?
+	//  Why + 0.0?
+	//  Why all the divides by 255? 
+	if ( error < epsilon * 0.2 ){//GREEN
+		object->SetColor( 0.0/255.0, 255.0/255.0,  200.0/255.0, 0.5 );
+		return(true);
+	} else {
+		if ( error > ( 2 * epsilon ) ){//RED
+			object->SetColor(255.0/255.0, 0.0/255.0,  0.0/255.0, 0.5);
+		} else {
+			if ( error > epsilon ){//Yellow->red
+				object->SetColor(200.0/255.0, (200.0*(1-(error-epsilon)/(2*epsilon-epsilon))+0.0)/255.0,  0.0/255.0, 0.5);
+			} 
+			else { //green->yellow
+				object->SetColor((200.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+0.0)/255.0, 200.0/255.0,  0.0/255.0, 0.5);
+			}
+		}
+		return(false);
+	}
+#endif
+
+	if ( error < sweet_zone ){
+		// If we are within the sweet zone, the color is more cyan than green.
+		// This makes it easier for the subject to recognize when the head is properly aligned.
+		// But one need not be in the sweet zone for the orientation to be considered good.
+		// If the orientation is within tolerance, it is good as well. This means that the color
+		// starts to change before leaving the tolerance zone (assuming that tolerance > sweet ).
+		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
+	} else {
+		// Colors will change as one moves farther from the center.
+		if ( error < tolerance ) {
+			// Go from green at the center to yellow at the limit of the tolerance zone.
+			double fade = error / tolerance;
+			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
+		}
+		else if ( error < 2.0 * tolerance ) {
+			// Go from yellow to red.
+			double fade = ( error - tolerance ) / tolerance;
+			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
+		}
+		// If more than 2 epsilons, the color is red.
+		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
+	}
+
+	return( error < tolerance );
+
+}
+
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
 	desiredHeadRollTolerance = tolerance;
-	SetQuaternion( desiredHeadOrientation, desiredHeadRoll, kVector );
+	headGoodCycles = CYCLES_TO_BE_GOOD;
 	return( desiredHeadRoll );
 }
 bool GraspVR::HandleHeadAlignment( void ) {
-	static int good_countdown = CYCLES_TO_BE_GOOD;
 	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
-	if ( renderer->ColorGlasses( desiredHeadRoll,desiredHeadRollSweetZone, desiredHeadRollTolerance ) ) return( --good_countdown <= 0 );
+	if ( SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance ) ) return( --headGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		good_countdown = CYCLES_TO_BE_GOOD;
+		headGoodCycles = CYCLES_TO_BE_GOOD;
 		return false;
 	}
 }
 
 double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 	desiredHandRoll = roll_angle;
+	handGoodCycles = CYCLES_TO_BE_GOOD;
 	return( desiredHandRoll );
 }
 bool GraspVR::HandleHandAlignment( void ) {
-	static int good_countdown = CYCLES_TO_BE_GOOD;
 	// If the hand is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
-	if ( renderer->ColorKK( desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance ) ) return( --good_countdown <= 0 );
+	if ( SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance ) ) return( --handGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		good_countdown = CYCLES_TO_BE_GOOD;
+		handGoodCycles = CYCLES_TO_BE_GOOD;
 		return false;
 	}
 }

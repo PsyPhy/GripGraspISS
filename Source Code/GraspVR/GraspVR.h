@@ -21,6 +21,11 @@ namespace Grasp {
 	class GraspVR : public VectorsMixin
 	{
 
+	private:
+
+		// Count down of how many cycles that the orientation has been good.
+		int	headGoodCycles;
+		int handGoodCycles;
 
 	public:
 
@@ -33,15 +38,17 @@ namespace Grasp {
 		GraspTrackers	*trackers;
 
 		GraspVR( void )  : 
-			desiredHeadRoll( 20.0 ), 
-			desiredHandRoll( -35.0 ),
 			currentProjectileState( cocked ),
 			hInstance( nullptr ),
 			oculusDisplay( nullptr ),
 			oculusMapper( nullptr ),
+			desiredHeadRoll( 20.0 ), 
 			desiredHeadRollSweetZone( 2.0 ),
+			desiredHandRoll( -35.0 ),
 			desiredHandRollSweetZone( 2.0 ),
-			desiredHandRollTolerance( 15.0 ),
+			desiredHandRollTolerance( 5.0 ),
+			handGoodCycles( CYCLES_TO_BE_GOOD ),
+			headGoodCycles( CYCLES_TO_BE_GOOD ),
 			trackers( nullptr ) {}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
@@ -78,23 +85,26 @@ namespace Grasp {
 
 	protected:
 
+		// Use color to guide the subject to a specified roll angle.
+		static const double errorColorMapTransparency;
+		bool SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance );
+
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
 		double			desiredHandRollSweetZone;
 		double			desiredHandRollTolerance;		
-		Quaternion		desiredHandOrientation;			// Converted into a quaternion for convenience.
 		bool			HandleHandAlignment( void );	// On each iteration of the rendering loop update the feedback.
 
+		// Prompt the subject to achieve the desired head orientation.
 		double			desiredHeadRoll;
 		double			desiredHeadRollSweetZone;
 		double			desiredHeadRollTolerance;		
-		Quaternion		desiredHeadOrientation;
 		bool			HandleHeadAlignment( void );
 
+		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
 		void			HandleSpinningPrompts( void );
 
 		// Drives movements of the projectiles.
-
 		ProjectileState	currentProjectileState;
 		ProjectileState TriggerProjectiles( void );
 		ProjectileState HandleProjectiles( void );

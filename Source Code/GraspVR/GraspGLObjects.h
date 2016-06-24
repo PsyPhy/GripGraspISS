@@ -96,8 +96,6 @@ namespace Grasp {
 			static const int target_balls;
 			static const double finger_length;
 
-			static const double errorColorMapTransparency;
-
 		protected:
 
 			// Textures that are used to decorate certain objects.
@@ -186,10 +184,6 @@ namespace Grasp {
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
 			Glasses  *CreateGlasses(void);
-
-			bool SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance );
-			bool ColorKK( double desired_angle, double sweet_zone, double tolerance );
-			bool ColorGlasses( double desired_angle, double sweet_zone, double tolerance );
 
 			// Objects that are not used for VR in the HMD, but may be used
 			// to create other 3D visual scenes.
