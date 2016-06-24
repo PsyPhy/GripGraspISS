@@ -45,7 +45,7 @@ public:
 };
 
 // A  tracker that controls roll movements using the arrow keys on the keyboard.
-// It is not really a mouse tracker, but it is a quick way to implement it.
+// It is not really a mouse tracker, but this is a quick way to implement it.
 class ArrowsRollPoseTracker : public MousePoseTracker {
 
 private:

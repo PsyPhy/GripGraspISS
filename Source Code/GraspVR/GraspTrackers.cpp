@@ -34,7 +34,7 @@ double GraspTrackers::mouseGain = - 0.001;
 // Where to place the tool when in V response mode.
 Pose GraspTrackers::handPoseV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
 // Where to place the tool when in K response mode.
-Pose GraspTrackers::handPoseK = {{100.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspTrackers::handPoseK = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -250,23 +250,26 @@ void GraspSimTrackers::Initialize( void ) {
 	 fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspSimTrackers", "Error initializing OculusPoseTracker." );
 
 	// Create a mouse tracker to simulate movements of the hand.
-	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
-	fAbortMessageOnCondition( !mouseRollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker." );
+	mouseTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !mouseTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
 	// The MouseRollPoseTracker will then rotate the tool around this constant position.
-	mouseRollTracker->BoresightTo( handPoseV );
-	// The mouse tracker, used in V-V, is the mouse tracker. 
-	mouseTracker = mouseRollTracker;
-	// The hand tracker is also the mouse tracker to simulate the other protocols.
-	// But this is problematic because it is going to put the hand along the line of sight.
-	handTracker = mouseRollTracker;
+	mouseTracker->OffsetTo( handPoseV );
 
-	// Create a arrow key tracker to simulate movements of the hand.
+	// The hand tracker is also a mouse tracker to simulate the other protocols.
+	// The hand tracker will move in parallel to the mouse tracker, but  since they are never used together this should be OK.
+	handTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the hand tracker." );
+	// Set the default position and orientation of the hand.
+	// The MouseRollPoseTracker will then rotate the tool around this constant position.
+	handTracker->OffsetTo( handPoseK );
+
+	// Create a arrow key tracker to simulate movements of the chest.
 	chestTracker = new PsyPhy::ArrowsRollPoseTracker( oculusMapper, arrowGain );
 	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspSimTrackers", "Error initializing ArrowRollPoseTracker." );
 	// Set the position and orientation of the chest wrt the origin when in V-V mode.
 	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
-	chestTracker->BoresightTo( chestPoseSim );
+	chestTracker->OffsetTo( chestPoseSim );
 }
 
 
