@@ -246,7 +246,8 @@ bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_ang
 	//  wrong or the other one. We should check.
 	double object_roll_angle = ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] ) );
 	// Compute the error with respect to the desired roll angle.
-	double error = fabs( desired_roll_angle - object_roll_angle );
+	double direction =  desired_roll_angle - object_roll_angle;
+	double magnitude = fabs( direction );
 
 #if 0
 	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
@@ -277,7 +278,7 @@ bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_ang
 	}
 #endif
 
-	if ( error < sweet_zone ){
+	if ( magnitude < sweet_zone ){
 		// If we are within the sweet zone, the color is more cyan than green.
 		// This makes it easier for the subject to recognize when the head is properly aligned.
 		// But one need not be in the sweet zone for the orientation to be considered good.
@@ -286,21 +287,28 @@ bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_ang
 		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
 	} else {
 		// Colors will change as one moves farther from the center.
-		if ( error < tolerance ) {
+		if ( magnitude < tolerance ) {
 			// Go from green at the center to yellow at the limit of the tolerance zone.
-			double fade = error / tolerance;
+			double fade = magnitude / tolerance;
 			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
 		}
-		else if ( error < 2.0 * tolerance ) {
+		else if ( magnitude < 2.0 * tolerance ) {
 			// Go from yellow to red.
-			double fade = ( error - tolerance ) / tolerance;
+			double fade = ( magnitude - tolerance ) / tolerance;
 			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
 		// If more than 2 epsilons, the color is red.
 		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
+	// If the orientation is far from the desired, show which way to turn.
+	if ( magnitude > 1.5 * tolerance ) {
+		if ( direction < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+		else renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+		renderer->tiltPrompt->Enable();
+	}
+	else renderer->tiltPrompt->Disable();
 
-	return( error < tolerance );
+	return( magnitude < tolerance );
 
 }
 
@@ -311,6 +319,9 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 	return( desiredHeadRoll );
 }
 bool GraspVR::HandleHeadAlignment( void ) {
+	renderer->tiltPrompt->SetPosition( renderer->hud->position );
+	renderer->tiltPrompt->SetOrientation( renderer->hud->orientation );
+	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
 	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
 	if ( SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance ) ) return( --headGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.
@@ -326,6 +337,10 @@ double GraspVR::SetDesiredHandRoll( double roll_angle ) {
 	return( desiredHandRoll );
 }
 bool GraspVR::HandleHandAlignment( void ) {
+	// Position the prompt arrow where the hand is.
+	renderer->tiltPrompt->SetPosition( renderer->kkTool->position );
+	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
+	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	// If the hand is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
 	if ( SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance ) ) return( --handGoodCycles <= 0 );
 	// If head alignment has been lost, reset the counter and return false.

@@ -40,7 +40,7 @@ const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 
 // We may want to use a circular arrow to indicate to the subject which
 //  way to tilt the head, in addition to color cues.
-const double GraspGLObjects::prompt_radius = 160.0;
+const double GraspGLObjects::prompt_radius = 60.0;
 const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
 const double GraspGLObjects::visor_radius = 320.0;
 
@@ -322,10 +322,11 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 	Assembly *prompt = new Assembly();
 	
-	// Size of the circular arrow, where 1.0 = 360°.
+	// Angular extent of the circular arrow, where 1.0 = 360°.
 	static double size = 0.85;
+	double guage =  prompt_radius / 10.0;
 
-	Annulus *donut = new Annulus( prompt_radius, prompt_radius / 6.0, size, 20, 20 );
+	Annulus *donut = new Annulus( prompt_radius, guage, size, 20, 20 );
 	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
@@ -334,10 +335,9 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );
 
-	Ellipsoid *base = new Ellipsoid ( prompt_radius / 6.0, prompt_radius / 12.0, prompt_radius / 6.0 );
+	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
 	base->SetPosition( prompt_radius, 0.0, 0.0 );
 	prompt->AddComponent( base );
-	prompt->SetAttitude( - 15.0, 0.0, 0.0 );
 	prompt->SetColor( 0.5, 0.0, 0.4 );
 
 	return prompt;
@@ -444,6 +444,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	starrySky->SetPosition( sky_location );
 	darkSky->SetPosition( sky_location );
 	successIndicator->SetPosition( prompt_location );
+	tiltPrompt->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
