@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Stimulus to Kinesthetic Response 
 301; SCRIPT; Preparation; K-KprepareSeated.tsk
 302; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
-303; COMMAND; Practice Trials; Executables\Grasp --KtoK --sequence=Sequences\DemoGraspSequence.seq --output=KtoK; StepReadySeated.html
-304; COMMAND; Experiment Trials Block 1; Executables\Grasp --KtoK --sequence=Sequences\HeadStraightGraspSequence.seq --output=tst1 ; StepReadySeated.html
-305; COMMAND; Experiment Trials Block 2; Executables\Grasp --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq --output=tst2 ; StepReadySeated.html
+303; COMMAND; Practice Trials; Executables\Grasp --KtoK --sequence=Sequences\DemoGraspSequence.seq --output=; StepReadySeated.html
+304; COMMAND; Experiment Trials Block 1; Executables\Grasp --KtoK --sequence=Sequences\HeadStraightGraspSequence.seq --output=; StepReadySeated.html
+305; COMMAND; Experiment Trials Block 2; Executables\Grasp --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq --output=; StepReadySeated.html
 399; INSTRUCTION; End of Subsession; ProtocolFinished.html

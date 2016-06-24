@@ -2,6 +2,6 @@
 101; SCRIPT; Preparation; V-VprepareSeated.tsk
 102; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
 103; COMMAND; Practice Trials; Executables\Grasp --VtoV --sequence=Sequences\DemoGraspSequence.seq --output=; StepReadySeated.html
-104; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoV --sequence=Sequences\HeadStraightGraspSequence.seq --output=tst1 ; StepReadySeated.html
-105; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoV --sequence=Sequences\HeadTiltGraspSequence.seq --output=tst2 ; StepReadySeated.html
+104; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoV --sequence=Sequences\HeadStraightGraspSequence.seq --output=; StepReadySeated.html
+105; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoV --sequence=Sequences\HeadTiltGraspSequence.seq --output=; StepReadySeated.html
 199; INSTRUCTION; End of Subsession; ProtocolFinished.html

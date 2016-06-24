@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 201; SCRIPT; Preparation; V-KprepareSeated.tsk
 202; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-203; COMMAND; Practice Trials; Executables\Grasp --VtoK --sequence=Sequences\DemoGraspSequence.seq --output=VtoK; StepReadySeated.html
-204; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoK --sequence=Sequences\HeadStraightGraspSequence.seq --output=tst1 ; StepReadySeated.html
-205; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoK --sequence=Sequences\HeadTiltGraspSequence.seq --output=tst2 ; StepReadySeated.html
+203; COMMAND; Practice Trials; Executables\Grasp --VtoK --sequence=Sequences\DemoGraspSequence.seq --output=; StepReadySeated.html
+204; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoK --sequence=Sequences\HeadStraightGraspSequence.seq --output=; StepReadySeated.html
+205; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoK --sequence=Sequences\HeadTiltGraspSequence.seq --output=; StepReadySeated.html
 299; INSTRUCTION; End of Subsession; ProtocolFinished.html
