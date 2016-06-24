@@ -663,14 +663,14 @@ void  KtoK::ExitPresentTarget( void ) {
 void KtoK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
-	renderer->vkTool->Enable();
+	renderer->kTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }
 
 void KtoK::ExitObtainResponse( void ) {
 	// Hide the hand.
-	renderer->vkTool->Disable();
+	renderer->kTool->Disable();
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }

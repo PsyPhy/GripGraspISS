@@ -53,6 +53,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( strstr( lpCmdLine, "--ncoda" ) ) useCoda = false;
 	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
 	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
+	if ( strstr( lpCmdLine, "--VtoK" ) ) paradigm = doVtoK;
 	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
 	if ( char *ptr = strstr( lpCmdLine, "--sequence=" ) ) sscanf( ptr, "--sequence=%s", sequence_filename );
 	if ( char *ptr = strstr( lpCmdLine, "--output=" ) ) sscanf( ptr, "--output=%s", output_filename_root );
@@ -72,7 +73,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		break;
 
 	case doVtoK:
-		grasp = new VtoVK();
+		grasp = new VtoK();
 		break;
 
 	case doKtoK:
