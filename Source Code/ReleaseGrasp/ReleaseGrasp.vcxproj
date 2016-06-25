@@ -11,28 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AlignToRigidBodyGUI\AlignToRigidBodyGUI.vcxproj">
-      <Project>{a924a357-a3f0-4a47-a8b7-cbcf3fe6e3b0}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\CreateRigidBodyModelFile\CreateRigidBodyModelFile.vcxproj">
-      <Project>{a80917f9-ef9d-4b0a-aa31-acaee6bd26e2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
-      <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
-      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TaskProcessUnitTester\TaskProcessUnitTester.vcxproj">
-      <Project>{13f2b16b-ae29-4cb4-9d50-0b6b9ce94738}</Project>
-    </ProjectReference>
+    <None Include="ReleaseGrasp.bat" />
+    <None Include="ReleaseGraspDebug.mak" />
+    <None Include="ReleaseGraspRelease.mak" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="InstallGraspDebug.mak" />
-    <None Include="InstallGraspRelease.mak" />
+    <ProjectReference Include="..\InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj">
+      <Project>{d372af87-b6c6-4007-b361-2dada1a1c9d7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}</ProjectGuid>
+    <ProjectGuid>{9B6BB1C8-C042-45CE-8155-5DE4A1003FF6}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -55,18 +44,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspDebug.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspDebug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspDebug.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspDebug.mak</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspRelease.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspRelease.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspDebug.mak</NMakeBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
