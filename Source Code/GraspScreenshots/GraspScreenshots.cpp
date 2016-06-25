@@ -92,7 +92,7 @@ int _tmain(int argc, char *argv[])
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
 
 	objects->tunnel->SetColor( GRAY );
-	objects->ColorGlasses( 0.0, 5.0, 15.0 );
+	objects->glasses->SetColor( 0.0f, 0.85f, 0.85f, 0.5f );
 
 	objects->chestStructure->SetPosition( 0.0, -200.0, -500.0 );
 	objects->handStructure->SetPosition( 0.0, 0.0, -500.0 );
