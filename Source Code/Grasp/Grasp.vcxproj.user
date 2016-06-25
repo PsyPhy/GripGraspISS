@@ -8,5 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments> --KtoK  --sequence=Sequences\DemoGraspSequence.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
