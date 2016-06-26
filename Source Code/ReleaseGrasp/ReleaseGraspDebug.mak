@@ -1,2 +1,3 @@
 default:
-	ReleaseGrasp.bat Debug
+	echo Not creating release in Debug mode.
+#	ReleaseGrasp.bat Debug

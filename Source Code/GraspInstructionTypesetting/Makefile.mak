@@ -8,15 +8,15 @@ INSTRUCTIONS_DESTINATION=..\..\Instructions
 
 install: Grasp.html
 	copy *.html $(INSTRUCTIONS_DESTINATION)
-	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any errors from the mkdir command.
+	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
 	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions & echo Ignoring any errors from the mkdir command.
+	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions & echo Ignoring any failures of the mkdir command.
 	copy Figures_Instructions\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V & echo Ignoring any errors from the mkdir command.
+	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V & echo Ignoring any failures of the mkdir command.
 	copy Figures_Instructions\V-V\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-K & echo Ignoring any errors from the mkdir command.
+	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-K & echo Ignoring any failures of the mkdir command.
 	copy Figures_Instructions\V-K\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-K
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\K-K & echo Ignoring any errors from the mkdir command.
+	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\K-K & echo Ignoring any failures of the mkdir command.
 	copy Figures_Instructions\K-K\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\K-K
 	echo %date% %time% > $@
 
@@ -47,7 +47,7 @@ PREPROCESSOR=cl.exe
 # The preprocessor that we are using is actually the Visual C++ compiler.
 # The /EP option tells the compiler to preprocess only. 
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
-PREPROCESSOR_OPTIONS=/EP /FI PsyPhyMDmacros.h
+PREPROCESSOR_OPTIONS=/EP /nologo /FI PsyPhyMDmacros.h
 
 .SUFFIXES: .html .md .tex
 .md.html:
