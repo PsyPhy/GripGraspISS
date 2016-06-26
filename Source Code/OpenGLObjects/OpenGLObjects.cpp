@@ -1189,11 +1189,11 @@ void Annulus::Draw( void ) {
 
 		vertex[0][X] = axis_radius + tube_radius * cos( alpha - deltaA );
 		vertex[0][Y] = tube_radius * sin( alpha - deltaA );
-		vertex[0][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( - deltaB / 2.0 );
+		vertex[0][Z] = sqrt( vertex[0][X] * vertex[0][X] + vertex[0][Y] * vertex[0][Y] ) * sin( - deltaB / 2.0 );
 
 		vertex[1][X] = axis_radius + tube_radius * cos( alpha + deltaA );
 		vertex[1][Y] = tube_radius * sin( alpha + deltaA );
-		vertex[1][Z] = sqrt( vertex[2][X] * vertex[2][X] + vertex[2][Y] * vertex[2][Y] ) * sin( - deltaB / 2.0 );
+		vertex[1][Z] = sqrt( vertex[1][X] * vertex[1][X] + vertex[1][Y] * vertex[1][Y] ) * sin( - deltaB / 2.0 );
 
 		vertex[2][X] = axis_radius + tube_radius * cos( alpha + deltaA );
 		vertex[2][Y] = tube_radius * sin( alpha + deltaA );
