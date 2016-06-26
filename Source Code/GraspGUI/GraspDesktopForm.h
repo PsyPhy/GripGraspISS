@@ -112,12 +112,16 @@ namespace GraspGUI {
 			fAbortMessageOnCondition( bytes > MAX_PATH, "GraspGUI", "Path to current directory is too long." );
 			rootDirectory = gcnew String( root_string ) + "\\";
 			instructionsDirectory = rootDirectory + "Instructions\\";
-			scriptDirectory =  rootDirectory + "Scripts\\";
-			execDirectory =  rootDirectory + "bin\\";
+			// Grasp.exe and other programs that may be called do not handle file paths that include spaces.
+			// While we can control that paths below the Grasp root directory do not have spaces, we have no control
+			// on the directories between the file system root and the Grasp root directory. So we do not
+			// add the absolute path to the root directory to the other file paths defined below.
+			scriptDirectory =  "Scripts\\";
+			execDirectory =  "Executables\\";
 			char datestr[MAX_PATH];
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			String ^dateString = gcnew String( datestr );
-			resultsDirectory = rootDirectory + "Results\\" +  dateString + "\\";
+			resultsDirectory = "Results\\" +  dateString + "\\";
 			try {
 				if ( !Directory::Exists( resultsDirectory ) ) Directory::CreateDirectory( resultsDirectory );
 			}
