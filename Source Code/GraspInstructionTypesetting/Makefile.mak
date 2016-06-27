@@ -5,38 +5,33 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
+EXECUTABLES=..\..\Executables
 
-install: Grasp.html
+install: Grasp.html GraspInstructionScreens.pdf
+	copy GraspInstructionScreens.pdf  $(INSTRUCTIONS_DESTINATION)
 	copy *.html $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
 	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions & echo Ignoring any failures of the mkdir command.
-	copy Figures_Instructions\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V & echo Ignoring any failures of the mkdir command.
-	copy Figures_Instructions\V-V\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-V
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-K & echo Ignoring any failures of the mkdir command.
-	copy Figures_Instructions\V-K\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\V-K
-	mkdir $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\K-K & echo Ignoring any failures of the mkdir command.
-	copy Figures_Instructions\K-K\*.* $(INSTRUCTIONS_DESTINATION)\Figures_Instructions\K-K
 	echo %date% %time% > $@
 
 # This should be a list of all the HTML files that you want to generate.
-ALL_HTML=GraspWelcome.html NotYetImplemented.html Invalid.html \
-	StepReady.html StepRunning.html StepFinished.html StepNormalFinish.html StepErrorFinish.html \
-	TaskFinished.html ProtocolFinished.html \
-	InstallSeated1.html InstallSeated2.html InstallFloating1.html InstallFloating2.html \
-	CodaInstallationCheckSeated.html CodaInstallationCheckFloating.html InstallLocker.html \
+ALL_HTML=GraspWelcome.html \
+	00IntroV-V.html 00IntroV-K.html 00IntroK-K.html \
 	CodaAlignFloating.html CodaAlignSeated.html StepReadySeated.html StepReadyFloating.html \
-	V-VIntro.html K-KIntro.html V-KIntro.html \
 	01StraightenHead.html 02TargetK.html 02TargetV.html 03TiltHead.html 04RespondK.html 04RespondV.html 05Feedback.html \
-	V-VFloatingProtocolReady.html V-VSeatedProtocolReady.html V-V1.html V-V2.html V-V3.html V-V4.html V-V5.html V-V6.html \
-	V-KFloatingProtocolReady.html V-KSeatedProtocolReady.html V-K1.html V-K2.html V-K3.html V-K4.html V-K5.html V-K6.html \
-	K-KFloatingProtocolReady.html K-KSeatedProtocolReady.html K-K1.html K-K2.html K-K3.html K-K4.html K-K5.html K-K6.html 
+	StepReady.html StepRunning.html StepFinished.html StepNormalFinish.html StepErrorFinish.html  NotYetImplemented.html Invalid.html \
+	TaskFinished.html ProtocolFinished.html 
 	
 # The idea here is to create a single document to show all the instruction screens.
 # The HTML document created by pandoc is not entirely well suited to our needs, but it's a start.
 Grasp.html: $(ALL_HTML)
 	pandoc -t S5 --standalone $(ALL_HTML) -o $@
+
+# The idea here is to create a single document to show all the instruction screens.
+# The HTML document created by pandoc is not entirely well suited to our needs, but it's a start.
+GraspInstructionScreens.pdf: $(ALL_HTML)
+	$(EXECUTABLES)\wkhtmltopdf.exe --page-size A5 --minimum-font-size 32 --margin-top 25 $(ALL_HTML) $@
+
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe

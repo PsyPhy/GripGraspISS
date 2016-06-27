@@ -1,13 +1,14 @@
 HEADER( __Tracker Alignment__ )
-CENTER( *Quasi-Freefloating* )
 
-CENTER( IMAGE(Pictures/AlignementFreeFloat.jpg, 300) )
+Ready to perform the alignment procedure for the 3D tracker:
 
-Ready to perform the alignment procedure for the 3D tracker.
+- Verify that the equipment is installed as shown:
+
+CENTER( IMAGE( Pictures/AlignmentFloating.jpg, 200 ) )
 
 - Check that the field of view of the tracker cameras is free of obstructions.
 
-- Confirm that the Chest markers are positioned properly on the quasi-freefloating plate.
+- Confirm that the chest markers are positioned properly on the chair.
  
 CENTER( Press __'Execute'__ to perform alignment. )
 

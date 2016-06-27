@@ -1,6 +1,6 @@
 HEADER( *__Welcome to Grasp__* )
 
-CENTER( IMAGE(Figures_Instructions/GraspLOGO.jpg, 400) )
+CENTER( IMAGE(Pictures/GraspLOGO.jpg, 400) )
 
 In the menus to the left:
 

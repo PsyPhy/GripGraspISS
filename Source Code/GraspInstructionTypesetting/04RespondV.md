@@ -1,7 +1,7 @@
 HEADER( *__Step 4: Align to Target__* )
 
-- Use the mouse trackball to aling the tool to the memorised target 
-(trackball movements to the left and right produce counterclockwise and clockwise rotations of the tool respectively).
+- Use the mouse trackball to align the tool to the memorised target 
+(trackball movements to the left and right produce counterclockwise and clockwise rotations of the tool, respectively).
 
 CENTER( IMAGE(Pictures/ValidateResponseV.jpg, 300) )
 

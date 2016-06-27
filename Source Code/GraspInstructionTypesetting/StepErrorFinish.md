@@ -1,5 +1,5 @@
 HEADER( __Action Completed with Errors__ )
-CENTER( IMAGE(Figures_Instructions/exclamation-blue.png, 240) )
+CENTER( IMAGE(Pictures/exclamation-blue.png, 240) )
  
  Press:
 

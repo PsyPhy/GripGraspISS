@@ -1,6 +1,6 @@
 HEADER( __Action Terminated__ )
 
-CENTER( IMAGE(Figures_Instructions/checked-off.png, 240) )
+CENTER( IMAGE(Pictures/checked-off.png, 240) )
  
 If normal exit:
 

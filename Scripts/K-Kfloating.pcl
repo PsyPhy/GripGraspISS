@@ -1,5 +1,5 @@
 # Protocol Definition: Visual Target to Manual Response 
-601; SCRIPT; Preparation; V-KprepareFloating.tsk
+601; SCRIPT; Preparation; K-KprepareFloating.tsk
 602; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
 603; COMMAND; Practice Trials; Executables\ --KtoK --sequence=Sequences\DemoGraspSequence.seq --output=; StepReadyFloating.html
 604; COMMAND; Experiment Trials Block 1; Executables\Grasp --KtoK --sequence=Sequences\HeadStraightGraspSequence.seq --output=; StepReadyFloating.html
