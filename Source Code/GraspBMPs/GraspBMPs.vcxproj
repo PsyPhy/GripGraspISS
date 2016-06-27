@@ -10,6 +10,9 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="GraspBMPs.mak" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B36BAD29-9483-4CB8-A052-0ECFB8A13B3D}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
@@ -34,8 +37,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>nmake /NOLOGO</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeCleanCommandLine>del /Q /F *.bmp &amp; del /Q /F ..\..\Bmp\*</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>nmake /NOLOGO</NMakeBuildCommandLine>
