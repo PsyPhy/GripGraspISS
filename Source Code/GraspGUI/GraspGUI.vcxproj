@@ -132,6 +132,9 @@
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
+      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
       <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
     </ProjectReference>
