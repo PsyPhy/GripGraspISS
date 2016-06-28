@@ -300,6 +300,9 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	// Note that we do not output a \n in the above. The line will be completed by the response.
 	fflush( fp );
 
+	// Turn the starry sky back on, even if it won't be visible right away because the room will be off.
+	renderer->starrySky->Enable();
+	renderer->darkSky->Disable();
 	// Turn off lots of visual cues in preparation for starting up the conflict.
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
@@ -368,6 +371,9 @@ GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) {
 void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the visible target.
 	renderer->orientationTarget->Disable();
+	// Change the sky background to remove the visual reference that it provides.
+	renderer->starrySky->Disable();
+	renderer->darkSky->Enable();
 }
 
 // TiltHead
