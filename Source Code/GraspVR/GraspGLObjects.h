@@ -114,6 +114,8 @@ namespace Grasp {
 			static const char *head_misalign_texture_bitmap;
 			Texture			*ready_to_start_texture;		// of the text.
 			static const char *ready_texture_bitmap;
+			Texture			*block_completed_texture;		// of the text.
+			static const char *block_completed_texture_bitmap;
 
 
 		public:
@@ -130,6 +132,7 @@ namespace Grasp {
 			Assembly		*timeoutIndicator;		// Shown when the subject takes too long to do something.
 			Assembly		*headMisalignIndicator;	// Shown when the subject does not maintain the desired head tilt.
 			Assembly		*readyToStartIndicator;	// Prompt the subject to press a button when ready.
+			Assembly		*blockCompletedIndicator; // Prompt the subject to take off the HMD and press 'Return' on the keyboard.
 			Assembly		*vTool;					// Full-fledged tool. One can see its orientation.
 
 			Yoke			*hand;					// An collection of objects that move with the hand.

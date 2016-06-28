@@ -46,11 +46,13 @@ void DrawToBMP( const char *filename ) {
 	objects->hmdStructure->Draw();
 	objects->handStructure->Draw();
 	objects->chestStructure->Draw();
-
 	window->Swap();
+
+	Sleep( 100 );
 
 	window->SaveAsBMP( filename );
 
+	
 }
 
 int _tmain(int argc, char *argv[])
@@ -108,6 +110,7 @@ int _tmain(int argc, char *argv[])
 	objects->response->Disable();
 	objects->tiltPrompt->Disable();
 	objects->vTool->Disable();
+	objects->vkTool->Disable();
 	objects->kTool->Disable();
 	objects->kkTool->Disable();
 	objects->projectiles->Disable();
@@ -115,12 +118,40 @@ int _tmain(int argc, char *argv[])
 	objects->successIndicator->Disable();
 	objects->timeoutIndicator->Disable();
 	objects->headMisalignIndicator->Disable();
+	objects->readyToStartIndicator->Disable();
+	objects->blockCompletedIndicator->Disable();
 		
 	objects->hmdStructure->Disable();
 	objects->handStructure->Disable();
 	objects->chestStructure->Disable();
+	Sleep( 1000 );
 
-	DrawToBMP( "Carlos.bmp" );
+	DrawToBMP( "Documentation\\ScreenShots\\GraspScreenShot.bmp" );
+
+		Sleep( 1000 );
+
+	objects->vTool->Disable();
+	objects->timeoutIndicator->Enable();
+	Sleep( 1000 );
+	DrawToBMP( "Documentation\\ScreenShots\\ReadyToStartScreenShot.bmp" );
+	Sleep( 1000 );
+
+	objects->timeoutIndicator->Disable();
+	objects->headMisalignIndicator->Enable();
+	Sleep( 1000 );
+	DrawToBMP( "Documentation\\ScreenShots\\HeadMisalignScreenShot.bmp" );
+	Sleep( 1000 );
+
+	objects->headMisalignIndicator->Disable();
+	objects->timeoutIndicator->Enable();
+	Sleep( 1000 );
+	DrawToBMP( "Documentation\\ScreenShots\\TimeoutScreenShot.bmp" );
+	Sleep( 1000 );
+
+	objects->timeoutIndicator->Disable();
+	objects->blockCompletedIndicator->Enable();
+	//DrawToBMP( "Documentation\\ScreenShots\\BlockCompletedScreenShot.bmp" );
+
 
 	return 0;
 }

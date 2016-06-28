@@ -19,9 +19,11 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
+// These textures are the messages presented to the subject on a rotating disk.
 const char *GraspGLObjects::timeout_texture_bitmap = "Bmp\\TimeLimit.bmp";
 const char *GraspGLObjects::head_misalign_texture_bitmap = "Bmp\\HeadMisalignment.bmp";
 const char *GraspGLObjects::ready_texture_bitmap = "Bmp\\ReadyToStart.bmp";
+const char *GraspGLObjects::block_completed_texture_bitmap = "Bmp\\BlockCompleted.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -96,6 +98,7 @@ void GraspGLObjects::CreateTextures( void ) {
 	timeout_texture = new Texture( timeout_texture_bitmap );
 	head_misalign_texture = new Texture( head_misalign_texture_bitmap );
 	ready_to_start_texture = new Texture( ready_texture_bitmap );
+	block_completed_texture = new Texture( block_completed_texture_bitmap );
 
 }
 
@@ -361,7 +364,7 @@ Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
 	Assembly	*assembly = new Assembly();
 	Disk		*surface;
 	
-	surface = new Disk( 120.0, 30.0, 128 );
+	surface = new Disk( 120.0, 35.0, 128 );
 	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
 	surface->SetTexture( texture );
 	assembly->AddComponent( surface );
@@ -397,6 +400,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	timeoutIndicator = CreateIndicator( timeout_texture );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
 	readyToStartIndicator = CreateIndicator( ready_to_start_texture );
+	blockCompletedIndicator = CreateIndicator( block_completed_texture );
 	projectiles = CreateProjectiles();
 
 	// Orientated tool used when responding with only visual feedback (e.g. V-V).
@@ -457,6 +461,7 @@ void GraspGLObjects::DrawVR( void ) {
 	timeoutIndicator->Draw();
 	headMisalignIndicator->Draw();
 	readyToStartIndicator->Draw();
+	blockCompletedIndicator->Draw();
 	vTool->Draw();
 	kTool->Draw();
 	vkTool->Draw();
