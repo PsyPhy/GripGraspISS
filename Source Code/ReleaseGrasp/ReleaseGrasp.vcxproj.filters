@@ -4,5 +4,6 @@
     <None Include="ReleaseGrasp.bat" />
     <None Include="ReleaseGraspDebug.mak" />
     <None Include="ReleaseGraspRelease.mak" />
+    <None Include="ReleaseGraspDraft.mak" />
   </ItemGroup>
 </Project>

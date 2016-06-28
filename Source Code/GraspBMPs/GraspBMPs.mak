@@ -1,5 +1,5 @@
 
-CONVERTER = ..\..\Executables\tiff2bmp.exe --height=512 --width=512 --quiet
+CONVERTER = ..\..\Executables\tiff2bmp.exe --height=512 --width=512
 
 STATICBMPS =	metal.bmp NightSky.bmp Rockwall.bmp 
 FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp TimeLimit.bmp
