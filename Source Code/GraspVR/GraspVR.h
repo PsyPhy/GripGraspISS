@@ -14,7 +14,7 @@
 namespace Grasp {
 
 	// Possible state of head or hand alignment with reference.
-	typedef enum { aligned, misaligned, transitioning } AlignmentStatus;
+	typedef enum { aligned, misaligned, transitioningToGood, transitioningToBad } AlignmentStatus;
 			
 	// Possible states of the projectiles.
 	typedef enum { cocked, triggered, running, hit, miss } ProjectileState;
@@ -25,12 +25,12 @@ namespace Grasp {
 	private:
 
 		// Count down of how many cycles that the orientation has been good.
-		static const int cyclesToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
-		static const int cyclesToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
-		int	headGoodCycles;
-		int headBadCycles;
-		int handGoodCycles;
-		int handBadCycles;
+		static const int secondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static const int secondsToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		Timer	headGoodTimer;
+		Timer	headBadTimer;
+		Timer	handGoodTimer;
+		Timer	handBadTimer;
 
 	public:
 
@@ -43,18 +43,23 @@ namespace Grasp {
 		GraspTrackers	*trackers;
 
 		GraspVR( void )  : 
-			currentProjectileState( cocked ),
+
 			hInstance( nullptr ),
 			oculusDisplay( nullptr ),
 			oculusMapper( nullptr ),
+			trackers( nullptr ),
+
 			desiredHeadRoll( 20.0 ), 
 			desiredHeadRollSweetZone( 2.0 ),
+			desiredHeadRollTolerance( 5.0 ),
+
 			desiredHandRoll( -35.0 ),
 			desiredHandRollSweetZone( 2.0 ),
 			desiredHandRollTolerance( 5.0 ),
-			handGoodCycles( cyclesToBeGood ),
-			headGoodCycles( cyclesToBeGood ),
-			trackers( nullptr ) {}
+
+			currentProjectileState( cocked )
+
+			{}
 
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
 				hInstance = instance;
@@ -92,7 +97,7 @@ namespace Grasp {
 
 		// Use color to guide the subject to a specified roll angle.
 		static const double errorColorMapTransparency;
-		bool SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance, bool use_arrow );
+		double SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance, bool use_arrow );
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
@@ -117,8 +122,8 @@ namespace Grasp {
 	public:
 
 		// Set the parameters for the above behaviors. They are exposed to the public.
-		double SetDesiredHandRoll( double roll_angle );
-		double SetDesiredHeadRoll( double roll_angle, double tolerance );
+		double SetDesiredHandRoll( double desired_roll_angle, double tolerance );
+		double SetDesiredHeadRoll( double desired_roll_angle, double tolerance );
 		double SetTargetOrientation( double roll_angle );
 
 	};

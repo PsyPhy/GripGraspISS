@@ -378,17 +378,15 @@ void GraspTaskManager::EnterTiltHead( void ) {
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
 	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
-	// We should show the arrow that indicates the required direction of 
-	// head tilt from the current orientation.
-	// This needs work, because it means measuring the current tilt of the
-	// head and compare it to the desired tilt. This could perhaps be
-	// built into HandleHeadAlignment().
 }
 GraspTrialState GraspTaskManager::UpdateTiltHead( void ) { 
 	// Update the visual feedback about the head tilt.
 	AlignmentStatus status = HandleHeadAlignment( true );
 	// Stay in this state a fixed time.
-	if ( TimerTimeout( stateTimer ) ) return( ObtainResponse ); 
+	if ( TimerTimeout( stateTimer ) ) {
+		if ( status == aligned ) return( ObtainResponse );
+		else return( Timeout ); 
+	}
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
@@ -525,7 +523,7 @@ GraspTrialState GraspTaskManager::UpdateTimeout( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
-	// HandleHeadAlignment();
+	HandleHeadAlignment( false );
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -636,7 +634,7 @@ void KtoK::EnterPresentTarget( void ) {
 	// But the orientation will be reflected by the color.
 	renderer->kkTool->Enable();
 	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation );
+	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, desiredHandRollTolerance );
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 

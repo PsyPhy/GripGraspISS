@@ -25,8 +25,8 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::cyclesToBeGood = 45;
-const int GraspVR::cyclesToBeBad = 45;
+const int GraspVR::secondsToBeGood = 1.0;
+const int GraspVR::secondsToBeBad = 2.0;
 
 // Transparency of objects that change color according to roll angle.
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
@@ -234,7 +234,7 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
-bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double sweet_zone, double tolerance, bool use_arrow ) {
+double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double sweet_zone, double tolerance, bool use_arrow ) {
 
 	// Compute the roll angle of the object that is being followed.
 	// I got this off of a web site. It seems to work for gaze close to straight ahead,
@@ -301,48 +301,61 @@ bool GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_ang
 		// If more than 2 epsilons, the color is red.
 		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
-	// If the orientation is far from the desired, show which way to turn.
-	if (use_arrow ) {
-		if ( magnitude > sweet_zone ) {
-			if ( direction < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-			else renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
-			renderer->tiltPrompt->Enable();
-		}
-		else renderer->tiltPrompt->Disable();
-	}
-	else renderer->tiltPrompt->Disable();
 
-	return( ( magnitude - sweet_zone ) < tolerance );
+	if ( magnitude - sweet_zone < tolerance ) return ( 0.0 );
+	else return ( direction );
 
 }
 
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
-	desiredHeadRollTolerance = tolerance;
-	headGoodCycles = cyclesToBeGood;
-	headBadCycles = cyclesToBeBad;
+	TimerSet( headGoodTimer, secondsToBeGood);
+	TimerSet( headBadTimer, 0.0 );
 	return( desiredHeadRoll );
 }
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
+
 	renderer->tiltPrompt->SetPosition( renderer->hud->position );
 	renderer->tiltPrompt->SetOrientation( renderer->hud->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
-	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
-	if ( SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance, use_arrow ) ) {
-		headBadCycles = cyclesToBeBad;
-		return( --headGoodCycles < 0 ? aligned : transitioning );
+
+	double alignment = SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance, use_arrow );
+	if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+
+	// If the head is aligned do stuff depending on the time delays.
+	if ( 0.0 == alignment ) {
+		// Arrow gets turned off as soon as the angle is good.
+		renderer->tiltPrompt->Disable();
+		if ( TimerTimeout( headGoodTimer )) {
+			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+			TimerSet( headBadTimer, secondsToBeBad );
+			// Indicate that the alignment is good.
+			return( aligned );
+		}
+		// The alignment hasn't be good for long enough to really be considered as good.
+		else return( transitioningToGood );
 	}
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		headGoodCycles = cyclesToBeGood;
-		return ( --headBadCycles < 0 ? misaligned : transitioning );
+		if ( TimerTimeout( headBadTimer )) {
+			// Made it to bad. To be good again you have to be good for a while.
+			TimerSet( headGoodTimer, secondsToBeGood );
+			// Turn on the arrow because we've been bad for a while.
+			renderer->tiltPrompt->Enable();
+			// Signal that we really are misaligned.
+			return( misaligned );
+		}
+		// The alignment hasn't be bad for long enough to really be considered as bad.
+		else return( transitioningToBad );
 	}
 }
 
-double GraspVR::SetDesiredHandRoll( double roll_angle ) {
-	desiredHandRoll = roll_angle;
-	handGoodCycles = cyclesToBeGood;
-	return( desiredHandRoll );
+double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
+	desiredHandRoll = desired_roll_angle;
+	TimerSet( handGoodTimer, secondsToBeGood);
+	TimerSet( handBadTimer, secondsToBeBad);
+	return( desiredHeadRoll );
 }
 AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	// Position the prompt arrow where the hand is.
@@ -351,14 +364,17 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
 	if ( SetColorByRollError( renderer->kkTool, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance, use_arrow ) ) {
-		handBadCycles = cyclesToBeBad;
-		return( --handGoodCycles < 0 ? aligned : transitioning );
+		TimerSet( handBadTimer, secondsToBeBad );
+		if ( TimerTimeout( handGoodTimer )) return( aligned );
+		else return( transitioningToGood );
 	}
 	// If head alignment has been lost, reset the counter and return false.
 	else {
-		handGoodCycles = cyclesToBeGood;
-		return ( --handBadCycles < 0 ? misaligned : transitioning );
-	}}
+		TimerSet( handGoodTimer, secondsToBeBad );
+		if ( TimerTimeout( handGoodTimer )) return( misaligned );
+		else return( transitioningToBad );
+	}
+}
 
 void GraspVR::HandleSpinningPrompts( void ) {
 	static double angle = 39.0;
