@@ -972,7 +972,7 @@ void Disk::Draw( void ) {
 
 	if ( ! enabled ) return;
 	PrepDraw();
-	double deltaA = Pi / (double) slices;
+	double deltaA = 2.0 * Pi / (double) slices;
 
 	if ( texture ) {
 
@@ -982,7 +982,7 @@ void Disk::Draw( void ) {
 
 		glEnable( GL_TEXTURE_2D );
 		texture->Use();
-		for ( double angle = 0.0; angle <= 2.0 * Pi; angle += deltaA  ){
+		for ( double angle = 0.0; angle <= 2.0 * Pi - deltaA; angle += deltaA  ){
 
 			x1 = outer_radius * cos( angle );
 			x2 = outer_radius * cos( angle + deltaA );
@@ -990,8 +990,8 @@ void Disk::Draw( void ) {
 			x4 = inner_radius * cos( angle );
 			y1 = outer_radius * sin( angle );
 			y2 = outer_radius * sin( angle + deltaA );
-			y3 = outer_radius * sin( angle + deltaA );
-			y4 = outer_radius * sin( angle );
+			y3 = inner_radius * sin( angle + deltaA );
+			y4 = inner_radius * sin( angle );
 
 			u1 = 0.5 + 0.45 * x1 / outer_radius;
 			u2 = 0.5 + 0.45 * x2 / outer_radius;
