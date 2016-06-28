@@ -123,11 +123,12 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 		// Strip off trailing newline.
 		// if ( strlen( line ) > 0 ) line[strlen( line ) - 1] = 0;
 		int feedback;
-		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %d",
+		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf;  %lf; %lf; %lf; %lf; %lf; %d",
 			&trialParameters[nTrials].targetHeadTilt,
 			&trialParameters[nTrials].targetHeadTiltTolerance,
 			&trialParameters[nTrials].targetHeadTiltDuration,
 			&trialParameters[nTrials].targetOrientation,
+			&trialParameters[nTrials].hapticTargetOrientationTolerance,
 			&trialParameters[nTrials].targetPresentationDuration,
 			&trialParameters[nTrials].responseHeadTilt,
 			&trialParameters[nTrials].responseHeadTiltTolerance,
@@ -136,7 +137,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 			&trialParameters[nTrials].conflictGain,
 			&feedback );
 
-		if ( items == 11 ) {
+		if ( items == 12 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
 				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
 			}
@@ -280,12 +281,13 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
 	// Output the parameters of this trial to the response file.
-	fprintf( fp, "%d; %5.2f; %5.2f; %5.2f; %6.2f; %5.2f; %6.2f; %5.2f; %5.2f; %5.2f; %d",
+	fprintf( fp, "%d; %5.2f; %5.2f; %5.2f; %6.2f; %5.2f; %5.2f; %6.2f; %5.2f; %5.2f; %5.2f; %d",
 		currentTrial,
 		trialParameters[currentTrial].targetHeadTilt,
 		trialParameters[currentTrial].targetHeadTiltTolerance,
 		trialParameters[currentTrial].targetHeadTiltDuration,
 		trialParameters[currentTrial].targetOrientation,
+		trialParameters[currentTrial].hapticTargetOrientationTolerance,
 		trialParameters[currentTrial].targetPresentationDuration,
 		trialParameters[currentTrial].responseHeadTilt,
 		trialParameters[currentTrial].responseHeadTiltTolerance,
@@ -634,7 +636,7 @@ void KtoK::EnterPresentTarget( void ) {
 	// But the orientation will be reflected by the color.
 	renderer->kkTool->Enable();
 	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, desiredHandRollTolerance );
+	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].hapticTargetOrientationTolerance );
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 

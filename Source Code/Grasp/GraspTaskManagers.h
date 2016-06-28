@@ -22,6 +22,7 @@ namespace Grasp {
 			double	targetHeadTiltTolerance;
 			double	targetHeadTiltDuration;
 			double	targetOrientation;
+			double  hapticTargetOrientationTolerance;
 			double	targetPresentationDuration;
 			double	responseHeadTilt;
 			double	responseHeadTiltTolerance;

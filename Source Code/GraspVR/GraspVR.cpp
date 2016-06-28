@@ -309,6 +309,7 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
+	desiredHeadRollTolerance = tolerance;
 	TimerSet( headGoodTimer, secondsToBeGood);
 	TimerSet( headBadTimer, 0.0 );
 	return( desiredHeadRoll );
@@ -353,25 +354,46 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
 double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
 	desiredHandRoll = desired_roll_angle;
-	TimerSet( handGoodTimer, secondsToBeGood);
-	TimerSet( handBadTimer, secondsToBeBad);
-	return( desiredHeadRoll );
+	desiredHandRollTolerance = tolerance;
+	TimerSet( handGoodTimer, secondsToBeGood );
+	TimerSet( handBadTimer, 0.0 );
+	return( desiredHandRoll );
 }
 AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
-	// Position the prompt arrow where the hand is.
+
+	// Place the tilt prompt around the hand.
 	renderer->tiltPrompt->SetPosition( renderer->kkTool->position );
-	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
-	// If the head is aligned CYCLES_TO_BE_GOOD cycles in a row, return that the head orientation is good.
-	if ( SetColorByRollError( renderer->kkTool, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance, use_arrow ) ) {
-		TimerSet( handBadTimer, secondsToBeBad );
-		if ( TimerTimeout( handGoodTimer )) return( aligned );
+	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
+
+	double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
+	if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+
+	// If the hand is aligned do stuff depending on the time delays.
+	if ( 0.0 == alignment ) {
+		// Arrow gets turned off as soon as the angle is good.
+		renderer->tiltPrompt->Disable();
+		if ( TimerTimeout( handGoodTimer )) {
+			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+			TimerSet( handBadTimer, secondsToBeBad );
+			// Indicate that the alignment is good.
+			return( aligned );
+		}
+		// The alignment hasn't be good for long enough to really be considered as good.
 		else return( transitioningToGood );
 	}
-	// If head alignment has been lost, reset the counter and return false.
+	// If head alignment has been lost, do other stuff depending on the delays.
 	else {
-		TimerSet( handGoodTimer, secondsToBeBad );
-		if ( TimerTimeout( handGoodTimer )) return( misaligned );
+		if ( TimerTimeout( handBadTimer )) {
+			// Made it to bad. To be good again you have to be good for a while.
+			TimerSet( handGoodTimer, secondsToBeGood );
+			// Turn on the arrow because we've been bad for a while.
+			renderer->tiltPrompt->Enable();
+			// Signal that we really are misaligned.
+			return( misaligned );
+		}
+		// The alignment hasn't be bad for long enough to really be considered as bad.
 		else return( transitioningToBad );
 	}
 }
