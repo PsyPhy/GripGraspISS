@@ -355,7 +355,7 @@ Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
 	return assembly;
 }
 
-Assembly *GraspGLObjects::CreateReadyToStartIndicator( void ) {
+Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
 	// For the moment the indicator for a timeout is just a magenta 
 	// sphere. I would like to create something that is more intuitive.
 	Assembly	*assembly = new Assembly();
@@ -363,39 +363,12 @@ Assembly *GraspGLObjects::CreateReadyToStartIndicator( void ) {
 	
 	surface = new Disk( 120.0, 30.0, 128 );
 	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
-	surface->SetTexture( ready_to_start_texture );
+	surface->SetTexture( texture );
 	assembly->AddComponent( surface );
 
 	return assembly;
 }
 
-Assembly *GraspGLObjects::CreateTimeoutIndicator( void ) {
-	// For the moment the indicator for a timeout is just a magenta 
-	// sphere. I would like to create something that is more intuitive.
-	Assembly	*assembly = new Assembly();
-	Disk		*surface;
-	
-	surface = new Disk( 120.0, 0.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
-	surface->SetTexture( timeout_texture );
-	assembly->AddComponent( surface );
-
-	return assembly;
-}
-
-Assembly *GraspGLObjects::CreateHeadMisalignIndicator( void ) {
-	// For the moment the indicator for a timeout is just a magenta 
-	// sphere. I would like to create something that is more intuitive.
-	Assembly	*assembly = new Assembly();
-	Disk		*surface;
-	
-	surface = new Disk( 120.0, 0.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
-	surface->SetTexture( head_misalign_texture );
-	assembly->AddComponent( surface );
-
-	return assembly;
-}
 
 void GraspGLObjects::CreateVRObjects( void ) {
 
@@ -421,9 +394,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	tiltPrompt = CreateTiltPrompt();
 	successIndicator = CreateSuccessIndicator();
-	timeoutIndicator = CreateTimeoutIndicator();
-	headMisalignIndicator = CreateHeadMisalignIndicator();
-	readyToStartIndicator = CreateReadyToStartIndicator();
+	timeoutIndicator = CreateIndicator( timeout_texture );
+	headMisalignIndicator = CreateIndicator( head_misalign_texture );
+	readyToStartIndicator = CreateIndicator( ready_to_start_texture );
 	projectiles = CreateProjectiles();
 
 	// Orientated tool used when responding with only visual feedback (e.g. V-V).

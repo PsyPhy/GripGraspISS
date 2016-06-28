@@ -179,9 +179,7 @@ namespace Grasp {
 			Assembly *CreateResponse( void );
 			Assembly *CreateTiltPrompt( void );
 			Assembly *CreateSuccessIndicator( void );
-			Assembly *CreateTimeoutIndicator( void );
-			Assembly *CreateHeadMisalignIndicator( void );
-			Assembly *CreateReadyToStartIndicator( void );
+			Assembly *CreateIndicator( Texture *texture );
 			Assembly *CreateRoom( void );
 			Assembly *CreateStarrySky( void );
 			Assembly *CreateDarkSky( void );
