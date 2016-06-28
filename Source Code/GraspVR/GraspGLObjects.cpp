@@ -56,6 +56,9 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
+// Make things attached to the heads-up display (HUD) semi-transparent.
+const double GraspGLObjects::hudTransparency = 0.25;
+
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
 	
@@ -358,8 +361,8 @@ Assembly *GraspGLObjects::CreateReadyToStartIndicator( void ) {
 	Assembly	*assembly = new Assembly();
 	Disk		*surface;
 	
-	surface = new Disk( 120.0, 0.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface = new Disk( 120.0, 30.0, 128 );
+	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
 	surface->SetTexture( ready_to_start_texture );
 	assembly->AddComponent( surface );
 
@@ -373,7 +376,7 @@ Assembly *GraspGLObjects::CreateTimeoutIndicator( void ) {
 	Disk		*surface;
 	
 	surface = new Disk( 120.0, 0.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
 	surface->SetTexture( timeout_texture );
 	assembly->AddComponent( surface );
 
@@ -387,7 +390,7 @@ Assembly *GraspGLObjects::CreateHeadMisalignIndicator( void ) {
 	Disk		*surface;
 	
 	surface = new Disk( 120.0, 0.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0 );
+	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
 	surface->SetTexture( head_misalign_texture );
 	assembly->AddComponent( surface );
 

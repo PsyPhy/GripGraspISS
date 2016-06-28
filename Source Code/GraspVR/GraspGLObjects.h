@@ -96,6 +96,8 @@ namespace Grasp {
 			static const int target_balls;
 			static const double finger_length;
 
+			static const double hudTransparency;
+
 		protected:
 
 			// Textures that are used to decorate certain objects.
