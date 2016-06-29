@@ -153,6 +153,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->vkTool->Disable();
 	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
+	renderer->wristZone->Disable();
 
 	currentProjectileState = cocked;
 
@@ -367,35 +368,42 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
-	double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
-	if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-	if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
-
-	// If the hand is aligned do stuff depending on the time delays.
-	if ( 0.0 == alignment ) {
-		// Arrow gets turned off as soon as the angle is good.
-		renderer->tiltPrompt->Disable();
-		if ( TimerTimeout( handGoodTimer )) {
-			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
-			TimerSet( handBadTimer, secondsToBeBad );
-			// Indicate that the alignment is good.
-			return( aligned );
-		}
-		// The alignment hasn't be good for long enough to really be considered as good.
-		else return( transitioningToGood );
+	if ( renderer->hand->position[Y] < -150.0 ) {
+		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		return( misaligned );
 	}
-	// If head alignment has been lost, do other stuff depending on the delays.
 	else {
-		if ( TimerTimeout( handBadTimer )) {
-			// Made it to bad. To be good again you have to be good for a while.
-			TimerSet( handGoodTimer, secondsToBeGood );
-			// Turn on the arrow because we've been bad for a while.
-			renderer->tiltPrompt->Enable();
-			// Signal that we really are misaligned.
-			return( misaligned );
+
+		double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
+		if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+		if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+
+		// If the hand is aligned do stuff depending on the time delays.
+		if ( 0.0 == alignment ) {
+			// Arrow gets turned off as soon as the angle is good.
+			renderer->tiltPrompt->Disable();
+			if ( TimerTimeout( handGoodTimer )) {
+				// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+				TimerSet( handBadTimer, secondsToBeBad );
+				// Indicate that the alignment is good.
+				return( aligned );
+			}
+			// The alignment hasn't be good for long enough to really be considered as good.
+			else return( transitioningToGood );
 		}
-		// The alignment hasn't be bad for long enough to really be considered as bad.
-		else return( transitioningToBad );
+		// If head alignment has been lost, do other stuff depending on the delays.
+		else {
+			if ( TimerTimeout( handBadTimer )) {
+				// Made it to bad. To be good again you have to be good for a while.
+				TimerSet( handGoodTimer, secondsToBeGood );
+				// Turn on the arrow because we've been bad for a while.
+				renderer->tiltPrompt->Enable();
+				// Signal that we really are misaligned.
+				return( misaligned );
+			}
+			// The alignment hasn't be bad for long enough to really be considered as bad.
+			else return( transitioningToBad );
+		}
 	}
 }
 

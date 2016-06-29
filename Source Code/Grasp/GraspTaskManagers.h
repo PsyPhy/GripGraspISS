@@ -169,6 +169,7 @@ namespace Grasp {
 		GraspTrialState UpdatePresentTarget( void );
 		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
+		GraspTrialState UpdateObtainResponse( void );
 		void ExitObtainResponse( void );
 	};
 

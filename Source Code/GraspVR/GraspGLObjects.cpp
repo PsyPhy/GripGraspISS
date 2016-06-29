@@ -273,6 +273,13 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 	return laserPointer;
 }
 
+Assembly *GraspGLObjects::CreateZone( void ) {
+	Assembly *assembly = new Assembly();
+	Disk *disk = new Disk( 50.0 );
+	assembly->AddComponent( disk );
+	assembly->SetColor( 0.0, 1.0, 0.0, 0.2 );
+	return assembly;
+}
 
 // Group all the elements that move with the hand into a single entity.
 // Each component will be activated or deactivated separately, but their pose will be set
@@ -405,6 +412,8 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	blockCompletedIndicator = CreateIndicator( block_completed_texture );
 	projectiles = CreateProjectiles();
 
+	wristZone = CreateZone();
+
 	// Orientated tool used when responding with only visual feedback (e.g. V-V).
 	vTool = CreateVisualTool();
 	// Orientated tool that allows visual feedback of the hand's orientation.
@@ -430,6 +439,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
+	wristZone->SetPosition( 25.0, -25.0, -200.0 );
 }
 
 
@@ -469,6 +479,7 @@ void GraspGLObjects::DrawVR( void ) {
 	vkTool->Draw();
 	kkTool->Draw();
 	projectiles->Draw();
+	wristZone->Draw();
 
 }
 

@@ -660,6 +660,9 @@ void VtoK::ExitObtainResponse( void ) {
 /// KtoK
 
 void KtoK::EnterPresentTarget( void ) {
+	// Show where to put the wrist.
+	renderer->wristZone->SetColor( 0.0, 1.0, 0.0, 0.05 );
+	renderer->wristZone->Enable();
 	// Show the subject where to point.
 	renderer->positionOnlyTarget->Enable();
 	// Do all the default actions as well.
@@ -672,6 +675,12 @@ void KtoK::EnterPresentTarget( void ) {
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 
+
+	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+
+	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	else trackers->handTracker->OffsetTo( down );
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
@@ -691,11 +700,17 @@ void  KtoK::ExitPresentTarget( void ) {
 	renderer->positionOnlyTarget->Disable();
 	// Hide the tool showing the orientation of the hand via color.
 	renderer->kkTool->Disable();
+	// Hide the wrist zone indication.
+	// renderer->wristZone->Disable();
+	renderer->wristZone->SetColor( 1.0, 0.0, 0.0, 0.05 );
 	// Do all the default actions as well.
 	GraspTaskManager::ExitPresentTarget();
 }
 
 void KtoK::EnterObtainResponse( void ) {
+	// Show where to put the wrist.
+	renderer->wristZone->SetColor( 0.0, 1.0, 0.0, 0.05 );
+	renderer->wristZone->Enable();
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
 	renderer->kTool->Enable();
@@ -703,9 +718,23 @@ void KtoK::EnterObtainResponse( void ) {
 	GraspTaskManager::EnterObtainResponse();
 }
 
+GraspTrialState KtoK::UpdateObtainResponse( void ) { 
+
+	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+
+	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	else trackers->handTracker->OffsetTo( down );
+	if ( renderer->hand->position[Y] < -150.0 ) renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+	else renderer->kTool->SetColor( 0.0, 0.0, 1.0, 0.85 );
+	return( GraspTaskManager::UpdateObtainResponse() );
+
+}
+
 void KtoK::ExitObtainResponse( void ) {
 	// Hide the hand.
 	renderer->kTool->Disable();
+	renderer->wristZone->Disable();
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }
