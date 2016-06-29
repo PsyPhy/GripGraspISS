@@ -133,9 +133,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 	FILE *fp = fopen( filename, "r" );
 	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for read.", filename );
 	while ( fgets( line, sizeof( line ), fp ) ) {
-		// Strip off trailing newline.
-		// if ( strlen( line ) > 0 ) line[strlen( line ) - 1] = 0;
-		int feedback;
+
 		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf;  %lf; %lf; %lf; %lf; %lf; %d",
 			&trialParameters[nTrials].targetHeadTilt,
 			&trialParameters[nTrials].targetHeadTiltTolerance,
@@ -148,7 +146,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 			&trialParameters[nTrials].responseHeadTiltDuration,
 			&trialParameters[nTrials].responseTimeout,
 			&trialParameters[nTrials].conflictGain,
-			&feedback );
+			&trialParameters[nTrials].provideFeedback );
 
 		if ( items == 12 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
@@ -156,7 +154,6 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 			}
 			else {
 				// A valid set of paramters. Add it to the list of trials.
-				trialParameters[nTrials].provideFeedback = ( feedback != 0 );
 				nTrials++;
 			}
 		}
@@ -207,7 +204,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
 	// Ouput a header.
-	fprintf( fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; conflictGain; feedback (0 or 1); time; response\n" );
+	fprintf( fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
@@ -294,18 +291,22 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
 	// Output the parameters of this trial to the response file.
-	fprintf( fp, "%d; %5.2f; %5.2f; %5.2f; %6.2f; %5.2f; %5.2f; %6.2f; %5.2f; %5.2f; %5.2f; %d",
+	fprintf( fp, "%d;  %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
 		currentTrial,
+
 		trialParameters[currentTrial].targetHeadTilt,
 		trialParameters[currentTrial].targetHeadTiltTolerance,
 		trialParameters[currentTrial].targetHeadTiltDuration,
+
 		trialParameters[currentTrial].targetOrientation,
 		trialParameters[currentTrial].hapticTargetOrientationTolerance,
 		trialParameters[currentTrial].targetPresentationDuration,
+
 		trialParameters[currentTrial].responseHeadTilt,
 		trialParameters[currentTrial].responseHeadTiltTolerance,
 		trialParameters[currentTrial].responseHeadTiltDuration,
 		trialParameters[currentTrial].responseTimeout,
+
 		trialParameters[currentTrial].conflictGain,
 		trialParameters[currentTrial].provideFeedback );
 
