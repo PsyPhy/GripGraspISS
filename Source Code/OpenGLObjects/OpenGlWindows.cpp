@@ -8,6 +8,7 @@
 #include <tchar.h>
 #include <math.h>
 #include <time.h> 
+#include "../Useful/fOutputDebugString.h"
 #include "../Useful/OpenGLUseful.h"
 #include "OpenGLWindows.h"
 
@@ -370,21 +371,22 @@ void OpenGLWindow::Swap( void )
 
 /********************************************************************************/
 
-void	SaveBitmap( const char *szFilename, HBITMAP hBitmap );
+void	SaveBitmap( const char *szFilename, HDC hdc, HBITMAP hBitmap );
 
 void OpenGLWindow::SaveAsBMP( const char *filename )
 {
 	// Presumably we just did a swap. 
 	// Sleep a little to be sure that the bitmap has been updated.
-	Sleep( 500 );
+	Sleep( 2000 );
 
 	HDC		hBmpFileDC = CreateCompatibleDC( hDC );
 	HBITMAP	hBmpFileBitmap = CreateCompatibleBitmap( hDC, width, height );
 	HBITMAP hOldBitmap = (HBITMAP) SelectObject( hBmpFileDC, hBmpFileBitmap );
-	BitBlt( hBmpFileDC, 0, 0, width, height, hDC, 0, 0, SRCCOPY | CAPTUREBLT );
-	SelectObject( hBmpFileDC, hOldBitmap );
-	
-	SaveBitmap( filename, hBmpFileBitmap );
+	int result = BitBlt( hBmpFileDC, 0, 0, width, height, hDC, 0, 0, SRCCOPY );
+	HBITMAP hJoe = (HBITMAP) SelectObject( hBmpFileDC, hOldBitmap );
+	fOutputDebugString( "SaveAsBMP %x %x %x %x %d\n", hDC, hOldBitmap, hBmpFileBitmap, hJoe, result );
+
+	SaveBitmap( filename, hDC, hBmpFileBitmap );
 
 	DeleteDC( hBmpFileDC );
 	DeleteObject( hBmpFileBitmap );

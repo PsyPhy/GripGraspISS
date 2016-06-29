@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 #include <tchar.h>
 #include <math.h>
 #include <time.h> 
@@ -36,21 +37,25 @@ GraspGLObjects	*objects;
 
 void DrawToBMP( const char *filename ) {
 
-	// Prepare for drawing.
-	window->Clear( 0.0, 0.0, 0.0 );
-	glUsefulPrepareRendering();
-	viewpoint->Apply( window, CYCLOPS );
+	static int col = RED;
 
-	// Draw everything that is enabled.
-	objects->DrawVR();
-	objects->hmdStructure->Draw();
-	objects->handStructure->Draw();
-	objects->chestStructure->Draw();
+	// Prepare for drawing.
+	window->Activate();
+	window->Clear( col++ );
 	window->Swap();
 
-	Sleep( 100 );
+	//glUsefulPrepareRendering();
+	//viewpoint->Apply( window, CYCLOPS );
 
+	// Draw everything that is enabled.
+	//objects->DrawVR();
+	//objects->hmdStructure->Draw();
+	//objects->handStructure->Draw();
+	//objects->chestStructure->Draw();
+
+	//window->Swap();
 	window->SaveAsBMP( filename );
+	Sleep( 1000 );
 
 	
 }
@@ -63,7 +68,7 @@ int _tmain(int argc, char *argv[])
 	window = new OpenGLWindow();
 
 	// Create sets the new window to be the active window.
-	if ( !window->Create( NULL, argv[0], 0, 0, 1024, 1024 ) ) {
+	if ( !window->Create( NULL, argv[0], 860, 0, 1024, 1024 ) ) {
 		fMessageBox( MB_OK, "TestOpenGLObjects", "Error creating window." );
 		exit( -1 );
 	}  
@@ -76,7 +81,7 @@ int _tmain(int argc, char *argv[])
 	*      that I give for the model room here are in mm.
 	*  100.0 to 10000.0  depth clipping planes - making this smaller would improve the depth resolution.
 	*/
-	viewpoint = new Viewpoint( 6.0, 85.0, 10.0, 10000.0);
+	viewpoint = new Viewpoint( 6.0, 75.0, 10.0, 10000.0);
 
 	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
 	viewpoint->SetOrientation(0.0, 0.0, 0.0 );
@@ -126,31 +131,25 @@ int _tmain(int argc, char *argv[])
 	objects->chestStructure->Disable();
 	Sleep( 1000 );
 
-	DrawToBMP( "Documentation\\ScreenShots\\GraspScreenShot.bmp" );
-
-		Sleep( 1000 );
-
 	objects->vTool->Disable();
-	objects->timeoutIndicator->Enable();
-	Sleep( 1000 );
-	DrawToBMP( "Documentation\\ScreenShots\\ReadyToStartScreenShot.bmp" );
-	Sleep( 1000 );
+	objects->readyToStartIndicator->Enable();
+ 	DrawToBMP( "Documentation\\ScreenShots\\ReadyToStartScreenShot.bmp" );
+	window->RunOnce();
 
-	objects->timeoutIndicator->Disable();
+	objects->readyToStartIndicator->Disable();
 	objects->headMisalignIndicator->Enable();
-	Sleep( 1000 );
 	DrawToBMP( "Documentation\\ScreenShots\\HeadMisalignScreenShot.bmp" );
-	Sleep( 1000 );
+	window->RunOnce();
 
 	objects->headMisalignIndicator->Disable();
 	objects->timeoutIndicator->Enable();
-	Sleep( 1000 );
 	DrawToBMP( "Documentation\\ScreenShots\\TimeoutScreenShot.bmp" );
-	Sleep( 1000 );
+	window->RunOnce();
 
 	objects->timeoutIndicator->Disable();
 	objects->blockCompletedIndicator->Enable();
-	//DrawToBMP( "Documentation\\ScreenShots\\BlockCompletedScreenShot.bmp" );
+	DrawToBMP( "Documentation\\ScreenShots\\BlockCompletedScreenShot.bmp" );
+	window->RunOnce();
 
 
 	return 0;
