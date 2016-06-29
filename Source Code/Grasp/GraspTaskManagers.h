@@ -6,7 +6,7 @@
 namespace Grasp {
 
 	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
-					ProvideFeedback, TrialCompleted, TrialInterrupted, Timeout,
+					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted, Timeout,
 					ExitStateMachine } GraspTrialState;
 
 	class GraspTaskManager : public GraspVR {
@@ -107,6 +107,12 @@ namespace Grasp {
 		virtual void EnterTrialCompleted( void );
 		virtual GraspTrialState UpdateTrialCompleted( void );
 		virtual void ExitTrialCompleted( void );
+
+		// BlockCompleted
+		// Show the subject the results of their response.
+		virtual void EnterBlockCompleted( void );
+		virtual GraspTrialState UpdateBlockCompleted( void );
+		virtual void ExitBlockCompleted( void );
 
 		// TrialInterrupted
 		// The trial was interrupted because the head orientation was not maintained.

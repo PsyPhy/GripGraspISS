@@ -87,6 +87,13 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		if ( nextState != currentState ) ExitTrialCompleted();
 		break;
 
+	case BlockCompleted:
+
+		if ( currentState != previousState ) EnterBlockCompleted();
+		nextState = UpdateBlockCompleted();
+		if ( nextState != currentState ) ExitBlockCompleted();
+		break;
+
 	case TrialInterrupted:
 
 		if ( currentState != previousState ) EnterTrialInterrupted();
@@ -470,7 +477,7 @@ GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) {
 	if ( TimerTimeout( stateTimer ) ) {
 		currentTrial++;
 		if ( currentTrial < nTrials ) return( StartTrial ); 
-		else return( ExitStateMachine );
+		else return( BlockCompleted );
 	}
 	// Otherwise, continue in this state.
 	// HandleHeadAlignment();
@@ -478,6 +485,25 @@ GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) {
 }
 void  GraspTaskManager::ExitTrialCompleted( void ) {
 	renderer->successIndicator->Disable();
+}
+
+// BlockCompleted
+// Provide an indication that the block was completed successfully.
+// Promt the subject to doff the HMD.
+void GraspTaskManager::EnterBlockCompleted( void ) {
+	// Show the success indicator.
+	renderer->blockCompletedIndicator->Enable();
+}
+GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
+	// After timer runs out, move on to the next trial or exit.
+	if ( oculusDisplay->Button[MOUSE_LEFT] ||  oculusDisplay->Key['\r'] ) return( ExitStateMachine );
+	// Otherwise, continue in this state.
+	// HandleHeadAlignment();
+	HandleSpinningPrompts();
+	return( currentState );
+}
+void  GraspTaskManager::ExitBlockCompleted( void ) {
+	renderer->blockCompletedIndicator->Disable();
 }
 
 // TrialInterrupted

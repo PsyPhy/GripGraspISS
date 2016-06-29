@@ -296,6 +296,8 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( timeoutIndicator );
 	headMisalignIndicator->SetOffset( prompt_location );
 	yoke->AddComponent( headMisalignIndicator );
+	blockCompletedIndicator->SetOffset( prompt_location );
+	yoke->AddComponent( blockCompletedIndicator );
 	readyToStartIndicator->SetOffset( prompt_location );
 	yoke->AddComponent( readyToStartIndicator );
 	vTool->SetOffset( 0.0, 0.0, -200.0 );
