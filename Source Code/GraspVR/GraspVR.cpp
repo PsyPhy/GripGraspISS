@@ -345,7 +345,7 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 			// Made it to bad. To be good again you have to be good for a while.
 			TimerSet( headGoodTimer, secondsToBeGood );
 			// Turn on the arrow because we've been bad for a while.
-			renderer->tiltPrompt->Enable();
+			if ( use_arrow ) renderer->tiltPrompt->Enable();
 			// Signal that we really are misaligned.
 			return( misaligned );
 		}

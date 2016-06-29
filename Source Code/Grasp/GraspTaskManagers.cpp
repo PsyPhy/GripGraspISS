@@ -44,7 +44,13 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		if ( nextState != currentState ) ExitStartTrial();
 		break;
 	
+	case ApplyConflict:
 
+		if ( currentState != previousState ) EnterApplyConflict();
+		nextState = UpdateApplyConflict();
+		if ( nextState != currentState ) ExitStartTrial();
+		break;
+	
 	case StraightenHead:
 
 		if ( currentState != previousState ) EnterStraightenHead();
@@ -307,6 +313,28 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	// Note that we do not output a \n in the above. The line will be completed by the response.
 	fflush( fp );
 
+	// The desired orientation of the head to zero in preparation for applying conflict (if any).
+	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+
+	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
+	// In the future it should send this info to ground.
+	fOutputDebugString( "Starting Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
+		currentTrial, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
+
+}
+GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
+	// Update the feedback about the head orientation wrt the desired head orientation.
+	// If the head alignment is satisfactory, move on to the next state.
+	if ( aligned == HandleHeadAlignment( true ) ) return( ApplyConflict ); 
+	else return( currentState );
+}
+void GraspTaskManager::ExitStartTrial( void ) {}
+
+//
+// ApplyConflict
+// Set the new trial parameters. This is where conflict should get turned off or on.
+void GraspTaskManager::EnterApplyConflict( void ) { 
+
 	// Turn the starry sky back on, even if it won't be visible right away because the room will be off.
 	renderer->starrySky->Enable();
 	renderer->darkSky->Disable();
@@ -322,22 +350,13 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	// Stay in the state a little longer after the room comes back on.
 	TimerSet( auxStateTimer, 2.0 );
 
-	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
-	// In the future it should send this info to ground.
-	fOutputDebugString( "Starting Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
-		currentTrial, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
-
 }
-GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
+GraspTrialState GraspTaskManager::UpdateApplyConflict( void ) { 
 	if ( TimerTimeout( auxStateTimer ) ) return( StraightenHead );
 	if ( TimerTimeout( stateTimer ) ) renderer->room->Enable();
 	return( currentState );
 }
-void GraspTaskManager::ExitStartTrial( void ) {
-	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
-}
-
+void GraspTaskManager::ExitApplyConflict( void ) {}
 
 //
 // StraightenHead
@@ -367,7 +386,7 @@ void GraspTaskManager::EnterPresentTarget( void ) {
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
-	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
+	if ( aligned != HandleHeadAlignment( false ) ) return( TrialInterrupted );
 	// Stay in this state for a fixed time.
 	// Nominally, the next step is to tilt the head prior to responding.
 	if ( TimerTimeout( stateTimer ) ) return( TiltHead ); 
@@ -444,8 +463,11 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 // ProvideFeedback
 // The subject sees the result of his or her response.
 void GraspTaskManager::EnterProvideFeedback( void ) {
-	// Show the target orientation.
-	renderer->orientationTarget->Enable();
+	// Put the target head orientation back to upright so that the subject can start moving there already.
+	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+	// Show the target.
+	if ( trialParameters[currentTrial].provideFeedback == 1 ) renderer->orientationTarget->Enable();
+	else renderer->positionOnlyTarget->Enable();
 	// Launch the projectiles from the current hand orientation (the response );
 	TriggerProjectiles();
 }
@@ -456,10 +478,12 @@ GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) {
 	ProjectileState pstate = HandleProjectiles();
 	if ( pstate == hit || pstate == miss ) return( TrialCompleted );
 	// Otherwise, continue in this state.
+	HandleHeadAlignment( false );
 	return( currentState );
 }
 void  GraspTaskManager::ExitProvideFeedback( void ) {
 	renderer->orientationTarget->Disable();
+	renderer->positionOnlyTarget->Disable();
 	renderer->projectiles->Disable();
 }
 
@@ -467,10 +491,12 @@ void  GraspTaskManager::ExitProvideFeedback( void ) {
 // Provide an indication that the trial was completed successfully.
 // Then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialCompleted( void ) {
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Show the success indicator.
-	renderer->successIndicator->Enable();
+	// renderer->successIndicator->Enable();
 	// Show it for a fixed time.
-	TimerSet( stateTimer, indicatorDisplayDuration ); 
+	//TimerSet( stateTimer, indicatorDisplayDuration ); 
+	TimerSet( stateTimer, 0.0 ); 
 }
 GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
@@ -480,7 +506,7 @@ GraspTrialState GraspTaskManager::UpdateTrialCompleted( void ) {
 		else return( BlockCompleted );
 	}
 	// Otherwise, continue in this state.
-	// HandleHeadAlignment();
+	HandleHeadAlignment( false );
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialCompleted( void ) {
@@ -493,12 +519,13 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 void GraspTaskManager::EnterBlockCompleted( void ) {
 	// Show the success indicator.
 	renderer->blockCompletedIndicator->Enable();
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
 	if ( oculusDisplay->Button[MOUSE_LEFT] ||  oculusDisplay->Key['\r'] ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
-	// HandleHeadAlignment();
+	HandleHeadAlignment( false );
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -513,7 +540,8 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	fprintf( fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
 	renderer->headMisalignIndicator->Enable();
-	// Show it for a fixed time.
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// Show the message until the subject presses a button.
@@ -528,7 +556,7 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 		else return( ExitStateMachine );
 	}
 	// Otherwise, continue in this state.
-	// HandleHeadAlignment();
+	HandleHeadAlignment( false );
 	HandleSpinningPrompts();
 	return( currentState );
 }
@@ -543,6 +571,7 @@ void GraspTaskManager::EnterTimeout( void ) {
 	fprintf( fp, "%f; timeout\n", 0.0 );
 	// Show the success indicator.
 	renderer->timeoutIndicator->Enable();
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateTimeout( void ) { 
 	// When the subject presses a button, move on..

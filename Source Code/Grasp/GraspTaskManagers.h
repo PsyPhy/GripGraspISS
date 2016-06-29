@@ -5,7 +5,7 @@
 
 namespace Grasp {
 
-	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
+	typedef enum { NullState, StartBlock, StartTrial, ApplyConflict, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
 					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted, Timeout,
 					ExitStateMachine } GraspTrialState;
 
@@ -71,6 +71,12 @@ namespace Grasp {
 		virtual void EnterStartTrial( void );
 		virtual GraspTrialState UpdateStartTrial( void );
 		virtual void ExitStartTrial( void );
+
+		// ApplyConflict
+		// Conflict gain is applied with a black scene.
+		virtual void EnterApplyConflict( void );
+		virtual GraspTrialState UpdateApplyConflict( void );
+		virtual void ExitApplyConflict( void );
 
 		// StraightenHead
 		// The subject is guided to align the head with the body axis.

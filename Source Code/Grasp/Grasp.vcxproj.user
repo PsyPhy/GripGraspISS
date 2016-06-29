@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> --VtoV --sequence=Sequences\DemoGraspSequence.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> --VtoV --nocoda --sequence=Sequences\DemoGraspSequence.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
