@@ -25,7 +25,7 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::secondsToBeGood = 1.0;
+const int GraspVR::secondsToBeGood = 3.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
 // Transparency of objects that change color according to roll angle.
@@ -94,7 +94,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	// Decide if we are in full screen mode or not.
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
-	static const bool fullscreen = true;
+	static const bool fullscreen = false;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8

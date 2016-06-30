@@ -34,7 +34,7 @@ double GraspTrackers::mouseGain = - 0.001;
 // Where to place the tool when in V response mode.
 Pose GraspTrackers::handPoseV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
 // Where to place the tool when in K response mode.
-Pose GraspTrackers::handPoseK = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspTrackers::handPoseK = {{50.0, 0.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -156,7 +156,7 @@ void GraspDexTrackers::Initialize( void ) {
 	
 	// Place the hand at a constant position relative to the origin.
 	mouseTracker->OffsetTo( handPoseV );
-	handTracker->OffsetTo( handPoseK );
+	//handTracker->OffsetTo( handPoseK );
 
 	////
 	//// We are not yet tracking positions, so we need to position the hand appropriately.
@@ -167,8 +167,6 @@ void GraspDexTrackers::Initialize( void ) {
 	Sleep( 200 );
 	// Allow them to update.
 	Update();
-	// And set the hand position to a fixed position.
-	handTracker->BoresightTo( handPoseK );
 
 }
 
