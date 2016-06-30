@@ -73,7 +73,14 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
-		renderer->hand->SetPose( handPose.pose );
+		// Filter the hand position somewhat.
+		// TODO: Constants need to be defined rather than hard-coded values.
+		Pose filtered;
+		ScaleVector( filtered.position, handPose.pose.position, 2.0 );
+		AddVectors ( filtered.position, filtered.position, renderer->hand->position );
+		ScaleVector( filtered.position, filtered.position, 1.0 / 3.0 );
+		CopyQuaternion( filtered.orientation, handPose.pose.orientation );
+		renderer->hand->SetPose( filtered );
 	}
 
 }
