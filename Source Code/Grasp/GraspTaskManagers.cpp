@@ -48,7 +48,7 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 
 		if ( currentState != previousState ) EnterApplyConflict();
 		nextState = UpdateApplyConflict();
-		if ( nextState != currentState ) ExitStartTrial();
+		if ( nextState != currentState ) ExitApplyConflict();
 		break;
 	
 	case StraightenHead:
@@ -348,16 +348,14 @@ void GraspTaskManager::EnterApplyConflict( void ) {
 
 	// The blanking period has a fixed duration. We should define a constant somewhere.
 	TimerSet( stateTimer,  1.0 ); 
-	// Stay in the state a little longer after the room comes back on.
-	TimerSet( auxStateTimer, 2.0 );
-
 }
 GraspTrialState GraspTaskManager::UpdateApplyConflict( void ) { 
-	if ( TimerTimeout( auxStateTimer ) ) return( StraightenHead );
-	if ( TimerTimeout( stateTimer ) ) renderer->room->Enable();
+	if ( TimerTimeout( stateTimer ) ) return( StraightenHead );
 	return( currentState );
 }
-void GraspTaskManager::ExitApplyConflict( void ) {}
+void GraspTaskManager::ExitApplyConflict( void ) {
+	renderer->room->Enable();
+}
 
 //
 // StraightenHead
