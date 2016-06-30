@@ -115,6 +115,7 @@ namespace Grasp {
 		void			HandleSpinningPrompts( void );
 
 		// Drives movements of the projectiles.
+		Vector3			projectileDirection;
 		ProjectileState	currentProjectileState;
 		ProjectileState TriggerProjectiles( void );
 		ProjectileState HandleProjectiles( void );

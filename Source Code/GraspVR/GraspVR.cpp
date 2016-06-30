@@ -186,6 +186,11 @@ ProjectileState GraspVR::TriggerProjectiles( void ) {
 	MultiplyVector( offset, renderer->selectedTool->offset, renderer->selectedTool->orientation );
 	AddVectors( world, renderer->selectedTool->position, offset );
 	renderer->projectiles->SetPosition( world );
+	// If the projectiles have been triggered and have not reached their destination, move
+	//  them forward along the line projecting out along the axis of the hand.
+	MultiplyVector( projectileDirection, kVector, renderer->selectedTool->orientation );
+	ScaleVector( projectileDirection, projectileDirection, -20.0 );
+
 	// Make the projectiles visible.
 	renderer->projectiles->Enable();
 	return( currentProjectileState = running );
@@ -203,12 +208,8 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 			renderer->projectiles->Disable();
 		}
 		else {
-			// If the projectiles have been triggered and have not reached their destination, move
-			//  them forward along the line projecting out along the axis of the hand.
-			Vector3 aim, new_position;
-			MultiplyVector( aim, kVector, renderer->selectedTool->orientation );
-			ScaleVector( aim, aim, -20.0 );
-			AddVectors( new_position, renderer->projectiles->position, aim );
+			Vector3 new_position;
+			AddVectors( new_position, renderer->projectiles->position, projectileDirection );
 			renderer->projectiles->SetPosition( new_position );
 			currentProjectileState = running;
 		}
