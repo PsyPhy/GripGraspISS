@@ -118,6 +118,7 @@ void GraspDexTrackers::Initialize( void ) {
 	chestCascadeTracker = new CascadePoseTracker();
 
 	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+	//for ( int unit = nCodaUnits; unit >= 0 ; unit-- ) {
 		hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 		fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
 		hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );

@@ -54,7 +54,7 @@ namespace Grasp {
 			desiredHeadRollTolerance( 5.0 ),
 
 			desiredHandRoll( -35.0 ),
-			desiredHandRollSweetZone( 2.0 ),
+			desiredHandRollSweetZone( 5.0 ),
 			desiredHandRollTolerance( 5.0 ),
 
 			currentProjectileState( cocked )

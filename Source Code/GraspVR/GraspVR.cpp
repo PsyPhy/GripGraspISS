@@ -79,7 +79,11 @@ void GraspVR::UpdateTrackers( void ) {
 		ScaleVector( filtered.position, handPose.pose.position, 2.0 );
 		AddVectors ( filtered.position, filtered.position, renderer->hand->position );
 		ScaleVector( filtered.position, filtered.position, 1.0 / 3.0 );
-		CopyQuaternion( filtered.orientation, handPose.pose.orientation );
+		Quaternion q;
+		MatrixToQuaternion( q, renderer->hand->orientation );
+		for ( int i = 0; i < 4; i++ ) q[i] += ( 2.0 *  handPose.pose.orientation[i] );
+		NormalizeQuaternion( q );
+		CopyQuaternion( filtered.orientation, q );
 		renderer->hand->SetPose( filtered );
 	}
 
@@ -289,6 +293,7 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 	}
 #endif
 
+	static double fade_angular_distance = 5.0;
 	if ( magnitude < sweet_zone ){
 		// If we are within the sweet zone, the color is more cyan than green.
 		// This makes it easier for the subject to recognize when the head is properly aligned.
@@ -298,21 +303,21 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
 	} else {
 		// Colors will change as one moves farther from the center.
-		if ( ( magnitude - sweet_zone ) < tolerance ) {
+		if ( ( magnitude - sweet_zone ) < fade_angular_distance ) {
 			// Go from green at the center to yellow at the limit of the tolerance zone.
-			double fade = ( magnitude - sweet_zone ) / tolerance;
+			double fade = ( magnitude - sweet_zone ) / fade_angular_distance;
 			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
 		}
-		else if ( ( magnitude - sweet_zone ) < 2.0 * tolerance ) {
+		else if ( ( magnitude - sweet_zone ) < 2.0 * fade_angular_distance ) {
 			// Go from yellow to red.
-			double fade = ( magnitude - sweet_zone - tolerance ) / tolerance;
+			double fade = ( magnitude - sweet_zone - fade_angular_distance ) / fade_angular_distance;
 			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
 		// If more than 2 epsilons, the color is red.
 		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
 
-	if ( magnitude - sweet_zone < tolerance ) return ( 0.0 );
+	if ( magnitude < tolerance ) return ( 0.0 );
 	else return ( direction );
 
 }
@@ -379,7 +384,6 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	Vector3 relativeHandPosition;
 	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
 	NormalizeVector( relativeHandPosition );
-	fOutputDebugString( "Aim: %6.3f\n",  DotProduct( relativeHandPosition, kVector ) );
 	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
 		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
 		TimerSet( handGoodTimer, secondsToBeGood );
@@ -393,12 +397,16 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 		// If the hand is aligned do stuff depending on the time delays.
+		static bool first_good = true;
+		static double remaining_time = secondsToBeGood;
 		if ( 0.0 == alignment ) {
+			if ( first_good ) TimerSet( handGoodTimer, remaining_time );
+			first_good = false;
 			// Arrow gets turned off as soon as the angle is good.
 			renderer->tiltPrompt->Disable();
+			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+			TimerSet( handBadTimer, secondsToBeBad );
 			if ( TimerTimeout( handGoodTimer )) {
-				// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
-				TimerSet( handBadTimer, secondsToBeBad );
 				// Indicate that the alignment is good.
 				return( aligned );
 			}
@@ -409,14 +417,19 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		else {
 			if ( TimerTimeout( handBadTimer )) {
 				// Made it to bad. To be good again you have to be good for a while.
-				TimerSet( handGoodTimer, secondsToBeGood );
+				remaining_time = secondsToBeGood;
+				first_good = true;
 				// Turn on the arrow because we've been bad for a while.
 				renderer->tiltPrompt->Enable();
 				// Signal that we really are misaligned.
 				return( misaligned );
 			}
 			// The alignment hasn't be bad for long enough to really be considered as bad.
-			else return( transitioningToBad );
+			else {
+				remaining_time = TimerRemainingTime( handGoodTimer );
+				first_good = true;
+				return( transitioningToBad );
+			}
 		}
 	}
 }
