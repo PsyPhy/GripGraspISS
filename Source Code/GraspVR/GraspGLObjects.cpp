@@ -189,8 +189,17 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( target_ball_radius );
-	sphere->SetColor(1.0, 165.0/255.0, 0.0);
+	sphere->SetColor(0.5, 0.0, 0.0 );
 	target->AddComponent( sphere );
+	//Disk *disk = new Disk( target_ball_radius + 50.0, target_ball_radius );
+	//disk->SetColor( 0.0, 0.0, 0.0, 1.0 );
+	//disk = new Disk( target_ball_radius + 100.0, target_ball_radius + 50.0 );
+	//disk->SetColor( 0.0, 0.0, 0.0, 1.0 );
+	//target->AddComponent( disk );
+	//disk = new Disk( target_ball_radius + 150.0, target_ball_radius + 100.0 );
+	//disk->SetColor( 1.0, 1.0, 1.0, 1.0 );
+	//target->AddComponent( disk );
+
 	return target;
 
 }
