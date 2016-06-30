@@ -25,7 +25,7 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::secondsToBeGood = 3.0;
+const int GraspVR::secondsToBeGood = 2.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
 // Transparency of objects that change color according to roll angle.
@@ -376,8 +376,14 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
-	if ( renderer->hand->position[Y] < -150.0 ) {
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
+	NormalizeVector( relativeHandPosition );
+	fOutputDebugString( "Aim: %6.3f\n",  DotProduct( relativeHandPosition, kVector ) );
+	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
 		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		TimerSet( handGoodTimer, secondsToBeGood );
+		TimerSet( handBadTimer, 0.0 );
 		return( misaligned );
 	}
 	else {
