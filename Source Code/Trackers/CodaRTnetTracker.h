@@ -38,6 +38,8 @@ private:
 	char *serverPassword;
 	char *codaCalDirectory;
 	char *codaAlignmentFilename;
+	char *codaSerialNumber0;
+	char *codaSerialNumber1;
 
 	// Marker tracker device.
 	const int cx1Device;	// Should be the CX1
@@ -95,6 +97,7 @@ protected:
 public:
 
 	CodaRTnetTracker( void ) : 
+
 		// Host address and UDP port for the Coda RTnet server.
 	    // The following addresss is for the RTnet server on DEX via the ETD port.
 		serverAddress( "10.80.12.103" ),
@@ -105,6 +108,8 @@ public:
 		serverPassword( "dex" ),
 		codaCalDirectory( "CodaMotion\\RTNet\\Binaries\\" ),
 		codaAlignmentFilename( "codaRTModuleCX1-Alignment.dat" ),
+		codaSerialNumber0( "3008" ),
+		codaSerialNumber1( "3009" ),
 
 		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
 		coda_mode( CODANET_CODA_MODE_200, 1, false ), 

@@ -258,8 +258,8 @@ namespace AlignToRigidBodyGUI {
 				 // Create the OpenGLObjects that depict the marker array structure.
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
-				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
-				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
+				 alignmentObject1 = objects->CreateHandMarkerStructure( model_file );
+				 alignmentObject2 = objects->CreateHandMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
 				 // Create a viewpoint that looks at the origin from the negative Z axis.

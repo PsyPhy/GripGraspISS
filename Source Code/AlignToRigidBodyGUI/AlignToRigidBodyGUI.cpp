@@ -16,9 +16,9 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	String ^marker_file = args->Length >= 4 ? args[3] : gcnew String( "CodaAlignmentMarkerData.mrk" );
-	String ^alignment_file = args->Length >= 3 ? args[2] : gcnew String( "CodaAlignment.aln" );
-	String ^model_file = args->Length >= 2 ? args[1] : gcnew String( "Bdy\\Chest.bdy" );
+	String ^marker_file = args->Length >= 3 ? args[2] : gcnew String( "CodaAlignmentMarkerData.mrk" );
+	String ^alignment_file = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment.aln" );
+	String ^model_file = args->Length >= 1 ? args[0] : gcnew String( "Bdy\\Chest.bdy" );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	//DexServices *dex = new DexServices();

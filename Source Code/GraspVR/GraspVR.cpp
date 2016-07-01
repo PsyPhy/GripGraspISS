@@ -105,7 +105,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	// Decide if we are in full screen mode or not.
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
-	static const bool fullscreen = false;
+	static const bool fullscreen = true;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8

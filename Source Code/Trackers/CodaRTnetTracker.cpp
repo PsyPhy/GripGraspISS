@@ -549,7 +549,7 @@ void  CodaRTnetTracker::AnnulAlignment( void ) {
 	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", codaAlignmentFilename );
 	fprintf( fp, "Dummy calibration file sent to clobber current alignment.\n" );
 	fclose( fp );
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
+	sprintf( command_line, "Executables\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
 	system( command_line );
 	sprintf( command_line, "del %s",  codaAlignmentFilename );
 
@@ -580,8 +580,8 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
 		// But I don't know how to get the serial numbers from the CODA units that are connected.
 		// So here I am hard coding the serial numbers from the GRIP science model. I will have to see
 		//  what happens when we move to other hardware.
-		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=3006\n", unit );
-		else fprintf( fp, "CX1SerialNumber%d=3007\n", unit );
+		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber0 );
+		else fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber1 );
 		// Note the negative signs for the offset. Again, trial and error.
 		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[X],  - offset[Y], - offset[Z] );
 		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation_matrix[X][X] , rotation_matrix[X][Y] , rotation_matrix[X][Z] );
@@ -591,7 +591,7 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
 	}
 	fclose( fp );
 	// Here we send the new alignment file to the CODA server. 
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
+	sprintf( command_line, "Executables\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
 	system( command_line );
 	// We could clean up after ourselves by deleting the local file or moving it to a log location. For now I just leave it.
 }
