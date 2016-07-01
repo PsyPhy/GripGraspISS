@@ -38,28 +38,20 @@ namespace AlignToRigidBodyGUI {
 		Grasp::GraspGLObjects					*objects;
 
 		String^ modelFile;
-		String^ alignmentFile;
-	private: System::Windows::Forms::TextBox^  instructionsTextBox;
-	protected: 
+		String^ filenameRoot;
 
-	protected: 
-
-	protected: 
-		String^ markerFile;
+		double maxPositionError;
+		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^alignment_file, String ^marker_file )
+		SingleObjectForm( String ^model_file, String ^filename_root ) :
+		  maxPositionError( 10.0 ),
+		  maxOrientationError( 2.0 )
 		{
 			InitializeComponent();
-
-			// Convert the String^ filenames to char *.
-			// Don't forget to free it when exiting.
 			modelFile = model_file;
-			alignmentFile = alignment_file;
-			markerFile = marker_file;
-
+			filenameRoot = filename_root;
 			noCoda = false;
-
 		}
 
 	protected:
@@ -113,6 +105,7 @@ namespace AlignToRigidBodyGUI {
 		}		
 
 	private:
+		System::Windows::Forms::TextBox^  instructionsTextBox;
 		System::Windows::Forms::GroupBox^	vrGroupBox2;
 		System::Windows::Forms::Panel^		vrPanel2;
 		System::Windows::Forms::GroupBox^	vrGroupBox1;
@@ -306,13 +299,13 @@ namespace AlignToRigidBodyGUI {
 				 StopRefreshTimer();
 				 // Stop the ongoing acquisition and discard the recorded data.
 				 coda->AbortAcquisition();	
-				// Unfortunately, we have to shutdown and restart to do a new acquisition.
+				 // Unfortunately, we have to shutdown and restart to do a new acquisition.
 				 coda->Quit();
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 coda->AnnulAlignment();
 
-				 // Restart and acquire a short burst of marker data to be use in the alignment.
+				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
 				 coda->Initialize();
 				 fprintf( stderr, "Starting acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
@@ -323,10 +316,17 @@ namespace AlignToRigidBodyGUI {
 					 Sleep( 20 );
 				 }
 				 coda->StopAcquisition();
-				 fprintf( stderr, "OK.\n\n" );
-				 coda->Quit();
+				 fprintf( stderr, "OK.\n" );
 
-				 // TODO: We should log the raw marker data here.
+				 // Log the data acquired in intrinsic coordinates.
+				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+				 String ^rawFilename = filenameRoot + ".intrinsic.mrk";
+				 char *raw_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( rawFilename ).ToPointer();
+				 fprintf( stderr, "Writing marker positions acquired in intrinsic coordinates ... " );
+				 coda->WriteMarkerFile( raw_file );
+				 fprintf( stderr, "OK.\n" );
+				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( raw_file ) );
+				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
@@ -353,8 +353,6 @@ namespace AlignToRigidBodyGUI {
 				 // This does the real work.
 				 coda->SetAlignmentFromPoses( poses );
 
-				 // TODO: We should log the alignment information to a file.
-
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
 				 coda->Initialize();
 				 fprintf( stderr, "Starting acquisition ... " );
@@ -367,12 +365,21 @@ namespace AlignToRigidBodyGUI {
 				 }
 				 coda->StopAcquisition();
 				 fprintf( stderr, "OK.\n\n" );
-				 coda->Quit();
 
-				 // TODO: We should log the newly aligned marker data as well.
+				 // Log the data acquired in aligned coordinates.
+				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+				 String ^alignedFilename = filenameRoot + ".aligned.mrk";
+				 char *aligned_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( alignedFilename ).ToPointer();
+				 fprintf( stderr, "Writing marker positions acquired in aligned coordinates ... " );
+				 coda->WriteMarkerFile( aligned_file );
+				 fprintf( stderr, "OK.\n" );
+				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( aligned_file ) );
+				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.
 				 // We should get position zero and null orientation in each case.
+				 char msg[25600] = "Alignment results: \n", line[256];
+				 bool well_aligned = true;
 				 for ( int unit = 0; unit < coda->nUnits; unit++ ) {
 					 // Compute the average marker positions for the acquired sample.
 					 coda->ComputeAverageMarkerFrame( avgFrame, coda->recordedMarkerFrames[unit], coda->nFrames );
@@ -380,7 +387,19 @@ namespace AlignToRigidBodyGUI {
 					 codaPoseTracker->GetCurrentPose( tracker_pose );
 					 // Show the computed pose.
 					 fOutputDebugString( "New Pose: %s %s\n", codaPoseTracker->vstr( tracker_pose.pose.position ), codaPoseTracker->qstr( tracker_pose.pose.orientation ) );
+					 // Build a string with the poses, in case we need to display after an error.
+					 double position_error = codaPoseTracker->VectorNorm( tracker_pose.pose.position );
+					 bool position_ok = position_error < maxPositionError;
+					 sprintf( line, "%d %s %6.3f %s\n", unit, codaPoseTracker->vstr( tracker_pose.pose.position ), position_error, ( position_ok ? "OK" : "!!" ));
+					 strcat( msg, line );
+					 double orientation_error = codaPoseTracker->AngleBetween( tracker_pose.pose.orientation, codaPoseTracker->nullQuaternion );
+					 bool orientation_ok = orientation_error < maxOrientationError;
+					 sprintf( line, "%d %s %6.3f %s\n", unit,  codaPoseTracker->qstr( tracker_pose.pose.orientation ), orientation_error, ( orientation_ok ? "OK" : "!!" ));
+					 strcat( msg, line );
+					 // Check that the alignment has been successful.
+					 well_aligned &= ( position_ok & orientation_ok );
 				 }
+				 fAbortMessageOnCondition( !well_aligned, "AlignToRigidBodyGUI", msg );
 
 				 // Close the form. 
 				 Close();

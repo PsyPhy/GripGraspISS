@@ -16,8 +16,7 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	String ^marker_file = args->Length >= 3 ? args[2] : gcnew String( "CodaAlignmentMarkerData.mrk" );
-	String ^alignment_file = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment.aln" );
+	String ^filename_root = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment" );
 	String ^model_file = args->Length >= 1 ? args[0] : gcnew String( "Bdy\\Chest.bdy" );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
@@ -25,7 +24,7 @@ int main(array<System::String ^> ^args)
 	//dex->Connect();
 
 	// Create the main window and run it
-	Application::Run(gcnew SingleObjectForm( model_file, alignment_file, marker_file ));
+	Application::Run(gcnew SingleObjectForm( model_file, filename_root ));
 	return( Environment::ExitCode );
 
 }
