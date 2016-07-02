@@ -10,5 +10,5 @@ CENTER( IMAGE( Pictures/AlignmentFloating.jpg, 200 ) )
 
 - Confirm that the chest markers are positioned properly on the chair.
  
-CENTER( Press __'Execute'__ to perform alignment. )
+SUBHEADER( Press __'Execute'__ to perform alignment. )
 

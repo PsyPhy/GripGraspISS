@@ -4,5 +4,5 @@ BIG( Adopt the quasi-freefloating posture with chest and hand markers attached a
 
 CENTER( IMAGE(Pictures/Floating.jpg, 240) )
  
-BIG( Press __'Execute'__ then don HMD and start trials. )
+SUBHEADER( Press __'Execute'__ then don HMD and start trials. )
 
