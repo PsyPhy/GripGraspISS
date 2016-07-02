@@ -304,10 +304,11 @@ namespace AlignToRigidBodyGUI {
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 coda->AnnulAlignment();
+				 coda->GetAlignment();
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
 				 coda->Initialize();
-				 fprintf( stderr, "Starting acquisition ... " );
+				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.
@@ -354,8 +355,9 @@ namespace AlignToRigidBodyGUI {
 				 coda->SetAlignmentFromPoses( poses );
 
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
+				 coda->Shutdown();
 				 coda->Initialize();
-				 fprintf( stderr, "Starting acquisition ... " );
+				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
 				 coda->StartAcquisition( 3.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.

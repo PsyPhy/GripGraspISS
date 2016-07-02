@@ -24,6 +24,8 @@
     <None Include="..\..\Bdy\Chest.bdy" />
     <None Include="..\..\Bdy\Hand.bdy" />
     <None Include="..\..\Bdy\HMD.bdy" />
+    <None Include="..\..\CodaAlignment.aligned.mrk" />
+    <None Include="..\..\CodaAlignment.intrinsic.mrk" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AlignToRigidBodyGUI.cpp">
