@@ -7,7 +7,7 @@
 INSTRUCTIONS_DESTINATION=..\..\Instructions
 EXECUTABLES=..\..\Executables
 
-install: Grasp.html GraspInstructionScreens.pdf
+install: Grasp.html Grasp.docx GraspInstructionScreens.pdf
 	copy GraspInstructionScreens.pdf  $(INSTRUCTIONS_DESTINATION)
 	copy *.html $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
@@ -26,6 +26,9 @@ ALL_HTML=GraspWelcome.html \
 # The HTML document created by pandoc is not entirely well suited to our needs, but it's a start.
 Grasp.html: $(ALL_HTML)
 	pandoc -t S5 --standalone $(ALL_HTML) -o $@
+
+Grasp.docx: $(ALL_HTML)
+	pandoc $(ALL_HTML) -o $@
 
 # The idea here is to create a single document to show all the instruction screens.
 # The HTML document created by pandoc is not entirely well suited to our needs, but it's a start.
