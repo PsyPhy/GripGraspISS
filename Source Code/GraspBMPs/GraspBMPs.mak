@@ -14,26 +14,19 @@ FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp RaiseArm.bm
 # The GRASP VR world requires a few bitmaps to decorate the walls. We keep copies in the source file tree
 # then copy as needed to the exection tree. That way, by maintaining this makefile up to date, only those
 # .bmp files that are actually needed get distributed in the release repositories.
-STATICBMPS =	metal.bmp NightSky.bmp Rockwall.bmp 
+# Static files (ones that are not automatically generated here from other sources) are
+# kept in a subdirectory. That way we can do a del *.bmp to clean the project directory.
+STATICBMPS =	StaticBitmaps\metal.bmp StaticBitmaps\NightSky.bmp StaticBitmaps\Rockwall.bmp 
 
 # The bitmaps are moved to this directory to be included in the execution environment.
 DESTINATION = ..\..\Bmp
 
 all:	$(FROMTIFFS) $(STATICBMPS)
 	copy /Y /V *.bmp $(DESTINATION)
+	copy /Y StaticBitmaps\metal.bmp $(DESTINATION)
+	copy /Y StaticBitmaps\NightSky.bmp $(DESTINATION)
+	copy /Y StaticBitmaps\Rockwall.bmp $(DESTINATION)
 	echo BMPs %date% %time% > $@
-
-# Static files (ones that are not automatically generated here from other sources) are
-# kept in a subdirectory. That way we can do a del *.bmp to clean the project directory.
-# So as part of the build we copy the static files to the current project directory.
-metal.bmp: StaticBitmaps\metal.bmp
-	copy /Y StaticBitmaps\metal.bmp .
-
-NightSky.bmp: StaticBitmaps\NightSky.bmp
-	copy /Y StaticBitmaps\NightSky.bmp .
-
-Rockwall.bmp: StaticBitmaps\Rockwall.bmp
-	copy /Y StaticBitmaps\Rockwall.bmp .
 
 # The next set of bitmaps are generated from a Powerpoint file entitled GraspCircularPrompts.pptx.
 # To genearate the bitmaps, you must first save the latest version of the Powerpoint file as .bmp image files
