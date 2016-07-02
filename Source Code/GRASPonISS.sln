@@ -80,6 +80,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspSequences", "GraspSequ
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HaltCoda", "HaltCoda\HaltCoda.vcxproj", "{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspDocumentation", "GraspDocumentation\GraspDocumentation.vcxproj", "{19E97A5A-DFCF-45D0-862E-48316001C0CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -339,6 +341,14 @@ Global
 		{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}.Release|Win32.Build.0 = Release|Win32
 		{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}.TestRelease|Win32.Build.0 = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Debug|Win32.Build.0 = Debug|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.DraftRelease|Win32.Build.0 = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Release|Win32.ActiveCfg = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Release|Win32.Build.0 = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
