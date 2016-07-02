@@ -5,8 +5,8 @@
 
 namespace Grasp {
 
-	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
-					ProvideFeedback, TrialCompleted, TrialInterrupted, Timeout,
+	typedef enum { NullState, StartBlock, StartTrial, ApplyConflict, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
+					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted, Timeout,
 					ExitStateMachine } GraspTrialState;
 
 	class GraspTaskManager : public GraspVR {
@@ -72,6 +72,12 @@ namespace Grasp {
 		virtual GraspTrialState UpdateStartTrial( void );
 		virtual void ExitStartTrial( void );
 
+		// ApplyConflict
+		// Conflict gain is applied with a black scene.
+		virtual void EnterApplyConflict( void );
+		virtual GraspTrialState UpdateApplyConflict( void );
+		virtual void ExitApplyConflict( void );
+
 		// StraightenHead
 		// The subject is guided to align the head with the body axis.
 		virtual void EnterStraightenHead( void );
@@ -107,6 +113,12 @@ namespace Grasp {
 		virtual void EnterTrialCompleted( void );
 		virtual GraspTrialState UpdateTrialCompleted( void );
 		virtual void ExitTrialCompleted( void );
+
+		// BlockCompleted
+		// Show the subject the results of their response.
+		virtual void EnterBlockCompleted( void );
+		virtual GraspTrialState UpdateBlockCompleted( void );
+		virtual void ExitBlockCompleted( void );
 
 		// TrialInterrupted
 		// The trial was interrupted because the head orientation was not maintained.
@@ -163,6 +175,7 @@ namespace Grasp {
 		GraspTrialState UpdatePresentTarget( void );
 		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
+		GraspTrialState UpdateObtainResponse( void );
 		void ExitObtainResponse( void );
 	};
 

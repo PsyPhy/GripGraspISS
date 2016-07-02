@@ -29,10 +29,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//int y_plus = 1;
 
 	int origin = 16;
-	int x_minus = 16;
-	int x_plus = 17;
-	int y_minus = 17;
-	int y_plus = 18;
+	int x_minus = 17;
+	int x_plus = 16;
+	int y_minus = 18;
+	int y_plus = 16;
 
 	fprintf( stderr, "Initializing CODA ..." );
 	codaTracker.Initialize();
@@ -47,17 +47,19 @@ int _tmain(int argc, _TCHAR* argv[])
 	while ( _kbhit() == 0 ) {
 		for ( int unit = 0; unit < 2; unit++ ) {
 			codaTracker.GetCurrentMarkerFrameUnit( localFrame[unit], unit );
-			fprintf( stderr, "Unit %d: ", unit );
+			fprintf( stderr, "Unit %d: Origin:", unit );
 			if ( localFrame[unit].marker[origin].visibility ) fprintf( stderr, "O" );
 			else fprintf( stderr, "." );
-			fprintf( stderr, "  " );
+			fprintf( stderr, "  X:" );
 			if ( localFrame[unit].marker[x_minus].visibility ) fprintf( stderr, "O" );
 			else fprintf( stderr, "." );
+			fprintf( stderr, "->" );
 			if ( localFrame[unit].marker[x_plus].visibility ) fprintf( stderr, "O" );
 			else fprintf( stderr, "." );
-			fprintf( stderr, "  " );
+			fprintf( stderr, "  Y:" );
 			if ( localFrame[unit].marker[y_minus].visibility ) fprintf( stderr, "O" );
 			else fprintf( stderr, "." );
+			fprintf( stderr, "->" );
 			if ( localFrame[unit].marker[y_plus].visibility ) fprintf( stderr, "O" );
 			else fprintf( stderr, "." );
 			fprintf( stderr, "    " );

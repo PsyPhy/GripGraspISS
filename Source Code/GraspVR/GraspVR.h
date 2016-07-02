@@ -54,7 +54,7 @@ namespace Grasp {
 			desiredHeadRollTolerance( 5.0 ),
 
 			desiredHandRoll( -35.0 ),
-			desiredHandRollSweetZone( 2.0 ),
+			desiredHandRollSweetZone( 5.0 ),
 			desiredHandRollTolerance( 5.0 ),
 
 			currentProjectileState( cocked )
@@ -115,6 +115,7 @@ namespace Grasp {
 		void			HandleSpinningPrompts( void );
 
 		// Drives movements of the projectiles.
+		Vector3			projectileDirection;
 		ProjectileState	currentProjectileState;
 		ProjectileState TriggerProjectiles( void );
 		ProjectileState HandleProjectiles( void );

@@ -26,7 +26,7 @@ using namespace PsyPhy;
 // Starting up the CODA takes time. It would be nice if we could leave it
 // in a running state after the first startup, to go faster on subsequent trials.
 // Set this flag to force a shutdown before each start up for testing purposes.
-#define ALWAYS_SHUTDOWN
+// #define ALWAYS_SHUTDOWN
 
 // RTNet C++ includes
 #define NO64BIT
@@ -118,13 +118,14 @@ void CodaRTnetTracker::Initialize( void ) {
 
 			// This says that we want individual data from each coda.
 			cl.setDeviceOptions( packet_mode );
-
-			// prepare for acquisition
-			OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
-			cl.prepareForAcq();
 			OutputDebugString( "OK.\n" );
 
 		}
+
+		// prepare for acquisition
+		OutputDebugString( "cl.prepareForAcq() ... " );
+		cl.prepareForAcq();
+		OutputDebugString( "OK.\n" );
 
 		// Find out how many Coda units are actually in use.
 		// I don't really need the alignment information, but that structure
@@ -165,6 +166,16 @@ void CodaRTnetTracker::Initialize( void ) {
 		exit( -1 );
 	}
 		
+}
+
+void CodaRTnetTracker::Shutdown( void ) {
+		unsigned int p, q, r, s;
+		sscanf( serverAddress, "%d.%d.%d.%d", &p, &q, &r, &s );
+		cl.connect( (p << 24) + (q << 16) + (r << 8) + s, serverPort );
+		cl.stopAcq();
+		OutputDebugString( "Shutting down ... " );
+		cl.stopSystem();
+		OutputDebugString( "OK.\n" );
 }
 
 /***************************************************************************/
@@ -318,9 +329,9 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 	// It appears that the system has to be prepared again for new acquisitions.
 	// That's not documented anywhere, but it seems to be true.
 	// TODO: Verify with Charnwood.
-	OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
-	cl.prepareForAcq();
-	OutputDebugString( "OK.\n" );
+	//OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
+	//cl.prepareForAcq();
+	//OutputDebugString( "OK.\n" );
 
 }
 
@@ -542,27 +553,44 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 }
 
 void  CodaRTnetTracker::AnnulAlignment( void ) {
+
 	char command_line[10240];
 
+	// Create a unique filename for a local temporary file.
+	char filename[MAX_PATH];
+	SYSTEMTIME st;
+	GetSystemTime( &st );
+	sprintf( filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_dummy_%s.tmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
+
 	// Create a local copy of a null alignment file and then send it to the CODA server.
-	FILE *fp = fopen( codaAlignmentFilename, "w" );
-	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", codaAlignmentFilename );
+	FILE *fp = fopen( filename, "w" );
+	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", filename );
 	fprintf( fp, "Dummy calibration file sent to clobber current alignment.\n" );
 	fclose( fp );
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
-	system( command_line );
-	sprintf( command_line, "del %s",  codaAlignmentFilename );
+	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
+		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, filename, codaAlignmentFilename );
+	if ( 0 != system( command_line ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
+	sprintf( command_line, "del %s",  filename );
+	if ( 0 != system( command_line ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
 
 }
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
 //  compute the alignment file that the CODA uses to align the units and send it to the server.
 void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
+
 	char command_line[10240];
 	Matrix3x3 rotation_matrix, transpose_matrix;
 	Vector3 offset;
+
+	// Create a unique filename for a local temporary file.
+	char filename[MAX_PATH];
+	SYSTEMTIME st;
+	GetSystemTime( &st );
+	sprintf( filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_%s", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
+
 	// Open a file locally to accept the alignment information.
-	FILE *fp = fopen( "codaRTModuleCX1-Alignment.dat", "w" );
+	FILE *fp = fopen( filename, "w" );
 	// This is an apparent header line.
 	fprintf( fp, "[CODA System Alignment]\n" );
 	// A block of parameters for each unit.
@@ -580,21 +608,21 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
 		// But I don't know how to get the serial numbers from the CODA units that are connected.
 		// So here I am hard coding the serial numbers from the GRIP science model. I will have to see
 		//  what happens when we move to other hardware.
-		if ( unit == 0 ) fprintf( fp, "CX1SerialNumber%d=3006\n", unit );
-		else fprintf( fp, "CX1SerialNumber%d=3007\n", unit );
+		fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber[unit] );
 		// Note the negative signs for the offset. Again, trial and error.
 		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[X],  - offset[Y], - offset[Z] );
 		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation_matrix[X][X] , rotation_matrix[X][Y] , rotation_matrix[X][Z] );
 		fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation_matrix[Y][X] , rotation_matrix[Y][Y] , rotation_matrix[Y][Z] );
 		fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation_matrix[Z][X] , rotation_matrix[Z][Y] , rotation_matrix[Z][Z] );
-
 	}
 	fclose( fp );
 	// Here we send the new alignment file to the CODA server. 
-	sprintf( command_line, "bin\\WinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s\" \"exit\" ", serverLogonID, serverPassword, serverAddress, codaCalDirectory, codaAlignmentFilename );
-	system( command_line );
-	// We could clean up after ourselves by deleting the local file or moving it to a log location. For now I just leave it.
-}
+	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
+		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, filename, codaAlignmentFilename );
+	if ( 0 != system( command_line ) ) fAbortMessage( "SetAlignmentFromPoses", "Error executing ftp command:\n  %s", command_line );
+	// We could clean up after ourselves by deleting the local file or moving it to a log location. 
+	// I am leaving it in place. In GRASP I am going to copy it to a log file.
+}	
 
 /*********************************************************************************/
 
@@ -614,6 +642,31 @@ void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &r
 
 }
 
+void CodaRTnetTracker::WriteMarkerFile( char *filename ) {
+	FILE *fp = fopen( filename, "w" );
+	fAbortMessageOnCondition( !fp, "Error opening %s for writing.", filename );
+	fprintf( fp, "%s\n", filename );
+	fprintf( fp, "Tracker Units: %d\n", nUnits );
+	fprintf( fp, "Frame\tTime" );
+	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
+		for ( int unit = 0; unit < nUnits; unit++ ) {
+			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+		}
+	}
+	fprintf( fp, "\n" );
+
+	for ( int frm = 0; frm < nFrames; frm++ ) {
+		fprintf( fp, "%05d %9.3f", frm, recordedMarkerFrames[0][frm].time );
+		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+			for ( int unit = 0; unit < nUnits; unit++ ) {
+				fprintf( fp, " %1d",  recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+			}
+		}
+		fprintf( fp, "\n" );
+	}
+	fclose( fp );
+}
 
 
 /****************************************************************************************/

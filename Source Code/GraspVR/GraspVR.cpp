@@ -25,7 +25,7 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::secondsToBeGood = 1.0;
+const int GraspVR::secondsToBeGood = 2.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
 // Transparency of objects that change color according to roll angle.
@@ -73,7 +73,18 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
-		renderer->hand->SetPose( handPose.pose );
+		// Filter the hand position somewhat.
+		// TODO: Constants need to be defined rather than hard-coded values.
+		Pose filtered;
+		ScaleVector( filtered.position, handPose.pose.position, 2.0 );
+		AddVectors ( filtered.position, filtered.position, renderer->hand->position );
+		ScaleVector( filtered.position, filtered.position, 1.0 / 3.0 );
+		Quaternion q;
+		MatrixToQuaternion( q, renderer->hand->orientation );
+		for ( int i = 0; i < 4; i++ ) q[i] += ( 2.0 *  handPose.pose.orientation[i] );
+		NormalizeQuaternion( q );
+		CopyQuaternion( filtered.orientation, q );
+		renderer->hand->SetPose( filtered );
 	}
 
 }
@@ -145,6 +156,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->tiltPrompt->Disable();
 	renderer->successIndicator->Disable();
 	renderer->timeoutIndicator->Disable();
+	renderer->blockCompletedIndicator->Disable();
 	renderer->headMisalignIndicator->Disable();
 	renderer->readyToStartIndicator->Disable();
 	renderer->vTool->Disable();
@@ -152,6 +164,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->vkTool->Disable();
 	renderer->kkTool->Disable();
 	renderer->projectiles->Disable();
+	renderer->wristZone->Disable();
 
 	currentProjectileState = cocked;
 
@@ -184,6 +197,11 @@ ProjectileState GraspVR::TriggerProjectiles( void ) {
 	MultiplyVector( offset, renderer->selectedTool->offset, renderer->selectedTool->orientation );
 	AddVectors( world, renderer->selectedTool->position, offset );
 	renderer->projectiles->SetPosition( world );
+	// If the projectiles have been triggered and have not reached their destination, move
+	//  them forward along the line projecting out along the axis of the hand.
+	MultiplyVector( projectileDirection, kVector, renderer->selectedTool->orientation );
+	ScaleVector( projectileDirection, projectileDirection, -20.0 );
+
 	// Make the projectiles visible.
 	renderer->projectiles->Enable();
 	return( currentProjectileState = running );
@@ -201,12 +219,8 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 			renderer->projectiles->Disable();
 		}
 		else {
-			// If the projectiles have been triggered and have not reached their destination, move
-			//  them forward along the line projecting out along the axis of the hand.
-			Vector3 aim, new_position;
-			MultiplyVector( aim, kVector, renderer->selectedTool->orientation );
-			ScaleVector( aim, aim, -20.0 );
-			AddVectors( new_position, renderer->projectiles->position, aim );
+			Vector3 new_position;
+			AddVectors( new_position, renderer->projectiles->position, projectileDirection );
 			renderer->projectiles->SetPosition( new_position );
 			currentProjectileState = running;
 		}
@@ -279,6 +293,7 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 	}
 #endif
 
+	static double fade_angular_distance = 5.0;
 	if ( magnitude < sweet_zone ){
 		// If we are within the sweet zone, the color is more cyan than green.
 		// This makes it easier for the subject to recognize when the head is properly aligned.
@@ -288,21 +303,21 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
 	} else {
 		// Colors will change as one moves farther from the center.
-		if ( ( magnitude - sweet_zone ) < tolerance ) {
+		if ( ( magnitude - sweet_zone ) < fade_angular_distance ) {
 			// Go from green at the center to yellow at the limit of the tolerance zone.
-			double fade = ( magnitude - sweet_zone ) / tolerance;
+			double fade = ( magnitude - sweet_zone ) / fade_angular_distance;
 			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
 		}
-		else if ( ( magnitude - sweet_zone ) < 2.0 * tolerance ) {
+		else if ( ( magnitude - sweet_zone ) < 2.0 * fade_angular_distance ) {
 			// Go from yellow to red.
-			double fade = ( magnitude - sweet_zone - tolerance ) / tolerance;
+			double fade = ( magnitude - sweet_zone - fade_angular_distance ) / fade_angular_distance;
 			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
 		// If more than 2 epsilons, the color is red.
 		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
 
-	if ( magnitude - sweet_zone < tolerance ) return ( 0.0 );
+	if ( magnitude < tolerance ) return ( 0.0 );
 	else return ( direction );
 
 }
@@ -343,7 +358,7 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 			// Made it to bad. To be good again you have to be good for a while.
 			TimerSet( headGoodTimer, secondsToBeGood );
 			// Turn on the arrow because we've been bad for a while.
-			renderer->tiltPrompt->Enable();
+			if ( use_arrow ) renderer->tiltPrompt->Enable();
 			// Signal that we really are misaligned.
 			return( misaligned );
 		}
@@ -366,35 +381,56 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
-	double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
-	if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-	if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
+	NormalizeVector( relativeHandPosition );
+	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
+		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		TimerSet( handGoodTimer, secondsToBeGood );
+		TimerSet( handBadTimer, 0.0 );
+		return( misaligned );
+	}
+	else {
 
-	// If the hand is aligned do stuff depending on the time delays.
-	if ( 0.0 == alignment ) {
-		// Arrow gets turned off as soon as the angle is good.
-		renderer->tiltPrompt->Disable();
-		if ( TimerTimeout( handGoodTimer )) {
+		double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
+		if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+		if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+
+		// If the hand is aligned do stuff depending on the time delays.
+		static bool first_good = true;
+		static double remaining_time = secondsToBeGood;
+		if ( 0.0 == alignment ) {
+			if ( first_good ) TimerSet( handGoodTimer, remaining_time );
+			first_good = false;
+			// Arrow gets turned off as soon as the angle is good.
+			renderer->tiltPrompt->Disable();
 			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
 			TimerSet( handBadTimer, secondsToBeBad );
-			// Indicate that the alignment is good.
-			return( aligned );
+			if ( TimerTimeout( handGoodTimer )) {
+				// Indicate that the alignment is good.
+				return( aligned );
+			}
+			// The alignment hasn't be good for long enough to really be considered as good.
+			else return( transitioningToGood );
 		}
-		// The alignment hasn't be good for long enough to really be considered as good.
-		else return( transitioningToGood );
-	}
-	// If head alignment has been lost, do other stuff depending on the delays.
-	else {
-		if ( TimerTimeout( handBadTimer )) {
-			// Made it to bad. To be good again you have to be good for a while.
-			TimerSet( handGoodTimer, secondsToBeGood );
-			// Turn on the arrow because we've been bad for a while.
-			renderer->tiltPrompt->Enable();
-			// Signal that we really are misaligned.
-			return( misaligned );
+		// If head alignment has been lost, do other stuff depending on the delays.
+		else {
+			if ( TimerTimeout( handBadTimer )) {
+				// Made it to bad. To be good again you have to be good for a while.
+				remaining_time = secondsToBeGood;
+				first_good = true;
+				// Turn on the arrow because we've been bad for a while.
+				renderer->tiltPrompt->Enable();
+				// Signal that we really are misaligned.
+				return( misaligned );
+			}
+			// The alignment hasn't be bad for long enough to really be considered as bad.
+			else {
+				remaining_time = TimerRemainingTime( handGoodTimer );
+				first_good = true;
+				return( transitioningToBad );
+			}
 		}
-		// The alignment hasn't be bad for long enough to really be considered as bad.
-		else return( transitioningToBad );
 	}
 }
 
@@ -403,6 +439,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->headMisalignIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->readyToStartIndicator->SetAttitude( angle, 0.0, 0.0 );
+	renderer->blockCompletedIndicator->SetAttitude( angle, 0.0, 0.0 );
 	angle -= 1.0;
 }
 double  GraspVR::SetTargetOrientation( double roll_angle ) {

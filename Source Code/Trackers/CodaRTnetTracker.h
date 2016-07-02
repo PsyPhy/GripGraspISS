@@ -34,10 +34,12 @@ private:
 
 	// Information to allow FTP to the server.
 	// We use this to manipulate the alignment transformations.
-	char *serverLogonID;
+	char *executablesPath;				// Path on the local machine to executables such as WinSCP.exe.
+	char *serverLogonID;				// Login ID and password for FTP to the CodaRTNet server.
 	char *serverPassword;
-	char *codaCalDirectory;
+	char *codaCalDirectory;				// Location and filename of where the alignment resides on the server.
 	char *codaAlignmentFilename;
+	char *codaSerialNumber[MAX_UNITS];			// Serial numbers of the CODA cx1 units. These are hard coded for now but we should read them somehow.
 
 	// Marker tracker device.
 	const int cx1Device;	// Should be the CX1
@@ -95,6 +97,7 @@ protected:
 public:
 
 	CodaRTnetTracker( void ) : 
+
 		// Host address and UDP port for the Coda RTnet server.
 	    // The following addresss is for the RTnet server on DEX via the ETD port.
 		serverAddress( "10.80.12.103" ),
@@ -105,6 +108,7 @@ public:
 		serverPassword( "dex" ),
 		codaCalDirectory( "CodaMotion\\RTNet\\Binaries\\" ),
 		codaAlignmentFilename( "codaRTModuleCX1-Alignment.dat" ),
+		executablesPath( "Executables\\" ),
 
 		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
 		coda_mode( CODANET_CODA_MODE_200, 1, false ), 
@@ -121,7 +125,17 @@ public:
 		cx1Device(1),
 		// This determines how many times we try to get a failed packet before giving up.
 		maxRetries(5)
-	{}
+	{
+		// For the moment these are hard coded and need to be changed when you run
+		//  on different machines. Should be somehow read from the server.
+
+		// Science Model @ Tecnalia
+		codaSerialNumber[0] = "3008";
+		codaSerialNumber[1] = "3009";
+		// Ground Model @ CADMOS
+		//codaSerialNumber[0] = "3006";
+		//codaSerialNumber[1] = "3007";
+	}
 
 	void Initialize( void );
 	int  Update( void );
@@ -147,6 +161,9 @@ public:
 
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
+
+	void	WriteMarkerFile( char *filename );
+	void	Shutdown( void );
 
 };
 

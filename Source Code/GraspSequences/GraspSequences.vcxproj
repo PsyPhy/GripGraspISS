@@ -10,6 +10,9 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Sequences\DemoGraspSequence.seq" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A063702B-6BE1-4939-96F1-19FB77921C29}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>

@@ -15,19 +15,23 @@
 #include <shellapi.h>
 #include <commdlg.h>
 
+#include "../Useful/fOutputDebugString.h"
+
+
 #define BITSPERPIXEL		32
 
-void	SaveBitmap( const char *szFilename, HBITMAP hBitmap )
+void	SaveBitmap( const char *szFilename, HDC hdc, HBITMAP hBitmap )
 {
-	HDC					hdc=NULL;
+//	HDC					hdc=NULL;
 	FILE*				fp=NULL;
 	LPVOID				pBuf=NULL;
 	BITMAPINFO			bmpInfo;
 	BITMAPFILEHEADER	bmpFileHeader;
 
+	fOutputDebugString ("SaveBitmap: %x\n", hBitmap );
 	do{
 
-		hdc=GetDC(NULL);
+//		hdc=GetDC(NULL);
 		ZeroMemory(&bmpInfo,sizeof(BITMAPINFO));
 		bmpInfo.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);
 		GetDIBits(hdc,hBitmap,0,0,NULL,&bmpInfo,DIB_RGB_COLORS);
@@ -42,7 +46,7 @@ void	SaveBitmap( const char *szFilename, HBITMAP hBitmap )
 		}
 		
 		bmpInfo.bmiHeader.biCompression=BI_RGB;
-		GetDIBits(hdc,hBitmap,0,bmpInfo.bmiHeader.biHeight,pBuf,&bmpInfo,DIB_RGB_COLORS);	
+		int result = GetDIBits(hdc,hBitmap,0,bmpInfo.bmiHeader.biHeight,pBuf,&bmpInfo,DIB_RGB_COLORS);	
 
 		if((fp=fopen(szFilename,"wb"))==NULL)
 		{
@@ -62,12 +66,9 @@ void	SaveBitmap( const char *szFilename, HBITMAP hBitmap )
 
 	}while(false);
 
-		if(hdc)
-			ReleaseDC(NULL,hdc);
+//		if(hdc) ReleaseDC(NULL,hdc);
 
-		if(pBuf)
-			free(pBuf);
+		if(pBuf) free(pBuf);
 
-		if(fp)
-			fclose(fp);
+		if(fp) fclose(fp);
 }

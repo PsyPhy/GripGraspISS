@@ -55,7 +55,6 @@ int  Tracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, in
 	return( RetrieveMarkerFrames( frames, max_frames ) );
 }
 
-
 /**************************************************************************************/
 
 void Tracker::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {

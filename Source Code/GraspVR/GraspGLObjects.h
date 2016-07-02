@@ -148,6 +148,8 @@ namespace Grasp {
 			Assembly		*starrySky;				// Backgrounds that can be seen at the end of the tunnel.
 			Assembly		*darkSky;
 
+			Assembly		*wristZone;				// A transparent cloud used to prompt the subject to place the hand for K.
+
 			// Objects used in third-person views of the virtual world.
 			Assembly		*head;
 			Assembly		*torso;
@@ -176,6 +178,7 @@ namespace Grasp {
 			Assembly *CreateProjectiles(void);
 			Yoke	 *CreateHand(void);
 			Yoke	 *CreateHUD(void);
+			Assembly *CreateZone( void );
 
 			Assembly *CreateOrientationTarget( void );
 			Assembly *CreatePositionOnlyTarget( void );
