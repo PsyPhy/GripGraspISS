@@ -2,7 +2,7 @@
 CONVERTER = ..\..\Executables\tiff2bmp.exe --height=512 --width=512
 
 STATICBMPS =	metal.bmp NightSky.bmp Rockwall.bmp 
-FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp TimeLimit.bmp
+FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp TimeLimit.bmp RaiseArm.bmp LowerArm.bmp
 DESTINATION = ..\..\Bmp
 
 all:	$(FROMTIFFS) $(STATICBMPS)
@@ -38,3 +38,22 @@ TimeLimit.bmp: GraspCircularPrompts/Diapositive4.tiff
 	rename GraspCircularPrompts\Diapositive4.bmp $@
 	move /Y GraspCircularPrompts\$@ .\
 
+RaiseArm.bmp: GraspCircularPrompts/Diapositive5.tiff
+	$(CONVERTER) --input=GraspCircularPrompts/Diapositive5.tiff 
+	rename GraspCircularPrompts\Diapositive5.bmp $@
+	move /Y GraspCircularPrompts\$@ .\
+
+LowerArm.bmp: GraspCircularPrompts/Diapositive6.tiff
+	$(CONVERTER) --input=GraspCircularPrompts/Diapositive6.tiff 
+	rename GraspCircularPrompts\Diapositive6.bmp $@
+	move /Y GraspCircularPrompts\$@ .\
+
+TimeoutTilt.bmp: GraspCircularPrompts/Diapositive7.tiff
+	$(CONVERTER) --input=GraspCircularPrompts/Diapositive7.tiff 
+	rename GraspCircularPrompts\Diapositive7.bmp $@
+	move /Y GraspCircularPrompts\$@ .\
+
+TimeoutResponse.bmp: GraspCircularPrompts/Diapositive8.tiff
+	$(CONVERTER) --input=GraspCircularPrompts/Diapositive8.tiff 
+	rename GraspCircularPrompts\Diapositive8.bmp $@
+	move /Y GraspCircularPrompts\$@ .\
