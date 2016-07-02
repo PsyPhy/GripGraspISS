@@ -4,8 +4,9 @@
 DOCUMENTATION_DESTINATION=..\..\Documentation
 EXECUTABLES=..\..\Executables
 INSTRUCTIONS=..\..\Instructions
+MESSAGES=..\GraspBMPs
 
-install: GraspInstructionScreens.pdf
+install: GraspScreens.pdf
 	echo %date% %time% > $@
 
 
@@ -24,6 +25,6 @@ PREPROCESSOR_OPTIONS=/EP /nologo /FI macros.h
 GraspInstructionScreens.pdf: $(INSTRUCTIONS)\*.html
 	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Apendix I: Grasp Instruction Screens" --header-font-size 8 --header-spacing 5 --margin-bottom 0 $(**) $@
 
-.SUFFIXES: .html .md .tex
-.md.html:
-	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS) $? | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
+
+GraspScreens.pdf: GraspInstructionScreens.pdf $(MESSAGES)\GraspVRMessages.pdf
+	 $(EXECUTABLES)\pdftk.exe $(**) cat output $@

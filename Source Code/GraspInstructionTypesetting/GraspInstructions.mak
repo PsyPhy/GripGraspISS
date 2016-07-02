@@ -8,15 +8,6 @@ INSTRUCTIONS_DESTINATION=..\..\Instructions
 DOCUMENTATION_DESTINATION=..\..\Documentation
 EXECUTABLES=..\..\Executables
 
-install: GraspInstructionScreens.pdf
-	copy GraspInstructionScreens.pdf  $(DOCUMENTATION_DESTINATION)
-	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
-	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
-	copy *.html $(INSTRUCTIONS_DESTINATION)
-	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
-	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
-	echo %date% %time% > $@
-
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
 	00IntroV-V.html 00IntroV-K.html 00IntroK-K.html \
@@ -24,6 +15,14 @@ ALL_HTML=GraspWelcome.html \
 	01StraightenHead.html 02TargetK.html 02TargetV.html 03TiltHead.html 04RespondK.html 04RespondV.html 05Feedback.html \
 	StepReady.html StepRunning.html StepFinished.html StepNormalFinish.html StepErrorFinish.html \
 	TaskFinished.html ProtocolFinished.html 
+
+install: $(ALL_HTML)
+	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
+	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
+	copy *.html $(INSTRUCTIONS_DESTINATION)
+	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
+	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
+	echo %date% %time% > $@
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe
@@ -35,10 +34,6 @@ PREPROCESSOR=cl.exe
 # The /EP option tells the compiler to preprocess only. 
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI PsyPhyMDmacros.h
-
-# The idea here is to create a single document to show all the instruction screens.
-GraspInstructionScreens.pdf: $(ALL_HTML) GraspInstructions.mak
-	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Grasp Instruction Screens" --header-font-size 8 --header-spacing 5 --margin-bottom 0 $(ALL_HTML) $@
 
 .SUFFIXES: .html .md .tex
 .md.html:

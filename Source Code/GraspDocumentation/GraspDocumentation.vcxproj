@@ -13,6 +13,14 @@
   <ItemGroup>
     <None Include="GraspDocumentation.mak" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
+      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
+      <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{19E97A5A-DFCF-45D0-862E-48316001C0CB}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
@@ -38,7 +46,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeBuildCommandLine>
-    <NMakeCleanCommandLine>del *.html *.bmp</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del *.html </NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>

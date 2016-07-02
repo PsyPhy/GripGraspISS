@@ -39,7 +39,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>del /Q /F *.bmp</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q /F *.bmp *.html *.tiff </NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

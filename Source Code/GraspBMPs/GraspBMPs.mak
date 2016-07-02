@@ -7,6 +7,10 @@
 # In theory, PowerPoint can save directly in .bmp format, but it gives strange results for me.
 CONVERTER = ..\..\Executables\tiff2bmp.exe --height=512 --width=512
 
+# Define the path to the pandoc.exe program that does the conversion.
+PANDOC=pandoc.exe
+PANDOC_OPTIONS=
+
 # This is the list of btimaps generated from Powerpoint. In general, they are messages that are
 # presented in a circular format with the VR presentation.
 FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp RaiseArm.bmp LowerArm.bmp TimeoutTilt.bmp TimeoutResponse.bmp TimeLImit.bmp
@@ -21,12 +25,18 @@ STATICBMPS =	StaticBitmaps\metal.bmp StaticBitmaps\NightSky.bmp StaticBitmaps\Ro
 # The bitmaps are moved to this directory to be included in the execution environment.
 DESTINATION = ..\..\Bmp
 
-all:	$(FROMTIFFS) $(STATICBMPS)
+EXECUTABLES=..\..\Executables
+
+all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
 	copy /Y /V *.bmp $(DESTINATION)
 	copy /Y StaticBitmaps\metal.bmp $(DESTINATION)
 	copy /Y StaticBitmaps\NightSky.bmp $(DESTINATION)
 	copy /Y StaticBitmaps\Rockwall.bmp $(DESTINATION)
 	echo BMPs %date% %time% > $@
+
+GraspVRMessages.pdf: *.bmp.html
+	type $(**) > $(@B).html
+	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Apendix II: Grasp VR Messages" --header-font-size 8 --header-spacing 5 --margin-bottom 20 $(@B).html $@
 
 # The next set of bitmaps are generated from a Powerpoint file entitled GraspCircularPrompts.pptx.
 # To genearate the bitmaps, you must first save the latest version of the Powerpoint file as .bmp image files
@@ -34,42 +44,36 @@ all:	$(FROMTIFFS) $(STATICBMPS)
 # Here we convert the individual images into bitmap files. Note that the images created by Powerpoint have 
 # filenames based on the slide number in the file. If you change the order of the slides or insert any slides
 # you have to edit here below to link each slide to the correct bitmap filename.
-ReadyToStart.bmp: GraspCircularPrompts/Diapositive1.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive1.tiff 
-	rename GraspCircularPrompts\Diapositive1.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
 
-BlockCompleted.bmp: GraspCircularPrompts/Diapositive2.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive2.tiff 
-	rename GraspCircularPrompts\Diapositive2.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+ReadyToStart.tiff: GraspCircularPrompts\Diapositive1.tiff
+	copy $(**) $@
 
-HeadMisalignment.bmp: GraspCircularPrompts/Diapositive3.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive3.tiff 
-	rename GraspCircularPrompts\Diapositive3.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+BlockCompleted.tiff: GraspCircularPrompts\Diapositive2.tiff
+	copy $(**) $@
 
-TimeLimit.bmp: GraspCircularPrompts/Diapositive4.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive4.tiff 
-	rename GraspCircularPrompts\Diapositive4.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+HeadMisalignment.tiff: GraspCircularPrompts\Diapositive3.tiff
+	copy $(**) $@
 
-RaiseArm.bmp: GraspCircularPrompts/Diapositive5.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive5.tiff 
-	rename GraspCircularPrompts\Diapositive5.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+TimeLimit.tiff: GraspCircularPrompts\Diapositive4.tiff
+	copy $(**) $@
 
-LowerArm.bmp: GraspCircularPrompts/Diapositive6.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive6.tiff 
-	rename GraspCircularPrompts\Diapositive6.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+LowerArm.tiff: GraspCircularPrompts\Diapositive5.tiff
+	copy $(**) $@
 
-TimeoutTilt.bmp: GraspCircularPrompts/Diapositive7.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive7.tiff 
-	rename GraspCircularPrompts\Diapositive7.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+RaiseArm.tiff: GraspCircularPrompts\Diapositive6.tiff
+	copy $(**) $@
 
-TimeoutResponse.bmp: GraspCircularPrompts/Diapositive8.tiff
-	$(CONVERTER) --input=GraspCircularPrompts/Diapositive8.tiff 
-	rename GraspCircularPrompts\Diapositive8.bmp $@
-	move /Y GraspCircularPrompts\$@ .\
+TimeoutTilt.tiff: GraspCircularPrompts\Diapositive7.tiff
+	copy $(**) $@
+
+TimeoutResponse.tiff: GraspCircularPrompts\Diapositive8.tiff
+	copy $(**) $@
+
+.SUFFIXES: .tiff .bmp
+
+# Here are the commands used to convert from a .tiff to a .bmp
+# We also create an .html version that is used by the GraspDocumentation
+# project to create pdf files showing all the screens seen by the subject.
+.tiff.bmp: 
+	$(CONVERTER) --input=$?
+	echo ^<img src="$@" size=50 /^> >$@.html
