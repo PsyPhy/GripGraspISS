@@ -377,14 +377,14 @@ void OpenGLWindow::SaveAsBMP( const char *filename )
 {
 	// Presumably we just did a swap. 
 	// Sleep a little to be sure that the bitmap has been updated.
-	Sleep( 2000 );
+	Sleep( 500 );
 
 	HDC		hBmpFileDC = CreateCompatibleDC( hDC );
 	HBITMAP	hBmpFileBitmap = CreateCompatibleBitmap( hDC, width, height );
 	HBITMAP hOldBitmap = (HBITMAP) SelectObject( hBmpFileDC, hBmpFileBitmap );
 	int result = BitBlt( hBmpFileDC, 0, 0, width, height, hDC, 0, 0, SRCCOPY );
 	HBITMAP hJoe = (HBITMAP) SelectObject( hBmpFileDC, hOldBitmap );
-	fOutputDebugString( "SaveAsBMP %x %x %x %x %d\n", hDC, hOldBitmap, hBmpFileBitmap, hJoe, result );
+	// fOutputDebugString( "SaveAsBMP %x %x %x %x %d\n", hDC, hOldBitmap, hBmpFileBitmap, hJoe, result );
 
 	SaveBitmap( filename, hDC, hBmpFileBitmap );
 

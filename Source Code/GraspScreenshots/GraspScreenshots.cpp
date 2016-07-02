@@ -1,5 +1,9 @@
-// GraspScreenshots.cpp : Defines the entry point for the console application.
+// GraspScreenshots.cpp 
 //
+
+// A program to generate still images of the GRASP VR environment and write them to a file.
+// This is used primarily to generate documentation (i.e. a document for screen review).
+
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -9,7 +13,6 @@
 #include <tchar.h>
 #include <math.h>
 #include <time.h> 
-
 
 #include <gl/gl.h>
 #include <gl/glu.h>
@@ -37,31 +40,50 @@ GraspGLObjects	*objects;
 
 void DrawToBMP( const char *filename ) {
 
-	static int col = RED;
-
 	// Prepare for drawing.
 	window->Activate();
-	window->Clear( col++ );
-	window->Swap();
+	window->Clear();
 
-	//glUsefulPrepareRendering();
-	//viewpoint->Apply( window, CYCLOPS );
+	glUsefulPrepareRendering();
+	viewpoint->Apply( window, CYCLOPS );
 
 	// Draw everything that is enabled.
-	//objects->DrawVR();
-	//objects->hmdStructure->Draw();
-	//objects->handStructure->Draw();
-	//objects->chestStructure->Draw();
+	objects->DrawVR();
+	objects->hmdStructure->Draw();
+	objects->handStructure->Draw();
+	objects->chestStructure->Draw();
 
-	//window->Swap();
+	window->Swap();
 	window->SaveAsBMP( filename );
-	Sleep( 1000 );
-
 	
 }
 
 int _tmain(int argc, char *argv[])
 {
+
+	// Should have at least one command line argument.
+	if ( argc < 2 ) {
+		fOutputDebugString( "GraspScreenshots: At least one command line argument is required.\n" );
+		fprintf( stderr, "GraspScreenshots: At least one command line argument is required.\n" );
+		exit( -1 );
+	}
+	// For some reason I have only been able to save one bitmap file per execution. Otherwise, I get the
+	//  same picture in each bitmap file (the first one drawn). So what I do here is to recursively call
+	//  the program with each command-line argument.
+	int return_status = 0;
+	if ( argc > 2 ) {
+		for ( int arg = 1; arg < argc; arg++ ) {
+			char line[1024];
+			sprintf( line, "\"%s\" %s", argv[0], argv[arg] );
+			int status;
+			if ( status = system( line ) ) {
+				fprintf( stderr, "%s exited with error code %d\n", line, status );
+				fOutputDebugString( "%s exited with error code %d\n", line, status );
+				return_status = status;
+			}
+		}
+		exit( return_status );
+	}
 
 	// Create and instance of a window object.
 	// This does not yet create the actual window on the screen.
@@ -125,33 +147,37 @@ int _tmain(int argc, char *argv[])
 	objects->headMisalignIndicator->Disable();
 	objects->readyToStartIndicator->Disable();
 	objects->blockCompletedIndicator->Disable();
+	objects->wristZone->Disable();
 		
 	objects->hmdStructure->Disable();
 	objects->handStructure->Disable();
 	objects->chestStructure->Disable();
-	Sleep( 1000 );
 
-	objects->vTool->Disable();
-	objects->readyToStartIndicator->Enable();
- 	DrawToBMP( "Documentation\\ScreenShots\\ReadyToStartScreenShot.bmp" );
-	window->RunOnce();
-
-	objects->readyToStartIndicator->Disable();
-	objects->headMisalignIndicator->Enable();
-	DrawToBMP( "Documentation\\ScreenShots\\HeadMisalignScreenShot.bmp" );
-	window->RunOnce();
-
-	objects->headMisalignIndicator->Disable();
-	objects->timeoutIndicator->Enable();
-	DrawToBMP( "Documentation\\ScreenShots\\TimeoutScreenShot.bmp" );
-	window->RunOnce();
-
-	objects->timeoutIndicator->Disable();
-	objects->blockCompletedIndicator->Enable();
-	DrawToBMP( "Documentation\\ScreenShots\\BlockCompletedScreenShot.bmp" );
-	window->RunOnce();
-
-
+	if ( !strcmp( argv[1], "ReadyToStart" )) {
+		objects->vTool->Disable();
+		objects->readyToStartIndicator->Enable();
+ 		DrawToBMP( "ReadyToStartScreenShot.bmp" );
+	}
+	else if ( !strcmp( argv[1], "BlockCompleted" )) {
+		objects->timeoutIndicator->Disable();
+		objects->blockCompletedIndicator->Enable();
+		DrawToBMP( "BlockCompletedScreenShot.bmp" );
+	}
+	else if ( !strcmp( argv[1], "HeadMisalign" )) {
+		objects->readyToStartIndicator->Disable();
+		objects->headMisalignIndicator->Enable();
+		DrawToBMP( "HeadMisalignScreenShot.bmp" );
+	}
+	else if ( !strcmp( argv[1], "Timeout" )) {
+		objects->headMisalignIndicator->Disable();
+		objects->timeoutIndicator->Enable();
+		DrawToBMP( "TimeoutScreenShot.bmp" );
+	}
+	else {
+		fOutputDebugString( "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
+		fprintf( stderr, "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
+		exit( -2 );
+	}
 	return 0;
 }
 
