@@ -26,7 +26,7 @@ using namespace PsyPhy;
 // Starting up the CODA takes time. It would be nice if we could leave it
 // in a running state after the first startup, to go faster on subsequent trials.
 // Set this flag to force a shutdown before each start up for testing purposes.
-#define ALWAYS_SHUTDOWN
+// #define ALWAYS_SHUTDOWN
 
 // RTNet C++ includes
 #define NO64BIT
@@ -118,13 +118,14 @@ void CodaRTnetTracker::Initialize( void ) {
 
 			// This says that we want individual data from each coda.
 			cl.setDeviceOptions( packet_mode );
-
-			// prepare for acquisition
-			OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
-			cl.prepareForAcq();
 			OutputDebugString( "OK.\n" );
 
 		}
+
+		// prepare for acquisition
+		OutputDebugString( "cl.prepareForAcq() ... " );
+		cl.prepareForAcq();
+		OutputDebugString( "OK.\n" );
 
 		// Find out how many Coda units are actually in use.
 		// I don't really need the alignment information, but that structure
@@ -165,6 +166,16 @@ void CodaRTnetTracker::Initialize( void ) {
 		exit( -1 );
 	}
 		
+}
+
+void CodaRTnetTracker::Shutdown( void ) {
+		unsigned int p, q, r, s;
+		sscanf( serverAddress, "%d.%d.%d.%d", &p, &q, &r, &s );
+		cl.connect( (p << 24) + (q << 16) + (r << 8) + s, serverPort );
+		cl.stopAcq();
+		OutputDebugString( "Shutting down ... " );
+		cl.stopSystem();
+		OutputDebugString( "OK.\n" );
 }
 
 /***************************************************************************/
@@ -318,9 +329,9 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 	// It appears that the system has to be prepared again for new acquisitions.
 	// That's not documented anywhere, but it seems to be true.
 	// TODO: Verify with Charnwood.
-	OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
-	cl.prepareForAcq();
-	OutputDebugString( "OK.\n" );
+	//OutputDebugString( "OK.\ncl.prepareForAcq() ... " );
+	//cl.prepareForAcq();
+	//OutputDebugString( "OK.\n" );
 
 }
 

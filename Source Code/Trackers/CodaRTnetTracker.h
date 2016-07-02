@@ -163,6 +163,7 @@ public:
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
 	void	WriteMarkerFile( char *filename );
+	void	Shutdown( void );
 
 };
 
