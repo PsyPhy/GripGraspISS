@@ -38,14 +38,14 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del /Q *.html</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del /Q *.html</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

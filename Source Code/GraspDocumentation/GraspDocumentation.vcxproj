@@ -46,13 +46,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeBuildCommandLine>
-    <NMakeCleanCommandLine>del *.html </NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del *.html *.pdf *.tiff *.bmp *.pdf install</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeBuildCommandLine>
-    <NMakeCleanCommandLine>del *.html *.bmp</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del *.html *.pdf *.tiff *.bmp *.pdf install</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>

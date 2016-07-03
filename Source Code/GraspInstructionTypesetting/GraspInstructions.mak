@@ -5,7 +5,6 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
-DOCUMENTATION_DESTINATION=..\..\Documentation
 EXECUTABLES=..\..\Executables
 
 # This should be a list of all the HTML files that you want to generate.
@@ -16,7 +15,10 @@ ALL_HTML=GraspWelcome.html \
 	StepReady.html StepRunning.html StepFinished.html StepNormalFinish.html StepErrorFinish.html \
 	TaskFinished.html ProtocolFinished.html 
 
-install: $(ALL_HTML)
+# This is going to install the instruction screens in the execution arboresence.
+# We delete the destination directory so that we eliminate any previous files that are no longer needed
+# and then copy in the newly created files.
+install: $(ALL_HTML) GraspInstructions.mak
 	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
 	copy *.html $(INSTRUCTIONS_DESTINATION)

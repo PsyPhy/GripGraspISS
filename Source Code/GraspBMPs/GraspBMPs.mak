@@ -25,6 +25,7 @@ STATICBMPS =	StaticBitmaps\metal.bmp StaticBitmaps\NightSky.bmp StaticBitmaps\Ro
 # The bitmaps are moved to this directory to be included in the execution environment.
 DESTINATION = ..\..\Bmp
 
+# This is where we can find the tools need to do the build.
 EXECUTABLES=..\..\Executables
 
 all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
@@ -34,6 +35,7 @@ all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
 	copy /Y StaticBitmaps\Rockwall.bmp $(DESTINATION)
 	echo BMPs %date% %time% > $@
 
+# Combine all the messages into a pdf document. This is useful when it comes time to generate the documention for the program.
 GraspVRMessages.pdf: *.bmp.html
 	type $(**) > $(@B).html
 	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Apendix II: Grasp VR Messages" --header-font-size 8 --header-spacing 5 --margin-bottom 20 $(@B).html $@
@@ -72,7 +74,7 @@ TimeoutResponse.tiff: GraspCircularPrompts\Diapositive8.tiff
 .SUFFIXES: .tiff .bmp
 
 # Here are the commands used to convert from a .tiff to a .bmp
-# We also create an .html version that is used by the GraspDocumentation
+# We also create an .html version that is used above to generate a pdf file with all the messages.
 # project to create pdf files showing all the screens seen by the subject.
 .tiff.bmp: 
 	$(CONVERTER) --input=$?

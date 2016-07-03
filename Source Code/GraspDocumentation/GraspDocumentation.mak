@@ -9,7 +9,6 @@ MESSAGES=..\GraspBMPs
 install: GraspScreens.pdf
 	echo %date% %time% > $@
 
-
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe
 PANDOC_OPTIONS=
@@ -25,6 +24,8 @@ PREPROCESSOR_OPTIONS=/EP /nologo /FI macros.h
 GraspInstructionScreens.pdf: $(INSTRUCTIONS)\*.html
 	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Apendix I: Grasp Instruction Screens" --header-font-size 8 --header-spacing 5 --margin-bottom 0 $(**) $@
 
-
-GraspScreens.pdf: GraspInstructionScreens.pdf $(MESSAGES)\GraspVRMessages.pdf
+# Here we combine the Instruction screen and the VR prompts into a single document.
+# The file containing the VR prompts was created in the project where the bitmaps are created because it is easier to do it there.
+GraspScreens.pdf: GraspInstructionScreens.pdf $(MESSAGES)\GraspVRMessages.pdf 
 	 $(EXECUTABLES)\pdftk.exe $(**) cat output $@
+	 copy $@ $(DOCUMENTATION_DESTINATION)
