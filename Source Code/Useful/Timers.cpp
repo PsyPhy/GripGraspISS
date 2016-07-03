@@ -43,11 +43,13 @@ void TimerStart ( Timer &timer ) {
 
 	QueryPerformanceFrequency( &li );
 	timer.frequency = (double) li.QuadPart;
-
 	QueryPerformanceCounter( &li );
 	timer.mark = li.QuadPart;
 
 	timer.split = timer.mark;
+
+	timer.paused = false;
+	timer.cumulative_elapsed_time = 0.0;
 
 }
 	
@@ -59,13 +61,14 @@ double TimerElapsedTime ( Timer &timer ) {
 	__int64			current_time;
 	double			duration;
 	
-	/* Compute the true time interval since the timer was started. */
+	// If paused, then return how much time had elapsed when the pause was initiated.
+	if ( timer.paused ) return( timer.cumulative_elapsed_time );
 
+	/* Compute the true time interval since the timer was started. */
 	QueryPerformanceCounter( &li );
 	current_time = li.QuadPart;
 	duration = (double) (current_time - timer.mark) / timer.frequency / dex_slow_motion;
-
-	return( duration );
+	return( timer.cumulative_elapsed_time + duration );
 
 }
 
@@ -73,23 +76,44 @@ double TimerRemainingTime( Timer &timer ) {
 	return( timer.alarm - TimerElapsedTime( timer ) );
 }
 
-/****************************************************************************/
+double TimerPause( Timer &timer ) {
+	timer.cumulative_elapsed_time = TimerElapsedTime( timer );
+	timer.paused = true;
+	return( timer.cumulative_elapsed_time );
+}
 
-double TimerSplitTime ( Timer &timer ) {
-	
+void TimerResume( Timer &timer ) {
 	LARGE_INTEGER	li;
 	__int64			current_time;
-	double			duration;
-	
-	/* Compute the true time interval since the last split was set. */
 
+	// If not paused this should have no effect.
+	if ( !timer.paused ) return;
+
+	/* Compute the true time interval since the timer was started. */
 	QueryPerformanceCounter( &li );
 	current_time = li.QuadPart;
-	duration = (double) (current_time - timer.split) / timer.frequency / dex_slow_motion;
-
-	return( duration );
-
+	timer.mark = current_time;
+	timer.paused = false;
 }
+
+//
+///****************************************************************************/
+//
+//double TimerSplitTime ( Timer &timer ) {
+//	
+//	LARGE_INTEGER	li;
+//	__int64			current_time;
+//	double			duration;
+//	
+//	/* Compute the true time interval since the last split was set. */
+//	QueryPerformanceCounter( &li );
+//	current_time = li.QuadPart;
+//	duration = (double) (current_time - timer.split) / timer.frequency / dex_slow_motion;
+//	timer.split = current_time;
+//
+//	return( duration );
+//
+//}
 
 /****************************************************************************/
 

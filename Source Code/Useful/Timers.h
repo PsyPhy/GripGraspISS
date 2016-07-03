@@ -22,6 +22,8 @@ typedef struct {
 	__int64 split;
 	double frequency;
     double	alarm;
+	bool	paused;
+	double	cumulative_elapsed_time;
 
 #else				/* SGI Irix */
 
@@ -38,10 +40,12 @@ typedef struct {
 void	TimerStart ( Timer &timer );
 double	TimerElapsedTime ( Timer &timer );
 double	TimerRemainingTime( Timer &timer );
-double	TimerSplitTime ( Timer &timer );
+//double	TimerSplitTime ( Timer &timer );
 void	TimerSet( Timer &timer, double seconds );
 int	    TimerTimeout( Timer &timer );
 void	TimerSetSlowmotion( float factor );
+double  TimerPause( Timer &timer );
+void	TimerResume( Timer &timer );
 
 #ifdef __cplusplus 
 }
