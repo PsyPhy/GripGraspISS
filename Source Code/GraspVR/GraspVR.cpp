@@ -32,6 +32,7 @@ const int GraspVR::secondsToBeBad = 2.0;
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
 //  too as a side effect, but that's not so important.
 const double GraspVR::errorColorMapTransparency = 0.5;
+const double GraspVR::fadeDistance = 5.0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -248,52 +249,10 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
-double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_angle, double sweet_zone, double tolerance, bool use_arrow ) {
+void GraspVR::SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone ) {
 
-	// Compute the roll angle of the object that is being followed.
-	// I got this off of a web site. It seems to work for gaze close to straight ahead,
-	// but I'm not sure that it will work well for pitch or yaw far from zero.
-	// In fact, I am pretty sure it is the same thing as what I did above by rotating the iVector.
-	// We need a reliable method for computing the roll angle independent from pitch and yaw.
+	double magnitude = fabs( roll_error );
 
-	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
-	//  orientation here match the orientation of the visual target. But I don't know if this one was 
-	//  wrong or the other one. We should check.
-	double object_roll_angle = ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] ) );
-	// Compute the error with respect to the desired roll angle.
-	double direction =  desired_roll_angle - object_roll_angle;
-	double magnitude = fabs( direction );
-
-#if 0
-	// fOutputDebugString( "Desired: %6.2f  Measured: %6.2f  Error: %6.2f\n", desired_roll_angle, object_roll_angle, error );
-
-
-	// Michele's formula for the color transitions.
-	//
-	// There are a number of things that I do not know how to explain:
-	//  Why epsilon * 0.2 and not simply epsilon to be in the good zone?
-	//  Why (2*epsilon - epsilon) and not just epsilon?
-	//  Why + 0.0?
-	//  Why all the divides by 255? 
-	if ( error < epsilon * 0.2 ){//GREEN
-		object->SetColor( 0.0/255.0, 255.0/255.0,  200.0/255.0, 0.5 );
-		return(true);
-	} else {
-		if ( error > ( 2 * epsilon ) ){//RED
-			object->SetColor(255.0/255.0, 0.0/255.0,  0.0/255.0, 0.5);
-		} else {
-			if ( error > epsilon ){//Yellow->red
-				object->SetColor(200.0/255.0, (200.0*(1-(error-epsilon)/(2*epsilon-epsilon))+0.0)/255.0,  0.0/255.0, 0.5);
-			} 
-			else { //green->yellow
-				object->SetColor((200.0*(error-epsilon*0.20)/(epsilon-epsilon*0.2)+0.0)/255.0, 200.0/255.0,  0.0/255.0, 0.5);
-			}
-		}
-		return(false);
-	}
-#endif
-
-	static double fade_angular_distance = 5.0;
 	if ( magnitude < sweet_zone ){
 		// If we are within the sweet zone, the color is more cyan than green.
 		// This makes it easier for the subject to recognize when the head is properly aligned.
@@ -303,23 +262,19 @@ double GraspVR::SetColorByRollError( OpenGLObject *object, double desired_roll_a
 		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
 	} else {
 		// Colors will change as one moves farther from the center.
-		if ( ( magnitude - sweet_zone ) < fade_angular_distance ) {
+		if ( ( magnitude - sweet_zone ) < fadeDistance ) {
 			// Go from green at the center to yellow at the limit of the tolerance zone.
-			double fade = ( magnitude - sweet_zone ) / fade_angular_distance;
+			double fade = ( magnitude - sweet_zone ) / fadeDistance;
 			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
 		}
-		else if ( ( magnitude - sweet_zone ) < 2.0 * fade_angular_distance ) {
+		else if ( ( magnitude - sweet_zone ) < 2.0 * fadeDistance ) {
 			// Go from yellow to red.
-			double fade = ( magnitude - sweet_zone - fade_angular_distance ) / fade_angular_distance;
+			double fade = ( magnitude - sweet_zone - fadeDistance ) / fadeDistance;
 			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
 		// If more than 2 epsilons, the color is red.
 		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
 	}
-
-	if ( magnitude < tolerance ) return ( 0.0 );
-	else return ( direction );
-
 }
 
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
@@ -331,16 +286,27 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 }
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
+	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
 	renderer->tiltPrompt->SetPosition( renderer->hud->position );
 	renderer->tiltPrompt->SetOrientation( renderer->hud->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
 
-	double alignment = SetColorByRollError( renderer->glasses, desiredHeadRoll, desiredHeadRollSweetZone, desiredHeadRollTolerance, use_arrow );
-	if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-	if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+	// Compute the roll angle of the object that is being followed.
+	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+	//  orientation here match the orientation of the visual target. But I don't know if this one was 
+	//  wrong or the other one. We should check.
+	double object_roll_angle = ToDegrees( atan2( - renderer->glasses->orientation[0][1], renderer->glasses->orientation[0][0] ) );
+	// Compute the error with respect to the desired roll angle.
+	double angular_error =  desiredHeadRoll - object_roll_angle;
+	// Set the color of the halo according to the angular error.
+	SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
+	// Set the direction of the arrow according to the direction of the error.
+	// This does not mean that the arrow is visible. That is determined below.
+	if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 	// If the head is aligned do stuff depending on the time delays.
-	if ( 0.0 == alignment ) {
+	if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
 		// Arrow gets turned off as soon as the angle is good.
 		renderer->tiltPrompt->Disable();
 		if ( TimerTimeout( headGoodTimer )) {
@@ -381,6 +347,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
+	// Check if the hand is raised properly. If not, it is shown in grey.
 	Vector3 relativeHandPosition;
 	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
 	NormalizeVector( relativeHandPosition );
@@ -392,42 +359,49 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	}
 	else {
 
-		double alignment = SetColorByRollError( renderer->kkTool, desiredHandRoll, desiredHandRollSweetZone, desiredHandRollTolerance, use_arrow );
-		if ( alignment < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-		if ( alignment > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+		// Compute the roll angle of the object that is being followed.
+		// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+		//  orientation here match the orientation of the visual target. But I don't know if this one was 
+		//  wrong or the other one. We should check.
+		double object_roll_angle = ToDegrees( atan2( - renderer->kkTool->orientation[0][1], renderer->kkTool->orientation[0][0] ) );
+		// Compute the error with respect to the desired roll angle.
+		double angular_error =  desiredHeadRoll - object_roll_angle;
+		// Set the color of the tool according to the angular error.
+		SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
+		// Set the direction of the arrow according to the direction of the error.
+		// This does not mean that the arrow is visible. That is determined below.
+		if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+		if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 		// If the hand is aligned do stuff depending on the time delays.
-		static bool first_good = true;
-		static double remaining_time = secondsToBeGood;
-		if ( 0.0 == alignment ) {
-			if ( first_good ) TimerSet( handGoodTimer, remaining_time );
-			first_good = false;
+		if ( fabs( angular_error ) < desiredHandRollTolerance ) {
 			// Arrow gets turned off as soon as the angle is good.
 			renderer->tiltPrompt->Disable();
-			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+			// We made it into the good zone. So to be bad again one must be bad for the requisite number of seconds.
 			TimerSet( handBadTimer, secondsToBeBad );
-			if ( TimerTimeout( handGoodTimer )) {
-				// Indicate that the alignment is good.
-				return( aligned );
-			}
+			// Restart the timer in case it was paused by a brief exit from the good zone.
+			TimerResume( handGoodTimer );
+			// But only say that we are aligned if we have been good for the requisite amount of time.
+			if ( TimerTimeout( handGoodTimer )) return( aligned );
 			// The alignment hasn't be good for long enough to really be considered as good.
 			else return( transitioningToGood );
 		}
-		// If head alignment has been lost, do other stuff depending on the delays.
+		// If hand alignment has been lost, do other stuff depending on the delays.
 		else {
 			if ( TimerTimeout( handBadTimer )) {
-				// Made it to bad. To be good again you have to be good for a while.
-				remaining_time = secondsToBeGood;
-				first_good = true;
+				// Made it to bad. 
 				// Turn on the arrow because we've been bad for a while.
-				renderer->tiltPrompt->Enable();
+				if (use_arrow ) renderer->tiltPrompt->Enable();
+				// If the error has endured long enough to trigger the arrow prompt, then
+				// reset the time required to be good again to the full duration.
+				// MICHELE: What do you think? 
+				TimerSet( handGoodTimer, secondsToBeGood );
 				// Signal that we really are misaligned.
 				return( misaligned );
 			}
 			// The alignment hasn't be bad for long enough to really be considered as bad.
 			else {
-				remaining_time = TimerRemainingTime( handGoodTimer );
-				first_good = true;
+				TimerPause( handGoodTimer );
 				return( transitioningToBad );
 			}
 		}

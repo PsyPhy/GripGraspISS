@@ -224,15 +224,14 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		if ( oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
 		if ( oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
 
-		// Render the scene to the HMD. This will draw all items that are
-		// enabled. The state machine is responsible for enabling and disabling
-		// the OpenGLObjects objects as needed.
-		Render();
-
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.
 		if ( this->UpdateStateMachine() ) break;
 
+		// Render the scene to the HMD. This will draw all items that are
+		// enabled. The state machine is responsible for enabling and disabling
+		// the OpenGLObjects objects as needed.
+		Render();
 	}
 	if ( fp ) fclose( fp );
 	fp = NULL;
@@ -693,22 +692,22 @@ void KtoK::EnterPresentTarget( void ) {
 	//renderer->wristZone->Enable();
 	// Show the subject where to point.
 	renderer->positionOnlyTarget->Enable();
-	// Do all the default actions as well.
-	GraspTaskManager::EnterPresentTarget();
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
 	// But the orientation will be reflected by the color.
 	renderer->kkTool->Enable();
 	// The desired orientation of the head to the specified head orientation.
 	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].hapticTargetOrientationTolerance );
+	// Do all the default actions as well.
+	GraspTaskManager::EnterPresentTarget();
 }
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 
 
-	//Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-	//Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 
-	//if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
-	//else trackers->handTracker->OffsetTo( down );
+	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	else trackers->handTracker->OffsetTo( down );
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
@@ -730,15 +729,14 @@ void  KtoK::ExitPresentTarget( void ) {
 	renderer->kkTool->Disable();
 	// Hide the wrist zone indication.
 	// renderer->wristZone->Disable();
-	renderer->wristZone->SetColor( 1.0, 0.0, 0.0, 0.05 );
 	// Do all the default actions as well.
 	GraspTaskManager::ExitPresentTarget();
 }
 
 void KtoK::EnterObtainResponse( void ) {
 	// Show where to put the wrist.
-	renderer->wristZone->SetColor( 0.0, 1.0, 0.0, 0.05 );
-	renderer->wristZone->Enable();
+	// renderer->wristZone->SetColor( 0.0, 1.0, 0.0, 0.05 );
+	// renderer->wristZone->Enable();
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
 	renderer->kTool->Enable();
@@ -748,11 +746,11 @@ void KtoK::EnterObtainResponse( void ) {
 
 GraspTrialState KtoK::UpdateObtainResponse( void ) { 
 
-	//Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-	//Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 
-	//if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
-	//else trackers->handTracker->OffsetTo( down );
+	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	else trackers->handTracker->OffsetTo( down );
 	if ( renderer->hand->position[Y] < -150.0 ) renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
 	else renderer->kTool->SetColor( 0.0, 0.0, 1.0, 0.85 );
 	return( GraspTaskManager::UpdateObtainResponse() );
@@ -762,7 +760,7 @@ GraspTrialState KtoK::UpdateObtainResponse( void ) {
 void KtoK::ExitObtainResponse( void ) {
 	// Hide the hand.
 	renderer->kTool->Disable();
-	renderer->wristZone->Disable();
+	// renderer->wristZone->Disable();
 	// Do all the default actions as well.
 	GraspTaskManager::ExitObtainResponse();
 }

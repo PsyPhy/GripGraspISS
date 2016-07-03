@@ -97,7 +97,8 @@ namespace Grasp {
 
 		// Use color to guide the subject to a specified roll angle.
 		static const double errorColorMapTransparency;
-		double SetColorByRollError( OpenGLObject *object, double desired_angle, double sweet_zone, double tolerance, bool use_arrow );
+		static const double fadeDistance;
+		void SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone );
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
