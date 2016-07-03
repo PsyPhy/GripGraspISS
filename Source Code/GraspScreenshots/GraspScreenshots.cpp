@@ -67,24 +67,6 @@ int _tmain(int argc, char *argv[])
 		fprintf( stderr, "GraspScreenshots: At least one command line argument is required.\n" );
 		exit( -1 );
 	}
-	// For some reason I have only been able to save one bitmap file per execution. Otherwise, I get the
-	//  same picture in each bitmap file (the first one drawn). So what I do here is to recursively call
-	//  the program with each command-line argument.
-	int return_status = 0;
-	if ( argc > 2 ) {
-		for ( int arg = 1; arg < argc; arg++ ) {
-			char line[1024];
-			sprintf( line, "\"%s\" %s", argv[0], argv[arg] );
-			int status;
-			if ( status = system( line ) ) {
-				fprintf( stderr, "%s exited with error code %d\n", line, status );
-				fOutputDebugString( "%s exited with error code %d\n", line, status );
-				return_status = status;
-			}
-		}
-		exit( return_status );
-	}
-
 	// Create and instance of a window object.
 	// This does not yet create the actual window on the screen.
 	window = new OpenGLWindow();
@@ -153,31 +135,32 @@ int _tmain(int argc, char *argv[])
 	objects->handStructure->Disable();
 	objects->chestStructure->Disable();
 
-	if ( !strcmp( argv[1], "ReadyToStart" )) {
-		objects->vTool->Disable();
-		objects->readyToStartIndicator->Enable();
- 		DrawToBMP( "ReadyToStartScreenShot.bmp" );
-	}
-	else if ( !strcmp( argv[1], "BlockCompleted" )) {
-		objects->timeoutIndicator->Disable();
-		objects->blockCompletedIndicator->Enable();
-		DrawToBMP( "BlockCompletedScreenShot.bmp" );
-	}
-	else if ( !strcmp( argv[1], "HeadMisalign" )) {
-		objects->readyToStartIndicator->Disable();
-		objects->headMisalignIndicator->Enable();
-		DrawToBMP( "HeadMisalignScreenShot.bmp" );
-	}
-	else if ( !strcmp( argv[1], "Timeout" )) {
-		objects->headMisalignIndicator->Disable();
-		objects->timeoutIndicator->Enable();
-		DrawToBMP( "TimeoutScreenShot.bmp" );
-	}
-	else {
-		fOutputDebugString( "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
-		fprintf( stderr, "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
-		exit( -2 );
-	}
+	for ( int arg = 2; arg < argc; arg++ ) {
+
+		if ( !strcmp( argv[1], "ReadyToStart" )) {
+			objects->vTool->Disable();
+			objects->readyToStartIndicator->Enable();
+		}
+		else if ( !strcmp( argv[1], "BlockCompleted" )) {
+			objects->timeoutIndicator->Disable();
+			objects->blockCompletedIndicator->Enable();
+			DrawToBMP( "BlockCompletedScreenShot.bmp" );
+		}
+		else if ( !strcmp( argv[1], "HeadMisalign" )) {
+			objects->readyToStartIndicator->Disable();
+			objects->headMisalignIndicator->Enable();
+			DrawToBMP( "HeadMisalignScreenShot.bmp" );
+		}
+		else if ( !strcmp( argv[1], "Timeout" )) {
+			objects->headMisalignIndicator->Disable();
+			objects->timeoutIndicator->Enable();
+			DrawToBMP( "TimeoutScreenShot.bmp" );
+		}
+		else {
+			fOutputDebugString( "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
+			fprintf( stderr, "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
+			exit( -2 );
+		}
 	return 0;
 }
 
