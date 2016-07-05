@@ -9,11 +9,12 @@ EXECUTABLES=..\..\Executables
 
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
-	00IntroV-V.html 00IntroV-K.html 00IntroK-K.html \
-	CodaAlignFloating.html CodaAlignSeated.html StepReadySeated.html StepReadyFloating.html \
-	01StraightenHead.html 02TargetK.html 02TargetV.html 03TiltHead.html 04RespondK.html 04RespondV.html 05Feedback.html \
-	StepReady.html StepRunning.html StepFinished.html StepNormalFinish.html StepErrorFinish.html \
-	TaskFinished.html ProtocolFinished.html 
+	00IntroV-V.instruction.html 00IntroV-K.instruction.html 00IntroK-K.instruction.html \
+	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html StepReadySeated.prompt.html StepReadyFloating.prompt.html \
+	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
+	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
+	StepReady.prompt.html StepRunning.instruction.html StepFinished.status.html StepNormalFinish.status.html StepErrorFinish.status.html \
+	TaskFinished.instruction.html ProtocolFinished.instruction.html 
 
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed

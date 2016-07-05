@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GraspDocumentation.mak" />
+    <None Include="GraspVRScenes.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
@@ -19,6 +20,12 @@
     </ProjectReference>
     <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
       <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
+      <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj">
+      <Project>{d372af87-b6c6-4007-b361-2dada1a1c9d7}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

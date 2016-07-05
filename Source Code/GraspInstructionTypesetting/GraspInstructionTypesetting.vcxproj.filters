@@ -1,79 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <None Include="ProtocolFinished.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="StepReady.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="StepErrorFinish.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="TaskFinished.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="StepFinished.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="StepNormalFinish.md">
-      <Filter>Generic</Filter>
-    </None>
     <None Include="GraspWelcome.md">
       <Filter>Generic</Filter>
-    </None>
-    <None Include="StepRunning.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="CodaAlignFloating.md">
-      <Filter>Install</Filter>
     </None>
     <None Include="NotYetImplemented.md">
       <Filter>Generic</Filter>
     </None>
-    <None Include="CodaAlignSeated.md">
+    <None Include="GraspInstructions.mak" />
+    <None Include="ProtocolFinished.instruction.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepErrorFinish.status.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepFinished.status.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepNormalFinish.status.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepReadyFloating.prompt.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepReadySeated.prompt.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="TaskFinished.instruction.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="StepRunning.instruction.md">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="CodaAlignFloating.prompt.md">
       <Filter>Install</Filter>
     </None>
-    <None Include="StepReadySeated.md">
+    <None Include="CodaAlignSeated.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="00IntroK-K.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="00IntroV-K.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="00IntroV-V.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="01StraightenHead.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="02TargetK.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="02TargetV.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="03TiltHead.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="04RespondK.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="04RespondV.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="05Feedback.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="StepReady.prompt.md">
       <Filter>Generic</Filter>
     </None>
-    <None Include="Invalid.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="StepReadyFloating.md">
-      <Filter>Generic</Filter>
-    </None>
-    <None Include="00IntroV-V.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="00IntroV-K.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="00IntroK-K.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="01StraightenHead.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="02TargetK.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="02TargetV.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="03TiltHead.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="04RespondK.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="04RespondV.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="05Feedback.md">
-      <Filter>Science</Filter>
-    </None>
-    <None Include="GraspInstructions.mak" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

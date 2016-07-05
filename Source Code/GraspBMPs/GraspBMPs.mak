@@ -38,7 +38,7 @@ all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
 # Combine all the messages into a pdf document. This is useful when it comes time to generate the documention for the program.
 GraspVRMessages.pdf: *.bmp.html
 	type $(**) > $(@B).html
-	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Apendix II: Grasp VR Messages" --header-font-size 8 --header-spacing 5 --margin-bottom 20 $(@B).html $@
+	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Grasp VR Messages" --header-font-size 8 --header-spacing 5 --margin-bottom 20 $(@B).html $@
 
 # The next set of bitmaps are generated from a Powerpoint file entitled GraspCircularPrompts.pptx.
 # To genearate the bitmaps, you must first save the latest version of the Powerpoint file as .bmp image files

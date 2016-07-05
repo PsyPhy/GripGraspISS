@@ -60,19 +60,21 @@ void DrawToBMP( const char *filename ) {
 
 int _tmain(int argc, char *argv[])
 {
+	bool confirm = false;
+	char *filename = "GraspScreenshot.bmp";
+	int  size = 1024;
 
-	// Should have at least one command line argument.
-	if ( argc < 2 ) {
-		fOutputDebugString( "GraspScreenshots: At least one command line argument is required.\n" );
-		fprintf( stderr, "GraspScreenshots: At least one command line argument is required.\n" );
-		exit( -1 );
+	// Parse command line for arguments affecting the window.
+	for ( int arg = 1; arg < argc; arg++ ) {
+		if ( 1 == sscanf( argv[arg], "--size=%d", &size ) ) fOutputDebugString( "Window size: %d x %d\n", size, size );
 	}
+	
 	// Create and instance of a window object.
 	// This does not yet create the actual window on the screen.
 	window = new OpenGLWindow();
 
 	// Create sets the new window to be the active window.
-	if ( !window->Create( NULL, argv[0], 860, 0, 1024, 1024 ) ) {
+	if ( !window->Create( NULL, argv[0], 860, 0, size, size ) ) {
 		fMessageBox( MB_OK, "TestOpenGLObjects", "Error creating window." );
 		exit( -1 );
 	}  
@@ -135,32 +137,91 @@ int _tmain(int argc, char *argv[])
 	objects->handStructure->Disable();
 	objects->chestStructure->Disable();
 
-	for ( int arg = 2; arg < argc; arg++ ) {
+	for ( int arg = 1; arg < argc; arg++ ) {
 
-		if ( !strcmp( argv[1], "ReadyToStart" )) {
-			objects->vTool->Disable();
+		double angle;
+
+		if ( 1 == sscanf( argv[arg], "--head=%lf", &angle ) ) {
+			viewpoint->SetOrientation( angle, 0.0, 0.0 );
+		}
+		else if ( 1 == sscanf( argv[arg], "--headError=%lf", &angle ) ) {
+			objects->SetColorByRollError( objects->glasses, angle, 2.0 );
+		}
+
+		else if ( 1 == sscanf( argv[arg], "--target=%lf", &angle ) ) {
+			objects->orientationTarget->SetOrientation( angle, 0.0, 0.0 );
+			objects->orientationTarget->Enable();
+		}
+		else if ( 1 == sscanf( argv[arg], "--handError=%lf", &angle ) ) {
+			objects->SetColorByRollError( objects->kkTool, angle, 2.0 );
+		}
+
+
+		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &angle ) ) {
+			objects->hand->SetOrientation( angle, 0.0, 0.0 );
+		}
+		else if ( !strcmp( argv[arg], "--vkTool" )) {
+			objects->vkTool->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--kTool" )) {
+			objects->kTool->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--vTool" )) {
+			objects->vTool->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--kkTool" )) {
+			objects->kkTool->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--handArrow" )) {
+			objects->tiltPrompt->SetPosition( objects->hand->position );
+			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
+			objects->tiltPrompt->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--headArrowLeft" )) {
+			objects->tiltPrompt->SetPosition( objects->hud->position );
+			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
+			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
+			objects->tiltPrompt->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--headArrowRight" )) {
+			objects->tiltPrompt->SetPosition( objects->hud->position );
+			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
+			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
+			objects->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+			objects->tiltPrompt->Enable();
+		}
+
+		else if ( !strcmp( argv[arg], "--ReadyToStart" )) {
 			objects->readyToStartIndicator->Enable();
 		}
-		else if ( !strcmp( argv[1], "BlockCompleted" )) {
-			objects->timeoutIndicator->Disable();
+
+		else if ( !strcmp( argv[arg], "--BlockCompleted" )) {
 			objects->blockCompletedIndicator->Enable();
-			DrawToBMP( "BlockCompletedScreenShot.bmp" );
 		}
-		else if ( !strcmp( argv[1], "HeadMisalign" )) {
-			objects->readyToStartIndicator->Disable();
+
+		else if ( !strcmp( argv[arg], "--TrialCompleted" )) {
+			objects->successIndicator->Enable();
+		}
+
+		else if ( !strcmp( argv[arg], "--Misalign" )) {
 			objects->headMisalignIndicator->Enable();
-			DrawToBMP( "HeadMisalignScreenShot.bmp" );
 		}
-		else if ( !strcmp( argv[1], "Timeout" )) {
-			objects->headMisalignIndicator->Disable();
+
+		else if ( !strcmp( argv[arg], "--Timeout" )) {
 			objects->timeoutIndicator->Enable();
-			DrawToBMP( "TimeoutScreenShot.bmp" );
 		}
-		else {
-			fOutputDebugString( "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
-			fprintf( stderr, "GraspScreenshots: Unrecognized argument (%s).\n", argv[1] );
-			exit( -2 );
+
+		else if ( !strcmp( argv[arg], "--confirm" )) {
+			confirm = true;
 		}
+		else if ( 1 == sscanf( argv[arg], "--size=%d", &size ) ); // Ignore this parameter. It was handled earlier.
+		else filename = argv[arg];
+
+	}
+	DrawToBMP( filename );
+
+	if ( confirm ) fMessageBox( MB_OK, "GraspScreenshots", "Screenshot saved to %s.", filename );
+
 	return 0;
 }
 

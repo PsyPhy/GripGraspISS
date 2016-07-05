@@ -50,31 +50,30 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="01StraightenHead.md" />
-    <None Include="02TargetK.md" />
-    <None Include="02TargetV.md" />
-    <None Include="03TiltHead.md" />
-    <None Include="04RespondK.md" />
-    <None Include="04RespondV.md" />
-    <None Include="05Feedback.md" />
-    <None Include="CodaAlignFloating.md" />
-    <None Include="CodaAlignSeated.md" />
-    <None Include="Invalid.md" />
-    <None Include="00IntroK-K.md" />
+    <None Include="01StraightenHead.instruction.md" />
+    <None Include="02TargetK.instruction.md" />
+    <None Include="02TargetV.instruction.md" />
+    <None Include="03TiltHead.instruction.md" />
+    <None Include="04RespondK.instruction.md" />
+    <None Include="04RespondV.instruction.md" />
+    <None Include="05Feedback.instruction.md" />
+    <None Include="CodaAlignFloating.prompt.md" />
+    <None Include="CodaAlignSeated.prompt.md" />
+    <None Include="00IntroK-K.instruction.md" />
     <None Include="NotYetImplemented.md" />
-    <None Include="ProtocolFinished.md" />
-    <None Include="StepErrorFinish.md" />
-    <None Include="StepFinished.md" />
-    <None Include="StepNormalFinish.md" />
-    <None Include="StepReady.md" />
-    <None Include="StepReadyFloating.md" />
-    <None Include="StepReadySeated.md" />
-    <None Include="StepRunning.md" />
+    <None Include="ProtocolFinished.instruction.md" />
+    <None Include="StepErrorFinish.status.md" />
+    <None Include="StepFinished.status.md" />
+    <None Include="StepNormalFinish.status.md" />
+    <None Include="StepReady.prompt.md" />
+    <None Include="StepReadyFloating.prompt.md" />
+    <None Include="StepReadySeated.prompt.md" />
+    <None Include="StepRunning.instruction.md" />
     <None Include="GraspWelcome.md" />
     <None Include="GraspInstructions.mak" />
-    <None Include="TaskFinished.md" />
-    <None Include="00IntroV-K.md" />
-    <None Include="00IntroV-V.md" />
+    <None Include="TaskFinished.instruction.md" />
+    <None Include="00IntroV-K.instruction.md" />
+    <None Include="00IntroV-V.instruction.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
