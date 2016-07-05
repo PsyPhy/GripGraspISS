@@ -328,6 +328,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			sprintf( datetimestr, "%02d%02d%02d.%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 			String ^dateTimeString = gcnew String( datetimestr );
 
+			// Show the current form as being disabled.
+			Enabled = false;
+
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
@@ -367,6 +370,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 
 			// Show the corresponding page.
 			instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
+
+			// Re-enable the form.
+			Enabled = true;
 		}
 }
 

@@ -634,7 +634,7 @@ namespace GraspGUI {
 			this->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
-			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GRASP@ISS";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);

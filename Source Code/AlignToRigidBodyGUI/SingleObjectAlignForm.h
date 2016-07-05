@@ -28,6 +28,7 @@ namespace AlignToRigidBodyGUI {
 	protected:
 
 		bool									noCoda;
+		bool									forceShow;
 
 		PsyPhy::OpenGLWindow					*vrWindow1, *vrWindow2;
 		PsyPhy::Viewpoint						*codaViewpoint;
@@ -41,18 +42,21 @@ namespace AlignToRigidBodyGUI {
 		String^ filenameRoot;
 
 		double maxPositionError;
+	private: System::Windows::Forms::Label^  trackerInitializing;
+	protected: 
 		double maxOrientationError;
 
 	public:
 		SingleObjectForm( String ^model_file, String ^filename_root ) :
 		  maxPositionError( 10.0 ),
-		  maxOrientationError( 2.0 )
-		{
-			InitializeComponent();
-			modelFile = model_file;
-			filenameRoot = filename_root;
-			noCoda = false;
-		}
+			  maxOrientationError( 2.0 ),
+			  forceShow( false ),
+			  noCoda( false )
+		  {
+			  InitializeComponent();
+			  modelFile = model_file;
+			  filenameRoot = filename_root;
+		  }
 
 	protected:
 		/// <summary>
@@ -133,6 +137,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->trackerInitializing = (gcnew System::Windows::Forms::Label());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
 			this->SuspendLayout();
@@ -141,7 +146,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(351, 403);
+			this->alignButton->Location = System::Drawing::Point(841, 831);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
@@ -154,7 +159,7 @@ namespace AlignToRigidBodyGUI {
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(80, 403);
+			this->cancelButton->Location = System::Drawing::Point(224, 831);
 			this->cancelButton->Name = L"cancelButton";
 			this->cancelButton->Size = System::Drawing::Size(159, 56);
 			this->cancelButton->TabIndex = 3;
@@ -165,48 +170,65 @@ namespace AlignToRigidBodyGUI {
 			// vrGroupBox2
 			// 
 			this->vrGroupBox2->Controls->Add(this->vrPanel2);
-			this->vrGroupBox2->Location = System::Drawing::Point(302, 174);
+			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->vrGroupBox2->Location = System::Drawing::Point(612, 144);
 			this->vrGroupBox2->Name = L"vrGroupBox2";
-			this->vrGroupBox2->Size = System::Drawing::Size(256, 223);
+			this->vrGroupBox2->Size = System::Drawing::Size(617, 641);
 			this->vrGroupBox2->TabIndex = 5;
 			this->vrGroupBox2->TabStop = false;
 			this->vrGroupBox2->Text = L"Tracker Camera 2";
 			// 
 			// vrPanel2
 			// 
-			this->vrPanel2->Location = System::Drawing::Point(11, 28);
+			this->vrPanel2->Location = System::Drawing::Point(6, 37);
 			this->vrPanel2->Name = L"vrPanel2";
-			this->vrPanel2->Size = System::Drawing::Size(235, 186);
+			this->vrPanel2->Size = System::Drawing::Size(605, 598);
 			this->vrPanel2->TabIndex = 1;
 			// 
 			// vrGroupBox1
 			// 
 			this->vrGroupBox1->Controls->Add(this->vrPanel1);
-			this->vrGroupBox1->Location = System::Drawing::Point(31, 174);
+			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->vrGroupBox1->Location = System::Drawing::Point(12, 144);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
-			this->vrGroupBox1->Size = System::Drawing::Size(256, 223);
+			this->vrGroupBox1->Size = System::Drawing::Size(582, 641);
 			this->vrGroupBox1->TabIndex = 4;
 			this->vrGroupBox1->TabStop = false;
 			this->vrGroupBox1->Text = L"Tracker Camera 1";
 			// 
 			// vrPanel1
 			// 
-			this->vrPanel1->Location = System::Drawing::Point(11, 28);
+			this->vrPanel1->Location = System::Drawing::Point(6, 37);
 			this->vrPanel1->Name = L"vrPanel1";
-			this->vrPanel1->Size = System::Drawing::Size(235, 186);
+			this->vrPanel1->Size = System::Drawing::Size(570, 598);
 			this->vrPanel1->TabIndex = 0;
 			// 
 			// instructionsTextBox
 			// 
-			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, 
+			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox->Location = System::Drawing::Point(44, 25);
+			this->instructionsTextBox->Location = System::Drawing::Point(12, 22);
 			this->instructionsTextBox->Multiline = true;
 			this->instructionsTextBox->Name = L"instructionsTextBox";
-			this->instructionsTextBox->Size = System::Drawing::Size(503, 126);
+			this->instructionsTextBox->Size = System::Drawing::Size(1217, 104);
 			this->instructionsTextBox->TabIndex = 6;
-			this->instructionsTextBox->Text = L"Verify that all markers are visible in each Tracker Camera view and then press \'A" 
-				L"lign\'.";
+			this->instructionsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// trackerInitializing
+			// 
+			this->trackerInitializing->AutoSize = true;
+			this->trackerInitializing->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->trackerInitializing->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->trackerInitializing->ForeColor = System::Drawing::Color::IndianRed;
+			this->trackerInitializing->Location = System::Drawing::Point(280, 371);
+			this->trackerInitializing->Name = L"trackerInitializing";
+			this->trackerInitializing->Size = System::Drawing::Size(678, 184);
+			this->trackerInitializing->TabIndex = 7;
+			this->trackerInitializing->Text = L"Tracker Initializing\r\nPlease wait ...";
+			this->trackerInitializing->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// SingleObjectForm
 			// 
@@ -214,13 +236,16 @@ namespace AlignToRigidBodyGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(570, 474);
+			this->ClientSize = System::Drawing::Size(1237, 924);
+			this->Controls->Add(this->trackerInitializing);
 			this->Controls->Add(this->instructionsTextBox);
 			this->Controls->Add(this->vrGroupBox2);
 			this->Controls->Add(this->vrGroupBox1);
 			this->Controls->Add(this->cancelButton);
 			this->Controls->Add(this->alignButton);
+			this->Location = System::Drawing::Point(20, 40);
 			this->Name = L"SingleObjectForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"CODA Tracker Alignment";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &SingleObjectForm::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &SingleObjectForm::Form1_Shown);
@@ -272,10 +297,27 @@ namespace AlignToRigidBodyGUI {
 					 return;
 				 }
 
+				 // Make sure that the windows have refreshed  before starting up the CODA, because it will 
+				 // take some time.
+
+				 // Show the Form as being inactive.
+				 Enabled = false;
+				 // Show a message while the tracker is initializing.
+				 trackerInitializing->Visible = true;
+				 Refresh();
+				 Application::DoEvents();
+
 				 // Create and start up the CODA tracker.
 				 coda = new CodaRTnetTracker();
 				 coda->Initialize();
 				 coda->StartAcquisition( 600.0 );
+				 
+				 // Hide the tracker message.
+				 trackerInitializing->Visible = false;
+				 // Re-enable the Form as being inactive.
+				 Enabled = true;
+				 // Prompt for the required action.
+				 instructionsTextBox->Text = "Verify that all markers are visible in each Tracker Camera view" + "         (all dots green) and then press 'Align'.         ";
 
 				 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
 				 CreateRefreshTimer( 300 );
@@ -413,7 +455,7 @@ namespace AlignToRigidBodyGUI {
 					 // Check that the alignment has been successful.
 					 well_aligned &= ( position_ok & orientation_ok );
 				 }
-				 fAbortMessageOnCondition( !well_aligned, "AlignToRigidBodyGUI", msg );
+				 fAbortMessageOnCondition( !well_aligned || forceShow, "AlignToRigidBodyGUI", msg );
 
 				 // Close the form. 
 				 Close();
