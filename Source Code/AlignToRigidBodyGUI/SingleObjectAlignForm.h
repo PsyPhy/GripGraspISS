@@ -358,8 +358,13 @@ namespace AlignToRigidBodyGUI {
 					 // We need to assemble the poses from each CODA unit into a single list to be passed to SetAlignmentFromPoses().
 					 coda->CopyPose( poses[unit], tracker_pose.pose );
 				 }
+				 // Log the data acquired in aligned coordinates.
+				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+				 String ^alignmentFilename = filenameRoot + ".alignment.dat";
+				 char *alignment_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( alignmentFilename ).ToPointer();
 				 // This does the real work.
-				 coda->SetAlignmentFromPoses( poses );
+				 coda->SetAlignmentFromPoses( poses, alignment_file );
+				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( alignment_file ) );
 
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
 				 coda->Shutdown();

@@ -26,7 +26,7 @@ using namespace PsyPhy;
 // Starting up the CODA takes time. It would be nice if we could leave it
 // in a running state after the first startup, to go faster on subsequent trials.
 // Set this flag to force a shutdown before each start up for testing purposes.
-// #define ALWAYS_SHUTDOWN
+#define ALWAYS_SHUTDOWN
 
 // RTNet C++ includes
 #define NO64BIT
@@ -585,20 +585,27 @@ void  CodaRTnetTracker::AnnulAlignment( void ) {
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
 //  compute the alignment file that the CODA uses to align the units and send it to the server.
-void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
+void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
 
 	char command_line[10240];
 	Matrix3x3 rotation_matrix, transpose_matrix;
 	Vector3 offset;
 
 	// Create a unique filename for a local temporary file.
-	char filename[MAX_PATH];
-	SYSTEMTIME st;
-	GetSystemTime( &st );
-	sprintf( filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_%s", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
+	// It can be overridden by the caller.
+	char local_filename[MAX_PATH];
+	if ( filename ) {
+		strncpy( local_filename, filename, sizeof( local_filename ));
+	}
+	else {
+		SYSTEMTIME st;
+		GetSystemTime( &st );
+		sprintf( local_filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_%s", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
+	}
 
 	// Open a file locally to accept the alignment information.
-	FILE *fp = fopen( filename, "w" );
+	FILE *fp = fopen( local_filename, "w" );
+	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Unable to open %s for writing.", local_filename );
 	// This is an apparent header line.
 	fprintf( fp, "[CODA System Alignment]\n" );
 	// A block of parameters for each unit.
@@ -626,7 +633,7 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS] ) {
 	fclose( fp );
 	// Here we send the new alignment file to the CODA server. 
 	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
-		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, filename, codaAlignmentFilename );
+		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, local_filename, codaAlignmentFilename );
 	if ( 0 != system( command_line ) ) fAbortMessage( "SetAlignmentFromPoses", "Error executing ftp command:\n  %s", command_line );
 	// We could clean up after ourselves by deleting the local file or moving it to a log location. 
 	// I am leaving it in place. In GRASP I am going to copy it to a log file.

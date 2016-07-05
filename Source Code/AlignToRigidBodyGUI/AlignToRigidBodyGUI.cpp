@@ -16,8 +16,10 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	String ^filename_root = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment" );
+	// First argument is the rigid body model file for the alignment object.
 	String ^model_file = args->Length >= 1 ? args[0] : gcnew String( "Bdy\\Chest.bdy" );
+	// Next is the root to generate filenames for storing the marker data and alignment.
+	String ^filename_root = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment" );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	//DexServices *dex = new DexServices();
