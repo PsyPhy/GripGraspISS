@@ -515,11 +515,19 @@ int CodaRTnetTracker::GetNumberOfCodas( void ) {
 	return( nUnits );
 }
 
-void CodaRTnetTracker::GetAlignment( void ) {
+void CodaRTnetTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] ) {
 	// Get what are the alignment transformations before doing the alignment.
 	// This is just for debugging. Set a breakpoint to see the results.
 	DeviceInfoUnitCoordSystem pre_xforms;
 	cl.getDeviceInfo( pre_xforms );
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		for ( int i = 0; i < 3; i++ ) {
+			for ( int j = 0; j < 3; j++ ) {
+				rotation[unit][i][j] = pre_xforms.dev.Rt[unit].R[i*3+j];
+			}
+		}
+		CopyVector( offset[unit], pre_xforms.dev.Rt[unit].t );
+	}
 }
 
 int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {

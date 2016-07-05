@@ -304,11 +304,18 @@ namespace AlignToRigidBodyGUI {
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 coda->AnnulAlignment();
-				 coda->GetAlignment();
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
 				 coda->Initialize();
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
+
+				 // Get the pre-alignment transformation and make sure that it is null.
+				 Vector3 current_offset[MAX_UNITS];
+				 Matrix3x3 current_rotation[MAX_UNITS];
+				 coda->GetAlignment( current_offset, current_rotation );
+				 // If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
+				 fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
+
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.

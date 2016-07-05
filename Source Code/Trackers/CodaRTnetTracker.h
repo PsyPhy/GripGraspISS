@@ -155,9 +155,9 @@ public:
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
-	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS] );
+	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename = nullptr );
 	void	AnnulAlignment( void );
-	void	GetAlignment( void );
+	void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
 
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
