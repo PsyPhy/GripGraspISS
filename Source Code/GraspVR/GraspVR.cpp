@@ -28,12 +28,6 @@ using namespace PsyPhy;
 const int GraspVR::secondsToBeGood = 2.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
-// Transparency of objects that change color according to roll angle.
-// It is important that the halo (glasses) be transparent. The kkTool will be transparent
-//  too as a side effect, but that's not so important.
-const double GraspVR::errorColorMapTransparency = 0.5;
-const double GraspVR::fadeDistance = 5.0;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
@@ -248,34 +242,6 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 
 }
 
-// Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
-void GraspVR::SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone ) {
-
-	double magnitude = fabs( roll_error );
-
-	if ( magnitude < sweet_zone ){
-		// If we are within the sweet zone, the color is more cyan than green.
-		// This makes it easier for the subject to recognize when the head is properly aligned.
-		// But one need not be in the sweet zone for the orientation to be considered good.
-		// If the orientation is within tolerance, it is good as well. This means that the color
-		// starts to change before leaving the tolerance zone (assuming that tolerance > sweet ).
-		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
-	} else {
-		// Colors will change as one moves farther from the center.
-		if ( ( magnitude - sweet_zone ) < fadeDistance ) {
-			// Go from green at the center to yellow at the limit of the tolerance zone.
-			double fade = ( magnitude - sweet_zone ) / fadeDistance;
-			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
-		}
-		else if ( ( magnitude - sweet_zone ) < 2.0 * fadeDistance ) {
-			// Go from yellow to red.
-			double fade = ( magnitude - sweet_zone - fadeDistance ) / fadeDistance;
-			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
-		}
-		// If more than 2 epsilons, the color is red.
-		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
-	}
-}
 
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
@@ -299,7 +265,7 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	// Compute the error with respect to the desired roll angle.
 	double angular_error =  desiredHeadRoll - object_roll_angle;
 	// Set the color of the halo according to the angular error.
-	SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
+	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
 	// Set the direction of the arrow according to the direction of the error.
 	// This does not mean that the arrow is visible. That is determined below.
 	if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
@@ -367,7 +333,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		// Compute the error with respect to the desired roll angle.
 		double angular_error =  desiredHeadRoll - object_roll_angle;
 		// Set the color of the tool according to the angular error.
-		SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
+		renderer->SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
 		// Set the direction of the arrow according to the direction of the error.
 		// This does not mean that the arrow is visible. That is determined below.
 		if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );

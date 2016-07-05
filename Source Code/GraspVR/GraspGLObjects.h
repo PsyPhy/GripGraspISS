@@ -98,6 +98,9 @@ namespace Grasp {
 
 			static const double hudTransparency;
 
+			static const double errorColorMapTransparency;
+			static const double errorColorMapFadeDistance;
+
 		protected:
 
 			// Textures that are used to decorate certain objects.
@@ -164,6 +167,9 @@ namespace Grasp {
 
 			void CreateTextures( void );
 			void SetLighting( void );
+
+			// Use color to guide the subject to a specified roll angle.
+			void SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone );
 
 			// Create all the objects needed for VR.
 			void CreateVRObjects( void );
