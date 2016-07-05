@@ -417,7 +417,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	// Stay in this state a fixed time.
 	if ( TimerTimeout( stateTimer ) ) {
 		if ( status == aligned ) return( ObtainResponse );
-		else return( Timeout ); 
+		else return( TrialInterrupted ); 
 	}
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
@@ -444,7 +444,7 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// Handle triggering and moving the projectiles.
 	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
 		// Record the response.
-		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->vTool->mstr( renderer->selectedTool->orientation ) );
+		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
@@ -703,11 +703,12 @@ void KtoK::EnterPresentTarget( void ) {
 
 GraspTrialState KtoK::UpdatePresentTarget( void ) { 
 
-	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	//Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	//Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 
-	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
-	else trackers->handTracker->OffsetTo( down );
+	//if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	//else trackers->handTracker->OffsetTo( down );
+
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
@@ -746,14 +747,24 @@ void KtoK::EnterObtainResponse( void ) {
 
 GraspTrialState KtoK::UpdateObtainResponse( void ) { 
 
-	Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-	Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	//Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+	//Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 
-	if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
-	else trackers->handTracker->OffsetTo( down );
-	if ( renderer->hand->position[Y] < -150.0 ) renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
-	else renderer->kTool->SetColor( 0.0, 0.0, 1.0, 0.85 );
-	return( GraspTaskManager::UpdateObtainResponse() );
+	//if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
+	//else trackers->handTracker->OffsetTo( down );
+
+	// Update the visual feedback about the head tilt and see if 
+	// the head is still aligned as needed. Interrupt the trial if not.
+	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
+
+	if ( HandleHandElevation() == aligned && oculusDisplay->Button[MOUSE_LEFT]  ) {
+		// Record the response.
+		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+		return( ProvideFeedback );
+	}
+	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
+	return( currentState );
 
 }
 

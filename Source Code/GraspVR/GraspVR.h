@@ -100,6 +100,7 @@ namespace Grasp {
 		double			desiredHandRollSweetZone;
 		double			desiredHandRollTolerance;		
 		AlignmentStatus	HandleHandAlignment( bool use_arrow );	// On each iteration of the rendering loop update the feedback.
+		AlignmentStatus	HandleHandElevation( void );			// On each iteration of the rendering loop update the feedback.
 
 		// Prompt the subject to achieve the desired head orientation.
 		double			desiredHeadRoll;

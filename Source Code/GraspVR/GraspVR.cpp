@@ -374,6 +374,23 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	}
 }
 
+AlignmentStatus GraspVR::HandleHandElevation( void ) {
+
+	// Check if the hand is raised properly. If not, it is shown in grey.
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
+	NormalizeVector( relativeHandPosition );
+	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
+		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		return( misaligned );
+	}
+	else {
+		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );
+		return( aligned );
+	}
+
+}
+
 void GraspVR::HandleSpinningPrompts( void ) {
 	static double angle = 39.0;
 	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
