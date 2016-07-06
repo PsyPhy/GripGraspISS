@@ -54,6 +54,13 @@ namespace Grasp {
 		::Timer auxStateTimer;
 		::Timer blockTimer;
 
+		// Detect action of the subject to record a response.
+		bool Validate( void ) {
+			ovrInputState state;
+			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
+			return( (oculusDisplay->Button[MOUSE_LEFT]) || (state.Buttons & ovrButton_Enter) );
+		}
+
 		// 
 		// Now define the handlers for each possible GraspTrialState.
 		// All of these methods are declared virtual, with the expectation

@@ -269,7 +269,7 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 	// Make the prompt spin to avoid creating a reference frame.
 	HandleSpinningPrompts();
 	// When the subject clicks a button, we move on to start the first trial
-	if ( oculusDisplay->Button[MOUSE_LEFT]  ||  oculusDisplay->Button[MOUSE_MIDDLE] ||  oculusDisplay->Button[MOUSE_RIGHT] ) return( StartTrial );
+	if ( Validate() ) return( StartTrial );
 	// Otherwise, continue in this state.
 	return( currentState );
 }
@@ -445,7 +445,7 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 	// Handle triggering and moving the projectiles.
-	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
+	if ( Validate() ) {
 		// Record the response.
 		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
@@ -524,7 +524,7 @@ void GraspTaskManager::EnterBlockCompleted( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
-	if ( oculusDisplay->Button[MOUSE_LEFT] ||  oculusDisplay->Key['\r'] ) return( ExitStateMachine );
+	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
 	HandleSpinningPrompts();
@@ -546,7 +546,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// Show the message until the subject presses a button.
-	if ( oculusDisplay->Button[MOUSE_LEFT] ) {		
+	if ( Validate() ) {		
 		// If retry count has not been exceeded and if there is room
 		//  copy the current trial paramters to the end of the list
 		//  of trials to be performed.
@@ -576,7 +576,7 @@ void GraspTaskManager::EnterTimeout( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateTimeout( void ) { 
 	// When the subject presses a button, move on..
-	if ( oculusDisplay->Button[MOUSE_LEFT] ) {
+	if ( Validate() ) {
 		// If retry count has not been exceeded and if there is room
 		//  copy the current trial paramters to the end of the list
 		//  of trials to be performed.
@@ -760,7 +760,7 @@ GraspTrialState KtoK::UpdateObtainResponse( void ) {
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 
-	if ( HandleHandElevation() == aligned && oculusDisplay->Button[MOUSE_LEFT]  ) {
+	if ( HandleHandElevation() == aligned && Validate()  ) {
 		// Record the response.
 		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
