@@ -245,7 +245,9 @@ struct OculusDisplayOGL
 	OVR::GLEContext         GLEContext;
 	bool                    Running;
 	bool                    Key[256];
-	bool					Button[256];	
+	bool					Button[256];
+	unsigned int			KeyDownEvents[256];
+	unsigned int			ButtonDownEvents[256];
 	int                     WinSizeW;
 	int                     WinSizeH;
 	GLuint                  fboId;
@@ -294,7 +296,9 @@ struct OculusDisplayOGL
 
 		case WM_KEYDOWN:
 			p->Key[wParam] = true;
+			p->KeyDownEvents[wParam]++;
 			break;
+
 		case WM_KEYUP:
 			p->Key[wParam] = false;
 			break;
@@ -392,6 +396,11 @@ struct OculusDisplayOGL
 		return 0;
 	}
 
+	void ClearKeyDownEvents( int key = -1 ) {
+		if ( key < 0 ) 	for (int i = 0; i < sizeof(KeyDownEvents) / sizeof(KeyDownEvents[0]); ++i) KeyDownEvents[i] = 0;
+		else KeyDownEvents[key] = 0;
+	}
+
 	OculusDisplayOGL() :
 
 	hInstance(nullptr),
@@ -416,6 +425,7 @@ struct OculusDisplayOGL
 		// Clear input
 		for (int i = 0; i < sizeof(Key) / sizeof(Key[0]); ++i) Key[i] = false;
 		for (int i = 0; i < sizeof(Button) / sizeof(Button[0]); ++i) Button[i] = false;
+		ClearKeyDownEvents();
 	}
 
 	~OculusDisplayOGL()
@@ -597,6 +607,7 @@ struct OculusDisplayOGL
 		}
 		GLEContext.Shutdown();
 	}
+
 
 	static void GLAPIENTRY DebugGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 	{

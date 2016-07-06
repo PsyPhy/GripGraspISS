@@ -221,8 +221,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Boresight the HMD tracker on 'B'.
 		// This is here for debugging and should probably be removed.
-		if ( oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
-		if ( oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
+		if ( oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
+		if ( oculusDisplay->KeyDownEvents['U'] ) trackers->hmdTracker->Unboresight();
 
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.
@@ -232,6 +232,9 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// enabled. The state machine is responsible for enabling and disabling
 		// the OpenGLObjects objects as needed.
 		Render();
+
+		// Clear any accumulated keydown events in preparation for the next cycle.
+		oculusDisplay->ClearKeyDownEvents();
 	}
 	if ( fp ) fclose( fp );
 	fp = NULL;
@@ -422,7 +425,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
-	if ( oculusDisplay->Key['G'] && status == aligned ) return( ObtainResponse ); 
+	if ( oculusDisplay->KeyDownEvents['G'] && status == aligned ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
