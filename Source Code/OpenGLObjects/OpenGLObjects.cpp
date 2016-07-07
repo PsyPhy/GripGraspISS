@@ -14,8 +14,6 @@
 #include "../Useful/Useful.h"
 #include "OpenGLObjects.h"
 
-#define USE_PARENT_COLOR  -1.0
-
 using namespace PsyPhy;
 
 /***************************************************************************/
