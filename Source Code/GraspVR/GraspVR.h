@@ -50,6 +50,8 @@ namespace Grasp {
 			oculusMapper( nullptr ),
 			trackers( nullptr ),
 
+			armRaisedThreshold( 0.9 ),
+
 			desiredHeadRoll( 20.0 ), 
 			desiredHeadRollSweetZone( 2.0 ),
 			desiredHeadRollTolerance( 5.0 ),
