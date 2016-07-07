@@ -84,7 +84,7 @@ void GraspTrackers::Update( void ) {
 	fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
 	fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
 	fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
-	fAbortMessageOnCondition( !mouseTracker->Update(), "PsyPhyOculusDemo", "Error updating mouse pose tracker." );
+	fAbortMessageOnCondition( !rollTracker->Update(), "PsyPhyOculusDemo", "Error updating mouse pose tracker." );
 
 }
 
@@ -92,7 +92,7 @@ void GraspTrackers::Release( void ) {
 	hmdTracker->Release();
 	handTracker->Release();
 	chestTracker->Release();
-	mouseTracker->Release();
+	rollTracker->Release();
 }
 
 // GraspDexTrackers is any version of GraspVR that uses the coda. 
@@ -145,7 +145,7 @@ void GraspDexTrackers::Initialize( void ) {
 	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdCascadeTracker );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
-	// Create a tracker to control the orientation via the mouse.
+	// Create a tracker to control the roll orientation via the mouse.
 	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
@@ -153,16 +153,11 @@ void GraspDexTrackers::Initialize( void ) {
 	hmdTracker = oculusCodaPoseTracker;
 	handTracker = handCascadeTracker;
 	chestTracker = chestCascadeTracker;
-	mouseTracker = mouseRollTracker;
+	rollTracker = mouseRollTracker;
 	
 	// Place the hand at a constant position relative to the origin.
-	mouseTracker->OffsetTo( handPoseV );
+	rollTracker->OffsetTo( handPoseV );
 	//handTracker->OffsetTo( handPoseK );
-
-	////
-	//// We are not yet tracking positions, so we need to position the hand appropriately.
-	//// Here I boresight the hand tracker to the fixed position as well. But this is
-	////  temporary and should be removed when we start tracking 3D positions as well.
 
 	// Give the trackers a chance to get started.
 	Sleep( 200 );
@@ -248,15 +243,16 @@ void GraspSimTrackers::Initialize( void ) {
 	
 	 fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspSimTrackers", "Error initializing OculusPoseTracker." );
 
-	// Create a mouse tracker to simulate movements of the hand.
-	mouseTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
-	fAbortMessageOnCondition( !mouseTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
+	// Create a tracker to control roll movements of the hand for the toV responses.
+	rollTracker = new PsyPhy::OculusRemoteRollPoseTracker( oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
-	// The MouseRollPoseTracker will then rotate the tool around this constant position.
-	mouseTracker->OffsetTo( handPoseV );
+	// The rollTracker will then rotate the tool around this constant position.
+	rollTracker->OffsetTo( handPoseV );
 
-	// The hand tracker is also a mouse tracker to simulate the other protocols.
-	// The hand tracker will move in parallel to the mouse tracker, but  since they are never used together this should be OK.
+	// The hand tracker is a mouse tracker to simulate the other protocols.
+	// If rollTrackers is also a mouse tracker, they will move in parallel to each other, 
+	// but  since they are never used together this should be OK.
 	handTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !handTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the hand tracker." );
 	// Set the default position and orientation of the hand.

@@ -47,7 +47,7 @@ namespace Grasp {
 		PoseTracker *hmdTracker;
 		PoseTracker *handTracker;
 		PoseTracker *chestTracker;
-		PoseTracker *mouseTracker;
+		PoseTracker *rollTracker;
 
 		GraspTrackers() {}
 		virtual void Initialize( void ) = 0;
@@ -108,6 +108,8 @@ namespace Grasp {
 
 		// We will need a mouse tracker of some kind to do the V-V protocol.
 		MouseRollPoseTracker *mouseRollTracker;
+		// Or we can use the Oculus remote.
+		OculusRemoteRollPoseTracker *oculusRollTracker;
 
 	public:
 

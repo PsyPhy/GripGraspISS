@@ -54,9 +54,9 @@ void GraspVR::UpdateTrackers( void ) {
 		TrackerPose mousePose;
 		viewpoint->SetPose( headPose.pose );
 		renderer->hud->SetPose( headPose.pose );
-		if ( !trackers->mouseTracker->GetCurrentPose( mousePose ) ) {
+		if ( !trackers->rollTracker->GetCurrentPose( mousePose ) ) {
 			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading mouse pose tracker (%03d).\n", ++pose_error_counter );
+			fOutputDebugString( "Error reading roll tracker (%03d).\n", ++pose_error_counter );
 		}
 		else renderer->vTool->SetAttitude( mousePose.pose.orientation );
 	}

@@ -57,6 +57,18 @@ public:
 		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
 };
 
+// A  tracker that controls roll movements only using the Oculus remote.
+// You can change the gain and change the direction by setting the gain to be negative.
+class OculusRemoteRollPoseTracker : public MousePoseTracker {
+public:
+		Vector3 eulerAngles;
+		OculusRemoteRollPoseTracker( OculusMapper *ptr = nullptr, double gain = 1.0 );
+		~OculusRemoteRollPoseTracker();
+		bool Update( void );
+		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
+};
+
+
 };
 
 

@@ -36,15 +36,6 @@ MouseRollPoseTracker::MouseRollPoseTracker( OculusMapper *mapper, double gain ) 
 }
 
 bool MouseRollPoseTracker::Update ( void ) {
-
-	// Read the state of the Oculus remote buttons and use them to drive the roll angle as well.
-	ovrInputState state;
-	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-	if ( state.Buttons & ovrButton_Left ) eulerAngles[ROLL] -= gain * 8.0;
-	if ( state.Buttons & ovrButton_Down ) eulerAngles[ROLL] -= gain;
-	if ( state.Buttons & ovrButton_Right ) eulerAngles[ROLL] += gain * 8.0;
-	if ( state.Buttons & ovrButton_Up ) eulerAngles[ROLL] += gain;
-
 	// Here we check the state of the key and move one gain step per cycle.
 	// If framerate is constant, velocity should be constant.
 	// An alternative approach would be to move according to the number of key down
@@ -58,11 +49,22 @@ bool MouseRollPoseTracker::Update ( void ) {
 }
 
 bool MouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
+
+	// Place the position of this simulated tracker.
 	CopyVector( pose.pose.position, zeroVector );
+	// When using this tracker in simulation, it is useful to have the ability 
+	// to raise and lower the hand.
+	if ( oculusMapper->display->Key['W'] ) pose.pose.position[Y] = -250.0;
+
+	// Compute the orientation output based on the mouse position and the results
+	// of the various key presses handled in the Update() method.
 	Quaternion rollQ, pitchQ, yawQ;
 	Quaternion intermediateQ;
-
-	SetQuaternion( rollQ, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain + eulerAngles[ROLL], kVector );
+	// A feature of the Oculus window on the laptop screen is that you can move the mouse infinitely in any direction.
+	// When the cursor gets to the edge of the screen, it wraps around to the other side.
+	// Here we use this feature to allow the roll angle to move without a limit.
+	SetQuaternion( rollQ, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
+	// Add in the pitch and yaw components, computed from eulerAngles[] that were modulated with key presses in Update().
 	SetQuaternion( pitchQ, eulerAngles[PITCH], iVector );
 	MultiplyQuaternions( intermediateQ, pitchQ, rollQ );
 	SetQuaternion( yawQ, eulerAngles[YAW], jVector );
@@ -90,6 +92,62 @@ bool ArrowsRollPoseTracker::Update ( void ) {
 bool ArrowsRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	CopyVector( pose.pose.position, zeroVector );
 	SetQuaternion( pose.pose.orientation, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
+	pose.time = GetTime();
+	pose.visible = true;
+	return pose.visible;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+OculusRemoteRollPoseTracker::OculusRemoteRollPoseTracker( OculusMapper *mapper, double gain ) {
+	oculusMapper = mapper;
+	this->gain = gain;
+	CopyVector( eulerAngles, zeroVector );
+	MousePoseTracker::MousePoseTracker( mapper, gain );
+}
+
+bool OculusRemoteRollPoseTracker::Update ( void ) {
+
+	// Read the state of the Oculus remote buttons and use them to drive the roll angle.
+	ovrInputState state;
+	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
+	// Use the disk buttons, which are like a mini joystick on a game pad, to move the roll angle.
+	// Left and Right move at a moderate rate. LeftDown and RightDown move faster. LeftUp and RightUp move slower.
+	// I am trying to get an intuitive way to change the speed. I don't think, however, that this is a
+	// good solution. We should look for another.
+	if ( state.Buttons & ovrButton_Left && state.Buttons & ovrButton_Down ) eulerAngles[ROLL] -= gain * 32.0;
+	else if ( state.Buttons & ovrButton_Left && state.Buttons & ovrButton_Up ) eulerAngles[ROLL] -= gain;
+	else if ( state.Buttons & ovrButton_Right && state.Buttons & ovrButton_Up ) eulerAngles[ROLL] += gain;
+	else if ( state.Buttons & ovrButton_Right && state.Buttons & ovrButton_Down ) eulerAngles[ROLL] += gain * 32;
+	else if ( state.Buttons & ovrButton_Left ) eulerAngles[ROLL] -= gain * 8.0;
+	else if ( state.Buttons & ovrButton_Right ) eulerAngles[ROLL] += gain * 8.0;
+	// Limit the roll angle of this tracker to +/- 90°.
+	if ( eulerAngles[ROLL] > ToRadians( 90.0 ) ) eulerAngles[ROLL] = ToRadians( 90.0 );
+	if ( eulerAngles[ROLL] < ToRadians( -90.0 ) ) eulerAngles[ROLL] = ToRadians( -90.0 );
+
+	// This is a more-or-less hidden feature. You can change pitch and yaw with the arrow keys on the keyboard.
+	// Here we check the state of the key and move one gain step per cycle.
+	// If framerate is constant, velocity should be constant.
+	// An alternative approach would be to move according to the number of key down
+	// events since the last cycle. That would allow for finer control and benefit from the
+	// accelerating nature of events when you hold down a key.
+	if ( oculusMapper->display->Key[VK_LEFT] ) eulerAngles[YAW] -= gain;
+	if ( oculusMapper->display->Key[VK_RIGHT] ) eulerAngles[YAW] += gain;
+	if ( oculusMapper->display->Key[VK_UP] ) eulerAngles[PITCH] -= gain;
+	if ( oculusMapper->display->Key[VK_DOWN] ) eulerAngles[PITCH] += gain;
+	return true;
+}
+
+bool OculusRemoteRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
+	CopyVector( pose.pose.position, zeroVector );
+	Quaternion rollQ, pitchQ, yawQ;
+	Quaternion intermediateQ;
+
+	SetQuaternion( rollQ, eulerAngles[ROLL], kVector );
+	SetQuaternion( pitchQ, eulerAngles[PITCH], iVector );
+	MultiplyQuaternions( intermediateQ, pitchQ, rollQ );
+	SetQuaternion( yawQ, eulerAngles[YAW], jVector );
+	MultiplyQuaternions( pose.pose.orientation, yawQ, intermediateQ );
 	pose.time = GetTime();
 	pose.visible = true;
 	return pose.visible;

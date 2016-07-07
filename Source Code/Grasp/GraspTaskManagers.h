@@ -58,7 +58,7 @@ namespace Grasp {
 		bool Validate( void ) {
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-			return( (oculusDisplay->Button[MOUSE_LEFT]) || (state.Buttons & ovrButton_Enter) );
+			return( (oculusDisplay->Button[MOUSE_LEFT]) || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter) );
 		}
 
 		// 
