@@ -760,7 +760,7 @@ GraspTrialState KtoK::UpdateObtainResponse( void ) {
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
 
-	if ( HandleHandElevation() == aligned && Validate()  ) {
+	if ( raised == HandleHandElevation() && Validate()  ) {
 		// Record the response.
 		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );

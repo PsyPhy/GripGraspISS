@@ -299,6 +299,27 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	}
 }
 
+ArmStatus GraspVR::HandleHandElevation( void ) {
+
+	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
+	NormalizeVector( relativeHandPosition );
+	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
+		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		renderer->vkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		return( lowered );
+	}
+	else {
+		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );	// kTool is always blue regardless of the orientation.
+		renderer->vkTool->SetColor( PARENT_COLOR );			// The color will depend on the color of each finger.
+		renderer->vkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandHandOrientation.
+		return( raised );
+	}
+
+}
+
 double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
 	desiredHandRoll = desired_roll_angle;
 	desiredHandRollTolerance = tolerance;
@@ -314,11 +335,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
-	Vector3 relativeHandPosition;
-	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
-	NormalizeVector( relativeHandPosition );
-	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
-		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+	if ( lowered == HandleHandElevation() ) {
 		TimerSet( handGoodTimer, secondsToBeGood );
 		TimerSet( handBadTimer, 0.0 );
 		return( misaligned );
@@ -374,22 +391,6 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	}
 }
 
-AlignmentStatus GraspVR::HandleHandElevation( void ) {
-
-	// Check if the hand is raised properly. If not, it is shown in grey.
-	Vector3 relativeHandPosition;
-	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
-	NormalizeVector( relativeHandPosition );
-	if ( DotProduct( relativeHandPosition, kVector ) < 0.9 ) {
-		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
-		return( misaligned );
-	}
-	else {
-		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );
-		return( aligned );
-	}
-
-}
 
 void GraspVR::HandleSpinningPrompts( void ) {
 	static double angle = 39.0;

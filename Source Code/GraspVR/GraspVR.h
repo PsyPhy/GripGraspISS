@@ -15,6 +15,7 @@ namespace Grasp {
 
 	// Possible state of head or hand alignment with reference.
 	typedef enum { aligned, misaligned, transitioningToGood, transitioningToBad } AlignmentStatus;
+	typedef enum { raised, lowered } ArmStatus;
 			
 	// Possible states of the projectiles.
 	typedef enum { cocked, triggered, running, hit, miss } ProjectileState;
@@ -95,12 +96,15 @@ namespace Grasp {
 
 	protected:
 
+		// Prompt the subject to raise or lower the arm.
+		double		armRaisedThreshold;					// Essentially the cosine of the angle of the cone of acceptance for raised.
+		ArmStatus	HandleHandElevation( void );		// On each iteration of the rendering loop update the feedback.
+
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
 		double			desiredHandRollSweetZone;
 		double			desiredHandRollTolerance;		
 		AlignmentStatus	HandleHandAlignment( bool use_arrow );	// On each iteration of the rendering loop update the feedback.
-		AlignmentStatus	HandleHandElevation( void );			// On each iteration of the rendering loop update the feedback.
 
 		// Prompt the subject to achieve the desired head orientation.
 		double			desiredHeadRoll;
