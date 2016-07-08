@@ -23,6 +23,9 @@
     <ProjectReference Include="..\Grasp\Grasp.vcxproj">
       <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\OculusMouse\OculusMouse.vcxproj">
+      <Project>{9e5d3f95-06ba-42a2-8956-f82f126cf7a6}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TaskProcessUnitTester\TaskProcessUnitTester.vcxproj">
       <Project>{13f2b16b-ae29-4cb4-9d50-0b6b9ce94738}</Project>
     </ProjectReference>
