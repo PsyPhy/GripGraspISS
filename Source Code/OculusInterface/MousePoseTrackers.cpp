@@ -11,6 +11,8 @@
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
 
+#include <math.h>
+
 using namespace PsyPhy;
 
 MousePoseTracker::MousePoseTracker( OculusMapper *ptr, double gain ) {
@@ -121,7 +123,7 @@ bool OculusRemoteRollPoseTracker::Update ( void ) {
 	else if ( state.Buttons & ovrButton_Right && state.Buttons & ovrButton_Down ) eulerAngles[ROLL] += gain * 32;
 	else if ( state.Buttons & ovrButton_Left ) eulerAngles[ROLL] -= gain * 8.0;
 	else if ( state.Buttons & ovrButton_Right ) eulerAngles[ROLL] += gain * 8.0;
-	// Limit the roll angle of this tracker to +/- 90°.
+	// Limit the roll angle of this tracker to a certain range.
 	if ( eulerAngles[ROLL] > ToRadians( 90.0 ) ) eulerAngles[ROLL] = ToRadians( 90.0 );
 	if ( eulerAngles[ROLL] < ToRadians( -90.0 ) ) eulerAngles[ROLL] = ToRadians( -90.0 );
 
