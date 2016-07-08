@@ -10,19 +10,27 @@ namespace Grasp {
 
 	class DexServices 
 	{
-		SOCKET  dex_socket;
 
 	private:
+
+		SOCKET  dexSocket;
+		FILE	*log;
+
+		void printDateTime( FILE *fp = stderr );
 
 	public:
 		
 		DexServices( void ){}
+
+		void Initialize( const char *filename = "DexServices.log" );
 		int Connect( void );
-		int Send( const char *packet, int size ) ;
-
-		int SendTaskInfo( int subject, int protocol, int task, int step );
-
+		int Send( const unsigned char *packet, int size ) ;
 		void Disconnect( void );
+		void Release( void );
+
+		int SendTaskInfo( int user, int protocol, int task, int step );
+		int SnapPicture( const char *tag );
+
 
 	};
 }

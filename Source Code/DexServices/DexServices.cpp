@@ -1,7 +1,6 @@
 // Module: DexServices
 // This is the main DLL file.
 
-#include "stdafx.h"
 #include <winsock2.h>
 #include <conio.h>
 #include <stdlib.h>
@@ -11,11 +10,26 @@
 #include <time.h>
 
 #include "../Useful/fOutputDebugString.h"
+#include "../Useful/fMessageBox.h"
 
-#include "GripPackets.h"
+#include "TMData.h"
 #include "DexServices.h"
 
 using namespace Grasp;
+
+void DexServices::printDateTime( FILE *fp ) {
+	SYSTEMTIME st;
+	GetSystemTime( &st );
+	fprintf( fp, "%4d-%02d-%02d %02d:%02d:%02d.%3d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
+}
+
+
+void DexServices::Initialize( const char *filename ) {
+	 log = fopen( filename, "w" );
+	 fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", filename );
+	 printDateTime( log );
+	 fprintf( log, " File %s open for logging services.\n", filename );
+}
 
 int DexServices::Connect ( void ) {
 
@@ -57,9 +71,9 @@ int DexServices::Connect ( void ) {
 	server.sin_family = AF_INET;
 	server.sin_port = htons(port);
 
-	dex_socket = socket(AF_INET, socket_type, 0); /* Open a socket */
+	dexSocket = socket(AF_INET, socket_type, 0); /* Open a socket */
 
-	if ( dex_socket < 0 )
+	if ( dexSocket < 0 )
 	{
 		fOutputDebugString( "Client: Error Opening socket: Error %d\n", WSAGetLastError());
 		WSACleanup();
@@ -71,15 +85,15 @@ int DexServices::Connect ( void ) {
 	}
 	// Set TCP_NODELAY to reduce jitter
 	unsigned int flag = 1;
-	setsockopt( dex_socket,         /* socket affected */
-		IPPROTO_TCP,				/* set option at TCP level */
-		TCP_NODELAY,				/* name of option */
+	setsockopt( dexSocket,	/* socket affected */
+		IPPROTO_TCP,		/* set option at TCP level */
+		TCP_NODELAY,		/* name of option */
 		(char *) &flag,					
-		sizeof( flag ));			/* length of option value */
+		sizeof( flag ));	/* length of option value */
 
 	fOutputDebugString( "Client: Client connecting to: %s.\n", server_name );
 
-	if (connect( dex_socket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
+	if (connect( dexSocket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
 
 	{
 		fOutputDebugString( "Client: connect() failed: %d\n", WSAGetLastError());
@@ -95,13 +109,15 @@ int DexServices::Connect ( void ) {
 };
 
 void DexServices::Disconnect( void ) {
-	closesocket( dex_socket );
+	closesocket( dexSocket );
 	WSACleanup();
+	printDateTime( log );
+	fprintf( log, " Connection closed.\n" );
 }
 
-int DexServices::Send( const char *packet, int size ) {
+int DexServices::Send( const unsigned char *packet, int size ) {
 
-	int retval = send( dex_socket, packet, size, 0);
+	int retval = send( dexSocket, (const char *) packet, size, 0);
 	if ( retval == SOCKET_ERROR )
 	{
 		fOutputDebugString( "Client: send() failed: error %d.\n", WSAGetLastError());
@@ -114,15 +130,65 @@ int DexServices::Send( const char *packet, int size ) {
 
 }
 
-int DexServices::SendTaskInfo( int subject, int protocol, int task, int step ) {
+int DexServices::SendTaskInfo( int user, int protocol, int task, int step ) {
 
-	GripHealthAndStatusInfo info;
-	EPMTelemetryPacket		packet;
+	// A buffer to hold the string of bytes that form the packet.
+	u8 packet[1024];
+	// An object that serializes the data destined for DEX housekeeping telemetry packets.
+	HK_packet hk;
 
+	// Fill the packet with info.
+	hk.current_protocol = protocol;
+	hk.current_user = user;
+	hk.current_task = task;
+	hk.current_step = step;
 
-	InsertGripHealthAndStatusInfo( &packet, &info );
-	Send( (char *) &packet, sizeof( packet ) );
+	// These two items are currently unused.
+	hk.motiontracker_status = 99;
+	hk.scriptengine_status = 99;
 
+	// Turn the data structure into a string of bytes with header etc.
+	u32 size = hk.serialize( packet );
 
+	// Send it to DEX.
+	Send( packet, size );
+
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
+			user, protocol, task, step, hk.motiontracker_status, hk.scriptengine_status );
+	}
+
+	return 0 ;
+}
+
+int DexServices::SnapPicture( const char *tag ) {
+
+	// A buffer to hold the string of bytes that form the packet.
+	u8 packet[1024];
+	// An object that serializes the data destined for DEX housekeeping telemetry packets.
+	CameraTrigger_packet cam;
+
+	// Truncate tags that are too long.
+	if ( strlen( tag ) < sizeof( cam.tag ) ) strcpy( cam.tag, tag );
+	else {
+		// Take only the part that fits.
+		memcpy( cam.tag, tag, sizeof( cam.tag ) );
+		// Make sure that it is null terminated.
+		cam.tag[ sizeof(cam.tag) - 1 ] = '\0';
+		// Emit a warning.
+		fOutputDebugString( "Warning: Truncating tag %s to %s\n", tag, cam.tag );
+	}
+
+	// Turn the data structure into a string of bytes with header etc.
+	u32 size = cam.serialize( packet );
+
+	// Send it to DEX.
+	Send( packet, size );
+
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Snapped picture.\n" );
+	}
 	return 0 ;
 }

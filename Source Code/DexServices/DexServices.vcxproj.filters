@@ -2,13 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="DexServices.h" />
-    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="TMdata.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DexServices.cpp" />
-    <ClCompile Include="GripPackets.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <ClCompile Include="TMdata.cpp" />
   </ItemGroup>
 </Project>

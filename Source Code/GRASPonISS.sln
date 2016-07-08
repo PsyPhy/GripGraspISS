@@ -86,6 +86,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestTimers", "TestTimers\Te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusMouse", "OculusMouse\OculusMouse.vcxproj", "{9E5D3F95-06BA-42A2-8956-F82F126CF7A6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDexServices", "TestDexServices\TestDexServices.vcxproj", "{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -367,6 +369,14 @@ Global
 		{9E5D3F95-06BA-42A2-8956-F82F126CF7A6}.Release|Win32.Build.0 = Release|Win32
 		{9E5D3F95-06BA-42A2-8956-F82F126CF7A6}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{9E5D3F95-06BA-42A2-8956-F82F126CF7A6}.TestRelease|Win32.Build.0 = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.Debug|Win32.Build.0 = Debug|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.DraftRelease|Win32.Build.0 = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.Release|Win32.ActiveCfg = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.Release|Win32.Build.0 = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
