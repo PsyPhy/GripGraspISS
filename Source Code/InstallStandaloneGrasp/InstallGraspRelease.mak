@@ -1,6 +1,6 @@
 ### Keep the GRASP top level execution environment curent.
 
-EXECUTABLES =  ..\Release\OculusMouse.exe ..\Release\GraspScreenshots.exe ..\Release\Grasp.exe  ..\Release\AlignToRigidBodyGUI.exe ..\Release\GraspGUI.exe  ..\Release\TaskProcessUnitTester.exe  ..\Release\CreateRigidBodyModelFile.exe
+EXECUTABLES =  ..\Release\OculusMouse.exe  ..\Release\Grasp.exe  ..\Release\AlignToRigidBodyGUI.exe ..\Release\GraspGUI.exe  ..\Release\TaskProcessUnitTester.exe  ..\Release\CreateRigidBodyModelFile.exe
 install: $(EXECUTABLES) InstallGraspRelease.mak 
 	copy ..\Release\OculusMouse.exe ..\..\Executables
 	copy ..\Release\Grasp.exe ..\..\Executables
