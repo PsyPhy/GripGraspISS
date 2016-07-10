@@ -76,6 +76,7 @@
   <ItemGroup>
     <ClCompile Include="fMessageBox.c" />
     <ClCompile Include="fOutputDebugString.c" />
+    <ClCompile Include="ini.c" />
     <ClCompile Include="OpenGLUseful.c" />
     <ClCompile Include="ParseCommaDelimitedLine.c" />
     <ClCompile Include="timeofday.c" />
@@ -84,13 +85,11 @@
   <ItemGroup>
     <ClInclude Include="fMessageBox.h" />
     <ClInclude Include="fOutputDebugString.h" />
+    <ClInclude Include="ini.h" />
     <ClInclude Include="OpenGLUseful.h" />
     <ClInclude Include="ParseCommaDelimitedLine.h" />
     <ClInclude Include="Timers.h" />
     <ClInclude Include="Useful.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
