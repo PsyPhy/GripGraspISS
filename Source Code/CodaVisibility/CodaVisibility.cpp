@@ -26,6 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	
 	MarkerFrame localFrame[2];
+	int which_marker = 0;
 
 	fprintf( stderr, "Initializing CODA ..." );
 	codaTracker.Initialize();
@@ -68,7 +69,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				count = 0;
 			}
 		}
-		fprintf( stderr, "%s %s\n", codaTracker.vstr( localFrame[0].marker[0].position), codaTracker.vstr( localFrame[1].marker[0].position ));
+		fprintf( stderr, "%s %s\n", codaTracker.vstr( localFrame[0].marker[which_marker].position), codaTracker.vstr( localFrame[1].marker[which_marker].position ));
 
 	}
 	int key = _getch(); // Clear the _kbhit().
