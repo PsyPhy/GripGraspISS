@@ -155,9 +155,13 @@ public:
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
-	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename = nullptr );
 	void	AnnulAlignment( void );
 	void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
+	// void	SetAlignment( Pose pose[MAX_UNITS], const char *filename = nullptr );
+	// This is a little different from the above. If we have the pose of an object in the intrinsic frame,
+	// the transformation has to be inverted before sending it to the CODA system.
+	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
 
 	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;

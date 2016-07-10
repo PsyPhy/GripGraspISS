@@ -584,12 +584,34 @@ void  CodaRTnetTracker::AnnulAlignment( void ) {
 }
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
-//  compute the alignment file that the CODA uses to align the units and send it to the server.
+//  compute and set the alignment file that the CODA uses to align the units and send it to the server.
 void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
 
+	Vector3 offset[MAX_UNITS];
+	Matrix3x3 rotation[MAX_UNITS], transpose_matrix;
+
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		// The pose gives us the orientation as a quaternion. 
+		// CODA wants it as a rotation matrix.
+		QuaternionToMatrix( rotation[unit], pose[unit].orientation );
+		// The offset that the CODA appears to use is the computed from the measured offset
+		// in intrinsic coordinates transformed by the inverse rotation (transpose).
+		// NB The transpose may come from the fact that I use row vectors.
+		// In any case, I came up with this by trial and error.
+		TransposeMatrix( transpose_matrix, rotation[unit] );
+		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
+	}
+	SetAlignment( offset, rotation, filename );
+
+}
+
+// Send the alignment transformations specified as offset and rotation matrix to the CODA.
+void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename ) {
+
 	char command_line[10240];
-	Matrix3x3 rotation_matrix, transpose_matrix;
-	Vector3 offset;
+
+	SYSTEMTIME st;
+	GetSystemTime( &st );
 
 	// Create a unique filename for a local temporary file.
 	// It can be overridden by the caller.
@@ -598,8 +620,6 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char 
 		strncpy( local_filename, filename, sizeof( local_filename ));
 	}
 	else {
-		SYSTEMTIME st;
-		GetSystemTime( &st );
 		sprintf( local_filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_%s", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
 	}
 
@@ -610,26 +630,22 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char 
 	fprintf( fp, "[CODA System Alignment]\n" );
 	// A block of parameters for each unit.
 	for ( int unit = 0; unit < nUnits; unit++ ) {
-		// The pose gives us the orientation as a quaternion. 
-		// CODA wants it as a rotation matrix.
-		QuaternionToMatrix( rotation_matrix, pose[unit].orientation );
-		// The offset that the CODA appears to use is the computed from the measured offset
-		// in intrinsic coordinates transformed by the inverse rotation (transpose).
-		// NB The transpose may come from the fact that I use row vectors.
-		// In any case, I came up with this by trial and error.
-		TransposeMatrix( transpose_matrix, rotation_matrix );
-		MultiplyVector( offset, pose[unit].position, transpose_matrix );
-		// The serial numbers are recorded in the alignment file, so I need to put them here (I think).
-		// But I don't know how to get the serial numbers from the CODA units that are connected.
-		// So here I am hard coding the serial numbers from the GRIP science model. I will have to see
-		//  what happens when we move to other hardware.
+		// The serial numbers are recorded in the alignment file.
+		// I don't know how to read the serial numbers from the server, so they are assigned when
+		//  this tracker is initialized. Here I check to see if they have been set by the presence
+		//  of an appropriate .ini file or by the caller.
+		// Note that this checks if a serial number has been defined here on the client. Success does not
+		//  mean that the serial numbers defined here correspond correctly to the serial numbers on the server.
+		fAbortMessageOnCondition( !strcmp( codaSerialNumber[unit], "0000" ), "CodaRTnetTracker", "Serial number has not been defined for CODA cx1 unit %d", unit );
+		// Write the serial number into the alignment file.
 		fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber[unit] );
 		// Note the negative signs for the offset. Again, trial and error.
-		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[X],  - offset[Y], - offset[Z] );
-		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation_matrix[X][X] , rotation_matrix[X][Y] , rotation_matrix[X][Z] );
-		fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation_matrix[Y][X] , rotation_matrix[Y][Y] , rotation_matrix[Y][Z] );
-		fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation_matrix[Z][X] , rotation_matrix[Z][Y] , rotation_matrix[Z][Z] );
+		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[unit][X],  - offset[unit][Y], - offset[unit][Z] );
+		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation[unit][X][X] , rotation[unit][X][Y] , rotation[unit][X][Z] );
+		fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation[unit][Y][X] , rotation[unit][Y][Y] , rotation[unit][Y][Z] );
+		fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation[unit][Z][X] , rotation[unit][Z][Y] , rotation[unit][Z][Z] );
 	}
+	fprintf( fp, ";;;\n;;; Created by CodaRTnetTracker %04d-%02d-%02d %02d:%02d:%02d\n;;;\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	fclose( fp );
 	// Here we send the new alignment file to the CODA server. 
 	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
