@@ -14,9 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/ini.h"
 
 #include "CodaRTnetTracker.h"
 
@@ -47,9 +49,15 @@ using namespace codaRTNet;
 
 /***************************************************************************/
 
-void CodaRTnetTracker::Initialize( void ) {
+void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 	
 	try {
+
+		// If there is an .ini file, parse it for serial numbers, server address, etc.
+		if ( ini_filename ) {
+			fOutputDebugString( "CodaRTnetTracker: Parsing %s.\n", ini_filename );
+			ini_parse( ini_filename, iniHandler, this );
+		}
 		
 		// Decode the IP address string that has already been initialized as part of the class.
 		unsigned int p, q, r, s;
@@ -574,6 +582,7 @@ void  CodaRTnetTracker::AnnulAlignment( void ) {
 	FILE *fp = fopen( filename, "w" );
 	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", filename );
 	fprintf( fp, "Dummy calibration file sent to clobber current alignment.\n" );
+	fprintf( fp, ";;;\n;;; Created by CodaRTnetTracker %04d-%02d-%02d %02d:%02d:%02d\n;;;\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	fclose( fp );
 	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
 		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, filename, codaAlignmentFilename );

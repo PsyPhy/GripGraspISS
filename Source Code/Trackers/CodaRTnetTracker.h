@@ -29,17 +29,17 @@ class CodaRTnetTracker : public Tracker {
 private:
 
 	// Hardwire the server IP address and port.
-	char *serverAddress;
+	char serverAddress[64];
 	unsigned int serverPort;
 
 	// Information to allow FTP to the server.
 	// We use this to manipulate the alignment transformations.
-	char *executablesPath;				// Path on the local machine to executables such as WinSCP.exe.
-	char *serverLogonID;				// Login ID and password for FTP to the CodaRTNet server.
-	char *serverPassword;
-	char *codaCalDirectory;				// Location and filename of where the alignment resides on the server.
-	char *codaAlignmentFilename;
-	char *codaSerialNumber[MAX_UNITS];			// Serial numbers of the CODA cx1 units. These are hard coded for now but we should read them somehow.
+	char executablesPath[FILENAME_MAX];				// Path on the local machine to executables such as WinSCP.exe.
+	char serverLogonID[64];				// Login ID and password for FTP to the CodaRTNet server.
+	char serverPassword[64];
+	char codaCalDirectory[FILENAME_MAX];				// Location and filename of where the alignment resides on the server.
+	char codaAlignmentFilename[FILENAME_MAX];
+	char codaSerialNumber[MAX_UNITS][16];			// Serial numbers of the CODA cx1 units. These are hard coded for now but we should read them somehow.
 
 	// Marker tracker device.
 	const int cx1Device;	// Should be the CX1
@@ -98,19 +98,7 @@ public:
 
 	CodaRTnetTracker( void ) : 
 
-		// Host address and UDP port for the Coda RTnet server.
-	    // The following addresss is for the RTnet server on DEX via the ETD port.
-		serverAddress( "10.80.12.103" ),
-		serverPort(10111), 
-
-		// FTP parameters
-		serverLogonID( "administrator" ),
-		serverPassword( "dex" ),
-		codaCalDirectory( "CodaMotion\\RTNet\\Binaries\\" ),
-		codaAlignmentFilename( "codaRTModuleCX1-Alignment.dat" ),
-		executablesPath( "Executables\\" ),
-
-		// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
+	  	// Marker acquistion rate (200Hz), down sampling (none) and external sync (no).
 		coda_mode( CODANET_CODA_MODE_200, 1, false ), 
 
 		// Request marker data from each Coda unit separately.
@@ -125,19 +113,49 @@ public:
 		cx1Device(1),
 		// This determines how many times we try to get a failed packet before giving up.
 		maxRetries(5)
+	
 	{
-		// For the moment these are hard coded and need to be changed when you run
-		//  on different machines. Should be somehow read from the server.
+		// Host address and UDP port for the Coda RTnet server.
+	    // The following addresss is for the RTnet server on DEX via the ETD port.
+		strcpy( serverAddress, "10.80.12.103" );
+		serverPort = 10111;
 
-		// Science Model @ Tecnalia
-		codaSerialNumber[0] = "3008";
-		codaSerialNumber[1] = "3009";
-		// Ground Model @ CADMOS
-		//codaSerialNumber[0] = "3006";
-		//codaSerialNumber[1] = "3007";
+		// FTP parameters
+		strcpy( serverLogonID, "administrator" );
+		strcpy( serverPassword, "dex" );
+		strcpy( codaCalDirectory, "CodaMotion\\RTNet\\Binaries\\" );
+		strcpy( codaAlignmentFilename, "codaRTModuleCX1-Alignment.dat" );
+		strcpy( executablesPath, "Executables\\" );
+
+		// Define the CODA cx1 serial numbers.
+		// I set them to "0000" here and check later to see if the correct values have been
+		//  initialized by the presence of a .ini file.
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) strcpy( codaSerialNumber[unit], "0000" );
 	}
 
-	void Initialize( void );
+private: 
+
+	static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+		CodaRTnetTracker *instance = (CodaRTnetTracker *) which_instance;
+		for ( int unit = 0; unit < MAX_UNITS; unit ++ ) {
+			char unit_name[32];
+			sprintf( unit_name, "CX1SerialNumber%d", unit );
+			if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, unit_name )) {
+				strncpy( instance->codaSerialNumber[unit], value ,  sizeof( instance->codaSerialNumber[unit] ));
+				fOutputDebugString( "CodaRTnet:  Serial Number %d = %s\n", unit, instance->codaSerialNumber[unit] );
+			}
+		}
+		if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, "CodaServerHost" )) strncpy( instance->serverAddress, value, sizeof( instance->serverAddress ));
+		if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, "CodaServerPort" )) instance->serverPort = atoi( value );
+		if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, "CodaServerLogin" )) strncpy( instance->serverLogonID, value, sizeof( instance->serverLogonID ));
+		if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, "CodaServerPassword" )) strncpy( instance->serverPassword, value, sizeof( instance->serverPassword ));
+		if ( !strcmp( section, "CodaRTnet" ) && !strcmp( name, "LocalExecutablesPath  " )) strncpy( instance->executablesPath, value, sizeof( instance->executablesPath  ));
+
+		return 1;
+	}
+
+public:
+	void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	int  Update( void );
 	void Quit( void );
 
