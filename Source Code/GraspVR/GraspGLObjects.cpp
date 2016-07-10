@@ -617,7 +617,7 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( GREEN );
-		else component[mrk]->SetColor( 0.1, 0.0, 0.05, 1.0 );
+		else component[mrk]->SetColor( BLACK );
 	}
 }
 
@@ -728,31 +728,31 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
 	double vertices[8][2];
 
-	vertices[0][X] = structure->modelMarker[1].position[X];
-	vertices[0][Y] = structure->modelMarker[1].position[Y];
-	vertices[1][X] = structure->modelMarker[5].position[X];
-	vertices[1][Y] = structure->modelMarker[5].position[Y];
-	vertices[2][X] = structure->modelMarker[2].position[X];
-	vertices[2][Y] = structure->modelMarker[2].position[Y];
-	vertices[3][X] = structure->modelMarker[6].position[X];
-	vertices[3][Y] = structure->modelMarker[6].position[Y];
+	vertices[0][X] = -130.0;
+	vertices[0][Y] = -90.0;
+	vertices[1][X] = -130.0;
+	vertices[1][Y] = 90.0;
+	vertices[2][X] = 130.0;
+	vertices[2][Y] = 90.0;
+	vertices[3][X] = 130.0;
+	vertices[3][Y] = -90.0;
 	Extrusion *plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
 	plate->SetColor( 1.0, 1.0, 0.0, 0.35 );
-	plate->SetPosition( 0.0, 0.0, ( structure->modelMarker[1].position[Z] + structure->modelMarker[5].position[Z] + structure->modelMarker[2].position[Z] + structure->modelMarker[6].position[Z] )/ 4.0 + STRUCTURE_BAR_RADIUS );
+	plate->SetPosition( 0.0, 0.0, 60.0 );
 	structure->AddComponent( plate );
 
-	vertices[0][X] = structure->modelMarker[0].position[X];
-	vertices[0][Y] = structure->modelMarker[0].position[Y];
-	vertices[1][X] = structure->modelMarker[3].position[X];
-	vertices[1][Y] = structure->modelMarker[3].position[Y];
-	vertices[2][X] = structure->modelMarker[4].position[X];
-	vertices[2][Y] = structure->modelMarker[4].position[Y];
-	vertices[3][X] = structure->modelMarker[7].position[X];
-	vertices[3][Y] = structure->modelMarker[7].position[Y];
+	vertices[0][X] = 0.0;
+	vertices[0][Y] = 60.0;
+	vertices[1][X] = 80.0;
+	vertices[1][Y] = 0.0;
+	vertices[2][X] = 0.0;
+	vertices[2][Y] = - 60.0;
+	vertices[3][X] = - 80.0;
+	vertices[3][Y] = 0.0;
 	plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
-	structure->AddComponent( plate );
-	plate->SetPosition( 0.0, 0.0, ( structure->modelMarker[7].position[Z] + structure->modelMarker[4].position[Z] + structure->modelMarker[3].position[Z] + structure->modelMarker[0].position[Z] )/ 4.0 + STRUCTURE_BAR_RADIUS );
+	plate->SetPosition( 0.0, 0.0,  0.0 );
 	plate->SetColor( 1.0, 0., 0.0, 0.35 );
+	structure->AddComponent( plate );
 
 	return( structure );
 }

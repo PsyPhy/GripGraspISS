@@ -42,7 +42,9 @@ namespace AlignToRigidBodyGUI {
 		String^ filenameRoot;
 
 		double maxPositionError;
-	private: System::Windows::Forms::Label^  trackerInitializing;
+	private: System::Windows::Forms::Label^  busy;
+	protected: 
+
 	protected: 
 		double maxOrientationError;
 
@@ -137,7 +139,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->trackerInitializing = (gcnew System::Windows::Forms::Label());
+			this->busy = (gcnew System::Windows::Forms::Label());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
 			this->SuspendLayout();
@@ -216,19 +218,18 @@ namespace AlignToRigidBodyGUI {
 			this->instructionsTextBox->TabIndex = 6;
 			this->instructionsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
-			// trackerInitializing
+			// busy
 			// 
-			this->trackerInitializing->AutoSize = true;
-			this->trackerInitializing->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
-			this->trackerInitializing->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->trackerInitializing->ForeColor = System::Drawing::Color::IndianRed;
-			this->trackerInitializing->Location = System::Drawing::Point(280, 371);
-			this->trackerInitializing->Name = L"trackerInitializing";
-			this->trackerInitializing->Size = System::Drawing::Size(678, 184);
-			this->trackerInitializing->TabIndex = 7;
-			this->trackerInitializing->Text = L"Tracker Initializing\r\nPlease wait ...";
-			this->trackerInitializing->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->busy->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->busy->ForeColor = System::Drawing::Color::IndianRed;
+			this->busy->Location = System::Drawing::Point(174, 371);
+			this->busy->Name = L"busy";
+			this->busy->Size = System::Drawing::Size(888, 184);
+			this->busy->TabIndex = 7;
+			this->busy->Text = L"Alignment in progress.\r\nPlease wait ...";
+			this->busy->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// SingleObjectForm
 			// 
@@ -237,15 +238,17 @@ namespace AlignToRigidBodyGUI {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
 			this->ClientSize = System::Drawing::Size(1237, 924);
-			this->Controls->Add(this->trackerInitializing);
+			this->ControlBox = false;
+			this->Controls->Add(this->busy);
 			this->Controls->Add(this->instructionsTextBox);
 			this->Controls->Add(this->vrGroupBox2);
 			this->Controls->Add(this->vrGroupBox1);
 			this->Controls->Add(this->cancelButton);
 			this->Controls->Add(this->alignButton);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
 			this->Location = System::Drawing::Point(20, 40);
 			this->Name = L"SingleObjectForm";
-			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"CODA Tracker Alignment";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &SingleObjectForm::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &SingleObjectForm::Form1_Shown);
@@ -276,8 +279,8 @@ namespace AlignToRigidBodyGUI {
 				 // Create the OpenGLObjects that depict the marker array structure.
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
-				 alignmentObject1 = objects->CreateHandMarkerStructure( model_file );
-				 alignmentObject2 = objects->CreateHandMarkerStructure( model_file );
+				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
+				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
 				 // Create a viewpoint that looks at the origin from the negative Z axis.
@@ -297,13 +300,14 @@ namespace AlignToRigidBodyGUI {
 					 return;
 				 }
 
-				 // Make sure that the windows have refreshed  before starting up the CODA, because it will 
-				 // take some time.
 
 				 // Show the Form as being inactive.
 				 Enabled = false;
 				 // Show a message while the tracker is initializing.
-				 trackerInitializing->Visible = true;
+				 busy->Text = L"Tracker Initializing\r\nPlease wait ...";
+				 busy->Visible = true;
+				 // Make sure that the windows have refreshed  before starting up the CODA, because it will 
+				 // take some time.
 				 Refresh();
 				 Application::DoEvents();
 
@@ -313,11 +317,11 @@ namespace AlignToRigidBodyGUI {
 				 coda->StartAcquisition( 600.0 );
 				 
 				 // Hide the tracker message.
-				 trackerInitializing->Visible = false;
+				 busy->Visible = false;
 				 // Re-enable the Form as being inactive.
 				 Enabled = true;
 				 // Prompt for the required action.
-				 instructionsTextBox->Text = "Verify that all markers are visible in each Tracker Camera view" + "         (all dots green) and then press 'Align'.         ";
+				 instructionsTextBox->Text = "Verify that all markers on the Chest Marker Plate are visible in each Tracker Camera view (all dots green) and then press 'Align'.         ";
 
 				 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
 				 CreateRefreshTimer( 300 );
@@ -328,14 +332,26 @@ namespace AlignToRigidBodyGUI {
 	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { }
 	private: System::Void alignButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
-				 // If in noCoda debug mode, signal to close the form and then return to skip initiating the CODA system.
+				 // Remove instruction.
+				 instructionsTextBox->Text = "";
+				 Refresh();
+				 Application::DoEvents();
+	
+			     // If in noCoda debug mode, signal to close the form and then return to skip initiating the CODA system.
 				 if ( noCoda ) {
 					 Close();
 					 return;
 				 }
 
-				 // Show the Form as being inactive.
-				 Enabled = false;
+				 // Show a message while we are busy acquiring and computing the new alignment.
+				 busy->Text = L"Alignment in Progress\r\nPlease wait ...";
+				 busy->Visible = true;
+				 // Show the buttons on the form as being inactive.
+				 cancelButton->Enabled = false;
+				 alignButton->Enabled = false;
+				 Refresh();
+				 Application::DoEvents();
+				 coda->AnnulAlignment();
 
 				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
 				 StopRefreshTimer();
@@ -345,9 +361,16 @@ namespace AlignToRigidBodyGUI {
 				 coda->Quit();
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
+				 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
+				 Refresh();
+				 Application::DoEvents();
 				 coda->AnnulAlignment();
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
+				 instructionsTextBox->Text = "[ Acquiring alignment data ... ]";
+				 Sleep( 10 );
+				 Refresh();
+				 Application::DoEvents();
 				 coda->Initialize();
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 
@@ -362,7 +385,8 @@ namespace AlignToRigidBodyGUI {
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.
 				 while ( coda->GetAcquisitionState() ) {
-					 fprintf( stderr, "." );
+					 Refresh();
+					 Application::DoEvents();
 					 Sleep( 20 );
 				 }
 				 coda->StopAcquisition();
@@ -380,6 +404,9 @@ namespace AlignToRigidBodyGUI {
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
+				 instructionsTextBox->Text = "[ Computing alignment transformations ... ]";
+				 Refresh();
+				 Application::DoEvents();
 				 MarkerFrame avgFrame;
 				 TrackerPose tracker_pose;
 				 Pose poses[MAX_UNITS];
@@ -409,10 +436,13 @@ namespace AlignToRigidBodyGUI {
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( alignment_file ) );
 
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
+				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
+				 Refresh();
+				 Application::DoEvents();
 				 coda->Shutdown();
 				 coda->Initialize();
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
-				 coda->StartAcquisition( 3.0 );
+				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.
 				 while ( coda->GetAcquisitionState() ) {
