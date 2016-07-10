@@ -7,6 +7,5 @@ install: $(EXECUTABLES) InstallGraspRelease.mak
 	copy ..\Release\GraspGUI.exe ..\..\Executables
 	copy ..\Release\AlignToRigidBodyGUI.exe ..\..\Executables
 	copy ..\Release\TaskProcessUnitTester.exe ..\..\Executables
-	copy ..\Release\GraspScreenshots.exe ..\..\Executables
 	copy ..\Release\CreateRigidBodyModelFile.exe ..\..\Executables
 	echo Release %date% %time% > $@

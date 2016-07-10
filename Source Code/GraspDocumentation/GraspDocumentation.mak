@@ -7,6 +7,7 @@ INSTRUCTIONS=..\..\Instructions
 GUI=GUIScreenshots
 VRMESSAGES=..\GraspBMPs
 HERE = $(CD)
+SCREENSHOTEXE="Source Code\Debug\GraspScreenshots.exe"
 
 SCREENSHOTS = ready.bmp leftFar.bmp leftCloser.bmp leftNear.bmp leftGood.bmp vTarget.bmp kTargetFar.bmp kTargetNear.bmp kTargetGood.bmp vTool.bmp kTool.bmp trialCompleted.bmp blockCompleted.bmp
 GUISHOTS = $(GUI)\Alert.png  $(GUI)\Execute.png  $(GUI)\Instruction.png   $(GUI)\Success.png   $(GUI)\Login.png  $(GUI)\SelectSubsession.png  $(GUI)\StartTask.png 
@@ -15,55 +16,55 @@ install: GraspScreens.pdf  GraspVRScenes.pdf GraspGUI.pdf
 	echo %date% %time% > $@
 
 ready.bmp: 
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --ReadyToStart  $@
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --ReadyToStart  $@
 	move ..\..\$@ .
 	
-blockCompleted.bmp: 
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --BlockCompleted  $@
+blockCompleted.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --BlockCompleted  $@
 	move ..\..\$@ .
 
-trialCompleted.bmp: 
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --TrialCompleted  $@
+trialCompleted.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --TrialCompleted  $@
 	move ..\..\$@ .
 
-kTargetFar.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --headError=0.0 --hand=35.0 --handError=15.0 --kkTool --handArrow  $@
+kTargetFar.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0 --hand=35.0 --handError=15.0 --kkTool --handArrow  $@
 	move ..\..\$@ .
 	
-kTargetNear.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --headError=0.0 --hand=24.0 --handError=4.0 --kkTool  $@
+kTargetNear.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0 --hand=24.0 --handError=4.0 --kkTool  $@
 	move ..\..\$@ .
 
-kTargetGood.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --headError=0.0 --hand=20.0 --handError=0.0 --kkTool  $@
+kTargetGood.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0 --hand=20.0 --handError=0.0 --kkTool  $@
 	move ..\..\$@ .
 
-vTarget.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --headError=0.0 --target=20.0  $@
+vTarget.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0 --target=20.0  $@
 	move ..\..\$@ .
 
-vTool.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=15.0 --headError=0.0 --vTool  $@
+vTool.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=15.0 --headError=0.0 --vTool  $@
 	move ..\..\$@ .
 
-kTool.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=15.0 --headError=0.0 --kTool  $@
+kTool.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=15.0 --headError=0.0 --kTool  $@
 	move ..\..\$@ .
 
-leftFar.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=-20.0 --headError=20.0 --headArrowRight  $@
+leftFar.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=-20.0 --headError=20.0 --headArrowRight  $@
 	move ..\..\$@ .
 	
-leftCloser.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=-5.0 --headError=5.0   $@
+leftCloser.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=-5.0 --headError=5.0   $@
 	move ..\..\$@ .
 
-leftNear.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=-3.0 --headError=3.0   $@
+leftNear.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=-3.0 --headError=3.0   $@
 	move ..\..\$@ .
 
-leftGood.bmp:
-	cd ..\.. & Executables\GraspScreenshots.exe --head=0.0 --headError=0.0   $@
+leftGood.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0   $@
 	move ..\..\$@ .
 
 # Define the path to the pandoc.exe program that does the conversion.

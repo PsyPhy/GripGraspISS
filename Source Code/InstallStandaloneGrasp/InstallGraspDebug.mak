@@ -7,6 +7,5 @@ install: $(EXECUTABLES) InstallGraspDebug.mak
 	copy ..\Debug\GraspGUI.exe ..\..\Executables
 	copy ..\Debug\AlignToRigidBodyGUI.exe ..\..\Executables
 	copy ..\Debug\TaskProcessUnitTester.exe ..\..\Executables
-	copy ..\Debug\GraspScreenshots.exe ..\..\Executables
 	copy ..\Debug\CreateRigidBodyModelFile.exe ..\..\Executables
 	echo Debug %date% %time% > $@
