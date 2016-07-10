@@ -569,27 +569,7 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 }
 
 void  CodaRTnetTracker::AnnulAlignment( void ) {
-
-	char command_line[10240];
-
-	// Create a unique filename for a local temporary file.
-	char filename[MAX_PATH];
-	SYSTEMTIME st;
-	GetSystemTime( &st );
-	sprintf( filename, "%04d-%02d-%02d_%02dh.%02dm.%02ds_dummy_%s.tmp", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, codaAlignmentFilename );
-
-	// Create a local copy of a null alignment file and then send it to the CODA server.
-	FILE *fp = fopen( filename, "w" );
-	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Error opening alignment file %s for writing.", filename );
-	fprintf( fp, "Dummy calibration file sent to clobber current alignment.\n" );
-	fprintf( fp, ";;;\n;;; Created by CodaRTnetTracker %04d-%02d-%02d %02d:%02d:%02d\n;;;\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-	fclose( fp );
-	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
-		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, filename, codaAlignmentFilename );
-	if ( 0 != system( command_line ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
-	sprintf( command_line, "del %s",  filename );
-	if ( 0 != system( command_line ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
-
+	SetAlignment( nullptr, nullptr, nullptr );
 }
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
@@ -635,33 +615,42 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 	// Open a file locally to accept the alignment information.
 	FILE *fp = fopen( local_filename, "w" );
 	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Unable to open %s for writing.", local_filename );
-	// This is an apparent header line.
-	fprintf( fp, "[CODA System Alignment]\n" );
-	// A block of parameters for each unit.
-	for ( int unit = 0; unit < nUnits; unit++ ) {
-		// The serial numbers are recorded in the alignment file.
-		// I don't know how to read the serial numbers from the server, so they are assigned when
-		//  this tracker is initialized. Here I check to see if they have been set by the presence
-		//  of an appropriate .ini file or by the caller.
-		// Note that this checks if a serial number has been defined here on the client. Success does not
-		//  mean that the serial numbers defined here correspond correctly to the serial numbers on the server.
-		fAbortMessageOnCondition( !strcmp( codaSerialNumber[unit], "0000" ), "CodaRTnetTracker", "Serial number has not been defined for CODA cx1 unit %d", unit );
-		// Write the serial number into the alignment file.
-		fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber[unit] );
-		// Note the negative signs for the offset. Again, trial and error.
-		fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[unit][X],  - offset[unit][Y], - offset[unit][Z] );
-		fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation[unit][X][X] , rotation[unit][X][Y] , rotation[unit][X][Z] );
-		fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation[unit][Y][X] , rotation[unit][Y][Y] , rotation[unit][Y][Z] );
-		fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation[unit][Z][X] , rotation[unit][Z][Y] , rotation[unit][Z][Z] );
+	if ( offset == nullptr || rotation == nullptr ) fprintf( fp, ";;; Dummy file to cancel alignment.\n" );
+	else {
+
+		// This is an apparent header line.
+		fprintf( fp, "[CODA System Alignment]\n" );
+		// A block of parameters for each unit.
+		for ( int unit = 0; unit < nUnits; unit++ ) {
+			// The serial numbers are recorded in the alignment file.
+			// I don't know how to read the serial numbers from the server, so they are assigned when
+			//  this tracker is initialized. Here I check to see if they have been set by the presence
+			//  of an appropriate .ini file or by the caller.
+			// Note that this checks if a serial number has been defined here on the client. Success does not
+			//  mean that the serial numbers defined here correspond correctly to the serial numbers on the server.
+			fAbortMessageOnCondition( !strcmp( codaSerialNumber[unit], "0000" ), "CodaRTnetTracker", "Serial number has not been defined for CODA cx1 unit %d", unit );
+			// Write the serial number into the alignment file.
+			fprintf( fp, "CX1SerialNumber%d=%s\n", unit, codaSerialNumber[unit] );
+			// Note the negative signs for the offset. Again, trial and error.
+			fprintf( fp, "Offset%d=%f,%f,%f\n", unit, - offset[unit][X],  - offset[unit][Y], - offset[unit][Z] );
+			fprintf( fp, "TransformX%d=%f,%f,%f\n", unit, rotation[unit][X][X] , rotation[unit][X][Y] , rotation[unit][X][Z] );
+			fprintf( fp, "TransformY%d=%f,%f,%f\n", unit, rotation[unit][Y][X] , rotation[unit][Y][Y] , rotation[unit][Y][Z] );
+			fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit, rotation[unit][Z][X] , rotation[unit][Z][Y] , rotation[unit][Z][Z] );
+		}
 	}
 	fprintf( fp, ";;;\n;;; Created by CodaRTnetTracker %04d-%02d-%02d %02d:%02d:%02d\n;;;\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	fclose( fp );
 	// Here we send the new alignment file to the CODA server. 
-	sprintf( command_line, "%sWinSCP.com /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
+	sprintf( command_line, "%sWinSCP.exe /command \"open ftp://%s:%s@%s\" \"cd %s\" \"put %s %s\" \"exit\" ", 
 		executablesPath, serverLogonID, serverPassword, serverAddress, codaCalDirectory, local_filename, codaAlignmentFilename );
-	if ( 0 != system( command_line ) ) fAbortMessage( "SetAlignmentFromPoses", "Error executing ftp command:\n  %s", command_line );
-	// We could clean up after ourselves by deleting the local file or moving it to a log location. 
-	// I am leaving it in place. In GRASP I am going to copy it to a log file.
+	// if ( 0 != system( command_line ) ) fAbortMessage( "SetAlignmentFromPoses", "Error executing ftp command:\n  %s", command_line );
+	// Use WinExec() to execute the FTP transfer because, unlike system(), it does not pop up a console window.
+	// Why it returns a return value greater than 31, rather than 0, is beyond me.
+	// See https://msdn.microsoft.com/en-us/library/windows/desktop/ms687393(v=vs.85).aspx
+	if ( 31 > WinExec( command_line, SW_HIDE ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
+	// WinExec() returns right away if GetMessage() is not called within a timeout, but WinSCP doesn't call it.
+	// So I sleep here to let the command to finish.
+	Sleep( 2000 );
 }	
 
 /*********************************************************************************/

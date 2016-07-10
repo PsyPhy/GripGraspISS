@@ -7,7 +7,7 @@
 // Interface to the CodaRTnet hardware.
 
 #pragma once
-
+#include "../Useful/fOutputDebugString.h"
 #include "Trackers.h"
 
 // RTNet C++ includes
@@ -117,20 +117,20 @@ public:
 	{
 		// Host address and UDP port for the Coda RTnet server.
 	    // The following addresss is for the RTnet server on DEX via the ETD port.
-		strcpy( serverAddress, "10.80.12.103" );
+		strncpy( serverAddress, "10.80.12.103", sizeof( serverAddress ) );
 		serverPort = 10111;
 
 		// FTP parameters
-		strcpy( serverLogonID, "administrator" );
-		strcpy( serverPassword, "dex" );
-		strcpy( codaCalDirectory, "CodaMotion\\RTNet\\Binaries\\" );
-		strcpy( codaAlignmentFilename, "codaRTModuleCX1-Alignment.dat" );
-		strcpy( executablesPath, "Executables\\" );
+		strncpy( serverLogonID, "administrator", sizeof( serverLogonID ) );
+		strncpy( serverPassword, "dex", sizeof( serverPassword ) );
+		strncpy( codaCalDirectory, "CodaMotion\\RTNet\\Binaries\\", sizeof( codaCalDirectory ) );
+		strncpy( codaAlignmentFilename, "codaRTModuleCX1-Alignment.dat", sizeof( codaAlignmentFilename ) );
+		strncpy( executablesPath, "Executables\\", sizeof( executablesPath ) );
 
 		// Define the CODA cx1 serial numbers.
 		// I set them to "0000" here and check later to see if the correct values have been
 		//  initialized by the presence of a .ini file.
-		for ( int unit = 0; unit < MAX_UNITS; unit++ ) strcpy( codaSerialNumber[unit], "0000" );
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) strncpy( codaSerialNumber[unit], "0000", sizeof( codaSerialNumber[unit] ) );
 	}
 
 private: 
