@@ -553,11 +553,11 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 	DWORD marker_id_array[5] = { origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1 };
 	int response;
 
-	if ( info.dev.dwStatus != 0 ) response = print_alignment_status( marker_id_array, info, MB_ABORTRETRYIGNORE );
+	if ( info.dev.dwStatus != 0 ) response = print_alignment_status( marker_id_array, info, MB_ABORTRETRYIGNORE | MB_ICONEXCLAMATION );
 	else if ( force_show ) response = print_alignment_status( marker_id_array, info, MB_OK );
-
-	if ( info.dev.dwStatus == 0 ) return( NORMAL_EXIT );
-	else return( response );
+	else response = IDOK; 
+	
+	return( response );
 }
 
 void  CodaRTnetTracker::AnnulAlignment( void ) {
