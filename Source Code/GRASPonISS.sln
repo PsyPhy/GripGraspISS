@@ -88,6 +88,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusMouse", "OculusMouse\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDexServices", "TestDexServices\TestDexServices.vcxproj", "{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignCodaToGL", "AlignCodaToGL\AlignCodaToGL.vcxproj", "{AA7B9489-69AF-4446-B824-2ED5B99C85DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -377,6 +379,14 @@ Global
 		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.Release|Win32.Build.0 = Release|Win32
 		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{1E42DBB7-5076-4298-B9D4-DCBEC6ADE67B}.TestRelease|Win32.Build.0 = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.Debug|Win32.Build.0 = Debug|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.DraftRelease|Win32.Build.0 = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.Release|Win32.ActiveCfg = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.Release|Win32.Build.0 = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
