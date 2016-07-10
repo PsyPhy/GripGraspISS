@@ -26,15 +26,27 @@ using namespace PsyPhy;
 // This has to be a static variable because otherwise it overflows the stack.
 CodaRTnetTracker codaTracker;
 
+void usage ( void ) {
+	fAbortMessage( "CreateRigidBodyModelFile", 
+		"Usage:\n\n  CreateRigidBodyModelFile [--confirm] [--unit=#] m1 m1 ... \n\nm1 ... mn are zero-based marker numbers.\n# is the zero-based CODA cx1 unit number.\nAttention: no spaces around '='." );
+}
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int mrk_list[MAX_MARKERS];
 	int mrk_list_length = 0;
+	int coda_unit = 0;
 
 	bool confirm = false;
 
 	for ( int arg = 1; arg < argc; arg++ ) {
 		if ( !strcmp( argv[arg], "--confirm" ) ) confirm = true;
+		else if ( !strncmp( argv[arg], "--unit=", strlen( "--unit=" ) ) ) {
+			int items = sscanf( argv[arg], "--unit=%d", &coda_unit );
+			if ( items != 1 ) usage();
+		}
+		else if ( argv[arg][0] == '-' ) usage();
 		else {
 			sscanf( argv[arg], "%d", &mrk_list[mrk_list_length] );
 			mrk_list_length++;
@@ -63,15 +75,24 @@ int _tmain(int argc, _TCHAR* argv[])
 	fprintf( stderr, "OK.\n" );
 
 	// Compute the average marker positions for the acquired sample.
-	codaTracker.ComputeAverageMarkerFrame( avgFrame, codaTracker.recordedMarkerFrames[1], codaTracker.nFrames );
+	fprintf( stderr, "Computing model ... " );
+	codaTracker.ComputeAverageMarkerFrame( avgFrame, codaTracker.recordedMarkerFrames[coda_unit], codaTracker.nFrames );
 	// Set the position of the model markers from the average acquired sample.
 	CodaPoseTracker *codaPoseTracker = new CodaPoseTracker( nullptr );
-	codaPoseTracker->SetModelMarkerPositions( mrk_list_length, mrk_list, &avgFrame );
-	// Output the model to a file via stdout.
+	int nmarkers = codaPoseTracker->SetModelMarkerPositions( mrk_list_length, mrk_list, &avgFrame );
+	// Ouput to the file, even if nmarkers is 0. This will create an empty model file but with the time stamp.
 	codaPoseTracker->WriteModelMarkerPositions( stdout );
-
-	if ( confirm ) fMessageBox( MB_OK, "CreateRigidBodyModelFile", "Model Creation Succeeded.\nMarkers = %d\n\n", mrk_list_length );
-
+	// Output the model to a file via stdout.
+	if ( nmarkers > 0 ) {
+		fprintf( stderr, "OK.\n" );
+		fprintf( stderr, "Model Creation Succeeded.\n  CODA cx1 Unit = %d\n  Markers = %d\n\n", coda_unit, mrk_list_length );
+		if ( confirm )  fMessageBox( MB_OK, "CreateRigidBodyModelFile", "Model Creation Succeeded.\n  CODA cx1 Unit = %d\n  Markers = %d\n\n", coda_unit, mrk_list_length );
+	}
+	else {
+		fprintf( stderr, "aborted due to missing markers.\n" );
+		fMessageBox( MB_OK, "CreateRigidBodyModelFile", "Model file is empty." );
+	}
+	
 	return 0;
 }
 

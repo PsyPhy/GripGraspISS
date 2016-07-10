@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClCompile Include="CreateRigidBodyModelFile.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TestBody.bdy" />
+  </ItemGroup>
 </Project>

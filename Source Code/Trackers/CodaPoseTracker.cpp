@@ -82,20 +82,43 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 	fAbortMessageOnCondition( ( n_markers < 0 ), "MeasureModelMarkerPositions()", "Invalid number of markers\n  n_markers = %d < 0", n_markers );
 	fAbortMessageOnCondition( ( n_markers > MAX_MARKERS ), "MeasureModelMarkerPositions()", "To many markers in marker list\n  n_markers = %d > MAX_MARKERS = %d", n_markers, MAX_MARKERS );
 	Vector3 centroid = {0.0, 0.0, 0.0};
+
+	int visible_markers = 0;
+	char invisible[1024] = "";
 	for ( int mrk = 0; mrk < n_markers; mrk++ ) {
 		int id = marker_list[mrk];
 		fAbortMessageOnCondition( ( id < 0 || id >= MAX_MARKERS ), "MeasureModelMarkerPositions()", "Marker %d ID = %d out of range [0 %d].", mrk, id, MAX_MARKERS - 1 );
-		fAbortMessageOnCondition( ( !frame->marker[ id ].visibility ), "MeasureModelMarkerPositions()", "Marker %d ID = %d not visible.", mrk, id );
-		modelMarker[mrk].id = id;
-		CopyVector( modelMarker[mrk].position, frame->marker[id].position );
-		AddVectors( centroid, centroid, frame->marker[id].position );
+		if ( !frame->marker[ id ].visibility ) {
+			char tochar[16];
+			sprintf( tochar, " %02d", id );
+			strcat( invisible, tochar );
+		}
+		else {
+			modelMarker[visible_markers].id = id;
+			CopyVector( modelMarker[visible_markers].position, frame->marker[id].position );
+			AddVectors( centroid, centroid, frame->marker[id].position );
+			visible_markers++;
+		}
 	}
+
+	if ( visible_markers < n_markers ) {
+		int response;
+		response = fMessageBox( MB_OKCANCEL | MB_ICONEXCLAMATION, "CodaPoseTracker::SetModelMarkerPositions", "Markers not visible: %s\nContinue anyway?", invisible );
+		if ( response == IDCANCEL ) return( 0 );
+	}
+
+	if ( visible_markers < n_markers ) {
+		int response;
+		response = fMessageBox( MB_OKCANCEL | MB_ICONQUESTION, "CodaPoseTracker::SetModelMarkerPositions", "Not enough markers to define rigid body pose.\nNumber of visibles markers: %d\n\nContinue anyway?", visible_markers );
+		if ( response == IDCANCEL ) return( 0 );
+	}
+
 	// Compute the marker positions relative to the centroid.
-	ScaleVector( centroid, centroid, 1.0 / (double) n_markers );
-	for ( int mrk = 0; mrk < n_markers; mrk++ ) {
+	if ( visible_markers > 0 ) ScaleVector( centroid, centroid, 1.0 / (double) visible_markers );
+	for ( int mrk = 0; mrk < visible_markers; mrk++ ) {
 		SubtractVectors( modelMarker[mrk].position, modelMarker[mrk].position, centroid );
 	}
-	nModelMarkers = n_markers;
+	nModelMarkers = visible_markers;
 	return nModelMarkers;
 }
 
@@ -107,7 +130,8 @@ void CodaPoseTracker::WriteModelMarkerPositions( FILE *fp ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		fprintf( fp, "%d\t%8.3f\t%8.3f\t%8.3f\n", modelMarker[mrk].id, modelMarker[mrk].position[X], modelMarker[mrk].position[Y], modelMarker[mrk].position[Z] );
 	}
-	fprintf( fp, "\n;;; Rigid Body Model File\n" );
+	if ( nModelMarkers < 1 ) fprintf( fp, "\n;;; Empty Rigid Body Model File (N markers < 1 )\n" );
+	else fprintf( fp, "\n;;; Rigid Body Model File\n" );
 	fprintf( fp, ";;; Created %d/%02d/%02d %02dh%02dm%02ds GMT\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 }
 
