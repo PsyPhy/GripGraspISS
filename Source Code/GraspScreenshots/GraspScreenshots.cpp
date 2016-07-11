@@ -182,13 +182,13 @@ int _tmain(int argc, char *argv[])
 			objects->tiltPrompt->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--headArrowLeft" )) {
-			objects->tiltPrompt->SetPosition( objects->hud->position );
+			objects->tiltPrompt->SetPosition( objects->hmd->position );
 			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
 			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
 			objects->tiltPrompt->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--headArrowRight" )) {
-			objects->tiltPrompt->SetPosition( objects->hud->position );
+			objects->tiltPrompt->SetPosition( objects->hmd->position );
 			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
 			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
 			objects->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );

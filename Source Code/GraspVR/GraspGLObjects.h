@@ -96,7 +96,7 @@ namespace Grasp {
 			static const int target_balls;
 			static const double finger_length;
 
-			static const double hudTransparency;
+			static const double hmdTransparency;
 
 			static const double errorColorMapTransparency;
 			static const double errorColorMapFadeDistance;
@@ -128,7 +128,7 @@ namespace Grasp {
 			Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
 			Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
 
-			Yoke			*hud;					// Collection of objects that move with the head.
+			Yoke			*hmd;					// Collection of objects that move with the head.
 			Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
 			Assembly		*tiltPrompt;			// Shows the subject which direction to turn the head when the error is large.
 			Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial.

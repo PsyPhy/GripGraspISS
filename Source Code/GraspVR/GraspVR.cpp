@@ -253,8 +253,8 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
 	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
-	renderer->tiltPrompt->SetPosition( renderer->hud->position );
-	renderer->tiltPrompt->SetOrientation( renderer->hud->orientation );
+	renderer->tiltPrompt->SetPosition( renderer->hmd->position );
+	renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
 	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
 
 	// Compute the roll angle of the object that is being followed.
@@ -303,7 +303,7 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 
 	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
 	Vector3 relativeHandPosition;
-	SubtractVectors( relativeHandPosition,  renderer->hud->position, renderer->hand->position );
+	SubtractVectors( relativeHandPosition,  renderer->hmd->position, renderer->hand->position );
 	NormalizeVector( relativeHandPosition );
 	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
 		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );

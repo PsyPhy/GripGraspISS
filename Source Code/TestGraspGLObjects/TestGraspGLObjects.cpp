@@ -110,7 +110,7 @@ int _tmain(int argc, char *argv[])
 		yaw_time += 0.002;
 
 		viewpoint->SetOrientation( yaw, 0.0, 0.0 );
-		objects->hud->SetOrientation( yaw, 0.0, 0.0 );
+		objects->hmd->SetOrientation( yaw, 0.0, 0.0 );
 
 		static double angle = 39.0;
 		objects->timeoutIndicator->SetAttitude( - angle, 0.0, 0.0 );

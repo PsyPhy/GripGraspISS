@@ -59,7 +59,7 @@ const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
-const double GraspGLObjects::hudTransparency = 0.25;
+const double GraspGLObjects::hmdTransparency = 0.25;
 
 // Transparency of objects that change color according to roll angle.
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
@@ -389,7 +389,7 @@ Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
 	Disk		*surface;
 	
 	surface = new Disk( 120.0, 35.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0, hudTransparency );
+	surface->SetColor( 0.9, 0.9, 1.0, hmdTransparency );
 	surface->SetTexture( texture );
 	assembly->AddComponent( surface );
 
@@ -440,7 +440,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
 	// And to the gaze.
-	hud = CreateHUD();
+	hmd = CreateHUD();
 	// By default, the tool used to shoot the projectiles is the one at the hand.
 	selectedTool = hand;
 }
