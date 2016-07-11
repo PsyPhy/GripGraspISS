@@ -40,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 		// Decode the IP address string that has already been initialized as part of the class.
 		unsigned int p, q, r, s;
-		fOutputDebugString( "HaltCoda: %s   Port: %d  Configuration: %d\n", serverAddress, serverPort );
+		fOutputDebugString( "HaltCoda: %s   Port: %d\n", serverAddress, serverPort );
 		sscanf( serverAddress, "%d.%d.%d.%d", &p, &q, &r, &s );
 		
 		// Connect to the server.
@@ -48,6 +48,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		cl.stopAcq();
 		fOutputDebugString( "Shutting down ... " );
 		cl.stopSystem();
+		cl.disconnect();
 		fOutputDebugString( "OK.\n" );
 	}
 
