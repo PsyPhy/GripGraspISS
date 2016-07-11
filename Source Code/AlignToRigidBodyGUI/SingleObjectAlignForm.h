@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "../OpenGLObjects/OpenGLWindows.h"
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
@@ -264,7 +266,8 @@ namespace AlignToRigidBodyGUI {
 				 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
-					 // coda->Quit();
+				 coda->AbortAcquisition();	
+					 coda->Quit();
 					 Environment::ExitCode = -1;
 					 Close();
 				 }
@@ -445,7 +448,7 @@ namespace AlignToRigidBodyGUI {
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
-				 // Just wait for the acquisition to finish.
+				 // Just wait for the acquisition to finish. 
 				 while ( coda->GetAcquisitionState() ) {
 					 fprintf( stderr, "." );
 					 Sleep( 20 );
@@ -486,8 +489,9 @@ namespace AlignToRigidBodyGUI {
 					 // Check that the alignment has been successful.
 					 well_aligned &= ( position_ok & orientation_ok );
 				 }
-				 fAbortMessageOnCondition( !well_aligned || forceShow, "AlignToRigidBodyGUI", msg );
-
+				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK, "AlignToRigidBodyGUI", msg );
+				 if ( !well_aligned ) Environment::ExitCode = -2;
+				 else Environment::ExitCode = 0;
 				 // Close the form. 
 				 Close();
 
