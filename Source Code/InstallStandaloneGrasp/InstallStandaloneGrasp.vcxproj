@@ -20,6 +20,9 @@
     <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
       <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
+      <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Grasp\Grasp.vcxproj">
       <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
     </ProjectReference>
