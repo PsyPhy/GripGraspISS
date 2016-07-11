@@ -43,6 +43,8 @@ namespace Grasp {
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
 
+		Transform	localAlignment; 
+
 		GraspVR( void )  : 
 
 			hInstance( nullptr ),
@@ -84,6 +86,9 @@ namespace Grasp {
 		virtual void UpdateTrackers( void );
 		// Clean up when finished.
 		virtual void ReleaseTrackers( void );
+		// Set the local transform to center the world at the current HMD 
+		//  position and orientation.
+		void AlignToHMD( void );
 
 		// Draw everything and output to the display.
 		void GraspVR::Render( void );

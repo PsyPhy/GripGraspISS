@@ -27,6 +27,10 @@ typedef struct {
 	Vector3	position;
 	Quaternion	orientation;
 } Pose;
+typedef struct {
+	Vector3	displacement;
+	Quaternion	rotation;
+} Transform;
 
 class VectorsMixin {
 
@@ -114,6 +118,8 @@ public:
 	bool ComputeRigidBodyPose( Vector3 position, Quaternion orientation,
 								Vector3 model[], Vector3 actual[], 
 								int N, const Quaternion default_orientation );
+
+	void TransformPose( Pose *result, Transform *xform, Pose *source );
 
 	char *vstr( const Vector3 v );
 	char *qstr( const Quaternion q );

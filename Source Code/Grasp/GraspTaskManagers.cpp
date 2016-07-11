@@ -219,8 +219,9 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 
-		// Boresight the HMD tracker on 'B'.
+		// Boresight the HMD tracker on 'B' or align to the HMD no 'A'.
 		// This is here for debugging and should probably be removed.
+		if ( oculusDisplay->KeyDownEvents['A'] ) AlignToHMD();
 		if ( oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
 		if ( oculusDisplay->KeyDownEvents['U'] ) trackers->hmdTracker->Unboresight();
 
@@ -345,6 +346,9 @@ void GraspTaskManager::EnterApplyConflict( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->tiltPrompt->Disable();
+
+	// Align to the current position of the HMD. 
+	AlignToHMD();
 
 	// Set the conflict gain.
 

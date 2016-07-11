@@ -34,7 +34,7 @@ double GraspTrackers::mouseGain = - 0.001;
 // Where to place the tool when in V response mode.
 Pose GraspTrackers::handPoseV = {{0.0, 0.0, -350.0}, {0.0, 0.0, 0.0, 1.0}};
 // Where to place the tool when in K response mode.
-Pose GraspTrackers::handPoseK = {{50.0, 0.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
+Pose GraspTrackers::handPoseK = {{0.0, 0.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.
@@ -207,7 +207,7 @@ void GraspSimTrackers::Initialize( void ) {
 	 fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspSimTrackers", "Error initializing OculusPoseTracker." );
 
 	// Create a tracker to control roll movements of the hand for the toV responses.
-	rollTracker = new PsyPhy::OculusRemoteRollPoseTracker( oculusMapper, mouseGain );
+	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
 	// The rollTracker will then rotate the tool around this constant position.

@@ -533,6 +533,15 @@ double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 
 }
 
+void VectorsMixin::TransformPose( Pose *result, Transform *xform, Pose *source ) {
+	Vector3 x;
+	Quaternion q;
+	MultiplyQuaternions( q, xform->rotation, source->orientation );
+	CopyQuaternion( result->orientation, q );
+	RotateVector( x,  xform->rotation, source->position );
+	AddVectors( result->position, x, xform->displacement );
+}
+
 /***********************************************************************************/
 
 // Compute the position and orientation of a rigid body defined by 3D marker locations.

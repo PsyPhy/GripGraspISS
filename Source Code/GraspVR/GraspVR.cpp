@@ -36,6 +36,9 @@ const int GraspVR::secondsToBeBad = 2.0;
 
 void GraspVR::InitializeTrackers( void ) {
 	trackers->Initialize();
+	CopyVector( localAlignment.displacement, zeroVector );
+	CopyQuaternion( localAlignment.rotation, nullQuaternion );
+
 }
 
 void GraspVR::UpdateTrackers( void ) {
@@ -51,15 +54,14 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
-		TrackerPose mousePose;
+		// Transform to the local reference frame centered on the initial HMD pose.
+		TransformPose( &headPose.pose, &localAlignment, &headPose.pose );
+		// Set the viewpoint according to the measured pose.
 		viewpoint->SetPose( headPose.pose );
-		renderer->hud->SetPose( headPose.pose );
-		if ( !trackers->rollTracker->GetCurrentPose( mousePose ) ) {
-			static int pose_error_counter = 0;
-			fOutputDebugString( "Error reading roll tracker (%03d).\n", ++pose_error_counter );
-		}
-		else renderer->vTool->SetAttitude( mousePose.pose.orientation );
+		// Place objects that move with the heads up display.
+		renderer->hmd->SetPose( headPose.pose );
 	}
+
 
 	// Track movements of the hand marker array.
 	TrackerPose handPose;
@@ -68,6 +70,7 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
+		TransformPose( &handPose.pose, &localAlignment, &handPose.pose );
 		// Filter the hand position somewhat.
 		// TODO: Constants need to be defined rather than hard-coded values.
 		Pose filtered;
@@ -82,11 +85,46 @@ void GraspVR::UpdateTrackers( void ) {
 		renderer->hand->SetPose( filtered );
 	}
 
+	// The vTool is a special case because it does not move with the hand. Instead,
+	// it is attached to the HMD and moves with the gaze. It's roll attitude is set by
+	// the roll tracker. We use the attitude property, rather than the orientation property,
+	// because the position and orientation properties are used to position and orient the
+	// visual object in 3D space.
+	TrackerPose rollPose;
+	if ( !trackers->rollTracker->GetCurrentPose( rollPose ) ) {
+		static int pose_error_counter = 0;
+		fOutputDebugString( "Error reading roll tracker (%03d).\n", ++pose_error_counter );
+	}
+	else renderer->vTool->SetAttitude( rollPose.pose.orientation );
+
+
 }
 
 void GraspVR::ReleaseTrackers( void ) {
 	trackers->Release();
 }
+
+void GraspVR::AlignToHMD( void ) {
+
+	TrackerPose hmdPose;
+
+	if ( !trackers->hmdTracker->GetCurrentPose( hmdPose ) ) {
+		fOutputDebugString( "Error reading head pose tracker for alignment.\n" );
+	}
+	else {
+		// Local alignment is the conjugate of the head pose orientation.
+		localAlignment.rotation[X] = - hmdPose.pose.orientation[X];
+		localAlignment.rotation[Y] = - hmdPose.pose.orientation[Y];
+		localAlignment.rotation[Z] = - hmdPose.pose.orientation[Z];
+		localAlignment.rotation[M] =   hmdPose.pose.orientation[M];
+		Vector3 rotated_position;
+		RotateVector( rotated_position, localAlignment.rotation, hmdPose.pose.position );
+		ScaleVector( localAlignment.displacement, rotated_position, -1.0 );
+	}
+}
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
