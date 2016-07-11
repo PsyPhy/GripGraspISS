@@ -42,43 +42,6 @@ Pose GraspTrackers::chestPoseSim = {{0.0, -200.0, 0.0}, {0.0, 0.0, 0.0, 1.0}};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Polling the CODA in the rendering loop can cause non-smooth updating.
-// Here we use a thread to get the CODA pose data in the background.
-#define MAX_CODA_MARKERS 28
-int nMarkers = 24;
-#define MAX_CODA_UNITS	8
-int nCodaUnits = 2;
-
-bool lockCoda[MAX_CODA_UNITS] = { false, false, false, false, false, false, false, false };
-bool stopMarkerGrabs = false;
-MarkerFrame codaBuffer[MAX_CODA_UNITS];
-HANDLE threadHandle;
-
-void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
-	while ( lockCoda[unit] );
-	lockCoda[unit] = true;
-	memcpy( destination, &codaBuffer[unit], sizeof( *destination ) );
-	lockCoda[unit] = false;
-}
-
-DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
-
-	PsyPhy::CodaRTnetTracker *coda = (PsyPhy::CodaRTnetTracker *)prm;
-	MarkerFrame localFrame;
-
-	while ( !stopMarkerGrabs ) {
-		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-			coda->GetCurrentMarkerFrameUnit( localFrame, unit );
-			while ( lockCoda[unit] );
-			lockCoda[unit] = true;
-			memcpy( &codaBuffer[unit], &localFrame, sizeof( codaBuffer[unit] ) );
-			lockCoda[unit] = false;
-		}
-	}
-	OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
-	return NULL;
-}
-
 void GraspTrackers::Update( void ) {
 	// Perform any periodic updating that the trackers might require.
 	fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating head pose tracker." );
@@ -108,7 +71,7 @@ void GraspDexTrackers::Initialize( void ) {
 	// Initiate real-time retrieval of CODA marker frames in a background thread 
 	// so that waiting for the frame to come back from the CODA does not slow down
 	// the rendering loop.
-	DWORD threadID;
+	for ( int i = 0; i < nCodaUnits; i++ ) lockSharedMarkerFrame[i] = false;
 	stopMarkerGrabs = false;
 	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
 

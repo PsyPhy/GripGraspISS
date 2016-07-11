@@ -86,7 +86,7 @@ namespace Grasp {
 		CodaRTnetTracker codaTracker;
 
 		// Buffers to hold the most recent frame of marker data.
-		MarkerFrame markerFrame[MAX_CASCADED_TRACKERS];
+		MarkerFrame markerFrame[MAX_UNITS];
 
 		// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
 		// We use one for each Coda unit, but we could use more.
@@ -122,6 +122,54 @@ namespace Grasp {
 			oculusMapper = mapper;
 		}
 		~GraspDexTrackers( void ) {}
+
+	private:
+
+		// Polling the CODA in the rendering loop can cause non-smooth updating.
+		// We use a thread to get the CODA pose data in the background.
+		// The following provides the means to use a thread.
+
+		bool			lockSharedMarkerFrame[MAX_UNITS];
+		MarkerFrame		sharedMarkerFrame[MAX_UNITS];
+		bool			stopMarkerGrabs;
+		HANDLE			threadHandle;
+		DWORD			threadID;
+
+		// A static function that will be run in a separate thread.
+		// It sits in the background and acquires the latest marker frames from CODA.
+		static DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
+
+			// The function passed to a new thread takes a single pointer as an argument.
+			// The GraspDexTrackers instance that creates the thread passes a pointer to itself 
+			//  as the argument and here we cast it back to a GraspDexTrackers pointer.
+			GraspDexTrackers *caller = (GraspDexTrackers *)prm;
+
+			// A buffer to hold one frame of marker data.
+			MarkerFrame localFrame;
+
+			// Loop until the main thread tells us to stop.
+			while ( !caller->stopMarkerGrabs ) {
+				for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+					// Get the latest marker data into a local frame buffer.
+					caller->codaTracker.GetCurrentMarkerFrameUnit( localFrame, unit );
+					// Copy it to a shared buffer, being careful not to allow simultaneous access.
+					while ( caller->lockSharedMarkerFrame[unit] );
+					caller->lockSharedMarkerFrame[unit] = true;
+					memcpy( &caller->sharedMarkerFrame[unit], &localFrame, sizeof( caller->sharedMarkerFrame[unit] ) );
+					caller->lockSharedMarkerFrame[unit] = false;
+				}
+			}
+			OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
+			return NULL;
+		}
+		
+		void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
+			while ( lockSharedMarkerFrame[unit] );
+			lockSharedMarkerFrame[unit] = true;
+			memcpy( destination, &sharedMarkerFrame[unit], sizeof( *destination ) );
+			lockSharedMarkerFrame[unit] = false;
+		}
+
 	};
 
 }
