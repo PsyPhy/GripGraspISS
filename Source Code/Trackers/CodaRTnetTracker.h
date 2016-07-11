@@ -173,7 +173,7 @@ public:
 
 	// Need to add the following.
 	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
-	void	AnnulAlignment( void );
+	void	AnnulAlignment( const char *filename = nullptr );
 	void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
 	void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
 	// void	SetAlignment( Pose pose[MAX_UNITS], const char *filename = nullptr );

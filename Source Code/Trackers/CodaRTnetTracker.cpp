@@ -164,14 +164,14 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		print_network_error( exNet );
 		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
 		MessageBox( NULL, "DexRTnet() failed.\n(NetworkException& exNet)", "CodaRTnetTracker", MB_OK );
-		exit( -1 );
+		exit( -2 );
 	}
 	catch(DeviceStatusArray& array)
 	{
 		print_devicestatusarray_errors(array);
 		fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
 		MessageBox( NULL, "DexRTnet() failed.\n(DeviceStatusArray& array)", "CodaRTnetTracker", MB_OK );
-		exit( -1 );
+		exit( -3 );
 	}
 		
 }
@@ -568,8 +568,8 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 	return( response );
 }
 
-void  CodaRTnetTracker::AnnulAlignment( void ) {
-	SetAlignment( nullptr, nullptr, nullptr );
+void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
+	SetAlignment( nullptr, nullptr, filename );
 }
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,

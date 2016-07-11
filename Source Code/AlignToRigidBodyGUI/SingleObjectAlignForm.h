@@ -351,7 +351,6 @@ namespace AlignToRigidBodyGUI {
 				 alignButton->Enabled = false;
 				 Refresh();
 				 Application::DoEvents();
-				 coda->AnnulAlignment();
 
 				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
 				 StopRefreshTimer();
@@ -364,7 +363,9 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
 				 Refresh();
 				 Application::DoEvents();
-				 coda->AnnulAlignment();
+				 char *tempfile = ".nullalignment.tmp";
+				 coda->AnnulAlignment( tempfile );
+				 DeleteFile( tempfile );
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
 				 instructionsTextBox->Text = "[ Acquiring alignment data ... ]";
