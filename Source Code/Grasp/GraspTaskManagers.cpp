@@ -488,8 +488,6 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 // ProvideFeedback
 // The subject sees the result of his or her response.
 void GraspTaskManager::EnterProvideFeedback( void ) {
-	// Put the target head orientation back to upright so that the subject can start moving there already.
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Show the target.
 	if ( trialParameters[currentTrial].provideFeedback == 1 ) renderer->orientationTarget->Enable();
 	else renderer->positionOnlyTarget->Enable();
@@ -503,7 +501,6 @@ GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) {
 	ProjectileState pstate = HandleProjectiles();
 	if ( pstate == hit || pstate == miss ) return( TrialCompleted );
 	// Otherwise, continue in this state.
-	HandleHeadAlignment( false );
 	return( currentState );
 }
 void  GraspTaskManager::ExitProvideFeedback( void ) {
@@ -516,7 +513,8 @@ void  GraspTaskManager::ExitProvideFeedback( void ) {
 // Provide an indication that the trial was completed successfully.
 // Then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialCompleted( void ) {
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	// Put the target head orientation back to upright so that the subject can start moving there already.
+	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Show the success indicator.
 	// renderer->successIndicator->Enable();
 	// Show it for a fixed time.
@@ -565,7 +563,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	fprintf( response_fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
 	renderer->headMisalignIndicator->Enable();
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	// SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
