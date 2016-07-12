@@ -78,8 +78,8 @@ namespace Grasp {
 
 	protected:
 
-		static const int nMarkers = 24;
-		static const int nCodaUnits = 2;
+		int nMarkers;
+		int nCodaUnits;
 
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
@@ -120,6 +120,8 @@ namespace Grasp {
 
 		GraspDexTrackers( OculusMapper *mapper ) {
 			oculusMapper = mapper;
+			nMarkers = 24;
+			nCodaUnits = 2;
 		}
 		~GraspDexTrackers( void ) {}
 
@@ -149,7 +151,7 @@ namespace Grasp {
 
 			// Loop until the main thread tells us to stop.
 			while ( !caller->stopMarkerGrabs ) {
-				for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+				for ( int unit = 0; unit < caller->nCodaUnits; unit++ ) {
 					// Get the latest marker data into a local frame buffer.
 					caller->codaTracker.GetCurrentMarkerFrameUnit( localFrame, unit );
 					// Copy it to a shared buffer, being careful not to allow simultaneous access.

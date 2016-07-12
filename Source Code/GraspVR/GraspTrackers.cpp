@@ -73,7 +73,7 @@ void GraspDexTrackers::Initialize( void ) {
 	// the rendering loop.
 	for ( int i = 0; i < nCodaUnits; i++ ) lockSharedMarkerFrame[i] = false;
 	stopMarkerGrabs = false;
-	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
+	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, this, 0, &threadID );
 
 	// Create PoseTrackers that combine data from multiple CODAs.
 	hmdCascadeTracker = new CascadePoseTracker();
