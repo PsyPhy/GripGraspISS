@@ -55,7 +55,7 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		// Transform to the local reference frame centered on the initial HMD pose.
-		TransformPose( &headPose.pose, &localAlignment, &headPose.pose );
+		TransformPose( headPose.pose, localAlignment, headPose.pose );
 		// Set the viewpoint according to the measured pose.
 		viewpoint->SetPose( headPose.pose );
 		// Place objects that move with the heads up display.
@@ -70,7 +70,7 @@ void GraspVR::UpdateTrackers( void ) {
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
-		TransformPose( &handPose.pose, &localAlignment, &handPose.pose );
+		TransformPose( handPose.pose, localAlignment, handPose.pose );
 		// Filter the hand position somewhat.
 		// TODO: Constants need to be defined rather than hard-coded values.
 		Pose filtered;

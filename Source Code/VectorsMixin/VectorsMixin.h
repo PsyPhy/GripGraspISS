@@ -119,7 +119,7 @@ public:
 								Vector3 model[], Vector3 actual[], 
 								int N, const Quaternion default_orientation );
 
-	void TransformPose( Pose *result, Transform *xform, Pose *source );
+	void TransformPose( Pose &result, Transform &xform, Pose &source );
 
 	char *vstr( const Vector3 v );
 	char *qstr( const Quaternion q );

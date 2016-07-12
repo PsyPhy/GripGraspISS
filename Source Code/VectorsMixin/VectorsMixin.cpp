@@ -533,13 +533,13 @@ double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 
 }
 
-void VectorsMixin::TransformPose( Pose *result, Transform *xform, Pose *source ) {
+void VectorsMixin::TransformPose( Pose &result, Transform &xform, Pose &source ) {
 	Vector3 x;
 	Quaternion q;
-	MultiplyQuaternions( q, xform->rotation, source->orientation );
-	CopyQuaternion( result->orientation, q );
-	RotateVector( x,  xform->rotation, source->position );
-	AddVectors( result->position, x, xform->displacement );
+	MultiplyQuaternions( q, xform.rotation, source.orientation );
+	CopyQuaternion( result.orientation, q );
+	RotateVector( x,  xform.rotation, source.position );
+	AddVectors( result.position, x, xform.displacement );
 }
 
 /***********************************************************************************/
