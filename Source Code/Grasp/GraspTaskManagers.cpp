@@ -4,6 +4,7 @@
 #include "../OculusInterface/OculusInterface.h"
 
 #include "../Useful/Timers.h"
+#include "../DexServices/DexServices.h"
 #include "../GraspVR/GraspVR.h"
 #include "GraspTaskManagers.h"
 
@@ -352,7 +353,11 @@ GraspTrialState GraspTaskManager::UpdateStartTrial( void ) {
 	if ( aligned == HandleHeadAlignment( true ) ) return( ApplyConflict ); 
 	else return( currentState );
 }
-void GraspTaskManager::ExitStartTrial( void ) {}
+void GraspTaskManager::ExitStartTrial( void ) {
+	char tag[32];
+	sprintf( tag, "StartT%03d", currentTrial );
+	dexServer->SnapPicture( tag );
+}
 
 //
 // ApplyConflict
@@ -407,6 +412,9 @@ void GraspTaskManager::ExitStraightenHead( void ) {}
 void GraspTaskManager::EnterPresentTarget( void ) {
 	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
 	TimerSet( stateTimer, trialParameters[currentTrial].targetPresentationDuration ); 
+	char tag[32];
+	sprintf( tag, "Target%03d", currentTrial );
+	dexServer->SnapPicture( tag );
 }
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
@@ -483,6 +491,9 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	// Make sure that the head tilt prompt is not still present.
 	renderer->tiltPrompt->Disable();
 	renderer->positionOnlyTarget->Disable();
+	char tag[32];
+	sprintf( tag, "Respns%03d", currentTrial );
+	dexServer->SnapPicture( tag );
 }
 
 // ProvideFeedback
@@ -563,8 +574,9 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	fprintf( response_fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
 	renderer->headMisalignIndicator->Enable();
-	// SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
-
+	char tag[32];
+	sprintf( tag, "Intrpt%03d", currentTrial );
+	dexServer->SnapPicture( tag );
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// Show the message until the subject presses a button.

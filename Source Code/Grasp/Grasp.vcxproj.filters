@@ -7,14 +7,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="..\..\Seq\TestGraspSequence.seq" />
-    <None Include="..\..\Seq\HeadStraightGraspSequence.seq" />
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="GraspTelemetry.h" />
     <ClInclude Include="GraspTaskManagers.h" />
   </ItemGroup>
   <ItemGroup>

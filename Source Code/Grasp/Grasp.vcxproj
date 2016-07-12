@@ -82,14 +82,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
-    <None Include="..\..\Seq\HeadStraightGraspSequence.seq" />
-    <None Include="..\..\Seq\TestGraspSequence.seq" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />
     <ClInclude Include="GraspTaskManagers.h" />
-    <ClInclude Include="GraspTelemetry.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +100,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
       <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspVR\GraspVR.vcxproj">
       <Project>{266170c2-0878-422f-a262-d1023c084b26}</Project>

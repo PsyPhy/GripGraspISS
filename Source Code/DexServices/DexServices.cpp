@@ -25,7 +25,7 @@ void DexServices::printDateTime( FILE *fp ) {
 
 
 void DexServices::Initialize( const char *filename ) {
-	 log = fopen( filename, "w" );
+	 log = fopen( filename, "a+" );
 	 fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", filename );
 	 printDateTime( log );
 	 fprintf( log, " File %s open for logging services.\n", filename );
@@ -105,6 +105,8 @@ int DexServices::Connect ( void ) {
 		fOutputDebugString( "ConnectToDex() OK.\n" );
 		return( 0 );
 	}
+	printDateTime( log );
+	fprintf( log, " Connected to DEX.\n" );
 
 };
 
@@ -113,6 +115,12 @@ void DexServices::Disconnect( void ) {
 	WSACleanup();
 	printDateTime( log );
 	fprintf( log, " Connection closed.\n" );
+}
+
+void DexServices::Release( void ) {
+	printDateTime( log );
+	fprintf( log, " Closing log file.\n" );
+	fclose( log );
 }
 
 int DexServices::Send( const unsigned char *packet, int size ) {
@@ -132,6 +140,12 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 
 int DexServices::SendTaskInfo( int user, int protocol, int task, int step ) {
 
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
+			user, protocol, task, step, 99, 99 );
+		fflush( log );
+	}
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[1024];
 	// An object that serializes the data destined for DEX housekeeping telemetry packets.
@@ -152,13 +166,6 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step ) {
 
 	// Send it to DEX.
 	Send( packet, size );
-
-	if ( log ) {
-		printDateTime( log );
-		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
-			user, protocol, task, step, hk.motiontracker_status, hk.scriptengine_status );
-	}
-
 	return 0 ;
 }
 
@@ -188,7 +195,8 @@ int DexServices::SnapPicture( const char *tag ) {
 
 	if ( log ) {
 		printDateTime( log );
-		fprintf( log, " Snapped picture.\n" );
+		fprintf( log, " Snapped picture: %s\n", cam.tag );
+		fflush( log );
 	}
 	return 0 ;
 }

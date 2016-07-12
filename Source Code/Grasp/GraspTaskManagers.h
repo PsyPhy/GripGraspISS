@@ -144,8 +144,8 @@ namespace Grasp {
 	public:
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2), response_fp(NULL), pose_fp(NULL) {}
 		~GraspTaskManager(){}
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs  ) {
-			GraspVR::Initialize( instance, display, mapper, trkrs );
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
+			GraspVR::Initialize( instance, display, mapper, trkrs, dex );
 		}
 		void Release( void ) {
 			GraspVR::Release();
