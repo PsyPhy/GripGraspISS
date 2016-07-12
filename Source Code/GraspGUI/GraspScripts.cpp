@@ -319,8 +319,10 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		Refresh();
 		Application::DoEvents();
 		if ( cueStepCommand ) {
+
 			// Don't trigger again on the next DocumentCompleted event.
 			cueStepCommand = false;
+
 			// Create an output filename.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
@@ -330,6 +332,12 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 
 			// Show the current form as being disabled.
 			Enabled = false;
+
+			// Snap a picture.
+			dex->SnapPicture( "PreExec" );
+
+			// Disconnect from DEX telemetry services so that the task program can connect.
+			dex->Disconnect();
 
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
@@ -341,6 +349,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 			int return_code = system( cmd );
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
+
 			// Map exit codes to the results pages defined in the step definition.
 			// The absolute value of the code determines which page is shown, i.e.
 			// codes -1 and 1 will show the same page, -2 and 2 the same page, etc,
@@ -370,6 +379,12 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 
 			// Show the corresponding page.
 			instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
+
+			// Reconnect to DEX for telemetry.
+			dex->Connect();
+
+			// Snap a picture.
+			dex->SnapPicture( "PostExec" );
 
 			// Re-enable the form.
 			Enabled = true;

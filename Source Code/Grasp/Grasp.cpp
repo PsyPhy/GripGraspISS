@@ -11,9 +11,11 @@
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
 
+// Telemetry and photo services provided by DEX.
+#include "../DexServices/DexServices.h"
+
 #include "../GraspVR/GraspVR.h"
 #include "GraspTaskManagers.h"
-#include "GraspTelemetry.h"
 
 using namespace PsyPhy;
 using namespace Grasp;
@@ -61,7 +63,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	GraspTaskManager	*grasp;
 	GraspTrackers		*trackers;
 
-	// ConnectToDex();
+	DexServices *dex = new DexServices();
 
 	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
 	else trackers = new GraspSimTrackers( &_oculusMapper );
@@ -86,7 +88,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		break;
 
 	}
-	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers );
+	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers, dex );
 	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 //	trackers->WriteDataFiles( output_filename_root );

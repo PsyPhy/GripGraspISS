@@ -61,7 +61,7 @@ namespace GraspGUI {
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
-			dex->SendTaskInfo( subjectID, currentProtocol, currentTask, currentStep );
+			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID );
 			fOutputDebugString( "dex->SendTaskInfo( %d, %d, %d, %d );\n", subjectID, protocolID, taskID, stepID );
 		}
 		void CreateRefreshTimer( int interval ) {
@@ -154,8 +154,8 @@ namespace GraspGUI {
 	private: System::Windows::Forms::ListBox^  subjectListBox;
 	private: System::Windows::Forms::GroupBox^  taskGroupBox;
 	private: System::Windows::Forms::ListBox^  taskListBox;
-			 // Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
-			 // That is why the variable name is "protocolListBox" instead of "protocolComboBox".
+	// Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
+	// That is why the variable name is "protocolListBox" instead of "protocolComboBox".
 	private: System::Windows::Forms::GroupBox^  protocolGroupBox;
 	private: System::Windows::Forms::ComboBox^  protocolListBox;
 
@@ -664,7 +664,12 @@ namespace GraspGUI {
 		System::Void SubjectGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
 		System::Void ProtocolGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
 		System::Void TaskGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
-		System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {}
+		System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+			dex->SendTaskInfo(  0, 0, 0, 0 );
+			fOutputDebugString( "dex->SendTaskInfo( 0, 0, 0, 0 );\n" );
+			dex->Disconnect();
+			dex->Release();
+		}
 
 		// Here I create my own MessageBox method. So far I am using the standard MessageBox, but
 		//  I place it here so that later I can change it to use a larger font.
@@ -703,12 +708,14 @@ namespace GraspGUI {
 #endif
 
 			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
-			//fOutputDebugString( "Connecting to DEX ... " );
-			//dex = new Grasp::DexServices();
-			//dex->Connect();
-			//fOutputDebugString( "OK.\n" );
-			//CreateRefreshTimer( 1000 );
-			//StartRefreshTimer();
+			fOutputDebugString( "Connecting to DEX ... " );
+			dex = new Grasp::DexServices();
+			dex->Initialize();
+			dex->Connect();
+			fOutputDebugString( "OK.\n" );
+			// Show progess on ground.
+			CreateRefreshTimer( 1000 );
+			StartRefreshTimer();
 
 		}
 
