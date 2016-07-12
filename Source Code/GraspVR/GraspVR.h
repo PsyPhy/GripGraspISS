@@ -33,6 +33,14 @@ namespace Grasp {
 		Timer	handGoodTimer;
 		Timer	handBadTimer;
 
+	protected:
+		// Hold the poses.
+		TrackerPose headPose;
+		TrackerPose chestPose;
+		TrackerPose handPose;
+		TrackerPose rollPose;
+
+
 	public:
 
 		HINSTANCE			hInstance;
@@ -81,7 +89,7 @@ namespace Grasp {
 		virtual void InitializeVR( HINSTANCE hinst );
 
 		// Initialize the chosen set of tracker.
-		virtual void InitializeTrackers( void );
+		virtual void InitializeTrackers( const char *filename_root = nullptr );
 		// Allow each tracker to update during a rendering loop.
 		virtual void UpdateTrackers( void );
 		// Clean up when finished.

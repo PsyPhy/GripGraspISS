@@ -105,10 +105,16 @@ bool PoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	return( pose.visible );
 }
 
+bool NullPoseTracker::Initialize( void ) {
+	TimerStart( timer );
+	PoseTracker::Initialize();
+	return true;
+}
+
 bool NullPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	CopyPose( pose.pose, nullPose );
 	pose.visible = true;
-	pose.time = 0.0;
+	pose.time = TimerElapsedTime( timer );
 	return( pose.visible );
 }
 

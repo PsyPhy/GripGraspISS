@@ -30,7 +30,6 @@ public:
     ovrPosef            EyeRenderPose[2];
 	ovrVector3f         ViewOffset[2];
 
-	double				fTiming;
 	double				sensorSampleTime;
 	long long			frameIndex;
 

@@ -34,7 +34,7 @@ const int GraspVR::secondsToBeBad = 2.0;
 // Trackers 
 //
 
-void GraspVR::InitializeTrackers( void ) {
+void GraspVR::InitializeTrackers( const char *filename_root ) {
 	trackers->Initialize();
 	CopyVector( localAlignment.displacement, zeroVector );
 	CopyQuaternion( localAlignment.rotation, nullQuaternion );
@@ -48,7 +48,6 @@ void GraspVR::UpdateTrackers( void ) {
 	// Get the position and orientation of the head and update the viewpoint accordingly.
 	// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 	// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-	TrackerPose headPose;
 	if ( !trackers->hmdTracker->GetCurrentPose( headPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
@@ -64,7 +63,6 @@ void GraspVR::UpdateTrackers( void ) {
 
 
 	// Track movements of the hand marker array.
-	TrackerPose handPose;
 	if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
@@ -85,12 +83,16 @@ void GraspVR::UpdateTrackers( void ) {
 		renderer->hand->SetPose( filtered );
 	}
 
+	if ( !trackers->chestTracker->GetCurrentPose( chestPose ) ) {
+		static int pose_error_counter = 0;
+		fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
+	}
+
 	// The vTool is a special case because it does not move with the hand. Instead,
 	// it is attached to the HMD and moves with the gaze. It's roll attitude is set by
 	// the roll tracker. We use the attitude property, rather than the orientation property,
 	// because the position and orientation properties are used to position and orient the
 	// visual object in 3D space.
-	TrackerPose rollPose;
 	if ( !trackers->rollTracker->GetCurrentPose( rollPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading roll tracker (%03d).\n", ++pose_error_counter );

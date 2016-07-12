@@ -37,6 +37,7 @@ bool OculusPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) {
 	pose.pose.orientation[Z] = ovrHeadPose.Orientation.z;
 	pose.pose.orientation[M] = ovrHeadPose.Orientation.w;
 	// Timestamp the sample.
+	pose.time = oculusMapper->sensorSampleTime;
 
 	// We assume that the pose is always obtained for this tracker.
 	pose.visible = true;

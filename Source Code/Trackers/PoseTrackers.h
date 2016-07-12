@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/Timers.h"
 
 namespace PsyPhy {
 
@@ -69,7 +70,10 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 class NullPoseTracker : public PoseTracker {
 
+private:
+	Timer	timer;
 public:
+	bool Initialize( void );
 	bool GetCurrentPoseIntrinsic( TrackerPose &pose );
 };
 

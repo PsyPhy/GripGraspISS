@@ -201,10 +201,17 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 	// Open a file for storing the responses.
 	sprintf( responseFilename, "%s.rsp", output_filename_root );
-	fp = fopen( responseFilename, "w" );
-	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
+	response_fp = fopen( responseFilename, "w" );
+	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
 	// Ouput a header.
-	fprintf( fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+	fprintf( response_fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+
+	// Open a file for storing the tracker poses.
+	sprintf( poseFilename, "%s.pse", output_filename_root );
+	pose_fp = fopen( poseFilename, "w" );
+	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
+	// Ouput a header.
+	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation\n" );
 
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
@@ -213,11 +220,23 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	previousState = NullState;
 	currentState = StartBlock;
 
+	// Measure the time since this block was initiated.
+	TimerStart( blockTimer );
+
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
+
+		// Output the poses to a file.
+		if ( pose_fp ) {
+			fprintf( pose_fp, "%3d; %6.3f; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
+				currentTrial, TimerElapsedTime( blockTimer ), 
+				headPose.time, headPose.visible, vstr( headPose.pose.position ), qstr( headPose.pose.orientation ), 
+				handPose.time, handPose.visible, vstr( handPose.pose.position ), qstr( handPose.pose.orientation ), 
+				chestPose.time, chestPose.visible, vstr( chestPose.pose.position), qstr( chestPose.pose.orientation ));
+		}
 
 		// Boresight the HMD tracker on 'B' or align to the HMD no 'A'.
 		// This is here for debugging and should probably be removed.
@@ -237,8 +256,10 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// Clear any accumulated keydown events in preparation for the next cycle.
 		oculusDisplay->ClearKeyDownEvents();
 	}
-	if ( fp ) fclose( fp );
-	fp = NULL;
+	if ( response_fp ) fclose( response_fp );
+	response_fp = NULL;
+	if ( pose_fp ) fclose( pose_fp );
+	pose_fp = NULL;
 
 	return 0;
 
@@ -276,7 +297,6 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 }
 void  GraspTaskManager::ExitStartBlock( void ) {
 	renderer->readyToStartIndicator->Disable();
-	TimerStart( blockTimer );
 }
 
 //
@@ -294,7 +314,7 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
 	// Output the parameters of this trial to the response file.
-	fprintf( fp, "%d;  %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
+	fprintf( response_fp, "%d;  %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
 		currentTrial,
 
 		trialParameters[currentTrial].targetHeadTilt,
@@ -315,7 +335,7 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 	// Make sure that this information gets written right away to facilitate degugging if we crash.
 	// Note that we do not output a \n in the above. The line will be completed by the response.
-	fflush( fp );
+	fflush( response_fp );
 
 	// The desired orientation of the head to zero in preparation for applying conflict (if any).
 	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
@@ -451,7 +471,7 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	// Handle triggering and moving the projectiles.
 	if ( Validate() ) {
 		// Record the response.
-		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
@@ -542,7 +562,7 @@ void  GraspTaskManager::ExitBlockCompleted( void ) {
 // Occurs when the required head tilt is not maintained.
 // Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
-	fprintf( fp, "%f; interrupted\n", 0.0 );
+	fprintf( response_fp, "%f; interrupted\n", 0.0 );
 	// Show the success indicator.
 	renderer->headMisalignIndicator->Enable();
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
@@ -573,7 +593,7 @@ void  GraspTaskManager::ExitTrialInterrupted( void ) {
 // Provide an indication that the subject took too long to respond.
 // Wait for a button press, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTimeout( void ) {
-	fprintf( fp, "%f; timeout\n", 0.0 );
+	fprintf( response_fp, "%f; timeout\n", 0.0 );
 	// Show the success indicator.
 	renderer->timeoutIndicator->Enable();
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
@@ -766,7 +786,7 @@ GraspTrialState KtoK::UpdateObtainResponse( void ) {
 
 	if ( raised == HandleHandElevation() && Validate()  ) {
 		// Record the response.
-		fprintf( fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}

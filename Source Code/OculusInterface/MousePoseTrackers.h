@@ -9,6 +9,7 @@
 #pragma once
 
 #include "../Trackers/PoseTrackers.h"
+#include "../Useful/Timers.h"
 
 namespace PsyPhy {
 
@@ -18,6 +19,7 @@ class MousePoseTracker : public PoseTracker {
 	private:
 
 	protected:
+		Timer timer;
 		OculusMapper *oculusMapper;
 		double gain;
 

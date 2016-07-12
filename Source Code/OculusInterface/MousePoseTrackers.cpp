@@ -18,14 +18,14 @@ using namespace PsyPhy;
 MousePoseTracker::MousePoseTracker( OculusMapper *ptr, double gain ) {
 	oculusMapper = ptr;
 	this->gain = gain;
+	TimerStart( timer );
 	PoseTracker();
 }
 
 // Define a common method to determine the timestamp for all MousePoseTrackers.
 double MousePoseTracker::GetTime( void ) { 
-	// We shoud set the time of the sample with respect to some clock common to the other trackers.
-	// I don't know what that will be, yet, so here I set the time to zero.
-	return 0.0;
+	// Time is the elapsed time since this tracker instance was initialized.
+	return( TimerElapsedTime( timer ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
