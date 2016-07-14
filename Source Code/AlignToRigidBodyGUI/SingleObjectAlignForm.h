@@ -8,8 +8,23 @@
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
+
 // The following should be integrated elsewhere.
 #include "../GraspGUIBellsAndWhistles/OpenGLWindowsInForms.h"
+
+#include "../DexServices/DexServices.h"
+#define STARTUP_VISIBILITY 10
+#define VISIBILITY 15
+#define SHUTDOWN_VISIBILITY 18
+#define ANNUL	19
+#define STARTUP_INTRINSIC	20
+#define ACQUIRE_INTRINSIC	25
+#define SHUTDOWN_INTRINSIC	29
+#define COMPUTE_ALIGNMENT	30
+#define STARTUP_ALIGNED		40
+#define ACQUIRE_ALIGNED		45
+#define SHUTDOWN_ALIGNED	49
+#define ABORT_REQUESTED		0xFF
 
 namespace AlignToRigidBodyGUI {
 
@@ -20,12 +35,17 @@ namespace AlignToRigidBodyGUI {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace PsyPhy;
+	using namespace Grasp;
 
 	/// <summary>
 	/// Summary for Form1
 	/// </summary>
 	public ref class SingleObjectForm : public System::Windows::Forms::Form
 	{
+
+	private:
+
+		DexServices	*dex;
 
 	protected:
 
@@ -44,22 +64,19 @@ namespace AlignToRigidBodyGUI {
 		String^ filenameRoot;
 
 		double maxPositionError;
-	private: System::Windows::Forms::Label^  busy;
-	protected: 
-
-	protected: 
 		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^filename_root ) :
-		  maxPositionError( 10.0 ),
-			  maxOrientationError( 2.0 ),
-			  forceShow( false ),
-			  noCoda( false )
+		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex ) :
+			maxPositionError( 10.0 ),
+			maxOrientationError( 2.0 ),
+			forceShow( false ),
+			noCoda( false )
 		  {
 			  InitializeComponent();
 			  modelFile = model_file;
 			  filenameRoot = filename_root;
+			  this->dex = dex;
 		  }
 
 	protected:
@@ -120,6 +137,7 @@ namespace AlignToRigidBodyGUI {
 		System::Windows::Forms::Panel^		vrPanel1;
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
+		System::Windows::Forms::Label^  busy;
 
 	private:
 		/// <summary>
@@ -263,7 +281,9 @@ namespace AlignToRigidBodyGUI {
 #pragma endregion
 
 	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
-				 System::Windows::Forms::DialogResult response;
+			// Send a message to ground to show our progress.
+			dex->SendSubstep( ABORT_REQUESTED );
+			 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
 				 coda->AbortAcquisition();	
@@ -306,6 +326,8 @@ namespace AlignToRigidBodyGUI {
 
 				 // Show the Form as being inactive.
 				 Enabled = false;
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( STARTUP_VISIBILITY );
 				 // Show a message while the tracker is initializing.
 				 busy->Text = L"Tracker Initializing\r\nPlease wait ...";
 				 busy->Visible = true;
@@ -317,6 +339,8 @@ namespace AlignToRigidBodyGUI {
 				 // Create and start up the CODA tracker.
 				 coda = new CodaRTnetTracker();
 				 coda->Initialize();
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( VISIBILITY );
 				 coda->StartAcquisition( 600.0 );
 				 
 				 // Hide the tracker message.
@@ -332,7 +356,9 @@ namespace AlignToRigidBodyGUI {
 
 			 }
 
-	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { }
+	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { 
+				dex->ResetTaskInfo();
+			 }
 	private: System::Void alignButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Remove instruction.
@@ -345,6 +371,9 @@ namespace AlignToRigidBodyGUI {
 					 Close();
 					 return;
 				 }
+
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( SHUTDOWN_VISIBILITY );
 
 				 // Show a message while we are busy acquiring and computing the new alignment.
 				 busy->Text = L"Alignment in Progress\r\nPlease wait ...";
@@ -363,6 +392,8 @@ namespace AlignToRigidBodyGUI {
 				 coda->Quit();
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( ANNUL );
 				 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
 				 Refresh();
 				 Application::DoEvents();
@@ -371,11 +402,16 @@ namespace AlignToRigidBodyGUI {
 				 DeleteFile( tempfile );
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( STARTUP_INTRINSIC );
 				 instructionsTextBox->Text = "[ Acquiring alignment data ... ]";
 				 Sleep( 10 );
 				 Refresh();
 				 Application::DoEvents();
 				 coda->Initialize();
+
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( ACQUIRE_INTRINSIC );
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 
 				 // Get the pre-alignment transformation and make sure that it is null.
@@ -404,6 +440,9 @@ namespace AlignToRigidBodyGUI {
 				 coda->WriteMarkerFile( raw_file );
 				 fprintf( stderr, "OK.\n" );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( raw_file ) );
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
+
 				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
@@ -440,11 +479,15 @@ namespace AlignToRigidBodyGUI {
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( alignment_file ) );
 
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( STARTUP_ALIGNED );
 				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
 				 Refresh();
 				 Application::DoEvents();
 				 coda->Shutdown();
 				 coda->Initialize();
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( ACQUIRE_ALIGNED );
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
@@ -464,6 +507,8 @@ namespace AlignToRigidBodyGUI {
 				 coda->WriteMarkerFile( aligned_file );
 				 fprintf( stderr, "OK.\n" );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( aligned_file ) );
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( SHUTDOWN_ALIGNED );
 				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.

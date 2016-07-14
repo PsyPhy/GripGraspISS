@@ -52,18 +52,25 @@ namespace GraspGUI {
 		// run in order to be able to see the pages. This flag allows us to "cue up" the 
 		// command, run the event loop until everything is visible, and then run the command.
 		bool cueStepCommand;
+		// Indicate the state of a step that involves an external command.
+		unsigned short stepExecutionState;
+
 	private: System::Windows::Forms::CheckBox^  unitTestingMode;
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static Timer^ refreshTimer;
-		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+		void SendProgressInfo( void ) {
 			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
-			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID );
-			fOutputDebugString( "dex->SendTaskInfo( %d, %d, %d, %d );\n", subjectID, protocolID, taskID, stepID );
+			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
+			fOutputDebugString( "dex->SendTaskInfo( %d, %d, %d, %d );\n", subjectID, protocolID, taskID, stepID, stepExecutionState );
 		}
+		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			SendProgressInfo();
+		}
+
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
 			refreshTimer->Interval = interval;

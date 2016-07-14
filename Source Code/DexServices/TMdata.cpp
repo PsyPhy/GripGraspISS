@@ -149,10 +149,10 @@ void RT_packet::FillPattern()
         manip_posX[i] = ++cnt;
         manip_posY[i] = ++cnt;
         manip_posZ[i] = ++cnt;
-        manip_oriX[i] = (++cnt)/10000.0;
-        manip_oriY[i] = (++cnt)/10000.0;
-        manip_oriZ[i] = (++cnt)/10000.0;
-        manip_oriM[i] = (++cnt)/10000.0;
+        manip_oriX[i] = (++cnt)/10000.0f;
+        manip_oriY[i] = (++cnt)/10000.0f;
+        manip_oriZ[i] = (++cnt)/10000.0f;
+        manip_oriM[i] = (++cnt)/10000.0f;
         markers_visib_1[i] = ++cnt;
         markers_visib_2[i] = ++cnt;
         manip_visib[i] = (i%2)==0;

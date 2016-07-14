@@ -40,9 +40,6 @@
     <ClCompile Include="..\GraspVR\GraspGLObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiObjectAlignForm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -52,9 +49,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SingleObjectAlignForm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiObjectAlignForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

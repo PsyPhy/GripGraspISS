@@ -286,6 +286,7 @@ void GraspDesktop::ShowStep( void ) {
 		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->instruction );
 		// No need to ask for verification if user tries to skip to the next page.
 		verifyNext = false;
+		stepExecutionState = STEP_SHOWN;
 	}
 	else {
 		// Enable the "Execute", "Skip" and "Previous" buttons.
@@ -298,6 +299,7 @@ void GraspDesktop::ShowStep( void ) {
 		verifyNext = true;
 		// Show the 'ready' page for the command.
 		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->ready );
+		stepExecutionState = STEP_READY_TO_EXECUTE;
 	}
 }
 
@@ -336,6 +338,10 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Snap a picture.
 			dex->SnapPicture( "PreExec" );
 
+			// Show the status of the current command.
+			stepExecutionState = STEP_EXECUTING;
+			SendProgressInfo();
+
 			// Disconnect from DEX telemetry services so that the task program can connect.
 			dex->Disconnect();
 
@@ -371,10 +377,17 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				// I think they already are, but to be sure I do it again.
 				normalNavigationGroupBox->Visible = false;
 				normalNavigationGroupBox->Enabled = false;
+				// Indicate in the script engine status that the command exited with an exit
+				//  code corresponding to an anomolous situation and specify the specific return code.
+				// Because stepExecutionState must be an unsigned short, we take the absolute value of the return code.
+				stepExecutionState = STEP_FINISHED_ABNORMAL + abs( return_code );
 			}
 			else {
 				normalNavigationGroupBox->Visible = true;
 				normalNavigationGroupBox->Enabled = true;
+				// Indicate in the script engine status that the command exited with an exit
+				//  code corresponding to a normal situation and specify the specific return code.
+				stepExecutionState = STEP_FINISHED_NORMAL + return_code;
 			}
 
 			// Show the corresponding page.
@@ -383,10 +396,13 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Reconnect to DEX for telemetry.
 			dex->Connect();
 
+			// Inform ground about the completion status.
+			SendProgressInfo();
+
 			// Snap a picture.
 			dex->SnapPicture( "PostExec" );
 
-			// Re-enable the form.
+			// Re-enable the form.	
 			Enabled = true;
 		}
 }

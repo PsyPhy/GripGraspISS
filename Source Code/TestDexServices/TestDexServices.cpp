@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	fprintf( stderr, "OK.\n" );
 
 	fprintf( stderr, "DexServices: Send dummy HK packet ... " );
-	dex->SendTaskInfo( 1, 2, 3, 4 );
+	dex->SendTaskInfo( 110, 220, 33, 44 );
 	fprintf( stderr, "OK.\n" );
 
 	fprintf( stderr, "DexServices: Snap a picture ... " );

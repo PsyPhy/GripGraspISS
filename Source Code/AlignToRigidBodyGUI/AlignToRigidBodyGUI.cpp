@@ -4,7 +4,6 @@
 
 #include "../DexServices/DexServices.h"
 #include "SingleObjectAlignForm.h"
-#include "MultiObjectAlignForm.h"
 
 using namespace AlignToRigidBodyGUI;
 using namespace Grasp;
@@ -22,11 +21,14 @@ int main(array<System::String ^> ^args)
 	String ^filename_root = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment" );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
-	//DexServices *dex = new DexServices();
-	//dex->Connect();
+	DexServices *dex = new DexServices();
+	dex->ParseCommandLineArguments( args );
+	dex->Initialize();
+	dex->Connect();
+	dex->SendSubstep( 0 );
 
 	// Create the main window and run it
-	Application::Run(gcnew SingleObjectForm( model_file, filename_root ));
+	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex ));
 	return( Environment::ExitCode );
 
 }

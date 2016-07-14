@@ -1,6 +1,8 @@
 // Module: DexServices
 // This is the main DLL file.
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <winsock2.h>
 #include <conio.h>
 #include <stdlib.h>
@@ -15,7 +17,10 @@
 #include "TMData.h"
 #include "DexServices.h"
 
+#define MOTIONTRACKERSTATUS 0xB0B0
+
 using namespace Grasp;
+using namespace System;
 
 void DexServices::printDateTime( FILE *fp ) {
 	SYSTEMTIME st;
@@ -138,12 +143,12 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 
 }
 
-int DexServices::SendTaskInfo( int user, int protocol, int task, int step ) {
+void DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep ) {
 
 	if ( log ) {
 		printDateTime( log );
 		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
-			user, protocol, task, step, 99, 99 );
+			user, protocol, task, step, substep, MOTIONTRACKERSTATUS );
 		fflush( log );
 	}
 	// A buffer to hold the string of bytes that form the packet.
@@ -151,22 +156,28 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step ) {
 	// An object that serializes the data destined for DEX housekeeping telemetry packets.
 	HK_packet hk;
 
+	// Save the current values as a convenience so that one can call SendSubstep() later on.
+	static_user = user;
+	static_protocol = protocol;
+	static_task = task;
+	static_step = step;
+
 	// Fill the packet with info.
 	hk.current_protocol = protocol;
 	hk.current_user = user;
 	hk.current_task = task;
 	hk.current_step = step;
+	hk.scriptengine_status = substep;
 
 	// These two items are currently unused.
-	hk.motiontracker_status = 99;
-	hk.scriptengine_status = 99;
+	hk.motiontracker_status = MOTIONTRACKERSTATUS;
 
 	// Turn the data structure into a string of bytes with header etc.
 	u32 size = hk.serialize( packet );
 
 	// Send it to DEX.
 	Send( packet, size );
-	return 0 ;
+
 }
 
 int DexServices::SnapPicture( const char *tag ) {
@@ -199,4 +210,27 @@ int DexServices::SnapPicture( const char *tag ) {
 		fflush( log );
 	}
 	return 0 ;
+}
+
+bool DexServices::ParseForInt( String ^argument, const char *flag, int &value ) {
+	if ( argument->StartsWith( gcnew String( flag ) ) ) {
+		int index = argument->IndexOf( '=' ) + 1;
+		value = Convert::ToInt32( argument->Substring( index ) );
+		return true;
+	}
+	return false;
+}
+
+
+void  DexServices::ParseCommandLineArguments( array<System::String ^> ^args ){
+	static_user = 0;
+	static_protocol = 0;
+	static_task = 0;
+	static_step = 0;
+	for ( int arg = 0; arg < args->Length; arg++ ) {
+		ParseForInt( args[arg], "--user", static_user );
+		ParseForInt( args[arg], "--protocol", static_protocol );
+		ParseForInt( args[arg], "--task", static_task );
+		ParseForInt( args[arg], "--step", static_step );
+	}
 }

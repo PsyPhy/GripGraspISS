@@ -3,6 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>Bdy\Chest.bdy</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>Bdy\Chest.bdy --user=111 --protocol=222 --task=333 --step=444</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
