@@ -51,19 +51,27 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	char output_filename_root[FILENAME_MAX];
 
 	// Parse the command line.
+	int items;
+	char *ptr;
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
 	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
 	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
 	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
 	if ( strstr( lpCmdLine, "--VtoK" ) ) paradigm = doVtoK;
 	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
-	if ( char *ptr = strstr( lpCmdLine, "--sequence=" ) ) sscanf( ptr, "--sequence=%s", sequence_filename );
-	if ( char *ptr = strstr( lpCmdLine, "--output=" ) ) sscanf( ptr, "--output=%s", output_filename_root );
+	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
+	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--output" ) ) items = sscanf( ptr, "--output=%s", output_filename_root );
+	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 
 	GraspTaskManager	*grasp;
 	GraspTrackers		*trackers;
 
 	DexServices *dex = new DexServices();
+	dex->ParseCommandLine( lpCmdLine );
+	dex->Initialize();
+	dex->Connect();
+	dex->SendSubstep( 0 );
 
 	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
 	else trackers = new GraspSimTrackers( &_oculusMapper );
@@ -91,7 +99,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers, dex );
 	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
-//	trackers->WriteDataFiles( output_filename_root );
+
+	dex->ResetTaskInfo();
+	dex->Disconnect();
+	dex->Release();
 
 	exit( 0 );
 

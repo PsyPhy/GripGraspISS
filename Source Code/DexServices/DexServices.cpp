@@ -17,10 +17,7 @@
 #include "TMData.h"
 #include "DexServices.h"
 
-#define MOTIONTRACKERSTATUS 0xB0B0
-
 using namespace Grasp;
-using namespace System;
 
 void DexServices::printDateTime( FILE *fp ) {
 	SYSTEMTIME st;
@@ -29,11 +26,14 @@ void DexServices::printDateTime( FILE *fp ) {
 }
 
 
-void DexServices::Initialize( const char *filename ) {
-	 log = fopen( filename, "a+" );
-	 fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", filename );
-	 printDateTime( log );
-	 fprintf( log, " File %s open for logging services.\n", filename );
+void DexServices::Initialize( char *filename ) {
+
+	if ( filename ) strncpy( log_filename, filename, sizeof( log_filename ));
+	log = fopen( log_filename, "a+" );
+	fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", log_filename );
+	printDateTime( log );
+	fprintf( log, " File %s open for logging services.\n", log_filename );
+
 }
 
 int DexServices::Connect ( void ) {
@@ -49,13 +49,13 @@ int DexServices::Connect ( void ) {
 
 	if ((retval = WSAStartup(0x202, &wsaData)) != 0)
 	{
-		fOutputDebugString( "Client: WSAStartup() failed with error %d\n", retval);
+		fOutputDebugString( "DexServices: WSAStartup() failed with error %d\n", retval);
 		WSACleanup();
 		return -1;
 	}
 	else
 	{
-		fOutputDebugString( "Client: WSAStartup() OK.\n");
+		fOutputDebugString( "DexServices: WSAStartup() OK.\n");
 	}
 
 	{ // Convert nnn.nnn address to a usable one
@@ -63,7 +63,7 @@ int DexServices::Connect ( void ) {
 
 		if(addr==INADDR_NONE)
 		{
-			fOutputDebugString( "Client: problem interpreting IP address.\n");
+			fOutputDebugString( "DexServices: problem interpreting IP address.\n");
 			WSACleanup();
 			return( -2 );
 		}
@@ -80,7 +80,7 @@ int DexServices::Connect ( void ) {
 
 	if ( dexSocket < 0 )
 	{
-		fOutputDebugString( "Client: Error Opening socket: Error %d\n", WSAGetLastError());
+		fOutputDebugString( "DexServices: Error Opening socket: Error %d\n", WSAGetLastError());
 		WSACleanup();
 		return -1;
 	}
@@ -96,18 +96,19 @@ int DexServices::Connect ( void ) {
 		(char *) &flag,					
 		sizeof( flag ));	/* length of option value */
 
-	fOutputDebugString( "Client: Client connecting to: %s.\n", server_name );
+	fOutputDebugString( "DexServices: Client connecting to: %s.\n", server_name );
 
-	if (connect( dexSocket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
-
-	{
-		fOutputDebugString( "Client: connect() failed: %d\n", WSAGetLastError());
-		WSACleanup();
+	// Try to connect to the host, but without blocking.
+	// If we are not connected to DEX we can still work.
+	unsigned long nonblocking = 1;
+	ioctlsocket( dexSocket, FIONBIO, &nonblocking );
+	if ( connect( dexSocket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR ) {
+		fOutputDebugString( "DexServices: connect() failed: %d (normal behavior for non-blocking connect).\n", WSAGetLastError());
 		return -1;
 	}
 	else
 	{
-		fOutputDebugString( "ConnectToDex() OK.\n" );
+		fOutputDebugString( "DexServices: ConnectToDex() OK.\n" );
 		return( 0 );
 	}
 	printDateTime( log );
@@ -116,6 +117,7 @@ int DexServices::Connect ( void ) {
 };
 
 void DexServices::Disconnect( void ) {
+	// If the connection failed, this should fail, too, but I don't really care.
 	closesocket( dexSocket );
 	WSACleanup();
 	printDateTime( log );
@@ -129,26 +131,22 @@ void DexServices::Release( void ) {
 }
 
 int DexServices::Send( const unsigned char *packet, int size ) {
-
+	// Attempt to send a packet. If the connection has not been established, this will fail, but we carry on.
+	// The caller may wish to signal the error or not, depending on the return code.
 	int retval = send( dexSocket, (const char *) packet, size, 0);
-	if ( retval == SOCKET_ERROR )
-	{
-		fOutputDebugString( "Client: send() failed: error %d.\n", WSAGetLastError());
-		fOutputDebugString( "XSACleanup() ... " );
-		WSACleanup();
-		fOutputDebugString( "OK\n" );
-		return( -1 );
-	}
+	// If we were fancier, we could check if the connection has been achieved before doing the send and depending
+	// on the error we could try to reconnnect. But instead I just assume that if the connection was not established
+	// by the first try, we just carry on without a connection.
+	if ( retval == SOCKET_ERROR ) fOutputDebugString( "DexServices: send() failed: error %d (may just be waiting for connection.)\n", WSAGetLastError());
 	return retval;
-
 }
 
-void DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep ) {
+int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep, unsigned short tracker_status ) {
 
 	if ( log ) {
 		printDateTime( log );
 		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
-			user, protocol, task, step, substep, MOTIONTRACKERSTATUS );
+			user, protocol, task, step, substep, tracker_status );
 		fflush( log );
 	}
 	// A buffer to hold the string of bytes that form the packet.
@@ -161,6 +159,8 @@ void DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsi
 	static_protocol = protocol;
 	static_task = task;
 	static_step = step;
+	static_substep = substep;
+	static_tracker_status = tracker_status;
 
 	// Fill the packet with info.
 	hk.current_protocol = protocol;
@@ -168,15 +168,15 @@ void DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsi
 	hk.current_task = task;
 	hk.current_step = step;
 	hk.scriptengine_status = substep;
-
-	// These two items are currently unused.
-	hk.motiontracker_status = MOTIONTRACKERSTATUS;
+	hk.motiontracker_status = tracker_status;
 
 	// Turn the data structure into a string of bytes with header etc.
 	u32 size = hk.serialize( packet );
 
 	// Send it to DEX.
-	Send( packet, size );
+	int sent = Send( packet, size );
+
+	return( sent );
 
 }
 
@@ -195,42 +195,56 @@ int DexServices::SnapPicture( const char *tag ) {
 		// Make sure that it is null terminated.
 		cam.tag[ sizeof(cam.tag) - 1 ] = '\0';
 		// Emit a warning.
-		fOutputDebugString( "Warning: Truncating tag %s to %s\n", tag, cam.tag );
+		fOutputDebugString( "DexServices: Warning - Truncating tag %s to %s\n", tag, cam.tag );
 	}
 
 	// Turn the data structure into a string of bytes with header etc.
 	u32 size = cam.serialize( packet );
 
 	// Send it to DEX.
-	Send( packet, size );
+	int sent = Send( packet, size );
 
 	if ( log ) {
 		printDateTime( log );
-		fprintf( log, " Snapped picture: %s\n", cam.tag );
+		fprintf( log, " Snapped picture: %s (%s)\n", cam.tag, ( sent == 0 ? "OK" : "not sent" ) );
 		fflush( log );
 	}
-	return 0 ;
+	return( sent );
 }
 
-bool DexServices::ParseForInt( String ^argument, const char *flag, int &value ) {
-	if ( argument->StartsWith( gcnew String( flag ) ) ) {
-		int index = argument->IndexOf( '=' ) + 1;
-		value = Convert::ToInt32( argument->Substring( index ) );
-		return true;
+void DexServices::ParseCommandLine( char *command_line ) {
+	char *ptr;
+	int items= -1;
+	if ( ptr = strstr( command_line, "--user" ) ) {
+		items = sscanf( ptr, "--user=%d", &static_user );
+		// If items == 1 then we successufully parsed the item as well.
+		// But if items = 0, it means that we recognized a --key but that the reading of the value was not successful.
+		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	}
-	return false;
-}
-
-
-void  DexServices::ParseCommandLineArguments( array<System::String ^> ^args ){
-	static_user = 0;
-	static_protocol = 0;
-	static_task = 0;
-	static_step = 0;
-	for ( int arg = 0; arg < args->Length; arg++ ) {
-		ParseForInt( args[arg], "--user", static_user );
-		ParseForInt( args[arg], "--protocol", static_protocol );
-		ParseForInt( args[arg], "--task", static_task );
-		ParseForInt( args[arg], "--step", static_step );
+	if ( ptr = strstr( command_line, "--protocol" ) ) {
+		items = sscanf( ptr, "--protocol=%d", &static_user );
+		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	}
+	if ( ptr = strstr( command_line, "--task" ) ) {
+		items = sscanf( ptr, "--task=%d", &static_task );
+		// If items == 1 then we successufully parsed the item as well.
+		// But if items = 0, it means that we recognized a --key but that the reading of the value was not successful.
+		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	}
+	if ( ptr = strstr( command_line, "--step" ) ) {
+		items = sscanf( ptr, "--step=%d", &static_step );
+		// If items == 1 then we successufully parsed the item as well.
+		// But if items = 0, it means that we recognized a --key but that the reading of the value was not successful.
+		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	}
+	if ( ptr = strstr( command_line, "--dexlog" ) ) {
+		char argument[256];
+		items = sscanf( ptr, "--dexlog=%d", argument );
+		sprintf( log_filename, "%s.dxl" );
+
+		// If items == 1 then we successufully parsed the item as well.
+		// But if items = 0, it means that we recognized a --key but that the reading of the value was not successful.
+		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	}
+
 }

@@ -28,9 +28,15 @@ int main(array<System::String ^> ^args)
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	DexServices *dex = new DexServices();
+	// See if the caller has specified the user, protocol, task and step numbers. We don't change those here.
 	dex->ParseCommandLineArguments( args );
-	dex->Initialize();
+	// Create a name for the log file using the filename root defined above.
+	char *log_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( filename_root + ".dxl" ).ToPointer();
+	dex->Initialize( log_file );
+	System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( log_file ) );
 	dex->Connect();
+	// Initialize the sub-step to zero and send it to the ground via DEX. 
+	// We will change this as the work progresses to indicate progress on this step.
 	dex->SendSubstep( 0 );
 
 	// Create the main window and run it

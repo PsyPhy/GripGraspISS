@@ -13,10 +13,14 @@
 #include "../GraspGUIBellsAndWhistles/OpenGLWindowsInForms.h"
 
 #include "../DexServices/DexServices.h"
-#define STARTUP_VISIBILITY 10
-#define VISIBILITY 15
+
+// The following defines are used to indicate progress through different
+// phases of the alignment process. These are sent as the sub-step indicator to 
+// ground via DEX using DexServices.
+#define STARTUP_VISIBILITY	10
+#define VISIBILITY			15
 #define SHUTDOWN_VISIBILITY 18
-#define ANNUL	19
+#define ANNUL_ALIGNMENT		19
 #define STARTUP_INTRINSIC	20
 #define ACQUIRE_INTRINSIC	25
 #define SHUTDOWN_INTRINSIC	29
@@ -24,7 +28,8 @@
 #define STARTUP_ALIGNED		40
 #define ACQUIRE_ALIGNED		45
 #define SHUTDOWN_ALIGNED	49
-#define ABORT_REQUESTED		0xFF
+#define ALIGNMENT_ERROR		9999
+#define ABORT_REQUESTED		8888
 
 namespace AlignToRigidBodyGUI {
 
@@ -38,7 +43,7 @@ namespace AlignToRigidBodyGUI {
 	using namespace Grasp;
 
 	/// <summary>
-	/// Summary for Form1
+	/// A windows Form that guides an operator through the alignment process.
 	/// </summary>
 	public ref class SingleObjectForm : public System::Windows::Forms::Form
 	{
@@ -280,19 +285,6 @@ namespace AlignToRigidBodyGUI {
 		}
 #pragma endregion
 
-	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			// Send a message to ground to show our progress.
-			dex->SendSubstep( ABORT_REQUESTED );
-			 System::Windows::Forms::DialogResult response;
-				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
-				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
-				 coda->AbortAcquisition();	
-					 coda->Quit();
-					 Environment::ExitCode = -1;
-					 Close();
-				 }
-			 }
-
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Create windows and viewpoints to show what the CODA units are seeing.
@@ -357,9 +349,42 @@ namespace AlignToRigidBodyGUI {
 			 }
 
 	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { 
+				// Clear the task HK information to show that we are done.
 				dex->ResetTaskInfo();
+				if ( Environment::ExitCode == -2 ) {
+					dex->SendSubstep( ALIGNMENT_ERROR );
+					dex->SendTrackerStatus( TRACKER_ANOMALY ); 
+				}
 			 }
+
+	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
+				// Send a message to ground to show our progress.
+				dex->SendSubstep( ABORT_REQUESTED );
+				System::Windows::Forms::DialogResult response;
+				response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
+				if ( response == System::Windows::Forms::DialogResult::Yes ) {
+				coda->AbortAcquisition();	
+					coda->Quit();
+					Environment::ExitCode = -1;
+					Close();
+				}
+				//Presumably, were were in the visibility check state and we are returning there.
+				dex->SendSubstep( VISIBILITY );
+			 }
+
+
 	private: System::Void alignButton_Click(System::Object^  sender, System::EventArgs^  e) {
+
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( SHUTDOWN_VISIBILITY );
+				 // Take a picture of the setup as seen from the CODA.
+				 dex->SnapPicture( "ALIGNMENT" );
+				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
+				 StopRefreshTimer();
+				 // Stop the ongoing acquisition and discard the recorded data.
+				 coda->AbortAcquisition();	
+				 // Unfortunately, we have to shutdown and restart to do a new acquisition.
+				 coda->Quit();
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
@@ -372,28 +397,19 @@ namespace AlignToRigidBodyGUI {
 					 return;
 				 }
 
-				 // Send a message to ground to show our progress.
-				 dex->SendSubstep( SHUTDOWN_VISIBILITY );
-
 				 // Show a message while we are busy acquiring and computing the new alignment.
 				 busy->Text = L"Alignment in Progress\r\nPlease wait ...";
 				 busy->Visible = true;
+
 				 // Show the buttons on the form as being inactive.
 				 cancelButton->Enabled = false;
 				 alignButton->Enabled = false;
 				 Refresh();
 				 Application::DoEvents();
 
-				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
-				 StopRefreshTimer();
-				 // Stop the ongoing acquisition and discard the recorded data.
-				 coda->AbortAcquisition();	
-				 // Unfortunately, we have to shutdown and restart to do a new acquisition.
-				 coda->Quit();
-
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 // Send a message to ground to show our progress.
-				 dex->SendSubstep( ANNUL );
+				 dex->SendSubstep( ANNUL_ALIGNMENT );
 				 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
 				 Refresh();
 				 Application::DoEvents();
@@ -440,13 +456,15 @@ namespace AlignToRigidBodyGUI {
 				 coda->WriteMarkerFile( raw_file );
 				 fprintf( stderr, "OK.\n" );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( raw_file ) );
-				 // Send a message to ground to show our progress.
-				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
 
+				 // We have to shut down in order to install a new alignment transformation and to allow for another acquisition.
+				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
 				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( COMPUTE_ALIGNMENT );
 				 instructionsTextBox->Text = "[ Computing alignment transformations ... ]";
 				 Refresh();
 				 Application::DoEvents();
@@ -513,7 +531,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.
 				 // We should get position zero and null orientation in each case.
-				 char msg[25600] = "Alignment results: \n", line[256];
+				 char msg[25600] = "Alignment results: \n\n", line[256];
 				 bool well_aligned = true;
 				 for ( int unit = 0; unit < coda->nUnits; unit++ ) {
 					 // Compute the average marker positions for the acquired sample.
@@ -534,7 +552,8 @@ namespace AlignToRigidBodyGUI {
 					 // Check that the alignment has been successful.
 					 well_aligned &= ( position_ok & orientation_ok );
 				 }
-				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK, "AlignToRigidBodyGUI", msg );
+				 strcat( msg, "\n\nAre the serial numbers set correctly?\nAre the FTP login and password correct?" );
+				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK | MB_ICONEXCLAMATION , "AlignToRigidBodyGUI", msg );
 				 if ( !well_aligned ) Environment::ExitCode = -2;
 				 else Environment::ExitCode = 0;
 				 // Close the form. 
