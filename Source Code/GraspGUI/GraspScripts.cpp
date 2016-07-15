@@ -349,7 +349,12 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
 			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
-			String ^cmdline =  stepList[currentStep]->command + resultsDirectory + "\\" + subjectList[currentSubject]->ID + "." + dateTimeString;
+			String ^cmdline =  stepList[currentStep]->command 
+				+ "--output=" + resultsDirectory + "\\" + subjectList[currentSubject]->ID + "." + dateTimeString
+				+ "--subject=" + currentSubject
+				+ "--protocol=" + currentProtocol
+				+ "--task=" + currentTask
+				+ "--step=" + currentStep;
 			char *cmd;
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;

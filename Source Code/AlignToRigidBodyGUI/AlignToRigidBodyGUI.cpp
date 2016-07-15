@@ -15,10 +15,16 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	// First argument is the rigid body model file for the alignment object.
-	String ^model_file = args->Length >= 1 ? args[0] : gcnew String( "Bdy\\Chest.bdy" );
-	// Next is the root to generate filenames for storing the marker data and alignment.
-	String ^filename_root = args->Length >= 2 ? args[1] : gcnew String( "CodaAlignment" );
+	// Parse the command line arguments.
+	// Note that unrecognized arguments will be ignored here, but they might be recognized
+	//  further down when DexServices parses the command line arguments as well.
+	String ^model_file = gcnew String( "Bdy\\Chest.bdy" );
+	String ^filename_root = gcnew String( "CodaAlignment" );
+	for ( int i = 0; i < args->Length; i++ ) {
+		if ( args[i]->StartsWith( "--body" ) ) model_file = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+		if ( args[i]->StartsWith( "--output" ) )filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+	}
+	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s\n", model_file, filename_root );
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	DexServices *dex = new DexServices();
