@@ -20,11 +20,13 @@ int main(array<System::String ^> ^args)
 	//  further down when DexServices parses the command line arguments as well.
 	String ^model_file = gcnew String( "Bdy\\Chest.bdy" );
 	String ^filename_root = gcnew String( "CodaAlignment" );
+	bool noCoda = false;
 	for ( int i = 0; i < args->Length; i++ ) {
 		if ( args[i]->StartsWith( "--body" ) ) model_file = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
-		if ( args[i]->StartsWith( "--output" ) )filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+		if ( args[i]->StartsWith( "--output" ) ) filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+		if ( args[i]->StartsWith( "--nocoda" ) ) noCoda = true;
 	}
-	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s\n", model_file, filename_root );
+	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s  CODA: %s\n", model_file, filename_root, ( noCoda ? "NO" : "YES" ));
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	DexServices *dex = new DexServices();
@@ -40,7 +42,7 @@ int main(array<System::String ^> ^args)
 	dex->SendSubstep( 0 );
 
 	// Create the main window and run it
-	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex ));
+	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex, noCoda ));
 	return( Environment::ExitCode );
 
 }

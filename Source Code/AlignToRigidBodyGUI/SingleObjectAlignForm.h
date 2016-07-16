@@ -72,16 +72,16 @@ namespace AlignToRigidBodyGUI {
 		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex ) :
+		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, bool noCoda ) :
 			maxPositionError( 10.0 ),
 			maxOrientationError( 2.0 ),
-			forceShow( false ),
-			noCoda( false )
+			forceShow( false )
 		  {
 			  InitializeComponent();
 			  modelFile = model_file;
 			  filenameRoot = filename_root;
 			  this->dex = dex;
+			  this->noCoda = noCoda;
 		  }
 
 	protected:

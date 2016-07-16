@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+
 #include "GraspDesktopForm.h"
 #include "GraspScripts.h"
 
@@ -359,6 +360,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				+ " --protocol=" + protocolID
 				+ " --task=" + taskID
 				+ " --step=" + stepID;
+			// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
+			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
+
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
