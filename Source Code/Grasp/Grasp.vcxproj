@@ -92,10 +92,14 @@
   <ItemGroup>
     <ClCompile Include="Grasp.cpp" />
     <ClCompile Include="GraspTaskManagers.cpp" />
+    <ClCompile Include="KtoK.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VtoK.cpp" />
+    <ClCompile Include="VtoV.cpp" />
+    <ClCompile Include="VtoVK.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">

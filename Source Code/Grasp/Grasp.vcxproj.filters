@@ -18,6 +18,10 @@
     <ClCompile Include="Grasp.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="GraspTaskManagers.cpp" />
+    <ClCompile Include="KtoK.cpp" />
+    <ClCompile Include="VtoK.cpp" />
+    <ClCompile Include="VtoVK.cpp" />
+    <ClCompile Include="VtoV.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\codaRTNetProtocol.lib">
