@@ -661,7 +661,7 @@ MarkerStructureGLObject::MarkerStructureGLObject( char *model_file ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		Sphere *sphere = new Sphere( STRUCTURE_BALL_RADIUS );
 		sphere->SetPosition( modelMarker[mrk].position );
-		sphere->SetColor( 0.2, 0.0, 0.2, 1.0 );
+		sphere->SetColor( 0.0, 1.0, 0.0, 1.0 );
 		AddComponent( sphere );
 	}
 

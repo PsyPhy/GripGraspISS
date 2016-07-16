@@ -73,9 +73,9 @@ namespace AlignToRigidBodyGUI {
 
 	public:
 		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, bool noCoda ) :
-			maxPositionError( 10.0 ),
-			maxOrientationError( 2.0 ),
-			forceShow( false )
+		  maxPositionError( 10.0 ),
+			  maxOrientationError( 2.0 ),
+			  forceShow( false )
 		  {
 			  InitializeComponent();
 			  modelFile = model_file;
@@ -309,32 +309,30 @@ namespace AlignToRigidBodyGUI {
 				 glUsefulInitializeDefault();
 				 glUsefulDefaultSpecularLighting( 0.75 );
 
-				 // When debugging without the CODA, just quit.
-				 if ( noCoda ) {
-					 instructionsTextBox->Text = instructionsTextBox->Text + " (noCoda debug mode)";
-					 return;
-				 }
-
-
 				 // Show the Form as being inactive.
 				 Enabled = false;
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( STARTUP_VISIBILITY );
+
 				 // Show a message while the tracker is initializing.
+				 if ( noCoda ) instructionsTextBox->Text = instructionsTextBox->Text + " (noCoda debug mode)";
 				 busy->Text = L"Tracker Initializing\r\nPlease wait ...";
 				 busy->Visible = true;
-				 // Make sure that the windows have refreshed  before starting up the CODA, because it will 
-				 // take some time.
+				 // Make sure that the windows have refreshed  before starting up the CODA, 
+				 // because it will take some time.
 				 Refresh();
 				 Application::DoEvents();
 
-				 // Create and start up the CODA tracker.
-				 coda = new CodaRTnetTracker();
-				 coda->Initialize();
+				 if ( noCoda ) Sleep( 5000 );
+				 else {
+					 // Create and start up the CODA tracker.
+					 coda = new CodaRTnetTracker();
+					 coda->Initialize();
+					 coda->StartAcquisition( 600.0 );
+				 }
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
-				 coda->StartAcquisition( 600.0 );
-				 
+
 				 // Hide the tracker message.
 				 busy->Visible = false;
 				 // Re-enable the Form as being inactive.
@@ -342,34 +340,52 @@ namespace AlignToRigidBodyGUI {
 				 // Prompt for the required action.
 				 instructionsTextBox->Text = "Verify that all markers on the Chest Marker Plate are visible in each Tracker Camera view (all dots green) and then press 'Align'.         ";
 
-				 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
-				 CreateRefreshTimer( 300 );
-				 StartRefreshTimer();
+				 if ( !noCoda ) {
+					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
+					 CreateRefreshTimer( 300 );
+					 StartRefreshTimer();
+				 }
+				 else {
+					vrWindow2->Activate();
+					vrWindow2->Clear( 0.50, 0.50, 0.60 );
+					codaViewpoint->Apply( vrWindow2, CYCLOPS );
+					alignmentObject2->Draw();
+					vrWindow2->Swap();
+
+					vrWindow1->Activate();
+					vrWindow1->Clear( 0.50, 0.50, 0.60 );
+					codaViewpoint->Apply( vrWindow1, CYCLOPS );
+					alignmentObject1->Draw();
+					vrWindow1->Swap();
+				 }
+
 
 			 }
 
 	private: System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) { 
-				// Clear the task HK information to show that we are done.
-				dex->ResetTaskInfo();
-				if ( Environment::ExitCode == -2 ) {
-					dex->SendSubstep( ALIGNMENT_ERROR );
-					dex->SendTrackerStatus( TRACKER_ANOMALY ); 
-				}
+				 // Clear the task HK information to show that we are done.
+				 dex->ResetTaskInfo();
+				 if ( Environment::ExitCode == -2 ) {
+					 dex->SendSubstep( ALIGNMENT_ERROR );
+					 dex->SendTrackerStatus( TRACKER_ANOMALY ); 
+				 }
 			 }
 
 	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
-				// Send a message to ground to show our progress.
-				dex->SendSubstep( ABORT_REQUESTED );
-				System::Windows::Forms::DialogResult response;
-				response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
-				if ( response == System::Windows::Forms::DialogResult::Yes ) {
-				coda->AbortAcquisition();	
-					coda->Quit();
-					Environment::ExitCode = -1;
-					Close();
-				}
-				//Presumably, were were in the visibility check state and we are returning there.
-				dex->SendSubstep( VISIBILITY );
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( ABORT_REQUESTED );
+				 System::Windows::Forms::DialogResult response;
+				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
+				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
+					 if ( !noCoda ) {
+						 coda->AbortAcquisition();
+						 coda->Quit();
+					 }
+					 Environment::ExitCode = -1;
+					 Close();
+				 }
+				 //Presumably, were were in the visibility check state and we are returning there.
+				 dex->SendSubstep( VISIBILITY );
 			 }
 
 
@@ -379,24 +395,20 @@ namespace AlignToRigidBodyGUI {
 				 dex->SendSubstep( SHUTDOWN_VISIBILITY );
 				 // Take a picture of the setup as seen from the CODA.
 				 dex->SnapPicture( "ALIGNMENT" );
-				 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
-				 StopRefreshTimer();
-				 // Stop the ongoing acquisition and discard the recorded data.
-				 coda->AbortAcquisition();	
-				 // Unfortunately, we have to shutdown and restart to do a new acquisition.
-				 coda->Quit();
+
+				 if ( !noCoda ) {
+					 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
+					 StopRefreshTimer();
+					 // Stop the ongoing acquisition and discard the recorded data.
+					 coda->AbortAcquisition();	
+					 // Unfortunately, we have to shutdown and restart to do a new acquisition.
+					 coda->Quit();
+				 }
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
 				 Refresh();
 				 Application::DoEvents();
-	
-			     // If in noCoda debug mode, signal to close the form and then return to skip initiating the CODA system.
-				 if ( noCoda ) {
-					 Close();
-					 return;
-				 }
-
 				 // Show a message while we are busy acquiring and computing the new alignment.
 				 busy->Text = L"Alignment in Progress\r\nPlease wait ...";
 				 busy->Visible = true;
@@ -406,6 +418,13 @@ namespace AlignToRigidBodyGUI {
 				 alignButton->Enabled = false;
 				 Refresh();
 				 Application::DoEvents();
+
+				 if ( noCoda ) {
+					 Sleep( 2000 );
+					 Environment::ExitCode = 0;
+					 Close();
+					 return;
+				 }
 
 				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				 // Send a message to ground to show our progress.
@@ -424,11 +443,11 @@ namespace AlignToRigidBodyGUI {
 				 Sleep( 10 );
 				 Refresh();
 				 Application::DoEvents();
+				 Sleep( 1000 );
 				 coda->Initialize();
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_INTRINSIC );
-				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 
 				 // Get the pre-alignment transformation and make sure that it is null.
 				 Vector3 current_offset[MAX_UNITS];
@@ -436,7 +455,7 @@ namespace AlignToRigidBodyGUI {
 				 coda->GetAlignment( current_offset, current_rotation );
 				 // If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
 				 fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
-
+				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish.
@@ -560,6 +579,6 @@ namespace AlignToRigidBodyGUI {
 				 Close();
 
 			 }
-};
+	};
 }
 
