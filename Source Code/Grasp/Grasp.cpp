@@ -49,6 +49,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	char sequence_filename[FILENAME_MAX];
 	char output_filename_root[FILENAME_MAX];
+	char dex_log_filename[FILENAME_MAX];
 
 	// Parse the command line.
 	int items;
@@ -69,7 +70,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	DexServices *dex = new DexServices();
 	dex->ParseCommandLine( lpCmdLine );
-	dex->Initialize();
+	strncpy( dex_log_filename, output_filename_root, sizeof( dex_log_filename ) - 1 );
+	strncat( dex_log_filename, ".dxl", sizeof( dex_log_filename ) - strlen( dex_log_filename ) - 1 );
+	dex->Initialize( dex_log_filename );
 	dex->Connect();
 	dex->SendSubstep( 0 );
 
