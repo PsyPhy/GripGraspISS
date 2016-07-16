@@ -345,16 +345,25 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Disconnect from DEX telemetry services so that the task program can connect.
 			dex->Disconnect();
 
+			// Construct the command line from the entry in the task or step file.
+			// To the entry from the script we add a specification of the output filename root, including path
+			// and specification of the user, protocol, task an subject ID. The client process will incorporate these
+			// values into the HK packets that get sent to DEX for transmission to the ground.
+			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
+			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
+			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
+			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+			String ^cmdline =  stepList[currentStep]->command 
+				+ " --output=" + resultsDirectory + subjectList[currentSubject]->ID + "." + dateTimeString
+				+ " --subject=" + subjectID
+				+ " --protocol=" + protocolID
+				+ " --task=" + taskID
+				+ " --step=" + stepID;
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
 			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
-			String ^cmdline =  stepList[currentStep]->command 
-				+ "--output=" + resultsDirectory + "\\" + subjectList[currentSubject]->ID + "." + dateTimeString
-				+ "--subject=" + currentSubject
-				+ "--protocol=" + currentProtocol
-				+ "--task=" + currentTask
-				+ "--step=" + currentStep;
+			// We have to use Marshal::StringToHGlobalAnsi() to create ANSI strings to pass to the system() command.
 			char *cmd;
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
