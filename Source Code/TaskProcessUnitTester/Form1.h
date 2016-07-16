@@ -25,6 +25,8 @@ namespace TaskProcessUnitTester {
 			//
 			cmdTextBox->Text = "";
 			for ( int i = 0; i < args->Length; i++ ) cmdTextBox->Text += args[i] + " ";
+			cmdTextBox->SelectionLength = 0;
+			cmdTextBox->SelectionStart = cmdTextBox->Text->Length;
 		}
 
 	protected:
@@ -112,6 +114,8 @@ namespace TaskProcessUnitTester {
 			// 
 			// cmdTextBox
 			// 
+			this->cmdTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
 			this->cmdTextBox->Location = System::Drawing::Point(24, 21);
 			this->cmdTextBox->Multiline = true;
 			this->cmdTextBox->Name = L"cmdTextBox";
