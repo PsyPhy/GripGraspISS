@@ -143,7 +143,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	static const bool fullscreen = true;
 	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
 	// what is going on in the HMD. To do so, set the following to false;
-	static const bool mirror = false;
+	static const bool mirror = true;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8
@@ -391,7 +391,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		//  wrong or the other one. We should check.
 		double object_roll_angle = ToDegrees( atan2( - renderer->kkTool->orientation[0][1], renderer->kkTool->orientation[0][0] ) );
 		// Compute the error with respect to the desired roll angle.
-		double angular_error =  desiredHeadRoll - object_roll_angle;
+		double angular_error =  desiredHandRoll - object_roll_angle;
 		// Set the color of the tool according to the angular error.
 		renderer->SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
 		// Set the direction of the arrow according to the direction of the error.
