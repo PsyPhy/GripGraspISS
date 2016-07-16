@@ -65,7 +65,6 @@ namespace GraspGUI {
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
 			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
-			fOutputDebugString( "dex->SendTaskInfo( %d, %d, %d, %d );\n", subjectID, protocolID, taskID, stepID, stepExecutionState );
 		}
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 			SendProgressInfo();

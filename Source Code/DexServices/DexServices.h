@@ -29,6 +29,7 @@ namespace Grasp {
 		SOCKET  dexSocket;
 		char	log_filename[FILENAME_MAX];
 		FILE	*log;
+		int		not_sent_countdown;
 
 		void printDateTime( FILE *fp = stderr );
 
@@ -47,6 +48,7 @@ namespace Grasp {
 		
 		DexServices( void ) :
 		
+		  not_sent_countdown(10),
 		  static_user(0),
 		  static_protocol(0),
 		  static_task(0),
