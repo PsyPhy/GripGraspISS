@@ -141,6 +141,9 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	// Decide if we are in full screen mode or not.
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
 	static const bool fullscreen = true;
+	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
+	// what is going on in the HMD. To do so, set the following to false;
+	static const bool mirror = false;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8
@@ -154,7 +157,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper->Initialize( oculusDisplay, true, fullscreen );
+	result = oculusMapper->Initialize( oculusDisplay, mirror, fullscreen );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
 
 	// Set up a default GL rendering context.

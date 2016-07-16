@@ -271,9 +271,64 @@ struct OculusDisplayOGL
 			unsigned short  word[2];
 		} unpack;
 		int mouse_x, mouse_y;
+			
+		HDC hDC = GetWindowDC( hWnd );
 
 		switch (Msg)
 		{
+
+		case WM_PAINT:
+
+			// Place a text message on the desktop screen when Oculus is running but mirroring is off.
+			// This should only get called once when the program starts up. It is called even when
+			// mirroring is on, but it is quickly overwritten by the mirroring bitblt.
+
+			// Since it should only be called once at the onset, I create and destroy the font and brush objects here.
+
+			HFONT hFont, hOldFont; 
+			HBRUSH brush;
+			PAINTSTRUCT ps;
+			RECT rect;
+
+			BeginPaint( hWnd, &ps );
+
+			// Clear the screen.
+			brush = CreateSolidBrush( RGB( 0, 0, 25 ) );
+			GetClientRect( hWnd, &rect );
+			FillRect( hDC, &ps.rcPaint, brush );
+			DeleteObject( brush );
+
+			// Set the text drawing color and mode.
+			SetTextColor( hDC,RGB( 255, 0, 255 ) );
+			SetBkMode( hDC,TRANSPARENT);
+
+			// A large message saying what is going on just above the centerline.
+			hFont = CreateFont( 96, 0, 0, 0, FW_BOLD, FALSE,
+				FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+				CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
+				"Broadway"); 
+			hOldFont = (HFONT)SelectObject( hDC, hFont);
+			GetClientRect( hWnd, &rect );
+			rect.bottom = ( rect.top + rect.bottom ) / 2;
+			DrawText(hDC, "Application is running in VR Helmet", -1, &rect, DT_SINGLELINE | DT_NOCLIP | DT_CENTER | DT_BOTTOM ) ;
+			SelectObject( hDC, hOldFont);
+			DeleteObject( hFont );
+
+			// A smaller message saying how to escape out of the program.
+			hFont = CreateFont( 48, 0, 0, 0, FW_BOLD, FALSE,
+				FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+				CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
+				"Broadway"); 
+			hOldFont = (HFONT)SelectObject( hDC, hFont);
+			GetClientRect( hWnd, &rect );
+			rect.top = ( rect.top + rect.bottom ) / 2 + 50;
+			DrawText(hDC, "Press 'Escape' on keyboard to force exit.", -1, &rect, DT_SINGLELINE | DT_NOCLIP | DT_CENTER | DT_TOP ) ;
+			SelectObject( hDC, hOldFont); 
+			DeleteObject( hFont );
+
+			EndPaint( hWnd, &ps );
+
+			break;
 
 		case WM_LBUTTONDOWN:
 			p->Button[MOUSE_LEFT] = true;
@@ -578,6 +633,8 @@ struct OculusDisplayOGL
 			glDebugMessageControlARB(GL_DEBUG_SOURCE_API, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 		}
 
+		ShowWindow( Window, SW_SHOW );
+		UpdateWindow( Window );
 		return true;
 	}
 
