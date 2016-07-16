@@ -1,6 +1,5 @@
 # Instructions and commands to guide the installation for the floating posture.
 01; INSTRUCTION; 00IntroK-K.instruction.html
-# Be sure to leave a space between the '.exe' and the ';' so that the filname gets set correctly.
-02; COMMAND; Executables\AlignToRigidBodyGUI.exe Bdy\Chest.bdy ; CodaAlignFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+02; COMMAND; Executables\AlignToRigidBodyGUI.exe --body=Bdy\Chest.bdy; CodaAlignFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 03; INSTRUCTION; TaskFinished.instruction.html
 
