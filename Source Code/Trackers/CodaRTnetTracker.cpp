@@ -135,17 +135,22 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		cl.prepareForAcq();
 		OutputDebugString( "OK.\n" );
 
-		// Find out how many Coda units are actually in use.
-		// I don't really need the alignment information, but that structure
-		// includes the number of Codas specified in the configuration that is in use.
-		// So we do a bogus alignment.
-		DeviceOptionsAlignment align(1, 1, 1, 1, 1);
-		cl.setDeviceOptions( align );
-		// Then this is what tells us how many units are there.
-		DeviceInfoAlignment align_info;
-		cl.getDeviceInfo( align_info );
+		//// Find out how many Coda units are actually in use.
+		//// I don't really need the alignment information, but that structure
+		//// includes the number of Codas specified in the configuration that is in use.
+		//// So we do a bogus alignment.
+		//DeviceOptionsAlignment align(1, 1, 1, 1, 1);
+		//cl.setDeviceOptions( align );
+		//// Then this is what tells us how many units are there.
+		//DeviceInfoAlignment align_info;
+		//cl.getDeviceInfo( align_info );
+		//fOutputDebugString( "Number of connected CODA units: %d\n", nUnits = align_info.dev.dwNumUnits );
 
-		fOutputDebugString( "Number of connected CODA units: %d\n", nUnits = align_info.dev.dwNumUnits );
+		// Find out how many Coda units are actually in use.
+		DeviceInfoUnitCoordSystem devinfo;  
+		cl.getDeviceInfo( devinfo );
+		DWORD NumCx1units = devinfo.dev.dwNumUnits;
+		fOutputDebugString( "Number of connected CODA units: %d\n", nUnits = devinfo.dev.dwNumUnits );
 
 		// Create a data stream.
 		// I know from experience that the port number (here 7000) has to be different
