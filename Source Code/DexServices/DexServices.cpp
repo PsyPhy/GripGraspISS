@@ -38,6 +38,9 @@ void DexServices::Initialize( char *filename ) {
 
 int DexServices::Connect ( void ) {
 
+	printDateTime( log );
+	fprintf( log, " Attempting connection to DEX.\n" );
+
 	// default to localhost
 	const char *server_name= DEFAULT_SERVER;
 	unsigned short port = DEFAULT_PORT;

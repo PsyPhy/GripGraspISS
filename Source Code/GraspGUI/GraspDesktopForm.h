@@ -717,7 +717,7 @@ namespace GraspGUI {
 			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
 			fOutputDebugString( "Connecting to DEX ... " );
 			dex = new Grasp::DexServices();
-			dex->Initialize();
+			dex->Initialize( "GraspGUI.dxl" );
 			dex->Connect();
 			fOutputDebugString( "OK.\n" );
 			// Show progess on ground.

@@ -52,7 +52,6 @@ namespace Grasp {
 		OculusViewpoint *viewpoint;
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
-		DexServices		*dexServer;
 
 		Transform	localAlignment; 
 
@@ -77,16 +76,13 @@ namespace Grasp {
 
 			{}
 
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
 				hInstance = instance;
 				oculusDisplay = display;
 				oculusMapper = mapper;
 				trackers = trkrs;
-				dexServer = dex;
 				InitializeVR( hInstance );
 				InitializeTrackers();
-				dex->Initialize();
-				dex->Connect();
 		}
 		void Release( void );
 		~GraspVR( void ) {}

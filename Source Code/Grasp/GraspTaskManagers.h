@@ -50,6 +50,7 @@ namespace Grasp {
 		// State Machine
 		GraspTrialState previousState, currentState, nextState;
 		bool UpdateStateMachine( void );
+		DexServices *dexServer;
 
 		// General purpose timers used by multiple states.
 		::Timer stateTimer;	
@@ -145,7 +146,8 @@ namespace Grasp {
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2), response_fp(NULL), pose_fp(NULL) {}
 		~GraspTaskManager(){}
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
-			GraspVR::Initialize( instance, display, mapper, trkrs, dex );
+			dexServer = dex;
+			GraspVR::Initialize( instance, display, mapper, trkrs );
 		}
 		void Release( void ) {
 			GraspVR::Release();

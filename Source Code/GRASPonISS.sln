@@ -90,6 +90,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDexServices", "TestDexS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignCodaToGL", "AlignCodaToGL\AlignCodaToGL.vcxproj", "{AA7B9489-69AF-4446-B824-2ED5B99C85DD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugGraspViaSystem", "DebugGraspViaSystem\DebugGraspViaSystem.vcxproj", "{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -389,6 +391,14 @@ Global
 		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.Release|Win32.Build.0 = Release|Win32
 		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{AA7B9489-69AF-4446-B824-2ED5B99C85DD}.TestRelease|Win32.Build.0 = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.Debug|Win32.Build.0 = Debug|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.DraftRelease|Win32.Build.0 = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.Release|Win32.ActiveCfg = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.Release|Win32.Build.0 = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

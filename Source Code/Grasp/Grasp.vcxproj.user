@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> --KtoK --nocoda --user=777 --protocol=888 --task=999 --step=998 --sequence=Sequences\DemoGraspSequence.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--VtoK --sequence=Sequences\DemoGraspSequence.seq --output=Results\160717\S2.160717.143646 --subject=2 --protocol=200 --task=203 --step=1</LocalDebuggerCommandArguments>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
