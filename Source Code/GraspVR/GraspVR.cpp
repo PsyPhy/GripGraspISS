@@ -87,6 +87,9 @@ void GraspVR::UpdateTrackers( void ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
 	}
+	else {
+		TransformPose( chestPose.pose, localAlignment, chestPose.pose );
+	}
 
 	// The vTool is a special case because it does not move with the hand. Instead,
 	// it is attached to the HMD and moves with the gaze. It's roll attitude is set by

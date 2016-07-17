@@ -212,7 +212,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	pose_fp = fopen( poseFilename, "w" );
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
 	// Ouput a header.
-	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation\n" );
+	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
@@ -232,11 +232,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
-			fprintf( pose_fp, "%3d; %6.3f; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
+			fprintf( pose_fp, "%3d; %6.3f; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
 				currentTrial, TimerElapsedTime( blockTimer ), 
 				headPose.time, headPose.visible, vstr( headPose.pose.position ), qstr( headPose.pose.orientation ), 
 				handPose.time, handPose.visible, vstr( handPose.pose.position ), qstr( handPose.pose.orientation ), 
-				chestPose.time, chestPose.visible, vstr( chestPose.pose.position), qstr( chestPose.pose.orientation ));
+				chestPose.time, chestPose.visible, vstr( chestPose.pose.position), qstr( chestPose.pose.orientation ),
+				rollPose.time, rollPose.visible, vstr( rollPose.pose.position), qstr( rollPose.pose.orientation )
+				);
 		}
 
 		// Boresight the HMD tracker on 'B' or align to the HMD no 'A'.

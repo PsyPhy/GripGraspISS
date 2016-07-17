@@ -206,13 +206,6 @@ void GraspSimTrackers::Initialize( void ) {
 	
 	 fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspSimTrackers", "Error initializing OculusPoseTracker." );
 
-	// Create a tracker to control roll movements of the hand for the toV responses.
-	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
-	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
-	// Set the position and orientation of the tool wrt the origin when in V-V mode.
-	// The rollTracker will then rotate the tool around this constant position.
-	rollTracker->OffsetTo( handPoseV );
-
 	// The hand tracker is a mouse tracker to simulate the other protocols.
 	// If rollTrackers is also a mouse tracker, they will move in parallel to each other, 
 	// but  since they are never used together this should be OK.
@@ -228,6 +221,14 @@ void GraspSimTrackers::Initialize( void ) {
 	// Set the position and orientation of the chest wrt the origin when in V-V mode.
 	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
 	chestTracker->OffsetTo( chestPoseSim );
+
+	// Create a tracker to control roll movements of the hand for the toV responses.
+	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
+	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
+	// Set the position and orientation of the tool wrt the origin when in V-V mode.
+	// The rollTracker will then rotate the tool around this constant position.
+	rollTracker->OffsetTo( handPoseV );
+
 }
 
 
