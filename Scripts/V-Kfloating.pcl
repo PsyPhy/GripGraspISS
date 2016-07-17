@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 501; SCRIPT; Preparation; V-KprepareFloating.tsk
 502; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-503; COMMAND; Practice Trials; Executables\Grasp --VtoK --sequence=Sequences\DemoGraspSequence.seq; StepReadyFloating.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-504; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoK --sequence=Sequences\HeadStraightGraspSequence.seq; StepReadyFloating.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-505; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadyFloating.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+503; COMMAND; Practice Trials; Executables\Grasp --VtoK --sequence=Sequences\DemoGraspSequence.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+504; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoK --sequence=Sequences\HeadStraightGraspSequence.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+505; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 599; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

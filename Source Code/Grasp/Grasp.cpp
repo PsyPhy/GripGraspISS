@@ -70,8 +70,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	DexServices *dex = new DexServices();
 	dex->ParseCommandLine( lpCmdLine );
-	strncpy( dex_log_filename, output_filename_root, sizeof( dex_log_filename ) - 1 );
-	strncat( dex_log_filename, ".dxl", sizeof( dex_log_filename ) - strlen( dex_log_filename ) - 1 );
+	strcpy( dex_log_filename, output_filename_root );
+	strcat( dex_log_filename, ".dxl" );
 	dex->Initialize( dex_log_filename );
 	dex->Connect();
 	dex->SendSubstep( 0 );
