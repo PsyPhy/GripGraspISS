@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
 	ovrInputState state;
 	ovr_GetInputState(	session,  ovrControllerType_Remote, &state );
 
-	bool enterPreviouslyDown = state.Buttons & ovrButton_Enter;
-	bool backPreviouslyDown = state.Buttons & ovrButton_Back;
+	bool enterPreviouslyDown = (bool) (state.Buttons & ovrButton_Enter);
+	bool backPreviouslyDown = (bool) (state.Buttons & ovrButton_Back);
 
 	while ( 1 ) {
 
@@ -109,13 +109,12 @@ int main(int argc, char *argv[])
 		// Center button is mapped to left mouse click.
 		if ( state.Buttons & ovrButton_Enter && !enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftDownInput, sizeof( MouseLeftDownInput ) );
 		if ( !(state.Buttons & ovrButton_Enter) && enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftUpInput, sizeof( MouseLeftUpInput ) );
-		enterPreviouslyDown = state.Buttons & ovrButton_Enter;
+		enterPreviouslyDown = (bool) (state.Buttons & ovrButton_Enter);
 
 		// Back button is mapped to right mouse click.
 		if ( state.Buttons & ovrButton_Back && !backPreviouslyDown )  SendInput( n_inputs, &MouseRightDownInput, sizeof( MouseRightDownInput ) );
 		if ( !(state.Buttons & ovrButton_Back ) && backPreviouslyDown )  SendInput( n_inputs, &MouseRightUpInput, sizeof( MouseRightUpInput ) );
-		backPreviouslyDown = state.Buttons & ovrButton_Back;
-
+		backPreviouslyDown = (bool) (state.Buttons & ovrButton_Back);
 
 		Sleep( 50 );
 	}
