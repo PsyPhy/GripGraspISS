@@ -356,7 +356,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
 			String ^cmdline =  stepList[currentStep]->command 
 				+ " --output=" + resultsDirectory + subjectList[currentSubject]->ID + "." + dateTimeString
-				+ " --subject=" + subjectID
+				+ " --user=" + subjectID
 				+ " --protocol=" + protocolID
 				+ " --task=" + taskID
 				+ " --step=" + stepID;
