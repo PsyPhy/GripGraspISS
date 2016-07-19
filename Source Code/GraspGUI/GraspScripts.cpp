@@ -153,14 +153,14 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 				else if ( !strcmp( token[1], "COMMAND" ) ) {
 					taskList[nTasks]->isolated_step->type = "COMMAND";
 					taskList[nTasks]->isolated_step->command = gcnew String( token[3] );
-					if ( tokens < 5 ) taskList[nTasks]->isolated_step->ready = gcnew String( "StepReady.html" );
+					if ( tokens < 5 ) taskList[nTasks]->isolated_step->ready = gcnew String( "StepReady.prompt.html" );
 					else taskList[nTasks]->isolated_step->ready = gcnew String( token[4] );
-					if ( tokens < 6 ) taskList[nTasks]->isolated_step->running = gcnew String( "StepRunning.html" );
+					if ( tokens < 6 ) taskList[nTasks]->isolated_step->running = gcnew String( "StepRunning.instruction.html" );
 					else taskList[nTasks]->isolated_step->running = gcnew String( token[5] );
 					if ( tokens < 7 ) {
 						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( 2 );
-						taskList[nTasks]->isolated_step->exit[0] = gcnew String( "StepNormalFinish.html" );
-						taskList[nTasks]->isolated_step->exit[1] = gcnew String( "StepErrorFinish.html" );
+						taskList[nTasks]->isolated_step->exit[0] = gcnew String( "StepNormalFinish.status.html" );
+						taskList[nTasks]->isolated_step->exit[1] = gcnew String( "StepErrorFinish.status.html" );
 					}
 					else {
 						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( tokens - 5 );
