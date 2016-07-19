@@ -21,26 +21,26 @@ int main(int argc, char *argv[])
 	dex = new DexServices;
 	fprintf( stderr, "OK.\n" );
 
+	fprintf( stderr, "DexServices: Initializing ... " );
+	dex->Initialize( "TestDexServices.dxl" );
+	fprintf( stderr, "OK.\n" );
+
 	fprintf( stderr, "DexServices: Connecting ... " );
 	dex->Connect();
 	fprintf( stderr, "OK.\n" );
 
-	fprintf( stderr, "DexServices: Initializing ... " );
-	dex->Initialize();
-	fprintf( stderr, "OK.\n" );
-
 	fprintf( stderr, "DexServices: Send dummy HK packet ... " );
-	if ( 0 == dex->SendTaskInfo( 110, 220, 33, 44 ) ) fprintf( stderr, "OK.\n" );
+	if ( 0 < dex->SendTaskInfo( 110, 220, 33, 44 ) ) fprintf( stderr, "OK.\n" );
 	else fprintf( stderr, "not sent.\n" );
 
 	fprintf( stderr, "DexServices: Snap a picture ... " );
-	if ( 0 == dex->SnapPicture( "JOE" ) ) fprintf( stderr, "OK.\n" );
+	if ( 0 < dex->SnapPicture( "JOE" ) ) fprintf( stderr, "OK.\n" );
 	else fprintf( stderr, "not sent.\n" );
 
 	Sleep( 600 );
 
 	fprintf( stderr, "DexServices: Snap a picture ... " );
-	if ( 0 == dex->SnapPicture( "JOSEPHMCINTYRE" ) ) fprintf( stderr, "OK.\n" );
+	if ( 0 < dex->SnapPicture( "JOSEPHMCINTYRE" ) ) fprintf( stderr, "OK.\n" );
 	else fprintf( stderr, "not sent.\n" );
 	
 	fprintf( stderr, "DexServices: Disconnecting ... " );
