@@ -1,9 +1,10 @@
 HEADER( *__Step 4: Align to Target__* )
 
-- Use the mouse trackball to align the tool to the memorised target 
-(trackball movements to the left and right produce counterclockwise and clockwise rotations of the tool, respectively).
+- With the left hand use the Remote Control to align the virtual tool to the memorised target. 
 
-CENTER( IMAGE(Pictures/ValidateResponseV.jpg, 300) )
+CENTER( (Press and hold the right and left arrows on the remote to<br>rotate clockwise and counter-clockwise, respectively.) )
 
-- Click on the right mouse button to validate your response once you think 
+CENTER( IMAGE(Pictures/ValidateResponseVremote.jpg, 300) )
+
+- Press the center button on the remote to validate your response once you think 
 that your hand is aligned with the memorised target.

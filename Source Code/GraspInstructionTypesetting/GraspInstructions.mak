@@ -6,6 +6,7 @@
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
 EXECUTABLES=..\..\Executables
+SCREENSHOTEXE="Source Code\Debug\GraspScreenshots.exe"
 
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
@@ -17,10 +18,13 @@ ALL_HTML=GraspWelcome.html \
 	TaskFinished.instruction.html ProtocolFinished.instruction.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
 	MaintenanceWelcome.instruction.html
 
+VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
+
+
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
 # and then copy in the newly created files.
-install: $(ALL_HTML) GraspInstructions.mak
+install: $(ALL_HTML)  $(VRIMAGES) GraspInstructions.mak
 	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
 	copy *.html $(INSTRUCTIONS_DESTINATION)
@@ -38,6 +42,23 @@ PREPROCESSOR=cl.exe
 # The /EP option tells the compiler to preprocess only. 
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI PsyPhyMDmacros.h
+
+Pictures\StraightenHeadGreen.bmp: 
+	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=0.0  $(@F)
+	move ..\..\$(@F) Pictures\.
+
+Pictures\StraightenHeadCyan.bmp: 
+	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=3.0  $(@F)
+	move ..\..\$(@F) Pictures\.
+
+Pictures\StraightenHeadYellow.bmp: 
+	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=10.0  $(@F)
+	move ..\..\$(@F) Pictures\.
+
+Pictures\StraightenHeadRed.bmp: 
+	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=30.0  $(@F)
+	move ..\..\$(@F) Pictures\.
+
 
 .SUFFIXES: .html .md .tex
 .md.html:

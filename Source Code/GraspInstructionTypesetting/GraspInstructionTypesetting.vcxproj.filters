@@ -47,9 +47,6 @@
     <None Include="00IntroV-V.instruction.md">
       <Filter>Science</Filter>
     </None>
-    <None Include="01StraightenHead.instruction.md">
-      <Filter>Science</Filter>
-    </None>
     <None Include="02TargetK.instruction.md">
       <Filter>Science</Filter>
     </None>
@@ -70,6 +67,18 @@
     </None>
     <None Include="StepReady.prompt.md">
       <Filter>Generic</Filter>
+    </None>
+    <None Include="MaintenanceWelcome.instruction.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="SetWithCodaReady.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="SetNoCodaReady.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="01StraightenHead.instruction.md">
+      <Filter>Install</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

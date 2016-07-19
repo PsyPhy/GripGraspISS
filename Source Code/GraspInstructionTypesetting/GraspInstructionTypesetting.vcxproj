@@ -60,8 +60,11 @@
     <None Include="CodaAlignFloating.prompt.md" />
     <None Include="CodaAlignSeated.prompt.md" />
     <None Include="00IntroK-K.instruction.md" />
+    <None Include="MaintenanceWelcome.instruction.md" />
     <None Include="NotYetImplemented.md" />
     <None Include="ProtocolFinished.instruction.md" />
+    <None Include="SetNoCodaReady.prompt.md" />
+    <None Include="SetWithCodaReady.prompt.md" />
     <None Include="StepErrorFinish.status.md" />
     <None Include="StepFinished.status.md" />
     <None Include="StepNormalFinish.status.md" />
