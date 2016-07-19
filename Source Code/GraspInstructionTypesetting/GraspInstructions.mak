@@ -14,7 +14,8 @@ ALL_HTML=GraspWelcome.html \
 	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepFinished.status.html StepNormalFinish.status.html StepErrorFinish.status.html \
-	TaskFinished.instruction.html ProtocolFinished.instruction.html 
+	TaskFinished.instruction.html ProtocolFinished.instruction.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
+	MaintenanceWelcome.instruction.html
 
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
