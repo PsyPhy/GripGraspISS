@@ -92,6 +92,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignCodaToGL", "AlignCodaT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugGraspViaSystem", "DebugGraspViaSystem\DebugGraspViaSystem.vcxproj", "{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspHardwareStatus", "GraspHardwareStatus\GraspHardwareStatus.vcxproj", "{3B9EA91D-4B96-465C-94F7-D64D41B29155}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -399,6 +401,13 @@ Global
 		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.Release|Win32.Build.0 = Release|Win32
 		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{AC8C40BD-3E69-47FA-9857-F67024DFF9D5}.TestRelease|Win32.Build.0 = Release|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.Debug|Win32.Build.0 = Debug|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.Release|Win32.ActiveCfg = Release|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.Release|Win32.Build.0 = Release|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
