@@ -26,6 +26,8 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Scripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% *.bat
+%TAR% --append %VERBOSE% --file=%ARCHIVE% *.ini
+
 
 REM Create an empty log directory to put in the release archive.
 REM We hide the current LOG directory so as not to loose what we have there.

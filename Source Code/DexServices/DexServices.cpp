@@ -228,7 +228,7 @@ void DexServices::ParseCommandLine( char *command_line ) {
 		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	}
 	if ( ptr = strstr( command_line, "--protocol" ) ) {
-		items = sscanf( ptr, "--protocol=%d", &static_user );
+		items = sscanf( ptr, "--protocol=%d", &static_protocol );
 		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	}
 	if ( ptr = strstr( command_line, "--task" ) ) {
