@@ -668,6 +668,7 @@ MarkerStructureGLObject::MarkerStructureGLObject( char *model_file ) {
 }
 
 MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_file ) {
+
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
 	structure->AddBar( 1, 2 );
 	structure->AddBar( 5, 6 );
@@ -705,7 +706,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_
 }
 
 MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model_file ) {
-	static double vertices[][2] = {{-100, -40}, {-100, 40}, {0, 70}, {100, 50}, {100, -50}, {0, -70}, {-100, -40}};
+
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
 	structure->AddBar( 0, 1 );
 	structure->AddBar( 1, 2 );
@@ -716,6 +717,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model
 	structure->AddBar( 6, 7 );
 	structure->AddBar( 7, 4 );	
 
+	static double vertices[][2] = {{-100, -40}, {-100, 40}, {0, 70}, {100, 50}, {100, -50}, {0, -70}, {-100, -40}};
 	Extrusion *plate = new Extrusion( 10.0, vertices, 7 );
 	plate->SetOrientation( 0.0, 0.0, 90.0 );
 	plate->SetPosition( -10.0, 0.0, 0.0 );
