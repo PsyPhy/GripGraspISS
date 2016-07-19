@@ -46,7 +46,9 @@ namespace GraspHardwareStatus {
 		OpenGLWindow *handWindow0;
 		OpenGLWindow *handWindow1;
 		OpenGLWindow *chestWindow0;
-		OpenGLWindow *chestWindow1;
+	private: System::Windows::Forms::RichTextBox^  richTextBox1;
+
+			 OpenGLWindow *chestWindow1;
 
 	public:
 		Form1(void)
@@ -94,6 +96,7 @@ namespace GraspHardwareStatus {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->chestPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->chestPanel0 = (gcnew System::Windows::Forms::Panel());
@@ -105,9 +108,10 @@ namespace GraspHardwareStatus {
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->chestGroupBox->SuspendLayout();
 			this->handGroupBox->SuspendLayout();
-			this->hmdPanel1->SuspendLayout();
+			this->hmdGroupBox->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// chestGroupBox
@@ -164,20 +168,20 @@ namespace GraspHardwareStatus {
 			this->handPanel0->Size = System::Drawing::Size(256, 205);
 			this->handPanel0->TabIndex = 1;
 			// 
-			// hmdPanel1
+			// hmdGroupBox
 			// 
-			this->hmdPanel1->Controls->Add(this->hmdPanel1);
-			this->hmdPanel1->Controls->Add(this->hmdPanel0);
-			this->hmdPanel1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->hmdGroupBox->Controls->Add(this->hmdPanel1);
+			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
+			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdPanel1->Location = System::Drawing::Point(12, 176);
-			this->hmdPanel1->Name = L"hmdGroupBox";
-			this->hmdPanel1->Size = System::Drawing::Size(558, 256);
-			this->hmdPanel1->TabIndex = 2;
-			this->hmdPanel1->TabStop = false;
-			this->hmdPanel1->Text = L"HMD Markers";
+			this->hmdGroupBox->Location = System::Drawing::Point(12, 176);
+			this->hmdGroupBox->Name = L"hmdGroupBox";
+			this->hmdGroupBox->Size = System::Drawing::Size(558, 256);
+			this->hmdGroupBox->TabIndex = 2;
+			this->hmdGroupBox->TabStop = false;
+			this->hmdGroupBox->Text = L"HMD Markers";
 			// 
-			// panel5
+			// hmdPanel1
 			// 
 			this->hmdPanel1->Location = System::Drawing::Point(291, 33);
 			this->hmdPanel1->Name = L"hmdPanel1";
@@ -213,14 +217,23 @@ namespace GraspHardwareStatus {
 			this->label2->TabIndex = 4;
 			this->label2->Text = L"Tracker Camera Bar 2";
 			// 
+			// richTextBox1
+			// 
+			this->richTextBox1->Location = System::Drawing::Point(16, 22);
+			this->richTextBox1->Name = L"richTextBox1";
+			this->richTextBox1->Size = System::Drawing::Size(553, 128);
+			this->richTextBox1->TabIndex = 5;
+			this->richTextBox1->Text = resources->GetString(L"richTextBox1.Text");
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(582, 1015);
+			this->Controls->Add(this->richTextBox1);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			this->Controls->Add(this->hmdPanel1);
+			this->Controls->Add(this->hmdGroupBox);
 			this->Controls->Add(this->handGroupBox);
 			this->Controls->Add(this->chestGroupBox);
 			this->Name = L"Form1";
@@ -228,7 +241,7 @@ namespace GraspHardwareStatus {
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
-			this->hmdPanel1->ResumeLayout(false);
+			this->hmdGroupBox->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 

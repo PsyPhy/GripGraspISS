@@ -1,5 +1,5 @@
 #include "stdafx.h"
-	
+
 // Create an OpenGLObjects window that is embedded in a Windows::Form.
 // To use, create a panel in the form and then pass the reference to that panel to this routine.
 // This is actually a generally useful routine and should probably be included in the 
