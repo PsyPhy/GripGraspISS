@@ -6,7 +6,7 @@ REM
 REM CreateRigidModelFile.exe uses the data from only one of the two CODA cx1 
 REM  units because this tends to give better performance. Here one can specify
 REM  which unit to use. 
-set UNIT=0
+set UNIT=1
 
 
 REM *****************************************************************************************

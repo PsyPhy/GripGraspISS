@@ -23,17 +23,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	MarkerFrame localFrame[2];
 
-	//int origin = 0;
-	//int x_minus = 0;
-	//int x_plus = 1;
-	//int y_minus = 2;
-	//int y_plus = 1;
+	int origin = 0;
+	int x_minus = 2;
+	int x_plus = 0;
+	int y_minus = 1;
+	int y_plus = 0;
 
-	int origin = 3;
-	int x_minus = 8;
-	int x_plus = 3;
-	int y_minus = 8;
-	int y_plus = 14;
+	//int origin = 3;
+	//int x_minus = 8;
+	//int x_plus = 3;
+	//int y_minus = 8;
+	//int y_plus = 14;
 
 	// 
 	// Loop until the alignment is successful or the user aborts.
