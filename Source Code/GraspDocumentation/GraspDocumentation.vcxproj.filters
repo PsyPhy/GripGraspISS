@@ -7,4 +7,7 @@
     <None Include="ManualManualScenes.md" />
     <None Include="VisualVisualScenes.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="macros.h" />
+  </ItemGroup>
 </Project>

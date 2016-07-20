@@ -31,6 +31,9 @@
       <Project>{d372af87-b6c6-4007-b361-2dada1a1c9d7}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="macros.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{19E97A5A-DFCF-45D0-862E-48316001C0CB}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>

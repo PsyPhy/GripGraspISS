@@ -11,7 +11,7 @@ SCREENSHOTEXE="Source Code\Debug\GraspScreenshots.exe" --size=512
 DOCUMENTS=GraspScreenReview.pdf  \
 	GraspGUIScreens.pdf GraspGUIScreens.docx \
 	InstallSeated.pdf InstallFloating.pdf ManualManualInstructions.pdf VisualManualInstructions.pdf VisualVisualInstructions.pdf \
-	VisualVisualScenes.pdf VisualManualScenes.pdf  ManualManualScenes.pdf
+	VisualVisualScenes.pdf VisualManualScenes.pdf  ManualManualScenes.pdf GraspIntro.pdf
 
 SCREENSHOTS = ready.bmp leftFar.bmp leftCloser.bmp leftNear.bmp good.bmp rightNear.bmp rightCloser.bmp rightFar.bmp \
 	vTarget.bmp kTargetFar.bmp kTargetNear.bmp kTargetGood.bmp vTool.bmp kTool.bmp trialCompleted.bmp blockCompleted.bmp
@@ -103,6 +103,12 @@ PREPROCESSOR=cl.exe
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI macros.h
 
+GraspIntro.html: GraspIntro.md GraspDocumentation.mak
+	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  GraspIntro.md | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
+
+GraspIntro.pdf: GraspIntro.html
+	$(EXECUTABLES)\wkhtmltopdf.exe  --minimum-font-size 24 --page-size A4  --default-header --header-left "Introduction" --header-font-size 12 --margin-bottom 25 --margin-top 35  --header-spacing 10 GraspIntro.html $@
+
 VisualVisualScenes.html: VisualVisualScenes.md $(SCREENSHOTS)
 	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  VisualVisualScenes.md | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
 
@@ -177,15 +183,15 @@ GraspVRMessages.pdf: $(VRMESSAGES)\GraspVRMessages.pdf
 	copy $(VRMESSAGES)\GraspVRMessages.pdf .
 
 # Here we combine the Instruction screens and the VR prompts into a single document.
-# The file containing the VR prompts was created in the project where the bitmaps are created because it is easier to do it there.
+# The file containing the VR prompts (GraspVRMessages.pdf) was created in the project 
+# where the bitmaps are created because it is easier to do it there.
 
-COMBINED = GraspGUIScreens.pdf \
+COMBINED = GraspIntro.pdf GraspGUIScreens.pdf \
 	InstallSeated.pdf InstallFloating.pdf \
 	VisualVisualInstructions.pdf VisualVisualScenes.pdf \
 	ManualManualInstructions.pdf ManualManualScenes.pdf \
 	VisualManualInstructions.pdf VisualManualScenes.pdf \
 	GraspVRMessages.pdf
-
 
 GraspScreenReview.pdf: $(COMBINED) $(VRMESSAGES)\GraspVRMessages.pdf 
 	 $(EXECUTABLES)\pdftk.exe $(**) cat output $@
