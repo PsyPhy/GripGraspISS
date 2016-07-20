@@ -1,4 +1,4 @@
-HEADER( *__Step 2: Acquire Target__* )
+HEADER( *__Step 2: Acquire the Target Orientation__* )
 
 - Once your head is aligned with your body (i.e. when the halo is bright green), 
 a line of balls will appear at the end of the tunnel, representing the target orientation.

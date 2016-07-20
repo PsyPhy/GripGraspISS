@@ -12,7 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GraspDocumentation.mak" />
-    <None Include="GraspVRScenes.md" />
+    <None Include="GraspGUIScreens.md" />
+    <None Include="ManualManualScenes.md" />
+    <None Include="VisualManualScenes.md" />
+    <None Include="VisualVisualScenes.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">

@@ -1,7 +1,7 @@
-HEADER( *__Step 2: Acquire Target__* )
+HEADER( *__Step 2: Acquire the Target Orientation__* )
 
-- Once your head is aligned with your body, a disk-shaped target will appear. 
-Raise your arm and point until the laser-pointer falls on the target.
+- Once your head is aligned with your body, a yellow spherical target will appear. 
+Raise your arm and point your hand towards the target such that the laser-pointer falls on the target.
 
 CENTER( IMAGE(Pictures/KTargetRed.jpg, 300) )
 
@@ -10,5 +10,5 @@ Memorise the hand orientation.
 
 CENTER( IMAGE(Pictures/KTargetGreen.jpg, 300) )
 
-- When the target dissappears, lower your arm to your side.
+- When the target disappears, lower your arm to your side.
 

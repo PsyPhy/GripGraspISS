@@ -14,9 +14,6 @@
     <None Include="StepErrorFinish.status.md">
       <Filter>Generic</Filter>
     </None>
-    <None Include="StepFinished.status.md">
-      <Filter>Generic</Filter>
-    </None>
     <None Include="StepNormalFinish.status.md">
       <Filter>Generic</Filter>
     </None>
@@ -78,7 +75,7 @@
       <Filter>Install</Filter>
     </None>
     <None Include="01StraightenHead.instruction.md">
-      <Filter>Install</Filter>
+      <Filter>Science</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

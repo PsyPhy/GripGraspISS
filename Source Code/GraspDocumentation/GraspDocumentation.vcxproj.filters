@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="GraspDocumentation.mak" />
-    <None Include="GraspVRScenes.md" />
+    <None Include="GraspGUIScreens.md" />
+    <None Include="VisualManualScenes.md" />
+    <None Include="ManualManualScenes.md" />
+    <None Include="VisualVisualScenes.md" />
   </ItemGroup>
 </Project>

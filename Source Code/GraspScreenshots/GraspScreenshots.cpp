@@ -156,11 +156,13 @@ int _tmain(int argc, char *argv[])
 			objects->orientationTarget->SetOrientation( angle, 0.0, 0.0 );
 			objects->orientationTarget->Enable();
 		}
+		else if ( !strcmp( argv[arg], "--targetSphere" ) ) {
+			objects->positionOnlyTarget->Enable();
+		}
+
 		else if ( 1 == sscanf( argv[arg], "--handError=%lf", &angle ) ) {
 			objects->SetColorByRollError( objects->kkTool, angle, 2.0 );
 		}
-
-
 		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &angle ) ) {
 			objects->hand->SetOrientation( angle, 0.0, 0.0 );
 		}

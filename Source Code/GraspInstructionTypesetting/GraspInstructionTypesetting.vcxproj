@@ -45,7 +45,7 @@
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO GraspInstructions.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del /Q *.html install</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html install redo</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
@@ -66,7 +66,6 @@
     <None Include="SetNoCodaReady.prompt.md" />
     <None Include="SetWithCodaReady.prompt.md" />
     <None Include="StepErrorFinish.status.md" />
-    <None Include="StepFinished.status.md" />
     <None Include="StepNormalFinish.status.md" />
     <None Include="StepReady.prompt.md" />
     <None Include="StepReadyFloating.prompt.md" />
@@ -80,6 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
+      <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

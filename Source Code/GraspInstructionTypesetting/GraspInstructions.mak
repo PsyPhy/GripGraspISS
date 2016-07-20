@@ -14,12 +14,11 @@ ALL_HTML=GraspWelcome.html \
 	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html StepReadySeated.prompt.html StepReadyFloating.prompt.html \
 	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
-	StepReady.prompt.html StepRunning.instruction.html StepFinished.status.html StepNormalFinish.status.html StepErrorFinish.status.html \
+	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
 	TaskFinished.instruction.html ProtocolFinished.instruction.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
 	MaintenanceWelcome.instruction.html
 
 VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
-
 
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
@@ -43,19 +42,22 @@ PREPROCESSOR=cl.exe
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI PsyPhyMDmacros.h
 
-Pictures\StraightenHeadGreen.bmp: 
+redo: ..\Debug\GraspScreenshots.exe
+	echo echo %date% %time% > $@
+
+Pictures\StraightenHeadGreen.bmp: redo
 	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=0.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
-Pictures\StraightenHeadCyan.bmp: 
+Pictures\StraightenHeadCyan.bmp: redo
 	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=3.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
-Pictures\StraightenHeadYellow.bmp: 
+Pictures\StraightenHeadYellow.bmp: redo
 	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=10.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
-Pictures\StraightenHeadRed.bmp: 
+Pictures\StraightenHeadRed.bmp: redo
 	cd ..\.. & $(SCREENSHOTEXE) --size=512 --headError=30.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 

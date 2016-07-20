@@ -463,21 +463,21 @@ void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_erro
 	double magnitude = fabs( roll_error );
 
 	if ( magnitude < sweet_zone ){
-		// If we are within the sweet zone, the color is more cyan than green.
+		// If we are within the sweet zone, the color is bright green.
 		// This makes it easier for the subject to recognize when the head is properly aligned.
 		// But one need not be in the sweet zone for the orientation to be considered good.
 		// If the orientation is within tolerance, it is good as well. This means that the color
 		// starts to change before leaving the tolerance zone (assuming that tolerance > sweet ).
-		object->SetColor( 0.0, 1.0,  0.5, errorColorMapTransparency );
+		object->SetColor( 0.0, 1.0,  0.0, errorColorMapTransparency );
 	} else {
 		// Colors will change as one moves farther from the center.
 		if ( ( magnitude - sweet_zone ) < errorColorMapFadeDistance ) {
-			// Go from green at the center to yellow at the limit of the tolerance zone.
+			// Go from cyan at the edge of the sweet zone to yellow at the limit of the tolerance zone.
 			double fade = ( magnitude - sweet_zone ) / errorColorMapFadeDistance;
-			object->SetColor( fade, 1.0, 0.0, errorColorMapTransparency );
+			object->SetColor( fade, 1.0, 1.0 - fade, errorColorMapTransparency );
 		}
 		else if ( ( magnitude - sweet_zone ) < 2.0 * errorColorMapFadeDistance ) {
-			// Go from yellow to red.
+			// As we get even farther away, fade from yellow to red.
 			double fade = ( magnitude - sweet_zone - errorColorMapFadeDistance ) / errorColorMapFadeDistance;
 			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
 		}
