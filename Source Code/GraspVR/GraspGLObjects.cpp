@@ -65,7 +65,7 @@ const double GraspGLObjects::hmdTransparency = 0.25;
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
 //  too as a side effect, but that's not so important.
 const double GraspGLObjects::errorColorMapTransparency = 0.5;
-const double GraspGLObjects::errorColorMapFadeDistance = 5.0;
+const double GraspGLObjects::errorColorMapFadeDistance = 7.5;
 
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
