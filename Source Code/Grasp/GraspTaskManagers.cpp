@@ -45,18 +45,18 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		if ( nextState != currentState ) ExitStartTrial();
 		break;
 	
-	case ApplyConflict:
-
-		if ( currentState != previousState ) EnterApplyConflict();
-		nextState = UpdateApplyConflict();
-		if ( nextState != currentState ) ExitApplyConflict();
-		break;
-	
 	case StraightenHead:
 
 		if ( currentState != previousState ) EnterStraightenHead();
 		nextState = UpdateStraightenHead();
 		if ( nextState != currentState ) ExitStraightenHead();
+		break;
+	
+	case AlignHead:
+
+		if ( currentState != previousState ) EnterAlignHead();
+		nextState = UpdateAlignHead();
+		if ( nextState != currentState ) ExitAlignHead();
 		break;
 	
 	case PresentTarget:
@@ -347,7 +347,7 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 }
 GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
-	return( ApplyConflict ); 
+	return( StraightenHead ); 
 }
 void GraspTaskManager::ExitStartTrial( void ) {
 	char tag[32];
@@ -356,9 +356,9 @@ void GraspTaskManager::ExitStartTrial( void ) {
 }
 
 //
-// ApplyConflict
+// StraightenHead
 // Set the new trial parameters. This is where conflict should get turned off or on.
-void GraspTaskManager::EnterApplyConflict( void ) { 
+void GraspTaskManager::EnterStraightenHead( void ) { 
 
 	// Turn the starry sky back on, even if it won't be visible right away because the room will be off.
 	renderer->starrySky->Enable();
@@ -372,13 +372,13 @@ void GraspTaskManager::EnterApplyConflict( void ) {
 	renderer->positionOnlyTarget->Enable();
 
 }
-GraspTrialState GraspTaskManager::UpdateApplyConflict( void ) { 
+GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
-	if ( 677 == HandleHeadOnShoulders( false ) ) return( StraightenHead ); 
+	if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
 	else return( currentState );
 }
-void GraspTaskManager::ExitApplyConflict( void ) {
+void GraspTaskManager::ExitStraightenHead( void ) {
 	// Set the conflict gain.
 
 	// Align to the current position of the HMD. 
@@ -387,22 +387,24 @@ void GraspTaskManager::ExitApplyConflict( void ) {
 }
 
 //
-// StraightenHead
-// The subject is guided to align the head with the body axis.
-void GraspTaskManager::EnterStraightenHead( void ) { 
+// AlignHead
+// The subject is guided to align the head in preparation for observing the target.
+// For the ISS, the head tilt will most likely be zero for target acquisition for
+// all trials, but the sequence entries allow one to specify a different orientation if desired.
+void GraspTaskManager::EnterAlignHead( void ) { 
 	// The desired orientation of the head to the specified head orientation.
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
 	TimerSet( stateTimer,  trialParameters[currentTrial].targetHeadTiltDuration ); 
 }
-GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
+GraspTrialState GraspTaskManager::UpdateAlignHead( void ) { 
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
 	if ( aligned == HandleHeadAlignment( true ) ) return( PresentTarget ); 
 	else if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
 	else return( currentState );
 }
-void GraspTaskManager::ExitStraightenHead( void ) {}
+void GraspTaskManager::ExitAlignHead( void ) {}
 
 // PresentTarget
 // The target is diplayed to the subejct.

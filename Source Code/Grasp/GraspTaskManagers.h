@@ -5,7 +5,7 @@
 
 namespace Grasp {
 
-	typedef enum { NullState, StartBlock, StartTrial, ApplyConflict, StraightenHead, PresentTarget, TiltHead, ObtainResponse, 
+	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, AlignHead, PresentTarget, TiltHead, ObtainResponse, 
 					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted, Timeout,
 					ExitStateMachine } GraspTrialState;
 
@@ -70,29 +70,29 @@ namespace Grasp {
 		// that they will be overridden by derived classes.
 		//
 
-		// StraightenHead
-		// The subject is guided to align the head with the body axis.
+		// StartBlock
+		// The system waits until the subject presses a button to start a block of trials.
 		virtual void EnterStartBlock( void );
 		virtual GraspTrialState UpdateStartBlock( void );
 		virtual void ExitStartBlock( void );
 
 		// StartTrial
-		// The subject is guided to align the head with the body axis.
+		// Trial parameters are set.
 		virtual void EnterStartTrial( void );
 		virtual GraspTrialState UpdateStartTrial( void );
 		virtual void ExitStartTrial( void );
 
-		// ApplyConflict
-		// Conflict gain is applied with a black scene.
-		virtual void EnterApplyConflict( void );
-		virtual GraspTrialState UpdateApplyConflict( void );
-		virtual void ExitApplyConflict( void );
-
 		// StraightenHead
-		// The subject is guided to align the head with the body axis.
+		// Conflict gain is applied with a black scene.
 		virtual void EnterStraightenHead( void );
 		virtual GraspTrialState UpdateStraightenHead( void );
 		virtual void ExitStraightenHead( void );
+
+		// AlignHead
+		// The subject is guided to align the head with the body axis.
+		virtual void EnterAlignHead( void );
+		virtual GraspTrialState UpdateAlignHead( void );
+		virtual void ExitAlignHead( void );
 
 		// PresentTarget
 		// The target is diplayed to the subejct.
