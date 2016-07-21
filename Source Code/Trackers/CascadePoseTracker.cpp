@@ -61,10 +61,7 @@ bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) {
 	for ( int trk = 0; trk < nTrackers; trk++ ) {
 		tracker[trk]->GetCurrentPose( component_pose );
 		if ( component_pose.visible ) {
-			 CopyTrackerPose( pose, component_pose );
-			//fOutputDebugString( "%8d Component Tracker %d %s\n", cycle_counter, trk, qstr( pose.pose.orientation ) );
-			//CopyQuaternion( pose.pose.orientation, component_pose.pose.orientation );
-			//CopyVector( pose.pose.position, zeroVector );
+			CopyTrackerPose( pose, component_pose );
 			pose.time = component_pose.time;
 			pose.visible = component_pose.visible;
 			break;

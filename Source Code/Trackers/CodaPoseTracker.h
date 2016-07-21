@@ -39,7 +39,7 @@ class CodaPoseTracker : public PoseTracker {
 		double intermarkerDistanceTolerance;
 		double 	positionScaleFactor;
 
-		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0), intermarkerDistanceTolerance(2.0) {
+		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0), intermarkerDistanceTolerance(1.0) {
 			// Store the pointer to the marker frame.
 			this->frame = frame;
 			// Don't scale by default.
