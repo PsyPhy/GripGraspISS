@@ -340,9 +340,6 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	// Note that we do not output a \n in the above. The line will be completed by the response.
 	fflush( response_fp );
 
-	// The desired orientation of the head to zero in preparation for applying conflict (if any).
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
-
 	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
 	// In the future it should send this info to ground.
 	fOutputDebugString( "Starting Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
@@ -350,10 +347,7 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 }
 GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
-	// Update the feedback about the head orientation wrt the desired head orientation.
-	// If the head alignment is satisfactory, move on to the next state.
-	if ( aligned == HandleHeadAlignment( true ) ) return( ApplyConflict ); 
-	else return( currentState );
+	return( ApplyConflict ); 
 }
 void GraspTaskManager::ExitStartTrial( void ) {
 	char tag[32];
@@ -373,20 +367,22 @@ void GraspTaskManager::EnterApplyConflict( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->tiltPrompt->Disable();
+	// The desired orientation of the head to zero in preparation for applying conflict (if any).
+	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+	renderer->positionOnlyTarget->Enable();
+
+}
+GraspTrialState GraspTaskManager::UpdateApplyConflict( void ) { 
+	// Update the feedback about the head orientation wrt the desired head orientation.
+	// If the head alignment is satisfactory, move on to the next state.
+	if ( 677 == HandleHeadOnShoulders( false ) ) return( StraightenHead ); 
+	else return( currentState );
+}
+void GraspTaskManager::ExitApplyConflict( void ) {
+	// Set the conflict gain.
 
 	// Align to the current position of the HMD. 
 	AlignToHMD();
-
-	// Set the conflict gain.
-
-	// The blanking period has a fixed duration. We should define a constant somewhere.
-	TimerSet( stateTimer,  1.0 ); 
-}
-GraspTrialState GraspTaskManager::UpdateApplyConflict( void ) { 
-	if ( TimerTimeout( stateTimer ) ) return( StraightenHead );
-	return( currentState );
-}
-void GraspTaskManager::ExitApplyConflict( void ) {
 	renderer->room->Enable();
 }
 
@@ -453,7 +449,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	AlignmentStatus status = HandleHeadAlignment( true );
 	// Stay in this state a fixed time.
 	if ( TimerTimeout( stateTimer ) ) {
-		if ( status == aligned ) return( ObtainResponse );
+		if ( status != misaligned ) return( ObtainResponse );
 		else return( TrialInterrupted ); 
 	}
 	// Allow an operator to force a move forward. This can be used in a training situation

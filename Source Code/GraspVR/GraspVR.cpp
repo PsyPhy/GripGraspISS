@@ -85,7 +85,7 @@ void GraspVR::UpdateTrackers( void ) {
 
 	if ( !trackers->chestTracker->GetCurrentPose( chestPose ) ) {
 		static int pose_error_counter = 0;
-		fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
+		// fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
 		TransformPose( chestPose.pose, localAlignment, chestPose.pose );
@@ -296,6 +296,7 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 	TimerSet( headBadTimer, 0.0 );
 	return( desiredHeadRoll );
 }
+
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
 	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
@@ -345,6 +346,68 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	}
 }
 
+AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
+
+	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
+	renderer->tiltPrompt->SetPosition( renderer->hmd->position );
+	renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
+	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
+
+	// Compute the roll angle of the object that is being followed.
+	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+	//  orientation here match the orientation of the visual target. But I don't know if this one was 
+	//  wrong or the other one. We should check.
+	// double object_roll_angle = ToDegrees( atan2( - renderer->glasses->orientation[0][1], renderer->glasses->orientation[0][0] ) );
+	Vector3 chest_to_eyes;
+	SubtractVectors( chest_to_eyes, headPose.pose.position, chestPose.pose.position );
+	Vector3 straight_ahead;
+	RotateVector( straight_ahead, headPose.pose.orientation, kVector );
+	Vector3 chest_to_eyes_z;
+	ScaleVector( chest_to_eyes_z, straight_ahead, DotProduct( chest_to_eyes, straight_ahead ) );
+	Vector3 chest_to_eyes_xy;
+	SubtractVectors( chest_to_eyes_xy, chest_to_eyes, chest_to_eyes_z );
+	Vector3 out_of_head;
+	RotateVector( out_of_head, headPose.pose.orientation, jVector );
+
+	// Compute the error with respect to the desired roll angle.
+	NormalizeVector( chest_to_eyes_xy );
+	double angular_error =  ToDegrees( acos( DotProduct( chest_to_eyes_xy, out_of_head ) ) );
+
+	// Set the color of the halo according to the angular error.
+	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
+	// Set the direction of the arrow according to the direction of the error.
+	// This does not mean that the arrow is visible. That is determined below.
+	if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+
+	// If the head is aligned do stuff depending on the time delays.
+	if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
+		// Arrow gets turned off as soon as the angle is good.
+		renderer->tiltPrompt->Disable();
+		if ( TimerTimeout( headGoodTimer )) {
+			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
+			TimerSet( headBadTimer, secondsToBeBad );
+			// Indicate that the alignment is good.
+			return( aligned );
+		}
+		// The alignment hasn't be good for long enough to really be considered as good.
+		else return( transitioningToGood );
+	}
+	// If head alignment has been lost, reset the counter and return false.
+	else {
+		if ( TimerTimeout( headBadTimer )) {
+			// Made it to bad. To be good again you have to be good for a while.
+			TimerSet( headGoodTimer, secondsToBeGood );
+			// Turn on the arrow because we've been bad for a while.
+			if ( use_arrow ) renderer->tiltPrompt->Enable();
+			// Signal that we really are misaligned.
+			return( misaligned );
+		}
+		// The alignment hasn't be bad for long enough to really be considered as bad.
+		else return( transitioningToBad );
+	}
+}
+
 ArmStatus GraspVR::HandleHandElevation( void ) {
 
 	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
@@ -354,13 +417,13 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
 		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
 		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
-		renderer->vkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		renderer->SetHandColor( renderer->vkTool, false );
 		return( lowered );
 	}
 	else {
 		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );	// kTool is always blue regardless of the orientation.
-		renderer->vkTool->SetColor( PARENT_COLOR );			// The color will depend on the color of each finger.
-		renderer->vkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandHandOrientation.
+		renderer->kkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandleHandOrientation.
+		renderer->SetHandColor( renderer->vkTool, true );
 		return( raised );
 	}
 

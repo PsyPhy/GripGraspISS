@@ -22,7 +22,7 @@ void KtoK::EnterPresentTarget( void ) {
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
 	// But the orientation will be reflected by the color.
 	renderer->kkTool->Enable();
-	// The desired orientation of the head to the specified head orientation.
+	// The target orientation for the hand.
 	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].hapticTargetOrientationTolerance );
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
@@ -58,8 +58,7 @@ void KtoK::EnterObtainResponse( void ) {
 	// Show where to put the wrist.
 	// renderer->wristZone->SetColor( 0.0, 1.0, 0.0, 0.05 );
 	// renderer->wristZone->Enable();
-	// Show the visual representation of the hand that is driven 
-	//  by the mouse or buttons.
+	// Show the visual representation of the hand.
 	renderer->kTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
