@@ -28,6 +28,27 @@ using namespace PsyPhy;
 const int GraspVR::secondsToBeGood = 2.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
+// The following are tolerances expressed in degrees.
+double	GraspVR::desiredHandRollTolerance = 5.0;
+double	GraspVR::desiredHandRollSweetZone = 2.0;
+double	GraspVR::desiredHeadRollTolerance = 5.0;
+double	GraspVR::desiredHeadRollSweetZone = 2.0;
+
+// The next two are angular tolerances as well, but
+// the are expressed as the cosine of the tolerance angle.
+double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
+double	GraspVR::straightAheadThreshold = 0.999;	// approx. 2.5° Corresponds roughly to center target radius.
+
+double GraspVR::handFilterConstant = 2.0;
+
+double GraspVR::interpupillary_distance = 6.0;
+double GraspVR::near_clipping = 1.0;
+double GraspVR::far_clipping = 5000.0;
+
+double GraspVR::projectile_speed = 20.0;
+double GraspVR::prompt_spin_speed = - 0.75;
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
@@ -69,15 +90,15 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		TransformPose( handPose.pose, localAlignment, handPose.pose );
-		// Filter the hand position somewhat.
-		// TODO: Constants need to be defined rather than hard-coded values.
+		// Recursively filter the hand position somewhat.
+		// This functionality should be built into the pose trackers, not here.
 		Pose filtered;
-		ScaleVector( filtered.position, handPose.pose.position, 2.0 );
+		ScaleVector( filtered.position, handPose.pose.position, handFilterConstant );
 		AddVectors ( filtered.position, filtered.position, renderer->hand->position );
-		ScaleVector( filtered.position, filtered.position, 1.0 / 3.0 );
+		ScaleVector( filtered.position, filtered.position, 1.0 / (handFilterConstant + 1.0) );
 		Quaternion q;
 		MatrixToQuaternion( q, renderer->hand->orientation );
-		for ( int i = 0; i < 4; i++ ) q[i] += ( 2.0 *  handPose.pose.orientation[i] );
+		for ( int i = 0; i < 4; i++ ) q[i] += ( handFilterConstant *  handPose.pose.orientation[i] );
 		NormalizeQuaternion( q );
 		CopyQuaternion( filtered.orientation, q );
 		renderer->hand->SetPose( filtered );
@@ -89,6 +110,7 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		TransformPose( chestPose.pose, localAlignment, chestPose.pose );
+		// Should filter this pose as well.
 	}
 
 	// The vTool is a special case because it does not move with the hand. Instead,
@@ -175,7 +197,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	// Our basic units are millimeters, so set the near and far accordingly.
-	viewpoint = new OculusViewpoint( oculusMapper, 6.0, 1.0, 10000.0 );
+	viewpoint = new OculusViewpoint( oculusMapper, interpupillary_distance, near_clipping, far_clipping );
 
 	// Set the player's position and orientation to the null position and orientation.
 	// Note that the head tracking will be applied relative to this pose.
@@ -244,7 +266,7 @@ ProjectileState GraspVR::TriggerProjectiles( void ) {
 	// If the projectiles have been triggered and have not reached their destination, move
 	//  them forward along the line projecting out along the axis of the hand.
 	MultiplyVector( projectileDirection, kVector, renderer->selectedTool->orientation );
-	ScaleVector( projectileDirection, projectileDirection, -20.0 );
+	ScaleVector( projectileDirection, projectileDirection, - projectile_speed );
 
 	// Make the projectiles visible.
 	renderer->projectiles->Enable();
@@ -302,11 +324,6 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
-	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
-	//renderer->tiltPrompt->SetPosition( renderer->hmd->position );
-	//renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
-	//renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
-
 	// Compute the roll angle of the object that is being followed.
 	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
 	//  orientation here match the orientation of the visual target. But I don't know if this one was 
@@ -352,11 +369,6 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 /// Prompt the subject to redress the head on the shoulders and look straight ahead.
 AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
-	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
-	//renderer->tiltPrompt->SetPosition( renderer->hmd->position );
-	//renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
-	//renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
-
 	// We do not have a lot of confidence about the positioning of the chest marker plate 
 	// so we define 'straight ahead' as follows.
 	// The centroid of the chest marker plate should be more reproducible than its orientation.
@@ -382,7 +394,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	double product;
 	bool centered;
 	RotateVector( gaze, headPose.pose.orientation, kVector );
-	if ( (product = DotProduct( gaze, straight_behind )) < 0.999 ) {
+	if ( (product = DotProduct( gaze, straight_behind )) < straightAheadThreshold ) {
 		centered = false;
 		renderer->straightAheadTarget->SetColor( MAGENTA );
 	}
@@ -547,12 +559,13 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 
 void GraspVR::HandleSpinningPrompts( void ) {
+	// Set an arbitrary starting orientation.
 	static double angle = 39.0;
 	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->headMisalignIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->readyToStartIndicator->SetAttitude( angle, 0.0, 0.0 );
 	renderer->blockCompletedIndicator->SetAttitude( angle, 0.0, 0.0 );
-	angle -= 1.0;
+	angle -= prompt_spin_speed;
 }
 double  GraspVR::SetTargetOrientation( double roll_angle ) {
 	renderer->orientationTarget->SetOrientation( roll_angle, 0.0, 0.0 );

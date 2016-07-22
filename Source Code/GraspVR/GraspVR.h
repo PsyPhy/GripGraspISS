@@ -36,11 +36,20 @@ namespace Grasp {
 		Timer	handBadTimer;
 
 	protected:
+
 		// Hold the poses.
 		TrackerPose headPose;
 		TrackerPose chestPose;
 		TrackerPose handPose;
 		TrackerPose rollPose;
+
+		static double handFilterConstant;
+		static double interpupillary_distance;
+		static double near_clipping;
+		static double far_clipping;
+
+		static double projectile_speed;
+		static double prompt_spin_speed;
 
 
 	public:
@@ -62,16 +71,8 @@ namespace Grasp {
 			oculusMapper( nullptr ),
 			trackers( nullptr ),
 
-			armRaisedThreshold( 0.9 ),
-
 			desiredHeadRoll( 20.0 ), 
-			desiredHeadRollSweetZone( 2.0 ),
-			desiredHeadRollTolerance( 5.0 ),
-
 			desiredHandRoll( -35.0 ),
-			desiredHandRollSweetZone( 5.0 ),
-			desiredHandRollTolerance( 5.0 ),
-
 			currentProjectileState( cocked )
 
 			{}
@@ -114,20 +115,21 @@ namespace Grasp {
 	protected:
 
 		// Prompt the subject to raise or lower the arm.
-		double		armRaisedThreshold;					// Essentially the cosine of the angle of the cone of acceptance for raised.
-		ArmStatus	HandleHandElevation( void );		// On each iteration of the rendering loop update the feedback.
+		static double	armRaisedThreshold;					// Essentially the cosine of the angle of the cone of acceptance for raised.
+		ArmStatus		HandleHandElevation( void );		// On each iteration of the rendering loop update the feedback.
 
 		// Prompt the subject to achieve the desired hand orientation.
 		double			desiredHandRoll;				// Easiest to specify this in a single Roll angle.
-		double			desiredHandRollSweetZone;
-		double			desiredHandRollTolerance;		
+		static double	desiredHandRollSweetZone;
+		static double	desiredHandRollTolerance;		
 		AlignmentStatus	HandleHandAlignment( bool use_arrow );	// On each iteration of the rendering loop update the feedback.
 
 		// Prompt the subject to achieve the desired head orientation.
 		double			desiredHeadRoll;
-		double			desiredHeadRollSweetZone;
-		double			desiredHeadRollTolerance;		
+		static double	desiredHeadRollSweetZone;
+		static double	desiredHeadRollTolerance;		
 		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
+		static double	straightAheadThreshold;
 		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
