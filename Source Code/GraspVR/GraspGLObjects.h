@@ -69,7 +69,7 @@ namespace Grasp {
 
 		class GraspGLObjects : public VectorsMixin {
 
-		protected:
+		public:
 		
 			
 			// Dimensions of the room.
@@ -125,12 +125,15 @@ namespace Grasp {
 
 			Assembly		*orientationTarget;		// Shows the target orientation.
 			Assembly		*positionOnlyTarget;	// Shows the center of the target location. Allows subject to aim without showing the target orientation.
+			Assembly		*straightAheadTarget;	// Placed straight ahead of the subject wrt the chest.
 			Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
 			Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
 
 			Yoke			*hmd;					// Collection of objects that move with the head.
 			Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
-			Assembly		*tiltPrompt;			// Shows the subject which direction to turn the head when the error is large.
+			Assembly		*headTiltPrompt;		// Shows the subject which direction to turn the head when the error is large.
+			Assembly		*gazeLaser;				// A virtual laser pointer that moves with the line of gaze, making it easier to center the gaze at the start of a trial.
+
 			Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial.
 			Assembly		*timeoutIndicator;		// Shown when the subject takes too long to do something.
 			Assembly		*headMisalignIndicator;	// Shown when the subject does not maintain the desired head tilt.
@@ -143,6 +146,7 @@ namespace Grasp {
 			Assembly		*vkTool;				// A tool that shows the hand's orientation. Used in V-VK and K-VK or in training for K-K.
 			Assembly		*kkTool;				// A tool that is used to drive the hand to the target orientation in K-K.
 
+			Assembly		*handRollPrompt;		// An arrow around the tool saying which way to turn.
 			OpenGLObject	*selectedTool;			// Used by the projectile handler. Sometimes the tool is at the hand, but when doing V-V it
 													// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
 
@@ -170,6 +174,10 @@ namespace Grasp {
 
 			// Use color to guide the subject to a specified roll angle.
 			void SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone );
+
+			// Need to be able to change the color of the fingers according to the position of the hand.
+			// OpenGLObjects does not provide an easy way to override the color, so this hack lets us do it.
+			void SetHandColor( Assembly *hand, bool enabled );
 
 			// Create all the objects needed for VR.
 			void CreateVRObjects( void );

@@ -194,7 +194,10 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->response->Disable();
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
-	renderer->tiltPrompt->Disable();
+	renderer->straightAheadTarget->Disable();
+	renderer->headTiltPrompt->Disable();
+	renderer->handRollPrompt->Disable();
+	renderer->gazeLaser->Disable();
 	renderer->successIndicator->Disable();
 	renderer->timeoutIndicator->Disable();
 	renderer->blockCompletedIndicator->Disable();
@@ -300,9 +303,9 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
 	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
-	renderer->tiltPrompt->SetPosition( renderer->hmd->position );
-	renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
-	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
+	//renderer->tiltPrompt->SetPosition( renderer->hmd->position );
+	//renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
+	//renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
 
 	// Compute the roll angle of the object that is being followed.
 	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
@@ -315,13 +318,13 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
 	// Set the direction of the arrow according to the direction of the error.
 	// This does not mean that the arrow is visible. That is determined below.
-	if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-	if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+	if ( angular_error < 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( angular_error > 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 	// If the head is aligned do stuff depending on the time delays.
 	if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
 		// Arrow gets turned off as soon as the angle is good.
-		renderer->tiltPrompt->Disable();
+		renderer->headTiltPrompt->Disable();
 		if ( TimerTimeout( headGoodTimer )) {
 			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
 			TimerSet( headBadTimer, secondsToBeBad );
@@ -337,7 +340,7 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 			// Made it to bad. To be good again you have to be good for a while.
 			TimerSet( headGoodTimer, secondsToBeGood );
 			// Turn on the arrow because we've been bad for a while.
-			if ( use_arrow ) renderer->tiltPrompt->Enable();
+			if ( use_arrow ) renderer->headTiltPrompt->Enable();
 			// Signal that we really are misaligned.
 			return( misaligned );
 		}
@@ -346,44 +349,86 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	}
 }
 
+/// Prompt the subject to redress the head on the shoulders and look straight ahead.
 AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
 	// Make the tilt prompt follow movements of the head, i.e. as part of the heads up display.
-	renderer->tiltPrompt->SetPosition( renderer->hmd->position );
-	renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
-	renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
+	//renderer->tiltPrompt->SetPosition( renderer->hmd->position );
+	//renderer->tiltPrompt->SetOrientation( renderer->hmd->orientation );
+	//renderer->tiltPrompt->SetOffset( 0.0, 0.0, -150.0 );
 
-	// Compute the roll angle of the object that is being followed.
-	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
-	//  orientation here match the orientation of the visual target. But I don't know if this one was 
-	//  wrong or the other one. We should check.
-	// double object_roll_angle = ToDegrees( atan2( - renderer->glasses->orientation[0][1], renderer->glasses->orientation[0][0] ) );
+	// We do not have a lot of confidence about the positioning of the chest marker plate 
+	// so we define 'straight ahead' as follows.
+	// The centroid of the chest marker plate should be more reproducible than its orientation.
+	// So we take the line from the centroid of the chest marker plate to the centroid of the HMD markers.
 	Vector3 chest_to_eyes;
 	SubtractVectors( chest_to_eyes, headPose.pose.position, chestPose.pose.position );
-	Vector3 straight_ahead;
-	RotateVector( straight_ahead, headPose.pose.orientation, kVector );
-	Vector3 chest_to_eyes_z;
-	ScaleVector( chest_to_eyes_z, straight_ahead, DotProduct( chest_to_eyes, straight_ahead ) );
-	Vector3 chest_to_eyes_xy;
-	SubtractVectors( chest_to_eyes_xy, chest_to_eyes, chest_to_eyes_z );
-	Vector3 out_of_head;
-	RotateVector( out_of_head, headPose.pose.orientation, jVector );
+	NormalizeVector( chest_to_eyes );
+	// The x-axis in the chest marker plate local reference will be in the plane of the plate and should 
+	// be more-or-less perpendicular to the chest-to-eyes vector, which is all we need, then, to define 
+	// the fronto-parallel plane with respect to the torso. This vector will be relatively unaffected by 
+	// pitch rotations of the torso or of the chest marker plate and we don't care about roll for this vector.
+	Vector3 left_to_right;
+	RotateVector( left_to_right, chestPose.pose.orientation, iVector );
+	// The straight ahead vector wrt the torso is perpendicular to the chest-to-eyes and left-to-right vectors.
+	// We use straight behind instead because it is more directly comparable to the k vector of the HMD, which 
+	//  points from front to back (GL reference frame).
+	Vector3 straight_behind;
+	ComputeCrossProduct( straight_behind, left_to_right, chest_to_eyes );
+	NormalizeVector( straight_behind );
+	// Set the color of the spherical target to green if it is centered in the field of view.
+	// Gaze is aligned with straight_ahead when the dot product between straight behind and the HMD k vector is 1.
+	Vector3 gaze;
+	double product;
+	bool centered;
+	RotateVector( gaze, headPose.pose.orientation, kVector );
+	if ( (product = DotProduct( gaze, straight_behind )) < 0.999 ) {
+		centered = false;
+		renderer->straightAheadTarget->SetColor( MAGENTA );
+	}
+	else {
+		renderer->straightAheadTarget->SetColor( GREEN );
+		centered = true;
+	}
+	// Now place the target at the end of the (not visible) tunnel.
+	// Note the negative sign when scaling the straight_behind vector, 
+	// so as to put it in front of the subject (GL coordinates).
+	Vector3 look_at_location;
+	ScaleVector( look_at_location, straight_behind, - renderer->room_length / 2.0 );
+	renderer->straightAheadTarget->SetPosition( look_at_location );
 
-	// Compute the error with respect to the desired roll angle.
-	NormalizeVector( chest_to_eyes_xy );
-	double angular_error =  ToDegrees( acos( DotProduct( chest_to_eyes_xy, out_of_head ) ) );
+	// Now we need to compute the roll angle of the head/hmd.
+	// We can assume that the subject is looking straight ahead because they have to 
+	// sight the target with the laser pointer in order to achieve the correct alignment.
+	Vector3 ear_to_ear;
+	RotateVector( ear_to_ear, headPose.pose.orientation, iVector );
+	// As mentioned above, we are not confident that the chest marker plate is well aligned,
+	// nor can we be sure that the head is not pitched up or down a bit.
+	// So rather than comparing jVector to jVector between the HMD and the chest plate, we 
+	// take the cross product of the vector from chest centroid to HMD centroid and the 
+	// vector from ear to ear. I call this vector 'nose', for no particularly good reason.
+	// If the roll angle of the head is zero, the artan of the length of nose should be 90°.
+	Vector3 nose;
+	ComputeCrossProduct( nose, chest_to_eyes, ear_to_ear );
+	product = VectorNorm( nose );
+	double angular_error = ( product > 1.0 ? 90.0 : ToDegrees( asin( product ) ) ) - 90.0;
 
 	// Set the color of the halo according to the angular error.
 	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
 	// Set the direction of the arrow according to the direction of the error.
 	// This does not mean that the arrow is visible. That is determined below.
-	if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-	if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+	if ( angular_error < 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+	if ( angular_error > 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 	// If the head is aligned do stuff depending on the time delays.
-	if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
+	if ( !centered ) {
+		TimerSet( headGoodTimer, secondsToBeGood );
+		TimerSet( headBadTimer, secondsToBeBad );
+		return( misaligned );
+	}
+	else if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
 		// Arrow gets turned off as soon as the angle is good.
-		renderer->tiltPrompt->Disable();
+		renderer->headTiltPrompt->Disable();
 		if ( TimerTimeout( headGoodTimer )) {
 			// We made it to good. So to be bad again one must be bad for the requisite number of seconds.
 			TimerSet( headBadTimer, secondsToBeBad );
@@ -399,7 +444,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 			// Made it to bad. To be good again you have to be good for a while.
 			TimerSet( headGoodTimer, secondsToBeGood );
 			// Turn on the arrow because we've been bad for a while.
-			if ( use_arrow ) renderer->tiltPrompt->Enable();
+			if ( use_arrow ) renderer->headTiltPrompt->Enable();
 			// Signal that we really are misaligned.
 			return( misaligned );
 		}
@@ -439,9 +484,9 @@ double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance 
 AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 	// Place the tilt prompt around the hand.
-	renderer->tiltPrompt->SetPosition( renderer->kkTool->position );
-	renderer->tiltPrompt->SetOrientation( renderer->kkTool->orientation );
-	renderer->tiltPrompt->SetOffset( 0.0, 0.0, 0.0 );
+	renderer->handRollPrompt->SetPosition( renderer->kkTool->position );
+	renderer->handRollPrompt->SetOrientation( renderer->kkTool->orientation );
+	renderer->handRollPrompt->SetOffset( 0.0, 0.0, 0.0 );
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
 	if ( lowered == HandleHandElevation() ) {
@@ -462,13 +507,13 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		renderer->SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
 		// Set the direction of the arrow according to the direction of the error.
 		// This does not mean that the arrow is visible. That is determined below.
-		if ( angular_error < 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
-		if ( angular_error > 0.0 ) renderer->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+		if ( angular_error < 0.0 ) renderer->handRollPrompt->SetAttitude( 0.0, 0.0, 0.0 );
+		if ( angular_error > 0.0 ) renderer->handRollPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
 		// If the hand is aligned do stuff depending on the time delays.
 		if ( fabs( angular_error ) < desiredHandRollTolerance ) {
 			// Arrow gets turned off as soon as the angle is good.
-			renderer->tiltPrompt->Disable();
+			renderer->handRollPrompt->Disable();
 			// We made it into the good zone. So to be bad again one must be bad for the requisite number of seconds.
 			TimerSet( handBadTimer, secondsToBeBad );
 			// Restart the timer in case it was paused by a brief exit from the good zone.
@@ -483,7 +528,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 			if ( TimerTimeout( handBadTimer )) {
 				// Made it to bad. 
 				// Turn on the arrow because we've been bad for a while.
-				if (use_arrow ) renderer->tiltPrompt->Enable();
+				if (use_arrow ) renderer->handRollPrompt->Enable();
 				// If the error has endured long enough to trigger the arrow prompt, then
 				// reset the time required to be good again to the full duration.
 				// MICHELE: What do you think? 
@@ -570,10 +615,12 @@ void GraspVR::DebugLoop( void ) {
 		if ( oculusDisplay->Key[VK_SPACE] ) {
 			renderer->orientationTarget->Disable();
 			renderer->positionOnlyTarget->Disable();
+			renderer->straightAheadTarget->Disable();
 			renderer->kkTool->Disable();
 			renderer->vTool->Disable();
 			renderer->kTool->Disable();
-			renderer->tiltPrompt->Disable();
+			renderer->handRollPrompt->Disable();
+			renderer->headTiltPrompt->Disable();
 			renderer->projectiles->Disable();
 			renderer->response->Disable();
 			renderer->starrySky->Enable();
@@ -608,7 +655,7 @@ void GraspVR::DebugLoop( void ) {
 		}
 
 		// Show the tilt prompt.
-		if ( oculusDisplay->Key['P'] ) renderer->tiltPrompt->Enable();
+		if ( oculusDisplay->Key['P'] ) renderer->headTiltPrompt->Enable();
 
 		Render();
 	}

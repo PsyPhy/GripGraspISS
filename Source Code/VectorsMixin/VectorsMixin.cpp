@@ -24,6 +24,10 @@ const Vector3 VectorsMixin::iVector = { 1.0, 0.0, 0.0 };
 const Vector3 VectorsMixin::jVector = { 0.0, 1.0, 0.0 };
 const Vector3 VectorsMixin::kVector = { 0.0, 0.0, 1.0 };
 
+const Vector3 VectorsMixin::iVectorMinus = { -1.0, 0.0, 0.0 };
+const Vector3 VectorsMixin::jVectorMinus = { 0.0, -1.0, 0.0 };
+const Vector3 VectorsMixin::kVectorMinus = { 0.0, 0.0, -1.0 };
+
 const Quaternion VectorsMixin::nullQuaternion = {0.0, 0.0, 0.0, 1.0};
 
 const Matrix3x3 VectorsMixin::identityMatrix = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};

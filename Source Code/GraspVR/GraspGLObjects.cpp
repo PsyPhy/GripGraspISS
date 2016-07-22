@@ -195,17 +195,8 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 
 	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( target_ball_radius );
-	sphere->SetColor(0.5, 0.0, 0.0 );
 	target->AddComponent( sphere );
-	//Disk *disk = new Disk( target_ball_radius + 50.0, target_ball_radius );
-	//disk->SetColor( 0.0, 0.0, 0.0, 1.0 );
-	//disk = new Disk( target_ball_radius + 100.0, target_ball_radius + 50.0 );
-	//disk->SetColor( 0.0, 0.0, 0.0, 1.0 );
-	//target->AddComponent( disk );
-	//disk = new Disk( target_ball_radius + 150.0, target_ball_radius + 100.0 );
-	//disk->SetColor( 1.0, 1.0, 1.0, 1.0 );
-	//target->AddComponent( disk );
-
+	target->SetColor( RED );
 	return target;
 
 }
@@ -217,6 +208,17 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 	return glasses;
 }
 
+// Need to change the hand to grey when outside the cone around the center line.
+// But otherwise the fingers each have a different color. So we need to do some work.
+void GraspGLObjects::SetHandColor( Assembly *hand, bool state ) {
+	// We know that the last element of the hand is the laser pointer and that
+	//  all the other ones are fingers. Hence the - 1 in the following.
+	for ( int i = 0; i < hand->components - 1; i++ ) {
+		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
+		if ( state ) hand->component[i]->SetColor( 0.75f, 0.15f * (float) i, 0.0f, 1.0f  );
+		else hand->component[i]->SetColor( 0.0, 0.0, 0.0, 0.85  );
+	}
+}
 
 
 Assembly *GraspGLObjects::CreateVisualTool( void ) {
@@ -224,11 +226,10 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 	Assembly *tool = new Assembly();
 
 	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
-	// There are as many fingers as target balls. This could change.
-	static int fingers = target_balls-1;
+	static int n_fingers = target_balls-1;
 	static double finger_spacing = finger_ball_radius*2;
 
-	for ( int trg = - fingers; trg <= fingers ; trg++ ){
+	for ( int trg = - n_fingers; trg <= n_fingers ; trg++ ){
 
 		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
 		Assembly *finger = new Assembly();
@@ -242,9 +243,6 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 		sphere->SetPosition( 0.0, 0.0, - finger_length );
 		finger->AddComponent( sphere );
 
-		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
-		finger->SetColor( 200.0f/255.0f, (75.0f + float(trg) * 75.0f/2.0f)/255.0f , 0.0f, 1.0f  );
-
 		// Space the fingers vertically.
 		finger->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		tool->AddComponent( finger );
@@ -254,6 +252,9 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 	// This laser is always on and always the same color.
 	laser->SetColor( RED );
 	tool->AddComponent( laser );
+
+	SetHandColor( tool, true );
+
 	return tool;
 }
 
@@ -314,6 +315,20 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
 	glasses->SetOffset( 0.0, 0.0, -400.0 );
 	yoke->AddComponent( glasses );
+
+	// An arrow that shows which way to tilt the head. It also moves as if in a heads up display.
+	headTiltPrompt->SetOffset( 0.0, 0.0, -100.0 );
+	yoke->AddComponent( headTiltPrompt );
+
+	// Similarly, the laser pointer attached to the head moves with it.
+	gazeLaser = CreateLaserPointer();
+	yoke->AddComponent( gazeLaser );
+
+	// When responding in the V only mode, the virtual tool (hand) moves with the gaze.
+	vTool->SetOffset( 0.0, 0.0, -200.0 );
+	yoke->AddComponent( vTool );
+
+	// Round signs conveying messages to the subject also move with the head.
 	timeoutIndicator->SetOffset( prompt_location );
 	yoke->AddComponent( timeoutIndicator );
 	headMisalignIndicator->SetOffset( prompt_location );
@@ -322,8 +337,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( blockCompletedIndicator );
 	readyToStartIndicator->SetOffset( prompt_location );
 	yoke->AddComponent( readyToStartIndicator );
-	vTool->SetOffset( 0.0, 0.0, -200.0 );
-	yoke->AddComponent( vTool );
+
 	return( yoke );
 
 }
@@ -417,9 +431,12 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	orientationTarget = CreateOrientationTarget();
 	positionOnlyTarget = CreatePositionOnlyTarget();
+	straightAheadTarget =  CreatePositionOnlyTarget();
+
 	response = CreateResponse();
 
-	tiltPrompt = CreateTiltPrompt();
+	headTiltPrompt = CreateTiltPrompt();
+	handRollPrompt = CreateTiltPrompt();
 	successIndicator = CreateSuccessIndicator();
 	timeoutIndicator = CreateIndicator( timeout_texture );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
@@ -450,7 +467,6 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	starrySky->SetPosition( sky_location );
 	darkSky->SetPosition( sky_location );
 	successIndicator->SetPosition( prompt_location );
-	tiltPrompt->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
@@ -502,6 +518,7 @@ void GraspGLObjects::DrawVR( void ) {
 	// DrawDarkSky();
 	room->Draw();
 	glasses->Draw();
+	gazeLaser->Draw();
 
 	// Draw the other objects with the hopes of seeing specular reflections. 
 	// I am still trying to get specular reflections to work.
@@ -510,8 +527,10 @@ void GraspGLObjects::DrawVR( void ) {
 
 	orientationTarget->Draw();
 	positionOnlyTarget->Draw();
+	straightAheadTarget->Draw();
 	response->Draw();
-	tiltPrompt->Draw();
+	headTiltPrompt->Draw();
+	handRollPrompt->Draw();
 	successIndicator->Draw();
 	timeoutIndicator->Draw();
 	headMisalignIndicator->Draw();

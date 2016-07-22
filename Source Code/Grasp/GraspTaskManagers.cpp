@@ -366,11 +366,12 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	// Turn off lots of visual cues in preparation for starting up the conflict.
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
-	renderer->tiltPrompt->Disable();
+	renderer->headTiltPrompt->Disable();
 	// The desired orientation of the head to zero in preparation for applying conflict (if any).
 	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
-	renderer->positionOnlyTarget->Enable();
-
+	// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
+	renderer->straightAheadTarget->Enable();
+	renderer->gazeLaser->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) { 
 	// Update the feedback about the head orientation wrt the desired head orientation.
@@ -379,11 +380,18 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 	else return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {
+	renderer->straightAheadTarget->Disable();
 	// Set the conflict gain.
 
 	// Align to the current position of the HMD. 
 	AlignToHMD();
-	renderer->room->Enable();
+	renderer->straightAheadTarget->Disable();
+	renderer->gazeLaser->Disable();
+	// Logically one might want to enable rendering of the room before leaving this state.
+	// But that causes an artifact because the room gets drawn once at the 'old' alignment.
+	// So I move enabling of the room to the next state.
+	// renderer->room->Enable();
+
 }
 
 //
@@ -392,6 +400,8 @@ void GraspTaskManager::ExitStraightenHead( void ) {
 // For the ISS, the head tilt will most likely be zero for target acquisition for
 // all trials, but the sequence entries allow one to specify a different orientation if desired.
 void GraspTaskManager::EnterAlignHead( void ) { 
+	// See above.
+	renderer->room->Enable();
 	// The desired orientation of the head to the specified head orientation.
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
@@ -489,7 +499,7 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 }
 void  GraspTaskManager::ExitObtainResponse( void ) {
 	// Make sure that the head tilt prompt is not still present.
-	renderer->tiltPrompt->Disable();
+	renderer->headTiltPrompt->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];
 	sprintf( tag, "Respns%03d", currentTrial );

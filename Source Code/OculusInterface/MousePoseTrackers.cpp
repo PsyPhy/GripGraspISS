@@ -93,7 +93,7 @@ bool ArrowsRollPoseTracker::Update ( void ) {
 
 bool ArrowsRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	CopyVector( pose.pose.position, zeroVector );
-	SetQuaternion( pose.pose.orientation, ( oculusMapper->display->mouseCumulativeX - oculusMapper->display->mouseCumulativeY ) * gain, kVector );
+	SetQuaternion( pose.pose.orientation, roll_angle * gain, kVector );
 	pose.time = GetTime();
 	pose.visible = true;
 	return pose.visible;

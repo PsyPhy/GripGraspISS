@@ -47,6 +47,10 @@ public:
 	static const Vector3 jVector;
 	static const Vector3 kVector;
 
+	static const Vector3 iVectorMinus;
+	static const Vector3 jVectorMinus;
+	static const Vector3 kVectorMinus;
+
 	static const double pi;
 	static const double epsilon;
 	double ToDegrees( double radians );
