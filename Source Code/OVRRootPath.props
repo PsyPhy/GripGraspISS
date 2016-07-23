@@ -3,7 +3,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <OVRSDKROOT0_8>../../../OculusSDKv0.8/</OVRSDKROOT0_8>
-    <OVRSDKROOT>../../../OculusSDKv1.3/OculusSDK/</OVRSDKROOT>
+    <OVRSDKROOT1_3>../../../OculusSDKv1.3/OculusSDK/</OVRSDKROOT1_3>
+    <OVRSDKROOT>../../../OculusSDKv1.6/OculusSDK/</OVRSDKROOT>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -13,7 +14,13 @@
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
  </ItemGroup>
-  <ItemGroup>
+ <ItemGroup>
+    <BuildMacro Include="OVRSDKROOT1_3">
+      <Value>$(OVRSDKROOT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+ </ItemGroup>
+ <ItemGroup>
     <BuildMacro Include="OVRSDKROOT">
       <Value>$(OVRSDKROOT)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
