@@ -61,7 +61,7 @@ int _tmain(int argc, char *argv[])
 	objects->hand->SetPosition( 25.0, -25.0, -200.0 );
 	objects->hand->SetOrientation( 0.0, -1.0, -1.0 );
 		
-	objects->tiltPrompt->SetOrientation(110.0, 0.0, 0.0);
+	objects->headTiltPrompt->SetOrientation(110.0, 0.0, 0.0);
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
 
@@ -72,7 +72,7 @@ int _tmain(int argc, char *argv[])
 	objects->orientationTarget->Enable();
 	objects->positionOnlyTarget->Disable();
 	objects->response->Enable();
-	objects->tiltPrompt->Disable();
+	objects->headTiltPrompt->Disable();
 	objects->vTool->Enable();
 	objects->kTool->Disable();
 	objects->kkTool->Disable();

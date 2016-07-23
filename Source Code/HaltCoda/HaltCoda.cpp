@@ -54,12 +54,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	catch(NetworkException& exNet)
 	{
-		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
+		fOutputDebugString( "Caught (NetworkException& exNet): %08x\n", exNet.errorcode );
 		exit( -1 );
 	}
 	catch(DeviceStatusArray& array)
 	{
-		fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
+		fOutputDebugString( "Caught (DeviceStatusArray& array): %d\n", array.numstatus );
 		exit( -1 );
 	}
 

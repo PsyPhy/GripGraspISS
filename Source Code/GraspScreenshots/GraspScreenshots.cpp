@@ -104,7 +104,7 @@ int _tmain(int argc, char *argv[])
 	objects->hand->SetPosition( 25.0, -25.0, -200.0 );
 	objects->hand->SetOrientation( 0.0, -1.0, -1.0 );
 		
-	objects->tiltPrompt->SetOrientation(110.0, 0.0, 0.0);
+	objects->headTiltPrompt->SetOrientation(110.0, 0.0, 0.0);
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
 
@@ -122,14 +122,17 @@ int _tmain(int argc, char *argv[])
 
 	objects->orientationTarget->Disable();
 	objects->positionOnlyTarget->Disable();
+	objects->straightAheadTarget->Disable();
 	objects->response->Disable();
-	objects->tiltPrompt->Disable();
+	objects->headTiltPrompt->Disable();
+	objects->handRollPrompt->Disable();
 	objects->vTool->Disable();
 	objects->vkTool->Disable();
 	objects->kTool->Disable();
 	objects->kkTool->Disable();
 	objects->projectiles->Disable();
 	objects->glasses->Enable();
+	objects->gazeLaser->Disable();
 	objects->successIndicator->Disable();
 	objects->timeoutIndicator->Disable();
 	objects->headMisalignIndicator->Disable();
@@ -179,22 +182,22 @@ int _tmain(int argc, char *argv[])
 			objects->kkTool->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--handArrow" )) {
-			objects->tiltPrompt->SetPosition( objects->hand->position );
-			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
-			objects->tiltPrompt->Enable();
+			objects->handRollPrompt->SetPosition( objects->hand->position );
+			objects->handRollPrompt->SetOrientation( objects->hand->orientation );
+			objects->handRollPrompt->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--headArrowLeft" )) {
-			objects->tiltPrompt->SetPosition( objects->hmd->position );
-			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
-			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
-			objects->tiltPrompt->Enable();
+			objects->headTiltPrompt->SetPosition( objects->hmd->position );
+			objects->headTiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
+			objects->headTiltPrompt->SetOrientation( objects->hand->orientation );
+			objects->headTiltPrompt->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--headArrowRight" )) {
-			objects->tiltPrompt->SetPosition( objects->hmd->position );
-			objects->tiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
-			objects->tiltPrompt->SetOrientation( objects->hand->orientation );
-			objects->tiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
-			objects->tiltPrompt->Enable();
+			objects->headTiltPrompt->SetPosition( objects->hmd->position );
+			objects->headTiltPrompt->SetOffset( 0.0, 0.0, -250.0 );
+			objects->headTiltPrompt->SetOrientation( objects->hand->orientation );
+			objects->headTiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
+			objects->headTiltPrompt->Enable();
 		}
 
 		else if ( !strcmp( argv[arg], "--ReadyToStart" )) {

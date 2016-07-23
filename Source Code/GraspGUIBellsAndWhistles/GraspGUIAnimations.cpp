@@ -133,7 +133,7 @@ void GraspDesktop::RefreshAnimations( void ) {
 	objectRenderer->hand->Draw();
 	objectRenderer->orientationTarget->Draw();
 	objectRenderer->positionOnlyTarget->Draw();
-	objectRenderer->tiltPrompt->Draw();
+	objectRenderer->headTiltPrompt->Draw();
 	objectRenderer->DrawBody( &head_pose );
 	workspaceWindow->Swap();
 

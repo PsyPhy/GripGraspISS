@@ -531,16 +531,16 @@ void GraspGLObjects::DrawVR( void ) {
 	response->Draw();
 	headTiltPrompt->Draw();
 	handRollPrompt->Draw();
+	vTool->Draw();
+	vkTool->Draw();
+	kTool->Draw();
+	kkTool->Draw();
+	projectiles->Draw();
 	successIndicator->Draw();
 	timeoutIndicator->Draw();
 	headMisalignIndicator->Draw();
 	readyToStartIndicator->Draw();
 	blockCompletedIndicator->Draw();
-	vTool->Draw();
-	kTool->Draw();
-	vkTool->Draw();
-	kkTool->Draw();
-	projectiles->Draw();
 	wristZone->Draw();
 
 }
