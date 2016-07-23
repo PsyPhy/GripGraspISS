@@ -1,6 +1,8 @@
 // AlignCodaToGL.cpp : Defines the entry point for the console application.
 //
 
+#define  _CRT_SECURE_NO_WARNINGS
+
 #include <windows.h>
 #include <mmsystem.h>
 
