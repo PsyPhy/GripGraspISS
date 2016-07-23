@@ -192,13 +192,11 @@ Assembly *GraspGLObjects::CreateResponse( void ) {
 }
 
 Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
-
 	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( target_ball_radius );
 	target->AddComponent( sphere );
 	target->SetColor( RED );
 	return target;
-
 }
 
 Glasses *GraspGLObjects::CreateGlasses( void ) {
@@ -322,6 +320,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 
 	// Similarly, the laser pointer attached to the head moves with it.
 	gazeLaser = CreateLaserPointer();
+	gazeLaser->SetColor( 0.7, 0.0, 0.4, 1.0 );
 	yoke->AddComponent( gazeLaser );
 
 	// When responding in the V only mode, the virtual tool (hand) moves with the gaze.
@@ -382,7 +381,7 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
 	base->SetPosition( prompt_radius, 0.0, 0.0 );
 	prompt->AddComponent( base );
-	prompt->SetColor( 0.5, 0.0, 0.4 );
+	prompt->SetColor( 0.5, 0.5, 0.5, 0.5 );
 
 	return prompt;
 
@@ -436,7 +435,11 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	response = CreateResponse();
 
 	headTiltPrompt = CreateTiltPrompt();
+	headTiltPrompt->SetColor( 0.5, 0.0, 0.4 );
+
 	handRollPrompt = CreateTiltPrompt();
+	handRollPrompt->SetColor( 0.0, 0.0, 0.4 );
+
 	successIndicator = CreateSuccessIndicator();
 	timeoutIndicator = CreateIndicator( timeout_texture );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
