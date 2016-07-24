@@ -46,7 +46,7 @@ void DrawToBMP( const char *filename ) {
 
 	// Prepare for drawing.
 	window->Activate();
-	window->Clear();
+	window->Clear( 0.0, 0.0, 0.0, 1.0 );
 
 	glUsefulPrepareRendering();
 	viewpoint->Apply( window, CYCLOPS );
@@ -169,6 +169,7 @@ int _tmain(int argc, char *argv[])
 		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &angle ) ) {
 			objects->hand->SetOrientation( angle, 0.0, 0.0 );
 		}
+
 		else if ( !strcmp( argv[arg], "--vkTool" )) {
 			objects->vkTool->Enable();
 		}
@@ -181,9 +182,15 @@ int _tmain(int argc, char *argv[])
 		else if ( !strcmp( argv[arg], "--kkTool" )) {
 			objects->kkTool->Enable();
 		}
-		else if ( !strcmp( argv[arg], "--handArrow" )) {
+		else if ( !strcmp( argv[arg], "--handArrowLeft" )) {
 			objects->handRollPrompt->SetPosition( objects->hand->position );
 			objects->handRollPrompt->SetOrientation( objects->hand->orientation );
+			objects->handRollPrompt->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--handArrowRight" )) {
+			objects->handRollPrompt->SetPosition( objects->hand->position );
+			objects->handRollPrompt->SetOrientation( objects->hand->orientation );
+			objects->handRollPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 			objects->handRollPrompt->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--headArrowLeft" )) {
@@ -218,6 +225,18 @@ int _tmain(int argc, char *argv[])
 
 		else if ( !strcmp( argv[arg], "--Timeout" )) {
 			objects->timeoutIndicator->Enable();
+		}
+
+		else if ( !strcmp( argv[arg], "--NoRoom" )) {
+			objects->room->Disable();
+		}
+
+		else if ( !strcmp( argv[arg], "--Redress" )) {
+			objects->gazeLaser->Enable();
+			objects->straightAheadTarget->Enable();
+		}
+		else if ( !strcmp( argv[arg], "--OffCenter" ) ) {
+			objects->hmd->SetOrientation( 3.0, 4.0, 0.0 );
 		}
 
 		else if ( !strcmp( argv[arg], "--confirm" )) {

@@ -13,7 +13,9 @@ DOCUMENTS=GraspScreenReview.pdf  \
 	InstallSeated.pdf InstallFloating.pdf ManualManualInstructions.pdf VisualManualInstructions.pdf VisualVisualInstructions.pdf \
 	VisualVisualScenes.pdf VisualManualScenes.pdf  ManualManualScenes.pdf GraspIntro.pdf
 
-SCREENSHOTS = ready.bmp leftFar.bmp leftCloser.bmp leftNear.bmp good.bmp rightNear.bmp rightCloser.bmp rightFar.bmp \
+SCREENSHOTS = ready.bmp \
+	leftFarAlign.bmp leftCloserAlign.bmp leftNearAlign.bmp goodAlign.bmp rightNearAlign.bmp rightCloserAlign.bmp rightFarAlign.bmp \
+	leftFarRedress.bmp leftCloserRedress.bmp leftNearRedress.bmp goodRedress.bmp rightNearRedress.bmp rightCloserRedress.bmp rightFarRedress.bmp \
 	vTarget.bmp kTargetFar.bmp kTargetNear.bmp kTargetGood.bmp vTool.bmp kTool.bmp trialCompleted.bmp blockCompleted.bmp
 GUISHOTS = $(GUI)\Alert.png  $(GUI)\Execute.png  $(GUI)\Instruction.png   $(GUI)\Success.png   $(GUI)\Login.png  $(GUI)\SelectSubsession.png  $(GUI)\StartTask.png 
 
@@ -63,34 +65,61 @@ kTool.bmp:
 	cd ..\.. & $(SCREENSHOTEXE) --targetSphere --head=15.0 --headError=0.0 --kTool  $@
 	move ..\..\$@ .
 
-leftFar.bmp:  
+leftFarAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=-20.0 --headError=20.0 --headArrowRight  $@
 	move ..\..\$@ .
 	
-leftCloser.bmp:  
+leftCloserAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=-5.0 --headError=6.0   $@
 	move ..\..\$@ .
 
-leftNear.bmp:  
+leftNearAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=-3.0 --headError=3.0   $@
 	move ..\..\$@ .
 
-good.bmp:  
+goodAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=0.0 --headError=0.0   $@
 	move ..\..\$@ .	
 
-rightNear.bmp:  
+rightNearAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=3.0 --headError=-3.0   $@
 	move ..\..\$@ .
 
-rightCloser.bmp:  
+rightCloserAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=5.0 --headError=-6.0   $@
 	move ..\..\$@ .
 
-rightFar.bmp:  
+rightFarAlign.bmp:  
 	cd ..\.. & $(SCREENSHOTEXE) --head=20.0 --headError=-20.0 --headArrowLeft  $@
 	move ..\..\$@ .
 
+leftFarRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --OffCenter --head=-20.0 --headError=20.0 --headArrowRight  $@
+	move ..\..\$@ .
+	
+leftCloserRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=-5.0 --headError=6.0   $@
+	move ..\..\$@ .
+
+leftNearRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=-3.0 --headError=3.0   $@
+	move ..\..\$@ .
+
+goodRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=0.0 --headError=0.0   $@
+	move ..\..\$@ .	
+
+rightNearRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=3.0 --headError=-3.0   $@
+	move ..\..\$@ .
+
+rightCloserRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=5.0 --headError=-6.0   $@
+	move ..\..\$@ .
+
+rightFarRedress.bmp:  
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --OffCenter --head=20.0 --headError=-20.0 --headArrowLeft  $@
+	move ..\..\$@ .
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe

@@ -473,6 +473,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	successIndicator->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
+	straightAheadTarget->SetPosition( target_location );
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	wristZone->SetPosition( 25.0, -25.0, -200.0 );
 }
