@@ -496,9 +496,14 @@ double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance 
 AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 	// Place the tilt prompt around the hand.
-	renderer->handRollPrompt->SetPosition( renderer->kkTool->position );
-	renderer->handRollPrompt->SetOrientation( renderer->kkTool->orientation );
-	renderer->handRollPrompt->SetOffset( 0.0, 0.0, 0.0 );
+	renderer->handRollPrompt->SetPosition( handPose.pose.position );
+	// Set its Z axis to align with the Z axis of the hand, but
+	//  ignore the roll angle.
+	Vector3 ray;
+	RotateVector( ray, handPose.pose.orientation, kVector );
+	Matrix3x3( rotation_matrix );
+	SetRotationMatrix( rotation_matrix, ray, kVector );
+	renderer->handRollPrompt->SetOrientation( rotation_matrix );
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
 	if ( lowered == HandleHandElevation() ) {

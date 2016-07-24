@@ -439,6 +439,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	handRollPrompt = CreateTiltPrompt();
 	handRollPrompt->SetColor( 0.0, 0.0, 0.4 );
+	handRollPrompt->SetOffset( 0.0, 0.0, - finger_length / 2.0 );
 
 	successIndicator = CreateSuccessIndicator();
 	timeoutIndicator = CreateIndicator( timeout_texture );

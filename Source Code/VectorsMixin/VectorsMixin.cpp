@@ -388,6 +388,20 @@ void VectorsMixin::SetQuaternion( Quaternion result, double radians, const Vecto
 
 }
 
+// Compute a rotation matrix that will rotat v1 to align with v2, ignoring the roll around the vectors.
+void VectorsMixin::SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const Vector3 v1 ) {
+	Vector3 u1, u2;
+	CopyVector( u1, v1 );
+	NormalizeVector( u1 );
+	CopyVector( u2, v2 );
+	NormalizeVector( u2 );
+	Vector3 rotation_vector;
+	ComputeCrossProduct( rotation_vector, u1, u2 );
+	double angle = atan2( VectorNorm( rotation_vector ), DotProduct( u1, u2 ) );
+	SetRotationMatrix( result, angle, rotation_vector );
+}
+
+
 void VectorsMixin::SetRotationMatrix( Matrix3x3 result, double radians, const Vector3 axis ) {
 
 	// This needs to be checked. Is the formula for row vectors or column vectors?

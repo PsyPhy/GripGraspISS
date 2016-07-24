@@ -112,6 +112,8 @@ public:
 	double AngleBetween( const Quaternion q1, const Quaternion q2 );
 	
 	void SetRotationMatrix( Matrix3x3 result, double radians, const Vector3 axis );
+	// Compute a rotation matrix that will align v1 with v2, ignoring the roll around the vectors.
+	void SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const Vector3 v1 );
 
 	void RotateVector( Vector3 result, const Quaternion q, const Vector3 v );
 	void MatrixToQuaternion( Quaternion result, Matrix3x3 m );
