@@ -29,12 +29,12 @@ using namespace Grasp;
 // Parameters that can be set to tune the tracking behavior.
 //
 
-// How much the tool will turn for a given displacement of the mouse or trackball.
+// How much the tool will turn for a given displacement of the mouse or trackball.(
 double GraspTrackers::mouseGain = - 0.001;
 // Where to place the tool when in V response mode.
 Pose GraspTrackers::handPoseV = {{0.0, 0.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
 // Where to place the tool when in K response mode.
-Pose GraspTrackers::handPoseK = {{100.0, -100.0, -500.0}, {0.0, 0.0, -.35, .94}};
+Pose GraspTrackers::handPoseK = {{100.0, -100.0, -500.0}, {0.02, 0.02, 0.0, sqrt( 1.0 - (0.02 * 0.02 + 0.02 * 0.02 ))}};
 // How much the torso will turn for each press of an arrow key.
 double GraspTrackers::arrowGain = - 0.01;
 // Simulate the position of the torso of the subject.

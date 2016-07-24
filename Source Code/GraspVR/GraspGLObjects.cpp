@@ -195,7 +195,7 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( target_ball_radius );
 	target->AddComponent( sphere );
-	target->SetColor( RED );
+	target->SetColor( ORANGE );
 	return target;
 }
 
