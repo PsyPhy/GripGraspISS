@@ -3,7 +3,6 @@ HEADER( *__Step 1: Straighten Head__* )
 - If your head is laterally tilted with respect to the trunk, the halo will be red:
 
 CENTER( IMAGE(Pictures/StraightenHeadRed.jpg, 200)  )
-CENTER( *__Need picture without tunnel and stars.__* )
 
 - Look straight ahead so that the laser pointer falls on the central target, 
 then slowly straighten your head on your shoulders. 
@@ -14,3 +13,5 @@ CENTER( IMAGE(Pictures/StraightenHeadRed.bmp, 100) IMAGE(Pictures/StraightenHead
 - When the halo pops to bright green, hold this position.
 
 CENTER( IMAGE(Pictures/StraightenHeadGreen.jpg, 200) )
+
+CENTER( [*__need pictures without tunnel and stars.__*] )

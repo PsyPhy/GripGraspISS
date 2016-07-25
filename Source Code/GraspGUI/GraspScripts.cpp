@@ -150,8 +150,8 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 					taskList[nTasks]->isolated_step->type = "INSTRUCTION";
 					taskList[nTasks]->isolated_step->instruction = gcnew String( token[3] );
 				}
-				else if ( !strcmp( token[1], "COMMAND" ) ) {
-					taskList[nTasks]->isolated_step->type = "COMMAND";
+				else if ( !strcmp( token[1], "COMMAND" ) || !strcmp( token[1], "COMMAND@" ) ) {
+					taskList[nTasks]->isolated_step->type = gcnew String( token[1] );
 					taskList[nTasks]->isolated_step->command = gcnew String( token[3] );
 					if ( tokens < 5 ) taskList[nTasks]->isolated_step->ready = gcnew String( "StepReady.prompt.html" );
 					else taskList[nTasks]->isolated_step->ready = gcnew String( token[4] );
@@ -202,8 +202,10 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 			sscanf( token[0], "%d", &number );
 			stepList[nSteps]->number = number;
 			stepList[nSteps]->type = gcnew String(  token[1] );
-			if ( !stepList[nSteps]->type->CompareTo( "INSTRUCTION" ) ) stepList[nSteps]->instruction = gcnew String( token[2] );
-			else if ( !stepList[nSteps]->type->CompareTo( "COMMAND" ) ) {
+			if ( stepList[nSteps]->type->Equals( "INSTRUCTION" ) || stepList[nSteps]->type->Equals( "INSTRUCTION@" ) ) {
+				stepList[nSteps]->instruction = gcnew String( token[2] );
+			}
+			else if ( stepList[nSteps]->type->Equals( "COMMAND" ) || stepList[nSteps]->type->Equals( "COMMAND@" )) {
 				stepList[nSteps]->command = gcnew String( token[2] );
 				stepList[nSteps]->ready = gcnew String( token[3] );
 				stepList[nSteps]->running = gcnew String( token[4] );
@@ -230,7 +232,7 @@ void GraspDesktop::previousButton_Click(System::Object^  sender, System::EventAr
 void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	if ( currentStep >= nSteps - 1 ) {
 		// End of this set of instructions.
-		SelectNextTask();
+		if ( !stepList[currentStep]->type->EndsWith("@") ) SelectNextTask();
 	}
 	else {
 		currentStep++;
@@ -422,6 +424,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 
 			// Re-enable the form.	
 			Enabled = true;
+
+			// And make sure that it is on top again.
+			Activate();
 		}
 }
 
