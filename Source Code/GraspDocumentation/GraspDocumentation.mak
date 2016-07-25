@@ -7,7 +7,7 @@ INSTRUCTIONS=..\..\Instructions
 GUI=GUIScreenshots
 VRMESSAGES=..\GraspBMPs
 HERE = $(CD)
-SCREENSHOTEXE="Source Code\Debug\GraspScreenshots.exe" --size=512
+SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=512
 DOCUMENTS=GraspScreenReview.pdf  \
 	GraspGUIScreens.pdf GraspGUIScreens.docx \
 	InstallSeated.pdf InstallFloating.pdf ManualManualInstructions.pdf VisualManualInstructions.pdf VisualVisualInstructions.pdf \
@@ -46,7 +46,7 @@ kTargetFar.bmp:
 	move ..\..\$@ .
 	
 kTargetNear.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --targetSphere --head=0.0 --headError=0.0 --hand=24.0 --handError=4.0 --kkTool  $@
+	cd ..\.. & $(SCREENSHOTEXE) --targetSphere --head=0.0 --headError=0.0 --hand=24.0 --handError=3.0 --kkTool  $@
 	move ..\..\$@ .
 
 kTargetGood.bmp:  

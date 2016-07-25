@@ -6,6 +6,8 @@
     <None Include="VisualManualScenes.md" />
     <None Include="ManualManualScenes.md" />
     <None Include="VisualVisualScenes.md" />
+    <None Include="GraspDocumentation.release.mak" />
+    <None Include="GraspDocumentation.debug.mak" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />

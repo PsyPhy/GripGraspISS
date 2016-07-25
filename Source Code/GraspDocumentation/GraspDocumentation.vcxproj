@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="GraspDocumentation.debug.mak" />
     <None Include="GraspDocumentation.mak" />
+    <None Include="GraspDocumentation.release.mak" />
     <None Include="GraspGUIScreens.md" />
     <None Include="ManualManualScenes.md" />
     <None Include="VisualManualScenes.md" />
@@ -58,15 +60,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.debug.mak</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>del *.html *.pdf *.tiff *.bmp *.pdf install</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.debug.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>nmake -NOLOGO GraspDocumentation.release.mak</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>del *.html *.pdf *.tiff *.bmp *.pdf install</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.mak</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake -NOLOGO GraspDocumentation.release.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
