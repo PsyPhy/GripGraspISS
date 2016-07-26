@@ -66,12 +66,6 @@ void KtoK::EnterObtainResponse( void ) {
 
 GraspTrialState KtoK::UpdateObtainResponse( void ) { 
 
-	//Pose up = {{50.0, -100.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-	//Pose down = {{50.0, -250.0, -500.0}, {0.0, 0.0, 0.0, 1.0}};
-
-	//if (  oculusDisplay->Key['W'] ) trackers->handTracker->OffsetTo( up );
-	//else trackers->handTracker->OffsetTo( down );
-
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );

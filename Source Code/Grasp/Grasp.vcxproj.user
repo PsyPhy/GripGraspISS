@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--KtoK --nocoda --sequence=Sequences\DemoGraspSequenceNoTiltToStart.seq --output=TestGrasp </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--VtoK --nocoda --sequence=Sequences\DemoGraspSequenceNoTiltToStart.seq --output=TestGrasp </LocalDebuggerCommandArguments>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
