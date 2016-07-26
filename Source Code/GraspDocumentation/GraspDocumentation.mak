@@ -42,7 +42,7 @@ trialCompleted.bmp:
 	move ..\..\$@ .
 
 kTargetFar.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --targetSphere --head=0.0 --headError=0.0 --hand=35.0 --handError=15.0 --kkTool --handArrow  $@
+	cd ..\.. & $(SCREENSHOTEXE) --targetSphere --head=0.0 --headError=0.0 --hand=35.0 --handError=15.0 --kkTool --handArrowLeft  $@
 	move ..\..\$@ .
 	
 kTargetNear.bmp:  
@@ -70,7 +70,7 @@ leftFarAlign.bmp:
 	move ..\..\$@ .
 	
 leftCloserAlign.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --head=-5.0 --headError=6.0   $@
+	cd ..\.. & $(SCREENSHOTEXE) --head=-5.0 --headError=10.0   $@
 	move ..\..\$@ .
 
 leftNearAlign.bmp:  
@@ -86,7 +86,7 @@ rightNearAlign.bmp:
 	move ..\..\$@ .
 
 rightCloserAlign.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --head=5.0 --headError=-6.0   $@
+	cd ..\.. & $(SCREENSHOTEXE) --head=5.0 --headError=-10.0   $@
 	move ..\..\$@ .
 
 rightFarAlign.bmp:  
@@ -98,7 +98,7 @@ leftFarRedress.bmp:
 	move ..\..\$@ .
 	
 leftCloserRedress.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=-5.0 --headError=6.0   $@
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=-5.0 --headError=10.0   $@
 	move ..\..\$@ .
 
 leftNearRedress.bmp:  
@@ -114,7 +114,7 @@ rightNearRedress.bmp:
 	move ..\..\$@ .
 
 rightCloserRedress.bmp:  
-	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=5.0 --headError=-6.0   $@
+	cd ..\.. & $(SCREENSHOTEXE) --Redress --NoRoom --head=5.0 --headError=-10.0   $@
 	move ..\..\$@ .
 
 rightFarRedress.bmp:  

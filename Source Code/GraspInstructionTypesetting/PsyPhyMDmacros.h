@@ -6,3 +6,15 @@
 #define LEFT(x) <p style="text-align:left" > x </p>
 #define RIGHT(x) <p style="text-align:right" > x </p>
 #define COMMA ,
+
+#define OPNOM(x) *__##x##__*
+#define FFRESTRAINT		OPNOM(Free-floating Restraint)
+#define CHAIR			OPNOM(GRIP Chair)
+#define TRACKER			OPNOM(Tracking Cameras)
+#define CHESTMARKERS	OPNOM(Chest Marker Support)
+#define HMDMARKERS		OPNOM(Head Marker Support)
+#define HANDMARKERS		OPNOM(Hand Marker Support)
+#define REMOTE			OPNOM(VR Headset Remote)
+#define HMD				OPNOM(Virtual Reality Headset)
+#define HALO			halo
+#define CBUTTON			Center Button

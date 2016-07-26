@@ -77,6 +77,8 @@
     <None Include="01StraightenHead.instruction.md">
       <Filter>Science</Filter>
     </None>
+    <None Include="GraspInstructions.release.mak" />
+    <None Include="GraspInstructions.debug.mak" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

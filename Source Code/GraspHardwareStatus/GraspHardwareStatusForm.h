@@ -250,8 +250,6 @@ namespace GraspHardwareStatus {
 
 		private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-				int bdy, unit;
-
 				hmdWindow0 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel0 );
 				hmdWindow1 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel1, hmdWindow0->hRC );
 				handWindow0 = PsyPhy::CreateOpenGLWindowInForm( handPanel0,hmdWindow0->hRC );

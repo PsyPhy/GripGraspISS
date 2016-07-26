@@ -6,7 +6,7 @@
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
 EXECUTABLES=..\..\Executables
-SCREENSHOTEXE="Source Code\Debug\GraspScreenshots.exe"
+SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=512
 
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
@@ -44,7 +44,7 @@ PREPROCESSOR=cl.exe
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI PsyPhyMDmacros.h
 
-redo: ..\Debug\GraspScreenshots.exe
+redo: ..\$(BUILDCONFIGURATION)\GraspScreenshots.exe
 	echo echo %date% %time% > $@
 
 Pictures\StraightenHeadGreen.bmp: redo
