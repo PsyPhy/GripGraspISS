@@ -8,7 +8,7 @@ CENTER( IMAGE(Pictures/StraightenHeadRed.jpg, 200)  )
 then slowly straighten your head on your shoulders. 
 This will make the HALO turn progressively from red to green:
 
-CENTER( IMAGE(Pictures/StraightenHeadRed.bmp, 100) IMAGE(Pictures/StraightenHeadYellow.bmp, 100) IMAGE(Pictures/StraightenHeadCyan.bmp, 100)  IMAGE(Pictures/StraightenHeadGreen.bmp, 100))
+CENTER( IMAGE(Pictures/InitialPosture.gif, 200) )
 
 - When the HALO pops to bright green, hold this position.
 
