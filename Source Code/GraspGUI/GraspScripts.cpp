@@ -209,7 +209,7 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 				stepList[nSteps]->command = gcnew String( token[2] );
 				stepList[nSteps]->ready = gcnew String( token[3] );
 				stepList[nSteps]->running = gcnew String( token[4] );
-				stepList[nSteps]->exit = gcnew array<String ^>( tokens - 4 );
+				stepList[nSteps]->exit = gcnew array<String ^>( tokens - 5 );
 				for ( int i = 5, j = 0; i < tokens; i++, j++ ) stepList[nSteps]->exit[j] = gcnew String( token[i] );
 			}
 			else fAbortMessage( "GraspGUI", "Unrecognized step type (%s) in task file %s.", token[1], fn );
