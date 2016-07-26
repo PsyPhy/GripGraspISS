@@ -269,6 +269,7 @@ void GraspDesktop::ShowStep( void ) {
 	// If we are doing a ShowStep, then make sure that the navigation buttons are enabled.
 	normalNavigationGroupBox->Visible = true;
 	normalNavigationGroupBox->Enabled = true;
+	this->AcceptButton = this->nextButton;
 	// Previous button is only active if we are not in the first step.
 	previousButton->Enabled = (currentStep > 0);
 	previousButton->Visible = true;
@@ -295,6 +296,7 @@ void GraspDesktop::ShowStep( void ) {
 		// Enable the "Execute", "Skip" and "Previous" buttons.
 		commandNavigationGroupBox->Visible = true;
 		commandNavigationGroupBox->Enabled = true;
+		this->AcceptButton = this->executeButton;
 		// Hide the normal navigation buttons.
 		normalNavigationGroupBox->Visible = false;
 		normalNavigationGroupBox->Enabled = false;
@@ -393,6 +395,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				errorCodeTextBox->Text = return_code.ToString();
 				errorNavigationGroupBox->Enabled = true;
 				errorNavigationGroupBox->Visible = true;
+				this->AcceptButton = this->retryButton;
 				// Make sure that the normal navigation buttons are hidden.
 				// I think they already are, but to be sure I do it again.
 				normalNavigationGroupBox->Visible = false;
@@ -405,6 +408,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			else {
 				normalNavigationGroupBox->Visible = true;
 				normalNavigationGroupBox->Enabled = true;
+				this->AcceptButton = this->nextButton;
 				// Indicate in the script engine status that the command exited with an exit
 				//  code corresponding to a normal situation and specify the specific return code.
 				stepExecutionState = STEP_FINISHED_NORMAL + return_code;

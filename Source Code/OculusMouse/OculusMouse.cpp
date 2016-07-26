@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <stdio.h>
 #include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
 
 // The following includes comes from the Oculus OVR source files.
 // The path is set via the user macro $(OVRSDKROOT) and via the property pages
@@ -21,6 +22,10 @@ INPUT MouseRightDownInput;
 INPUT MouseRightUpInput;
 INPUT KeyReturnDownInput;
 INPUT KeyReturnUpInput;
+INPUT KeyTabDownInput;
+INPUT KeyTabUpInput;
+INPUT KeyShiftDownInput;
+INPUT KeyShiftUpInput;
 
 int n_inputs = 1;
 
@@ -70,12 +75,42 @@ int main(int argc, char *argv[])
 	KeyReturnDownInput.ki.dwFlags = 0;
 	KeyReturnDownInput.ki.wScan = 0;
 	KeyReturnDownInput.ki.wVk = VK_RETURN;
+	KeyReturnDownInput.type = INPUT_KEYBOARD;
 
 	KeyReturnUpInput.ki.time = 0;
 	KeyReturnUpInput.ki.dwExtraInfo = 0;
 	KeyReturnUpInput.ki.dwFlags = KEYEVENTF_KEYUP;
 	KeyReturnUpInput.ki.wScan = 0;
 	KeyReturnUpInput.ki.wVk = VK_RETURN;
+	KeyReturnUpInput.type = INPUT_KEYBOARD;
+
+	KeyTabDownInput.ki.time = 0;
+	KeyTabDownInput.ki.dwExtraInfo = 0;
+	KeyTabDownInput.ki.dwFlags = 0;
+	KeyTabDownInput.ki.wScan = 0;
+	KeyTabDownInput.ki.wVk = VK_TAB;
+	KeyTabDownInput.type = INPUT_KEYBOARD;
+
+	KeyTabUpInput.ki.time = 0;
+	KeyTabUpInput.ki.dwExtraInfo = 0;
+	KeyTabUpInput.ki.dwFlags = KEYEVENTF_KEYUP;
+	KeyTabUpInput.ki.wScan = 0;
+	KeyTabUpInput.ki.wVk = VK_TAB;
+	KeyTabUpInput.type = INPUT_KEYBOARD;
+
+	KeyShiftDownInput.ki.time = 0;
+	KeyShiftDownInput.ki.dwExtraInfo = 0;
+	KeyShiftDownInput.ki.dwFlags = 0;
+	KeyShiftDownInput.ki.wScan = 0;
+	KeyShiftDownInput.ki.wVk = VK_SHIFT;
+	KeyShiftDownInput.type = INPUT_KEYBOARD;
+
+	KeyShiftUpInput.ki.time = 0;
+	KeyShiftUpInput.ki.dwExtraInfo = 0;
+	KeyShiftUpInput.ki.dwFlags = KEYEVENTF_KEYUP;
+	KeyShiftUpInput.ki.wScan = 0;
+	KeyShiftUpInput.ki.wVk = VK_SHIFT;
+	KeyShiftUpInput.type = INPUT_KEYBOARD;
 
 	ovrResult result;
 	result = ovr_Initialize( nullptr );
@@ -90,8 +125,11 @@ int main(int argc, char *argv[])
 	ovrInputState state;
 	ovr_GetInputState(	session,  ovrControllerType_Remote, &state );
 
-	bool enterPreviouslyDown = (bool) (state.Buttons & ovrButton_Enter);
-	bool backPreviouslyDown = (bool) (state.Buttons & ovrButton_Back);
+	bool enterPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Enter));
+	bool backPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Back));
+	bool volUpPrevouslyDown = ( 0 != (state.Buttons & ovrButton_VolUp));
+	bool volDownPrevouslyDown = ( 0 != (state.Buttons & ovrButton_VolDown));
+	bool homePreviouslyDown = ( 0 != (state.Buttons & ovrButton_Home));
 
 	while ( 1 ) {
 
@@ -109,12 +147,35 @@ int main(int argc, char *argv[])
 		// Center button is mapped to left mouse click.
 		if ( state.Buttons & ovrButton_Enter && !enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftDownInput, sizeof( MouseLeftDownInput ) );
 		if ( !(state.Buttons & ovrButton_Enter) && enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftUpInput, sizeof( MouseLeftUpInput ) );
-		enterPreviouslyDown = (bool) (state.Buttons & ovrButton_Enter);
+		enterPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Enter));
 
-		// Back button is mapped to right mouse click.
-		if ( state.Buttons & ovrButton_Back && !backPreviouslyDown )  SendInput( n_inputs, &MouseRightDownInput, sizeof( MouseRightDownInput ) );
-		if ( !(state.Buttons & ovrButton_Back ) && backPreviouslyDown )  SendInput( n_inputs, &MouseRightUpInput, sizeof( MouseRightUpInput ) );
-		backPreviouslyDown = (bool) (state.Buttons & ovrButton_Back);
+		// Back button is mapped to <Enter>.
+		if ( state.Buttons & ovrButton_Back && !backPreviouslyDown )  {
+			SendInput( n_inputs, &KeyReturnDownInput, sizeof( KeyReturnDownInput ) );
+		}
+		if ( !(state.Buttons & ovrButton_Back ) && backPreviouslyDown )  SendInput( n_inputs, &KeyReturnUpInput, sizeof( KeyReturnUpInput ) );
+		backPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Back));
+
+		// Home button is mapped to right mouse click.
+		if ( state.Buttons & ovrButton_Home && !homePreviouslyDown )  SendInput( n_inputs, &MouseRightDownInput, sizeof( MouseRightDownInput ) );
+		if ( !(state.Buttons & ovrButton_Home ) && homePreviouslyDown )  SendInput( n_inputs, &MouseRightUpInput, sizeof( MouseRightUpInput ) );
+		homePreviouslyDown = ( 0 != (state.Buttons & ovrButton_Home));
+
+		// VolUp button is mapped to tab.
+		if ( state.Buttons & ovrButton_VolUp && !volUpPrevouslyDown )  SendInput( n_inputs, &KeyTabDownInput, sizeof( KeyTabDownInput ) );
+		if ( !(state.Buttons & ovrButton_VolUp ) && volUpPrevouslyDown )  SendInput( n_inputs, &KeyTabUpInput, sizeof( KeyTabUpInput ) );
+		volUpPrevouslyDown = ( 0 != (state.Buttons & ovrButton_VolUp));
+
+		// VolDown button is mapped to shift-tab.
+		if ( state.Buttons & ovrButton_VolDown && !volDownPrevouslyDown )  {
+			SendInput( n_inputs, &KeyShiftDownInput, sizeof( KeyShiftDownInput ) );
+			SendInput( n_inputs, &KeyTabDownInput, sizeof( KeyTabDownInput ) );
+		}
+		if ( !(state.Buttons & ovrButton_VolDown ) && volDownPrevouslyDown ) {
+			SendInput( n_inputs, &KeyTabUpInput, sizeof( KeyTabUpInput ) );
+			SendInput( n_inputs, &KeyShiftUpInput, sizeof( KeyShiftUpInput ) );
+		}
+		volDownPrevouslyDown = ( 0 != (state.Buttons & ovrButton_VolDown));
 
 		Sleep( 50 );
 	}
