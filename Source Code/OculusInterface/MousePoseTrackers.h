@@ -71,6 +71,21 @@ public:
 };
 
 
+// A  tracker that is driven in 3D by key presses, with roll determined by the mouse.
+class KeyboardPoseTracker : public MousePoseTracker {
+
+protected:
+	double	positionGain;
+	double	rotationGain;
+	Pose	currentPose;
+public:
+		Vector3 eulerAngles;
+		KeyboardPoseTracker( OculusMapper *ptr = nullptr, double position_gain = 1.0, double rotation_gain = 1.0 );
+		~KeyboardPoseTracker();
+		bool Update( void );
+		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
+};
+
 };
 
 

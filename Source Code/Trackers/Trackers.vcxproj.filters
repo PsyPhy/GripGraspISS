@@ -12,6 +12,7 @@
     <ClInclude Include="PoseTrackers.h" />
     <ClInclude Include="CascadePoseTracker.h" />
     <ClInclude Include="CodaPoseTracker.h" />
+    <ClInclude Include="PoseTrackerFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -20,5 +21,6 @@
     <ClCompile Include="CodaRTnetTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
     <ClCompile Include="CascadePoseTracker.cpp" />
+    <ClCompile Include="PoseTrackerFilter.cpp" />
   </ItemGroup>
 </Project>

@@ -90,18 +90,18 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		TransformPose( handPose.pose, localAlignment, handPose.pose );
-		// Recursively filter the hand position somewhat.
-		// This functionality should be built into the pose trackers, not here.
-		Pose filtered;
-		ScaleVector( filtered.position, handPose.pose.position, handFilterConstant );
-		AddVectors ( filtered.position, filtered.position, renderer->hand->position );
-		ScaleVector( filtered.position, filtered.position, 1.0 / (handFilterConstant + 1.0) );
-		Quaternion q;
-		MatrixToQuaternion( q, renderer->hand->orientation );
-		for ( int i = 0; i < 4; i++ ) q[i] += ( handFilterConstant *  handPose.pose.orientation[i] );
-		NormalizeQuaternion( q );
-		CopyQuaternion( filtered.orientation, q );
-		renderer->hand->SetPose( filtered );
+		//// Recursively filter the hand position somewhat.
+		//// This functionality should be built into the pose trackers, not here.
+		//Pose filtered;
+		//ScaleVector( filtered.position, handPose.pose.position, handFilterConstant );
+		//AddVectors ( filtered.position, filtered.position, renderer->hand->position );
+		//ScaleVector( filtered.position, filtered.position, 1.0 / (handFilterConstant + 1.0) );
+		//Quaternion q;
+		//MatrixToQuaternion( q, renderer->hand->orientation );
+		//for ( int i = 0; i < 4; i++ ) q[i] += ( handFilterConstant *  handPose.pose.orientation[i] );
+		//NormalizeQuaternion( q );
+		//CopyQuaternion( filtered.orientation, q );
+		renderer->hand->SetPose( handPose.pose );
 	}
 
 	if ( !trackers->chestTracker->GetCurrentPose( chestPose ) ) {
@@ -110,7 +110,6 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		TransformPose( chestPose.pose, localAlignment, chestPose.pose );
-		// Should filter this pose as well.
 	}
 
 	// The vTool is a special case because it does not move with the hand. Instead,

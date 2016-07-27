@@ -24,6 +24,7 @@
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../Trackers/CascadePoseTracker.h"
+#include "../Trackers/PoseTrackerFilter.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/MousePoseTrackers.h"
@@ -66,6 +67,8 @@ namespace Grasp {
 		// We will need a mouse tracker of some kind to do the V-V protocol.
 		MouseRollPoseTracker *mouseRollTracker;
 
+		PoseTracker *chestTrackerRaw;
+
 		virtual void Initialize( void );
 		GraspSimTrackers( OculusMapper *mapper ) {
 			oculusMapper = mapper;
@@ -105,6 +108,10 @@ namespace Grasp {
 
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 		OculusCodaPoseTracker *oculusCodaPoseTracker;
+
+		// For the other two coda-only tracker we probably need to filter.
+		PoseTrackerFilter *handFilteredTracker;
+		PoseTrackerFilter *chestFilteredTracker;
 
 		// We will need a mouse tracker of some kind to do the V-V protocol.
 		MouseRollPoseTracker *mouseRollTracker;

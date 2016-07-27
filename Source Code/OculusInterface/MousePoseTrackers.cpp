@@ -154,3 +154,32 @@ bool OculusRemoteRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	pose.visible = true;
 	return pose.visible;
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+KeyboardPoseTracker::KeyboardPoseTracker ( OculusMapper *mapper, double position_gain, double rotation_gain ) {
+	oculusMapper = mapper;
+	positionGain = position_gain;
+	rotationGain = rotation_gain;
+	CopyVector( currentPose.position, zeroVector );
+	CopyQuaternion( currentPose.orientation, nullQuaternion );
+	MousePoseTracker::MousePoseTracker( mapper, gain );
+}
+
+bool KeyboardPoseTracker::Update ( void ) {
+	if ( oculusMapper->display->Key[VK_LEFT] ) currentPose.position[X] -= positionGain;
+	if ( oculusMapper->display->Key[VK_RIGHT] ) currentPose.position[X] += positionGain;
+	if ( oculusMapper->display->Key[VK_UP] ) currentPose.position[Z] -= positionGain;
+	if ( oculusMapper->display->Key[VK_DOWN] ) currentPose.position[Z] += positionGain;
+	if ( oculusMapper->display->Key['S'] ) currentPose.position[Y] -= positionGain;
+	if ( oculusMapper->display->Key['D'] ) currentPose.position[Y] += positionGain;
+	return true;
+}
+
+bool KeyboardPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
+	CopyPose( pose.pose, currentPose );
+	pose.time = GetTime();
+	pose.visible = true;
+	return pose.visible;
+}

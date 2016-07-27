@@ -15,6 +15,7 @@
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/PoseTrackerFilter.h"
 
 #include "../OculusInterface/MousePoseTrackers.h"
 #include "../OculusInterface/OculusPoseTracker.h"
@@ -108,14 +109,18 @@ void GraspDexTrackers::Initialize( void ) {
 	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdCascadeTracker );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
+	// Create pose trackers that simply filter the coda trackers.
+	handFilteredTracker = new PoseTrackerFilter( handCascadeTracker, 2.0 );
+	chestFilteredTracker = new PoseTrackerFilter( chestCascadeTracker, 10.0 );
+
 	// Create a tracker to control the roll orientation via the mouse.
 	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
 	// Now assign the trackers to each body part.
 	hmdTracker = oculusCodaPoseTracker;
-	handTracker = handCascadeTracker;
-	chestTracker = chestCascadeTracker;
+	handTracker = handFilteredTracker;
+	chestTracker = chestFilteredTracker;
 	rollTracker = mouseRollTracker;
 	
 	// Place the hand at a constant position relative to the origin.
@@ -216,12 +221,15 @@ void GraspSimTrackers::Initialize( void ) {
 	handTracker->OffsetTo( handPoseK );
 
 	// Create a arrow key tracker to simulate movements of the chest.
-	chestTracker = new PsyPhy::ArrowsRollPoseTracker( oculusMapper, arrowGain );
-	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspSimTrackers", "Error initializing ArrowRollPoseTracker." );
+	chestTrackerRaw = new PsyPhy::KeyboardPoseTracker( oculusMapper );
+	fAbortMessageOnCondition( !chestTrackerRaw->Initialize(), "GraspSimTrackers", "Error initializing ArrowRollPoseTracker." );
 	// Set the position and orientation of the chest wrt the origin when in V-V mode.
 	// The ArrowsRollPoseTracker will then rotate the tool around this constant position.
-	chestTracker->OffsetTo( chestPoseSim );
-
+	chestTrackerRaw->OffsetTo( chestPoseSim );
+	// Filter the chest pose.
+	chestTracker = new PoseTrackerFilter( chestTrackerRaw, 2.0 );
+	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspSimTrackers", "Error initializing PoseTrackerFilter." );
+	
 	// Create a tracker to control roll movements of the hand for the toV responses.
 	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
