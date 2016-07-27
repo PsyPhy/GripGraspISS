@@ -395,10 +395,10 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	RotateVector( gaze, headPose.pose.orientation, kVector );
 	if ( (product = DotProduct( gaze, straight_behind )) < straightAheadThreshold ) {
 		centered = false;
-		renderer->straightAheadTarget->SetColor( MAGENTA );
+		renderer->gazeLaser->SetColor( MAGENTA );
 	}
 	else {
-		renderer->straightAheadTarget->SetColor( GREEN );
+		renderer->gazeLaser->SetColor( GREEN );
 		centered = true;
 	}
 	// Now place the target at the end of the (not visible) tunnel.

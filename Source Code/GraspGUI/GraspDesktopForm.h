@@ -817,8 +817,7 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			MessageBox( "Will show payload status.", "GRASP@ISS", MessageBoxButtons::OK );
-			// system( "bin\\WinSCP.com /command \"open ftp://administrator:dex@10.80.12.103\" \"cd DATA1\" \"cd DATA\" \"cd glog\" \"ls\" \"get *\" \"exit\" & pause" );
+			system( "Executables\\AlignToRigidBodyGUI.exe --body=Bdy\\Chest.bdy" );
 		}
 
 	private:

@@ -28,7 +28,9 @@ bool PoseTrackerFilter::Initialize( void ) {
 	// Overall success requires that all be successful.
 	initialized = true;
 	unfiltered_tracker->Initialize();
-	unfiltered_tracker->GetCurrentPose( current_pose );
+	CopyPose( current_pose.pose, nullPose );
+	current_pose.time = 0.0;
+	current_pose.visible = false;
 	return( initialized );
 }
 

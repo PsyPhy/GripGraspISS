@@ -1,6 +1,6 @@
 ;;;;;  
 ;;;;; Configuration file fo the CodaRTnet tracker.
-;;;;; This instance is configured for the CNRS codas on AH1007.
+;;;;; This instance is configured for the science model (SM) at Tecnalia.
 ;;;;;
 
 [CodaRTnet]

@@ -111,7 +111,9 @@ void GraspDexTrackers::Initialize( void ) {
 
 	// Create pose trackers that simply filter the coda trackers.
 	handFilteredTracker = new PoseTrackerFilter( handCascadeTracker, 2.0 );
+	handFilteredTracker->Initialize();
 	chestFilteredTracker = new PoseTrackerFilter( chestCascadeTracker, 10.0 );
+	chestFilteredTracker->Initialize();
 
 	// Create a tracker to control the roll orientation via the mouse.
 	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );

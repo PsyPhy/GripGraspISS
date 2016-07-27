@@ -57,10 +57,11 @@ namespace AlignToRigidBodyGUI {
 		bool									noCoda;
 		bool									forceShow;
 
-		PsyPhy::OpenGLWindow					*vrWindow1, *vrWindow2;
-		PsyPhy::Viewpoint						*codaViewpoint;
-		Grasp::MarkerStructureGLObject			*alignmentObject1;
-		Grasp::MarkerStructureGLObject			*alignmentObject2;
+		PsyPhy::OpenGLWindow					*visibilityWindow1, *visibilityWindow2;
+		PsyPhy::OpenGLWindow					*fovWindow1, *fovWindow2;
+		PsyPhy::Viewpoint						*codaViewpoint, *objectViewpoint;
+		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
+		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 
 		PsyPhy::CodaRTnetTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
@@ -69,6 +70,17 @@ namespace AlignToRigidBodyGUI {
 		String^ filenameRoot;
 
 		double maxPositionError;
+
+	protected: 
+
+	private: System::Windows::Forms::TextBox^  instructionsTextBox2;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::Panel^  fovPanel2;
+	private: System::Windows::Forms::GroupBox^  groupBox2;
+	private: System::Windows::Forms::Panel^  fovPanel1;
+	private: System::Windows::Forms::Label^  busy;
+
+	protected: 
 		double maxOrientationError;
 
 	public:
@@ -96,30 +108,63 @@ namespace AlignToRigidBodyGUI {
 			}
 		}
 
+		void Render ( void ) {
+			
+			// Update the 3D view of the alignment object.
+
+			visibilityWindow2->Activate();
+			visibilityWindow2->Clear( 0.10, 0.10, 0.30 );
+			objectViewpoint->Apply( visibilityWindow2, CYCLOPS );
+			visibilityObject2->Draw();
+			visibilityWindow2->Swap();
+
+			visibilityWindow1->Activate();
+			visibilityWindow2->Clear( 0.10, 0.10, 0.30 );
+			objectViewpoint->Apply( visibilityWindow1, CYCLOPS );
+			visibilityObject1->Draw();
+			visibilityWindow1->Swap();
+
+			fovWindow2->Activate();
+			fovWindow2->Clear( 0.05, 0.05, 0.15 );
+			codaViewpoint->Apply( fovWindow2, CYCLOPS );
+			alignmentObject2->Draw();
+			fovWindow2->Swap();
+
+			fovWindow1->Activate();
+			fovWindow1->Clear( 0.025, 0.025, 0.1 );
+			codaViewpoint->Apply( fovWindow1, CYCLOPS );
+			alignmentObject1->Draw();
+			fovWindow1->Swap();
+
+		}
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-			static int count = 0;
-			MarkerFrame localFrame;
 
-			coda->GetCurrentMarkerFrameUnit( localFrame, 0 );
-			alignmentObject1->ShowVisibility( localFrame );
-			coda->GetCurrentMarkerFrameUnit( localFrame, 1 );
-			alignmentObject2->ShowVisibility( localFrame );
+			TrackerPose pose;
+			MarkerFrame codaFrame;
+			CodaPoseTracker *poseTracker = new CodaPoseTracker( &codaFrame );
+				
+			// The name of the model file is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+			char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
+			poseTracker->ReadModelMarkerPositions( model_file );
+			System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
-			// Update the 3D view of the alignment object.
-			vrWindow2->Activate();
-			vrWindow2->Clear( 0.50, 0.50, 0.60 );
-			codaViewpoint->Apply( vrWindow2, CYCLOPS );
-			alignmentObject2->Draw();
-			vrWindow2->Swap();
+			coda->GetCurrentMarkerFrameUnit( codaFrame, 0 );
+			visibilityObject1->ShowVisibility( codaFrame );
+			poseTracker->GetCurrentPose( pose );
+			if ( pose.visible ) {
+				alignmentObject1->SetPose( pose.pose );
+			}
+			coda->GetCurrentMarkerFrameUnit( codaFrame, 1 );
+			visibilityObject2->ShowVisibility( codaFrame );
+			poseTracker->GetCurrentPose( pose );
+			if ( pose.visible ) {
+				alignmentObject2->SetPose( pose.pose );
+			}
 
-			vrWindow1->Activate();
-			vrWindow1->Clear( 0.50, 0.50, 0.60 );
-			codaViewpoint->Apply( vrWindow1, CYCLOPS );
-			alignmentObject1->Draw();
-			vrWindow1->Swap();
+			Render();
 
 		}
 		void CreateRefreshTimer( int interval ) {
@@ -137,12 +182,14 @@ namespace AlignToRigidBodyGUI {
 	private:
 		System::Windows::Forms::TextBox^  instructionsTextBox;
 		System::Windows::Forms::GroupBox^	vrGroupBox2;
-		System::Windows::Forms::Panel^		vrPanel2;
+private: System::Windows::Forms::Panel^  visibilityPanel2;
+
 		System::Windows::Forms::GroupBox^	vrGroupBox1;
-		System::Windows::Forms::Panel^		vrPanel1;
+private: System::Windows::Forms::Panel^  visibilityPanel1;
+
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
-		System::Windows::Forms::Label^  busy;
+
 
 	private:
 		/// <summary>
@@ -160,20 +207,27 @@ namespace AlignToRigidBodyGUI {
 			this->alignButton = (gcnew System::Windows::Forms::Button());
 			this->cancelButton = (gcnew System::Windows::Forms::Button());
 			this->vrGroupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			this->vrPanel2 = (gcnew System::Windows::Forms::Panel());
+			this->visibilityPanel2 = (gcnew System::Windows::Forms::Panel());
 			this->vrGroupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->visibilityPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->instructionsTextBox2 = (gcnew System::Windows::Forms::TextBox());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->fovPanel2 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->fovPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->busy = (gcnew System::Windows::Forms::Label());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
+			this->groupBox1->SuspendLayout();
+			this->groupBox2->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// alignButton
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(841, 831);
+			this->alignButton->Location = System::Drawing::Point(749, 899);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
@@ -186,7 +240,7 @@ namespace AlignToRigidBodyGUI {
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(224, 831);
+			this->cancelButton->Location = System::Drawing::Point(177, 899);
 			this->cancelButton->Name = L"cancelButton";
 			this->cancelButton->Size = System::Drawing::Size(159, 56);
 			this->cancelButton->TabIndex = 3;
@@ -196,63 +250,112 @@ namespace AlignToRigidBodyGUI {
 			// 
 			// vrGroupBox2
 			// 
-			this->vrGroupBox2->Controls->Add(this->vrPanel2);
-			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->vrGroupBox2->Controls->Add(this->visibilityPanel2);
+			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox2->Location = System::Drawing::Point(612, 144);
+			this->vrGroupBox2->Location = System::Drawing::Point(552, 74);
 			this->vrGroupBox2->Name = L"vrGroupBox2";
-			this->vrGroupBox2->Size = System::Drawing::Size(617, 641);
+			this->vrGroupBox2->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox2->TabIndex = 5;
 			this->vrGroupBox2->TabStop = false;
 			this->vrGroupBox2->Text = L"Tracker Camera 2";
 			// 
-			// vrPanel2
+			// visibilityPanel2
 			// 
-			this->vrPanel2->Location = System::Drawing::Point(6, 37);
-			this->vrPanel2->Name = L"vrPanel2";
-			this->vrPanel2->Size = System::Drawing::Size(605, 598);
-			this->vrPanel2->TabIndex = 1;
+			this->visibilityPanel2->Location = System::Drawing::Point(10, 37);
+			this->visibilityPanel2->Name = L"visibilityPanel2";
+			this->visibilityPanel2->Size = System::Drawing::Size(500, 291);
+			this->visibilityPanel2->TabIndex = 1;
 			// 
 			// vrGroupBox1
 			// 
-			this->vrGroupBox1->Controls->Add(this->vrPanel1);
-			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->vrGroupBox1->Controls->Add(this->visibilityPanel1);
+			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox1->Location = System::Drawing::Point(12, 144);
+			this->vrGroupBox1->Location = System::Drawing::Point(12, 74);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
-			this->vrGroupBox1->Size = System::Drawing::Size(582, 641);
+			this->vrGroupBox1->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox1->TabIndex = 4;
 			this->vrGroupBox1->TabStop = false;
 			this->vrGroupBox1->Text = L"Tracker Camera 1";
 			// 
-			// vrPanel1
+			// visibilityPanel1
 			// 
-			this->vrPanel1->Location = System::Drawing::Point(6, 37);
-			this->vrPanel1->Name = L"vrPanel1";
-			this->vrPanel1->Size = System::Drawing::Size(570, 598);
-			this->vrPanel1->TabIndex = 0;
+			this->visibilityPanel1->Location = System::Drawing::Point(10, 37);
+			this->visibilityPanel1->Name = L"visibilityPanel1";
+			this->visibilityPanel1->Size = System::Drawing::Size(500, 291);
+			this->visibilityPanel1->TabIndex = 0;
 			// 
 			// instructionsTextBox
 			// 
-			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, 
+			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->instructionsTextBox->Location = System::Drawing::Point(12, 22);
 			this->instructionsTextBox->Multiline = true;
 			this->instructionsTextBox->Name = L"instructionsTextBox";
-			this->instructionsTextBox->Size = System::Drawing::Size(1217, 104);
+			this->instructionsTextBox->Size = System::Drawing::Size(1060, 46);
 			this->instructionsTextBox->TabIndex = 6;
 			this->instructionsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
+			// instructionsTextBox2
+			// 
+			this->instructionsTextBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->instructionsTextBox2->Location = System::Drawing::Point(12, 432);
+			this->instructionsTextBox2->Multiline = true;
+			this->instructionsTextBox2->Name = L"instructionsTextBox2";
+			this->instructionsTextBox2->Size = System::Drawing::Size(1060, 46);
+			this->instructionsTextBox2->TabIndex = 13;
+			this->instructionsTextBox2->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->Controls->Add(this->fovPanel2);
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox1->Location = System::Drawing::Point(552, 484);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(520, 409);
+			this->groupBox1->TabIndex = 12;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Tracker Camera 2";
+			// 
+			// fovPanel2
+			// 
+			this->fovPanel2->Location = System::Drawing::Point(10, 37);
+			this->fovPanel2->Name = L"fovPanel2";
+			this->fovPanel2->Size = System::Drawing::Size(500, 358);
+			this->fovPanel2->TabIndex = 1;
+			// 
+			// groupBox2
+			// 
+			this->groupBox2->Controls->Add(this->fovPanel1);
+			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox2->Location = System::Drawing::Point(12, 484);
+			this->groupBox2->Name = L"groupBox2";
+			this->groupBox2->Size = System::Drawing::Size(520, 409);
+			this->groupBox2->TabIndex = 11;
+			this->groupBox2->TabStop = false;
+			this->groupBox2->Text = L"Tracker Camera 1";
+			// 
+			// fovPanel1
+			// 
+			this->fovPanel1->Location = System::Drawing::Point(10, 37);
+			this->fovPanel1->Name = L"fovPanel1";
+			this->fovPanel1->Size = System::Drawing::Size(500, 358);
+			this->fovPanel1->TabIndex = 0;
+			// 
 			// busy
 			// 
-			this->busy->BorderStyle = System::Windows::Forms::BorderStyle::Fixed3D;
+			this->busy->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->busy->ForeColor = System::Drawing::Color::IndianRed;
-			this->busy->Location = System::Drawing::Point(174, 371);
+			this->busy->Location = System::Drawing::Point(102, 372);
 			this->busy->Name = L"busy";
 			this->busy->Size = System::Drawing::Size(888, 184);
-			this->busy->TabIndex = 7;
+			this->busy->TabIndex = 15;
 			this->busy->Text = L"Alignment in progress.\r\nPlease wait ...";
 			this->busy->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
@@ -262,9 +365,12 @@ namespace AlignToRigidBodyGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(1237, 924);
+			this->ClientSize = System::Drawing::Size(1082, 967);
 			this->ControlBox = false;
 			this->Controls->Add(this->busy);
+			this->Controls->Add(this->instructionsTextBox2);
+			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->instructionsTextBox);
 			this->Controls->Add(this->vrGroupBox2);
 			this->Controls->Add(this->vrGroupBox1);
@@ -279,6 +385,8 @@ namespace AlignToRigidBodyGUI {
 			this->Shown += gcnew System::EventHandler(this, &SingleObjectForm::Form1_Shown);
 			this->vrGroupBox2->ResumeLayout(false);
 			this->vrGroupBox1->ResumeLayout(false);
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox2->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -287,22 +395,35 @@ namespace AlignToRigidBodyGUI {
 
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-				 // Create windows and viewpoints to show what the CODA units are seeing.
-				 vrWindow1 = PsyPhy::CreateOpenGLWindowInForm( vrPanel1);
-				 vrWindow2 = PsyPhy::CreateOpenGLWindowInForm( vrPanel2, vrWindow1->hRC );
 
 				 // Create the OpenGLObjects that depict the marker array structure.
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
 				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
+				 visibilityObject1 = objects->CreateChestMarkerStructure( model_file );
+				 visibilityObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
+				 // Create windows and viewpoints to show which markers are visible.
+				 visibilityWindow1 = PsyPhy::CreateOpenGLWindowInForm( visibilityPanel1);
+				 visibilityWindow2 = PsyPhy::CreateOpenGLWindowInForm( visibilityPanel2, visibilityWindow1->hRC );
+
 				 // Create a viewpoint that looks at the origin from the negative Z axis.
+				 // This is the cannonical viewpoint for an object at zero position and orientation.
+				 objectViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
+				 objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
+				 objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+
+				 // Create windows and viewpoints to show what the CODA units are seeing.
+				 fovWindow1 = PsyPhy::CreateOpenGLWindowInForm( fovPanel1 );
+				 fovWindow2 = PsyPhy::CreateOpenGLWindowInForm( fovPanel2, fovWindow1->hRC );
+
+				 // Create a viewpoint that looks at the origin from the negative Y axis.
 				 // This is where the CODAs are with respect to the workspace.
-				 codaViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
-				 codaViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
-				 codaViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+				 codaViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 10000.0);
+				 codaViewpoint->SetPosition( 0.0, - 2000.0, 0.0 );
+				 codaViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
 
 				 // Initialize the state of the GL graphics engine.
 				 // Some of this will be overridden by the object renderer.
@@ -323,13 +444,26 @@ namespace AlignToRigidBodyGUI {
 				 Refresh();
 				 Application::DoEvents();
 
-				 if ( noCoda ) Sleep( 5000 );
+				 if ( noCoda ) Sleep( 2000 );
 				 else {
-					 // Create and start up the CODA tracker.
+					 // Create the CODA tracker.
 					 coda = new CodaRTnetTracker();
+
+					 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
+					 // Send a message to ground to show our progress.
+					 dex->SendSubstep( ANNUL_ALIGNMENT );
+					 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
+					 Refresh();
+					 Application::DoEvents();
+					 char *tempfile = ".nullalignment.tmp";
+					 coda->AnnulAlignment( tempfile );
+					 DeleteFile( tempfile );
+
+					 // Create and start up the CODA tracker.
 					 coda->Initialize();
 					 coda->StartAcquisition( 600.0 );
 				 }
+
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
 
@@ -338,26 +472,15 @@ namespace AlignToRigidBodyGUI {
 				 // Re-enable the Form as being inactive.
 				 Enabled = true;
 				 // Prompt for the required action.
-				 instructionsTextBox->Text = "Verify that all markers on the Chest Marker Plate are visible in each Tracker Camera view (all dots green) and then press 'Align'.         ";
+				 instructionsTextBox->Text = "Verify that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
+				 instructionsTextBox2->Text = "Verify that the Chest Marker Support is centered in each Tracker Camera Field-of-View.";
 
 				 if ( !noCoda ) {
 					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
 					 CreateRefreshTimer( 300 );
 					 StartRefreshTimer();
 				 }
-				 else {
-					vrWindow2->Activate();
-					vrWindow2->Clear( 0.50, 0.50, 0.60 );
-					codaViewpoint->Apply( vrWindow2, CYCLOPS );
-					alignmentObject2->Draw();
-					vrWindow2->Swap();
-
-					vrWindow1->Activate();
-					vrWindow1->Clear( 0.50, 0.50, 0.60 );
-					codaViewpoint->Apply( vrWindow1, CYCLOPS );
-					alignmentObject1->Draw();
-					vrWindow1->Swap();
-				 }
+				 else Render();
 
 
 			 }
@@ -407,6 +530,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
+				 instructionsTextBox2->Text = "";
 				 Refresh();
 				 Application::DoEvents();
 				 // Show a message while we are busy acquiring and computing the new alignment.
@@ -425,16 +549,6 @@ namespace AlignToRigidBodyGUI {
 					 Close();
 					 return;
 				 }
-
-				 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
-				 // Send a message to ground to show our progress.
-				 dex->SendSubstep( ANNUL_ALIGNMENT );
-				 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
-				 Refresh();
-				 Application::DoEvents();
-				 char *tempfile = ".nullalignment.tmp";
-				 coda->AnnulAlignment( tempfile );
-				 DeleteFile( tempfile );
 
 				 // Restart and acquire a short burst of marker data to be used to perform the alignment.
 				 // Send a message to ground to show our progress.
