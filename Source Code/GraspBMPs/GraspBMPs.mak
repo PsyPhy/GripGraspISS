@@ -55,42 +55,53 @@ GraspVRMessages.pdf: GraspVRMessages.html
 # filenames based on the slide number in the file. If you change the order of the slides or insert any slides
 # you have to edit here below to link each slide to the correct bitmap filename.
 
-ReadyToStart.bmp: GraspCircularPrompts\Diapositive1.tiff
+ReadyToStart.bmp: GraspCircularPrompts\Diapositive02.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-BlockCompleted.bmp: GraspCircularPrompts\Diapositive2.tiff
+BlockCompleted.bmp: GraspCircularPrompts\Diapositive03.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-HeadMisalignment.bmp: GraspCircularPrompts\Diapositive3.tiff
+LowerArm.bmp: GraspCircularPrompts\Diapositive04.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeLimit.bmp: GraspCircularPrompts\Diapositive4.tiff
+LowerArmTimeout.bmp: GraspCircularPrompts\Diapositive05.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-LowerArm.bmp: GraspCircularPrompts\Diapositive5.tiff
+RaiseArm.bmp: GraspCircularPrompts\Diapositive06.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-RaiseArm.bmp: GraspCircularPrompts\Diapositive6.tiff
+RaiseArmTimeout.bmp: GraspCircularPrompts\Diapositive07.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeoutTilt.bmp: GraspCircularPrompts\Diapositive7.tiff
+HeadMisalignment.bmp: GraspCircularPrompts\Diapositive08.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeoutResponse.bmp: GraspCircularPrompts\Diapositive8.tiff
+HeadMisalignmentTimeout.bmp: GraspCircularPrompts\Diapositive09.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
+
+ResponseTimeout.bmp: GraspCircularPrompts\Diapositive10.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
+
+TimeLimit.bmp: GraspCircularPrompts\Diapositive11.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
+
