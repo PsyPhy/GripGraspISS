@@ -563,14 +563,13 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 
 void GraspVR::HandleSpinningPrompts( void ) {
+
 	// Set an arbitrary starting orientation.
 	static double angle = 39.0;
-	renderer->timeoutIndicator->SetAttitude( angle, 0.0, 0.0 );
-	renderer->headMisalignIndicator->SetAttitude( angle, 0.0, 0.0 );
-	renderer->readyToStartIndicator->SetAttitude( angle, 0.0, 0.0 );
-	renderer->blockCompletedIndicator->SetAttitude( angle, 0.0, 0.0 );
+	renderer->spinners->SetAttitude( angle, 0.0, 0.0 );
 	angle -= prompt_spin_speed;
 }
+
 double  GraspVR::SetTargetOrientation( double roll_angle ) {
 	renderer->orientationTarget->SetOrientation( roll_angle, 0.0, 0.0 );
 	return( roll_angle );

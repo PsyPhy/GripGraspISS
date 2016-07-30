@@ -19,11 +19,18 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
+
 // These textures are the messages presented to the subject on a rotating disk.
-const char *GraspGLObjects::timeout_texture_bitmap = "Bmp\\TimeLimit.bmp";
-const char *GraspGLObjects::head_misalign_texture_bitmap = "Bmp\\HeadMisalignment.bmp";
-const char *GraspGLObjects::ready_texture_bitmap = "Bmp\\ReadyToStart.bmp";
-const char *GraspGLObjects::block_completed_texture_bitmap = "Bmp\\BlockCompleted.bmp";
+const char *GraspGLObjects::ready_to_start_bitmap = "Bmp\\ReadyToStart.bmp";
+const char *GraspGLObjects::block_completed_bitmap = "Bmp\\BlockCompleted.bmp";
+const char *GraspGLObjects::lower_arm_bitmap = "Bmp\\LowerArm.bmp";
+const char *GraspGLObjects::lower_arm_timeout_bitmap = "Bmp\\LowerArmTimeout.bmp";
+const char *GraspGLObjects::raise_arm_bitmap = "Bmp\\RaiseArm.bmp";
+const char *GraspGLObjects::raise_arm_timeout_bitmap = "Bmp\\RaiseArmTimeout.bmp";
+const char *GraspGLObjects::head_misalign_bitmap = "Bmp\\HeadMisalignment.bmp";
+const char *GraspGLObjects::head_align_timeout_bitmap = "Bmp\\HeadAlignmentTimeout.bmp";
+const char *GraspGLObjects::response_timeout_bitmap = "Bmp\\ResponseTimeout.bmp";
+const char *GraspGLObjects::timeout_bitmap = "Bmp\\TimeLimit.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -96,15 +103,23 @@ void GraspGLObjects::SetLighting( void ) {
 }
 
 void GraspGLObjects::CreateTextures( void ) {
+
 	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
-	timeout_texture = new Texture( timeout_texture_bitmap );
-	head_misalign_texture = new Texture( head_misalign_texture_bitmap );
-	ready_to_start_texture = new Texture( ready_texture_bitmap );
-	block_completed_texture = new Texture( block_completed_texture_bitmap );
+
+	ready_to_start_texture = new Texture( ready_to_start_bitmap );
+	block_completed_texture = new Texture( block_completed_bitmap );
+	raise_arm_texture = new Texture( raise_arm_bitmap );
+	raise_arm_timeout_texture = new Texture( raise_arm_timeout_bitmap );
+	lower_arm_texture = new Texture( lower_arm_bitmap );
+	lower_arm_timeout_texture = new Texture(lower_arm_timeout_bitmap );
+	head_misalign_texture = new Texture( head_misalign_bitmap );
+	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
+	timeout_texture = new Texture( timeout_bitmap );
+	response_timeout_texture = new Texture( response_timeout_bitmap );
 
 }
 
@@ -307,6 +322,7 @@ Yoke *GraspGLObjects::CreateHand( void ) {
 }
 
 Yoke *GraspGLObjects::CreateHUD( void ) {
+
 	Yoke *yoke = new Yoke();
 		
 	// The glasses will be positioned at the same place as the head based on the tracker.
@@ -328,14 +344,33 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( vTool );
 
 	// Round signs conveying messages to the subject also move with the head.
-	timeoutIndicator->SetOffset( prompt_location );
-	yoke->AddComponent( timeoutIndicator );
-	headMisalignIndicator->SetOffset( prompt_location );
-	yoke->AddComponent( headMisalignIndicator );
-	blockCompletedIndicator->SetOffset( prompt_location );
-	yoke->AddComponent( blockCompletedIndicator );
-	readyToStartIndicator->SetOffset( prompt_location );
-	yoke->AddComponent( readyToStartIndicator );
+	spinners = new Assembly();
+
+	headMisalignIndicator = CreateIndicator( head_misalign_texture );
+	spinners->AddComponent( headMisalignIndicator );
+	headAlignTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
+	spinners->AddComponent( headAlignTimeoutIndicator );
+	headTiltTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
+	spinners->AddComponent( headTiltTimeoutIndicator );
+	raiseArmIndicator= CreateIndicator( raise_arm_texture );
+	spinners->AddComponent( raiseArmIndicator );
+	raiseArmTimeoutIndicator= CreateIndicator( raise_arm_timeout_texture );
+	spinners->AddComponent( raiseArmTimeoutIndicator );
+	lowerArmIndicator = CreateIndicator( lower_arm_texture );
+	spinners->AddComponent( lowerArmIndicator );
+	lowerArmTimeoutIndicator = CreateIndicator( lower_arm_timeout_texture );
+	spinners->AddComponent( lowerArmTimeoutIndicator );
+	readyToStartIndicator = CreateIndicator( ready_to_start_texture );
+	spinners->AddComponent( readyToStartIndicator );
+	blockCompletedIndicator = CreateIndicator( block_completed_texture );
+	spinners->AddComponent( blockCompletedIndicator );
+	timeoutIndicator = CreateIndicator( timeout_texture );
+	spinners->AddComponent( timeoutIndicator );
+	responseTimeoutIndicator = CreateIndicator( response_timeout_texture );
+	spinners->AddComponent( responseTimeoutIndicator );
+
+	spinners->SetOffset( prompt_location );
+	yoke->AddComponent( spinners );
 
 	return( yoke );
 
@@ -396,8 +431,7 @@ Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
 }
 
 Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
-	// For the moment the indicator for a timeout is just a magenta 
-	// sphere. I would like to create something that is more intuitive.
+
 	Assembly	*assembly = new Assembly();
 	Disk		*surface;
 	
@@ -405,6 +439,7 @@ Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
 	surface->SetColor( 0.9, 0.9, 1.0, hmdTransparency );
 	surface->SetTexture( texture );
 	assembly->AddComponent( surface );
+	assembly->Disable();
 
 	return assembly;
 }
@@ -442,10 +477,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	handRollPrompt->SetOffset( 0.0, 0.0, - finger_length / 2.0 );
 
 	successIndicator = CreateSuccessIndicator();
-	timeoutIndicator = CreateIndicator( timeout_texture );
-	headMisalignIndicator = CreateIndicator( head_misalign_texture );
-	readyToStartIndicator = CreateIndicator( ready_to_start_texture );
-	blockCompletedIndicator = CreateIndicator( block_completed_texture );
+
 	projectiles = CreateProjectiles();
 
 	wristZone = CreateZone();
@@ -542,10 +574,7 @@ void GraspGLObjects::DrawVR( void ) {
 	kkTool->Draw();
 	projectiles->Draw();
 	successIndicator->Draw();
-	timeoutIndicator->Draw();
-	headMisalignIndicator->Draw();
-	readyToStartIndicator->Draw();
-	blockCompletedIndicator->Draw();
+	spinners->Draw();
 	wristZone->Draw();
 
 }

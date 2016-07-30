@@ -39,15 +39,20 @@ GraspTrialState VtoK::UpdateObtainResponse( void ) {
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed. Interrupt the trial if not.
-	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
-
+	if ( misaligned == HandleHeadAlignment( false ) ) {
+		interruptCondition = HEAD_MISALIGNMENT;
+		return( TrialInterrupted );
+	}
 	if ( raised == HandleHandElevation() && Validate()  ) {
 		// Record the response.
 		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
-	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
+	if ( TimerTimeout( stateTimer ) ) {
+		interruptCondition = RESPONSE_TIMEOUT;
+		return( TrialInterrupted ); 
+	}
 	return( currentState );
 
 }

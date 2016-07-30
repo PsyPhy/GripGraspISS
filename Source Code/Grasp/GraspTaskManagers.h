@@ -6,7 +6,7 @@
 namespace Grasp {
 
 	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, AlignHead, PresentTarget, TiltHead, ObtainResponse, 
-					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted, Timeout,
+					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted,
 					ExitStateMachine } GraspTrialState;
 
 	class GraspTaskManager : public GraspVR {
@@ -14,7 +14,11 @@ namespace Grasp {
 
 	public:
 
-		static const double indicatorDisplayDuration;
+		static double indicatorDisplayDuration;
+		static double alignHeadTimeout;
+		static double tiltHeadTimeout;
+		static double responseTimeout;
+		static double alignHandTimeout;
 
 		// List of paramters for each trial.
 		struct {
@@ -132,15 +136,11 @@ namespace Grasp {
 
 		// TrialInterrupted
 		// The trial was interrupted because the head orientation was not maintained.
+		enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } interruptCondition;
+		Assembly *interrupt_indicator;
 		virtual void EnterTrialInterrupted( void );
 		virtual GraspTrialState UpdateTrialInterrupted( void );
 		virtual void ExitTrialInterrupted( void );
-
-		// Timeout
-		// The trial was interrupted because the subject failed to respond.
-		virtual void EnterTimeout( void );
-		virtual GraspTrialState UpdateTimeout( void );
-		virtual void ExitTimeout( void );
 
 	public:
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2), response_fp(NULL), pose_fp(NULL) {}
@@ -182,6 +182,13 @@ namespace Grasp {
 	};
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
+
+	private:
+		
+		::Timer alignHandTimer;
+
+	public:
+
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
 		void EnterPresentTarget( void );
 		GraspTrialState UpdatePresentTarget( void );

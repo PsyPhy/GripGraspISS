@@ -24,6 +24,8 @@ void KtoK::EnterPresentTarget( void ) {
 	renderer->kkTool->Enable();
 	// The target orientation for the hand.
 	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].hapticTargetOrientationTolerance );
+	// Set a timeout to achieve the target orientation of the hand.
+	TimerSet( alignHandTimer, alignHandTimeout );
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
 }
@@ -32,7 +34,15 @@ GraspTrialState KtoK::UpdatePresentTarget( void ) {
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
-	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
+	if ( misaligned == HandleHeadAlignment( false ) ) {
+		interruptCondition = HEAD_MISALIGNMENT;
+		return( TrialInterrupted );
+	}
+	// Limit the time allowed to achieve the target hand orientation.
+	if ( TimerTimeout( alignHandTimer ) ) {
+		interruptCondition = ALIGN_HAND_TIMEOUT;
+		return( TrialInterrupted );
+	}
 
 	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
 	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
@@ -48,6 +58,7 @@ void  KtoK::ExitPresentTarget( void ) {
 	renderer->positionOnlyTarget->Disable();
 	// Hide the tool showing the orientation of the hand via color.
 	renderer->kkTool->Disable();
+	renderer->handRollPrompt->Disable();
 	// Hide the wrist zone indication.
 	// renderer->wristZone->Disable();
 	// Do all the default actions as well.
@@ -68,15 +79,20 @@ GraspTrialState KtoK::UpdateObtainResponse( void ) {
 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed. Interrupt the trial if not.
-	if ( misaligned == HandleHeadAlignment( false ) ) return( TrialInterrupted );
-
+	if ( misaligned == HandleHeadAlignment( false ) ) {
+		interruptCondition = HEAD_MISALIGNMENT;
+		return( TrialInterrupted );
+	}
 	if ( raised == HandleHandElevation() && Validate()  ) {
 		// Record the response.
 		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
-	if ( TimerTimeout( stateTimer ) ) return( Timeout ); 
+	if ( TimerTimeout( stateTimer ) ) {
+		interruptCondition = RESPONSE_TIMEOUT;
+		return( TrialInterrupted ); 
+	}
 	return( currentState );
 
 }
