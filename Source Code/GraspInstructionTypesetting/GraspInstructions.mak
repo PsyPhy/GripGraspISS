@@ -27,9 +27,9 @@ VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Picture
 # and then copy in the newly created files.
 install: $(ALL_HTML)  $(VRIMAGES) GraspInstructions.mak
 	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
-	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
+	-mkdir $(INSTRUCTIONS_DESTINATION) 
 	copy *.html $(INSTRUCTIONS_DESTINATION)
-	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
+	-mkdir $(INSTRUCTIONS_DESTINATION)\Pictures
 	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
 	echo %date% %time% > $@
 
