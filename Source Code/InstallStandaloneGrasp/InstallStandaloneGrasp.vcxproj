@@ -34,8 +34,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="InstallGraspDebug.mak" />
-    <None Include="InstallGraspRelease.mak" />
+    <None Include="InstallGrasp.debug.mak" />
+    <None Include="InstallGrasp.release.mak" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}</ProjectGuid>
@@ -63,15 +63,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspDebug.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspDebug.mak</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallGrasp.debug.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGrasp.debug.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>install</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspRelease.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspRelease.mak</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallGrasp.release.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGrasp.release.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
