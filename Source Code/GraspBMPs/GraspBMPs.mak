@@ -28,7 +28,13 @@ DESTINATION = ..\..\Bmp
 # This is where we can find the tools need to do the build.
 EXECUTABLES=..\..\Executables
 
-all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
+# This is going to install the bitmaps in the execution arboresence.
+# We delete the destination directory so that we eliminate any previous files that are no longer needed
+# and then copy in the newly created files. The '-' in front of mkdir tells nmake not to stop if the
+# command generates an error (which it does if the directory already exists).
+install:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
+	rmdir /S /Q $(DESTINATION)
+	-mkdir $(DESTINATION)
 	copy /Y /V *.bmp $(DESTINATION)
 	copy /Y StaticBitmaps\metal.bmp $(DESTINATION)
 	copy /Y StaticBitmaps\NightSky.bmp $(DESTINATION)
@@ -36,8 +42,10 @@ all:	$(FROMTIFFS) $(STATICBMPS) GraspVRMessages.pdf
 	echo BMPs %date% %time% > $@
 
 # Combine all the messages into a pdf document. This is useful when it comes time to generate the documention for the program.
-GraspVRMessages.pdf: *.bmp.html
-	type $(**) > $(@B).html
+GraspVRMessages.html: *.bmp.html
+	type $(**) > $@
+
+GraspVRMessages.pdf: GraspVRMessages.html
 	$(EXECUTABLES)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Grasp VR Messages" --header-font-size 8 --header-spacing 5 --margin-bottom 20 $(@B).html $@
 
 # The next set of bitmaps are generated from a Powerpoint file entitled GraspCircularPrompts.pptx.
@@ -47,35 +55,42 @@ GraspVRMessages.pdf: *.bmp.html
 # filenames based on the slide number in the file. If you change the order of the slides or insert any slides
 # you have to edit here below to link each slide to the correct bitmap filename.
 
-ReadyToStart.tiff: GraspCircularPrompts\Diapositive1.tiff
-	copy $(**) $@
+ReadyToStart.bmp: GraspCircularPrompts\Diapositive1.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-BlockCompleted.tiff: GraspCircularPrompts\Diapositive2.tiff
-	copy $(**) $@
+BlockCompleted.bmp: GraspCircularPrompts\Diapositive2.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-HeadMisalignment.tiff: GraspCircularPrompts\Diapositive3.tiff
-	copy $(**) $@
+HeadMisalignment.bmp: GraspCircularPrompts\Diapositive3.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeLimit.tiff: GraspCircularPrompts\Diapositive4.tiff
-	copy $(**) $@
+TimeLimit.bmp: GraspCircularPrompts\Diapositive4.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-LowerArm.tiff: GraspCircularPrompts\Diapositive5.tiff
-	copy $(**) $@
+LowerArm.bmp: GraspCircularPrompts\Diapositive5.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-RaiseArm.tiff: GraspCircularPrompts\Diapositive6.tiff
-	copy $(**) $@
+RaiseArm.bmp: GraspCircularPrompts\Diapositive6.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeoutTilt.tiff: GraspCircularPrompts\Diapositive7.tiff
-	copy $(**) $@
+TimeoutTilt.bmp: GraspCircularPrompts\Diapositive7.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> >$@.html
 
-TimeoutResponse.tiff: GraspCircularPrompts\Diapositive8.tiff
-	copy $(**) $@
-
-.SUFFIXES: .tiff .bmp
-
-# Here are the commands used to convert from a .tiff to a .bmp
-# We also create an .html version that is used above to generate a pdf file with all the messages.
-# project to create pdf files showing all the screens seen by the subject.
-.tiff.bmp: 
-	$(CONVERTER) --input=$?
+TimeoutResponse.bmp: GraspCircularPrompts\Diapositive8.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> >$@.html
