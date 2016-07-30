@@ -13,7 +13,9 @@ PANDOC_OPTIONS=
 
 # This is the list of btimaps generated from Powerpoint. In general, they are messages that are
 # presented in a circular format with the VR presentation.
-FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp HeadMisalignment.bmp RaiseArm.bmp LowerArm.bmp TimeoutTilt.bmp TimeoutResponse.bmp TimeLImit.bmp
+FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp \
+			LowerArm.bmp LowerArmTimeout.bmp RaiseArm.bmp RaiseArmTimeout.bmp \
+			HeadMisalignment.bmp HeadAlignmentTimeout.bmp ResponseTimeout.bmp TimeLimit.bmp  
 
 # The GRASP VR world requires a few bitmaps to decorate the walls. We keep copies in the source file tree
 # then copy as needed to the exection tree. That way, by maintaining this makefile up to date, only those
@@ -55,53 +57,54 @@ GraspVRMessages.pdf: GraspVRMessages.html
 # filenames based on the slide number in the file. If you change the order of the slides or insert any slides
 # you have to edit here below to link each slide to the correct bitmap filename.
 
+MAKEHTML = echo $(@B) ^<img src="$@" size=50 /^> 
 ReadyToStart.bmp: GraspCircularPrompts\Diapositive02.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 BlockCompleted.bmp: GraspCircularPrompts\Diapositive03.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 LowerArm.bmp: GraspCircularPrompts\Diapositive04.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 LowerArmTimeout.bmp: GraspCircularPrompts\Diapositive05.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 RaiseArm.bmp: GraspCircularPrompts\Diapositive06.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 RaiseArmTimeout.bmp: GraspCircularPrompts\Diapositive07.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 HeadMisalignment.bmp: GraspCircularPrompts\Diapositive08.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
-HeadMisalignmentTimeout.bmp: GraspCircularPrompts\Diapositive09.tiff
+HeadAlignmentTimeout.bmp: GraspCircularPrompts\Diapositive09.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 ResponseTimeout.bmp: GraspCircularPrompts\Diapositive10.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 TimeLimit.bmp: GraspCircularPrompts\Diapositive11.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
-	echo ^<img src="$@" size=50 /^> >$@.html
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
