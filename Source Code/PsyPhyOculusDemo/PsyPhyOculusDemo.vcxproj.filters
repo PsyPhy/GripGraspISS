@@ -3,25 +3,13 @@
   <ItemGroup>
     <ClCompile Include="PsyPhyOculusDemo.cpp" />
     <ClCompile Include="PsyPhyRendering.cpp" />
-    <ClCompile Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
-      <Filter>CAPI</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyRoomSceneRenderer.h" />
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
-      <Filter>CAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
-      <Filter>CAPI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library Files">
       <UniqueIdentifier>{70802c64-6ca9-4aa4-854f-d3ef4139f460}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="CAPI">
-      <UniqueIdentifier>{dd03c9d7-223d-4024-8659-1a52f291f350}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -19,13 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp" />
     <ClCompile Include="PsyPhyOculusDemo.cpp" />
     <ClCompile Include="PsyPhyRendering.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h" />
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h" />
     <ClInclude Include="TinyRoomSceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>

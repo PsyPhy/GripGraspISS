@@ -92,11 +92,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugGraspViaSystem", "Debu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspHardwareStatus", "GraspHardwareStatus\GraspHardwareStatus.vcxproj", "{3B9EA91D-4B96-465C-94F7-D64D41B29155}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\OculusSDKv1.6\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj", "{EA50E705-5113-49E5-B105-2512EDC8DDC6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SequenceCreator", "SequenceCreator\SequenceCreator.vcxproj", "{00C7BCF0-90BC-4E72-8EC6-5CC443585B2A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGraspTracker", "TestGraspTracker\TestGraspTracker.vcxproj", "{4A496E7B-5FFE-4A89-A8E1-2E57BC650C45}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\GraspOculusSDKv1.6\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj", "{EA50E705-5113-49E5-B105-2512EDC8DDC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -404,14 +404,6 @@ Global
 		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.Release|Win32.Build.0 = Release|Win32
 		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{3B9EA91D-4B96-465C-94F7-D64D41B29155}.TestRelease|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.Build.0 = Debug|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.DraftRelease|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.DraftRelease|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.TestRelease|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.TestRelease|Win32.Build.0 = Release|Win32
 		{00C7BCF0-90BC-4E72-8EC6-5CC443585B2A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{00C7BCF0-90BC-4E72-8EC6-5CC443585B2A}.Debug|Win32.Build.0 = Debug|Win32
 		{00C7BCF0-90BC-4E72-8EC6-5CC443585B2A}.DraftRelease|Win32.ActiveCfg = Release|Win32
@@ -428,6 +420,14 @@ Global
 		{4A496E7B-5FFE-4A89-A8E1-2E57BC650C45}.Release|Win32.Build.0 = Release|Win32
 		{4A496E7B-5FFE-4A89-A8E1-2E57BC650C45}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{4A496E7B-5FFE-4A89-A8E1-2E57BC650C45}.TestRelease|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.Build.0 = Debug|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.DraftRelease|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

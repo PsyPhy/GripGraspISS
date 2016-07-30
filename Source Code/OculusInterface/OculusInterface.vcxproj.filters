@@ -8,12 +8,6 @@
     <ClInclude Include="OculusMapper.v0.8.h" />
     <ClInclude Include="OculusWIN32.v0.8.h" />
     <ClInclude Include="OculusWIN32.v1.3.h" />
-    <ClInclude Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
-      <Filter>CAPI1.6</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
-      <Filter>CAPI1.6</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -23,13 +17,5 @@
     <ClCompile Include="OculusViewpoint.cpp" />
     <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="MousePoseTrackers.cpp" />
-    <ClCompile Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
-      <Filter>CAPI1.6</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="CAPI1.6">
-      <UniqueIdentifier>{625e19dc-decf-4049-8412-23043be06441}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

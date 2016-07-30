@@ -90,8 +90,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h" />
-    <ClInclude Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h" />
     <ClInclude Include="MousePoseTrackers.h" />
     <ClInclude Include="OculusInterface.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
@@ -104,7 +102,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp" />
     <ClCompile Include="MousePoseTrackers.cpp" />
     <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="OculusPoseTracker.cpp" />
