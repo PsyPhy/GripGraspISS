@@ -233,7 +233,7 @@ void create_objects( void ) {
 	tool->AddComponent( slab );
 
 	sphere = new Sphere( 40.0 );
-	sphere->SetColor( RED );
+	sphere->SetColor( Blinking( Translucid( RED ) ) );
 	tool->AddComponent( sphere );
 
 	cylinder = new Cylinder( 10.0, 30.0, 60.0 );

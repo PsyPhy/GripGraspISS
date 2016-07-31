@@ -53,7 +53,7 @@ OpenGLObject::OpenGLObject( void ) {
 	_init_gl_displacement( gl_offset );
 
 	// By default, use the color of the parent or the previously drawn object.
-	SetColor( 0.0, 0.0, 0.0, USE_PARENT_COLOR );
+	SetColor( PARENT_COLOR );
 }
 
 /*********************************************************************************/
@@ -286,12 +286,17 @@ void OpenGLObject::PrepDraw( void ) {
 
   // If the color is defined, set it before drawing.
   // Otherwise continue in the color of the parent.
-  if ( color[3] != USE_PARENT_COLOR ) glColor4fv( color );
+  if ( color[3] != USE_PARENT_COLOR ) {
+	  if ( color[3] >= 0 ) glColor4fv( color );
+	  else {
+		  ULONGLONG ticks;
+		  if ( ( ticks = GetTickCount64() % 1000 ) > 500 ) glColor4f( color[0], color[1], color[2], - color[3] );
+		  else glColor4f( 0.0f, 0.0f, 0.0f, 0.0f );
+	  }
+  }
 
   // Ditto for the texture.
-  if ( texture ) {
-    texture->Use();
-  }
+  if ( texture ) texture->Use();
 
   // This assumes that we are in Model matrix mode.
   // Maybe we need to select that mode each time?
@@ -306,7 +311,7 @@ void OpenGLObject::PrepDraw( void ) {
   glTranslatedv( gl_position );
   glMultMatrixd( gl_orientation );
 
-  // This additional translation and rotationallows us to change the 
+  // This additional translation and rotation allows us to change the 
   // control point of the object, i.e. where is the object
   // when it's postion is zero.
   glTranslatedv( gl_offset );
