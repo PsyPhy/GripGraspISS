@@ -19,6 +19,8 @@ namespace Grasp {
 		static double tiltHeadTimeout;
 		static double responseTimeout;
 		static double alignHandTimeout;
+		static double handPromptDelay;
+		static double handErrorDelay;
 
 		// List of paramters for each trial.
 		struct {
@@ -56,9 +58,13 @@ namespace Grasp {
 		bool UpdateStateMachine( void );
 		DexServices *dexServer;
 
-		// General purpose timers used by multiple states.
-		::Timer stateTimer;	
-		::Timer auxStateTimer;
+		// Timers used by multiple states.
+		::Timer presentTargetTimer;
+		::Timer straightenHeadTimer;
+		::Timer alignHeadTimer;
+		::Timer tiltHeadTimer;
+		::Timer responseTimer;
+		::Timer trialCompletedTimer;
 		::Timer blockTimer;
 
 		// Detect action of the subject to record a response.

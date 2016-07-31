@@ -49,7 +49,7 @@ GraspTrialState VtoK::UpdateObtainResponse( void ) {
 		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 		return( ProvideFeedback );
 	}
-	if ( TimerTimeout( stateTimer ) ) {
+	if ( TimerTimeout( responseTimer ) ) {
 		interruptCondition = RESPONSE_TIMEOUT;
 		return( TrialInterrupted ); 
 	}

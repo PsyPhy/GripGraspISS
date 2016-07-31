@@ -19,6 +19,7 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
+const char *GraspGLObjects::hand_icon_bitmap = "Bmp\\RaiseArm.bmp";
 
 // These textures are the messages presented to the subject on a rotating disk.
 const char *GraspGLObjects::ready_to_start_bitmap = "Bmp\\ReadyToStart.bmp";
@@ -56,6 +57,7 @@ const double GraspGLObjects::prompt_radius = 60.0;
 const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
 const double GraspGLObjects::visor_radius = 320.0;
 
+Vector3 GraspGLObjects::desired_wrist_location = { 0.0, 0.0, -400.0 };
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
@@ -113,6 +115,8 @@ void GraspGLObjects::CreateTextures( void ) {
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
 	// The cylindrical reference bars on the walls use a different texture.
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
+	// A pictogram of the hand used for prompting.
+	hand_icon_texture = new Texture( hand_icon_bitmap, 500, 500 );
 
 }
 
@@ -215,7 +219,8 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 }
 
 // Need to change the hand to grey when outside the cone around the center line.
-// But otherwise the fingers each have a different color. So we need to do some work.
+// But otherwise the fingers each have a different color. So we need to do some work
+// to switch back and forth between grey and the defined colors of each finger.
 void GraspGLObjects::SetHandColor( Assembly *hand, bool state ) {
 	// We know that the last element of the hand is the laser pointer and that
 	//  all the other ones are fingers. Hence the - 1 in the following.
@@ -295,11 +300,14 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 	return laserPointer;
 }
 
+// Create a translucid cloud to show where to place the hand.
 Assembly *GraspGLObjects::CreateZone( void ) {
 	Assembly *assembly = new Assembly();
-	Disk *disk = new Disk( 50.0 );
+	Disk *disk = new Disk( 50.0, 0.0, 128 );
+	disk->SetTexture( hand_icon_texture );
 	assembly->AddComponent( disk );
-	assembly->SetColor( 0.0, 1.0, 0.0, 0.2 );
+	// Set the color to a translucid green.
+	assembly->SetColor( 0.0, 1.0, 0.0, 0.1 );
 	return assembly;
 }
 
@@ -311,6 +319,10 @@ Yoke *GraspGLObjects::CreateHand( void ) {
 	hand->AddComponent( vkTool );
 	hand->AddComponent( kTool );
 	hand->AddComponent( kkTool );
+	lowerHandPrompt = new Sphere( finger_length );
+	lowerHandPrompt->SetColor( Blinking( Translucid( RED ) ) );
+	lowerHandPrompt->Disable();
+	hand->AddComponent( lowerHandPrompt );
 	return( hand );
 }
 
@@ -350,16 +362,16 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	spinners->AddComponent( headTiltTimeoutIndicator );
 
 	raise_arm_texture = new Texture( raise_arm_bitmap );
-	raiseArmIndicator= CreateIndicator( raise_arm_texture );
-	spinners->AddComponent( raiseArmIndicator );
+	raiseHandIndicator= CreateIndicator( raise_arm_texture );
+	spinners->AddComponent( raiseHandIndicator );
 
 	raise_arm_timeout_texture = new Texture( raise_arm_timeout_bitmap );
 	raiseArmTimeoutIndicator= CreateIndicator( raise_arm_timeout_texture );
 	spinners->AddComponent( raiseArmTimeoutIndicator );
 
 	lower_arm_texture = new Texture( lower_arm_bitmap );
-	lowerArmIndicator = CreateIndicator( lower_arm_texture );
-	spinners->AddComponent( lowerArmIndicator );
+	lowerHandIndicator = CreateIndicator( lower_arm_texture );
+	spinners->AddComponent( lowerHandIndicator );
 
 	lower_arm_timeout_texture = new Texture(lower_arm_timeout_bitmap );
 	lowerArmTimeoutIndicator = CreateIndicator( lower_arm_timeout_texture );
@@ -530,8 +542,9 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( target_location );
 	straightAheadTarget->SetPosition( target_location );
+	// Place the stationary object that shows the subject's response a little bit in front of the targets.
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
-	wristZone->SetPosition( 25.0, -25.0, -200.0 );
+	wristZone->SetPosition( desired_wrist_location );
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
@@ -600,6 +613,7 @@ void GraspGLObjects::DrawVR( void ) {
 	successIndicator->Draw();
 	spinners->Draw();
 	wristZone->Draw();
+	lowerHandPrompt->Draw();
 
 }
 

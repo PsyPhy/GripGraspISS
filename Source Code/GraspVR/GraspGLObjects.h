@@ -89,6 +89,7 @@ namespace Grasp {
 		static const Vector3 prompt_location;
 		static const double prompt_radius;
 		static const double visor_radius;
+		static Vector3 desired_wrist_location;
 
 		static const double target_ball_radius;
 		static const double finger_ball_radius;
@@ -114,6 +115,9 @@ namespace Grasp {
 		Texture			*sky_texture;				// A starry sky.
 		static const char *sky_texture_bitmap;
 
+		Texture			*hand_icon_texture;			// A pictogram of a hand;
+		static const char *hand_icon_bitmap;
+
 		// Messages that are placed on a moving disk to give feedback to the subject in a way that avoids
 		// establishing a reference frame based on the orientation of the text.
 
@@ -129,7 +133,7 @@ namespace Grasp {
 		Texture			*block_completed_texture;		
 		static const char *block_completed_bitmap;
 
-		Assembly		*lowerArmIndicator;				// Prompt the subject to raise and lower the hand appropriately.
+		Assembly		*lowerHandIndicator;				// Prompt the subject to raise and lower the hand appropriately.
 		Texture			*lower_arm_texture;		
 		static const char *lower_arm_bitmap;	 
 
@@ -137,7 +141,7 @@ namespace Grasp {
 		Texture			*lower_arm_timeout_texture;		
 		static const char *lower_arm_timeout_bitmap;	
 
-		Assembly		*raiseArmIndicator;			
+		Assembly		*raiseHandIndicator;			
 		Texture			*raise_arm_texture;		
 		static const char *raise_arm_bitmap;	 
 
@@ -190,7 +194,7 @@ namespace Grasp {
 		Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial (currently not used).
 
 
-		Assembly		*vTool;					// Full-fledged tool. One can see its orientation.
+		Assembly		*vTool;					// Full-fledged tool used in V-V and K-V. It is at a fixed locatino wrt the head and rolls with mouse movement.
 
 		Yoke			*hand;					// An collection of objects that move with the hand.
 		Assembly		*kTool;					// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
@@ -198,15 +202,17 @@ namespace Grasp {
 		Assembly		*kkTool;				// A tool that is used to drive the hand to the target orientation in K-K.
 
 		Assembly		*handRollPrompt;		// An arrow around the tool saying which way to turn.
+		Sphere			*lowerHandPrompt;		// A cloud around the tool that is activated to remind the subject to lower the hand.
+		Assembly		*wristZone;				// A transparent cloud used to prompt the subject to place the hand for K.
+
 		OpenGLObject	*selectedTool;			// Used by the projectile handler. Sometimes the tool is at the hand, but when doing V-V it
-		// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
+												// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
 
 		Assembly		*room;					// A collection of objects that make up the fixed visual environment.
 		Cylinder		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
 		Assembly		*starrySky;				// Backgrounds that can be seen at the end of the tunnel.
 		Assembly		*darkSky;
 
-		Assembly		*wristZone;				// A transparent cloud used to prompt the subject to place the hand for K.
 
 		// Objects used in third-person views of the virtual world.
 		Assembly		*head;

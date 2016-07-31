@@ -555,6 +555,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	// Set an arbitrary starting orientation.
 	static double angle = 39.0;
 	renderer->spinners->SetAttitude( angle, 0.0, 0.0 );
+	renderer->wristZone->SetAttitude( angle, 0.0, 0.0 );
 	angle += prompt_spin_speed;
 }
 
