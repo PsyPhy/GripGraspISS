@@ -90,17 +90,6 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 	else {
 		TransformPose( handPose.pose, localAlignment, handPose.pose );
-		//// Recursively filter the hand position somewhat.
-		//// This functionality should be built into the pose trackers, not here.
-		//Pose filtered;
-		//ScaleVector( filtered.position, handPose.pose.position, handFilterConstant );
-		//AddVectors ( filtered.position, filtered.position, renderer->hand->position );
-		//ScaleVector( filtered.position, filtered.position, 1.0 / (handFilterConstant + 1.0) );
-		//Quaternion q;
-		//MatrixToQuaternion( q, renderer->hand->orientation );
-		//for ( int i = 0; i < 4; i++ ) q[i] += ( handFilterConstant *  handPose.pose.orientation[i] );
-		//NormalizeQuaternion( q );
-		//CopyQuaternion( filtered.orientation, q );
 		renderer->hand->SetPose( handPose.pose );
 	}
 
@@ -209,9 +198,12 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->PlaceVRObjects();
 
 	// Initialize state of the objects.
-	renderer->starrySky->Enable();
-	renderer->darkSky->Disable();
+	// Almost everything is off by default, except the room, the sky and the halo.
 	renderer->room->Enable();
+	renderer->starrySky->Enable();
+	renderer->glasses->Enable();
+
+	renderer->darkSky->Disable();
 	renderer->response->Disable();
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
@@ -220,10 +212,6 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	renderer->handRollPrompt->Disable();
 	renderer->gazeLaser->Disable();
 	renderer->successIndicator->Disable();
-	renderer->timeoutIndicator->Disable();
-	renderer->blockCompletedIndicator->Disable();
-	renderer->headMisalignIndicator->Disable();
-	renderer->readyToStartIndicator->Disable();
 	renderer->vTool->Disable();
 	renderer->kTool->Disable();
 	renderer->vkTool->Disable();
@@ -567,7 +555,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	// Set an arbitrary starting orientation.
 	static double angle = 39.0;
 	renderer->spinners->SetAttitude( angle, 0.0, 0.0 );
-	angle -= prompt_spin_speed;
+	angle += prompt_spin_speed;
 }
 
 double  GraspVR::SetTargetOrientation( double roll_angle ) {

@@ -31,6 +31,9 @@ const char *GraspGLObjects::head_misalign_bitmap = "Bmp\\HeadMisalignment.bmp";
 const char *GraspGLObjects::head_align_timeout_bitmap = "Bmp\\HeadAlignmentTimeout.bmp";
 const char *GraspGLObjects::response_timeout_bitmap = "Bmp\\ResponseTimeout.bmp";
 const char *GraspGLObjects::timeout_bitmap = "Bmp\\TimeLimit.bmp";
+const char *GraspGLObjects::hand_too_soon_bitmap = "Bmp\\HandTooSoon.bmp";
+const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
+const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -108,18 +111,8 @@ void GraspGLObjects::CreateTextures( void ) {
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
+	// The cylindrical reference bars on the walls use a different texture.
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
-
-	ready_to_start_texture = new Texture( ready_to_start_bitmap );
-	block_completed_texture = new Texture( block_completed_bitmap );
-	raise_arm_texture = new Texture( raise_arm_bitmap );
-	raise_arm_timeout_texture = new Texture( raise_arm_timeout_bitmap );
-	lower_arm_texture = new Texture( lower_arm_bitmap );
-	lower_arm_timeout_texture = new Texture(lower_arm_timeout_bitmap );
-	head_misalign_texture = new Texture( head_misalign_bitmap );
-	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
-	timeout_texture = new Texture( timeout_bitmap );
-	response_timeout_texture = new Texture( response_timeout_bitmap );
 
 }
 
@@ -346,28 +339,59 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	// Round signs conveying messages to the subject also move with the head.
 	spinners = new Assembly();
 
+	head_misalign_texture = new Texture( head_misalign_bitmap );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
 	spinners->AddComponent( headMisalignIndicator );
+
+	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
 	headAlignTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
 	spinners->AddComponent( headAlignTimeoutIndicator );
 	headTiltTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
 	spinners->AddComponent( headTiltTimeoutIndicator );
+
+	raise_arm_texture = new Texture( raise_arm_bitmap );
 	raiseArmIndicator= CreateIndicator( raise_arm_texture );
 	spinners->AddComponent( raiseArmIndicator );
+
+	raise_arm_timeout_texture = new Texture( raise_arm_timeout_bitmap );
 	raiseArmTimeoutIndicator= CreateIndicator( raise_arm_timeout_texture );
 	spinners->AddComponent( raiseArmTimeoutIndicator );
+
+	lower_arm_texture = new Texture( lower_arm_bitmap );
 	lowerArmIndicator = CreateIndicator( lower_arm_texture );
 	spinners->AddComponent( lowerArmIndicator );
+
+	lower_arm_timeout_texture = new Texture(lower_arm_timeout_bitmap );
 	lowerArmTimeoutIndicator = CreateIndicator( lower_arm_timeout_texture );
 	spinners->AddComponent( lowerArmTimeoutIndicator );
+
+	ready_to_start_texture = new Texture( ready_to_start_bitmap );
 	readyToStartIndicator = CreateIndicator( ready_to_start_texture );
 	spinners->AddComponent( readyToStartIndicator );
+
+	block_completed_texture = new Texture( block_completed_bitmap );
 	blockCompletedIndicator = CreateIndicator( block_completed_texture );
 	spinners->AddComponent( blockCompletedIndicator );
+
+	timeout_texture = new Texture( timeout_bitmap );
 	timeoutIndicator = CreateIndicator( timeout_texture );
 	spinners->AddComponent( timeoutIndicator );
+
+	response_timeout_texture = new Texture( response_timeout_bitmap );
 	responseTimeoutIndicator = CreateIndicator( response_timeout_texture );
 	spinners->AddComponent( responseTimeoutIndicator );
+
+	hand_too_soon_texture = new Texture( hand_too_soon_bitmap );
+	handTooSoonIndicator = CreateIndicator( hand_too_soon_texture );
+	spinners->AddComponent( handTooSoonIndicator );
+
+	hand_rotate_timeout_texture = new Texture( hand_rotate_timeout_bitmap );
+	handRotateTimeoutIndicator = CreateIndicator( hand_rotate_timeout_texture );
+	spinners->AddComponent( handRotateTimeoutIndicator );
+	
+	hand_should_not_texture = new Texture( hand_should_not_bitmap );
+	handShouldNotBeRaisedIndicator = CreateIndicator( hand_should_not_texture );
+	spinners->AddComponent( handShouldNotBeRaisedIndicator );
 
 	spinners->SetOffset( prompt_location );
 	yoke->AddComponent( spinners );

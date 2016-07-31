@@ -117,36 +117,62 @@ namespace Grasp {
 		// Messages that are placed on a moving disk to give feedback to the subject in a way that avoids
 		// establishing a reference frame based on the orientation of the text.
 
+	public:
+
+		Assembly		*spinners;
+
+		Assembly		*readyToStartIndicator;			// Prompt the subject to press a button when ready.
 		Texture			*ready_to_start_texture;		
 		static const char *ready_to_start_bitmap;
 
+		Assembly		*blockCompletedIndicator;		// Prompt the subject to take off the HMD and press 'Return' on the keyboard.
 		Texture			*block_completed_texture;		
 		static const char *block_completed_bitmap;
 
+		Assembly		*lowerArmIndicator;				// Prompt the subject to raise and lower the hand appropriately.
 		Texture			*lower_arm_texture;		
 		static const char *lower_arm_bitmap;	 
 
+		Assembly		*lowerArmTimeoutIndicator;
 		Texture			*lower_arm_timeout_texture;		
 		static const char *lower_arm_timeout_bitmap;	
 
+		Assembly		*raiseArmIndicator;			
 		Texture			*raise_arm_texture;		
 		static const char *raise_arm_bitmap;	 
 
+		Assembly		*raiseArmTimeoutIndicator;
 		Texture			*raise_arm_timeout_texture;		
 		static const char *raise_arm_timeout_bitmap;	
 
+		Assembly		*headMisalignIndicator;			// Shown when the subject does not maintain the desired head tilt.
 		Texture			*head_misalign_texture;		
 		static const char *head_misalign_bitmap;
 
+		Assembly		*headAlignTimeoutIndicator;
+		Assembly		*headTiltTimeoutIndicator;
 		Texture			*head_align_timeout_texture;		
 		static const char *head_align_timeout_bitmap;
 
+		Assembly		*timeoutIndicator;				// Shown when the subject takes too long to do something.
 		Texture			*timeout_texture;			
 		static const char *timeout_bitmap;	 
 
+		Assembly		*responseTimeoutIndicator;		// Shown when the subject takes too long to confirm a response.
 		Texture			*response_timeout_texture;		
 		static const char *response_timeout_bitmap;	 
 
+		Assembly		*handRotateTimeoutIndicator;	// Shown when the subject takes too long to confirm a response.
+		Texture			*hand_rotate_timeout_texture;		
+		static const char *hand_rotate_timeout_bitmap;	 
+
+		Assembly		*handTooSoonIndicator;			// Shown when the subject takes too long to confirm a response.
+		Texture			*hand_too_soon_texture;		
+		static const char *hand_too_soon_bitmap;	 
+
+		Assembly		*handShouldNotBeRaisedIndicator;	// Shown when the subject takes too long to confirm a response.
+		Texture			*hand_should_not_texture;		
+		static const char *hand_should_not_bitmap;	 
 
 	public:
 
@@ -163,20 +189,6 @@ namespace Grasp {
 
 		Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial (currently not used).
 
-		Assembly		*spinners;
-		Assembly		*raiseArmIndicator;			// Prompt the subject to raise and lower the hand appropriately.
-		Assembly		*raiseArmTimeoutIndicator;
-		Assembly		*lowerArmIndicator;
-		Assembly		*lowerArmTimeoutIndicator;
-
-		Assembly		*timeoutIndicator;				// Shown when the subject takes too long to do something.
-		Assembly		*responseTimeoutIndicator;		// Shown when the subject takes too long to confirm a response.
-		Assembly		*headMisalignIndicator;			// Shown when the subject does not maintain the desired head tilt.
-		Assembly		*headAlignTimeoutIndicator;
-		Assembly		*headTiltTimeoutIndicator;
-
-		Assembly		*readyToStartIndicator;			// Prompt the subject to press a button when ready.
-		Assembly		*blockCompletedIndicator;		// Prompt the subject to take off the HMD and press 'Return' on the keyboard.
 
 		Assembly		*vTool;					// Full-fledged tool. One can see its orientation.
 

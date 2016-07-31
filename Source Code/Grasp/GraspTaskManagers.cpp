@@ -238,7 +238,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 				);
 		}
 
-		// Boresight the HMD tracker on 'B' or align to the HMD no 'A'.
+		// Boresight the HMD tracker on 'B' or align to the HMD on 'A'.
 		// This is here for debugging and should probably be removed.
 		if ( oculusDisplay->KeyDownEvents['A'] ) AlignToHMD();
 		if ( oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
@@ -465,10 +465,21 @@ void GraspTaskManager::EnterTiltHead( void ) {
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
 	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
+	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
+	renderer->kTool->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateTiltHead( void ) { 
 	// Update the visual feedback about the head tilt.
 	AlignmentStatus status = HandleHeadAlignment( true );
+	// The hand must be lowered before leaving this state.
+	if ( raised == HandleHandElevation() && TimerElapsedTime( stateTimer ) > 1.0 ) renderer->lowerArmIndicator->Enable();
+	else renderer->lowerArmIndicator->Disable();
+	// The hand must be lowered before leaving this state.
+	if ( raised == HandleHandElevation() && TimerElapsedTime( stateTimer ) > 3.0 ) {
+		renderer->lowerArmIndicator->Disable();
+		interruptCondition = RAISED_HAND_VIOLATION;
+		return( TrialInterrupted ); 
+	}
 	// Stay in this state a fixed time.
 	if ( TimerTimeout( stateTimer ) ) {
 		if ( status != misaligned ) return( ObtainResponse );
@@ -485,6 +496,8 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
 	// Remove the prompt about which way to tilt.
+	renderer->lowerArmIndicator->Disable();
+	renderer->kTool->Disable();
 }
 
 // ObtainResponse
@@ -607,7 +620,9 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	switch ( interruptCondition ) {
 	case RAISE_HAND_TIMEOUT: interrupt_indicator = renderer->raiseArmTimeoutIndicator; break;
 	case LOWER_HAND_TIMEOUT: interrupt_indicator = renderer->lowerArmTimeoutIndicator; break;
-	case ALIGN_HAND_TIMEOUT: interrupt_indicator = renderer->timeoutIndicator; break;
+	case RAISED_HAND_VIOLATION: interrupt_indicator = renderer->handShouldNotBeRaisedIndicator; break;
+	case HAND_TOO_SOON: interrupt_indicator = renderer->handTooSoonIndicator; break;
+	case ALIGN_HAND_TIMEOUT: interrupt_indicator = renderer->handRotateTimeoutIndicator; break;
 	case RESPONSE_TIMEOUT: interrupt_indicator = renderer->responseTimeoutIndicator; break;
 	case HEAD_ALIGNMENT_TIMEOUT: interrupt_indicator = renderer->headAlignTimeoutIndicator; break;
 	case HEAD_TILT_TIMEOUT: interrupt_indicator = renderer->headTiltTimeoutIndicator; break;

@@ -15,7 +15,8 @@ PANDOC_OPTIONS=
 # presented in a circular format with the VR presentation.
 FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp \
 			LowerArm.bmp LowerArmTimeout.bmp RaiseArm.bmp RaiseArmTimeout.bmp \
-			HeadMisalignment.bmp HeadAlignmentTimeout.bmp ResponseTimeout.bmp TimeLimit.bmp  
+			HeadMisalignment.bmp HeadAlignmentTimeout.bmp ResponseTimeout.bmp TimeLimit.bmp  \
+			HandRotateTimeout.bmp HandTooSoon.bmp HandShouldNot.bmp
 
 # The GRASP VR world requires a few bitmaps to decorate the walls. We keep copies in the source file tree
 # then copy as needed to the exection tree. That way, by maintaining this makefile up to date, only those
@@ -108,3 +109,17 @@ TimeLimit.bmp: GraspCircularPrompts\Diapositive11.tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
+HandRotateTimeout.bmp: GraspCircularPrompts\Diapositive12.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
+
+HandTooSoon.bmp: GraspCircularPrompts\Diapositive13.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
+
+HandShouldNot.bmp: GraspCircularPrompts\Diapositive14.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html

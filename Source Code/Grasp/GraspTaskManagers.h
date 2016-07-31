@@ -136,7 +136,7 @@ namespace Grasp {
 
 		// TrialInterrupted
 		// The trial was interrupted because the head orientation was not maintained.
-		enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } interruptCondition;
+		enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } interruptCondition;
 		Assembly *interrupt_indicator;
 		virtual void EnterTrialInterrupted( void );
 		virtual GraspTrialState UpdateTrialInterrupted( void );
