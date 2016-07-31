@@ -56,7 +56,10 @@ bool MouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	CopyVector( pose.pose.position, zeroVector );
 	// When using this tracker in simulation, it is useful to have the ability 
 	// to raise and lower the hand.
-	if ( oculusMapper->display->Key['W'] ) pose.pose.position[Y] = -250.0;
+	static double simulated_hand_height;
+	if ( oculusMapper->display->Key['W'] ) simulated_hand_height = 0.0;
+	if ( oculusMapper->display->Key['X'] ) simulated_hand_height = -250.0;
+	pose.pose.position[Y] = simulated_hand_height;
 
 	// Compute the orientation output based on the mouse position and the results
 	// of the various key presses handled in the Update() method.
