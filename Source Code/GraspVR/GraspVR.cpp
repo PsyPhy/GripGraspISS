@@ -356,6 +356,28 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 /// Prompt the subject to redress the head on the shoulders and look straight ahead.
 AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
+	static ::Timer delay_timer;
+
+	// The hand must be lowered before leaving this state. If it is still raised after a short
+	// delay, we activate the prompt to remind the subject to lower the arm.
+	ArmStatus hand_status = HandleHandElevation();
+	if ( raised == hand_status ) {
+		// If the delay timer has been paused, this restarts it.
+		// If it is already running, this does nothing.
+		TimerResume( delay_timer );
+		// If the hand is visible, prompt the subject to lower it, after a delay.
+		if ( TimerTimeout( delay_timer ) ) renderer->lowerHandPrompt->Enable();
+		TimerSet( headGoodTimer, secondsToBeGood );
+		TimerSet( headBadTimer, secondsToBeBad );
+		return( misaligned );
+	}
+	else {
+		// By setting this timer, and pausing it, we create a delay before the lowerHandPrompt shows up.
+		TimerSet( delay_timer, 2.0 );
+		TimerPause( delay_timer );
+		renderer->lowerHandPrompt->Disable();
+	}
+
 	// We do not have a lot of confidence about the positioning of the chest marker plate 
 	// so we define 'straight ahead' as follows.
 	// The centroid of the chest marker plate should be more reproducible than its orientation.
@@ -532,7 +554,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 			if ( TimerTimeout( handBadTimer )) {
 				// Made it to bad. 
 				// Turn on the arrow because we've been bad for a while.
-				if (use_arrow ) renderer->handRollPrompt->Enable();
+				if ( use_arrow ) renderer->handRollPrompt->Enable();
 				// If the error has endured long enough to trigger the arrow prompt, then
 				// reset the time required to be good again to the full duration.
 				// MICHELE: What do you think? 
@@ -555,7 +577,7 @@ void GraspVR::HandleSpinningPrompts( void ) {
 	// Set an arbitrary starting orientation.
 	static double angle = 39.0;
 	renderer->spinners->SetAttitude( angle, 0.0, 0.0 );
-	renderer->wristZone->SetAttitude( angle, 0.0, 0.0 );
+	renderer->raiseHandIndicator->SetAttitude( angle, 0.0, 0.0 );
 	angle += prompt_spin_speed;
 }
 

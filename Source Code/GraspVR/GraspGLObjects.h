@@ -256,7 +256,7 @@ namespace Grasp {
 		Assembly *CreateResponse( void );
 		Assembly *CreateTiltPrompt( void );
 		Assembly *CreateSuccessIndicator( void );
-		Assembly *CreateIndicator( Texture *texture );
+		Assembly *CreateIndicator( Texture *texture, double hole_radius = 35.0 );
 		Assembly *CreateRoom( void );
 		Assembly *CreateStarrySky( void );
 		Assembly *CreateDarkSky( void );

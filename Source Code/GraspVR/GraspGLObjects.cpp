@@ -19,7 +19,6 @@ using namespace Grasp;
 const char *GraspGLObjects::wall_texture_bitmap = "Bmp\\Rockwall.bmp";
 const char *GraspGLObjects::references_texture_bitmap = "Bmp\\Metal.bmp";
 const char *GraspGLObjects::sky_texture_bitmap= "Bmp\\NightSky.bmp";
-const char *GraspGLObjects::hand_icon_bitmap = "Bmp\\RaiseArm.bmp";
 
 // These textures are the messages presented to the subject on a rotating disk.
 const char *GraspGLObjects::ready_to_start_bitmap = "Bmp\\ReadyToStart.bmp";
@@ -115,8 +114,6 @@ void GraspGLObjects::CreateTextures( void ) {
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
 	// The cylindrical reference bars on the walls use a different texture.
 	references_texture = new Texture( references_texture_bitmap, 500, 500 );
-	// A pictogram of the hand used for prompting.
-	hand_icon_texture = new Texture( hand_icon_bitmap, 500, 500 );
 
 }
 
@@ -304,12 +301,60 @@ Assembly * GraspGLObjects::CreateLaserPointer( void ) {
 Assembly *GraspGLObjects::CreateZone( void ) {
 	Assembly *assembly = new Assembly();
 	Disk *disk = new Disk( 50.0, 0.0, 128 );
-	disk->SetTexture( hand_icon_texture );
 	assembly->AddComponent( disk );
-	// Set the color to a translucid green.
-	assembly->SetColor( 0.0, 1.0, 0.0, 0.1 );
+	// Set the color to a blinking translucid green.
+	assembly->SetColor( 0.0, 1.0, 0.0, - 0.05 );
 	return assembly;
 }
+
+Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
+
+	Assembly *prompt = new Assembly();
+	
+	// Angular extent of the circular arrow, where 1.0 = 360°.
+	static double size = 0.85;
+	double guage =  prompt_radius / 10.0;
+
+	Annulus *donut = new Annulus( prompt_radius, guage, size, 20, 20 );
+	donut->SetAttitude( 0.0, 90.0, 0.0 );
+	prompt->AddComponent( donut );
+
+	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, 20 );
+	tip->SetAttitude( 0.0, 90.0, 0.0 );
+	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
+	prompt->AddComponent( tip );
+
+	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
+	base->SetPosition( prompt_radius, 0.0, 0.0 );
+	prompt->AddComponent( base );
+	prompt->SetColor( 0.5, 0.5, 0.5, 0.5 );
+
+	return prompt;
+
+}
+
+Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
+	Assembly	*assembly = new Assembly();
+	Sphere		*sphere = new Sphere( prompt_radius );
+	sphere->SetColor( GREEN );
+	assembly->AddComponent( sphere );
+	return assembly;
+}
+
+Assembly *GraspGLObjects::CreateIndicator( Texture *texture, double hole_radius ) {
+
+	Assembly	*assembly = new Assembly();
+	Disk		*surface;
+	
+	surface = new Disk( 120.0, hole_radius, 128 );
+	surface->SetTexture( texture );
+	assembly->AddComponent( surface );
+	assembly->SetColor( 0.9, 0.9, 1.0, hmdTransparency );
+	assembly->Disable();
+
+	return assembly;
+}
+
 
 // Group all the elements that move with the hand into a single entity.
 // Each component will be activated or deactivated separately, but their pose will be set
@@ -320,7 +365,8 @@ Yoke *GraspGLObjects::CreateHand( void ) {
 	hand->AddComponent( kTool );
 	hand->AddComponent( kkTool );
 	lowerHandPrompt = new Sphere( finger_length );
-	lowerHandPrompt->SetColor( Blinking( Translucid( RED ) ) );
+	// Set the color to a transparent blinking red.
+	lowerHandPrompt->SetColor( 1.0, 0.0, 0.0, -0.02 );
 	lowerHandPrompt->Disable();
 	hand->AddComponent( lowerHandPrompt );
 	return( hand );
@@ -360,10 +406,6 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	spinners->AddComponent( headAlignTimeoutIndicator );
 	headTiltTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
 	spinners->AddComponent( headTiltTimeoutIndicator );
-
-	raise_arm_texture = new Texture( raise_arm_bitmap );
-	raiseHandIndicator= CreateIndicator( raise_arm_texture );
-	spinners->AddComponent( raiseHandIndicator );
 
 	raise_arm_timeout_texture = new Texture( raise_arm_timeout_bitmap );
 	raiseArmTimeoutIndicator= CreateIndicator( raise_arm_timeout_texture );
@@ -405,8 +447,16 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	handShouldNotBeRaisedIndicator = CreateIndicator( hand_should_not_texture );
 	spinners->AddComponent( handShouldNotBeRaisedIndicator );
 
+	raise_arm_texture = new Texture( raise_arm_bitmap );
+	raiseHandIndicator = CreateIndicator( raise_arm_texture, 1.0 );
+	// Set this indicator to be green and very transparent.
+	raiseHandIndicator->SetColor( 0.0, 1.0, 0.0, 0.05 );
+	spinners->AddComponent( raiseHandIndicator );
+
 	spinners->SetOffset( prompt_location );
 	yoke->AddComponent( spinners );
+
+
 
 	return( yoke );
 
@@ -432,54 +482,6 @@ Assembly *GraspGLObjects::CreateProjectiles( void ) {
 	return projectiles;
 
 }
-Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
-
-	Assembly *prompt = new Assembly();
-	
-	// Angular extent of the circular arrow, where 1.0 = 360°.
-	static double size = 0.85;
-	double guage =  prompt_radius / 10.0;
-
-	Annulus *donut = new Annulus( prompt_radius, guage, size, 20, 20 );
-	donut->SetAttitude( 0.0, 90.0, 0.0 );
-	prompt->AddComponent( donut );
-
-	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, 20 );
-	tip->SetAttitude( 0.0, 90.0, 0.0 );
-	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
-	prompt->AddComponent( tip );
-
-	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
-	base->SetPosition( prompt_radius, 0.0, 0.0 );
-	prompt->AddComponent( base );
-	prompt->SetColor( 0.5, 0.5, 0.5, 0.5 );
-
-	return prompt;
-
-}
-
-Assembly *GraspGLObjects::CreateSuccessIndicator( void ) {
-	Assembly	*assembly = new Assembly();
-	Sphere		*sphere = new Sphere( prompt_radius );
-	sphere->SetColor( GREEN );
-	assembly->AddComponent( sphere );
-	return assembly;
-}
-
-Assembly *GraspGLObjects::CreateIndicator( Texture *texture ) {
-
-	Assembly	*assembly = new Assembly();
-	Disk		*surface;
-	
-	surface = new Disk( 120.0, 35.0, 128 );
-	surface->SetColor( 0.9, 0.9, 1.0, hmdTransparency );
-	surface->SetTexture( texture );
-	assembly->AddComponent( surface );
-	assembly->Disable();
-
-	return assembly;
-}
-
 
 void GraspGLObjects::CreateVRObjects( void ) {
 
@@ -614,6 +616,7 @@ void GraspGLObjects::DrawVR( void ) {
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
+	raiseHandIndicator->Draw();
 
 }
 

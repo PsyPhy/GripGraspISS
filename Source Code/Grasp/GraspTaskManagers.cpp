@@ -377,6 +377,8 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
 	renderer->straightAheadTarget->Enable();
 	renderer->gazeLaser->Enable();
+	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
+	renderer->kTool->Enable();
 	// Set a timeout to wait for head at proper alignment.
 	TimerSet( straightenHeadTimer, alignHeadTimeout );
 }
@@ -386,6 +388,12 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
+
+	// Time spent with the hand in the field of view does not count against the timeout.
+	// This is a little risky because it could run forever.
+	if ( raised == HandleHandElevation() ) TimerPause( straightenHeadTimer );
+	else TimerResume( straightenHeadTimer );
+
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
 	if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
@@ -399,11 +407,14 @@ void GraspTaskManager::ExitStraightenHead( void ) {
 	AlignToHMD();
 	renderer->straightAheadTarget->Disable();
 	renderer->gazeLaser->Disable();
+	// Remove the prompts about lowering the hand, if any.
+	renderer->lowerHandIndicator->Disable();
+	renderer->lowerHandPrompt->Disable();
+	renderer->kTool->Disable();
 	// Logically one might want to enable rendering of the room before leaving this state.
 	// But that causes an artifact because the room gets drawn once at the 'old' alignment.
 	// So I move enabling of the room to the next state.
 	// renderer->room->Enable();
-
 }
 
 //
@@ -421,9 +432,10 @@ void GraspTaskManager::EnterAlignHead( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateAlignHead( void ) { 
 	// Update the feedback about the head orientation wrt the desired head orientation.
-	// If the head alignment is satisfactory, move on to the next state.
+	// If the head alignment is satisfactory and the hand is not raised, move on to the next state.
 	if ( aligned == HandleHeadAlignment( true ) ) return( PresentTarget ); 
 	else if ( TimerTimeout( alignHeadTimer ) ) {
+		renderer->lowerHandPrompt->Disable();
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
@@ -438,6 +450,7 @@ void GraspTaskManager::EnterPresentTarget( void ) {
 	char tag[32];
 	sprintf( tag, "Target%03d", currentTrial );
 	dexServer->SnapPicture( tag );
+	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
 }
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
@@ -470,8 +483,8 @@ GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) {
 		return( TrialInterrupted );
 	}
 	// Check if the hand has been raised, and if not, show the prompt.
-	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > handPromptDelay ) renderer->wristZone->Enable();
-	else renderer->wristZone->Disable();
+	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	else renderer->raiseHandIndicator->Disable();
 	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
 	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
 	return( GraspTaskManager::UpdatePresentTarget() );
@@ -484,8 +497,9 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the visible tools, if any.
 	renderer->kkTool->Disable();
 	renderer->handRollPrompt->Disable();
-	// Hide the wrist zone indication.
+	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
+	renderer->raiseHandIndicator->Disable();
 	// Change the sky background to remove the visual reference that it provides.
 	renderer->starrySky->Disable();
 	renderer->darkSky->Enable();
@@ -579,8 +593,8 @@ GraspTrialState GraspTaskManager::UpdateVisualResponse( void ) {
 GraspTrialState GraspTaskManager::UpdateKinestheticResponse( void ) { 
 	// Check if the hand has been raised, and if not show the prompt.
 	ArmStatus arm_state = HandleHandElevation();
-	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > handPromptDelay ) renderer->wristZone->Enable();
-	else renderer->wristZone->Disable();
+	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	else renderer->raiseHandIndicator->Disable();
 	// If the hand is raised and the subject presses valide, record the response and move one.
 	if ( raised == arm_state && Validate()  ) return( ProvideFeedback );
 	return( GraspTaskManager::UpdateObtainResponse() );
@@ -595,6 +609,7 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	renderer->vTool->Disable();
 	renderer->vkTool->Disable();
 	renderer->wristZone->Disable();
+	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];
 	sprintf( tag, "Respns%03d", currentTrial );
