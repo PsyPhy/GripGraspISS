@@ -602,7 +602,6 @@ GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) {
 	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
-	HandleSpinningPrompts();
 	return( currentState );
 }
 void  GraspTaskManager::ExitBlockCompleted( void ) {
@@ -647,7 +646,6 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 	}
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
-	HandleSpinningPrompts();
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialInterrupted( void ) {

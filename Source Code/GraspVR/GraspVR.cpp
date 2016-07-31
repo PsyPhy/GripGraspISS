@@ -566,6 +566,8 @@ double  GraspVR::SetTargetOrientation( double roll_angle ) {
 
 void GraspVR::Render( void ) {
 
+	HandleSpinningPrompts();
+
 	// Prepare the GL graphics state for drawing in a way that is compatible 
 	//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
 	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
