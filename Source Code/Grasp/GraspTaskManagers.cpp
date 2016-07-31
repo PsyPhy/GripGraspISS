@@ -435,8 +435,6 @@ void GraspTaskManager::ExitAlignHead( void ) {}
 // The target is diplayed to the subject.
 // Here don't actually display anything, but the derived classes will.
 void GraspTaskManager::EnterPresentTarget( void ) {
-	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
-	TimerSet( presentTargetTimer, trialParameters[currentTrial].targetPresentationDuration ); 
 	char tag[32];
 	sprintf( tag, "Target%03d", currentTrial );
 	dexServer->SnapPicture( tag );
@@ -444,20 +442,50 @@ void GraspTaskManager::EnterPresentTarget( void ) {
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
-	if ( aligned != HandleHeadAlignment( false ) ) {
+	if ( misaligned == HandleHeadAlignment( false ) ) {
 		interruptCondition = HEAD_MISALIGNMENT;
 		return( TrialInterrupted );
 	}
-	// Stay in this state for a fixed time.
-	// Nominally, the next step is to tilt the head prior to responding.
-	if ( TimerTimeout( presentTargetTimer ) ) return( TiltHead ); 
-	// If we haven't returned based on some condition above, continue in
+	// If we haven't already returned based on some condition, continue in
 	// this state for the next cycle.
 	return( currentState );
 }
+
+GraspTrialState GraspTaskManager::UpdateVisualTarget( void ) { 
+	// Stay in this state for a fixed time.
+	// Nominally, the next step is to tilt the head prior to responding.
+	if ( TimerTimeout( presentTargetTimer ) ) return( TiltHead ); 
+	return( GraspTaskManager::UpdatePresentTarget() );
+	// Check if the hand has been raised, and if so, signal an error.
+	if ( raised == HandleHandElevation() ) {
+		interruptCondition = RAISED_HAND_VIOLATION;
+		return( TrialInterrupted );
+	}
+}
+
+GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) { 
+	// Limit the time allowed to achieve the target hand orientation.
+	if ( TimerTimeout( alignHandTimer ) ) {
+		interruptCondition = ALIGN_HAND_TIMEOUT;
+		return( TrialInterrupted );
+	}
+	// Check if the hand has been raised, and if not, show the prompt.
+	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > handPromptDelay ) renderer->wristZone->Enable();
+	else renderer->wristZone->Disable();
+	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
+	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
+	return( GraspTaskManager::UpdatePresentTarget() );
+}
+
 void  GraspTaskManager::ExitPresentTarget( void ) {
-	// Hide the visible target.
+	// Hide the visible targets.
 	renderer->orientationTarget->Disable();
+	renderer->positionOnlyTarget->Disable();
+	// Hide the visible tools, if any.
+	renderer->kkTool->Disable();
+	renderer->handRollPrompt->Disable();
+	// Hide the wrist zone indication.
+	renderer->wristZone->Disable();
 	// Change the sky background to remove the visual reference that it provides.
 	renderer->starrySky->Disable();
 	renderer->darkSky->Enable();
@@ -524,29 +552,49 @@ void GraspTaskManager::EnterObtainResponse( void ) {
 	renderer->positionOnlyTarget->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) { 
+	// Limit the time allowed to give a response
+	if ( TimerTimeout( responseTimer ) ) {
+		interruptCondition = RESPONSE_TIMEOUT;
+		return( TrialInterrupted ); 
+	}
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed. Interrupt the trial if not.
 	if ( misaligned == HandleHeadAlignment( false ) ) {
 		interruptCondition = HEAD_MISALIGNMENT;
 		return( TrialInterrupted );
 	}
-	// Handle triggering and moving the projectiles.
-	if ( Validate() ) {
-		// Record the response.
-		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
-		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
-		return( ProvideFeedback );
-	}
-	if ( TimerTimeout( responseTimer ) ) {
-		interruptCondition = RESPONSE_TIMEOUT;
-		return( TrialInterrupted ); 
-	}
-	// Otherwise, continue in this state.
 	return( currentState );
 }
+// Here we provide a common routing to handle updating during a visual 
+// response. It does not get called by the base class, but a derived class
+// can call it from within its own UpdateOptainResponse() handler.
+GraspTrialState GraspTaskManager::UpdateVisualResponse( void ) { 
+	// Handle triggering and moving the projectiles.
+	if ( Validate() ) return( ProvideFeedback );
+	return( GraspTaskManager::UpdateObtainResponse() );
+}
+// Here we provide a common routing to handle updating during a kinesthetic 
+// response. It does not get called by the base class, but a derived class
+// can call it from within its own UpdateOptainResponse() handler.
+GraspTrialState GraspTaskManager::UpdateKinestheticResponse( void ) { 
+	// Check if the hand has been raised, and if not show the prompt.
+	ArmStatus arm_state = HandleHandElevation();
+	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > handPromptDelay ) renderer->wristZone->Enable();
+	else renderer->wristZone->Disable();
+	// If the hand is raised and the subject presses valide, record the response and move one.
+	if ( raised == arm_state && Validate()  ) return( ProvideFeedback );
+	return( GraspTaskManager::UpdateObtainResponse() );
+}
+
 void  GraspTaskManager::ExitObtainResponse( void ) {
 	// Make sure that the head tilt prompt is not still present.
 	renderer->headTiltPrompt->Disable();
+	// Hide the hand. To make this routine generic, we 
+	//  hide all possible representations of the hand;
+	renderer->kTool->Disable();
+	renderer->vTool->Disable();
+	renderer->vkTool->Disable();
+	renderer->wristZone->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];
 	sprintf( tag, "Respns%03d", currentTrial );
@@ -556,6 +604,9 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 // ProvideFeedback
 // The subject sees the result of his or her response.
 void GraspTaskManager::EnterProvideFeedback( void ) {
+	// Record the response.
+	fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+	fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 	// Show the target.
 	if ( trialParameters[currentTrial].provideFeedback == 1 ) renderer->orientationTarget->Enable();
 	else renderer->positionOnlyTarget->Enable();

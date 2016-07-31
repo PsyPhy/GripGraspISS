@@ -16,14 +16,10 @@ using namespace PsyPhy;
 void VtoV::EnterPresentTarget( void ) {
 	// The target is displayed visually.
 	renderer->orientationTarget->Enable();
+	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
+	TimerSet( presentTargetTimer, trialParameters[currentTrial].targetPresentationDuration ); 
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
-}
-void  VtoV::ExitPresentTarget( void ) {
-	// Hide the visible target.
-	renderer->orientationTarget->Disable();
-	// Do all the default actions as well.
-	GraspTaskManager::ExitPresentTarget();
 }
 
 void VtoV::EnterObtainResponse( void ) {
@@ -32,11 +28,4 @@ void VtoV::EnterObtainResponse( void ) {
 	renderer->vTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
-}
-
-void VtoV::ExitObtainResponse( void ) {
-	// Hide the hand.
-	renderer->vTool->Disable();
-	// Do all the default actions as well.
-	GraspTaskManager::ExitObtainResponse();
 }

@@ -17,15 +17,12 @@ using namespace PsyPhy;
 void VtoK::EnterPresentTarget( void ) {
 	// The target is displayed visually.
 	renderer->orientationTarget->Enable();
+	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
+	TimerSet( presentTargetTimer, trialParameters[currentTrial].targetPresentationDuration ); 
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
 }
-void  VtoK::ExitPresentTarget( void ) {
-	// Hide the visible target.
-	renderer->orientationTarget->Disable();
-	// Do all the default actions as well.
-	GraspTaskManager::ExitPresentTarget();
-}
+
 
 void VtoK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand that is driven 
@@ -33,32 +30,4 @@ void VtoK::EnterObtainResponse( void ) {
 	renderer->kTool->Enable();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
-}
-
-GraspTrialState VtoK::UpdateObtainResponse( void ) { 
-
-	// Update the visual feedback about the head tilt and see if 
-	// the head is still aligned as needed. Interrupt the trial if not.
-	if ( misaligned == HandleHeadAlignment( false ) ) {
-		interruptCondition = HEAD_MISALIGNMENT;
-		return( TrialInterrupted );
-	}
-	if ( raised == HandleHandElevation() && Validate()  ) {
-		// Record the response.
-		fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
-		fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
-		return( ProvideFeedback );
-	}
-	if ( TimerTimeout( responseTimer ) ) {
-		interruptCondition = RESPONSE_TIMEOUT;
-		return( TrialInterrupted ); 
-	}
-	return( currentState );
-
-}
-void VtoK::ExitObtainResponse( void ) {
-	// Hide the hand.
-	renderer->kTool->Disable();
-	// Do all the default actions as well.
-	GraspTaskManager::ExitObtainResponse();
 }

@@ -62,6 +62,7 @@ namespace Grasp {
 		::Timer presentTargetTimer;
 		::Timer straightenHeadTimer;
 		::Timer alignHeadTimer;
+		::Timer alignHandTimer;
 		::Timer tiltHeadTimer;
 		::Timer responseTimer;
 		::Timer trialCompletedTimer;
@@ -110,6 +111,9 @@ namespace Grasp {
 		virtual GraspTrialState UpdatePresentTarget( void );
 		virtual void ExitPresentTarget( void );
 
+		GraspTrialState UpdateVisualTarget( void );
+		GraspTrialState UpdateKinestheticTarget( void );
+
 		// TiltHead
 		// The subject is guided to achieve a tilted head position.
 		virtual void EnterTiltHead( void );
@@ -121,6 +125,9 @@ namespace Grasp {
 		virtual void EnterObtainResponse( void );
 		virtual GraspTrialState UpdateObtainResponse( void );
 		virtual void ExitObtainResponse( void );
+
+		GraspTrialState UpdateVisualResponse( void );
+		GraspTrialState UpdateKinestheticResponse( void );
 
 		// ProvideFeedback
 		// Show the subject the results of their response.
@@ -164,44 +171,34 @@ namespace Grasp {
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
 		void Prepare( void ) { renderer->selectedTool = renderer->vTool; }
-		void EnterPresentTarget( void );
-		void ExitPresentTarget( void );
+		GraspTrialState UpdatePresentTarget( void ) { return UpdateVisualTarget(); }
+		GraspTrialState UpdateObtainResponse( void ) { return UpdateVisualResponse(); }
 		void EnterObtainResponse( void );
-		void ExitObtainResponse( void );
+		void EnterPresentTarget( void );
 	};
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
+		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );
-		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
-		void ExitObtainResponse( void );
 	};
 	// V-K protocol. 
 	class VtoK : public GraspTaskManager {
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
+		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );
-		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
-		GraspTrialState UpdateObtainResponse( void );
-		void ExitObtainResponse( void );
 	};
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
-
-	private:
-		
-		::Timer alignHandTimer;
-
-	public:
-
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		GraspTrialState UpdatePresentTarget( void ) { return UpdateKinestheticTarget(); }
+		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );
-		GraspTrialState UpdatePresentTarget( void );
-		void ExitPresentTarget( void );
 		void EnterObtainResponse( void );
-		GraspTrialState UpdateObtainResponse( void );
-		void ExitObtainResponse( void );
 	};
 
 
