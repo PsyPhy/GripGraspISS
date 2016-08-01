@@ -75,6 +75,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->Initialize( dex_log_filename );
 	dex->Connect();
 	dex->SendSubstep( 0 );
+	dex->SnapPicture( "STARTUP" );
 
 	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
 	else trackers = new GraspSimTrackers( &_oculusMapper );
@@ -103,6 +104,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 
+	dex->SnapPicture( "RELEASE" );
 	dex->ResetTaskInfo();
 	dex->Disconnect();
 	dex->Release();
