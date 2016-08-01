@@ -28,6 +28,8 @@ double GraspTaskManager::alignHandTimeout = 10.0;
 double GraspTaskManager::handPromptDelay = 2.0;
 double GraspTaskManager::handErrorDelay = 2.0;
 
+int GraspTaskManager::maxRetries = 9;
+
 //
 // A state machine to run through the different state of a block of trials.
 // On entry, the current state is compared to the previous state.
@@ -207,18 +209,19 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
 	currentTrial = 0;
 
-	// Open a file for storing the responses.
+	// Initiliaze the counter that limits the number of retries.
+	retriesRemaining = maxRetries;
+
+	// Open a file for storing the responses and output a header.
 	sprintf( responseFilename, "%s.rsp", output_filename_root );
 	response_fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-	// Ouput a header.
 	fprintf( response_fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
-	// Open a file for storing the tracker poses.
+	// Open a file for storing the tracker poses and output a header.
 	sprintf( poseFilename, "%s.pse", output_filename_root );
 	pose_fp = fopen( poseFilename, "w" );
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
-	// Ouput a header.
 	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
 	// Call the paradigm-specific preparation, if any.
@@ -256,7 +259,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.
-		if ( this->UpdateStateMachine() ) break;
+		if ( UpdateStateMachine() ) break;
 
 		// Render the scene to the HMD. This will draw all items that are
 		// enabled. The state machine is responsible for enabling and disabling

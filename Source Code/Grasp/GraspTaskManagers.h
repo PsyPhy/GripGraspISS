@@ -5,9 +5,11 @@
 
 namespace Grasp {
 
-	typedef enum { NullState, StartBlock, StartTrial, StraightenHead, AlignHead, PresentTarget, TiltHead, ObtainResponse, 
-					ProvideFeedback, TrialCompleted, BlockCompleted, TrialInterrupted,
-					ExitStateMachine } GraspTrialState;
+	typedef enum { NullState = 0, StartBlock = 1, StartTrial = 10, StraightenHead = 20, AlignHead = 21, 
+					PresentTarget = 30, TiltHead = 40, ObtainResponse = 50, 
+					ProvideFeedback = 60, TrialCompleted = 69, 
+					TrialInterrupted = 70, BlockCompleted = 90, ExitStateMachine = 99 } GraspTrialState;
+	typedef enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } Anomaly;
 
 	class GraspTaskManager : public GraspVR {
 
@@ -21,6 +23,8 @@ namespace Grasp {
 		static double alignHandTimeout;
 		static double handPromptDelay;
 		static double handErrorDelay;
+
+		static int maxRetries;
 
 		// List of paramters for each trial.
 		struct {
@@ -40,9 +44,6 @@ namespace Grasp {
 		int nTrials;
 		int currentTrial;
 		int retriesRemaining;
-		int SetMaxRetries( int max_retries ) {
-			retriesRemaining = max_retries;
-		}
 		int LoadTrialParameters( char *filename );
 		void RepeatTrial( int trial );
 		virtual void Prepare( void ) {}
@@ -148,15 +149,16 @@ namespace Grasp {
 		virtual void ExitBlockCompleted( void );
 
 		// TrialInterrupted
-		// The trial was interrupted because the head orientation was not maintained.
-		enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } interruptCondition;
+		// The variable interruptCondition should have been set to indicate the cause.
+		Anomaly interruptCondition;
+		// A holder to remember which indicator has been turned on.
 		Assembly *interrupt_indicator;
 		virtual void EnterTrialInterrupted( void );
 		virtual GraspTrialState UpdateTrialInterrupted( void );
 		virtual void ExitTrialInterrupted( void );
 
 	public:
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(2), response_fp(NULL), pose_fp(NULL) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL) {}
 		~GraspTaskManager(){}
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServer = dex;
