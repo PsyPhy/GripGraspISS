@@ -14,7 +14,7 @@ using namespace PsyPhy;
 // Defined constants
 
 // Time to show the trial success indicator.
-// It is currently set to 0 so that there is no presentation fo the success indicator.
+// It is currently set to 0 so that there is no presentation of the success indicator.
 double GraspTaskManager::indicatorDisplayDuration = 0.0;	
 
 // Time limits to accomplish different actions.
@@ -38,6 +38,11 @@ int GraspTaskManager::maxRetries = 9;
 // If the subsequent state is not the same as the current state, the ExitXXX() method is called for the current state before leaving the cycle.
 //
 bool GraspTaskManager::UpdateStateMachine( void ) {
+
+	// If the state has changed, tell the ground where we are.
+	// This happens automatically for any state change.
+	// Specific state handlers might also add additional information.
+	if ( currentState != previousState ) ShowProgress( currentState );
 
 	// Here I implement a rather brute force implementation in which each state has it's own 
 	// case in the switch statement and each case calls explicitly the required methods. If 
@@ -201,6 +206,11 @@ void GraspTaskManager::RepeatTrial( int trial ) {
 	fOutputDebugString( "Trial %d will be repeated. Retries remaining: %d\n", trial, retriesRemaining );
 }
 
+void GraspTaskManager::ShowProgress( int phase, int characteristic ) {
+	int info = ( nTrials - currentTrial ) * 100 + phase + characteristic;
+	dexServices->SendSubstep( info );
+}
+
 int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filename_root ) {
 
 	// Load the trial parameters.
@@ -224,6 +234,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
 	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
+	// Tell the ground what we are about to start doing.
+	ShowProgress( StartBlock, GetParadigm() );
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
 
@@ -350,9 +362,10 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 	// Indicate which trial is about to begin. For now we simply show this on the debug text window.
 	// In the future it should send this info to ground.
-	fOutputDebugString( "Starting Trial: %d  Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
-		currentTrial, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
-
+	fOutputDebugString( "Starting Trial: %d / %d Target: %6.1f  Head Tilt: %6.1f  Conflict: %4.2f\n",
+		currentTrial, nTrials, trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].conflictGain );
+	// Tell the ground how many retries are remaining.
+	ShowProgress( StartTrial, retriesRemaining );
 }
 GraspTrialState GraspTaskManager::UpdateStartTrial( void ) { 
 	return( StraightenHead ); 
@@ -360,7 +373,7 @@ GraspTrialState GraspTaskManager::UpdateStartTrial( void ) {
 void GraspTaskManager::ExitStartTrial( void ) {
 	char tag[32];
 	sprintf( tag, "StartT%03d", currentTrial );
-	dexServer->SnapPicture( tag );
+	dexServices->SnapPicture( tag );
 }
 
 //
@@ -450,7 +463,7 @@ void GraspTaskManager::ExitAlignHead( void ) {}
 void GraspTaskManager::EnterPresentTarget( void ) {
 	char tag[32];
 	sprintf( tag, "Target%03d", currentTrial );
-	dexServer->SnapPicture( tag );
+	dexServices->SnapPicture( tag );
 	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
 }
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
@@ -614,7 +627,7 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];
 	sprintf( tag, "Respns%03d", currentTrial );
-	dexServer->SnapPicture( tag );
+	dexServices->SnapPicture( tag );
 }
 
 // ProvideFeedback
@@ -704,6 +717,8 @@ void  GraspTaskManager::ExitBlockCompleted( void ) {
 // Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
 	fprintf( response_fp, "%f; interrupted\n", 0.0 );
+	// Tell the ground what caused the interruption.
+	ShowProgress( TrialInterrupted, interruptCondition );
 	// Show the cause of the interruption.
 	switch ( interruptCondition ) {
 	case RAISE_HAND_TIMEOUT: interrupt_indicator = renderer->raiseArmTimeoutIndicator; break;
@@ -719,7 +734,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	interrupt_indicator->Enable();
 	char tag[32];
 	sprintf( tag, "Itpt%1d.%03d", interruptCondition, currentTrial );
-	dexServer->SnapPicture( tag );
+	dexServices->SnapPicture( tag );
 }
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// Show the message until the subject presses a button.

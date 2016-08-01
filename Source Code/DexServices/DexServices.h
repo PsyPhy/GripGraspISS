@@ -12,12 +12,11 @@
 #define STEP_FINISHED_NORMAL	40000
 #define STEP_FINISHED_ABNORMAL	50000
 
-#define TRACKERSTATUS_UNKNOWN	55555
-#define TRACKER_ANOMALY			44444
-
 #define TRACKER_CONNECTED		10000
 #define TRACKER_PREPARED		20000
 #define TRACKER_ACQUIRING		30000
+#define TRACKER_ANOMALY			44444
+#define TRACKERSTATUS_UNKNOWN	55555
 
 namespace Grasp {
 
@@ -68,7 +67,7 @@ namespace Grasp {
 		int SendTaskInfo( int user, int protocol, int task, int step, 
 			unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN );
 		int ResetTaskInfo( void ) { return( SendTaskInfo( 0, 0, 0, 0, 0, 0 ) ); }
-		int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + substep, static_tracker_status ) ); }
+		int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); }
 		int SendTrackerStatus( int status ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, static_substep, status ) ); }
 
 		int SnapPicture( const char *tag );

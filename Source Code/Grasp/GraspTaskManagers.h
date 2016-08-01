@@ -5,11 +5,14 @@
 
 namespace Grasp {
 
-	typedef enum { NullState = 0, StartBlock = 1, StartTrial = 10, StraightenHead = 20, AlignHead = 21, 
-					PresentTarget = 30, TiltHead = 40, ObtainResponse = 50, 
-					ProvideFeedback = 60, TrialCompleted = 69, 
-					TrialInterrupted = 70, BlockCompleted = 90, ExitStateMachine = 99 } GraspTrialState;
-	typedef enum { RAISE_HAND_TIMEOUT, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } Anomaly;
+	typedef enum { unknown = 0, VTOV, VTOK, KTOK, VTOVK, VKTOVK } Paradigm;
+	typedef enum { NullState = 0, StartBlock = 10, BlockCompleted = 19, 
+					StartTrial = 20, 
+					StraightenHead = 31, AlignHead = 32, 
+					PresentTarget = 33, TiltHead = 34, ObtainResponse = 35, 
+					ProvideFeedback = 36, TrialCompleted = 39, 
+					TrialInterrupted = 40, ExitStateMachine = 99 } GraspTrialState;
+	typedef enum { RAISE_HAND_TIMEOUT = 1, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } Anomaly;
 
 	class GraspTaskManager : public GraspVR {
 
@@ -44,10 +47,15 @@ namespace Grasp {
 		int nTrials;
 		int currentTrial;
 		int retriesRemaining;
+
+		// Derived classes must provide a method identifying which paradigm it implements.
+		virtual Paradigm GetParadigm( void ) = 0;
+
 		int LoadTrialParameters( char *filename );
 		void RepeatTrial( int trial );
 		virtual void Prepare( void ) {}
 		int RunTrialBlock( char *sequence_filename, char *output_filename_root );
+		void ShowProgress( int phase, int characteristic = 0 );
 
 		FILE *response_fp;
 		char responseFilename[FILENAME_MAX];
@@ -57,7 +65,7 @@ namespace Grasp {
 		// State Machine
 		GraspTrialState previousState, currentState, nextState;
 		bool UpdateStateMachine( void );
-		DexServices *dexServer;
+		DexServices *dexServices;
 
 		// Timers used by multiple states.
 		::Timer presentTargetTimer;
@@ -161,7 +169,7 @@ namespace Grasp {
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL) {}
 		~GraspTaskManager(){}
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
-			dexServer = dex;
+			dexServices = dex;
 			GraspVR::Initialize( instance, display, mapper, trkrs );
 		}
 		void Release( void ) {
@@ -172,6 +180,7 @@ namespace Grasp {
 
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( VTOV ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->vTool; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateVisualResponse(); }
@@ -180,6 +189,7 @@ namespace Grasp {
 	};
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( VTOVK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
@@ -188,6 +198,7 @@ namespace Grasp {
 	};
 	// V-K protocol. 
 	class VtoK : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( VTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
@@ -196,6 +207,7 @@ namespace Grasp {
 	};
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( KTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateKinestheticTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
