@@ -149,16 +149,17 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	structure->AddComponent( tunnel );
 
 	// Reference Bars 
+	double bar_length = room_length - 5.0 * reference_bar_radius;
 	for (int i=0; i < reference_bars; i++ ){ 
-		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, room_length, reference_bar_facets );
-		referenceBar->SetOffset( room_radius- reference_bar_radius, 0.0, 0.0 );
+		Cylinder *referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, bar_length, reference_bar_facets );
+		referenceBar->SetOffset( room_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
 		// The texturing on the bars may be commented out for the moment because it lengthens the rendering time too much.
 		referenceBar->SetTexture( references_texture );
 		structure->AddComponent( referenceBar );
-		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius,  room_length );
-		referenceBar->SetOffset( room_radius - reference_bar_radius, 0.0, 0.0 );
+		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, bar_length, reference_bar_facets );
+		referenceBar->SetOffset( room_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
 		// See above.
