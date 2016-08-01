@@ -626,9 +626,15 @@ void GraspTaskManager::EnterProvideFeedback( void ) {
 	fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 	fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 	// Show the target.
-	if ( trialParameters[currentTrial].provideFeedback == 1 ) renderer->orientationTarget->Enable();
-	else renderer->positionOnlyTarget->Enable();
-	// Launch the projectiles from the current hand orientation (the response );
+	if ( trialParameters[currentTrial].provideFeedback == 1 ) {
+		renderer->orientationTarget->Enable();
+		renderer->multiProjectile->Enable();
+	}
+	else {
+		renderer->positionOnlyTarget->Enable();
+		renderer->monoProjectile->Enable();
+	}
+// Launch the projectiles from the current hand orientation (the response );
 	TriggerProjectiles();
 }
 GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) { 
@@ -643,8 +649,10 @@ GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) {
 void  GraspTaskManager::ExitProvideFeedback( void ) {
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
-	renderer->projectiles->Disable();
+	renderer->multiProjectile->Disable();
+	renderer->monoProjectile->Disable();
 }
+
 
 // TrialCompleted
 // Provide an indication that the trial was completed successfully.

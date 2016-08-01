@@ -185,6 +185,8 @@ namespace Grasp {
 		Assembly		*straightAheadTarget;	// Placed straight ahead of the subject wrt the chest.
 		Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
 		Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
+		Assembly		*multiProjectile;
+		Assembly		*monoProjectile;
 
 		Yoke			*hmd;					// Collection of objects that move with the head.
 		Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
@@ -246,7 +248,7 @@ namespace Grasp {
 		Assembly *CreateVisualTool( void );
 		Assembly *CreateKinestheticTool( void );
 		Assembly *CreateLaserPointer(void);
-		Assembly *CreateProjectiles(void);
+		Assembly *CreateProjectiles( int fingers );
 		Yoke	 *CreateHand(void);
 		Yoke	 *CreateHUD(void);
 		Assembly *CreateZone( void );

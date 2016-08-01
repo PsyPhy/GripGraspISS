@@ -462,24 +462,21 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 
 }
 
-Assembly *GraspGLObjects::CreateProjectiles( void ) {
+Assembly *GraspGLObjects::CreateProjectiles( int fingers ) {
 
-	Assembly *projectiles = new Assembly();
-	static int fingers = target_balls - 1;
-	static double finger_spacing = finger_ball_radius * 2;
+	Assembly *assembly = new Assembly();
+	double finger_spacing = finger_ball_radius * 2;
 
 	for ( int trg = - fingers; trg <= fingers ; trg++ ){
-
 		Sphere *sphere = new Sphere( finger_ball_radius*1.0 );
 		// Create a color that varies as a function of the ball's position.
 		sphere->SetColor( 200.0f/255.0f, (75.0f + float(trg) * 75.0f / 2.0f ) / 255.0f , 0.0f, 1.0f );
 		// Space the balls vertically.
 		sphere->SetPosition( 0.0, finger_spacing * trg, 0.0 );
-		projectiles->AddComponent( sphere );
-		
+		assembly->AddComponent( sphere );
 	}
 
-	return projectiles;
+	return assembly;
 
 }
 
@@ -516,7 +513,13 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	successIndicator = CreateSuccessIndicator();
 
-	projectiles = CreateProjectiles();
+	projectiles = new Assembly;
+	multiProjectile = CreateProjectiles( target_balls - 1 );
+	multiProjectile->Disable();
+	projectiles->AddComponent( multiProjectile );
+	monoProjectile = CreateProjectiles( 0 );
+	projectiles->AddComponent( monoProjectile );
+	monoProjectile->Disable();
 
 	wristZone = CreateZone();
 
