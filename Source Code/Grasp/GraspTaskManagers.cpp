@@ -391,16 +391,14 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
-
 	// Time spent with the hand in the field of view does not count against the timeout.
 	// This is a little risky because it could run forever.
 	if ( raised == HandleHandElevation() ) TimerPause( straightenHeadTimer );
 	else TimerResume( straightenHeadTimer );
-
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
 	if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
-	else return( currentState );
+	return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {
 	renderer->straightAheadTarget->Disable();

@@ -356,28 +356,6 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 /// Prompt the subject to redress the head on the shoulders and look straight ahead.
 AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
-	static ::Timer delay_timer;
-
-	// The hand must be lowered before leaving this state. If it is still raised after a short
-	// delay, we activate the prompt to remind the subject to lower the arm.
-	ArmStatus hand_status = HandleHandElevation();
-	if ( raised == hand_status ) {
-		// If the delay timer has been paused, this restarts it.
-		// If it is already running, this does nothing.
-		TimerResume( delay_timer );
-		// If the hand is visible, prompt the subject to lower it, after a delay.
-		if ( TimerTimeout( delay_timer ) ) renderer->lowerHandPrompt->Enable();
-		TimerSet( headGoodTimer, secondsToBeGood );
-		TimerSet( headBadTimer, secondsToBeBad );
-		return( misaligned );
-	}
-	else {
-		// By setting this timer, and pausing it, we create a delay before the lowerHandPrompt shows up.
-		TimerSet( delay_timer, 2.0 );
-		TimerPause( delay_timer );
-		renderer->lowerHandPrompt->Disable();
-	}
-
 	// We do not have a lot of confidence about the positioning of the chest marker plate 
 	// so we define 'straight ahead' as follows.
 	// The centroid of the chest marker plate should be more reproducible than its orientation.
@@ -441,13 +419,22 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	if ( angular_error < 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
 	if ( angular_error > 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
-	// If the head is aligned do stuff depending on the time delays.
+	// The hand must be lowered to really be aligned. If it is still raised after a short
+	// delay, we activate the prompt to remind the subject to lower the arm.
+	ArmStatus hand_status = HandleHandElevation();
+	if ( hand_status == raised ) {
+		if ( TimerElapsedTime( headBadTimer ) > secondsToBeGood ) renderer->lowerHandPrompt->Enable();
+		TimerSet( headGoodTimer, secondsToBeGood );
+		return( misaligned );
+	} 
+	else renderer->lowerHandPrompt->Disable();
+	// Must have the gaze centered to be aligned.
 	if ( !centered ) {
 		TimerSet( headGoodTimer, secondsToBeGood );
-		TimerSet( headBadTimer, secondsToBeBad );
 		return( misaligned );
 	}
-	else if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
+	// Now check for the actual head roll alignment, adding in some hysteresis.
+	if ( fabs( angular_error ) < desiredHeadRollTolerance ) {
 		// Arrow gets turned off as soon as the angle is good.
 		renderer->headTiltPrompt->Disable();
 		if ( TimerTimeout( headGoodTimer )) {
