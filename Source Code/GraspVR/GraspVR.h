@@ -43,6 +43,8 @@ namespace Grasp {
 		TrackerPose handPose;
 		TrackerPose rollPose;
 
+		Transform	localAlignment; 
+
 		static double handFilterConstant;
 		static double interpupillary_distance;
 		static double near_clipping;
@@ -62,7 +64,8 @@ namespace Grasp {
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
 
-		Transform	localAlignment; 
+		double conflictGain;
+
 
 		GraspVR( void )  : 
 
@@ -73,7 +76,9 @@ namespace Grasp {
 
 			desiredHeadRoll( 20.0 ), 
 			desiredHandRoll( -35.0 ),
-			currentProjectileState( cocked )
+			currentProjectileState( cocked ),
+
+			conflictGain( 1.0 )
 
 			{}
 

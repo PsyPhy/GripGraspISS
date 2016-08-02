@@ -82,6 +82,8 @@ void GraspVR::UpdateTrackers( void ) {
 		renderer->hmd->SetPose( headPose.pose );
 	}
 
+	// Apply a counter rotation to the room as a means to generate conflict.
+	renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
 
 	// Track movements of the hand marker array.
 	if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
@@ -317,7 +319,10 @@ double GraspVR::ObjectRollAngle( OpenGLObject * object ) {
 	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
 	//  orientation here match the orientation of the visual target. But I don't know if this one was 
 	//  wrong or the other one. We should check.
-	return( ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] )));
+
+	// This computes the angle from the projection of the rotated iVector into the XY plane. 
+	// It should fail when yaw is close to 90°.
+	return( ToDegrees( atan2( - object->orientation[X][Y], object->orientation[X][X] )));
 }
 
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {

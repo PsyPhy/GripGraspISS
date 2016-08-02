@@ -44,9 +44,10 @@ namespace Grasp {
 			double	conflictGain;
 			bool	provideFeedback;
 		} trialParameters[MAX_GRASP_TRIALS];
-		int nTrials;
-		int currentTrial;
-		int retriesRemaining;
+		
+		int nTrials;				// Total number of trials to be performed. This gets incremented if a trial is set to be repeated.
+		int currentTrial;			// Where we are in the list of trials.
+		int retriesRemaining;		// Erroneous trials get repeated at the end of the block, but only up to a certain number of repetitions.
 
 		// Derived classes must provide a method identifying which paradigm it implements.
 		virtual Paradigm GetParadigm( void ) = 0;
@@ -67,7 +68,11 @@ namespace Grasp {
 		bool UpdateStateMachine( void );
 		DexServices *dexServices;
 
-		// Timers used by multiple states.
+		// Timers used by various different states.
+		// It would have been nice if each timer could be restricted in scope to the 3 methods associated 
+		//  with the associated state, but that would mean making a class for each state. I may do that 
+		//  someday, but in the mean time I give them names here to help keep track of which state is 
+		//  using which time and for what.
 		::Timer presentTargetTimer;
 		::Timer straightenHeadTimer;
 		::Timer alignHeadTimer;
@@ -166,6 +171,7 @@ namespace Grasp {
 		virtual void ExitTrialInterrupted( void );
 
 	public:
+		// Constructor, with initialization of some elements.
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL) {}
 		~GraspTaskManager(){}
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {

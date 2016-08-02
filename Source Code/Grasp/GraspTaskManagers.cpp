@@ -234,14 +234,15 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
 	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
-	// Tell the ground what we are about to start doing.
-	ShowProgress( StartBlock, GetParadigm() );
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
 
 	// Initialize the state machine.
 	previousState = NullState;
 	currentState = StartBlock;
+
+	// Tell the ground what we are about to start doing.
+	ShowProgress( StartBlock, GetParadigm() );
 
 	// Measure the time since this block was initiated.
 	TimerStart( blockTimer );
@@ -416,7 +417,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 void GraspTaskManager::ExitStraightenHead( void ) {
 	renderer->straightAheadTarget->Disable();
 	// Set the conflict gain.
-
+	conflictGain = trialParameters[currentTrial].conflictGain;
 	// Align to the current position of the HMD. 
 	AlignToHMD();
 	renderer->straightAheadTarget->Disable();
