@@ -1,18 +1,6 @@
 // This is the main DLL file.
 
 #include "stdafx.h"
-#include "../Useful/fMessageBox.h"
-
-#include "../OculusInterface/OculusInterface.h"
-
-// Include 3D and 6D tracking capabilities.
-#include "../Trackers/PoseTrackers.h"
-#include "../Trackers/CodaRTnetTracker.h"
-
-#include "../OculusInterface/MousePoseTrackers.h"
-#include "../OculusInterface/OculusPoseTracker.h"
-#include "../OculusInterface/OculusViewpoint.h"
-
 #include "GraspVR.h"
 
 using namespace Grasp;

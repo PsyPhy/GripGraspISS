@@ -10,12 +10,17 @@
 
 #pragma once
 
+// There is an incompatibilty between the M macro defined in Useful.h that is
+// used to access the real part of a Quaternion and the Oculus library.
+// So the following header file must come before Useful.h. This also 
+// implies that this include file must come before Useful.h in any file that 
+// uses them both.
+#include "../OculusInterface/OculusInterface.h"
+
 #include "../Useful/Useful.h"
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
-
-#include "../OculusInterface/OculusInterface.h"
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"

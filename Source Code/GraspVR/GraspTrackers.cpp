@@ -9,16 +9,6 @@
 ///
 
 #include "stdafx.h"
-
-#include "../OculusInterface/OculusInterface.h"
-
-// Include 3D and 6D tracking capabilities.
-#include "../Trackers/PoseTrackers.h"
-#include "../Trackers/CodaRTnetTracker.h"
-#include "../Trackers/PoseTrackerFilter.h"
-
-#include "../OculusInterface/MousePoseTrackers.h"
-#include "../OculusInterface/OculusPoseTracker.h"
 #include "GraspTrackers.h"
 
 using namespace PsyPhy;
