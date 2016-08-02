@@ -7,6 +7,10 @@
 // Interface to the CodaRTnet hardware.
 
 #pragma once
+
+// Disable warnings about "unsafe" functions.
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "../Useful/fOutputDebugString.h"
 #include "Trackers.h"
 
@@ -21,6 +25,13 @@
 #include "../Include/codaRTNetProtocolCPP/PacketDecode3DResultExt.h"
 #include "../Include/codaRTNetProtocolCPP/PacketDecodeADC16.h"
 #include "../Include/codaRTNetProtocolCPP/DeviceInfoUnitCoordSystem.h"
+
+// Exit codes for abort on errors.
+// To avoid confusion with more generic errors, all are set to -2 at the moment.
+// I don't yet have a nice way to coordinate exit codes across applications.
+#define RTNET_CONFIGERROR	-2
+#define RTNET_INITERROR		-2
+#define RTNET_RETRIEVEERROR	-2
 
 namespace PsyPhy {
 
@@ -155,7 +166,7 @@ private:
 	}
 
 public:
-	void Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	int  Update( void );
 	void Quit( void );
 

@@ -81,7 +81,7 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		if (configs.dwNumConfig < (DWORD) codaConfig)
 		{
 			fOutputDebugString("ERROR: specified hardware configuration %d not available.\n", codaConfig);
-			exit( -1 );
+			exit( RTNET_CONFIGERROR );
 		}
 		// Show which configuration we are trying to use.
 		wcstombs( dest, configs.config[codaConfig].strName, sizeof( dest ) );
@@ -169,14 +169,14 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		print_network_error( exNet );
 		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
 		MessageBox( NULL, "DexRTnet() failed.\n(NetworkException& exNet)", "CodaRTnetTracker", MB_OK );
-		exit( -2 );
+		exit( RTNET_INITERROR );
 	}
 	catch(DeviceStatusArray& array)
 	{
 		print_devicestatusarray_errors(array);
 		fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
 		MessageBox( NULL, "DexRTnet() failed.\n(DeviceStatusArray& array)", "CodaRTnetTracker", MB_OK );
-		exit( -3 );
+		exit( RTNET_INITERROR );
 	}
 		
 }
@@ -303,12 +303,12 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 					DWORD nMarkers = decode3D.getNumMarkers();
 					if ( nMarkers > MAX_MARKERS ) {
 						fMessageBox(  MB_OK, "CodaRTnetTracker", "How many markers?!?!\n   %d > %d", nMarkers, MAX_MARKERS  );
-						exit( -1 );
+						exit( RTNET_RETRIEVEERROR );
 					}
 					int   unit = decode3D.getPage();
 					if ( unit >= nUnits ) {
 						MessageBox( NULL, "Which unit?!?!", "CodaRTnetTracker", MB_OK );
-						exit( -1 );
+						exit( RTNET_RETRIEVEERROR );
 					}
 					recordedMarkerFrames[unit][frm].time = decode3D.getTick() * cl.getDeviceTickSeconds( DEVICEID_CX1 );
 					for ( DWORD mrk = 0; mrk < nMarkers; mrk++ ) {
@@ -418,7 +418,7 @@ bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int select
 			// Other than that, this is a fatal error so we exit.
 			print_devicestatusarray_errors(array);
 			OutputDebugString( "\n" );
-			exit( -1 );
+			exit( RTNET_RETRIEVEERROR );
 		}
 	}
 	// If not already acquiring, then request acquisition of a single frame.
@@ -432,7 +432,7 @@ bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int select
 		{
 			print_devicestatusarray_errors(array);
 			fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
-			exit( -1 );
+			exit( RTNET_RETRIEVEERROR );
 		}
 	}
 	
@@ -479,7 +479,7 @@ bool CodaRTnetTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int select
 			if ( unit >= nUnits ) {
 				// I don't believe that we should ever get here, but who knows?
 				MessageBox( NULL, "Which unit?!?!", "Dexterous", MB_OK );
-				exit( -1 );
+				exit( RTNET_RETRIEVEERROR );
 			}
 			
 			// Process the data from the selected unit only.

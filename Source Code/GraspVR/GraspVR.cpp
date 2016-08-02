@@ -47,7 +47,6 @@ void GraspVR::InitializeTrackers( const char *filename_root ) {
 	trackers->Initialize();
 	CopyVector( localAlignment.displacement, zeroVector );
 	CopyQuaternion( localAlignment.rotation, nullQuaternion );
-
 }
 
 void GraspVR::UpdateTrackers( void ) {
@@ -153,15 +152,24 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	OVR::System::Init();
 #endif
 	result = ovr_Initialize( nullptr );
-	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
+	if ( OVR_FAILURE( result ) ) {
+		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize libOVR (ovrError %d).", result );
+		exit( OCULUS_ERROR );
+	}
 
 	// Initialize the Oculus-enabled Windows platform.
 	result = oculusDisplay->InitWindow( hinst, L"GraspVR", fullscreen );
-	fAbortMessageOnCondition(   OVR_FAILURE( result ), "GraspVR", "Failed to open window." );
+	if ( OVR_FAILURE( result ) ) {
+		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusDisplay (ovrError %d).", result );
+		exit( OCULUS_ERROR );
+	}
 
 	// Initialize the interface to the Oculus HMD.
 	result = oculusMapper->Initialize( oculusDisplay, mirror, fullscreen );
-	fAbortMessageOnCondition( OVR_FAILURE( result ), "GraspVR", "Failed to initialize libOVR." );
+	if ( OVR_FAILURE( result ) ) {
+		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusMapper (ovrError %d).", result );
+		exit( OCULUS_ERROR );
+	}
 
 	// Set up a default GL rendering context.
 	glUsefulInitializeDefault();
