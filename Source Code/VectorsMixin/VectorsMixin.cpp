@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "../Useful/Useful.h" 
 #include "../Useful/fOutputDebugString.h" 
+#include "../Useful/fMessageBox.h"
+
 #include "VectorsMixin.h"
 
 using namespace PsyPhy;
@@ -390,6 +392,7 @@ void VectorsMixin::SetQuaternion( Quaternion result, double radians, const Vecto
 
 // Compute a rotation matrix that will rotat v1 to align with v2, ignoring the roll around the vectors.
 void VectorsMixin::SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const Vector3 v1 ) {
+	// Compute the rotation vector as the cross product of the unitized vectors.
 	Vector3 u1, u2;
 	CopyVector( u1, v1 );
 	NormalizeVector( u1 );
@@ -397,7 +400,11 @@ void VectorsMixin::SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const 
 	NormalizeVector( u2 );
 	Vector3 rotation_vector;
 	ComputeCrossProduct( rotation_vector, u1, u2 );
+	// Compute the magnitude of the rotation in a way that is not sensitive to parallel 
+	//  vectors or to numerical errors when the rotation is zero.
 	double angle = atan2( VectorNorm( rotation_vector ), DotProduct( u1, u2 ) );
+	// Compute the rotation matrix. Note that we use the non-unit rotation vector as the axis of 
+	//  rotation because SetRotationMatrix() will normalize it anyway.
 	SetRotationMatrix( result, angle, rotation_vector );
 }
 
@@ -433,6 +440,77 @@ void VectorsMixin::SetRotationMatrix( Matrix3x3 result, double radians, const Ve
 	}
 
 }
+
+void VectorsMixin::SetRotationMatrix( Matrix3x3 m, double roll, double pitch, double yaw ) {
+
+	Matrix3x3 yawM, pitchM, rollM;
+	Matrix3x3 rpM;
+
+	CopyMatrix( yawM, identityMatrix );
+	yawM[X][X] = cos( yaw );
+	yawM[X][Z] = - sin( yaw );
+	yawM[Z][X] = sin( yaw );
+	yawM[Z][Z] = cos( yaw );
+
+	CopyMatrix( pitchM, identityMatrix );
+	pitchM[Y][Y] = cos( pitch );
+	pitchM[Y][Z] = - sin( pitch );
+	pitchM[Z][Y] = sin( pitch );
+	pitchM[Z][Z] = cos( pitch );
+
+	CopyMatrix( rollM, identityMatrix );
+	rollM[X][X] = cos( roll );
+	rollM[X][Y] = - sin( roll );
+	rollM[Y][X] = sin( roll );
+	rollM[Y][Y] = cos( roll );
+
+	MultiplyMatrices( rpM, rollM, pitchM );
+	MultiplyMatrices( m, rpM, yawM );
+
+}
+
+double VectorsMixin::RollAngleFromMatrix( const Matrix3x3 m ) {
+	Matrix3x3 rollM;
+	fAbortMessage( "VectorsMixin", "RollAngleFromMatrix() does not work yet." );
+#if 1
+	double azimuth = atan2( m[Z][X],m[Z][Z] );
+	double elevation= atan2( m[Z][Y], sqrt(  m[Z][X] * m[Z][X] +m[Z][Z] * m[Z][Z] ) );
+
+	Matrix3x3 yawMt;
+	CopyMatrix( yawMt, identityMatrix );
+	yawMt[X][X] = cos( azimuth );
+	yawMt[X][Z] = sin( azimuth );
+	yawMt[Z][X] = - sin( azimuth );
+	yawMt[Z][Z] = cos( azimuth );
+
+	Matrix3x3 pitchMt;
+	CopyMatrix( pitchMt, identityMatrix );
+	pitchMt[Y][Y] = cos( elevation );
+	pitchMt[Y][Z] = sin( elevation );
+	pitchMt[Z][Y] = - sin( elevation );
+	pitchMt[Z][Z] = cos( elevation );
+
+	Matrix3x3 pitchMyawMt;
+	MultiplyMatrices( pitchMyawMt, yawMt, pitchMt );
+	MultiplyMatrices( rollM, m, pitchMyawMt );
+	Matrix3x3 aim;
+	SetRotationMatrix( aim, kVector, m[Z] );
+	//printf( "\n%s\n", mstr( pitchMyawMt ) );
+	//printf( "%s\n", mstr( aim ) );
+	Matrix3x3 CHK;
+	Matrix3x3 aimT;
+	TransposeMatrix( aimT, aim );
+	MultiplyMatrices( rollM, pitchMyawMt, aimT );
+	//printf( "%s\n", mstr( CHK ) );
+
+
+#else
+	MultiplyMatrices( rollM, aim, m );
+#endif
+	return( atan2( rollM[Y][X], rollM[X][X] ) );
+}
+
+
 
 void VectorsMixin::QuaternionToMatrix( Matrix3x3 m, const Quaternion q ) {
 

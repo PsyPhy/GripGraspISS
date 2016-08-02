@@ -114,6 +114,9 @@ namespace Grasp {
 
 	protected:
 
+		// A common routine to compute the roll angle of an object.
+		double ObjectRollAngle( OpenGLObject * object );
+
 		// Prompt the subject to raise or lower the arm.
 		static double	armRaisedThreshold;					// Essentially the cosine of the angle of the cone of acceptance for raised.
 		ArmStatus		HandleHandElevation( void );		// On each iteration of the rendering loop update the feedback.

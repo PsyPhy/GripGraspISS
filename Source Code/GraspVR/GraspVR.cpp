@@ -309,13 +309,24 @@ double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance 
 	return( desiredHeadRoll );
 }
 
+// A common routine to compute the roll angle of an object. It is used to compute the roll angle of
+// the head when guiding the head to the desired tilt and to compute the roll angle of the hand/tool
+// when guiding the hand to a kinesthetic target.
+double GraspVR::ObjectRollAngle( OpenGLObject * object ) {
+	// This implementation is sensitive to pitch and yaw and will go crazy at 90°.
+	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
+	//  orientation here match the orientation of the visual target. But I don't know if this one was 
+	//  wrong or the other one. We should check.
+	return( ToDegrees( atan2( - object->orientation[0][1], object->orientation[0][0] )));
+}
+
 AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 
 	// Compute the roll angle of the object that is being followed.
 	// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
 	//  orientation here match the orientation of the visual target. But I don't know if this one was 
 	//  wrong or the other one. We should check.
-	double object_roll_angle = ToDegrees( atan2( - renderer->glasses->orientation[0][1], renderer->glasses->orientation[0][0] ) );
+	double object_roll_angle = ObjectRollAngle( renderer->glasses );
 	// Compute the error with respect to the desired roll angle.
 	double angular_error =  desiredHeadRoll - object_roll_angle;
 	// Set the color of the halo according to the angular error.
@@ -509,11 +520,8 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 	}
 	else {
 
-		// Compute the roll angle of the object that is being followed.
-		// Note the negative sign on the Y parameter passed to atan2. I had to add this to make the target
-		//  orientation here match the orientation of the visual target. But I don't know if this one was 
-		//  wrong or the other one. We should check.
-		double object_roll_angle = ToDegrees( atan2( - renderer->kkTool->orientation[0][1], renderer->kkTool->orientation[0][0] ) );
+		// Compute the roll angle of the hand.
+		double object_roll_angle = ObjectRollAngle( renderer->kkTool );
 		// Compute the error with respect to the desired roll angle.
 		double angular_error =  desiredHandRoll - object_roll_angle;
 		// Set the color of the tool according to the angular error.

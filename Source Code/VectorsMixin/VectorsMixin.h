@@ -114,6 +114,10 @@ public:
 	void SetRotationMatrix( Matrix3x3 result, double radians, const Vector3 axis );
 	// Compute a rotation matrix that will align v1 with v2, ignoring the roll around the vectors.
 	void SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const Vector3 v1 );
+	// Compute a rotation matrix from Euler angles. Angles are in radians.
+	void SetRotationMatrix( Matrix3x3 result, double roll, double pitch, double yaw );
+	// Compute the final roll angle of a rotation, ignoring pitch and yaw.
+	double RollAngleFromMatrix( const Matrix3x3 m );
 
 	void RotateVector( Vector3 result, const Quaternion q, const Vector3 v );
 	void MatrixToQuaternion( Quaternion result, Matrix3x3 m );
