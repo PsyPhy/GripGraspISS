@@ -18,9 +18,10 @@ VectorsMixin vm;
 int main(int argc, char *argv[])
 {
 
-	double		roll, pitch, yaw;
-	Matrix3x3	ROT, ROTt, R, Rt, PY, PYt, noPY, noPYt, CK;
-	Vector3		eulers;
+	//double		roll, pitch, yaw;
+	Matrix3x3	ROT, ROTt, R, Rt;
+	//Matrix3x3	PY, PYt, noPY, noPYt, CK;
+	//Vector3		eulers;
 
 	vm.SetRotationMatrix( ROT, 0.0, 20.0, 30.0 );
 	vm.SetRotationMatrix( R, ROT[Z], vm.kVector );
@@ -62,6 +63,6 @@ int main(int argc, char *argv[])
 	//	}
 	//}
 
-	getch();
+	_getch();
 }
 

@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
 #include <time.h>
 #include <vector>
@@ -24,7 +26,7 @@ int main(){
 	for (int cond=0; cond<CondNumber; cond++){
 		for (int rep=0; rep<RepNumber; rep++){
 			double Trials[TotNunTrials][ParamNumber]={0};
-			srand(time(NULL));
+			srand( (unsigned int) time(NULL) );
 			int trl=0;
 			for (int ih=0; ih<1; ih++){
 				for (int trg=0; trg<7; trg++){
@@ -51,7 +53,7 @@ int main(){
 			vector<int> rand_trial_order;
 			for (int trl=0;trl<TotNunTrials;trl++) rand_trial_order.push_back(trl);
 
-			srand(time(NULL));
+			srand( (unsigned int) time(NULL));
 			random_shuffle(rand_trial_order.begin(),rand_trial_order.end());
 
 			FILE *pfile;
