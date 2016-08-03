@@ -6,6 +6,6 @@
 #include "OculusWIN32.v0.8.h"
 #include "OculusMapper.v0.8.h"
 #else
-#include "OculusWIN32.v1.3.h"
-#include "OculusMapper.v1.3.h"
+#include "OculusWIN32.h"
+#include "OculusMapper.h"
 #endif

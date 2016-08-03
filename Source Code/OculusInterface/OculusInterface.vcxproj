@@ -93,10 +93,10 @@
     <ClInclude Include="MousePoseTrackers.h" />
     <ClInclude Include="OculusInterface.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
-    <ClInclude Include="OculusMapper.v1.3.h" />
+    <ClInclude Include="OculusMapper.h" />
     <ClInclude Include="OculusViewpoint.h" />
     <ClInclude Include="OculusWIN32.v0.8.h" />
-    <ClInclude Include="OculusWIN32.v1.3.h" />
+    <ClInclude Include="OculusWIN32.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
