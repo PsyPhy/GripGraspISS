@@ -59,7 +59,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	ovrResult result;
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper.Initialize( platform, true, false );
+	result = oculusMapper.Initialize( platform, true );
 	if ( OVR_FAILURE ( result ) ) return result;
 
 	// Create a pose tracker that uses only the Oculus.

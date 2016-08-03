@@ -4,6 +4,7 @@
 #include "GraspHardwareStatusForm.h"
 
 using namespace GraspHardwareStatus;
+using namespace PsyPhy;
 
 [STAThreadAttribute]
 int main(array<System::String ^> ^args)

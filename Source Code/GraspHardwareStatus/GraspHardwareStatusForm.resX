@@ -117,9 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>This window displays the current status of the 3D Tracking system.
-The visibililty of the markers on each marker structure is inidcated for each of the 3D Tracking Cameras. 
-This information is being transmitted to the ground</value>
-  </data>
 </root>

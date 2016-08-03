@@ -3,5 +3,6 @@
   <ItemGroup>
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.release.mak" />
+    <None Include="InstallGrasp.mak" />
   </ItemGroup>
 </Project>

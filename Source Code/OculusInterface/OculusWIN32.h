@@ -17,6 +17,7 @@ OculusWIN32.h
 #include <assert.h>
 
 #include "../Useful/fOutputDebugString.h"
+#include "../Useful/fMessageBox.h"
 
 // Oculus had this in the include file, but that is bad practice because it gets included everywhere.
 // I comment it out here and qualify the names with OVR:: as needed.
@@ -252,6 +253,7 @@ struct OculusDisplayOGL
 	int                     WinSizeH;
 	GLuint                  fboId;
 	HINSTANCE               hInstance;
+	HWND					parentWindow;
 
 	static const int MARGIN = 100;
 	int       pointerLastX;
@@ -289,6 +291,7 @@ struct OculusDisplayOGL
 			HBRUSH brush;
 			PAINTSTRUCT ps;
 			RECT rect;
+			int font_size;
 
 			BeginPaint( hWnd, &ps );
 
@@ -303,7 +306,9 @@ struct OculusDisplayOGL
 			SetBkMode( hDC,TRANSPARENT);
 
 			// A large message saying what is going on just above the centerline.
-			hFont = CreateFont( 96, 0, 0, 0, FW_BOLD, FALSE,
+			// Scale the text to the size of the window.
+			font_size = ( rect.right - rect.left ) / 20;
+			hFont = CreateFont( font_size, 0, 0, 0, FW_BOLD, FALSE,
 				FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
 				CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 				"Broadway"); 
@@ -315,7 +320,7 @@ struct OculusDisplayOGL
 			DeleteObject( hFont );
 
 			// A smaller message saying how to escape out of the program.
-			hFont = CreateFont( 48, 0, 0, 0, FW_BOLD, FALSE,
+			hFont = CreateFont( font_size / 2, 0, 0, 0, FW_BOLD, FALSE,
 				FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
 				CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 				"Broadway"); 
@@ -489,14 +494,16 @@ struct OculusDisplayOGL
 		CloseWindow();
 	}
 
-	bool InitWindow( HINSTANCE hInst, LPCWSTR title, bool fullscreen )
+	bool InitWindow( HINSTANCE hInst, LPCWSTR title, bool fullscreen = true, HWND parent = 0 )
 	{
 
+		parentWindow = parent;
 		hInstance = hInst;
 		Running = true;
 
 		this->fullscreen = fullscreen;
 		if ( fullscreen ) WindowStyle = WS_POPUP;
+		else if ( parent ) WindowStyle = WS_OVERLAPPED | WS_CHILD;
 		else WindowStyle = WS_OVERLAPPEDWINDOW;
 
 		WNDCLASSW wc;
@@ -508,9 +515,27 @@ struct OculusDisplayOGL
 		wc.lpszClassName = L"ORT";
 		RegisterClassW(&wc);
 
-		// Create a window with no size.
-		// We will adjust the window size and show it in InitDevice().
-		Window = CreateWindowW(wc.lpszClassName, title, WindowStyle, 0, 0, 0, 0, 0, 0, hInstance, 0);
+		RECT win_rect;
+		if ( parentWindow ) GetWindowRect( parent, &win_rect );
+		else {
+			// Get a handle to the desktop window
+			HWND hDesktop = GetDesktopWindow();
+			// Get the size of screen to the variable desktop
+			GetWindowRect (hDesktop, &win_rect );
+		}
+		WinSizeW = win_rect.right - win_rect.left;
+		WinSizeH = win_rect.bottom - win_rect.top;
+		int x = 0;
+		int y = 0;
+		if ( !parentWindow && !fullscreen ) {
+			WinSizeW /= 2;
+			WinSizeH /= 2;
+			x = WinSizeW / 2;
+			y = WinSizeH / 2;
+		}
+
+		// Create a window.
+		Window = CreateWindowW(wc.lpszClassName, title, WindowStyle, x, y, WinSizeW, WinSizeH, parentWindow, 0, hInstance, 0);
 		if (!Window) return false;
 
 		SetWindowLongPtr(Window, 0, LONG_PTR(this));
@@ -518,6 +543,20 @@ struct OculusDisplayOGL
 		hDC = GetDC(Window);
 
 		return true;
+	}
+
+	void ResizeWindow( int width, int height ) {
+		if ( fullscreen || parentWindow ) return;
+		RECT win_rect;
+		// Get a handle to the desktop window
+		HWND hDesktop = GetDesktopWindow();
+		// Get the size of screen to the variable desktop
+		GetWindowRect (hDesktop, &win_rect );
+		WinSizeW = width;
+		WinSizeH = height;
+		int x = ( win_rect.left + win_rect.right ) / 2 - width / 2;
+		int y = ( win_rect.bottom + win_rect.top ) / 2 - height / 2 + 40;
+		SetWindowPos( Window, NULL, x, y, width, height, SWP_SHOWWINDOW );
 	}
 
 	void CloseWindow()
@@ -536,16 +575,11 @@ struct OculusDisplayOGL
 	}
 
 	// Note: currently there is no way to get GL to use the passed pLuid
-	bool InitDevice( int vpW, int vpH, const LUID* pLuid = nullptr )
+	bool InitDevice( const LUID* pLuid = nullptr )
 	{
 
-		WinSizeW = vpW;
-		WinSizeH = vpH;
-
-		RECT size = { 0, 0, WinSizeW, WinSizeH };
-		AdjustWindowRect( &size, WindowStyle, false );
 		const UINT flags = SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW;
-		if ( !SetWindowPos(Window, nullptr, 0, 0, size.right - size.left, size.bottom - size.top, flags)) return false;
+		// if ( !SetWindowPos( Window, nullptr, 0, 0, size.right - size.left, size.bottom - size.top, flags)) return false;
 
 		PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARBFunc = nullptr;
 		PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARBFunc = nullptr;

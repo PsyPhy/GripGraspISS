@@ -1,5 +1,20 @@
 #include "stdafx.h"
 
+#include <gl/gl.h>
+#include <gl/glu.h>
+
+#include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
+#include "../OpenGLObjects/OpenGLWindows.h"
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
+
 // Create an OpenGLObjects window that is embedded in a Windows::Form.
 // To use, create a panel in the form and then pass the reference to that panel to this routine.
 // This is actually a generally useful routine and should probably be included in the 

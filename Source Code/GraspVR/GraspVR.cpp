@@ -165,7 +165,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	}
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper->Initialize( oculusDisplay, mirror, fullscreen );
+	result = oculusMapper->Initialize( oculusDisplay, mirror );
 	if ( OVR_FAILURE( result ) ) {
 		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusMapper (ovrError %d).", result );
 		exit( OCULUS_ERROR );

@@ -1,5 +1,7 @@
 // TestGraspTracker.cpp : Defines the entry point for the console application.
 //
+
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,7 +31,7 @@ int main( int argc, char *argv[] )
 	// Initialize the Oculus-enabled Windows platform.
 	fAbortMessageOnCondition( !window.InitWindow( NULL, L"GraspOnOculus", false ), "PsyPhyOculus", "Failed to open window." );
 
-	mapper.Initialize( &window, true, false );
+	mapper.Initialize( &window, true );
 	trackers->Initialize();
 
 	while ( window.HandleMessages() ) {

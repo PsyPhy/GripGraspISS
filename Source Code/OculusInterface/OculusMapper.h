@@ -46,7 +46,7 @@ public:
 	~OculusMapper ()
 	{}
 
-	ovrResult Initialize ( OculusDisplayOGL *display, bool mirrorOn, bool fullscreen ) {
+	ovrResult Initialize ( OculusDisplayOGL *display, bool mirrorOn ) {
 
 		this->display = display;
 		this->mirrorOn = mirrorOn;
@@ -55,24 +55,13 @@ public:
 		if ( !OVR_SUCCESS( result) ) return result;
 		hmdDesc = ovr_GetHmdDesc(session);
 
-		// Setup Window and Graphics
-		// I have added the option of using a full screen window on the host machine.
-		// This works best with the mouse movement handling routines that I have implemented because
-		//  one does not want the user to accidently click outside the window and lose focus.
-		ovrSizei windowSize;
-		if ( fullscreen ) {
-			// We should read the screen size somehow.
-			windowSize.w = 1920;
-			windowSize.h = 1080;
-		}
-		else {
-			// Note: the mirror window can be any size, for this sample we use 1/2 the HMD resolution
-			windowSize.w = hmdDesc.Resolution.w / 2;
-			windowSize.h = hmdDesc.Resolution.h / 2;
-		}
-		if ( !display->InitDevice( windowSize.w, windowSize.h, reinterpret_cast<LUID*>(&luid) ) ) return ovrError_Initialize;
-		mirrorWidth = windowSize.w;
-		mirrorHeight = windowSize.h;
+		// Resize the mirror window to match the dimensions of the HMD.
+		// Note: this will have no effect if the window is in full screen mode or 
+		//  if it is encrusted inside another window.
+		display->ResizeWindow( hmdDesc.Resolution.w / 2, hmdDesc.Resolution.h / 2 );
+		if ( !display->InitDevice( reinterpret_cast<LUID*>(&luid) ) ) return ovrError_Initialize;
+		mirrorWidth = display->WinSizeW;
+		mirrorHeight = display->WinSizeH;
 
 		// Make eye render buffers
 		for (int eye = 0; eye < 2; ++eye) {
@@ -83,11 +72,10 @@ public:
 		}
 
 		// Create mirror texture and an FBO used to copy mirror texture to back buffer
-
 		ovrMirrorTextureDesc desc;
 		memset(&desc, 0, sizeof(desc));
-		desc.Width = windowSize.w;
-		desc.Height = windowSize.h;
+		desc.Width = mirrorWidth;
+		desc.Height =mirrorHeight;
 		desc.Format = OVR_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 		result = ovr_CreateMirrorTextureGL( session, &desc, &mirrorTexture );

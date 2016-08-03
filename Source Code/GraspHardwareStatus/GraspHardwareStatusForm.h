@@ -2,9 +2,23 @@
 
 #include <Windows.h>
 
+#include "../OculusInterface/OculusInterface.h"
+
+#include <gl/gl.h>
+#include <gl/glu.h>
+
+#include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
 #include "../OpenGLObjects/OpenGLWindows.h"
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
+
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
@@ -46,7 +60,9 @@ namespace GraspHardwareStatus {
 		OpenGLWindow *handWindow0;
 		OpenGLWindow *handWindow1;
 		OpenGLWindow *chestWindow0;
-	private: System::Windows::Forms::RichTextBox^  richTextBox1;
+	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::Panel^  oculusPanel;
 
 			 OpenGLWindow *chestWindow1;
 
@@ -96,7 +112,6 @@ namespace GraspHardwareStatus {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->chestPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->chestPanel0 = (gcnew System::Windows::Forms::Panel());
@@ -108,10 +123,13 @@ namespace GraspHardwareStatus {
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->oculusPanel = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox->SuspendLayout();
 			this->handGroupBox->SuspendLayout();
 			this->hmdGroupBox->SuspendLayout();
+			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// chestGroupBox
@@ -120,7 +138,7 @@ namespace GraspHardwareStatus {
 			this->chestGroupBox->Controls->Add(this->chestPanel0);
 			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->chestGroupBox->Location = System::Drawing::Point(12, 724);
+			this->chestGroupBox->Location = System::Drawing::Point(12, 560);
 			this->chestGroupBox->Name = L"chestGroupBox";
 			this->chestGroupBox->Size = System::Drawing::Size(558, 256);
 			this->chestGroupBox->TabIndex = 0;
@@ -147,7 +165,7 @@ namespace GraspHardwareStatus {
 			this->handGroupBox->Controls->Add(this->handPanel0);
 			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->handGroupBox->Location = System::Drawing::Point(12, 450);
+			this->handGroupBox->Location = System::Drawing::Point(12, 286);
 			this->handGroupBox->Name = L"handGroupBox";
 			this->handGroupBox->Size = System::Drawing::Size(558, 256);
 			this->handGroupBox->TabIndex = 1;
@@ -174,7 +192,7 @@ namespace GraspHardwareStatus {
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdGroupBox->Location = System::Drawing::Point(12, 176);
+			this->hmdGroupBox->Location = System::Drawing::Point(12, 12);
 			this->hmdGroupBox->Name = L"hmdGroupBox";
 			this->hmdGroupBox->Size = System::Drawing::Size(558, 256);
 			this->hmdGroupBox->TabIndex = 2;
@@ -200,7 +218,7 @@ namespace GraspHardwareStatus {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(45, 981);
+			this->label1->Location = System::Drawing::Point(45, 819);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(205, 25);
 			this->label1->TabIndex = 3;
@@ -211,26 +229,48 @@ namespace GraspHardwareStatus {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(323, 981);
+			this->label2->Location = System::Drawing::Point(323, 819);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(205, 25);
 			this->label2->TabIndex = 4;
 			this->label2->Text = L"Tracker Camera Bar 2";
 			// 
-			// richTextBox1
+			// button1
 			// 
-			this->richTextBox1->Location = System::Drawing::Point(16, 22);
-			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(553, 128);
-			this->richTextBox1->TabIndex = 5;
-			this->richTextBox1->Text = resources->GetString(L"richTextBox1.Text");
+			this->button1->Location = System::Drawing::Point(936, 467);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(141, 57);
+			this->button1->TabIndex = 5;
+			this->button1->Text = L"button1";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->Controls->Add(this->oculusPanel);
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox1->Location = System::Drawing::Point(592, 12);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(852, 423);
+			this->groupBox1->TabIndex = 6;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"VR Headset";
+			// 
+			// oculusPanel
+			// 
+			this->oculusPanel->Location = System::Drawing::Point(17, 31);
+			this->oculusPanel->Name = L"oculusPanel";
+			this->oculusPanel->Size = System::Drawing::Size(829, 375);
+			this->oculusPanel->TabIndex = 0;
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(582, 1015);
-			this->Controls->Add(this->richTextBox1);
+			this->ClientSize = System::Drawing::Size(1454, 851);
+			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->hmdGroupBox);
@@ -242,6 +282,7 @@ namespace GraspHardwareStatus {
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
+			this->groupBox1->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -258,6 +299,14 @@ namespace GraspHardwareStatus {
 				chestWindow1 = PsyPhy::CreateOpenGLWindowInForm( chestPanel1, hmdWindow0->hRC );
 
 				 }
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+
+			 HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
+			 char cmd[1024];
+			 sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --nocoda --parent=%d", parent );
+			 system( cmd );
+
+		 }
 };
 
 }

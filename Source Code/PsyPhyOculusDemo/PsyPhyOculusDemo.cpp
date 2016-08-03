@@ -10,8 +10,10 @@ Joe McIntyre
 
 // Flags to set the operating mode.
 bool useOVR = false;		// OVR style rendering.
-bool usePsyPhy = true;	// PsyPhy style rendering.
-bool useCoda = true;	// Do we have a Coda?
+bool usePsyPhy = true;		// PsyPhy style rendering.
+bool useCoda = true;		// Do we have a Coda?
+bool fullscreen = false;	// Size of mirror window on console screen.
+bool mirror = true;			// Do we mirror to the console or not?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -122,7 +124,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	fAbortMessageOnCondition( !nullPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing NullPoseTracker." );
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper.Initialize( platform, true, false );
+	result = oculusMapper.Initialize( platform, mirror );
 	if ( OVR_FAILURE ( result ) ) return result;
 
 	// Create a pose tracker that uses only the Oculus.
@@ -213,7 +215,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	while ( platform->HandleMessages() ) {
 
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-		static float Yaw( 0.0f );  
+		static float Yaw( 180.0f );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -365,8 +367,22 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 }
 
 //-------------------------------------------------------------------------------------
-int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
+int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 {
+
+	HWND parent = 0;
+	char *ptr;
+
+	if ( strstr( command_line, "--nocoda" ) ) useCoda = false;
+	if ( ptr = (char *)strstr( command_line, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parent );
+	if ( strstr( command_line, "--fullscreen" ) ) fullscreen = true;
+	if ( strstr( command_line, "--secret" ) ) mirror = false;
+
+
+	fOutputDebugString( "Parent window handle: %08x\n", parent );
+	fprintf( stderr, "Parent window handle: %08x\n", parent );
+	// fMessageBox( MB_OK, "PsyPhyOculusDemo", "Parent window handle: %08x\n", parent );
+	fflush( stderr );
 
 	// Initialize the connection to the CODA tracking system.
 	if ( useCoda ) codaTracker.Initialize();
@@ -379,7 +395,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
 
 	// Initialize the Oculus-enabled Windows platform.
-	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", false ), "PsyPhyOculus", "Failed to open window." );
+	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", fullscreen, parent ), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
 	if ( useCoda ) {
