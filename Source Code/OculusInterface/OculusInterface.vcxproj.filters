@@ -8,6 +8,7 @@
     <ClInclude Include="OculusWIN32.v0.8.h" />
     <ClInclude Include="OculusWIN32.h" />
     <ClInclude Include="OculusMapper.h" />
+    <ClInclude Include="CodaSimTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -17,5 +18,6 @@
     <ClCompile Include="OculusViewpoint.cpp" />
     <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="MousePoseTrackers.cpp" />
+    <ClCompile Include="CodaSimTracker.cpp" />
   </ItemGroup>
 </Project>

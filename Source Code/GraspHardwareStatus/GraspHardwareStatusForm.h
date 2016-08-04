@@ -289,25 +289,26 @@ namespace GraspHardwareStatus {
 		}
 #pragma endregion
 
-		private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
+	private: 
 
-				hmdWindow0 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel0 );
-				hmdWindow1 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel1, hmdWindow0->hRC );
-				handWindow0 = PsyPhy::CreateOpenGLWindowInForm( handPanel0,hmdWindow0->hRC );
-				handWindow1 = PsyPhy::CreateOpenGLWindowInForm( handPanel1, hmdWindow0->hRC );
-				chestWindow0 = PsyPhy::CreateOpenGLWindowInForm( chestPanel0, hmdWindow0->hRC );
-				chestWindow1 = PsyPhy::CreateOpenGLWindowInForm( chestPanel1, hmdWindow0->hRC );
+		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
+			hmdWindow0 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel0 );
+			hmdWindow1 = PsyPhy::CreateOpenGLWindowInForm( hmdPanel1, hmdWindow0->hRC );
+			handWindow0 = PsyPhy::CreateOpenGLWindowInForm( handPanel0,hmdWindow0->hRC );
+			handWindow1 = PsyPhy::CreateOpenGLWindowInForm( handPanel1, hmdWindow0->hRC );
+			chestWindow0 = PsyPhy::CreateOpenGLWindowInForm( chestPanel0, hmdWindow0->hRC );
+			chestWindow1 = PsyPhy::CreateOpenGLWindowInForm( chestPanel1, hmdWindow0->hRC );
+		}
 
-				 }
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 
-			 HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
-			 char cmd[1024];
-			 sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --nocoda --parent=%d", parent );
-			 system( cmd );
+			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
+			char cmd[1024];
+			sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --nocoda --parent=%d", parent );
+			system( cmd );
 
-		 }
-};
+		}
+	};
 
 }
 

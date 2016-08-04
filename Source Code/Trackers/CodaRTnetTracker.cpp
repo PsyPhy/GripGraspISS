@@ -367,7 +367,7 @@ int CodaRTnetTracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_fr
 int CodaRTnetTracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) {
 	//* Loop through and get them all.
 	for ( int frm = 0; frm < nFrames; frm++ ) {
-		frames[frm].time += recordedMarkerFrames[0][frm].time;
+		frames[frm].time = recordedMarkerFrames[0][frm].time;
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			CopyVector( frames[frm].marker[mrk].position, zeroVector );
 			int count = 0;

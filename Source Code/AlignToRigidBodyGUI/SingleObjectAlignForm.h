@@ -109,7 +109,7 @@ namespace AlignToRigidBodyGUI {
 		}
 
 		void Render ( void ) {
-			
+
 			// Update the 3D view of the alignment object.
 
 			visibilityWindow2->Activate();
@@ -145,7 +145,7 @@ namespace AlignToRigidBodyGUI {
 			TrackerPose pose;
 			MarkerFrame codaFrame;
 			CodaPoseTracker *poseTracker = new CodaPoseTracker( &codaFrame );
-				
+
 			// The name of the model file is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
 			char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 			poseTracker->ReadModelMarkerPositions( model_file );
@@ -182,14 +182,11 @@ namespace AlignToRigidBodyGUI {
 	private:
 		System::Windows::Forms::TextBox^  instructionsTextBox;
 		System::Windows::Forms::GroupBox^	vrGroupBox2;
-private: System::Windows::Forms::Panel^  visibilityPanel2;
-
+		System::Windows::Forms::Panel^  visibilityPanel2;
 		System::Windows::Forms::GroupBox^	vrGroupBox1;
-private: System::Windows::Forms::Panel^  visibilityPanel1;
-
+		System::Windows::Forms::Panel^  visibilityPanel1;
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
-
 
 	private:
 		/// <summary>
@@ -395,7 +392,6 @@ private: System::Windows::Forms::Panel^  visibilityPanel1;
 
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-
 				 // Create the OpenGLObjects that depict the marker array structure.
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
@@ -448,7 +444,6 @@ private: System::Windows::Forms::Panel^  visibilityPanel1;
 				 else {
 					 // Create the CODA tracker.
 					 coda = new CodaRTnetTracker();
-
 					 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 					 // Send a message to ground to show our progress.
 					 dex->SendSubstep( ANNUL_ALIGNMENT );
@@ -458,7 +453,6 @@ private: System::Windows::Forms::Panel^  visibilityPanel1;
 					 char *tempfile = ".nullalignment.tmp";
 					 coda->AnnulAlignment( tempfile );
 					 DeleteFile( tempfile );
-
 					 // Create and start up the CODA tracker.
 					 coda->Initialize();
 					 coda->StartAcquisition( 600.0 );
@@ -466,7 +460,6 @@ private: System::Windows::Forms::Panel^  visibilityPanel1;
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
-
 				 // Hide the tracker message.
 				 busy->Visible = false;
 				 // Re-enable the Form as being inactive.

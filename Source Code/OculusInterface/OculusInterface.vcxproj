@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CodaSimTracker.h" />
     <ClInclude Include="MousePoseTrackers.h" />
     <ClInclude Include="OculusInterface.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
@@ -102,6 +103,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CodaSimTracker.cpp" />
     <ClCompile Include="MousePoseTrackers.cpp" />
     <ClCompile Include="OculusCodaPoseTracker.cpp" />
     <ClCompile Include="OculusPoseTracker.cpp" />

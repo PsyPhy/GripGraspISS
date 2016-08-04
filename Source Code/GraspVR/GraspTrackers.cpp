@@ -39,7 +39,6 @@ void GraspTrackers::Update( void ) {
 	fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
 	fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
 	fAbortMessageOnCondition( !rollTracker->Update(), "PsyPhyOculusDemo", "Error updating mouse pose tracker." );
-
 }
 
 void GraspTrackers::Release( void ) {
@@ -49,8 +48,9 @@ void GraspTrackers::Release( void ) {
 	rollTracker->Release();
 }
 
-// GraspDexTrackers is any version of GraspVR that uses the coda. 
-// NB It does not define the hmd, hand and chest tracker. That should be done in another flavor built on this one.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GraspDexTrackers uses trackers based on the Oculus and DEX/CODA tracker.
 void GraspDexTrackers::Initialize( void ) {
 
 	// Initialize the connection to the CODA tracking system.
@@ -184,6 +184,7 @@ void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
 	fclose( fp );
 	fOutputDebugString( "File %s closed.\n", filename );
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
