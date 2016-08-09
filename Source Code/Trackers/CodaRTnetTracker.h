@@ -166,37 +166,39 @@ private:
 	}
 
 public:
-	void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
-	int  Update( void );
-	void Quit( void );
+	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual int  Update( void );
+	virtual void Quit( void );
 
-	void StartAcquisition( float max_duration );
-	void StopAcquisition( void );
-	void AbortAcquisition( void );
-	bool CheckAcquisitionOverrun( void );
+	virtual void StartAcquisition( float max_duration );
+	virtual void StopAcquisition( void );
+	virtual void AbortAcquisition( void );
+	virtual bool CheckAcquisitionOverrun( void );
 
-	bool GetAcquisitionState( void );
-	int  GetNumberOfCodas( void );
+	virtual bool GetAcquisitionState( void );
+	virtual int  GetNumberOfCodas( void );
 
-	int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
-	int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
-	bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
+	virtual int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
+	virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
+	virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 
 	// Need to add the following.
-	int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
-	void	AnnulAlignment( const char *filename = nullptr );
-	void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
-	void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
+	virtual int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
+	virtual void	AnnulAlignment( const char *filename = nullptr );
+	virtual void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	virtual void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
 	// void	SetAlignment( Pose pose[MAX_UNITS], const char *filename = nullptr );
 	// This is a little different from the above. If we have the pose of an object in the intrinsic frame,
 	// the transformation has to be inverted before sending it to the CODA system.
-	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
+	virtual void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
 
-	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
-	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
+	virtual void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) {
+		fMessageBox( MB_OK, "CodaRTnetTracker", "GetUnitPlacement() not yet implemented." );
+	}
+	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
-	void	WriteMarkerFile( char *filename );
-	void	Shutdown( void );
+	virtual void	WriteMarkerFile( char *filename );
+	virtual void	Shutdown( void );
 
 };
 

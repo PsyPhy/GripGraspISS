@@ -11,14 +11,14 @@
 // Disable warnings about "unsafe" functions.
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "..\Trackers\Trackers.h"
 #include "..\Useful\Timers.h"
+#include "..\Trackers\CodaRTnetTracker.h"
 
 namespace PsyPhy {
 
 #define MARKER_ARRAYS	3
 
-class CodaSimTracker : public Tracker {
+class CodaSimTracker : public CodaRTnetTracker {
 
 private:
 
@@ -75,7 +75,9 @@ public:
 	// the transformation has to be inverted before sending it to the CODA system.
 	void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
 
-	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) ;
+	void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) {
+		fMessageBox( MB_OK, "CodaSimTracker", "GetUnitPlacement() not yet implemented." );
+	}
 	void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
 	void	WriteMarkerFile( char *filename );

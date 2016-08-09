@@ -68,6 +68,8 @@ int CodaSimTracker::Update( void ) {
 	return( 0 );
 }
 
+void CodaSimTracker::Shutdown( void ) {}
+
 void CodaSimTracker::Quit( void ) {}
 
 /*********************************************************************************/
