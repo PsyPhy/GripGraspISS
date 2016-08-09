@@ -111,6 +111,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Library Include="..\Lib\codaRTNetProtocol.lib">
+      <FileType>Document</FileType>
+    </Library>
     <Library Include="..\Lib\GLAUX.LIB">
       <FileType>Document</FileType>
     </Library>
@@ -125,8 +128,17 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OculusInterface\OculusInterface.vcxproj">
+      <Project>{44ec28d5-22d2-414a-9f40-1bf29ef832d9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
       <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Trackers\Trackers.vcxproj">
+      <Project>{964bbd65-c198-4a02-8255-349803bdb59d}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>

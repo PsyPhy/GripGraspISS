@@ -710,7 +710,7 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 }
 
 #define STRUCTURE_BALL_RADIUS 7.0
-#define STRUCTURE_BAR_RADIUS 10.0
+#define STRUCTURE_BAR_RADIUS 15.0
 
 void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
@@ -768,59 +768,95 @@ MarkerStructureGLObject::MarkerStructureGLObject( char *model_file ) {
 MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_file ) {
 
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
-	structure->AddBar( 1, 2 );
-	structure->AddBar( 5, 6 );
-	structure->AddBar( 0, 3 );
-	structure->AddBar( 4, 7 );
 
-	// The real structure has right-angle elbows but I am using a slanted piece to connect the bars.
+	Slab *bar;
+	Assembly *frame = new Assembly();
 
-	Slab *slab;
-	Vector3 center, delta, corner;
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 100.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition(   0.0, 0.0, 0.0 );
+	frame->AddComponent( bar );
+	bar = new Slab( 210.0, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition(   0.0, 0.0, 0.0 );
+	frame->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 160.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( 110.0, 0.0, 40.0 );
+	frame->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 160.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( -110.0, 0.0, 40.0 );
+	frame->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS, 40 );
+	bar->SetPosition( -110.0, 0.0, 20.0 );
+	frame->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS, 40 );
+	bar->SetPosition( 110.0, 0.0, 20.0 );
+	frame->AddComponent( bar );
 
-	AddVectors( center, structure->modelMarker[0].position, structure->modelMarker[3].position );
-	ScaleVector( center, center, 0.5 );
-	SubtractVectors( delta, center, structure->modelMarker[1].position );
-	AddVectors( corner, center, structure->modelMarker[1].position );
-	ScaleVector( corner, corner, 0.5 );
-	slab = new Slab( VectorNorm( delta ) * 1.1, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
-	slab->SetPosition( corner );
-	slab->SetOrientation(  0.0, 0.0, ToDegrees( atan2( delta[Z], delta[X] ) ) );
-	slab->SetColor( 1.0, 1.0, 0.0, 0.15 );
-	structure->AddComponent( slab );
 
-	AddVectors( center, structure->modelMarker[4].position, structure->modelMarker[7].position );
-	ScaleVector( center, center, 0.5 );
-	SubtractVectors( delta, center, structure->modelMarker[2].position );
-	AddVectors( corner, center, structure->modelMarker[2].position );
-	ScaleVector( corner, corner, 0.5 );
-	slab = new Slab( VectorNorm( delta ) * 1.1, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
-	slab->SetPosition( corner );
-	slab->SetOrientation(  0.0, 0.0, ToDegrees( atan2( delta[Z], delta[X] ) ) );
-	slab->SetColor( 1.0, 1.0, 0.0, 0.15 );
-	structure->AddComponent( slab );
+	frame->SetPosition( 0.0, 0.0, -10.0 );
 
+	structure->AddComponent( frame );
+
+
+	structure->SetColor( Translucid( YELLOW ) );
+//	structure->SetOrientation( 0.0, 0.0, 90.0 );
 	return( structure );
 }
 
 MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model_file ) {
 
+	Slab *bar;
+	Assembly *frame, *square, *diamond;
+
 	MarkerStructureGLObject *structure = new MarkerStructureGLObject( model_file );
-	structure->AddBar( 0, 1 );
-	structure->AddBar( 1, 2 );
-	structure->AddBar( 2, 3 );
-	structure->AddBar( 3, 0 );
-	structure->AddBar( 4, 5 );
-	structure->AddBar( 5, 6 );
-	structure->AddBar( 6, 7 );
-	structure->AddBar( 7, 4 );	
+
+	frame = new Assembly();
+
+	square = new Assembly();
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 160.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition(   70.0, 0.0, 0.0 );
+	square->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 160.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( - 70.0, 0.0, 0.0 );
+	square->AddComponent( bar );
+	bar = new Slab( 160.0, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( 0.0, 70.0, 0.0 );
+	square->AddComponent( bar );
+	bar = new Slab( 160.0, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( 0.0, -70.0, 0.0 );
+	square->AddComponent( bar );
+
+	frame->AddComponent( square );
+
+	diamond = new Assembly();
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 80.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition(   35.0, 0.0, 0.0 );
+	diamond->AddComponent( bar );
+	bar = new Slab( STRUCTURE_BAR_RADIUS, 80.0, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( - 35.0, 0.0, 0.0 );
+	diamond->AddComponent( bar );
+	bar = new Slab( 80.0, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( 0.0, 35.0, 0.0 );
+	diamond->AddComponent( bar );
+	bar = new Slab( 80.0, STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS );
+	bar->SetPosition( 0.0, -35.0, 0.0 );
+	diamond->AddComponent( bar );
+	diamond->SetOrientation( 45.0, 0.0, 0.0 );
+	diamond->SetPosition( 0.0, 0.0, -100.0 );
+
+	frame->AddComponent( diamond );
 
 	static double vertices[][2] = {{-100, -40}, {-100, 40}, {0, 70}, {100, 50}, {100, -50}, {0, -70}, {-100, -40}};
 	Extrusion *plate = new Extrusion( 10.0, vertices, 7 );
 	plate->SetOrientation( 0.0, 0.0, 90.0 );
 	plate->SetPosition( -10.0, 0.0, 0.0 );
-	
-	structure->AddComponent( plate );
+	frame->AddComponent( plate );
+
+	square->SetColor( Translucid( YELLOW ) );
+	diamond->SetColor( Translucid( RED ) );
+	plate->SetColor( Translucid( ORANGE ) );
+	frame->SetOffset( 0.0, 0.0, 70.0 );
+
+	structure->AddComponent( frame );
 	return( structure );
 }
 
@@ -837,7 +873,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][X] = 130.0;
 	vertices[3][Y] = -90.0;
 	Extrusion *plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
-	plate->SetColor( 1.0, 1.0, 0.0, 0.35 );
+	plate->SetColor( Translucid( YELLOW ) );
 	plate->SetPosition( 0.0, 0.0, 60.0 );
 	structure->AddComponent( plate );
 
@@ -851,7 +887,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][Y] = 0.0;
 	plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
 	plate->SetPosition( 0.0, 0.0,  0.0 );
-	plate->SetColor( 1.0, 0., 0.0, 0.35 );
+	plate->SetColor( Translucid( ORANGE ) );
 	structure->AddComponent( plate );
 
 	return( structure );
