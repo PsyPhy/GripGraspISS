@@ -1,7 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 101; SCRIPT; Preparation; V-VprepareSeated.tsk
 102; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-103; COMMAND; Practice Trials; Executables\Grasp --VtoV --sequence=Sequences\DemoGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+103; COMMAND; Practice Trials; Executables\Grasp.bat --VtoV --sequence=Sequences\DemoGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 104; COMMAND; Experiment Trials Block 1; Executables\Grasp --VtoV --sequence=Sequences\HeadStraightGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 105; COMMAND; Experiment Trials Block 2; Executables\Grasp --VtoV --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 199; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
