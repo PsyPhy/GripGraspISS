@@ -37,7 +37,7 @@ namespace PsyPhy {
 
 class CodaRTnetTracker : public Tracker {
 
-private:
+protected:
 
 	// Hardwire the server IP address and port.
 	char serverAddress[64];
@@ -144,7 +144,7 @@ public:
 		for ( int unit = 0; unit < MAX_UNITS; unit++ ) strncpy( codaSerialNumber[unit], "0000", sizeof( codaSerialNumber[unit] ) );
 	}
 
-private: 
+protected: 
 
 	static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 		CodaRTnetTracker *instance = (CodaRTnetTracker *) which_instance;
@@ -199,6 +199,23 @@ public:
 
 	virtual void	WriteMarkerFile( char *filename );
 	virtual void	Shutdown( void );
+
+};
+
+///
+/// Another version of the CodaRTnetTracker that uses unbuffered acquisition.
+///
+class CodaRTnetContinuousTracker : public CodaRTnetTracker {
+
+public:
+		
+	int nFramesPerUnit[MAX_UNITS];
+
+	CodaRTnetContinuousTracker( void ) {}
+	virtual void StartAcquisition( void );
+	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
+	virtual void StopAcquisition( void );
+	virtual int  Update( void );
 
 };
 

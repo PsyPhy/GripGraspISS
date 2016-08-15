@@ -18,7 +18,7 @@
 #include "../Trackers/CodaRTnetTracker.h"
 
 // A device that records 3D marker positions.
-PsyPhy::CodaRTnetTracker codaTracker;
+PsyPhy::CodaRTnetContinuousTracker codaTracker;
 
 using namespace PsyPhy;
 
@@ -38,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while ( _kbhit() == 0 ) {
 		for ( int unit = 0; unit < 2; unit++ ) {
 			codaTracker.GetCurrentMarkerFrameUnit( localFrame[unit], unit );
-			fprintf( stderr, "U%d: ", unit );
+			fprintf( stderr, "U%d: %6.3f ", unit, localFrame[unit].time );
 			for ( int mrk = 0; mrk < 24; mrk++ ) {
 				if ( localFrame[unit].marker[mrk].visibility ) fprintf( stderr, "O" );
 				else fprintf( stderr, "." );

@@ -910,3 +910,116 @@ int CodaRTnetTracker::print_alignment_status( const DWORD* marker_id_array,  con
 
 
 
+/*********************************************************************************/
+
+void CodaRTnetContinuousTracker::StartAcquisition( void ) {
+	
+	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
+	overrun = false;
+	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
+	OutputDebugString( "cl.startAcqContinuous()\n" );
+	cl.startAcqContinuous();
+	
+}
+
+void CodaRTnetContinuousTracker::StopAcquisition( void ) {
+	// Attempt to halt an ongoing aquisition. 
+	// Does not care if it was actually acquiring or not.
+	// Does not retrieve the data.
+	OutputDebugString( "Aborting acquisition ..." );
+	cl.stopAcq();
+	OutputDebugString( "OK.\n" );
+}
+
+int CodaRTnetContinuousTracker::Update( void ) {
+	
+	int mrk;
+	
+	int nChecksumErrors = 0;
+	int nTimeouts = 0;
+	int nUnexpectedPackets = 0;
+	int nFailedFrames = 0;
+	int nSuccessfullPackets = 0;
+
+	bool status = false;
+
+	// Time out means there are no new packets available.
+	while ( stream.receivePacket(packet, 100) != CODANET_STREAMTIMEOUT ) {
+	
+		// Check if the packet is corrupted.
+		if ( !packet.verifyCheckSum() ) {
+			nChecksumErrors++;
+		}
+
+		// Check if it is a 3D marker packet. It could conceivably  be a packet
+		// from the ADC device, although we don't plan to use the CODA ADC at the moment.
+		else if ( !decode3D.decode( packet ) ) {
+			nUnexpectedPackets++;
+		}
+
+		// If we get this far, it is a valid marker packet.
+		else {
+			// Count the total number of valid packets..
+			nSuccessfullPackets++;
+			// find number of markers included in the packet.
+			int n_markers = decode3D.getNumMarkers();
+
+			// Single shots can return 56 marker positions, even if we are using
+			// 200 Hz / 28 markers for continuous acquisition. Stay within bounds.
+			if ( n_markers > MAX_MARKERS ) {
+				n_markers = MAX_MARKERS;
+			}
+			
+			// The 'page' number is used to say which CODA unit the packet belongs to.
+			int   unit = decode3D.getPage();
+			if ( unit >= nUnits ) {
+				// I don't believe that we should ever get here, but who knows?
+				MessageBox( NULL, "Which unit?!?!", "Dexterous", MB_OK );
+				exit( RTNET_RETRIEVEERROR );
+			}
+			
+			// Compute the time from the tick counter in the packet and the tick duration.
+			// Actually, I am not sure if the tick is defined on a single shot acquistion.
+			int index = nFramesPerUnit[unit];
+			MarkerFrame *frame = &recordedMarkerFrames[unit][index];
+			frame->time = decode3D.getTick() * cl.getDeviceTickSeconds( DEVICEID_CX1 );
+
+			// Get the marker data from the CODA packet.
+			for ( mrk = 0; mrk < n_markers; mrk++ ) {
+				float *pos = decode3D.getPosition( mrk );
+				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] = pos[i];
+				frame->marker[mrk].visibility = ( decode3D.getValid( mrk ) != 0 );
+			}
+
+			// If the packet contains fewer markers than the nominal number for
+			//  the apparatus, set the other markers to be out of sight..
+			for ( mrk = mrk; mrk < nMarkers; mrk++ ) {
+				float *pos = decode3D.getPosition( mrk );
+				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] =INVISIBLE;
+				frame->marker[mrk].visibility = false;
+			}
+			if ( nFramesPerUnit[unit] < MAX_FRAMES - 1 ) nFramesPerUnit[unit]++;
+			
+			// Signal that we got the data that we were seeking.
+			status = true;
+		}
+	}
+	nFrames = nFramesPerUnit[0];
+	for ( int unit = 1; unit < nUnits; unit++ ) {
+		if ( nFramesPerUnit[unit] < nFrames ) nFrames =  nFramesPerUnit[unit];
+	}
+
+	return( status );
+	
+}
+
+bool CodaRTnetContinuousTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
+	// Make sure that any packets that were sent were read.
+	Update();
+	// Copy the most recent packet for the unit in question.
+	if ( nFramesPerUnit[selected_unit] <= 0 ) return( false );
+	else {
+		CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFramesPerUnit[selected_unit] - 1] );
+		return true;
+	}
+}
