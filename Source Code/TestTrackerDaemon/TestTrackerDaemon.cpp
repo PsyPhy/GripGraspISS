@@ -78,8 +78,17 @@ int main( int argc, char *argv[] )
 			printf("Data: %8d %8d\n" , count++, record.count );
 		}
  		if ( _kbhit() ) {
-			_getch();
-			break;
+			int key = _getch();
+			if ( key == 27 ) break;
+
+			char reset[8] = "RESET";
+			if ( sendto(sock, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&si_other, sizeof(si_other)) < 0)
+			{
+				int error_value = WSAGetLastError();
+				closesocket(sock);
+				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+			}
+			fprintf( stderr, "message sent successfully\n" );
 		}
 
 		Sleep( 1000 );

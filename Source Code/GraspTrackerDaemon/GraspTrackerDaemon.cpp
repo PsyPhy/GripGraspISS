@@ -25,6 +25,7 @@ CodaRTnetContinuousTracker codaTracker;
 // A structured data buffer with fields for all of the tracker data.
 GraspTrackerRecord record;
 int record_length = sizeof( record );
+GraspTrackerRecord echo;
 
 
 int main( int argc, char *argv[] )
@@ -70,64 +71,97 @@ int main( int argc, char *argv[] )
 	Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT );
 	Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 
-	record.count = 0;
-	while(1)
+	struct sockaddr_in Receiver_addr;
+	Receiver_addr.sin_family = AF_INET;
+	Receiver_addr.sin_port = htons( TRACKER_DAEMON_PORT );
+	Receiver_addr.sin_addr.s_addr = INADDR_ANY;
+	enabled = TRUE;
+
+	struct sockaddr_in si_other;
+	int len_si_other = sizeof( si_other );
+
+	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, (char*)&enabled, sizeof(BOOL)) < 0 ) 
 	{
-		if ( use_coda ) {
-			record.nUnits =  codaTracker.nUnits;
-			for ( int unit = 0; unit < record.nUnits; unit++ ) {
-				codaTracker.GetCurrentMarkerFrameUnit( record.frame[unit], unit );
-			}
-		}
-		else {
-			record.nUnits = 2;
-			record.count++;
-			for ( int unit = 0; unit < record.nUnits; unit++ ) {
-				record.frame[unit].time = (double) record.count / 200.0;
-				for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-					if ( ( mrk / 8 ) == unit ) record.frame[unit].marker[mrk].visibility = true;
-					else record.frame[unit].marker[mrk].visibility = false;
-				}
-			}
-		}
-		for ( int unit = 0; unit < record.nUnits; unit++ ) {
-			fprintf( stderr, "U%d: %6.3f ", unit, record.frame[unit].time );
-			for ( int mrk = 0; mrk < 24; mrk++ ) {
-				if ( record.frame[unit].marker[mrk].visibility ) fprintf( stderr, "O" );
-				else fprintf( stderr, "." );
-				if ( ((mrk+1) % 8) == 0 ) fprintf( stderr, "   " );
-			}
-			fprintf( stderr, "  " );
-		}
-
-		if ( sendto(sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
-		{
-			int error_value = WSAGetLastError();
-			closesocket(sock);
-			fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-		}
-
-		fprintf( stderr, "message sent successfully\n" );
-
-		record.count++;
-		Sleep( 1 );
-
-		if ( _kbhit() ) break;
-
+		closesocket(sock);
+		fAbortMessage( "TestTrackerDaemon", "Error setting socket options." );		
 	}
 
-	// Clear the keyboard hit.
-	_getch();
-	// Close the socket and clean up.
-	closesocket(sock);
-	WSACleanup();
-	// Stop CODA acquisitions.
-	if ( use_coda ) codaTracker.AbortAcquisition();
+	if ( bind(sock, (sockaddr*)&Receiver_addr, sizeof(Receiver_addr)) < 0)
+	{
+		int error_value = WSAGetLastError();
+		closesocket(sock);
+		fAbortMessage( "TestTrackerDaemon", "Error binding socket (%d).", error_value );		
+	}
+	unsigned long noBlock = 1;
+	ioctlsocket( sock, FIONBIO, &noBlock );
 
-	fprintf( stderr, "\nGraspTrackerDaemon terminated.\n" );
-	if ( confirm ) {
-		fprintf( stderr, "Press <Return> to close window.\n" );
-		_getch();
+	while ( 1 ) {
+
+		record.count = 0;
+		while(1)
+		{
+			if ( use_coda ) {
+				record.nUnits =  codaTracker.nUnits;
+				for ( int unit = 0; unit < record.nUnits; unit++ ) {
+					codaTracker.GetCurrentMarkerFrameUnit( record.frame[unit], unit );
+				}
+			}
+			else {
+				record.nUnits = 2;
+				record.count++;
+				for ( int unit = 0; unit < record.nUnits; unit++ ) {
+					record.frame[unit].time = (double) record.count / 200.0;
+					for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+						if ( ( mrk / 8 ) == unit ) record.frame[unit].marker[mrk].visibility = true;
+						else record.frame[unit].marker[mrk].visibility = false;
+					}
+				}
+			}
+			for ( int unit = 0; unit < record.nUnits; unit++ ) {
+				fprintf( stderr, "U%d: %6.3f ", unit, record.frame[unit].time );
+				for ( int mrk = 0; mrk < 24; mrk++ ) {
+					if ( record.frame[unit].marker[mrk].visibility ) fprintf( stderr, "O" );
+					else fprintf( stderr, "." );
+					if ( ((mrk+1) % 8) == 0 ) fprintf( stderr, "   " );
+				}
+				fprintf( stderr, "  " );
+			}
+
+			if ( sendto(sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
+			{
+				int error_value = WSAGetLastError();
+				closesocket(sock);
+				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+			}
+			fprintf( stderr, "message sent successfully\n" );
+			int recv_len = recvfrom( sock, (char *) &echo, sizeof( echo ), 0, (struct sockaddr *) &si_other, &len_si_other );
+			if ( recv_len != sizeof( record ) ) break;
+
+			record.count++;
+			Sleep( 1 );
+
+			if ( _kbhit() ) {
+				// Clear the keyboard hit.
+				_getch();
+				// Close the socket and clean up.
+				closesocket(sock);
+				WSACleanup();
+				fprintf( stderr, "\nGraspTrackerDaemon terminated.\n" );
+				if ( confirm ) {
+					fprintf( stderr, "Press <Return> to close window.\n" );
+					_getch();
+				}
+				exit( 0 );
+			}
+
+		}
+
+		// Stop CODA acquisitions.
+		if ( use_coda ) {
+			codaTracker.AbortAcquisition();
+			codaTracker.Quit();
+		}
+
 	}
 
 	return 0;
