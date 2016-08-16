@@ -817,7 +817,7 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			system( "Executables\\AlignToRigidBodyGUI.exe --body=Bdy\\Chest.bdy" );
+			system( "Executables\\GraspHardwareStatus.exe" );
 		}
 
 	private:
