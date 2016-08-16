@@ -6,6 +6,7 @@
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
 
@@ -63,7 +64,7 @@ namespace AlignToRigidBodyGUI {
 		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 
-		PsyPhy::CodaRTnetTracker				*coda;
+		PsyPhy::CodaRTnetDaemonTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
 
 		String^ modelFile;
@@ -119,7 +120,7 @@ namespace AlignToRigidBodyGUI {
 			visibilityWindow2->Swap();
 
 			visibilityWindow1->Activate();
-			visibilityWindow2->Clear( 0.10, 0.10, 0.30 );
+			visibilityWindow1->Clear( 0.10, 0.10, 0.30 );
 			objectViewpoint->Apply( visibilityWindow1, CYCLOPS );
 			visibilityObject1->Draw();
 			visibilityWindow1->Swap();
@@ -153,12 +154,14 @@ namespace AlignToRigidBodyGUI {
 
 			coda->GetCurrentMarkerFrameUnit( codaFrame, 0 );
 			visibilityObject1->ShowVisibility( codaFrame );
+			alignmentObject1->ShowVisibility( codaFrame );
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject1->SetPose( pose.pose );
 			}
 			coda->GetCurrentMarkerFrameUnit( codaFrame, 1 );
 			visibilityObject2->ShowVisibility( codaFrame );
+			alignmentObject2->ShowVisibility( codaFrame );
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject2->SetPose( pose.pose );
@@ -443,7 +446,7 @@ namespace AlignToRigidBodyGUI {
 				 if ( noCoda ) Sleep( 2000 );
 				 else {
 					 // Create the CODA tracker.
-					 coda = new CodaRTnetTracker();
+					 coda = new CodaRTnetDaemonTracker();
 					 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 					 // Send a message to ground to show our progress.
 					 dex->SendSubstep( ANNUL_ALIGNMENT );
@@ -518,7 +521,7 @@ namespace AlignToRigidBodyGUI {
 					 // Stop the ongoing acquisition and discard the recorded data.
 					 coda->AbortAcquisition();	
 					 // Unfortunately, we have to shutdown and restart to do a new acquisition.
-					 coda->Quit();
+					 coda->Shutdown();
 				 }
 
 				 // Remove instruction.
@@ -557,11 +560,11 @@ namespace AlignToRigidBodyGUI {
 				 dex->SendSubstep( ACQUIRE_INTRINSIC );
 
 				 // Get the pre-alignment transformation and make sure that it is null.
-				 Vector3 current_offset[MAX_UNITS];
-				 Matrix3x3 current_rotation[MAX_UNITS];
-				 coda->GetAlignment( current_offset, current_rotation );
-				 // If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
-				 fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
+				 //Vector3 current_offset[MAX_UNITS];
+				 //Matrix3x3 current_rotation[MAX_UNITS];
+				 //coda->GetAlignment( current_offset, current_rotation );
+				 //// If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
+				 //fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
@@ -585,6 +588,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // We have to shut down in order to install a new alignment transformation and to allow for another acquisition.
 				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
+				 coda->Shutdown();
 				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
@@ -629,11 +633,12 @@ namespace AlignToRigidBodyGUI {
 				 Refresh();
 				 Application::DoEvents();
 				 coda->Shutdown();
+				 coda->Quit();
 				 coda->Initialize();
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_ALIGNED );
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
-				 coda->StartAcquisition( 2.0 );
+				 coda->StartAcquisition( 5.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish. 
 				 while ( coda->GetAcquisitionState() ) {

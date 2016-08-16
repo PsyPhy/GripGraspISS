@@ -299,3 +299,5 @@ GraspGUI.dxl
 Source Code/TestDexServices/TestDexServices.dxl
 TestGrasp.dxl
 *.seq
+*.dxl
+DeleteMe.alignment.dat
