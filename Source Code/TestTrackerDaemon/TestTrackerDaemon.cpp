@@ -31,7 +31,7 @@ int main( int argc, char *argv[] )
 	Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT );
 	Recv_addr.sin_addr.s_addr = INADDR_ANY;
 	int slen = sizeof( si_other );
-	BOOL enabled = TRUE;
+	bool enabled = TRUE;
 	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, (char*)&enabled, sizeof(BOOL)) < 0 ) 
 	{
 		closesocket(sock);
@@ -79,7 +79,7 @@ int main( int argc, char *argv[] )
 		}
  		if ( _kbhit() ) {
 			_getch();
-			char *reset = "RESET";
+			break;
 		}
 
 		Sleep( 1000 );
