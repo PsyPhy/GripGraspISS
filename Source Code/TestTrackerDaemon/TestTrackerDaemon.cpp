@@ -35,14 +35,14 @@ int main( int argc, char *argv[] )
 	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, (char*)&enabled, sizeof(BOOL)) < 0 ) 
 	{
 		closesocket(sock);
-		fAbortMessage( "GraspTrackerDaemon", "Error setting broadcast options." );		
+		fAbortMessage( "TestTrackerDaemon", "Error setting socket options." );		
 	}
 
 	if ( bind(sock, (sockaddr*)&Recv_addr, sizeof(Recv_addr)) < 0)
 	{
 		int error_value = WSAGetLastError();
 		closesocket(sock);
-		fAbortMessage( "GraspTrackerDaemon", "Error connecting socket (%d).", error_value );		
+		fAbortMessage( "TestTrackerDaemon", "Error binding socket (%d).", error_value );		
 	}
 	unsigned long noBlock = 1;
 	ioctlsocket( sock, FIONBIO, &noBlock );
@@ -77,13 +77,15 @@ int main( int argc, char *argv[] )
 			printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
 			printf("Data: %8d %8d\n" , count++, record.count );
 		}
- 		if ( _kbhit() ) break;
+ 		if ( _kbhit() ) {
+			_getch();
+			char *reset = "RESET";
+		}
 
 		Sleep( 1000 );
 
 	}
 
-	_getch();
 	closesocket(sock);
 
 	WSACleanup();
