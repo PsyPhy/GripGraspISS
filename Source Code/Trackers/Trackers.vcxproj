@@ -74,6 +74,7 @@
   <ItemGroup>
     <ClInclude Include="CascadePoseTracker.h" />
     <ClInclude Include="CodaPoseTracker.h" />
+    <ClInclude Include="CodaRTnetDaemonTracker.h" />
     <ClInclude Include="CodaRTnetTracker.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="PoseTrackerFilter.h" />
@@ -84,6 +85,7 @@
   <ItemGroup>
     <ClCompile Include="CascadePoseTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
+    <ClCompile Include="CodaRTnetDaemonTracker.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
     <ClCompile Include="PoseTrackerFilter.cpp" />
     <ClCompile Include="PoseTrackers.cpp" />

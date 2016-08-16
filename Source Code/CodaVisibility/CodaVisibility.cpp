@@ -7,6 +7,7 @@
 #include <math.h>
 #include <time.h>
 #include <conio.h>
+#include <WinSock2.h>
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -16,15 +17,19 @@
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 
 // A device that records 3D marker positions.
-PsyPhy::CodaRTnetContinuousTracker codaTracker;
+PsyPhy::CodaRTnetDaemonTracker codaTracker;
 
 using namespace PsyPhy;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	
+	// Make sure that the GraspTrackerDaemon has time to bind its socket.
+	Sleep( 500 );
+
 	MarkerFrame localFrame[2];
 	int which_marker = 0;
 
@@ -32,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	codaTracker.Initialize();
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Starting acquisition ... " );
-	codaTracker.StartAcquisition( 600.0 );
+	codaTracker.StartAcquisition();
 	fprintf( stderr, "OK.\n\n" );
 
 	while ( _kbhit() == 0 ) {

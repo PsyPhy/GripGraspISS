@@ -55,5 +55,4 @@ if ERRORLEVEL == 1 GOTO IGNORE
 :IGNORE
 Executables\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %2.*"  "exit" 
 
-pause
 exit 0

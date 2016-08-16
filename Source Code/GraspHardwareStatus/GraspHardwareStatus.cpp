@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "GraspHardwareStatusForm.h"
 #include "../OculusInterface/CodaSimTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 
 using namespace GraspHardwareStatus;
 using namespace PsyPhy;
@@ -14,7 +15,9 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	CodaRTnetTracker *tracker = new CodaSimTracker();
+	Sleep( 1000 );
+
+	CodaRTnetDaemonTracker *tracker = new CodaRTnetDaemonTracker();
 	tracker->Initialize();
 
 	MarkerFrame codaFrame;
@@ -35,7 +38,7 @@ int main(array<System::String ^> ^args)
 	dex->Initialize();
 
 	// Create the main window and run it
-	Application::Run(gcnew Form1( &codaFrame, hmdTracker, handTracker, chestTracker ));
+	Application::Run(gcnew Form1( tracker, hmdTracker, handTracker, chestTracker ));
 
 	tracker->Quit();
 

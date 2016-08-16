@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClCompile Include="GraspTrackerDaemon.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GraspTrackerDaemon.h" />
+  </ItemGroup>
 </Project>

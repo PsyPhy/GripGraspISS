@@ -1023,3 +1023,4 @@ bool CodaRTnetContinuousTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, 
 		return true;
 	}
 }
+

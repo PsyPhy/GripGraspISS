@@ -20,6 +20,7 @@
 #include "../OpenGLObjects/OpenGLTextures.h"
 
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
 
@@ -70,7 +71,7 @@ namespace GraspHardwareStatus {
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
 
-		MarkerFrame *markerFrame;
+		CodaRTnetDaemonTracker *coda;
 		CodaPoseTracker *hmdTracker;
 		CodaPoseTracker *handTracker;
 		CodaPoseTracker *chestTracker;
@@ -80,9 +81,12 @@ namespace GraspHardwareStatus {
 		GraspGLObjects *objects;
 		// A visual representation of each marker structure.
 		// These ones are always at the origin in the null orientation.
-		Assembly *hmdStationary;
-		Assembly *handStationary;
-		Assembly *chestStationary;
+		MarkerStructureGLObject *hmdStationary0;
+		MarkerStructureGLObject *handStationary0;
+		MarkerStructureGLObject *chestStationary0;
+		MarkerStructureGLObject *hmdStationary1;
+		MarkerStructureGLObject *handStationary1;
+		MarkerStructureGLObject *chestStationary1;
 		// Another set of objects that will move around according to the tracker.
 		Assembly *hmdMobile;
 		Assembly *handMobile;
@@ -92,9 +96,9 @@ namespace GraspHardwareStatus {
 		Yoke *mobiles;
 
 	public:
-		Form1( MarkerFrame *frame, CodaPoseTracker *hmd, CodaPoseTracker *hand, CodaPoseTracker *chest )
+		Form1( CodaRTnetDaemonTracker *tracker, CodaPoseTracker *hmd, CodaPoseTracker *hand, CodaPoseTracker *chest )
 		{
-			markerFrame = frame;
+			coda = tracker;
 			hmdTracker = hmd;
 			handTracker = hand;
 			chestTracker = chest;
@@ -362,9 +366,13 @@ namespace GraspHardwareStatus {
 			this->oculusPanel->Size = System::Drawing::Size(829, 375);
 			this->oculusPanel->TabIndex = 0;			
 				
-			hmdStationary = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
-			handStationary = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
-			chestStationary = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
+			hmdStationary0 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
+			handStationary0 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
+			chestStationary0 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
+
+			hmdStationary1 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
+			handStationary1 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
+			chestStationary1 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
 
 			// 
 			// label3
@@ -476,17 +484,16 @@ namespace GraspHardwareStatus {
 		
 			// Show the visibility of each marker superimposed on it's marker 
 			// structure, each structure in a separate window for each CODA unit.
-			RenderWindow( hmdWindow0, objectViewpoint, hmdStationary );
-			RenderWindow( hmdWindow1, objectViewpoint, hmdStationary );
-			RenderWindow( handWindow0, objectViewpoint, handStationary );
-			RenderWindow( handWindow1, objectViewpoint, handStationary );
-			RenderWindow( chestWindow0, objectViewpoint, chestStationary );
-			RenderWindow( chestWindow1, objectViewpoint, chestStationary );
+			RenderWindow( hmdWindow0, objectViewpoint, hmdStationary0 );
+			RenderWindow( hmdWindow1, objectViewpoint, hmdStationary1 );
+			RenderWindow( handWindow0, objectViewpoint, handStationary0 );
+			RenderWindow( handWindow1, objectViewpoint, handStationary1 );
+			RenderWindow( chestWindow0, objectViewpoint, chestStationary0 );
+			RenderWindow( chestWindow1, objectViewpoint, chestStationary1 );
 			// Show the position and orientation of each marker structure
 			// from the perspective of each CODA unit.
 			RenderWindow( vrWindow0, codaViewpoint0, mobiles );
 			RenderWindow( vrWindow1, codaViewpoint1, mobiles );
-		
 		
 		}
 
@@ -495,15 +502,19 @@ namespace GraspHardwareStatus {
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 
 			TrackerPose pose;
-
-			//coda->GetCurrentMarkerFrameUnit( codaFrame, 0 );
-			//visibilityObject1->ShowVisibility( codaFrame );
+			MarkerFrame markerFrame;
+			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
+			hmdStationary0->ShowVisibility( markerFrame );
+			handStationary0->ShowVisibility( markerFrame );
+			chestStationary0->ShowVisibility( markerFrame );
 			//poseTracker->GetCurrentPose( pose );
 			//if ( pose.visible ) {
 			//	alignmentObject1->SetPose( pose.pose );
 			//}
-			//coda->GetCurrentMarkerFrameUnit( codaFrame, 1 );
-			//visibilityObject2->ShowVisibility( codaFrame );
+			coda->GetCurrentMarkerFrameUnit( markerFrame, 1 );
+			hmdStationary1->ShowVisibility( markerFrame );
+			handStationary1->ShowVisibility( markerFrame );
+			chestStationary1->ShowVisibility( markerFrame );
 			//poseTracker->GetCurrentPose( pose );
 			//if ( pose.visible ) {
 			//	alignmentObject2->SetPose( pose.pose );
@@ -558,9 +569,12 @@ namespace GraspHardwareStatus {
 
 			// Create the OpenGLObjects that depict the marker array structure.
 			objects = new Grasp::GraspGLObjects();
-			hmdStationary = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
-			handStationary = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
-			chestStationary = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
+			hmdStationary0 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
+			handStationary0 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
+			chestStationary0 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
+			hmdStationary1 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
+			handStationary1 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
+			chestStationary1 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
 			hmdMobile = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
 			handMobile = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chestMobile = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
