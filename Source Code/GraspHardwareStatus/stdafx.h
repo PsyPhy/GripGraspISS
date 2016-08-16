@@ -4,12 +4,13 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <windows.h>
-#include <mmsystem.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
 #include <math.h>
 #include <time.h> 
+#include <WinSock2.h>
 #include <process.h>
+
+#include <windows.h>
+#include <mmsystem.h>

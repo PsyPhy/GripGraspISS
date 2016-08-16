@@ -405,6 +405,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
+	if ( Validate() ) return( AlignHead );
 	// Time spent with the hand in the field of view does not count against the timeout.
 	// This is a little risky because it could run forever.
 	if ( raised == HandleHandElevation() ) TimerPause( straightenHeadTimer );
