@@ -29,7 +29,11 @@ private:
 		
 	WSADATA	wsaData;
 	SOCKET	daemonSocket;
+	struct sockaddr_in daemonAddr;
+	int daemonAddrLength;
 	bool	acquiring;
+
+	Timer	timer;
 
 public:
 
@@ -37,12 +41,14 @@ public:
 
 	CodaRTnetDaemonTracker( void ) {}
 	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
-	virtual void StartAcquisition( void );
+	virtual void StartAcquisition( double max_seconds );
+	virtual bool GetAcquisitionState( void );
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
 	virtual void StopAcquisition( void );
 	virtual void AbortAcquisition( void );
 	virtual int  Update( void );
 	virtual void  Quit( void );
+	virtual void  Shutdown( void );
 
 };
 

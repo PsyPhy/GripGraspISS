@@ -50,6 +50,7 @@ int main( int argc, char *argv[] )
 	else {
 		codaTracker.nUnits = 0;
 		codaTracker.nMarkers = 0;
+		Sleep( 5000 );
 	}
 
 	// Initialize a socket to which we will broadcast the data.
@@ -158,8 +159,16 @@ int main( int argc, char *argv[] )
 
 		// Stop CODA acquisitions.
 		if ( use_coda ) {
+			fprintf( stderr, "Resetting CODA ... " );
 			codaTracker.AbortAcquisition();
+			codaTracker.Shutdown();
 			codaTracker.Quit();
+			fprintf( stderr, "OK.\n" );
+		}
+		else {
+			fprintf( stderr, "Pausing to simulate CODA reset ... " );
+			Sleep( 5000 );
+			fprintf( stderr, "OK.\n" );
 		}
 
 	}

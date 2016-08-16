@@ -27,10 +27,10 @@ using namespace PsyPhy;
 
 /*********************************************************************************/
 
-void CodaRTnetDaemonTracker::StartAcquisition( void ) {
-	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
+void CodaRTnetDaemonTracker::StartAcquisition( double duration ) {
 	overrun = false;
 	acquiring = true;
+	TimerSet( timer, duration );
 	// Start placing data at the beginning of the buffer.
 	nFrames = 0;
 }
@@ -42,6 +42,11 @@ void CodaRTnetDaemonTracker::StopAcquisition( void ) {
 	OutputDebugString( "Stopping acquisition ..." );
 	acquiring = false;
 	OutputDebugString( "OK.\n" );
+}
+
+bool CodaRTnetDaemonTracker::GetAcquisitionState( void ) {
+	Update();
+	return( acquiring );
 }
 
 void CodaRTnetDaemonTracker::AbortAcquisition( void ) {
@@ -59,17 +64,15 @@ int CodaRTnetDaemonTracker::Update( void ) {
 	
 	// This tracker basically just catches and stores data from a daemon server that does the actual talking to CODA.
 	// In the update handler we process any new available packets from the daemon. Note that it is entirely possible
-	// that we are not catching every frame.
-	struct sockaddr_in si_other;
-	int slen = sizeof( si_other );
-	int recv_len;
+	// that we are not catching every frame, especially if we don't call Update() often enough.
 
 	GraspTrackerRecord record;
 
     // Clear any pending inputs and only take the last one.
 	int packet_count;
+	int recv_len;
     for ( packet_count = 0; true; packet_count++ ) {
-		recv_len = recvfrom( daemonSocket, (char *) &record, sizeof( record ), 0, (struct sockaddr *) &si_other, &slen);
+		recv_len = recvfrom( daemonSocket, (char *) &record, sizeof( record ), 0, (struct sockaddr *) &daemonAddr, &daemonAddrLength);
 		int nError = WSAGetLastError();
 		// We are using non-blocking calls so that if there is no data we continue on with other things.
 		// It is normal to receive WSAEWOULDBLOCK when no data is available on the socket.
@@ -83,6 +86,9 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		// but this sets the number of units correcty when the first packet is read and processed here.
 		nUnits = record.nUnits;
 		for ( int unit = 0; unit < nUnits; unit++ ) CopyMarkerFrame( recordedMarkerFrames[unit][nFrames % MAX_FRAMES], record.frame[unit] );
+
+		if ( TimerTimeout( timer ) ) acquiring = false;
+
 		// If we are acquiring, move on to the next frame. Note the % in the previous lines. We implement
 		//  a circular buffer that never overflows, but that can lose early data points.
 		if ( acquiring ) nFrames++;
@@ -92,9 +98,9 @@ int CodaRTnetDaemonTracker::Update( void ) {
 }
 
 bool CodaRTnetDaemonTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
-	// Make sure that any packets that were sent were read.
+	// Make sure that any packets that were sent have been read.
 	Update();
-	if (acquiring ) CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFrames - 1] );
+	if ( acquiring ) CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFrames - 1] );
 	else CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFrames] );
 	return true;
 }
@@ -108,6 +114,8 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 		ini_parse( ini_filename, iniHandler, this );
 	}
 		
+	daemonAddrLength = sizeof( daemonAddr );
+
 	// Create and prepare the socket used to receive the UDP datagrams from the daemon.
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
 	Sleep( 500 );
@@ -140,15 +148,25 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	// Initialize the state of the acqusition.
 	nFrames = 0;
 	acquiring = false;
-	// Create an initial frame that shows all markers to be invisible. This is so that if someone asks for the 
-	// current frame of data before any actually arrives, they will get back something that won't break the system.
-	for ( int unit = nUnits; unit < MAX_UNITS; unit++ ) {
-		recordedMarkerFrames[unit][nFrames].time = 0.0;
-		for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-			recordedMarkerFrames[unit][nFrames].marker[mrk].visibility = false;
-		}
+	nUnits = 0;
+	// Wait until we get at least one frame from the daemon. It will set the true number of units.
+	while ( nUnits == 0 ) {
+		Update();
+		Sleep( 100 );
 	}
 }
 void CodaRTnetDaemonTracker::Quit(void ) {
-	fOutputDebugString( "Quitting CodaRTnetTracker but leaving RTnet runnning ..." );
+	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
+}
+void CodaRTnetDaemonTracker::Shutdown(void ) {
+	fOutputDebugString( "Resetting GraspTrackerDaemon ..." );
+	char reset[8] = "RESET";
+	if ( sendto( daemonSocket, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&daemonAddr, sizeof( daemonAddr )) < 0)
+	{
+		int error_value = WSAGetLastError();
+		closesocket( daemonSocket );
+		fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+	}
+	fprintf( stderr, "message sent successfully\n" );
+
 }
