@@ -20,7 +20,7 @@ REM  the subject can use the Remote to navigate on the computer and restart.
 Start /min "OculusMouse" Executables\OculusMouse.exe
 
 REM Start up the CODA system
-Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --nocoda --confirm
+Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe
 REM Wait for it to complete initialization.
 @echo **********************************************************************************************
 @echo **********************************************************************************************

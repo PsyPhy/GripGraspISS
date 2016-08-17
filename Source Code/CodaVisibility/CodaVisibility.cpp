@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	codaTracker.Initialize();
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Starting acquisition ... " );
-	codaTracker.StartAcquisition();
+	codaTracker.StartAcquisition( 600.0 );
 	fprintf( stderr, "OK.\n\n" );
 
 	while ( _kbhit() == 0 ) {

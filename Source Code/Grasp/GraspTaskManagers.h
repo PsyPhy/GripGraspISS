@@ -84,9 +84,13 @@ namespace Grasp {
 
 		// Detect action of the subject to record a response.
 		bool Validate( void ) {
+			static bool previous_state = false;
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-			return( (oculusDisplay->Button[MOUSE_LEFT]) || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter) );
+			bool current_state = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
+			bool result = current_state ^ previous_state;
+			previous_state = current_state;
+			return( result );
 		}
 
 		// 

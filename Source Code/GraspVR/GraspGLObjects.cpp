@@ -709,7 +709,7 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 	DrawHead( pose );
 }
 
-#define STRUCTURE_BALL_RADIUS 7.0
+#define STRUCTURE_BALL_RADIUS 15.0
 #define STRUCTURE_BAR_RADIUS 15.0
 
 void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame ) {

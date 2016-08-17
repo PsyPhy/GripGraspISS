@@ -186,6 +186,11 @@ namespace Grasp {
 
 	};
 
+	class GraspDexDaemonTrackers : public GraspDexTrackers {
+		CodaRTnetTracker codaTracker;
+	};
+
+
 }
 
 
