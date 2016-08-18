@@ -31,6 +31,12 @@ void Tracker::StopAcquisition( void ) {}
 bool Tracker::GetAcquisitionState( void ) {
 	return( false );
 }
+void Tracker::WaitAcquisitionCompleted( void ) {
+	while ( GetAcquisitionState() ) {
+		Update();
+		Sleep( 1 );
+	}
+}
 bool Tracker::CheckAcquisitionOverrun( void ) {
 	return( false );
 }

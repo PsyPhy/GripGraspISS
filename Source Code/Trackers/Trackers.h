@@ -65,7 +65,7 @@ class Tracker : public PsyPhy::VectorsMixin {
 		// Number of markers to be acquired.
 		int nMarkers;
 		int nUnits;
-		int nFrames;
+		unsigned int nFrames;
 
 		double samplePeriod;
 
@@ -78,6 +78,7 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual void	StartAcquisition( float max_duration );
 		virtual void	StopAcquisition( void );
 		virtual bool	GetAcquisitionState( void );
+		virtual void	WaitAcquisitionCompleted( void );
 		virtual bool	CheckAcquisitionOverrun( void );
 		// Retieve all the marker data 
 		virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) = 0;
@@ -86,7 +87,6 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual bool	GetCurrentMarkerFrame( MarkerFrame &frame );
 		virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 		virtual bool	GetCurrentMarkerFrameIntrinsic( MarkerFrame &frame, int unit );
-
 
 		virtual double	GetSamplePeriod( void );
 		virtual int		GetNumberOfUnits( void );

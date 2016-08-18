@@ -1,7 +1,7 @@
 // GraspTrackerDaemon.h
 
 // Coda tracker and equivalents.
-#include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/PoseTrackers.h"
 
 // GraspTrackerDaemon will output data on this port.
@@ -19,4 +19,6 @@ typedef struct {
 	PsyPhy::TrackerPose chest;
 	int	nUnits;
 	MarkerFrame frame[MAX_UNITS];
+	PsyPhy::Vector3 alignmentOffset[MAX_UNITS];
+	PsyPhy::Matrix3x3 alignmentRotation[MAX_UNITS];
 } GraspTrackerRecord;

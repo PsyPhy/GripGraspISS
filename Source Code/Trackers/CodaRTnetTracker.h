@@ -187,7 +187,6 @@ public:
 	virtual void	AnnulAlignment( const char *filename = nullptr );
 	virtual void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
 	virtual void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
-	// void	SetAlignment( Pose pose[MAX_UNITS], const char *filename = nullptr );
 	// This is a little different from the above. If we have the pose of an object in the intrinsic frame,
 	// the transformation has to be inverted before sending it to the CODA system.
 	virtual void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
@@ -199,23 +198,6 @@ public:
 
 	virtual void	WriteMarkerFile( char *filename );
 	virtual void	Shutdown( void );
-
-};
-
-///
-/// Another version of the CodaRTnetTracker that uses unbuffered acquisition.
-///
-class CodaRTnetContinuousTracker : public CodaRTnetTracker {
-
-public:
-		
-	int nFramesPerUnit[MAX_UNITS];
-
-	CodaRTnetContinuousTracker( void ) {}
-	virtual void StartAcquisition( void );
-	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
-	virtual void StopAcquisition( void );
-	virtual int  Update( void );
 
 };
 

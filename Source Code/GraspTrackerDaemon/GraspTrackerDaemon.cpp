@@ -43,13 +43,17 @@ int main( int argc, char *argv[] )
 		fprintf( stderr, "Initializing CODA ..." );
 		codaTracker.Initialize();
 		fprintf( stderr, "OK.\n" );
-		fprintf( stderr, "Starting acquisition ... " );
-		codaTracker.StartAcquisition();
-		fprintf( stderr, "OK.\n\n" );
+		for ( int unit = 0; unit < codaTracker.nUnits; unit++ ) {
+			codaTracker.GetAlignment( record.alignmentOffset, record.alignmentRotation );
+		}
 	}
 	else {
-		codaTracker.nUnits = 0;
-		codaTracker.nMarkers = 0;
+		codaTracker.nUnits = MAX_UNITS;
+		codaTracker.nMarkers = MAX_MARKERS;
+		for ( int unit = 0; unit < codaTracker.nUnits; unit++ ) {
+			codaTracker.CopyVector( record.alignmentOffset[unit], codaTracker.zeroVector );
+			codaTracker.CopyMatrix( record.alignmentRotation[unit], codaTracker.identityMatrix );
+		}
 		Sleep( 5000 );
 	}
 
@@ -84,14 +88,14 @@ int main( int argc, char *argv[] )
 	if ( setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, (char*)&enabled, sizeof(BOOL)) < 0 ) 
 	{
 		closesocket(sock);
-		fAbortMessage( "TestTrackerDaemon", "Error setting socket options." );		
+		fAbortMessage( "GraspTrackerDaemon", "Error setting socket options." );		
 	}
 
 	if ( bind(sock, (sockaddr*)&Receiver_addr, sizeof(Receiver_addr)) < 0)
 	{
 		int error_value = WSAGetLastError();
 		closesocket(sock);
-		fAbortMessage( "TestTrackerDaemon", "Error binding socket (%d).", error_value );		
+		fAbortMessage( "GraspTrackerDaemon", "Error binding socket (%d).", error_value );		
 	}
 	unsigned long noBlock = 1;
 	ioctlsocket( sock, FIONBIO, &noBlock );
@@ -102,18 +106,18 @@ int main( int argc, char *argv[] )
 		while(1)
 		{
 			if ( use_coda ) {
-				record.nUnits =  codaTracker.nUnits;
+				record.nUnits = codaTracker.nUnits;
 				for ( int unit = 0; unit < record.nUnits; unit++ ) {
 					codaTracker.GetCurrentMarkerFrameUnit( record.frame[unit], unit );
 				}
 			}
 			else {
-				record.nUnits = 2;
 				record.count++;
+				record.nUnits = codaTracker.nUnits;
 				for ( int unit = 0; unit < record.nUnits; unit++ ) {
 					record.frame[unit].time = (double) record.count / 200.0;
 					for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-						if ( ( mrk / 8 ) == unit ) record.frame[unit].marker[mrk].visibility = true;
+						if ( ( (mrk + record.count / 100 ) / 8 ) % 4 == unit ) record.frame[unit].marker[mrk].visibility = true;
 						else record.frame[unit].marker[mrk].visibility = false;
 					}
 				}
@@ -161,7 +165,6 @@ int main( int argc, char *argv[] )
 		if ( use_coda ) {
 			fprintf( stderr, "Resetting CODA ... " );
 			codaTracker.AbortAcquisition();
-			codaTracker.Shutdown();
 			codaTracker.Quit();
 			fprintf( stderr, "OK.\n" );
 		}
