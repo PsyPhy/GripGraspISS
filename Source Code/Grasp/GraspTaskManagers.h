@@ -29,6 +29,8 @@ namespace Grasp {
 
 		static int maxRetries;
 
+		static bool manualStraightenHead;
+
 		// List of paramters for each trial.
 		struct {
 			double	targetHeadTilt;

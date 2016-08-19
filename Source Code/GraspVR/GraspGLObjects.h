@@ -178,6 +178,10 @@ namespace Grasp {
 		Texture			*hand_should_not_texture;		
 		static const char *hand_should_not_bitmap;	 
 
+		Assembly		*straightenHeadIndicator;	// Shown when the subject takes too long to confirm a response.
+		Texture			*straighten_head_texture;		
+		static const char *straighten_head_bitmap;	 
+
 	public:
 
 		Assembly		*orientationTarget;		// Shows the target orientation.

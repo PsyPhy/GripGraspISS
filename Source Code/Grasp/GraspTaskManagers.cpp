@@ -18,7 +18,7 @@ using namespace PsyPhy;
 double GraspTaskManager::indicatorDisplayDuration = 0.0;	
 
 // Time limits to accomplish different actions.
-double GraspTaskManager::alignHeadTimeout = 10.0;
+double GraspTaskManager::alignHeadTimeout = 15.0;
 double GraspTaskManager::tiltHeadTimeout = 10.0;
 double GraspTaskManager::responseTimeout = 10.0;
 double GraspTaskManager::alignHandTimeout = 10.0;
@@ -30,6 +30,7 @@ double GraspTaskManager::handErrorDelay = 2.0;
 
 int GraspTaskManager::maxRetries = 9;
 
+bool GraspTaskManager::manualStraightenHead = true;
 //
 // A state machine to run through the different state of a block of trials.
 // On entry, the current state is compared to the previous state.
@@ -391,9 +392,13 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->headTiltPrompt->Disable();
 	// The desired orientation of the head to zero in preparation for applying conflict (if any).
 	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
-	// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
-	renderer->straightAheadTarget->Enable();
-	renderer->gazeLaser->Enable();
+	if ( manualStraightenHead ) renderer->straightenHeadIndicator->Enable();
+	else {
+		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
+		renderer->straightAheadTarget->Enable();
+		renderer->gazeLaser->Enable();
+	}
+
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
 	// Set a timeout to wait for head at proper alignment.
@@ -406,13 +411,11 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 	if ( Validate() ) return( AlignHead );
-	// Time spent with the hand in the field of view does not count against the timeout.
-	// This is a little risky because it could run forever.
-	if ( raised == HandleHandElevation() ) TimerPause( straightenHeadTimer );
-	else TimerResume( straightenHeadTimer );
+	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > handPromptDelay ) renderer->lowerHandPrompt->Enable();
+	else renderer->lowerHandPrompt->Disable();
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
-	if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
+	// if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
 	return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {
@@ -427,6 +430,7 @@ void GraspTaskManager::ExitStraightenHead( void ) {
 	renderer->lowerHandIndicator->Disable();
 	renderer->lowerHandPrompt->Disable();
 	renderer->kTool->Disable();
+	renderer->straightenHeadIndicator->Disable();
 	// Logically one might want to enable rendering of the room before leaving this state.
 	// But that causes an artifact because the room gets drawn once at the 'old' alignment.
 	// So I move enabling of the room to the next state.

@@ -34,6 +34,7 @@ const char *GraspGLObjects::timeout_bitmap = "Bmp\\TimeLimit.bmp";
 const char *GraspGLObjects::hand_too_soon_bitmap = "Bmp\\HandTooSoon.bmp";
 const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
 const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
+const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -448,6 +449,10 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	handShouldNotBeRaisedIndicator = CreateIndicator( hand_should_not_texture );
 	spinners->AddComponent( handShouldNotBeRaisedIndicator );
 
+	straighten_head_texture = new Texture( straighten_head_bitmap );
+	straightenHeadIndicator = CreateIndicator( straighten_head_texture );
+	spinners->AddComponent( straightenHeadIndicator );
+
 	raise_arm_texture = new Texture( raise_arm_bitmap );
 	raiseHandIndicator = CreateIndicator( raise_arm_texture, 1.0 );
 	// Set this indicator to be green and very transparent.
@@ -456,8 +461,6 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 
 	spinners->SetOffset( prompt_location );
 	yoke->AddComponent( spinners );
-
-
 
 	return( yoke );
 
