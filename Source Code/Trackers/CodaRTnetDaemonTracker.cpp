@@ -152,7 +152,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	strcpy( restartCommand, "" );
 	// Wait until we get at least one frame from the daemon. It will set the true number of units.
 	Timer timer;
-	TimerSet( timer, 5.0 );
+	TimerSet( timer, 15.0 );
 	while ( nUnits == 0 ) {
 		if ( TimerTimeout( timer ) ) fAbortMessage( "CodaRTnetDaemonTracker", "Timeout waiting for tracker daemon." );
 		Update();

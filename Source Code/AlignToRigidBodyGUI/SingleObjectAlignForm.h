@@ -88,8 +88,7 @@ namespace AlignToRigidBodyGUI {
 		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, bool noCoda ) :
 		  maxPositionError( 10.0 ),
 			  maxOrientationError( 2.0 ),
-			  forceShow( true
-			  )
+			  forceShow( false )
 		  {
 			  InitializeComponent();
 			  modelFile = model_file;

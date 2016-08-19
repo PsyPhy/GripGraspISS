@@ -22,9 +22,7 @@
     <None Include="app.ico">
       <Filter>Source Files\Resource Files</Filter>
     </None>
-    <None Include="..\..\RunGRASP.bat">
-      <Filter>Source Files</Filter>
-    </None>
+    <None Include="..\..\RunGRASP.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGUI.cpp">
