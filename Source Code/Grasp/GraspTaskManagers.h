@@ -83,14 +83,18 @@ namespace Grasp {
 		::Timer blockTimer;
 
 		// Detect action of the subject to record a response.
+		bool waitForUp;
 		bool Validate( void ) {
-			static bool previous_state = false;
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
 			bool current_state = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
-			bool result = current_state ^ previous_state;
-			previous_state = current_state;
-			return( result );
+			if ( waitForUp && current_state ) return( false );
+			if ( !current_state ) {
+				waitForUp = false;
+				return( false );
+			}
+			waitForUp = true;
+			return( true );
 		}
 
 		// 
@@ -181,6 +185,11 @@ namespace Grasp {
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServices = dex;
 			GraspVR::Initialize( instance, display, mapper, trkrs );
+			// Initialize state for button pushes.
+			ovrInputState state;
+			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
+			waitForUp = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
+
 		}
 		void Release( void ) {
 			GraspVR::Release();
