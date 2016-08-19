@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	MarkerFrame localFrame[2];
 	int which_marker = 0;
 
-	fprintf( stderr, "Initializing CODA ..." );
+	fprintf( stderr, "Initializing CodaRTnetDaemonTracker ..." );
 	codaTracker.Initialize();
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Starting acquisition ... " );

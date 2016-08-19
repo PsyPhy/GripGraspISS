@@ -66,7 +66,34 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		
 		// Connect to the server.
 		cl.connect( (p << 24) + (q << 16) + (r << 8) + s, serverPort );
+
+	}
+	catch(NetworkException& exNet)
+	{
+		print_network_error( exNet );
+		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
+		MessageBox( NULL, "DexRTnet() failed.\n(NetworkException& exNet)", "CodaRTnetTracker", MB_OK );
+		exit( RTNET_INITERROR );
+	}
+	catch(DeviceStatusArray& array)
+	{
+		print_devicestatusarray_errors(array);
+		fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
+		MessageBox( NULL, "DexRTnet() failed.\n(DeviceStatusArray& array)", "CodaRTnetTracker", MB_OK );
+		exit( RTNET_INITERROR );
+	}
+
+	// Initialization automatically includes starting up the CODA system.
+	Startup();
 		
+}
+	
+// Startup the CODA system. This may be done as part of initialization, or it may be done
+// internally when the state of the CODA needs to be reset.
+void CodaRTnetTracker::Startup( void ) {
+
+	try {
+
 		// Check that the server has at least the expected number of configurations.
 		cl.enumerateHWConfig(configs);
 		// Print config names for debugging purposes.
@@ -543,6 +570,7 @@ void CodaRTnetTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotati
 	}
 }
 
+/// Perform the standard Charnwood alignment using markers to define the origin, the x direction and the y direction.
 int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
 
 	// Get what are the alignment transformations before doing the alignment.
@@ -573,31 +601,12 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 	return( response );
 }
 
-void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
-	SetAlignment( nullptr, nullptr, filename );
-}
+///
+/// Custom alignment procedures.
+///
 
-// Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
-//  compute and set the alignment file that the CODA uses to align the units and send it to the server.
-void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
-
-	Vector3 offset[MAX_UNITS];
-	Matrix3x3 rotation[MAX_UNITS], transpose_matrix;
-
-	for ( int unit = 0; unit < nUnits; unit++ ) {
-		// The pose gives us the orientation as a quaternion. 
-		// CODA wants it as a rotation matrix.
-		QuaternionToMatrix( rotation[unit], pose[unit].orientation );
-		// The offset that the CODA appears to use is the computed from the measured offset
-		// in intrinsic coordinates transformed by the inverse rotation (transpose).
-		// NB The transpose may come from the fact that I use row vectors.
-		// In any case, I came up with this by trial and error.
-		TransposeMatrix( transpose_matrix, rotation[unit] );
-		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
-	}
-	SetAlignment( offset, rotation, filename );
-
-}
+/// The RTNet SDK does not provide for setting the alignment transformations. So what we do instead
+/// is write the transforms to a file that is then sent to the CODA server and read on startup.
 
 // Send the alignment transformations specified as offset and rotation matrix to the CODA.
 void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename ) {
@@ -656,7 +665,37 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 	// WinExec() returns right away if GetMessage() is not called within a timeout, but WinSCP doesn't call it.
 	// So I sleep here to let the command to finish.
 	Sleep( 2000 );
+	// The CODA needs to be shutdown and restart to take into account the new alignment.
+	Shutdown();
+	Startup();
+
 }	
+
+void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
+	SetAlignment( nullptr, nullptr, filename );
+}
+
+// Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
+//  compute and set the alignment file that the CODA uses to align the units and send it to the server.
+void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
+
+	Vector3 offset[MAX_UNITS];
+	Matrix3x3 rotation[MAX_UNITS], transpose_matrix;
+
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		// The pose gives us the orientation as a quaternion. 
+		// CODA wants it as a rotation matrix.
+		QuaternionToMatrix( rotation[unit], pose[unit].orientation );
+		// The offset that the CODA appears to use is the computed from the measured offset
+		// in intrinsic coordinates transformed by the inverse rotation (transpose).
+		// NB The transpose may come from the fact that I use row vectors.
+		// In any case, I came up with this by trial and error.
+		TransposeMatrix( transpose_matrix, rotation[unit] );
+		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
+	}
+	SetAlignment( offset, rotation, filename );
+
+}
 
 /*********************************************************************************/
 

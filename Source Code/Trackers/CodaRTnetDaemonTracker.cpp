@@ -20,8 +20,8 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Useful/ini.h"
 
-#include "CodaRTnetDaemonTracker.h"
 #include "../GraspTrackerDaemon/GraspTrackerDaemon.h"
+#include "CodaRTnetDaemonTracker.h"
 
 using namespace PsyPhy;
 
@@ -86,7 +86,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		// but this sets the number of units correcty when the first packet is read and processed here.
 		nUnits = record.nUnits;
 		for ( int unit = 0; unit < nUnits; unit++ ) CopyMarkerFrame( recordedMarkerFrames[unit][nFrames % MAX_FRAMES], record.frame[unit] );
-
+		// If the time limit has expired, we stop acquiring a time series of frames.
 		if ( TimerTimeout( timer ) ) acquiring = false;
 
 		// If we are acquiring, move on to the next frame. Note the % in the previous lines. We implement
@@ -149,8 +149,12 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	nFrames = 0;
 	acquiring = false;
 	nUnits = 0;
+	strcpy( restartCommand, "" );
 	// Wait until we get at least one frame from the daemon. It will set the true number of units.
+	Timer timer;
+	TimerSet( timer, 5.0 );
 	while ( nUnits == 0 ) {
+		if ( TimerTimeout( timer ) ) fAbortMessage( "CodaRTnetDaemonTracker", "Timeout waiting for tracker daemon." );
 		Update();
 		Sleep( 100 );
 	}
@@ -158,15 +162,19 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 void CodaRTnetDaemonTracker::Quit(void ) {
 	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
 }
-void CodaRTnetDaemonTracker::Shutdown(void ) {
-	fOutputDebugString( "Resetting GraspTrackerDaemon ..." );
-	char reset[8] = "RESET";
-	if ( sendto( daemonSocket, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&daemonAddr, sizeof( daemonAddr )) < 0)
-	{
-		int error_value = WSAGetLastError();
-		closesocket( daemonSocket );
-		fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-	}
-	fprintf( stderr, "message sent successfully\n" );
+void CodaRTnetDaemonTracker::Shutdown( void ) {
+	//fOutputDebugString( "Resetting GraspTrackerDaemon ..." );
+	//char reset[8] = "RESET";
+	//if ( sendto( daemonSocket, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&daemonAddr, sizeof( daemonAddr )) < 0)
+	//{
+	//	int error_value = WSAGetLastError();
+	//	closesocket( daemonSocket );
+	//	fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+	//}
+	//fprintf( stderr, "message sent successfully\n" );
+	system( "TaskKill /IM GraspTrackerDaemon.exe" );
+}
 
+void CodaRTnetDaemonTracker::Startup( void ) {
+		system( "Executables\\GraspTrackerDaemon.bat" );
 }

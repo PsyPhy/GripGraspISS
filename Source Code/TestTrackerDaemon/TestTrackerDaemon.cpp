@@ -70,7 +70,7 @@ int main( int argc, char *argv[] )
 			int nError = WSAGetLastError();
 			if ( nError == WSAEWOULDBLOCK ) break;
 			if ( nError != 0 ) fAbortMessage( "TestTrackerDaemon", "recvfrom() failed with error code : %d" , nError );
-			if ( recv_len != sizeof( record ) ) fAbortMessage( "TestTrackerDaemon", "recvfrom() returned unexpected byte count: %d vs. %d" , recv_len, sizeof( record ) );
+			if ( recv_len != sizeof( record ) ) fprintf( stderr, "recvfrom() returned unexpected byte count: %d vs. %d\n" , recv_len, sizeof( record ) );
         }
 #endif
 		if ( packet_count > 0 ) {
@@ -81,14 +81,14 @@ int main( int argc, char *argv[] )
 			int key = _getch();
 			if ( key == 27 ) break;
 
-			char reset[8] = "RESET";
-			if ( sendto(sock, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&si_other, sizeof(si_other)) < 0)
-			{
-				int error_value = WSAGetLastError();
-				closesocket(sock);
-				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-			}
-			fprintf( stderr, "message sent successfully\n" );
+			//char reset[8] = "RESET";
+			//if ( sendto(sock, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&si_other, sizeof(si_other)) < 0)
+			//{
+			//	int error_value = WSAGetLastError();
+			//	closesocket(sock);
+			//	fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+			//}
+			//fprintf( stderr, "message sent successfully\n" );
 		}
 
 		Sleep( 1000 );

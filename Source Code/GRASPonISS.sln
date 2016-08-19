@@ -100,9 +100,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\GraspOculus
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestVectorsMixin", "TestVectorsMixin\TestVectorsMixin.vcxproj", "{145A0F2C-591B-4C19-BF53-9C167967F496}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspTrackerDaemon", "GraspTrackerDaemon\GraspTrackerDaemon.vcxproj", "{7917BFE8-E5FF-4406-B243-19970BB61CE5}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestTrackerDaemon", "TestTrackerDaemon\TestTrackerDaemon.vcxproj", "{97261698-34B8-4510-9A32-74127F93906C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspTrackerDaemon", "GraspTrackerDaemon\GraspTrackerDaemon.vcxproj", "{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -442,14 +442,6 @@ Global
 		{145A0F2C-591B-4C19-BF53-9C167967F496}.Release|Win32.Build.0 = Release|Win32
 		{145A0F2C-591B-4C19-BF53-9C167967F496}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{145A0F2C-591B-4C19-BF53-9C167967F496}.TestRelease|Win32.Build.0 = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.Debug|Win32.Build.0 = Debug|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.DraftRelease|Win32.ActiveCfg = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.DraftRelease|Win32.Build.0 = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.Release|Win32.ActiveCfg = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.Release|Win32.Build.0 = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.TestRelease|Win32.ActiveCfg = Release|Win32
-		{7917BFE8-E5FF-4406-B243-19970BB61CE5}.TestRelease|Win32.Build.0 = Release|Win32
 		{97261698-34B8-4510-9A32-74127F93906C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{97261698-34B8-4510-9A32-74127F93906C}.Debug|Win32.Build.0 = Debug|Win32
 		{97261698-34B8-4510-9A32-74127F93906C}.DraftRelease|Win32.ActiveCfg = Release|Win32
@@ -458,6 +450,14 @@ Global
 		{97261698-34B8-4510-9A32-74127F93906C}.Release|Win32.Build.0 = Release|Win32
 		{97261698-34B8-4510-9A32-74127F93906C}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{97261698-34B8-4510-9A32-74127F93906C}.TestRelease|Win32.Build.0 = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.Debug|Win32.Build.0 = Debug|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.DraftRelease|Win32.Build.0 = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.Release|Win32.ActiveCfg = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.Release|Win32.Build.0 = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{E987EBA3-C5E3-4B00-9BF0-08B0C7E2AE3B}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

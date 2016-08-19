@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\RunGRASP.bat" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

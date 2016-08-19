@@ -88,7 +88,8 @@ namespace AlignToRigidBodyGUI {
 		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, bool noCoda ) :
 		  maxPositionError( 10.0 ),
 			  maxOrientationError( 2.0 ),
-			  forceShow( false )
+			  forceShow( true
+			  )
 		  {
 			  InitializeComponent();
 			  modelFile = model_file;
@@ -458,7 +459,6 @@ namespace AlignToRigidBodyGUI {
 					 DeleteFile( tempfile );
 					 // Create and start up the CODA tracker.
 					 coda->Initialize();
-					 coda->StartAcquisition( 600.0 );
 				 }
 
 				 // Send a message to ground to show our progress.
@@ -515,14 +515,14 @@ namespace AlignToRigidBodyGUI {
 				 // Take a picture of the setup as seen from the CODA.
 				 dex->SnapPicture( "ALIGNMENT" );
 
-				 if ( !noCoda ) {
-					 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
-					 StopRefreshTimer();
-					 // Stop the ongoing acquisition and discard the recorded data.
-					 coda->AbortAcquisition();	
-					 // Unfortunately, we have to shutdown and restart to do a new acquisition.
-					 coda->Shutdown();
-				 }
+				 //if ( !noCoda ) {
+					// // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
+					// StopRefreshTimer();
+					// // Stop the ongoing acquisition and discard the recorded data.
+					// coda->AbortAcquisition();	
+					// // Unfortunately, we have to shutdown and restart to do a new acquisition.
+					// coda->Shutdown();
+				 //}
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
@@ -554,7 +554,7 @@ namespace AlignToRigidBodyGUI {
 				 Refresh();
 				 Application::DoEvents();
 				 Sleep( 1000 );
-				 coda->Initialize();
+				 //coda->Initialize();
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_INTRINSIC );
@@ -632,9 +632,6 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
 				 Refresh();
 				 Application::DoEvents();
-				 coda->Shutdown();
-				 coda->Quit();
-				 coda->Initialize();
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_ALIGNED );
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
@@ -643,6 +640,7 @@ namespace AlignToRigidBodyGUI {
 				 // Just wait for the acquisition to finish. 
 				 while ( coda->GetAcquisitionState() ) {
 					 fprintf( stderr, "." );
+					 Application::DoEvents();
 					 Sleep( 20 );
 				 }
 				 coda->StopAcquisition();

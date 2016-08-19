@@ -15,7 +15,7 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	Sleep( 1000 );
+	Sleep( 100 );
 
 	CodaRTnetDaemonTracker *tracker = new CodaRTnetDaemonTracker();
 	tracker->Initialize();

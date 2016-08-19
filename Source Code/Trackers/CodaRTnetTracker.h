@@ -146,6 +146,8 @@ public:
 
 protected: 
 
+	// Provide the means to read a .ini file to set configuration parameters.
+	// This is defined here as static because its address is sent as a callback to a parsing routine.
 	static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 		CodaRTnetTracker *instance = (CodaRTnetTracker *) which_instance;
 		for ( int unit = 0; unit < MAX_UNITS; unit ++ ) {
@@ -197,6 +199,10 @@ public:
 	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
 	virtual void	WriteMarkerFile( char *filename );
+
+protected:
+	// These are used internally to start and stop the CODA system, e.g. when setting a new alignment.
+	virtual void	Startup( void );
 	virtual void	Shutdown( void );
 
 };

@@ -119,7 +119,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			
 			// Compute the time from the tick counter in the packet and the tick duration.
 			// Actually, I am not sure if the tick is defined on a single shot acquistion.
-			int index = ( nFramesPerUnit[unit] - 1 ) % MAX_FRAMES;
+			int index = nFramesPerUnit[unit] % MAX_FRAMES;
 			MarkerFrame *frame = &recordedMarkerFrames[unit][index];
 			frame->time = decode3D.getTick() * cl.getDeviceTickSeconds( DEVICEID_CX1 );
 
@@ -157,7 +157,10 @@ bool CodaRTnetContinuousTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, 
 	// Make sure that any packets that were sent were read.
 	Update();
 	// Copy the most recent packet for the unit in question.
-	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFramesPerUnit[selected_unit] - 1] );
+	unsigned int index;
+	if ( acquiring ) index = ( nFramesPerUnit[selected_unit] - 1 ) % MAX_FRAMES;
+	else index = nFramesPerUnit[selected_unit] % MAX_FRAMES;
+	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][index] );
 	return true;
 }
 
