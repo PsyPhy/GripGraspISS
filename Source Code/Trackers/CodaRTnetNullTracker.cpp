@@ -53,6 +53,8 @@ void CodaRTnetNullTracker::StartAcquisition( double duration ) {
 }
 
 void CodaRTnetNullTracker::StopAcquisition( void ) {}
+void CodaRTnetNullTracker::AbortAcquisition( void ) {}
+void CodaRTnetNullTracker::Quit( void ) {}
 
 bool CodaRTnetNullTracker::GetAcquisitionState( void ) {
 	Update();

@@ -43,6 +43,8 @@ public:
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
 	virtual void GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
 	virtual void StopAcquisition( void );
+	virtual void AbortAcquisition( void );
+	virtual void Quit( void );
 	virtual int  Update( void );
 
 };
