@@ -184,7 +184,7 @@ void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
 
 void GraspDexTrackers::Initialize( void ) {
 
-	// Initialize all of the low-leve coda-based pose trackers.
+	// Initialize all of the low-level coda-based pose trackers.
 	InitializeCodaTrackers();
 
 	//// Create a tracker to control the roll orientation via the mouse.
