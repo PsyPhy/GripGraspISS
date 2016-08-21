@@ -20,8 +20,14 @@
     <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
       <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GraspHardwareStatus\GraspHardwareStatus.vcxproj">
+      <Project>{3b9ea91d-4b96-465c-94f7-d64d41b29155}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
       <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspTrackerDaemon\GraspTrackerDaemon.vcxproj">
+      <Project>{e987eba3-c5e3-4b00-9bf0-08b0c7e2ae3b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Grasp\Grasp.vcxproj">
       <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>

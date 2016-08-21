@@ -77,7 +77,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->SendSubstep( 0 );
 	dex->SnapPicture( "STARTUP" );
 
-	if ( useCoda ) trackers = new GraspDexTrackers( &_oculusMapper );
+	if ( useCoda ) {
+		CodaRTnetTracker *codaTracker = new CodaRTnetDaemonTracker();
+		trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
+	}
 	else trackers = new GraspSimTrackers( &_oculusMapper );
 	
 	switch ( paradigm ) {

@@ -15,6 +15,9 @@
     <ClInclude Include="PoseTrackerFilter.h" />
     <ClInclude Include="CodaRTnetDaemonTracker.h" />
     <ClInclude Include="CodaRTnetContinuousTracker.h" />
+    <ClInclude Include="CodaRTnetNullTracker.h" />
+    <ClInclude Include="OculusRemotePoseTracker.h" />
+    <ClInclude Include="NullPoseTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -26,5 +29,8 @@
     <ClCompile Include="PoseTrackerFilter.cpp" />
     <ClCompile Include="CodaRTnetDaemonTracker.cpp" />
     <ClCompile Include="CodaRTnetContinuousTracker.cpp" />
+    <ClCompile Include="CodaRTnetNullTracker.cpp" />
+    <ClCompile Include="OculusRemotePoseTracker.cpp" />
+    <ClCompile Include="NullPoseTracker.cpp" />
   </ItemGroup>
 </Project>

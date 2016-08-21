@@ -1,10 +1,10 @@
 /*********************************************************************************/
 /*                                                                               */
-/*                                CascadePoseTracker.cpp                         */
+/*                                PoseTrackerFilter.cpp                          */
 /*                                                                               */
 /*********************************************************************************/
 
-// A pose tracker that combines the CODA and Oculus instruments.
+// A pose tracker simply filters the output of another one.
 
 #include "stdafx.h"
 

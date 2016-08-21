@@ -1,7 +1,7 @@
 // GraspTrackerDaemon.h
 
 // Coda tracker and equivalents.
-#include <io.h>
+
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/fMessageBox.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
@@ -12,6 +12,10 @@
 // But I haven't mastered that technique and for the current application 
 // everything runs on one machine. So I just put it as localhost.
 #define TRACKER_BROADCAST_ADDRESS	"localhost"
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
 
 // The data output by GraspTrackerDaemon.
 typedef struct {
@@ -25,3 +29,6 @@ typedef struct {
 	PsyPhy::Matrix3x3 alignmentRotation[MAX_UNITS];
 } GraspTrackerRecord;
 
+#ifdef  __cplusplus
+}
+#endif

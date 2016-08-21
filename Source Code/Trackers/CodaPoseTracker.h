@@ -23,6 +23,10 @@ class CodaPoseTracker : public PoseTracker {
 		// In this way multiple CodaPoseTrackers can share the same buffer of marker data.
 		MarkerFrame	*frame;
 
+	protected:
+
+	public:
+
 		// A buffer that holds the model for the rigid body.
 		// Each element is the number and the 3D position of a marker with respect
 		//  to the control point of the rigid body when in the null pose.
@@ -32,14 +36,10 @@ class CodaPoseTracker : public PoseTracker {
 		} modelMarker[MAX_MARKERS];
 		int nModelMarkers;
 
-	protected:
-
-	public:
-
 		double intermarkerDistanceTolerance;
 		double 	positionScaleFactor;
 
-		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0), intermarkerDistanceTolerance(1.0) {
+		CodaPoseTracker( MarkerFrame *frame = nullptr ) : nModelMarkers(0), intermarkerDistanceTolerance(5.0) {
 			// Store the pointer to the marker frame.
 			this->frame = frame;
 			// Don't scale by default.

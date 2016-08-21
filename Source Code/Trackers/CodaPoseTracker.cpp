@@ -58,8 +58,8 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 			}
 		}
 	}
-	if ( true || validated_markers < visible_markers ) {
-		fOutputDebugString( "Visible Markers: %d Rejected %d markers.\n", visible_markers, visible_markers - validated_markers );
+	if ( validated_markers < visible_markers ) {
+		fOutputDebugString( "%08x Visible Markers: %d Rejected %d markers.\n", (unsigned int) this, visible_markers, visible_markers - validated_markers );
 	}
 
 	if ( validated_markers < 4 ) pose.visible = false;

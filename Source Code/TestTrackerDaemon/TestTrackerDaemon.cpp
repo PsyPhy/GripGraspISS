@@ -74,24 +74,14 @@ int main( int argc, char *argv[] )
         }
 #endif
 		if ( packet_count > 0 ) {
-			printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-			printf("Data: %8d %8d\n" , count++, record.count );
+			// printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
+			printf("Data: %8d %8d\n" , count++, packet_count  );
 		}
  		if ( _kbhit() ) {
 			int key = _getch();
 			if ( key == 27 ) break;
-
-			//char reset[8] = "RESET";
-			//if ( sendto(sock, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&si_other, sizeof(si_other)) < 0)
-			//{
-			//	int error_value = WSAGetLastError();
-			//	closesocket(sock);
-			//	fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-			//}
-			//fprintf( stderr, "message sent successfully\n" );
 		}
-
-		Sleep( 1000 );
+		Sleep( 20 );
 
 	}
 

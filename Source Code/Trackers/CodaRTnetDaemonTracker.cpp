@@ -70,10 +70,10 @@ int CodaRTnetDaemonTracker::Update( void ) {
 
     // Clear any pending inputs and only take the last one.
 	int packet_count;
-	int recv_len;
+	int recv_len, nError;
     for ( packet_count = 0; true; packet_count++ ) {
 		recv_len = recvfrom( daemonSocket, (char *) &record, sizeof( record ), 0, (struct sockaddr *) &daemonAddr, &daemonAddrLength);
-		int nError = WSAGetLastError();
+		nError = WSAGetLastError();
 		// We are using non-blocking calls so that if there is no data we continue on with other things.
 		// It is normal to receive WSAEWOULDBLOCK when no data is available on the socket.
 		if ( nError == WSAEWOULDBLOCK ) break;
@@ -89,10 +89,11 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		// If the time limit has expired, we stop acquiring a time series of frames.
 		if ( TimerTimeout( timer ) ) acquiring = false;
 
-		// If we are acquiring, move on to the next frame. Note the % in the previous lines. We implement
+		// If we are acquiring, move on to the next frame. Note the % (remainder) in the previous lines. We implement
 		//  a circular buffer that never overflows, but that can lose early data points.
 		if ( acquiring ) nFrames++;
 	}
+	fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
 	return( true );
 	
 }

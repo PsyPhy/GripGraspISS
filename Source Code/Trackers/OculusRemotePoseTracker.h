@@ -1,6 +1,6 @@
 /*********************************************************************************/
 /*                                                                               */
-/*                                PoseTrackerFilter.h                            */
+/*                            OculusRemotePoseTracker.h                         */
 /*                                                                               */
 /*********************************************************************************/
 
@@ -10,21 +10,23 @@
 
 namespace PsyPhy {
 
-class PoseTrackerFilter : public PoseTracker {
+class OculusRemotePoseTracker : public PoseTracker {
 
 	private:
 
-		PoseTracker	*unfiltered_tracker;
 		TrackerPose current_pose;
+		Vector3		eulerAngles;
 
+		ovrSession			session;
+		ovrGraphicsLuid		luid;
 
-	protected:
+		Timer timer;
+		double gain;
 
 	public:
 
-		double filterConstant;
-		PoseTrackerFilter( PoseTracker *tracker = nullptr, double filter_constant = 0.0 );
-		~PoseTrackerFilter();
+		OculusRemotePoseTracker( double gain = 1.0 );
+		~OculusRemotePoseTracker();
 
 		bool Initialize( void );
 		bool  Update( void );

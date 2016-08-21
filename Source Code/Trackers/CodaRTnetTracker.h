@@ -82,7 +82,7 @@ protected:
 	int packetsPerFrame;
 
 	// decoder objects
-	codaRTNet::PacketDecode3DResultExt decode3D;	// 3D measurements (CX1)
+	codaRTNet::PacketDecode3DResultExt	decode3D;		// 3D measurements (CX1)
 	codaRTNet::PacketDecodeADC16		decodeADC;		// 16-bit ADC measurements (GS16AIO)
 
 	// Various objects

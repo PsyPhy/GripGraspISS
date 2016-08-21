@@ -68,14 +68,6 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 };
 
-class NullPoseTracker : public PoseTracker {
-
-private:
-	Timer	timer;
-public:
-	bool Initialize( void );
-	bool GetCurrentPoseIntrinsic( TrackerPose &pose );
-};
 
 };
 

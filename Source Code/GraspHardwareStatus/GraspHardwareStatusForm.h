@@ -493,7 +493,7 @@ namespace GraspHardwareStatus {
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 
-			TrackerPose pose;
+			// TrackerPose pose;
 			MarkerFrame markerFrame;
 			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
 			hmdStationary0->ShowVisibility( markerFrame );

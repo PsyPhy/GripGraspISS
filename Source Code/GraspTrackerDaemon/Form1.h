@@ -1,17 +1,8 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
-
-#include "GraspTrackerDaemon.h"
-
-// A device that records 3D marker positions.
-PsyPhy::CodaRTnetContinuousTracker codaTracker;
-// A structured data buffer with fields for all of the tracker data.
-static GraspTrackerRecord record;
-// Read the echo of the packet into this buffer.
-static GraspTrackerRecord echo;
-static int record_length = sizeof( record );
-SOCKET sock;
-struct sockaddr_in Sender_addr;
+#include <io.h>
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../GraspVR/GraspTrackers.h"
 
 namespace GraspTrackerDaemon {
 
@@ -23,18 +14,6 @@ namespace GraspTrackerDaemon {
 	using namespace System::Drawing;
 	using namespace PsyPhy;
 
-	// The data output by GraspTrackerDaemon.
-	typedef struct {
-		unsigned long count;
-		PsyPhy::TrackerPose	hmd;
-		PsyPhy::TrackerPose hand;
-		PsyPhy::TrackerPose chest;
-		int	nUnits;
-		MarkerFrame frame[MAX_UNITS];
-		PsyPhy::Vector3 alignmentOffset[MAX_UNITS];
-		PsyPhy::Matrix3x3 alignmentRotation[MAX_UNITS];
-	} GraspTrackerRecord;
-
 	/// <summary>
 	/// Summary for Form1
 	/// </summary>
@@ -43,12 +22,27 @@ namespace GraspTrackerDaemon {
 	public:
 
 		bool use_coda;
+		PsyPhy::CodaRTnetTracker *coda;
+		Grasp::GraspDexTrackers *trackers;
+	private: System::Windows::Forms::GroupBox^  groupBox3;
+	private: System::Windows::Forms::TextBox^  chestPoseTextBox;
+
+
+	private: System::Windows::Forms::TextBox^  handPoseTextBox;
+
+	private: System::Windows::Forms::TextBox^  hmdPoseTextBox;
+	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::Label^  label5;
+	private: System::Windows::Forms::Label^  label4;
+
+	public: 
+		PsyPhy::VectorsMixin	*vm;
 
 		Form1(void) : use_coda( true )
 		{
 			InitializeComponent();
 			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) use_coda = false;
-
+			vm = new VectorsMixin();
 		}
 
 	protected:
@@ -94,8 +88,16 @@ namespace GraspTrackerDaemon {
 			this->visibilityTextBox0 = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->timeTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->chestPoseTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->handPoseTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->hmdPoseTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
+			this->groupBox3->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// exitButton
@@ -187,12 +189,95 @@ namespace GraspTrackerDaemon {
 			this->timeTextBox->TabIndex = 1;
 			this->timeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
+			// groupBox3
+			// 
+			this->groupBox3->Controls->Add(this->label5);
+			this->groupBox3->Controls->Add(this->label4);
+			this->groupBox3->Controls->Add(this->label3);
+			this->groupBox3->Controls->Add(this->chestPoseTextBox);
+			this->groupBox3->Controls->Add(this->handPoseTextBox);
+			this->groupBox3->Controls->Add(this->hmdPoseTextBox);
+			this->groupBox3->Location = System::Drawing::Point(21, 119);
+			this->groupBox3->Name = L"groupBox3";
+			this->groupBox3->Size = System::Drawing::Size(674, 130);
+			this->groupBox3->TabIndex = 6;
+			this->groupBox3->TabStop = false;
+			this->groupBox3->Text = L"Pose Trackers";
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label3->Location = System::Drawing::Point(18, 25);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(49, 20);
+			this->label3->TabIndex = 8;
+			this->label3->Text = L"HMD";
+			this->label3->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			this->label3->Click += gcnew System::EventHandler(this, &Form1::label3_Click);
+			// 
+			// chestPoseTextBox
+			// 
+			this->chestPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->chestPoseTextBox->Location = System::Drawing::Point(75, 95);
+			this->chestPoseTextBox->Name = L"chestPoseTextBox";
+			this->chestPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->chestPoseTextBox->TabIndex = 7;
+			this->chestPoseTextBox->Text = L" 00000000  00000000  00000000 ";
+			// 
+			// handPoseTextBox
+			// 
+			this->handPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->handPoseTextBox->Location = System::Drawing::Point(75, 58);
+			this->handPoseTextBox->Name = L"handPoseTextBox";
+			this->handPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->handPoseTextBox->TabIndex = 6;
+			this->handPoseTextBox->Text = L" 00000000  00000000  00000000 ";
+			// 
+			// hmdPoseTextBox
+			// 
+			this->hmdPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->hmdPoseTextBox->Location = System::Drawing::Point(75, 21);
+			this->hmdPoseTextBox->Name = L"hmdPoseTextBox";
+			this->hmdPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->hmdPoseTextBox->TabIndex = 5;
+			this->hmdPoseTextBox->Text = L" 00000000  00000000  00000000 ";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label4->Location = System::Drawing::Point(18, 62);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(49, 20);
+			this->label4->TabIndex = 9;
+			this->label4->Text = L"Hand";
+			this->label4->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label5->Location = System::Drawing::Point(14, 99);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(53, 20);
+			this->label5->TabIndex = 10;
+			this->label5->Text = L"Chest";
+			this->label5->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(695, 114);
+			this->ClientSize = System::Drawing::Size(701, 262);
+			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->exitButton);
@@ -207,6 +292,8 @@ namespace GraspTrackerDaemon {
 			this->groupBox1->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
 			this->groupBox2->PerformLayout();
+			this->groupBox3->ResumeLayout(false);
+			this->groupBox3->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -216,112 +303,31 @@ namespace GraspTrackerDaemon {
 			Close();
 		}
 
-		void ProcessCodaInputs( void ) {
-			if ( use_coda ) {
-				record.nUnits = codaTracker.nUnits;
-				for ( int unit = 0; unit < record.nUnits; unit++ ) {
-					codaTracker.GetCurrentMarkerFrameUnit( record.frame[unit], unit );
-				}
-			}
-			else {
-				record.count++;
-				record.nUnits = codaTracker.nUnits;
-				for ( int unit = 0; unit < record.nUnits; unit++ ) {
-					record.frame[unit].time = (double) record.count / 200.0;
-					for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-						if ( ( (mrk + record.count / 10 ) / 8 ) % 4 == unit ) record.frame[unit].marker[mrk].visibility = true;
-						else record.frame[unit].marker[mrk].visibility = false;
-					}
-				}
-			}
-
-			String ^line;
-			int unit = 0;
-			double frame_time = record.frame[unit].time;
-			timeTextBox->Text = frame_time.ToString("F3");
-			line = " ";
-			for ( int mrk = 0; mrk < 24; mrk++ ) {
-				if ( record.frame[unit].marker[mrk].visibility ) line += "O";
-				else line += ".";
-				if ( ((mrk+1) % 8) == 0 ) line += "  ";
-			}
-			visibilityTextBox0->Text = line;
-			unit = 1;
-			line = " ";
-			for ( int mrk = 0; mrk < 24; mrk++ ) {
-				if ( record.frame[unit].marker[mrk].visibility ) line += "O";
-				else line += ".";
-				if ( ((mrk+1) % 8) == 0 ) line += "  ";
-			}
-			visibilityTextBox1->Text = line;
-			if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
-			{
-				int error_value = WSAGetLastError();
-				closesocket( sock );
-				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-			}
-			fprintf( stderr, "message sent successfully\n" );
-		}
+		void ProcessCodaInputs( void );
+		void InitializeCoda( void );
+		void ReleaseCoda( void );
+		void InitializeSocket( void );
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-			if ( use_coda ) {
-				visibilityTextBox0->Text = " Initializing CODA ... ";
-				visibilityTextBox1->Text = "   (Please wait.)";
-				Refresh();
-				Application::DoEvents();
+			visibilityTextBox0->Text = " Initializing CODA ... ";
+			visibilityTextBox1->Text = "   (Please wait.)";
+			Refresh();
+			Application::DoEvents();
 
-				codaTracker.Initialize();
-				visibilityTextBox1->Text = "";
-				visibilityTextBox0->Text = " Initializing CODA ... OK.";
-				for ( int unit = 0; unit < codaTracker.nUnits; unit++ ) {
-					codaTracker.GetAlignment( record.alignmentOffset, record.alignmentRotation );
-				}
-			}
-			else {
-				visibilityTextBox0->Text = "Simulating startup ... ";
-				visibilityTextBox1->Text = "   (Please wait.)";
-				Refresh();
-				Application::DoEvents();
-				codaTracker.nUnits = MAX_UNITS;
-				codaTracker.nMarkers = MAX_MARKERS;
-				for ( int unit = 0; unit < codaTracker.nUnits; unit++ ) {
-					codaTracker.CopyVector( record.alignmentOffset[unit], codaTracker.zeroVector );
-					codaTracker.CopyMatrix( record.alignmentRotation[unit], codaTracker.identityMatrix );
-				}
-				Sleep( 5000 );
-				visibilityTextBox1->Text = "";
-				visibilityTextBox0->Text = " Simulating startup ... OK.";
-			}
+			InitializeCoda();
+			InitializeSocket();
 
-			// Initialize a socket to which we will broadcast the data.
-			WSADATA wsaData;
-			WSAStartup(MAKEWORD(2, 2), &wsaData);
+			visibilityTextBox1->Text = "";
+			visibilityTextBox0->Text = " Initializing CODA ... OK.";
 
-			sock = socket(AF_INET, SOCK_DGRAM, 0);
-			if (sock == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
-
-			BOOL enabled = TRUE;
-			if ( setsockopt( sock, SOL_SOCKET, SO_BROADCAST, (char*)&enabled, sizeof(BOOL)) < 0 ) 
-			{
-				closesocket(sock);
-				fAbortMessage( "GraspTrackerDaemon", "Error setting broadcast options." );		
-			}
-
-			Sender_addr.sin_family = AF_INET;
-			Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT );
-			Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
-
-			CreateRefreshTimer( 100 );
+			CreateRefreshTimer( 1 );
 			StartRefreshTimer();
 		}
 
 		System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 			StopRefreshTimer();
-			if ( use_coda ) {
-				codaTracker.AbortAcquisition();
-				codaTracker.Quit();
-			}
+			// ReleaseCoda();
 		}
 
 		// A timer to handle animations and screen refresh, and associated actions.
@@ -341,6 +347,8 @@ namespace GraspTrackerDaemon {
 			refreshTimer->Stop();
 		}		
 
-	};
+private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+};
 }
 
