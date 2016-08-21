@@ -14,8 +14,8 @@ using namespace PsyPhy;
 // Defined constants
 
 // Time to show the trial success indicator.
-// It is currently set to 0 so that there is no presentation of the success indicator.
-double GraspTaskManager::indicatorDisplayDuration = 0.0;	
+// If it is set to 0 so that there is no presentation of the success indicator.
+double GraspTaskManager::indicatorDisplayDuration = 1.0;	
 
 // Time limits to accomplish different actions.
 double GraspTaskManager::alignHeadTimeout = 15.0;
@@ -310,6 +310,8 @@ void GraspTaskManager::EnterStartBlock( void ) {
 	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
+	// Show the hand, just to allow the subject to play a little.
+	//renderer->vkTool->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
 	// Modulate the halo color, even though it does not matter, so
@@ -322,6 +324,7 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 }
 void  GraspTaskManager::ExitStartBlock( void ) {
 	renderer->readyToStartIndicator->Disable();
+	renderer->vkTool->Disable();
 }
 
 //
