@@ -89,12 +89,12 @@ namespace GraspTrackerDaemon {
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->timeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->chestPoseTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->handPoseTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->hmdPoseTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox3->SuspendLayout();
@@ -204,6 +204,30 @@ namespace GraspTrackerDaemon {
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Pose Trackers";
 			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label5->Location = System::Drawing::Point(14, 99);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(53, 20);
+			this->label5->TabIndex = 10;
+			this->label5->Text = L"Chest";
+			this->label5->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label4->Location = System::Drawing::Point(18, 62);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(49, 20);
+			this->label4->TabIndex = 9;
+			this->label4->Text = L"Hand";
+			this->label4->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
@@ -215,7 +239,6 @@ namespace GraspTrackerDaemon {
 			this->label3->TabIndex = 8;
 			this->label3->Text = L"HMD";
 			this->label3->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
-			this->label3->Click += gcnew System::EventHandler(this, &Form1::label3_Click);
 			// 
 			// chestPoseTextBox
 			// 
@@ -247,30 +270,6 @@ namespace GraspTrackerDaemon {
 			this->hmdPoseTextBox->TabIndex = 5;
 			this->hmdPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(18, 62);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(49, 20);
-			this->label4->TabIndex = 9;
-			this->label4->Text = L"Hand";
-			this->label4->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
-			// 
-			// label5
-			// 
-			this->label5->AutoSize = true;
-			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->label5->Location = System::Drawing::Point(14, 99);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(53, 20);
-			this->label5->TabIndex = 10;
-			this->label5->Text = L"Chest";
-			this->label5->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
-			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -285,7 +284,6 @@ namespace GraspTrackerDaemon {
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
-			this->WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &Form1::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->groupBox1->ResumeLayout(false);
@@ -307,6 +305,7 @@ namespace GraspTrackerDaemon {
 		void InitializeCoda( void );
 		void ReleaseCoda( void );
 		void InitializeSocket( void );
+		void FakeTheCodaData( void );
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
@@ -333,7 +332,9 @@ namespace GraspTrackerDaemon {
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			StopRefreshTimer();
 			ProcessCodaInputs();
+			StartRefreshTimer();
 		}
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
@@ -347,8 +348,7 @@ namespace GraspTrackerDaemon {
 			refreshTimer->Stop();
 		}		
 
-private: System::Void label3_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
+
 };
 }
 

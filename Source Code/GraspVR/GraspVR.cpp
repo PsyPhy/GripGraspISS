@@ -56,7 +56,7 @@ void GraspVR::UpdateTrackers( void ) {
 	// Get the position and orientation of the head and update the viewpoint accordingly.
 	// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 	// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-	if ( !trackers->hmdTracker->GetCurrentPose( headPose ) ) {
+	if ( !trackers->GetCurrentHMDPose( headPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
 	}
@@ -73,7 +73,7 @@ void GraspVR::UpdateTrackers( void ) {
 	renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
 
 	// Track movements of the hand marker array.
-	if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
+	if ( !trackers->GetCurrentHandPose( handPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
@@ -82,7 +82,7 @@ void GraspVR::UpdateTrackers( void ) {
 		renderer->hand->SetPose( handPose.pose );
 	}
 
-	if ( !trackers->chestTracker->GetCurrentPose( chestPose ) ) {
+	if ( !trackers->GetCurrentChestPose( chestPose ) ) {
 		static int pose_error_counter = 0;
 		// fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
 	}

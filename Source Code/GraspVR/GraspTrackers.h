@@ -62,6 +62,17 @@ namespace Grasp {
 		GraspTrackers() {}
 		virtual void Initialize( void ) = 0;
 		virtual void Update( void );
+		virtual bool GetCurrentHMDPose( TrackerPose &pose ) {
+			return( hmdTracker->GetCurrentPose( pose ) );
+		}
+		virtual bool GetCurrentHandPose( TrackerPose &pose ) {
+			return( handTracker->GetCurrentPose( pose ) );
+		}
+		virtual bool GetCurrentChestPose( TrackerPose &pose ) {
+			return( chestTracker->GetCurrentPose( pose ) );
+		}
+
+
 		virtual void Release( void );
 		virtual void WriteDataFiles( char *filename_root ){};
 

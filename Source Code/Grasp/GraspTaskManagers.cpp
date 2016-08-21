@@ -251,6 +251,11 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {
 
+		static int cycle_counter = 0;
+
+		if ( cycle_counter % 1000 == 0 ) fOutputDebugString( "GraspTaskManager cycle: %d  %f\n", cycle_counter, TimerElapsedTime( blockTimer ) );
+		cycle_counter++;
+
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 
