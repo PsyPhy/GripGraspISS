@@ -306,12 +306,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 // StartBlock
 // Wait until the subject is in the HMD and ready to start.
 void GraspTaskManager::EnterStartBlock( void ) {
-	// The desired orientation of the head is upright (0°). This is not essential, but it allows us to show the colors already.
+	// The desired orientation of the head is upright (0°). 
+	// This is not essential, but it allows us to show the colors already.
 	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
 	// Show the hand, just to allow the subject to play a little.
-	//renderer->vkTool->Enable();
+	renderer->vkTool->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
 	// Modulate the halo color, even though it does not matter, so
@@ -393,15 +394,17 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->headTiltPrompt->Disable();
-	// The desired orientation of the head to zero in preparation for applying conflict (if any).
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
-	if ( manualStraightenHead ) renderer->straightenHeadIndicator->Enable();
+	if ( manualStraightenHead ) {
+		renderer->straightenHeadIndicator->Enable();
+		renderer->glasses->SetColor( 0.0, 0.1, 1.0, 0.35 );
+	}
 	else {
+		// The desired orientation of the head to zero in preparation for applying conflict (if any).
+		SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
 		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
 		renderer->straightAheadTarget->Enable();
 		renderer->gazeLaser->Enable();
 	}
-
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
 	// Set a timeout to wait for head at proper alignment.
@@ -414,7 +417,9 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 	if ( Validate() ) return( AlignHead );
-	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > handPromptDelay ) renderer->lowerHandPrompt->Enable();
+	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > handPromptDelay ) {
+		renderer->lowerHandPrompt->Enable();
+	}
 	else renderer->lowerHandPrompt->Disable();
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory, move on to the next state.
