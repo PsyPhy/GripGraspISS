@@ -8,9 +8,15 @@ REM A batch file that executes Grasp.exe and then transfers the data files to DE
 REM
 
 REM
+REM Grasp.exe is still incompatible with GraspTrackerDaemon. 
+REM
+TaskKill /IM GraspTrackerDaemon.exe
+timeout /T 3 /NOBREAK
+
+REM
 REM Execute Grasp.exe with all the arguments.
 REM
-Executables\Grasp.exe %*
+Executables\Grasp.exe --output=Joe --sequence=Sequences\DemoGraspSequence.seq
 
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.
 REM Find the filename root amongst the parameters.
@@ -54,5 +60,8 @@ Executables\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GR
 if ERRORLEVEL == 1 GOTO IGNORE
 :IGNORE
 Executables\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %2.*"  "exit" 
+
+REM Restart the CODA system
+Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe
 
 exit 0
