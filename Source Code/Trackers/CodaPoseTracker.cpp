@@ -110,7 +110,7 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 		if ( response == IDCANCEL ) return( 0 );
 	}
 
-	if ( visible_markers < n_markers ) {
+	if ( visible_markers < 4 ) {
 		int response;
 		response = fMessageBox( MB_OKCANCEL | MB_ICONQUESTION, "CodaPoseTracker::SetModelMarkerPositions", "Not enough markers to define rigid body pose.\nNumber of visibles markers: %d\n\nContinue anyway?", visible_markers );
 		if ( response == IDCANCEL ) return( 0 );
