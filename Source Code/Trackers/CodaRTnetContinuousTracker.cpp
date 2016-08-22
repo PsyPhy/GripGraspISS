@@ -24,8 +24,8 @@
 
 using namespace PsyPhy;
 
-void CodaRTnetContinuousTracker::Initialize( void ) {
-	CodaRTnetTracker::Initialize();
+void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
+	CodaRTnetTracker::Initialize( ini_filename );
 	acquiring = false;
 	overrun = false;
 	// Fill the last frame with a record in which all the markers are invisible.
