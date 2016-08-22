@@ -36,7 +36,7 @@ protected:
 public:
 
 	CodaRTnetContinuousTracker( void ) : acquiring(false) {}
-	virtual void Initialize( void );
+	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartContinuousAcquisition( void );
 	virtual void StartAcquisition( double duration );
 	virtual bool GetAcquisitionState();

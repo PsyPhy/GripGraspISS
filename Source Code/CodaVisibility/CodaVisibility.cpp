@@ -17,10 +17,8 @@
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
-
-// A device that records 3D marker positions.
-PsyPhy::CodaRTnetDaemonTracker codaTracker;
 
 using namespace PsyPhy;
 
@@ -35,7 +33,7 @@ int main(int argc, char *argv[])
 	// A device that records 3D marker positions.
 	PsyPhy::CodaRTnetTracker *codaTracker;
 	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
-	else codaTracker = new PsyPhy::CodaRTnetTracker();
+	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
 
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
 	Sleep( 500 );
@@ -47,7 +45,7 @@ int main(int argc, char *argv[])
 	codaTracker->Initialize();
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Starting acquisition ... " );
-	codaTracker->StartAcquisition( 600.0 );
+	// codaTracker->StartAcquisition( 600.0 );
 	fprintf( stderr, "OK.\n\n" );
 
 	while ( _kbhit() == 0 ) {

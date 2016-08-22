@@ -87,12 +87,12 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 	Vector3 centroid = {0.0, 0.0, 0.0};
 
 	int visible_markers = 0;
-	char invisible[1024] = "";
+	char invisible[256] = "";
 	for ( int mrk = 0; mrk < n_markers; mrk++ ) {
 		int id = marker_list[mrk];
 		fAbortMessageOnCondition( ( id < 0 || id >= MAX_MARKERS ), "MeasureModelMarkerPositions()", "Marker %d ID = %d out of range [0 %d].", mrk, id, MAX_MARKERS - 1 );
 		if ( !frame->marker[ id ].visibility ) {
-			char tochar[16];
+			char tochar[256];
 			sprintf( tochar, " %02d", id );
 			strcat( invisible, tochar );
 		}
