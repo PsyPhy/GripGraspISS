@@ -127,6 +127,7 @@ namespace GraspTrackerDaemon {
 			fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
 		}
 
+
 		// Update the screen display.
 		String ^line;
 		int unit = 0;

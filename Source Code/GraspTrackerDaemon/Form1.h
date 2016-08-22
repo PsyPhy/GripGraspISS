@@ -24,16 +24,6 @@ namespace GraspTrackerDaemon {
 		bool use_coda;
 		PsyPhy::CodaRTnetTracker *coda;
 		Grasp::GraspDexTrackers *trackers;
-	private: System::Windows::Forms::GroupBox^  groupBox3;
-	private: System::Windows::Forms::TextBox^  chestPoseTextBox;
-
-
-	private: System::Windows::Forms::TextBox^  handPoseTextBox;
-
-	private: System::Windows::Forms::TextBox^  hmdPoseTextBox;
-	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Label^  label5;
-	private: System::Windows::Forms::Label^  label4;
 
 	public: 
 		PsyPhy::VectorsMixin	*vm;
@@ -41,7 +31,7 @@ namespace GraspTrackerDaemon {
 		Form1(void) : use_coda( true )
 		{
 			InitializeComponent();
-			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) use_coda = false;
+			if ( 0 == _access_s( "FakeCoda.flg", 0x00 ) ) use_coda = false;
 			vm = new VectorsMixin();
 		}
 
@@ -58,19 +48,27 @@ namespace GraspTrackerDaemon {
 		}
 
 	protected: 
-	private: System::Windows::Forms::Button^  exitButton;
-	private: System::Windows::Forms::GroupBox^  groupBox1;
-	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::TextBox^  visibilityTextBox1;
-	private: System::Windows::Forms::TextBox^  visibilityTextBox0;
-	private: System::Windows::Forms::GroupBox^  groupBox2;
-	private: System::Windows::Forms::TextBox^  timeTextBox;
+		///
+		/// Designer generated objects
+	private: 
+		System::Windows::Forms::Button^  exitButton;
+		System::Windows::Forms::GroupBox^  groupBox1;
+		System::Windows::Forms::Label^  label2;
+		System::Windows::Forms::Label^  label1;
+		System::Windows::Forms::TextBox^  visibilityTextBox1;
+		System::Windows::Forms::TextBox^  visibilityTextBox0;
+		System::Windows::Forms::GroupBox^  groupBox2;
+		System::Windows::Forms::TextBox^  timeTextBox;
+		System::Windows::Forms::GroupBox^  groupBox3;
+		System::Windows::Forms::TextBox^  chestPoseTextBox;
+		System::Windows::Forms::TextBox^  handPoseTextBox;
+		System::Windows::Forms::TextBox^  hmdPoseTextBox;
+		System::Windows::Forms::Label^  label3;
+		System::Windows::Forms::Label^  label5;
+		System::Windows::Forms::Label^  label4;
 
 	private:
-		/// <summary>
 		/// Required designer variable.
-		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code

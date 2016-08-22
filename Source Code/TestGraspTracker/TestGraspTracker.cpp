@@ -22,7 +22,10 @@ int main( int argc, char *argv[] )
 
 	GraspTrackers *trackers;
 
-	if ( use_coda ) trackers = new GraspDexTrackers( &mapper );
+	if ( use_coda ) {
+		CodaRTnetTracker *codaTracker = new CodaRTnetDaemonTracker();
+		trackers = new GraspOculusCodaTrackers( &mapper, codaTracker );
+	}
 	else trackers = new GraspSimTrackers( &mapper );
 
 	ovrResult result = ovr_Initialize( nullptr );

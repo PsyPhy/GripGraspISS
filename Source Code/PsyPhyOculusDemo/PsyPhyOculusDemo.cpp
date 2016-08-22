@@ -34,6 +34,7 @@ bool mirror = true;			// Do we mirror to the console or not?
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/NullPoseTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../Trackers/CascadePoseTracker.h"
 #include "../OculusInterface/OculusPoseTracker.h"
