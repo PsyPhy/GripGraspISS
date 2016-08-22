@@ -137,7 +137,7 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
+		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) : threadHandle( nullptr ) {
 			nMarkers = 24;
 			nCodaUnits = 2;
 			codaTracker = tracker;
@@ -157,7 +157,10 @@ namespace Grasp {
 		// We use a thread to get the CODA pose data in the background.
 		// The following provides the means to use a thread.
 
-		bool			lockSharedMarkerFrame[MAX_UNITS];
+		bool			requestSharedMemoryParent;
+		bool			requestSharedMemoryChild;
+		bool			parentHasPriority;
+
 		MarkerFrame		sharedMarkerFrame[MAX_UNITS];
 		bool			stopMarkerGrabs;
 		HANDLE			threadHandle;
@@ -171,8 +174,9 @@ namespace Grasp {
 
 #ifdef _DEBUG
 			// A buffer to hold sample times, used to debug loop times.
-			double	isi[MAX_ISI];
+			static double	isi[MAX_ISI];
 			unsigned long	n_isi;
+			n_isi = 0;
 #endif
 			// The function passed to a new thread takes a single pointer as an argument.
 			// The GraspDexTrackers instance that creates the thread passes a pointer to itself 
@@ -184,20 +188,23 @@ namespace Grasp {
 
 			// A cycle counter and timer just for debugging.
 			int count = 0;
-			n_isi = 0;
 			Timer timer;
 			TimerStart( timer );
 
 			// Loop until the main thread tells us to stop.
 			while ( !caller->stopMarkerGrabs ) {
+
 				for ( int unit = 0; unit < caller->nCodaUnits; unit++ ) {
+
 					// Get the latest marker data into a local frame buffer.
 					caller->codaTracker->GetCurrentMarkerFrameUnit( localFrame, unit );
 					// Copy it to a shared buffer, being careful not to allow simultaneous access.
-					while ( caller->lockSharedMarkerFrame[unit] );
-					caller->lockSharedMarkerFrame[unit] = true;
+					caller->requestSharedMemoryChild = true;
+					caller->parentHasPriority = true;
+					while ( caller->requestSharedMemoryParent && caller->parentHasPriority ) Sleep( 1 );
 					memcpy( &caller->sharedMarkerFrame[unit], &localFrame, sizeof( caller->sharedMarkerFrame[unit] ) );
-					caller->lockSharedMarkerFrame[unit] = false;
+					caller->requestSharedMemoryChild = false;
+
 				}
 				if ( !( count % 1000 ) ) fOutputDebugString( "Background cycle count: %d %.3f\n", count, TimerElapsedTime( timer ) );
 				count++;
@@ -219,10 +226,13 @@ namespace Grasp {
 		}
 
 		void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
-			while ( lockSharedMarkerFrame[unit] );
-			lockSharedMarkerFrame[unit] = true;
+
+			requestSharedMemoryParent = true;
+			parentHasPriority = false;
+			while ( requestSharedMemoryChild && !parentHasPriority ) Sleep( 1 );
 			memcpy( destination, &sharedMarkerFrame[unit], sizeof( *destination ) );
-			lockSharedMarkerFrame[unit] = false;
+			requestSharedMemoryParent = true;
+
 		}
 
 	};

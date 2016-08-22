@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "GraspTrackers.h"
 
+// #define BACKGROUND_GET_DATA
+
 using namespace PsyPhy;
 using namespace Grasp;
 
@@ -61,13 +63,17 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 	// if we use the continuous tracker.
 	//codaTracker.StartAcquisition( 600.0 );
 
-#if 1
+#ifdef BACKGROUND_GET_DATA
 	// Initiate real-time retrieval of CODA marker frames in a background thread 
 	// so that waiting for the frame to come back from the CODA does not slow down
 	// the rendering loop.
-	for ( int i = 0; i < nCodaUnits; i++ ) lockSharedMarkerFrame[i] = false;
+	requestSharedMemoryParent = false;
+	requestSharedMemoryChild = false;
+	parentHasPriority = false;
+
 	stopMarkerGrabs = false;
 	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, this, 0, &threadID );
+	// SetThreadPriority( threadHandle, THREAD_PRIORITY_HIGHEST );
 #endif
 
 	// Create PoseTrackers that combine data from multiple CODAs.
@@ -112,14 +118,13 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 }
 
 void GraspDexTrackers::GetMarkerData( void ) {
-#if 1
+#ifdef BACKGROUND_GET_DATA
 	// Get the current position of the CODA markers.
 	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 		GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
 	}
 #else 
 	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-		fOutputDebugString( "%.6f Unit: %d ", TimerElapsedTime( timer ), unit );
 		codaTracker->GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
 	}
 #endif
@@ -130,6 +135,14 @@ void GraspDexTrackers::UpdatePoseTrackers( void ) {
 }
 
 void GraspDexTrackers::Update( void ) {
+		
+	// Check if the thread is still running.
+	// I don't know why it should stop, but it seems to be happening in Release mode.
+	if ( threadHandle ) {
+		int result = WaitForSingleObject( threadHandle, 0 );
+		if ( result == WAIT_OBJECT_0 ) fAbortMessage( "GraspTrackers", "Retrieval thread has unexpectedly terminated!" );
+	}
+
 	// Retrieve the marker data from the CODA.
 	GetMarkerData();
 	// Compute the poses.
@@ -142,8 +155,10 @@ void GraspDexTrackers::Release( void ) {
 	GraspTrackers::Release();
 
 	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
-	stopMarkerGrabs = true;
-	WaitForSingleObject( threadHandle, INFINITE );
+	if ( threadHandle ) {
+		stopMarkerGrabs = true;
+		WaitForSingleObject( threadHandle, INFINITE );
+	}
 	// Halt the continuous Coda acquisition.
 	codaTracker->AbortAcquisition();
 	codaTracker->Quit();
