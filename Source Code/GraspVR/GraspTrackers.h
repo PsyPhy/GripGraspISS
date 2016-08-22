@@ -38,6 +38,8 @@
 #include "../OculusInterface/MousePoseTrackers.h"
 #include "../Trackers/OculusRemotePoseTracker.h"
 
+#define MAX_ISI 100000
+
 namespace Grasp {
 
 	using namespace PsyPhy;
@@ -162,12 +164,16 @@ namespace Grasp {
 		DWORD			threadID;
 
 	protected:
-		Timer timer;
 
 		// A static function that will be run in a separate thread.
 		// It sits in the background and acquires the latest marker frames from CODA.
 		static DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
 
+#ifdef _DEBUG
+			// A buffer to hold sample times, used to debug loop times.
+			double	isi[MAX_ISI];
+			unsigned long	n_isi;
+#endif
 			// The function passed to a new thread takes a single pointer as an argument.
 			// The GraspDexTrackers instance that creates the thread passes a pointer to itself 
 			//  as the argument and here we cast it back to a GraspDexTrackers pointer.
@@ -178,6 +184,7 @@ namespace Grasp {
 
 			// A cycle counter and timer just for debugging.
 			int count = 0;
+			n_isi = 0;
 			Timer timer;
 			TimerStart( timer );
 
@@ -194,9 +201,20 @@ namespace Grasp {
 				}
 				if ( !( count % 1000 ) ) fOutputDebugString( "Background cycle count: %d %.3f\n", count, TimerElapsedTime( timer ) );
 				count++;
-				Sleep( 5 );
+#ifdef _DEBUG
+				isi[n_isi] = TimerElapsedTime( timer );
+				if ( n_isi < MAX_ISI ) n_isi++;
+#endif
+				Sleep( 1 );
 			}
 			OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
+#ifdef _DEBUG
+			fOutputDebugString( "GraspTrackers Updates: %d of %d\n", n_isi, MAX_ISI );
+			for ( unsigned long i = 1; i < n_isi; i++ ) {
+				double delta;
+				if ( ( delta = isi[i] - isi[i-1] ) >= 0.002 ) fOutputDebugString( "%d %.3f\n", i, isi[i] - isi[i-1] );
+			}
+#endif
 			return NULL;
 		}
 

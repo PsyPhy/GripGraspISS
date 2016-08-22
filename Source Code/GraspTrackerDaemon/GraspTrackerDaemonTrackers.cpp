@@ -43,6 +43,47 @@ namespace GraspTrackerDaemon {
 		Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 	}
 
+	// If we are not connected to actual codas, we simulate markers going in 
+	// and out of view for debugging purposes. This should probably be integrated
+	// into the CodaRTnetNullTracker.
+	void Form1::FakeTheCodaData( void ) {
+		static double angle = 0.0;
+		int unit, mrk, id;
+		for ( unit = 0; unit < coda->nUnits; unit++ ) {
+			for ( mrk = 0; mrk < trackers->hmdCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			for ( mrk = 0; mrk < trackers->handCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->handCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->handCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].position[Z] -= 300.0;
+				coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 50.0;
+				coda->recordedMarkerFrames[unit][0].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			for ( mrk = 0; mrk < trackers->chestCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			// The following code causes intermittent occlusions of the simulated markers.
+			for ( int unit = 0; unit < record.nUnits; unit++ ) {
+				int mrk;
+				record.frame[unit].time = (double) record.count / 200.0;
+				for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+					if ( ( (mrk + record.count / 10 ) / 8 ) % 6 == unit ) coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = false;
+					else coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = true;
+				}
+			}
+		}
+		angle += 0.05;
+	}
+
 	void Form1::InitializeCoda( void ) {
 
 		if ( use_coda ) coda = new CodaRTnetContinuousTracker();
@@ -55,32 +96,7 @@ namespace GraspTrackerDaemon {
 		for ( int unit = 0; unit < trackers->codaTracker->nUnits; unit++ ) {
 			trackers->codaTracker->GetAlignment( record.alignmentOffset, record.alignmentRotation );
 		}
-		if ( !use_coda ) {
-			int unit, mrk, id;
-			for ( unit = 0; unit < coda->nUnits; unit++ ) {
-				for ( mrk = 0; mrk < trackers->hmdCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-					id = trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].id;
-					vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-						trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].position );
-					coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-				}
-				for ( mrk = 0; mrk < trackers->handCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-					id = trackers->handCodaPoseTracker[unit]->modelMarker[mrk].id;
-					vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-						trackers->handCodaPoseTracker[unit]->modelMarker[mrk].position );
-					coda->recordedMarkerFrames[unit][0].marker[id].position[Z] -= 300.0;
-					coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 50.0;
-					coda->recordedMarkerFrames[unit][0].marker[id].position[X] += 100.0;
-					coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-				}
-				for ( mrk = 0; mrk < trackers->chestCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-					id = trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].id;
-					vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-						trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].position );
-					coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-				}
-			}
-		}
+		if ( !use_coda ) FakeTheCodaData();
 	}
 
 	void Form1::ReleaseCoda( void ) {
@@ -91,21 +107,8 @@ namespace GraspTrackerDaemon {
 
 		record.nUnits = trackers->codaTracker->nUnits;
 		record.count++;
-		// If we are not connected to actual codas, we simulate markers going in 
-		// and out of view for debugging purposes. This should probably be integrated
-		// into the CodaRTnetNullTracker.
-		if ( !use_coda ) {
-			for ( int unit = 0; unit < record.nUnits; unit++ ) {
-				int mrk;
-				record.frame[unit].time = (double) record.count / 200.0;
-				for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-					// The following code causes intermittent occlusions of the simulated markers.
-					if ( ( (mrk + record.count / 10 ) / 8 ) % 6 == unit ) coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = false;
-					else coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = true;
-				}
-			}
-		}
-		fOutputDebugString( "\n" );
+		if ( !use_coda ) FakeTheCodaData();
+
 		trackers->Update();
 		// Fill the record with the marker data from the CODA system.
 		for ( int unit = 0; unit < record.nUnits; unit++ ) {
@@ -123,7 +126,6 @@ namespace GraspTrackerDaemon {
 			closesocket( sock );
 			fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
 		}
-		fprintf( stderr, "message sent successfully\n" );
 
 		// Update the screen display.
 		String ^line;

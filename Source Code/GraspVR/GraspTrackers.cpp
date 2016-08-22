@@ -57,6 +57,8 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 	codaTracker->Initialize();
 
 	// Start continuous acquisition of Coda marker data for a maximum duration.
+	// This is needed if we use the classical CodaRTnet tracker, but is not necessary
+	// if we use the continuous tracker.
 	//codaTracker.StartAcquisition( 600.0 );
 
 #if 1
@@ -205,9 +207,6 @@ void GraspDexTrackers::Initialize( void ) {
 	Sleep( 200 );
 	// Allow them to update.
 	Update();
-
-	TimerStart( timer );
-
 } 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -243,9 +242,6 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	Sleep( 200 );
 	// Allow them to update.
 	Update();
-
-	TimerStart( timer );
-
 } 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

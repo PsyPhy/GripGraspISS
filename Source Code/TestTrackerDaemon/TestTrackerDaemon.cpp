@@ -38,6 +38,11 @@ int main( int argc, char *argv[] )
 		fAbortMessage( "TestTrackerDaemon", "Error setting socket options." );		
 	}
 
+	// Make the receiver buffer bigger so that we don't miss any packets.
+	int bufferSize = 100 * sizeof( record );
+	int bufferSizeLen = sizeof(bufferSize);
+	setsockopt( sock, SOL_SOCKET, SO_RCVBUF, (char *) &bufferSize, bufferSizeLen);
+
 	if ( bind(sock, (sockaddr*)&Recv_addr, sizeof(Recv_addr)) < 0)
 	{
 		int error_value = WSAGetLastError();
@@ -81,7 +86,7 @@ int main( int argc, char *argv[] )
 			int key = _getch();
 			if ( key == 27 ) break;
 		}
-		Sleep( 20 );
+		Sleep( 500 );
 
 	}
 

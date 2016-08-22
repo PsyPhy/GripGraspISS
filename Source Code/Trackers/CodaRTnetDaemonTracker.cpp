@@ -23,6 +23,8 @@
 #include "../GraspTrackerDaemon/GraspTrackerDaemon.h"
 #include "CodaRTnetDaemonTracker.h"
 
+#define UDP_BUFFER_SIZE_IN_PACKETS 32
+
 using namespace PsyPhy;
 
 /*********************************************************************************/
@@ -69,6 +71,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 	GraspTrackerRecord record;
 
     // Clear any pending inputs and only take the last one.
+	static int cycle_counter = 0;
 	int packet_count;
 	int recv_len, nError;
     for ( packet_count = 0; true; packet_count++ ) {
@@ -93,7 +96,9 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		//  a circular buffer that never overflows, but that can lose early data points.
 		if ( acquiring ) nFrames++;
 	}
-	fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
+	if ( packet_count >= UDP_BUFFER_SIZE_IN_PACKETS ) fOutputDebugString( "Daemon Tracker Update: %d %d\n", cycle_counter, packet_count );
+	cycle_counter++;
+	// fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
 	return( true );
 	
 }
@@ -124,11 +129,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	WSAStartup( MAKEWORD(2, 2), &wsaData);
 	daemonSocket = socket(AF_INET, SOCK_DGRAM, 0);
 	if (daemonSocket == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
-	// Listen for datagrams on any connected network interface.
-	struct sockaddr_in Recv_addr;
-	Recv_addr.sin_family = AF_INET;
-	Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT );
-	Recv_addr.sin_addr.s_addr = INADDR_ANY;
+
 	// Set SO_REUSEADDR for the socket so that other processes can listen to the same data stream.
 	bool enabled = true;
 	if ( setsockopt( daemonSocket, SOL_SOCKET, SO_REUSEADDR, (char*) &enabled, sizeof(enabled)) < 0 ) 
@@ -136,6 +137,18 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 		closesocket( daemonSocket );
 		fAbortMessage( "CodaRTnetDaemonTracker", "Error setting broadcast options." );		
 	}
+
+	// Make the receiver buffer bigger so that we don't miss any packets.
+	int bufferSize = UDP_BUFFER_SIZE_IN_PACKETS * sizeof( GraspTrackerRecord );
+	int bufferSizeLen = sizeof(bufferSize);
+	setsockopt( daemonSocket, SOL_SOCKET, SO_RCVBUF, (char *) &bufferSize, bufferSizeLen);
+
+	// Listen for datagrams on any connected network interface.
+	struct sockaddr_in Recv_addr;
+	Recv_addr.sin_family = AF_INET;
+	Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT );
+	Recv_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
+	
 	int bind_value;
 	if ( (bind_value = bind( daemonSocket, (sockaddr*) &Recv_addr, sizeof( Recv_addr )) ) == SOCKET_ERROR )
 	{
@@ -164,18 +177,9 @@ void CodaRTnetDaemonTracker::Quit(void ) {
 	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
 }
 void CodaRTnetDaemonTracker::Shutdown( void ) {
-	//fOutputDebugString( "Resetting GraspTrackerDaemon ..." );
-	//char reset[8] = "RESET";
-	//if ( sendto( daemonSocket, (char *) &reset, sizeof( reset ), 0, (sockaddr *)&daemonAddr, sizeof( daemonAddr )) < 0)
-	//{
-	//	int error_value = WSAGetLastError();
-	//	closesocket( daemonSocket );
-	//	fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
-	//}
-	//fprintf( stderr, "message sent successfully\n" );
 	system( "TaskKill /IM GraspTrackerDaemon.exe" );
 }
 
 void CodaRTnetDaemonTracker::Startup( void ) {
-		system( "Executables\\GraspTrackerDaemon.bat" );
+	system( "Executables\\GraspTrackerDaemon.bat" );
 }

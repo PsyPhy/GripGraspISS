@@ -326,7 +326,7 @@ namespace GraspTrackerDaemon {
 
 		System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 			StopRefreshTimer();
-			// ReleaseCoda();
+			ReleaseCoda();
 		}
 
 		// A timer to handle animations and screen refresh, and associated actions.
