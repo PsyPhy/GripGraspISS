@@ -131,7 +131,7 @@ namespace GraspTrackerDaemon {
 		String ^line;
 		int unit = 0;
 		double frame_time = record.frame[unit].time;
-		timeTextBox->Text = frame_time.ToString("F3");
+		timeTextBox0->Text = frame_time.ToString("F3");
 		line = " ";
 		for ( int mrk = 0; mrk < 24; mrk++ ) {
 			if ( record.frame[unit].marker[mrk].visibility ) line += "O";
@@ -140,6 +140,8 @@ namespace GraspTrackerDaemon {
 		}
 		visibilityTextBox0->Text = line;
 		unit = 1;
+		frame_time = record.frame[unit].time;
+		timeTextBox1->Text = frame_time.ToString("F3");
 		line = " ";
 		for ( int mrk = 0; mrk < 24; mrk++ ) {
 			if ( record.frame[unit].marker[mrk].visibility ) line += "O";

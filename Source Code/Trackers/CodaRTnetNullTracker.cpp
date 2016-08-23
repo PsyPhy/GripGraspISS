@@ -37,23 +37,31 @@ void CodaRTnetNullTracker::Initialize( const char *ini_filename ) {
 		recordedMarkerFrames[unit][index].time = 0.0;
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
 	}
-	nFrames = 0;
+	nFrames = 1;
 	Sleep( 3000 );
 }
 
 void CodaRTnetNullTracker::StartContinuousAcquisition( void ) {}
 
 void CodaRTnetNullTracker::StartAcquisition( double duration ) {
-	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
+	TimerSet( acquisitionTimer, duration );
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		nFramesPerUnit[unit] = 1;
+		recordedMarkerFrames[unit][0].time = TimerElapsedTime( acquisitionTimer );
+	}
 	nFrames = 1;
 	overrun = false;
 	acquiring = true;
-	TimerSet( acquisitionTimer, duration );
 	StartContinuousAcquisition();
 }
 
-void CodaRTnetNullTracker::StopAcquisition( void ) {}
-void CodaRTnetNullTracker::AbortAcquisition( void ) {}
+void CodaRTnetNullTracker::StopAcquisition( void ) {
+	acquiring = false;
+}
+void CodaRTnetNullTracker::AbortAcquisition( void ) {
+	acquiring = false;
+	nFrames = 1;
+}
 void CodaRTnetNullTracker::Quit( void ) {}
 
 bool CodaRTnetNullTracker::GetAcquisitionState( void ) {
@@ -62,13 +70,19 @@ bool CodaRTnetNullTracker::GetAcquisitionState( void ) {
 }
 
 int CodaRTnetNullTracker::Update( void ) {
+	if ( acquiring ) {
+		for ( int unit = 0; unit < nUnits; unit++ ) {
+			recordedMarkerFrames[unit][nFramesPerUnit[unit]].time = TimerElapsedTime( acquisitionTimer );
+			if ( nFramesPerUnit[unit] < MAX_FRAMES - 1 ) nFramesPerUnit[unit]++;
+		}
+	}
 	return( true );
 }
 
 bool CodaRTnetNullTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
 	// Make sure that any packets that were sent were read.
 	Update();
-	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][0] );
+	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFramesPerUnit[selected_unit] - 1] );
 	return true;
 }
 
