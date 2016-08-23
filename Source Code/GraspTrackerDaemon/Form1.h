@@ -282,6 +282,7 @@ namespace GraspTrackerDaemon {
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
+			this->WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &Form1::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->groupBox1->ResumeLayout(false);
@@ -318,7 +319,7 @@ namespace GraspTrackerDaemon {
 			visibilityTextBox1->Text = "";
 			visibilityTextBox0->Text = " Initializing CODA ... OK.";
 
-			CreateRefreshTimer( 1 );
+			CreateRefreshTimer( 100 );
 			StartRefreshTimer();
 		}
 

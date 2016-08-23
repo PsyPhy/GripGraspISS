@@ -178,8 +178,11 @@ void CodaRTnetDaemonTracker::Quit(void ) {
 }
 void CodaRTnetDaemonTracker::Shutdown( void ) {
 	system( "TaskKill /IM GraspTrackerDaemon.exe" );
+	Sleep( 2000 );
 }
 
 void CodaRTnetDaemonTracker::Startup( void ) {
-	system( "Executables\\GraspTrackerDaemon.bat" );
+	//system( "Executables\\GraspTrackerDaemon.exe" );
+	system( "Start \"GRASP Tracker\" Executables\\GraspTrackerDaemon.exe  /B" );
+	Sleep( 5000 );
 }

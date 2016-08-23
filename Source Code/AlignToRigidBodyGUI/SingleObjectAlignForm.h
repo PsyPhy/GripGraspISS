@@ -442,24 +442,23 @@ namespace AlignToRigidBodyGUI {
 				 // because it will take some time.
 				 Refresh();
 				 Application::DoEvents();
-
-				 if ( noCoda ) Sleep( 2000 );
-				 else {
-					 // Create the CODA tracker.
-					 coda = new CodaRTnetDaemonTracker();
-					 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
-					 // Send a message to ground to show our progress.
-					 dex->SendSubstep( ANNUL_ALIGNMENT );
-					 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
-					 Refresh();
-					 Application::DoEvents();
-					 char *tempfile = ".nullalignment.tmp";
-					 coda->AnnulAlignment( tempfile );
-					 DeleteFile( tempfile );
-					 // Create and start up the CODA tracker.
-					 coda->Initialize();
-				 }
-
+				 // Wait to make sure that the tracker is up and running so that we can kill it.
+				 Sleep( 5000 );
+				
+				// Create the CODA tracker.
+				coda = new CodaRTnetDaemonTracker();
+				// Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
+				// Send a message to ground to show our progress.
+				dex->SendSubstep( ANNUL_ALIGNMENT );
+				instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
+				Refresh();
+				Application::DoEvents();
+				char *tempfile = ".nullalignment.tmp";
+				coda->AnnulAlignment( tempfile );
+				DeleteFile( tempfile );
+				// Create and start up the CODA tracker.
+				coda->Initialize();
+				 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
 				 // Hide the tracker message.

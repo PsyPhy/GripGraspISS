@@ -127,7 +127,6 @@ namespace GraspTrackerDaemon {
 			fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
 		}
 
-
 		// Update the screen display.
 		String ^line;
 		int unit = 0;
@@ -149,15 +148,26 @@ namespace GraspTrackerDaemon {
 		}
 		visibilityTextBox1->Text = line;
 
-		char str[256];
-		sprintf( str, "%s %s", trackers->vstr( record.hmd.pose.position ), trackers->qstr( record.hmd.pose.orientation ) );
-		hmdPoseTextBox->Text = gcnew String( str );
+		if ( record.hmd.visible ) {
+			char str[256];
+			sprintf( str, "%s %s", trackers->vstr( record.hmd.pose.position ), trackers->qstr( record.hmd.pose.orientation ) );
+			hmdPoseTextBox->Text = gcnew String( str );
+		}
+		else hmdPoseTextBox->Text = "                         (obscured)";
 
-		sprintf( str, "%s %s", trackers->vstr( record.hand.pose.position ), trackers->qstr( record.hand.pose.orientation ) );
-		handPoseTextBox->Text = gcnew String( str );
+		if ( record.hand.visible ) {
+			char str[256];
+			sprintf( str, "%s %s", trackers->vstr( record.hand.pose.position ), trackers->qstr( record.hand.pose.orientation ) );
+			handPoseTextBox->Text = gcnew String( str );
+		}
+		else handPoseTextBox->Text = "                        (obscured)";
 
-		sprintf( str, "%s %s", trackers->vstr( record.chest.pose.position ), trackers->qstr( record.chest.pose.orientation ) );
-		chestPoseTextBox->Text = gcnew String( str );
+		if ( record.chest.visible ) {
+			char str[256];
+			sprintf( str, "%s %s", trackers->vstr( record.chest.pose.position ), trackers->qstr( record.chest.pose.orientation ) );
+			chestPoseTextBox->Text = gcnew String( str );
+		}
+		else chestPoseTextBox->Text = "                       (obscured)";
 
 	}
 
