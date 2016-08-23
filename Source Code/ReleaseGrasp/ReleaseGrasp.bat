@@ -32,6 +32,7 @@ REM Need to have a fake .flg cookie in case NoCoda.flg is not there
 REM so that tar will not choke on *.flg.
 echo ignore > ignore.flg
 %TAR% --append %VERBOSE% --file=%ARCHIVE% *.flg
+del /F /Q ignore.flg
 
 REM Create an empty log directory to put in the release archive.
 REM We hide the current LOG directory so as not to loose what we have there.
