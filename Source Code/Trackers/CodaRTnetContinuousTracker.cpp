@@ -81,10 +81,6 @@ int CodaRTnetContinuousTracker::Update( void ) {
 
 	bool status = false;
 
-	//* Generic data packet
-	codaRTNet::RTNetworkPacket			local_packet;
-	// decoder objects
-	codaRTNet::PacketDecode3DResultExt	local_decode3D;		// 3D measurements (CX1)
 
 	// If we are in a fixed duration acquisition and the timer runs out, 
 	// stop acquiring. 
@@ -94,8 +90,15 @@ int CodaRTnetContinuousTracker::Update( void ) {
 	}
 
 	// Time out means there are no new packets available.
-	while ( stream.receivePacket( local_packet, 100) != CODANET_STREAMTIMEOUT ) {
+	while ( true ) {
 	
+		//* Generic data packet
+		codaRTNet::RTNetworkPacket			local_packet;
+		// decoder objects
+		codaRTNet::PacketDecode3DResultExt	local_decode3D;		// 3D measurements (CX1)
+
+		if ( stream.receivePacket( local_packet, 100) == CODANET_STREAMTIMEOUT) break; 
+
 		// Check if the packet is corrupted.
 		if ( !local_packet.verifyCheckSum() ) nChecksumErrors++;
 
@@ -144,7 +147,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			}
 			if ( acquiring ) nFramesPerUnit[unit]++;
 			
-			// Signal that we got the data that we were seeking.
+			// Signal that we got some data in this loop.
 			status = true;
 		}
 	}
