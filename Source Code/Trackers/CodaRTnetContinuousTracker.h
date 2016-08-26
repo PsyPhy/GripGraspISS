@@ -38,7 +38,7 @@ public:
 	CodaRTnetContinuousTracker( void ) : acquiring(false) {}
 	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartContinuousAcquisition( void );
-	virtual void StartAcquisition( double duration );
+	virtual void StartAcquisition( float duration );
 	virtual bool GetAcquisitionState();
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
 	virtual void StopAcquisition( void );

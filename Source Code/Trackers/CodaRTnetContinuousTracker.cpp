@@ -46,7 +46,7 @@ void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
 	cl.startAcqContinuous();
 }
 
-void CodaRTnetContinuousTracker::StartAcquisition( double duration ) {
+void CodaRTnetContinuousTracker::StartAcquisition( float duration ) {
 	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
 	nFrames = 0;
 	overrun = false;
