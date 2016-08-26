@@ -31,7 +31,7 @@
 //  2 in order to save buffer space.
 #define MAX_UNITS				2
 // The longest duration of acquisition allowed. (samples/sec * sec/min * min)
-#define MAX_MINUTES	10
+#define MAX_MINUTES	30
 #define MAX_FRAMES				(200 * 60 * MAX_MINUTES)
 #define DEFAULT_SAMPLE_PERIOD	0.005
 #define INVISIBLE				-99999.99999
