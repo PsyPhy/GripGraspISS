@@ -1,12 +1,16 @@
 /***************************************************************************/
 /*                                                                         */
-/*                               CodaRTnetTracker                          */
+/*                         CodaRTnetContinuousTracker                      */
 /*                                                                         */
 /***************************************************************************/
 
 #include "stdafx.h"
 
 // A tracker that uses the CODA RTnet interface.
+// In this version the RTnet server is set to send data continuously without
+// any buffering on the server side. Capturing the data on the client side
+// is handled by calling Update() frequently enough so as not to miss any packets.
+
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -28,9 +32,9 @@ void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
 	CodaRTnetTracker::Initialize( ini_filename );
 	acquiring = false;
 	overrun = false;
-	// Fill the last frame with a record in which all the markers are invisible.
+	// Fill the first frame with a record in which all the markers are invisible.
 	// This will be sent as the current frame until such time that a real frame has been read.
-	unsigned int index = ( (unsigned int) 0 - 1 ) % MAX_FRAMES;
+	unsigned int index = 0;
 	for ( int unit = 0; unit < nUnits; unit++ ) {
 		nFramesPerUnit[unit] = 0;
 		recordedMarkerFrames[unit][index].time = 0.0;
@@ -40,28 +44,49 @@ void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
 	StartContinuousAcquisition();
 }
 
+// StartContinuousAcquisition() is specific to the continuous tracker. It puts the CODA RTnet server
+// into continuous acquisition mode. It is called once byt Initialize() and may well never be needed elsewhere.
 void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
 	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
 	OutputDebugString( "cl.startAcqContinuous()\n" );
 	cl.startAcqContinuous();
 }
 
-void CodaRTnetContinuousTracker::StartAcquisition( float duration ) {
-	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
-	nFrames = 0;
-	overrun = false;
-	acquiring = true;
-	TimerSet( acquisitionTimer, duration );
-	StartContinuousAcquisition();
-}
-
-void CodaRTnetContinuousTracker::StopAcquisition( void ) {
+void CodaRTnetContinuousTracker::StopContinuousAcquisition( void ) {
 	// Attempt to halt an ongoing aquisition. 
 	// Does not care if it was actually acquiring or not.
 	// Does not retrieve the data.
 	OutputDebugString( "Stopping acquisition ..." );
 	cl.stopAcq();
 	OutputDebugString( "OK.\n" );
+}
+
+// Start and stop reading marker frames into a buffer.
+// We assume that continuous acquisitions are already occuring, so all we do 
+// is say to start inserting the data from the beginning of the buffer.
+void CodaRTnetContinuousTracker::StartAcquisition( float duration ) {
+	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
+	nFrames = 0;
+	overrun = false;
+	acquiring = true;
+	TimerSet( acquisitionTimer, duration );
+}
+
+// To stop acquiring we simply set the acquisition flag to false.
+// The frame counters will stay where they are and any new incoming data
+// will be placed in the buffer just after the most recent frame of the acquired series.
+void CodaRTnetContinuousTracker::StopAcquisition( void ) {
+	acquiring = false;
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		unsigned int next = nFramesPerUnit[unit] % MAX_FRAMES;
+		unsigned int previous = ( next - 1 ) % MAX_FRAMES;
+		// New frames will get written to the place in the buffer pointed to by nFramesPerUnit[].
+		// If not acquiring, GetCurrentMarkerFrame will return the data from that location as well.
+		// If GetCurrentMarkerFrame() is called to soon, there will not be any new available data.
+		// So we prefill the lcoation with the last sample from the recorded time series, this being
+		// the latest valid data until a new frame comes in.
+		CopyMarkerFrame( recordedMarkerFrames[unit][next],  recordedMarkerFrames[unit][previous] );
+	}
 }
 
 bool CodaRTnetContinuousTracker::GetAcquisitionState( void ) {
@@ -82,21 +107,29 @@ int CodaRTnetContinuousTracker::Update( void ) {
 	bool status = false;
 
 
-	// If we are in a fixed duration acquisition and the timer runs out, 
-	// stop acquiring. 
 	if ( TimerTimeout( acquisitionTimer ) ) {
+		// If we are still acquiring when the timer runs out, this is considered
+		// to be an overrun. The caller may want to know.
 		if ( acquiring ) overrun = true;
+		// If we are in a fixed duration acquisition and the timer runs out, 
+		// then stop acquiring.
 		acquiring = false;
 	}
 
-	// Time out means there are no new packets available.
 	while ( true ) {
-	
-		//* Generic data packet
+
+		// CodaRTnet packet-handling objects cannot be reused for more than one packet.
+		// Otherwise, a bug in the CodaRTnet SDK causes a memory leak.
+		// So these objects are instantiated here within a block so that 
+		// the destructors get called on each cycle.
+
+		// Generic data packet
 		codaRTNet::RTNetworkPacket			local_packet;
 		// decoder objects
 		codaRTNet::PacketDecode3DResultExt	local_decode3D;		// 3D measurements (CX1)
 
+		// We set an extremely short timeout to effectively make a non-blocking call.
+		// Time out means there are no new packets available.
 		if ( stream.receivePacket( local_packet, 100) == CODANET_STREAMTIMEOUT) break; 
 
 		// Check if the packet is corrupted.
@@ -145,7 +178,13 @@ int CodaRTnetContinuousTracker::Update( void ) {
 				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] =INVISIBLE;
 				frame->marker[mrk].visibility = false;
 			}
-			if ( acquiring ) nFramesPerUnit[unit]++;
+			if ( acquiring ) {
+				if ( nFramesPerUnit[unit] < MAX_FRAMES ) nFramesPerUnit[unit]++;
+				else {
+					fOutputDebugString( "here" );
+				}
+				fOutputDebugString( "Unit: %d %d \n", unit,  nFramesPerUnit[unit] );
+			}
 			
 			// Signal that we got some data in this loop.
 			status = true;
@@ -164,15 +203,16 @@ int CodaRTnetContinuousTracker::Update( void ) {
 	
 }
 
+// Copy the most recent packet for the unit in question.
 bool CodaRTnetContinuousTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
 	// Make sure that any packets that were sent were read.
 	Update();
-	// Copy the most recent packet for the unit in question.
+	unsigned int index;
 	// If we are acquiring a time series, nFramesPerUnit points is one more than the index of the last acquired sample.
+	// So we back up one sample and send that frame.
+	if ( acquiring ) index = ( nFramesPerUnit[selected_unit] - 1 ) % MAX_FRAMES;
 	// If we are not acquiring a time series, the most recent data is copied into the location pointed to by nFramesPerUnit,
 	//  which does not advance.
-	unsigned int index;
-	if ( acquiring ) index = ( nFramesPerUnit[selected_unit] - 1 ) % MAX_FRAMES;
 	else index = nFramesPerUnit[selected_unit] % MAX_FRAMES;
 	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][index] );
 	return true;

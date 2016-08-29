@@ -58,9 +58,9 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 			}
 		}
 	}
-	if ( validated_markers < visible_markers ) {
-		fOutputDebugString( "%08x Visible Markers: %d Rejected %d markers.\n", (unsigned int) this, visible_markers, visible_markers - validated_markers );
-	}
+	//if ( validated_markers < visible_markers ) {
+	//	fOutputDebugString( "%08x Visible Markers: %d Rejected %d markers.\n", (unsigned int) this, visible_markers, visible_markers - validated_markers );
+	//}
 
 	if ( validated_markers < 4 ) pose.visible = false;
 	// ComputeRigidBodyPose() does it all!
