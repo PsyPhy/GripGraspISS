@@ -624,7 +624,7 @@ void GraspGLObjects::DrawVR( void ) {
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
-	raiseHandIndicator->Draw();
+	// raiseHandIndicator->Draw();
 
 }
 

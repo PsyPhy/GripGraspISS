@@ -4,6 +4,9 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../GraspVR/GraspTrackers.h"
 
+// We need InteropServics in order to convert a String to a char *.
+using namespace System::Runtime::InteropServices;
+
 namespace GraspTrackerDaemon {
 
 	using namespace System;
@@ -28,6 +31,10 @@ namespace GraspTrackerDaemon {
 	private: System::Windows::Forms::Button^  startButton;
 
 	private: System::Windows::Forms::Button^  stopButton;
+	private: System::Windows::Forms::Button^  saveButton;
+	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
+	private: System::Windows::Forms::Button^  button1;
+
 
 	public: 
 
@@ -105,6 +112,9 @@ namespace GraspTrackerDaemon {
 			this->hmdPoseTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->startButton = (gcnew System::Windows::Forms::Button());
 			this->stopButton = (gcnew System::Windows::Forms::Button());
+			this->saveButton = (gcnew System::Windows::Forms::Button());
+			this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox3->SuspendLayout();
@@ -316,12 +326,43 @@ namespace GraspTrackerDaemon {
 			this->stopButton->UseVisualStyleBackColor = true;
 			this->stopButton->Click += gcnew System::EventHandler(this, &Form1::stopButton_Click);
 			// 
+			// saveButton
+			// 
+			this->saveButton->Enabled = false;
+			this->saveButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
+			this->saveButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->saveButton->Location = System::Drawing::Point(294, 255);
+			this->saveButton->Name = L"saveButton";
+			this->saveButton->Size = System::Drawing::Size(133, 46);
+			this->saveButton->TabIndex = 9;
+			this->saveButton->Text = L"Save";
+			this->saveButton->UseVisualStyleBackColor = true;
+			this->saveButton->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			// 
+			// saveFileDialog1
+			// 
+			this->saveFileDialog1->DefaultExt = L"mrk";
+			this->saveFileDialog1->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &Form1::saveFileDialog1_FileOk);
+			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(451, 270);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(80, 30);
+			this->button1->TabIndex = 10;
+			this->button1->Text = L"Decal";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click_1);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->exitButton;
 			this->ClientSize = System::Drawing::Size(702, 313);
+			this->Controls->Add(this->button1);
+			this->Controls->Add(this->saveButton);
 			this->Controls->Add(this->stopButton);
 			this->Controls->Add(this->startButton);
 			this->Controls->Add(this->label2);
@@ -372,7 +413,7 @@ namespace GraspTrackerDaemon {
 			visibilityTextBox1->Text = "";
 			visibilityTextBox0->Text = " Initializing CODA ... OK.";
 
-			CreateRefreshTimer( 100 );
+			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
 		}
 
@@ -404,12 +445,28 @@ namespace GraspTrackerDaemon {
 private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 startButton->Enabled = false;
 			 stopButton->Enabled = true;
-			 trackers->codaTracker->StartAcquisition( 600 );
+			 saveButton->Enabled = false;
+			 trackers->codaTracker->StartAcquisition( 1000.0 );
 		 }
 private: System::Void stopButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 startButton->Enabled = true;
 			 stopButton->Enabled = false;
+			 saveButton->Enabled = true;
 			 trackers->codaTracker->StopAcquisition();
+		 }
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 saveFileDialog1->ShowDialog();
+		 }
+			// char *filename = "GraspTrackerDaemon.mrk";
+		 //}
+private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+			char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( saveFileDialog1->FileName ).ToPointer();
+			trackers->codaTracker->WriteMarkerFile( fn );
+			fMessageBox( MB_OK, "GraspTrackerDaemon.mrk", "Wrote %d samples to %s", trackers->codaTracker->nFrames, fn );
+			Marshal::FreeHGlobal( IntPtr(fn) );
+		 }
+private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
+			 trackers->codaTracker->AnnulAlignment();
 		 }
 };
 }

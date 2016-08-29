@@ -4,5 +4,6 @@
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.release.mak" />
     <None Include="InstallGrasp.mak" />
+    <None Include="LoadCodaCals.bat" />
   </ItemGroup>
 </Project>

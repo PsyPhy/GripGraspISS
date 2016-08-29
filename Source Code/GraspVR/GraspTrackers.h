@@ -38,6 +38,8 @@
 #include "../OculusInterface/MousePoseTrackers.h"
 #include "../Trackers/OculusRemotePoseTracker.h"
 
+#include "../DexServices/DexServices.h"
+
 #define MAX_ISI 100000
 
 namespace Grasp {
@@ -72,6 +74,9 @@ namespace Grasp {
 		}
 		virtual bool GetCurrentChestPose( TrackerPose &pose ) {
 			return( chestTracker->GetCurrentPose( pose ) );
+		}
+		virtual unsigned int GetTrackerStatus( void ) {
+			return( TRACKERSTATUS_UNKNOWN );
 		}
 
 
@@ -145,6 +150,7 @@ namespace Grasp {
 		}
 		virtual void Initialize( void );
 		virtual void InitializeCodaTrackers( void );
+		virtual unsigned int GetTrackerStatus( void );
 		virtual void Update( void );
 		virtual void Release( void );
 		virtual void WriteDataFiles( char *filename_root );

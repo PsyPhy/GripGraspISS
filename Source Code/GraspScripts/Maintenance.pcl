@@ -1,5 +1,11 @@
 # Protocol Definition: Maintenance Tasks 
 900; INSTRUCTION; Maintenance Tasks; MaintenanceWelcome.instruction.html
-901; COMMAND; Set for HMD Tracking Only; echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
-902; COMMAND; Set to use GRIP 3D tracker; del /F /Q NoCoda.flg; SetWithCodaReady.prompt.html
-
+901; COMMAND; Use HMD Tracking Only; echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
+902; COMMAND; Use GRIP 3D (CODA) tracker; del /F /Q NoCoda.flg; SetWithCodaReady.prompt.html
+903; COMMAND; Use FM Marker Structures; copy /Y Bdy\FM\*.bdy Bdy & pause; StepReady.prompt.html
+904; COMMAND; Use RED Marker Structures; copy /Y Bdy\RED\*.bdy Bdy & pause; StepReady.prompt.html
+905; COMMAND; Use YELLOW Marker Structures; copy /Y Bdy\YELLOW\*.bdy Bdy & pause; StepReady.prompt.html
+910; COMMAND; Use TrM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini & pause; StepReady.prompt.html
+911; COMMAND; Use GM  Tracker Units; copy /Y InitFiles\CodaRTnet.ini.GM1  CodaRTnet.ini & pause; StepReady.prompt.html
+912; COMMAND; Use ScM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.SM  CodaRTnet.ini & pause; StepReady.prompt.html
+913; COMMAND; Use FM2 Tracker Units; copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini & pause; StepReady.prompt.html

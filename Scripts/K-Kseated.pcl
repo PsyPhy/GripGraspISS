@@ -1,7 +1,8 @@
 # Protocol Definition: Visual Stimulus to Kinesthetic Response 
 301; SCRIPT; Preparation; K-KprepareSeated.tsk
 302; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
-303; COMMAND; Practice Trials; Executables\Grasp --KtoK --sequence=Sequences\DemoGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-304; COMMAND; Experiment Trials Block 1; Executables\Grasp --KtoK --sequence=Sequences\HeadStraightGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-305; COMMAND; Experiment Trials Block 2; Executables\Grasp --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+303; COMMAND; Practice Trials; Executables\Grasp.bat --KtoK --sequence=Sequences\DemoGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+304; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --KtoK --sequence=Sequences\HeadStraightGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+305; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+310; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 399; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

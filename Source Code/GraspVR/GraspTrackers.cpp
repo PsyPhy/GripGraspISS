@@ -149,6 +149,25 @@ void GraspDexTrackers::Update( void ) {
 	UpdatePoseTrackers();
 }
 
+// Construct a number that indicates the number of visible markers in each structure.
+unsigned int GraspDexTrackers::GetTrackerStatus( void ) {
+
+	unsigned int status = 0;
+	int group, id, mrk, unit;
+	for ( group = 0, id = 0; group < 3 && id < MAX_MARKERS; group ++ ) {
+		int group_count = 0;
+		for ( mrk = 0; mrk < 8 && id < MAX_MARKERS; mrk++ , id++ ) {
+			bool visibility = false;
+			for ( unit = 0; unit < nCodaUnits; unit++ ) {
+				if ( markerFrame[unit].marker[id].visibility ) visibility = true;
+			}
+			if ( visibility ) group_count++;
+		}
+		status = status + pow(10.0,group) * group_count;
+	}
+	return( status );
+}
+
 void GraspDexTrackers::Release( void ) {
 
 	// Do what all flavors of GraspTrackers do.

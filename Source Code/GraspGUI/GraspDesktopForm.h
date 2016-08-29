@@ -58,7 +58,7 @@ namespace GraspGUI {
 	private: System::Windows::Forms::CheckBox^  unitTestingMode;
 
 		// A timer to handle animations and screen refresh, and associated actions.
-		static Timer^ refreshTimer;
+		static System::Windows::Forms::Timer^ refreshTimer;
 		void SendProgressInfo( void ) {
 			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );

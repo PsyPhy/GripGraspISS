@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 {
 	fprintf( stderr, "\n\n%s\nEmulates a mouse using the Oculus remote.\n\n", "OculusMouse.exe" );
 
-	int slow = 10;
+	int slow = 15;
 
 	// Initialize the various Input structures.
 	MouseMoveInput.mi.dx = 0;
