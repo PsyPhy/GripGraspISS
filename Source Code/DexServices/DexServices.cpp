@@ -147,6 +147,28 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
+int DexServices::SendScienceRealtimeData( void ) {
+
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Sent science realtime info.\n" );
+		fflush( log );
+	}
+	// A buffer to hold the string of bytes that form the packet.
+	u8 packet[1024];
+	// An object that serializes the data destined for DEX housekeeping telemetry packets.
+	RT_packet rt;
+
+	// Turn the data structure into a string of bytes with header etc.
+	u32 size = rt.serialize( packet );
+
+	// Send it to DEX.
+	int sent = Send( packet, size );
+
+	return( sent );
+
+}
+
 int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep, unsigned short tracker_status ) {
 
 	if ( log ) {
@@ -185,6 +207,12 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 	return( sent );
 
 }
+
+// Send a number to indicate the tracker status.
+int DexServices::SendTrackerStatus( unsigned int status ) {
+	return( SendTaskInfo( static_user, static_protocol, static_task, static_step, static_substep, status ) ); 
+}
+
 
 int DexServices::SnapPicture( const char *tag ) {
 

@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "../Trackers/Trackers.h"
+
+
 // Connection to Dex hardware via the ET port.
 #define DEFAULT_SERVER "10.80.12.103"
 #define DEFAULT_PORT 2128
@@ -68,9 +71,11 @@ namespace Grasp {
 			unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN );
 		int ResetTaskInfo( void ) { return( SendTaskInfo( 0, 0, 0, 0, 0, 0 ) ); }
 		int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); }
-		int SendTrackerStatus( int status ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, static_substep, status ) ); }
+		int SendTrackerStatus( unsigned int status );
 
 		int SnapPicture( const char *tag );
+
+		int SendScienceRealtimeData( void );
 
 		void ParseCommandLine( char *command_line );
 

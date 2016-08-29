@@ -19,7 +19,7 @@ double GraspTaskManager::indicatorDisplayDuration = 1.0;
 
 // Time limits to accomplish different actions.
 double GraspTaskManager::alignHeadTimeout = 15.0;
-double GraspTaskManager::tiltHeadTimeout = 10.0;
+double GraspTaskManager::tiltHeadTimeout = 5.0;
 double GraspTaskManager::responseTimeout = 10.0;
 double GraspTaskManager::alignHandTimeout = 10.0;
 
@@ -258,6 +258,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
+		dexServices->SendTrackerStatus( trackers->GetTrackerStatus() );
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
