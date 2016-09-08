@@ -140,7 +140,7 @@ namespace GraspTrackerDaemon {
 			// 
 			this->groupBox1->Controls->Add(this->visibilityTextBox1);
 			this->groupBox1->Controls->Add(this->visibilityTextBox0);
-			this->groupBox1->Location = System::Drawing::Point(362, 12);
+			this->groupBox1->Location = System::Drawing::Point(369, 12);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(354, 94);
 			this->groupBox1->TabIndex = 4;
@@ -193,7 +193,7 @@ namespace GraspTrackerDaemon {
 			// 
 			this->groupBox2->Controls->Add(this->timeTextBox1);
 			this->groupBox2->Controls->Add(this->timeTextBox0);
-			this->groupBox2->Location = System::Drawing::Point(196, 12);
+			this->groupBox2->Location = System::Drawing::Point(203, 12);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(148, 94);
 			this->groupBox2->TabIndex = 5;
@@ -230,7 +230,7 @@ namespace GraspTrackerDaemon {
 			this->groupBox3->Controls->Add(this->hmdPoseTextBox);
 			this->groupBox3->Location = System::Drawing::Point(16, 119);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(700, 130);
+			this->groupBox3->Size = System::Drawing::Size(707, 130);
 			this->groupBox3->TabIndex = 6;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Pose Trackers";
@@ -277,7 +277,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->chestPoseTextBox->Location = System::Drawing::Point(75, 95);
 			this->chestPoseTextBox->Name = L"chestPoseTextBox";
-			this->chestPoseTextBox->Size = System::Drawing::Size(612, 29);
+			this->chestPoseTextBox->Size = System::Drawing::Size(625, 29);
 			this->chestPoseTextBox->TabIndex = 7;
 			this->chestPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -287,7 +287,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->handPoseTextBox->Location = System::Drawing::Point(75, 58);
 			this->handPoseTextBox->Name = L"handPoseTextBox";
-			this->handPoseTextBox->Size = System::Drawing::Size(612, 29);
+			this->handPoseTextBox->Size = System::Drawing::Size(625, 29);
 			this->handPoseTextBox->TabIndex = 6;
 			this->handPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -297,7 +297,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->hmdPoseTextBox->Location = System::Drawing::Point(75, 21);
 			this->hmdPoseTextBox->Name = L"hmdPoseTextBox";
-			this->hmdPoseTextBox->Size = System::Drawing::Size(612, 29);
+			this->hmdPoseTextBox->Size = System::Drawing::Size(625, 29);
 			this->hmdPoseTextBox->TabIndex = 5;
 			this->hmdPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -362,7 +362,7 @@ namespace GraspTrackerDaemon {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(728, 313);
+			this->ClientSize = System::Drawing::Size(735, 313);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->saveButton);
 			this->Controls->Add(this->stopButton);
@@ -377,6 +377,7 @@ namespace GraspTrackerDaemon {
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
+			this->WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &Form1::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->groupBox1->ResumeLayout(false);

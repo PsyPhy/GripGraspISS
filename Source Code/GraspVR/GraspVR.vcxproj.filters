@@ -15,6 +15,7 @@
     <ClCompile Include="GraspGLObjects.cpp" />
     <ClCompile Include="GraspVR.cpp" />
     <ClCompile Include="Stdafx.cpp" />
+    <ClCompile Include="GraspTrackers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
