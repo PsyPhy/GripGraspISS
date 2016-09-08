@@ -628,6 +628,11 @@ double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 
 }
 
+double VectorsMixin::RotationAngle( const Quaternion q1 ) {
+	double hypotenuse = sqrt( q1[X] * q1[X] + q1[Y] * q1[Y] +  q1[Z] * q1[Z] );
+	return( 2.0 * atan2( hypotenuse, q1[M] ) );
+}
+
 void VectorsMixin::TransformPose( Pose &result, Transform &xform, Pose &source ) {
 	Vector3 x;
 	Quaternion q;
@@ -837,7 +842,7 @@ char *VectorsMixin::qstr( const Quaternion q ) {
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], "{%6.3fi%+6.3fj%+6.3fk%+6.3f}", q[X], q[Y], q[Z], q[M] );
+	sprintf( str[instance], "{%6.3fi %+6.3fj %+6.3fk %+6.3f}", q[X], q[Y], q[Z], q[M] );
 	return( str[instance] );
 }
 

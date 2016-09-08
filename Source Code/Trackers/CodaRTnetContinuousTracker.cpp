@@ -52,10 +52,10 @@ void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
 	cl.startAcqContinuous();
 }
 
+// Attempt to halt an ongoing aquisition. 
+// Does not care if it was actually acquiring or not.
+// Does not retrieve the data.
 void CodaRTnetContinuousTracker::StopContinuousAcquisition( void ) {
-	// Attempt to halt an ongoing aquisition. 
-	// Does not care if it was actually acquiring or not.
-	// Does not retrieve the data.
 	OutputDebugString( "Stopping acquisition ..." );
 	cl.stopAcq();
 	OutputDebugString( "OK.\n" );

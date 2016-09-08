@@ -36,6 +36,9 @@
     <ClCompile Include="GraspTrackerDaemonTrackers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\GraspVR\GraspTrackers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Form1.h">

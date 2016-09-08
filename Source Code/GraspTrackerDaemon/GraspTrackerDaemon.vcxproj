@@ -89,6 +89,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\GraspVR\GraspTrackers.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GraspTrackerDaemon.cpp" />
     <ClCompile Include="GraspTrackerDaemonTrackers.cpp" />

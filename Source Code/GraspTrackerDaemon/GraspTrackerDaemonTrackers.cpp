@@ -21,6 +21,13 @@ int record_length;
 SOCKET sock;
 struct sockaddr_in Sender_addr;
 
+// A buffer to hold pose data.
+struct {
+	TrackerPose hmd;
+	TrackerPose hand;
+	TrackerPose chest;
+} poseData[MAX_FRAMES];
+
 namespace GraspTrackerDaemon {
 
 	void Form1::InitializeSocket( void ) {
@@ -119,6 +126,12 @@ namespace GraspTrackerDaemon {
 		trackers->handTracker->GetCurrentPose( record.hand );
 		trackers->chestTracker->GetCurrentPose( record.chest );
 
+		trackers->hmdTracker->CopyTrackerPose( poseData[nPoseSamples].hmd, record.hmd );
+		trackers->handTracker->CopyTrackerPose( poseData[nPoseSamples].hand, record.hand );
+		trackers->chestTracker->CopyTrackerPose( poseData[nPoseSamples].chest, record.chest );
+
+		if (recording) nPoseSamples = (++nPoseSamples) % MAX_FRAMES;
+
 		// Broadcast the record.
 		if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
 		{
@@ -172,5 +185,35 @@ namespace GraspTrackerDaemon {
 		else chestPoseTextBox->Text = "                       (obscured)";
 
 	}
+
+	System::Void Form1::saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+			char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( saveFileDialog1->FileName ).ToPointer();
+			trackers->codaTracker->WriteMarkerFile( fn );
+			fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", trackers->codaTracker->nFrames, fn );
+			char pose_fn[512] = "";
+			strcat( pose_fn, fn );
+			strcat( pose_fn, ".pse" );
+			FILE *fp = fopen( pose_fn, "w" );
+			for ( int i = 0; i < nPoseSamples; i++ ) {
+				fprintf( fp, "%8d", i );
+				fprintf( fp, " %0.3f %s %s", poseData[i].hmd.time, trackers->vstr( poseData[i].hmd.pose.position ), trackers->qstr( poseData[i].hmd.pose.orientation ) );
+				fprintf( fp, " %0.3f %s %s", poseData[i].hand.time, trackers->vstr( poseData[i].hand.pose.position ), trackers->qstr( poseData[i].hand.pose.orientation ) );
+				fprintf( fp, " %0.3f %s %s", poseData[i].chest.time, trackers->vstr( poseData[i].chest.pose.position ), trackers->qstr( poseData[i].chest.pose.orientation ) );
+				fprintf( fp, " %0.3f %0.3f %0.3f", 
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].hmd.pose.orientation,  poseData[i].hand.pose.orientation )),
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].hand.pose.orientation,  poseData[i].chest.pose.orientation )),
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].chest.pose.orientation,  poseData[i].hmd.pose.orientation ))
+				);
+				fprintf( fp, " %0.3f %0.3f %0.3f", 
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].hmd.pose.orientation )),
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].hand.pose.orientation )),
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].chest.pose.orientation ))
+				);
+				fprintf( fp, "\n" );
+			}
+			fclose( fp );
+			fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", nPoseSamples, pose_fn );
+			Marshal::FreeHGlobal( IntPtr(fn) );
+		 }
 
 };

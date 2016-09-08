@@ -14,7 +14,6 @@
   <ItemGroup>
     <ClCompile Include="GraspGLObjects.cpp" />
     <ClCompile Include="GraspVR.cpp" />
-    <ClCompile Include="GraspTrackers.cpp" />
     <ClCompile Include="Stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
