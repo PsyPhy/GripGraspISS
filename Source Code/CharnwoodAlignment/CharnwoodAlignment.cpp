@@ -41,14 +41,18 @@ int main( int argc,  char *argv[] )
 	//int y_minus = 8;
 	//int y_plus = 14;
 
-/*	for ( int i = 0; i < argc; i++ ) {
+	for ( int i = 0; i < argc; i++ ) {
 		if ( !strncmp( argv[i], "--origin=", strlen( "--origin=" ) ) ) sscanf( argv[i], "--origin=%d", &origin );
 		if ( !strncmp( argv[i], "--x_minus=", strlen( "--x_minus=" ) ) ) sscanf( argv[i], "--x_minus=%d", &x_minus );
 		if ( !strncmp( argv[i], "--x_plus=", strlen( "--x_plus=" ) ) ) sscanf( argv[i], "--x_plus=%d", &x_plus );
 		if ( !strncmp( argv[i], "--y_minus=", strlen( "--y_minus=" ) ) ) sscanf( argv[i], "--y_minus=%d", &y_minus );
 		if ( !strncmp( argv[i], "--y_plus=", strlen( "--y_plus=" ) ) ) sscanf( argv[i], "--y_plus=%d", &y_plus );
 	}
-	*/// 
+	
+	response = fMessageBox( MB_OKCANCEL, "CharnwoodAlignment", "Origin: %d\nX Axis: %d -> %d\nY Axis: %d -> %d", origin, x_minus, x_plus, y_minus, y_plus );	
+	if ( response == IDCANCEL ) exit( -1 );
+
+	// 
 	// Loop until the alignment is successful or the user aborts.
 	//
 	while (1) {
