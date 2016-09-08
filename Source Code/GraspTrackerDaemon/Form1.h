@@ -27,9 +27,11 @@ namespace GraspTrackerDaemon {
 		bool use_coda;
 		PsyPhy::CodaRTnetTracker *coda;
 		Grasp::GraspDexTrackers *trackers;
+		bool recording;
+		unsigned int nPoseSamples;
+	
 	private: System::Windows::Forms::TextBox^  timeTextBox1;
 	private: System::Windows::Forms::Button^  startButton;
-
 	private: System::Windows::Forms::Button^  stopButton;
 	private: System::Windows::Forms::Button^  saveButton;
 	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
@@ -43,7 +45,7 @@ namespace GraspTrackerDaemon {
 	public: 
 		PsyPhy::VectorsMixin	*vm;
 
-		Form1(void) : use_coda( true )
+		Form1(void) : use_coda( true ), recording( false ), nPoseSamples( 0 )
 		{
 			InitializeComponent();
 			if ( 0 == _access_s( "FakeCoda.flg", 0x00 ) ) use_coda = false;
@@ -126,7 +128,7 @@ namespace GraspTrackerDaemon {
 			this->exitButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
 			this->exitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->exitButton->Location = System::Drawing::Point(547, 255);
+			this->exitButton->Location = System::Drawing::Point(583, 254);
 			this->exitButton->Name = L"exitButton";
 			this->exitButton->Size = System::Drawing::Size(133, 46);
 			this->exitButton->TabIndex = 1;
@@ -138,7 +140,7 @@ namespace GraspTrackerDaemon {
 			// 
 			this->groupBox1->Controls->Add(this->visibilityTextBox1);
 			this->groupBox1->Controls->Add(this->visibilityTextBox0);
-			this->groupBox1->Location = System::Drawing::Point(336, 12);
+			this->groupBox1->Location = System::Drawing::Point(362, 12);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(354, 94);
 			this->groupBox1->TabIndex = 4;
@@ -191,7 +193,7 @@ namespace GraspTrackerDaemon {
 			// 
 			this->groupBox2->Controls->Add(this->timeTextBox1);
 			this->groupBox2->Controls->Add(this->timeTextBox0);
-			this->groupBox2->Location = System::Drawing::Point(182, 12);
+			this->groupBox2->Location = System::Drawing::Point(196, 12);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(148, 94);
 			this->groupBox2->TabIndex = 5;
@@ -228,7 +230,7 @@ namespace GraspTrackerDaemon {
 			this->groupBox3->Controls->Add(this->hmdPoseTextBox);
 			this->groupBox3->Location = System::Drawing::Point(16, 119);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(674, 130);
+			this->groupBox3->Size = System::Drawing::Size(700, 130);
 			this->groupBox3->TabIndex = 6;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Pose Trackers";
@@ -275,7 +277,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->chestPoseTextBox->Location = System::Drawing::Point(75, 95);
 			this->chestPoseTextBox->Name = L"chestPoseTextBox";
-			this->chestPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->chestPoseTextBox->Size = System::Drawing::Size(612, 29);
 			this->chestPoseTextBox->TabIndex = 7;
 			this->chestPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -285,7 +287,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->handPoseTextBox->Location = System::Drawing::Point(75, 58);
 			this->handPoseTextBox->Name = L"handPoseTextBox";
-			this->handPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->handPoseTextBox->Size = System::Drawing::Size(612, 29);
 			this->handPoseTextBox->TabIndex = 6;
 			this->handPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -295,7 +297,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->hmdPoseTextBox->Location = System::Drawing::Point(75, 21);
 			this->hmdPoseTextBox->Name = L"hmdPoseTextBox";
-			this->hmdPoseTextBox->Size = System::Drawing::Size(589, 29);
+			this->hmdPoseTextBox->Size = System::Drawing::Size(612, 29);
 			this->hmdPoseTextBox->TabIndex = 5;
 			this->hmdPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -347,7 +349,7 @@ namespace GraspTrackerDaemon {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(451, 270);
+			this->button1->Location = System::Drawing::Point(465, 265);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(80, 30);
 			this->button1->TabIndex = 10;
@@ -360,7 +362,7 @@ namespace GraspTrackerDaemon {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(702, 313);
+			this->ClientSize = System::Drawing::Size(728, 313);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->saveButton);
 			this->Controls->Add(this->stopButton);
@@ -375,7 +377,6 @@ namespace GraspTrackerDaemon {
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
-			this->WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &Form1::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->groupBox1->ResumeLayout(false);
@@ -447,24 +448,22 @@ private: System::Void startButton_Click(System::Object^  sender, System::EventAr
 			 stopButton->Enabled = true;
 			 saveButton->Enabled = false;
 			 trackers->codaTracker->StartAcquisition( 1000.0 );
+			 nPoseSamples = 0;
+			 recording = true;
 		 }
 private: System::Void stopButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 startButton->Enabled = true;
 			 stopButton->Enabled = false;
 			 saveButton->Enabled = true;
 			 trackers->codaTracker->StopAcquisition();
+			 recording = false;
 		 }
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 recording = false;
 			 saveFileDialog1->ShowDialog();
 		 }
-			// char *filename = "GraspTrackerDaemon.mrk";
-		 //}
-private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
-			char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( saveFileDialog1->FileName ).ToPointer();
-			trackers->codaTracker->WriteMarkerFile( fn );
-			fMessageBox( MB_OK, "GraspTrackerDaemon.mrk", "Wrote %d samples to %s", trackers->codaTracker->nFrames, fn );
-			Marshal::FreeHGlobal( IntPtr(fn) );
-		 }
+
+private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e);
 private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
 			 trackers->codaTracker->AnnulAlignment();
 		 }
