@@ -56,7 +56,8 @@ namespace GraspGUI {
 		unsigned short stepExecutionState;
 
 	private: System::Windows::Forms::CheckBox^  unitTestingMode;
-	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::Button^  repeatButton;
+
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
@@ -231,6 +232,7 @@ namespace GraspGUI {
 			this->execBackButton = (gcnew System::Windows::Forms::Button());
 			this->execSkipButton = (gcnew System::Windows::Forms::Button());
 			this->normalNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->repeatButton = (gcnew System::Windows::Forms::Button());
 			this->previousButton = (gcnew System::Windows::Forms::Button());
 			this->nextButton = (gcnew System::Windows::Forms::Button());
 			this->stepHeaderGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -238,7 +240,6 @@ namespace GraspGUI {
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->htmlGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->navigatorGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
 			this->protocolGroupBox->SuspendLayout();
@@ -538,7 +539,7 @@ namespace GraspGUI {
 			// 
 			// normalNavigationGroupBox
 			// 
-			this->normalNavigationGroupBox->Controls->Add(this->button1);
+			this->normalNavigationGroupBox->Controls->Add(this->repeatButton);
 			this->normalNavigationGroupBox->Controls->Add(this->previousButton);
 			this->normalNavigationGroupBox->Controls->Add(this->nextButton);
 			this->normalNavigationGroupBox->Location = System::Drawing::Point(14, 911);
@@ -546,6 +547,18 @@ namespace GraspGUI {
 			this->normalNavigationGroupBox->Size = System::Drawing::Size(591, 68);
 			this->normalNavigationGroupBox->TabIndex = 12;
 			this->normalNavigationGroupBox->TabStop = false;
+			// 
+			// repeatButton
+			// 
+			this->repeatButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->repeatButton->Location = System::Drawing::Point(326, 19);
+			this->repeatButton->Name = L"repeatButton";
+			this->repeatButton->Size = System::Drawing::Size(124, 42);
+			this->repeatButton->TabIndex = 14;
+			this->repeatButton->Text = L"Repeat";
+			this->repeatButton->UseVisualStyleBackColor = true;
+			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
 			// 
 			// previousButton
 			// 
@@ -629,17 +642,6 @@ namespace GraspGUI {
 			this->instructionViewer->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
-			// 
-			// button1
-			// 
-			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(320, 17);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(124, 42);
-			this->button1->TabIndex = 14;
-			this->button1->Text = L"Repeat";
-			this->button1->UseVisualStyleBackColor = true;
 			// 
 			// GraspDesktop
 			// 
@@ -859,6 +861,8 @@ namespace GraspGUI {
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
 
-	};
+	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			 }
+};
 }
 
