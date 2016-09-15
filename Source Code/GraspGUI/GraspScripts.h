@@ -51,6 +51,7 @@ namespace GraspGUI {
 	public ref class Step {
 	public:
 		int	    number;
+		// Type can be "INSTRUCTION", "COMMAND" or "SYSTEM"
 		String^ type;
 
 		// A step may simply be an INSTRUCTION to be displayed.
@@ -62,6 +63,10 @@ namespace GraspGUI {
 		// a instruction screen (html) to be displayed when the step is ready to be run,
 		// another while it is running and then an array of html files to be displayed
 		// depending on the exit code from the executed command.
+		// The difference between "COMMAND" and "SYSTEM" is that a set of command-line arguments
+		// are added to COMMANDs when called, but not to SYSTEMs. This allows one to specify
+		// standard commands such as copy without having the command corrupted by the automatically 
+		// added command-line options.
 		String^ command;
 		String^	ready;
 		String^ running;

@@ -559,6 +559,7 @@ namespace GraspGUI {
 			this->repeatButton->Text = L"Repeat";
 			this->repeatButton->UseVisualStyleBackColor = true;
 			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
+			this->repeatButton->Visible = false;
 			// 
 			// previousButton
 			// 
@@ -791,6 +792,10 @@ namespace GraspGUI {
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			if ( taskListBox->SelectedIndex < 0 ) {
+				ShowLogon();
+				return;
+			}
 			// Check if the subject was supposed to execute a command and if so, verify that
 			// they really want to leave the current step without doing so.
 			if ( verifyNext || ( currentStep > 0 && currentStep < nSteps - 1 ) ) {
@@ -820,7 +825,11 @@ namespace GraspGUI {
 				if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "INSTRUCTION" ) ) {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
-				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) ) {
+				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND@" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM@" ) 
+					) {
 					stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
 					stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
 					stepList[0]->running = taskList[taskListBox->SelectedIndex]->isolated_step->running;
