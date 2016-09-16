@@ -13,15 +13,25 @@ using namespace PsyPhy;
 
 // Defined constants
 
+// Amount of time to show a visual target.
+double	GraspTaskManager::targetPresentationDuration = 3.0;
+
 // Time to show the trial success indicator.
-// If it is set to 0 so that there is no presentation of the success indicator.
+// If it is set to 0 there is no presentation of the success indicator.
 double GraspTaskManager::indicatorDisplayDuration = 1.0;	
 
 // Time limits to accomplish different actions.
-double GraspTaskManager::alignHeadTimeout = 15.0;
+double GraspTaskManager::alignHeadTimeout = 30.0;
 double GraspTaskManager::tiltHeadTimeout = 5.0;
 double GraspTaskManager::responseTimeout = 10.0;
-double GraspTaskManager::alignHandTimeout = 10.0;
+double GraspTaskManager::alignHandTimeout = 30.0;
+
+// Required precision for aligning the head.
+// I am setting these values to what I think they should be for training.
+// The head tilt tolerances are rather large.
+double	GraspTaskManager::targetHeadTiltTolerance = 10.0;
+double	GraspTaskManager::responseHeadTiltTolerance = 10.0;
+double	GraspTaskManager::hapticTargetOrientationTolerance = 10.0;
 
 // It is easy to forget to raise and lower the hand, but it is annoying to be prompted each time.
 // The following parameter set delays before displaying the prompt.
@@ -150,21 +160,14 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for read.", filename );
 	while ( fgets( line, sizeof( line ), fp ) ) {
 
-		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf;  %lf; %lf; %lf; %lf; %lf; %d",
+		int items = sscanf( line, "%lf; %lf; %lf; %lf; %d",
 			&trialParameters[nTrials].targetHeadTilt,
-			&trialParameters[nTrials].targetHeadTiltTolerance,
-			&trialParameters[nTrials].targetHeadTiltDuration,
 			&trialParameters[nTrials].targetOrientation,
-			&trialParameters[nTrials].hapticTargetOrientationTolerance,
-			&trialParameters[nTrials].targetPresentationDuration,
 			&trialParameters[nTrials].responseHeadTilt,
-			&trialParameters[nTrials].responseHeadTiltTolerance,
-			&trialParameters[nTrials].responseHeadTiltDuration,
-			&trialParameters[nTrials].responseTimeout,
 			&trialParameters[nTrials].conflictGain,
 			&trialParameters[nTrials].provideFeedback );
 
-		if ( items == 12 ) {
+		if ( items == 5 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
 				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
 			}
@@ -314,7 +317,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 void GraspTaskManager::EnterStartBlock( void ) {
 	// The desired orientation of the head is upright (0°). 
 	// This is not essential, but it allows us to show the colors already.
-	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
 	// Show the hand, just to allow the subject to play a little.
@@ -353,17 +356,17 @@ void GraspTaskManager::EnterStartTrial( void ) {
 		currentTrial,
 
 		trialParameters[currentTrial].targetHeadTilt,
-		trialParameters[currentTrial].targetHeadTiltTolerance,
-		trialParameters[currentTrial].targetHeadTiltDuration,
+		targetHeadTiltTolerance,
+		alignHeadTimeout,
 
 		trialParameters[currentTrial].targetOrientation,
-		trialParameters[currentTrial].hapticTargetOrientationTolerance,
-		trialParameters[currentTrial].targetPresentationDuration,
+		hapticTargetOrientationTolerance,
+		targetPresentationDuration,
 
 		trialParameters[currentTrial].responseHeadTilt,
-		trialParameters[currentTrial].responseHeadTiltTolerance,
-		trialParameters[currentTrial].responseHeadTiltDuration,
-		trialParameters[currentTrial].responseTimeout,
+		responseHeadTiltTolerance,
+		tiltHeadTimeout,
+		responseTimeout,
 
 		trialParameters[currentTrial].conflictGain,
 		trialParameters[currentTrial].provideFeedback );
@@ -402,11 +405,11 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->headTiltPrompt->Disable();
 	if ( manualStraightenHead ) {
 		renderer->straightenHeadIndicator->Enable();
-		renderer->glasses->SetColor( 0.0, 0.1, 1.0, 0.35 );
+		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
 	}
 	else {
 		// The desired orientation of the head to zero in preparation for applying conflict (if any).
-		SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+		SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
 		renderer->straightAheadTarget->Enable();
 		renderer->gazeLaser->Enable();
@@ -460,7 +463,7 @@ void GraspTaskManager::EnterAlignHead( void ) {
 	// See above.
 	renderer->room->Enable();
 	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
 	TimerSet( alignHeadTimer,  alignHeadTimeout ); 
 }
@@ -548,7 +551,7 @@ void GraspTaskManager::EnterTiltHead( void ) {
 	TimerSet( tiltHeadTimer, tiltHeadTimeout ); 
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
-	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, responseHeadTiltTolerance );
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
 }
@@ -690,7 +693,7 @@ void  GraspTaskManager::ExitProvideFeedback( void ) {
 // Then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialCompleted( void ) {
 	// Put the target head orientation back to upright so that the subject can start moving there already.
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 	// Show the success indicator.
 	renderer->successIndicator->Enable();
 	// Show it for a fixed time.
@@ -717,7 +720,7 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 void GraspTaskManager::EnterBlockCompleted( void ) {
 	// Show the success indicator.
 	renderer->blockCompletedIndicator->Enable();
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.

@@ -20,7 +20,7 @@ void KtoK::EnterPresentTarget( void ) {
 	// The orientation will be reflected by the color.
 	renderer->kkTool->Enable();
 	// The target orientation for the hand.
-	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, trialParameters[currentTrial].hapticTargetOrientationTolerance );
+	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, hapticTargetOrientationTolerance );
 	// Set a timeout to achieve the target orientation of the hand.
 	TimerSet( alignHandTimer, alignHandTimeout );
 	// Do all the default actions as well.

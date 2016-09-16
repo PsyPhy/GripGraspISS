@@ -16,16 +16,21 @@ namespace Grasp {
 
 	class GraspTaskManager : public GraspVR {
 
-
 	public:
 
-		static double indicatorDisplayDuration;
-		static double alignHeadTimeout;
-		static double tiltHeadTimeout;
-		static double responseTimeout;
-		static double alignHandTimeout;
-		static double handPromptDelay;
-		static double handErrorDelay;
+		static double	targetPresentationDuration;
+		static double	indicatorDisplayDuration;
+
+		static double	alignHeadTimeout;
+		static double	tiltHeadTimeout;
+		static double	responseTimeout;
+		static double	alignHandTimeout;
+		static double	handPromptDelay;
+		static double	handErrorDelay;
+
+		static double	targetHeadTiltTolerance;
+		static double	responseHeadTiltTolerance;
+		static double	hapticTargetOrientationTolerance;
 
 		static int maxRetries;
 
@@ -34,15 +39,8 @@ namespace Grasp {
 		// List of paramters for each trial.
 		struct {
 			double	targetHeadTilt;
-			double	targetHeadTiltTolerance;
-			double	targetHeadTiltDuration;
 			double	targetOrientation;
-			double  hapticTargetOrientationTolerance;
-			double	targetPresentationDuration;
 			double	responseHeadTilt;
-			double	responseHeadTiltTolerance;
-			double	responseHeadTiltDuration;
-			double  responseTimeout;
 			double	conflictGain;
 			bool	provideFeedback;
 		} trialParameters[MAX_GRASP_TRIALS];
@@ -192,7 +190,6 @@ namespace Grasp {
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
 			waitForUp = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
-
 		}
 		void Release( void ) {
 			GraspVR::Release();

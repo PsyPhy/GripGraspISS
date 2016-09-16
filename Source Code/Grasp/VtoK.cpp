@@ -17,7 +17,7 @@ using namespace PsyPhy;
 void VtoK::EnterPresentTarget( void ) {
 	// The target is displayed visually.
 	renderer->orientationTarget->Enable();
-	TimerSet( presentTargetTimer, trialParameters[currentTrial].targetPresentationDuration ); 
+	TimerSet( presentTargetTimer, targetPresentationDuration ); 
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
 }
