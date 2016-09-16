@@ -230,7 +230,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	sprintf( responseFilename, "%s.rsp", output_filename_root );
 	response_fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-	fprintf( response_fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+	fprintf( response_fp, "trial; type; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
 	// Open a file for storing the tracker poses and output a header.
 	sprintf( poseFilename, "%s.pse", output_filename_root );
@@ -352,8 +352,9 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
 	// Output the parameters of this trial to the response file.
-	fprintf( response_fp, "%d;  %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
+	fprintf( response_fp, "%d;  %s; %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
 		currentTrial,
+		tag,
 
 		trialParameters[currentTrial].targetHeadTilt,
 		targetHeadTiltTolerance,
