@@ -585,7 +585,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
-	if ( oculusDisplay->KeyDownEvents['G'] && status == aligned ) return( ObtainResponse ); 
+	if ( oculusDisplay->KeyDownEvents[' '] && status == aligned ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {

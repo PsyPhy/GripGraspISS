@@ -2,7 +2,7 @@
 601; SCRIPT; Preparation; K-KprepareFloating.tsk
 602; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
 603; COMMAND; Training Head Straight; Executables\Grasp.bat --KtoK --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-604; COMMAND; Training Head Tilted; Executables\Grasp.bat --KtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+604; COMMAND; Training Head Tilted; Executables\Grasp.bat --training --KtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 605; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 606; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --KtoK --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 610; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
