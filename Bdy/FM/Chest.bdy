@@ -7,5 +7,5 @@
 6	-102.340	  70.991	  16.846
 7	-100.466	 -74.040	  14.507
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - FM2 Chest
 ;;; Created 2016/08/25 10h34m50s GMT

@@ -6,5 +6,5 @@
 21	  13.838	 -55.993	   7.052
 22	 -90.515	  67.907	  -3.493
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - RED HMD (bad?)
 ;;; Created 2016/08/19 10h55m37s GMT

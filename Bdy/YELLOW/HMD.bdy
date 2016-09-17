@@ -6,5 +6,5 @@
 21	   1.279	  38.665	 -20.878
 23	 105.951	 -80.887	  15.167
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - Yellow HMD
 ;;; Created 2016/08/22 16h11m56s GMT

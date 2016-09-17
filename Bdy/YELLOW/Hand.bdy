@@ -7,5 +7,5 @@
 14	  -1.160	  51.481	 -51.838
 15	 -52.476	   0.654	 -48.887
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - Yellow Hand
 ;;; Created 2016/08/22 16h10m57s GMT

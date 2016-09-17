@@ -7,5 +7,5 @@
 6	  -0.116	 -34.037	 -15.326
 7	-101.657	  70.263	  17.036
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - Yellow Chest
 ;;; Created 2016/08/22 16h10m44s GMT

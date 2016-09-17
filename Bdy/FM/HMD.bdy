@@ -7,5 +7,5 @@
 22	-108.197	  76.813	  18.827
 23	-105.882	 -80.390	  18.189
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - FM2 HMD
 ;;; Created 2016/08/25 10h35m16s GMT
