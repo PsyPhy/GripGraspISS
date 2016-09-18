@@ -210,6 +210,7 @@ namespace GraspGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->statusButton = (gcnew System::Windows::Forms::Button());
 			this->quitButton = (gcnew System::Windows::Forms::Button());
@@ -558,8 +559,8 @@ namespace GraspGUI {
 			this->repeatButton->TabIndex = 14;
 			this->repeatButton->Text = L"Repeat";
 			this->repeatButton->UseVisualStyleBackColor = true;
-			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
 			this->repeatButton->Visible = false;
+			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
 			// 
 			// previousButton
 			// 
@@ -656,6 +657,7 @@ namespace GraspGUI {
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->ForeColor = System::Drawing::SystemColors::ControlText;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;

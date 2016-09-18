@@ -19,10 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="app.ico">
-      <Filter>Source Files\Resource Files</Filter>
-    </None>
-    <None Include="..\..\RunGRASP.bat" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGUI.cpp">

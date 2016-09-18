@@ -87,8 +87,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\RunGRASP.bat" />
-    <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +111,7 @@
     <EmbeddedResource Include="GraspDesktopForm.resX">
       <DependentUpon>GraspDesktopForm.h</DependentUpon>
       <SubType>Designer</SubType>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
