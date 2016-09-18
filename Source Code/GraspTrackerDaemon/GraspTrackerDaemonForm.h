@@ -29,14 +29,6 @@ namespace GraspTrackerDaemon {
 		Grasp::GraspDexTrackers *trackers;
 		bool recording;
 		unsigned int nPoseSamples;
-	
-	private: System::Windows::Forms::TextBox^  timeTextBox1;
-	private: System::Windows::Forms::Button^  startButton;
-	private: System::Windows::Forms::Button^  stopButton;
-	private: System::Windows::Forms::Button^  saveButton;
-	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
-	private: System::Windows::Forms::Button^  button1;
-
 
 	public: 
 
@@ -75,8 +67,13 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::TextBox^  visibilityTextBox1;
 		System::Windows::Forms::TextBox^  visibilityTextBox0;
 		System::Windows::Forms::GroupBox^  groupBox2;
-	private: System::Windows::Forms::TextBox^  timeTextBox0;
-
+		System::Windows::Forms::TextBox^  timeTextBox0;
+		System::Windows::Forms::TextBox^  timeTextBox1;
+		System::Windows::Forms::Button^  startButton;
+		System::Windows::Forms::Button^  stopButton;
+		System::Windows::Forms::Button^  saveButton;
+		System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
+		System::Windows::Forms::Button^  button1;
 		System::Windows::Forms::GroupBox^  groupBox3;
 		System::Windows::Forms::TextBox^  chestPoseTextBox;
 		System::Windows::Forms::TextBox^  handPoseTextBox;
@@ -377,7 +374,6 @@ namespace GraspTrackerDaemon {
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
-			this->WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &Form1::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->groupBox1->ResumeLayout(false);
@@ -413,10 +409,11 @@ namespace GraspTrackerDaemon {
 			InitializeSocket();
 
 			visibilityTextBox1->Text = "";
-			visibilityTextBox0->Text = " Initializing CODA ... OK.";
+			visibilityTextBox0->Text = " Initializing CfODA ... OK.";
 
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
+			WindowState = System::Windows::Forms::FormWindowState::Minimized;
 		}
 
 		System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {

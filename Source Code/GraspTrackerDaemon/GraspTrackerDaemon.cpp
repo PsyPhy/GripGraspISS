@@ -1,7 +1,7 @@
 // GraspTrackerDaemon.cpp : main project file.
 
 #include "stdafx.h"
-#include "Form1.h"
+#include "GraspTrackerDaemonForm.h"
 
 using namespace GraspTrackerDaemon;
 

@@ -19,7 +19,7 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="GraspTrackerDaemon.bat">
+    <None Include="StartGraspTrackerDaemon.bat">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -38,9 +38,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Form1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -50,6 +47,9 @@
     <ClInclude Include="GraspTrackerDaemon.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraspTrackerDaemonForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -57,7 +57,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resX">
+    <EmbeddedResource Include="GraspTrackerDaemonForm.resX">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>
