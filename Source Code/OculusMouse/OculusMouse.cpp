@@ -119,7 +119,9 @@ int main(int argc, char *argv[])
 	ovrGraphicsLuid		luid;
 	result = ovr_Create( &session, &luid );
 	fAbortMessageOnCondition( !OVR_SUCCESS( result), "OculusMouse", "Failed to create OVR session." );
+	ovrHmdDesc hmdDesc = ovr_GetHmdDesc(session);
 	fprintf( stderr, "Oculus OVR intialized.\n" );
+
 
 	// Read the state of the Oculus remote buttons to initialize the up/down states.
 	ovrInputState state;
