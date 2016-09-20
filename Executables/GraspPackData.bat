@@ -45,6 +45,8 @@ set DIRECTORY=GDLK
 
 REM
 REM Compute the archive name based on today's date.
+REM This is bad because it depends on the regional settings.
+REM Per CADMOS request, it should be YYDOY.tar
 set yy=%date:~6,4%
 set mm=%date:~3,2%
 set dd=%date:~0,2%

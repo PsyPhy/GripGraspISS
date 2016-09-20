@@ -83,6 +83,7 @@
   <ItemGroup>
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
     <None Include="Grasp.bat" />
+    <None Include="GraspPackData.bat" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-@echo on
+@echo off
 setlocal 
 
 REM 
@@ -14,6 +14,9 @@ TaskKill /IM OculusMouse.exe
 REM Same for the CODA daemon.
 TaskKill /IM GraspTrackerDaemon.exe
 
+REM Clear the console window to hide any message about processes that are not present.
+cls
+
 REM Now start up Oculus.
 Start /MIN /WAIT Executables\StartOculus.exe 
 
@@ -22,11 +25,9 @@ REM When GRASP exits, OculusMouse will still be running so that if the exit was 
 REM  the subject can use the Remote to navigate on the computer and restart.
 Start /MIN "OculusMouse" Executables\OculusMouse.exe 
 
-REM Start up the CODA system
+REM Start up the CODA system and wait for it to be active.
 Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe
-
-REM Wait for it to complete initialization.
-Start /MIN /WAIT Executables\WaitForCodaDaemon.exe 
+Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
 
 REM Here we actually start Grasp as a background process with no console window.
 Start "Grasp Console Window" Executables\GraspGUI.exe

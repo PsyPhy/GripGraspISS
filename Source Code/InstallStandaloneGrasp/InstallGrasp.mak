@@ -13,7 +13,8 @@ EXECUTABLES = ..\$(BUILDCONFIGURATION)\Grasp.exe ..\Grasp\Grasp.bat ..\Grasp\Gra
 	..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe \
 	..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe \
 	..\$(BUILDCONFIGURATION)\StartOculus.exe \
-	LoadCodaCals.bat 
+	LoadCodaCals.bat \
+	RunGRASP.bat
 
 install: $(EXECUTABLES) InstallGrasp.mak 
 	copy ..\$(BUILDCONFIGURATION)\OculusMouse.exe ..\..\Executables
@@ -33,6 +34,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\StartOculus.exe ..\..\Executables
 	copy LoadCodaCals.bat ..\..\Executables
+	copy RunGRASP.bat ..\..
 	-mkdir ..\..\Executables\CodaCalFiles
 	copy ..\..\..\Installers\CodaCalFiles\EM ..\..\Executables\CodaCalFiles
 	copy ..\..\..\Installers\CodaCalFiles\FM2 ..\..\Executables\CodaCalFiles
