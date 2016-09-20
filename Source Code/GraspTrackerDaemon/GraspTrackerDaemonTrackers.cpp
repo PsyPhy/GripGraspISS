@@ -4,7 +4,7 @@
 #include "../Trackers/NullPoseTracker.h"
 #include "GraspTrackerDaemon.h"
 
-#include "Form1.h"
+#include "GraspTrackerDaemonForm.h"
 
 using namespace PsyPhy;
 using namespace Grasp;

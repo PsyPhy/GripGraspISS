@@ -665,7 +665,7 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 	// WinExec() returns right away if GetMessage() is not called within a timeout, but WinSCP doesn't call it.
 	// So I sleep here to let the command to finish.
 	Sleep( 2000 );
-	// The CODA needs to be shutdown and restart to take into account the new alignment.
+	// The CODA needs to be shutdown and restarted to take into account the new alignment.
 	Shutdown();
 	Startup();
 

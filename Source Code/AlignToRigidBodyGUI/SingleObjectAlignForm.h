@@ -454,9 +454,11 @@ namespace AlignToRigidBodyGUI {
 				Refresh();
 				Application::DoEvents();
 				char *tempfile = ".nullalignment.tmp";
+				// Reset the alignment transformation.
 				coda->AnnulAlignment( tempfile );
 				DeleteFile( tempfile );
-				// Create and start up the CODA tracker.
+				
+				// Start up the CODA tracker.
 				coda->Initialize();
 				 
 				 // Send a message to ground to show our progress.
@@ -513,14 +515,7 @@ namespace AlignToRigidBodyGUI {
 				 // Take a picture of the setup as seen from the CODA.
 				 dex->SnapPicture( "ALIGNMENT" );
 
-				 //if ( !noCoda ) {
-					// // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
-					// StopRefreshTimer();
-					// // Stop the ongoing acquisition and discard the recorded data.
-					// coda->AbortAcquisition();	
-					// // Unfortunately, we have to shutdown and restart to do a new acquisition.
-					// coda->Shutdown();
-				 //}
+				 StopRefreshTimer();
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
@@ -551,18 +546,17 @@ namespace AlignToRigidBodyGUI {
 				 Sleep( 10 );
 				 Refresh();
 				 Application::DoEvents();
-				 Sleep( 1000 );
-				 //coda->Initialize();
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_INTRINSIC );
 
-				 // Get the pre-alignment transformation and make sure that it is null.
+				 //// Get the pre-alignment transformation and make sure that it is null.
 				 //Vector3 current_offset[MAX_UNITS];
 				 //Matrix3x3 current_rotation[MAX_UNITS];
 				 //coda->GetAlignment( current_offset, current_rotation );
 				 //// If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
 				 //fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
+
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
@@ -583,11 +577,6 @@ namespace AlignToRigidBodyGUI {
 				 coda->WriteMarkerFile( raw_file );
 				 fprintf( stderr, "OK.\n" );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( raw_file ) );
-
-				 // We have to shut down in order to install a new alignment transformation and to allow for another acquisition.
-				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
-				 coda->Shutdown();
-				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
@@ -630,6 +619,7 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
 				 Refresh();
 				 Application::DoEvents();
+
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_ALIGNED );
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
@@ -654,7 +644,6 @@ namespace AlignToRigidBodyGUI {
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( aligned_file ) );
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( SHUTDOWN_ALIGNED );
-				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.
 				 // We should get position zero and null orientation in each case.
@@ -683,6 +672,8 @@ namespace AlignToRigidBodyGUI {
 				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK | MB_ICONEXCLAMATION , "AlignToRigidBodyGUI", msg );
 				 if ( !well_aligned ) Environment::ExitCode = -2;
 				 else Environment::ExitCode = 0;
+				 // Here we quit, but we leave the daemon running.
+				 coda->Quit();
 				 // Close the form. 
 				 Close();
 

@@ -405,8 +405,8 @@ namespace GraspTrackerDaemon {
 			Refresh();
 			Application::DoEvents();
 
-			InitializeCoda();
 			InitializeSocket();
+			InitializeCoda();
 
 			visibilityTextBox1->Text = "";
 			visibilityTextBox0->Text = " Initializing CfODA ... OK.";

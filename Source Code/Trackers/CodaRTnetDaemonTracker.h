@@ -33,17 +33,13 @@ private:
 	int daemonAddrLength;
 	bool	acquiring;
 
-	char restartCommand[MAX_PATH+32];
-
 	Timer	timer;
 
 public:
 
 	int nFramesPerUnit[MAX_UNITS];
 
-	CodaRTnetDaemonTracker( void ) {
-		strcpy( restartCommand, "" );
-	}
+	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {}
 	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartAcquisition( double max_seconds );
 	virtual bool GetAcquisitionState( void );

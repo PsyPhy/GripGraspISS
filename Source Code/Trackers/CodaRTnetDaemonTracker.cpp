@@ -98,7 +98,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 	}
 	if ( packet_count >= UDP_BUFFER_SIZE_IN_PACKETS ) fOutputDebugString( "Daemon Tracker Update: %d %d\n", cycle_counter, packet_count );
 	cycle_counter++;
-	// fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
+	fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
 	return( true );
 	
 }
@@ -119,14 +119,17 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 		fOutputDebugString( "CodaRTnetDaemonTracker: Parsing %s.\n", ini_filename );
 		ini_parse( ini_filename, iniHandler, this );
 	}
+
+	if ( daemonSocket != NULL && daemonSocket != INVALID_SOCKET ) closesocket( daemonSocket );
 		
 	daemonAddrLength = sizeof( daemonAddr );
 
 	// Create and prepare the socket used to receive the UDP datagrams from the daemon.
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
-	Sleep( 500 );
 	WSADATA wsaData;
-	WSAStartup( MAKEWORD(2, 2), &wsaData);
+	WSAStartup( MAKEWORD(2, 2), &wsaData );
+
+	Sleep( 500 );
 	daemonSocket = socket(AF_INET, SOCK_DGRAM, 0);
 	if (daemonSocket == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
 
@@ -135,6 +138,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	if ( setsockopt( daemonSocket, SOL_SOCKET, SO_REUSEADDR, (char*) &enabled, sizeof(enabled)) < 0 ) 
 	{
 		closesocket( daemonSocket );
+		daemonSocket = NULL;
 		fAbortMessage( "CodaRTnetDaemonTracker", "Error setting broadcast options." );		
 	}
 
@@ -143,7 +147,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	int bufferSizeLen = sizeof(bufferSize);
 	setsockopt( daemonSocket, SOL_SOCKET, SO_RCVBUF, (char *) &bufferSize, bufferSizeLen);
 
-	// Listen for datagrams on any connected network interface.
+	// Listen for datagrams from the specified address.
 	struct sockaddr_in Recv_addr;
 	Recv_addr.sin_family = AF_INET;
 	Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT );
@@ -154,18 +158,19 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	{
 		int error_value = WSAGetLastError();
 		closesocket( daemonSocket );
+		daemonSocket = NULL;
 		fAbortMessage( "CodaRTnetDaemonTracker", "Error binding socket (%d %d).", bind_value, error_value  );		
 	}
 	// Set the socket to do nonblocking calls to allow performing other actions while waiting for new data.
 	unsigned long noBlock = 1;
 	ioctlsocket( daemonSocket, FIONBIO, &noBlock );
+
 	// Initialize the state of the acqusition.
 	nFrames = 0;
 	acquiring = false;
 	nUnits = 0;
-	strcpy( restartCommand, "" );
-	// Wait until we get at least one frame from the daemon. It will set the true number of units.
 	Timer timer;
+	// Wait until we get at least one frame from the daemon. It will set the true number of units.
 	TimerSet( timer, 15.0 );
 	while ( nUnits == 0 ) {
 		if ( TimerTimeout( timer ) ) fAbortMessage( "CodaRTnetDaemonTracker", "Timeout waiting for tracker daemon." );
@@ -174,15 +179,21 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	}
 }
 void CodaRTnetDaemonTracker::Quit(void ) {
+	closesocket( daemonSocket );
+	daemonSocket = NULL;
 	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
 }
+
+
 void CodaRTnetDaemonTracker::Shutdown( void ) {
+	// Need to quit to close the socket connection.
+	Quit();
+	// Now shutdown the daemon.
 	system( "TaskKill /IM GraspTrackerDaemon.exe" );
 	Sleep( 2000 );
 }
-
 void CodaRTnetDaemonTracker::Startup( void ) {
-	//system( "Executables\\GraspTrackerDaemon.exe" );
-	system( "Start \"GRASP Tracker\" Executables\\GraspTrackerDaemon.exe  /B" );
-	Sleep( 5000 );
+	system( "Start \"GRASP Tracker\" /MIN Executables\\GraspTrackerDaemon.exe" );
+	// Re-establish a connection with the daemon.
+	Initialize();
 }
