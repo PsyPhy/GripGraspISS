@@ -41,6 +41,9 @@
     <ProjectReference Include="..\PsyPhyOculusDemo\PsyPhyOculusDemo.vcxproj">
       <Project>{92626b0e-65f3-4caa-927c-3246d766c7be}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\StartOculus\StartOculus.vcxproj">
+      <Project>{b9598f12-de85-4177-aec3-d5ae2400db33}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TaskProcessUnitTester\TaskProcessUnitTester.vcxproj">
       <Project>{13f2b16b-ae29-4cb4-9d50-0b6b9ce94738}</Project>
     </ProjectReference>

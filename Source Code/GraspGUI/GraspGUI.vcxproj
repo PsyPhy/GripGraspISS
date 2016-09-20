@@ -64,6 +64,9 @@
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <EmbeddedResource>
+      <LogicalName>GraspGUI.GraspDesktop.resources</LogicalName>
+    </EmbeddedResource>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -78,6 +81,9 @@
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <EmbeddedResource>
+      <LogicalName>GraspGUI.GraspDesktop.resources</LogicalName>
+    </EmbeddedResource>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
