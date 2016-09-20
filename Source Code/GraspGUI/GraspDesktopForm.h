@@ -508,7 +508,7 @@ namespace GraspGUI {
 			this->executeButton->Name = L"executeButton";
 			this->executeButton->Size = System::Drawing::Size(127, 44);
 			this->executeButton->TabIndex = 14;
-			this->executeButton->Text = L"Execute";
+			this->executeButton->Text = L"Start";
 			this->executeButton->UseVisualStyleBackColor = true;
 			this->executeButton->Click += gcnew System::EventHandler(this, &GraspDesktop::startButton_Click);
 			// 
