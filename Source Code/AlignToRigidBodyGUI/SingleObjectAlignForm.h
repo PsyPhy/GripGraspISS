@@ -63,6 +63,7 @@ namespace AlignToRigidBodyGUI {
 		PsyPhy::Viewpoint						*codaViewpoint, *objectViewpoint;
 		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
+		PsyPhy::Assembly						*fovSweetSpot;
 
 		PsyPhy::CodaRTnetDaemonTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
@@ -126,15 +127,17 @@ namespace AlignToRigidBodyGUI {
 			visibilityWindow1->Swap();
 
 			fovWindow2->Activate();
-			fovWindow2->Clear( 0.05, 0.05, 0.15 );
+			fovWindow2->Clear( 0.0, 0.0, 0.0 );
 			codaViewpoint->Apply( fovWindow2, CYCLOPS );
 			alignmentObject2->Draw();
+			fovSweetSpot->Draw();
 			fovWindow2->Swap();
 
 			fovWindow1->Activate();
-			fovWindow1->Clear( 0.025, 0.025, 0.1 );
+			fovWindow1->Clear( 0.0, 0.0, 0.0 );
 			codaViewpoint->Apply( fovWindow1, CYCLOPS );
 			alignmentObject1->Draw();
+			fovSweetSpot->Draw();
 			fovWindow1->Swap();
 
 		}
@@ -158,14 +161,22 @@ namespace AlignToRigidBodyGUI {
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject1->SetPose( pose.pose );
+				alignmentObject1->SetPosition( 0.0, 2000.0, -300.0 );
+				alignmentObject1->SetOrientation( 0.0, -90.0, 0.0 );
+				alignmentObject1->Enable();
 			}
+			else alignmentObject1->Disable();
 			coda->GetCurrentMarkerFrameUnit( codaFrame, 1 );
 			visibilityObject2->ShowVisibility( codaFrame );
 			alignmentObject2->ShowVisibility( codaFrame );
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject2->SetPose( pose.pose );
+				alignmentObject2->SetPosition( 300.0, 2000.0, 0.0 );
+				alignmentObject2->SetOrientation( 90.0, -90.0, 0.0 );
+				alignmentObject2->Enable();
 			}
+			else alignmentObject2->Disable();
 
 			Render();
 
@@ -399,7 +410,15 @@ namespace AlignToRigidBodyGUI {
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
+				 Sphere *sphere1 = new Sphere( 100.0 );
+				 sphere1->SetColor( GREEN );	
+				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject1->AddComponent( sphere1 );
 				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
+				 Sphere *sphere2 = new Sphere( 100.0 );
+				 sphere1->SetColor( GREEN );	
+				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject2->AddComponent( sphere2 );
 				 visibilityObject1 = objects->CreateChestMarkerStructure( model_file );
 				 visibilityObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
@@ -417,11 +436,41 @@ namespace AlignToRigidBodyGUI {
 				 // Create windows and viewpoints to show what the CODA units are seeing.
 				 fovWindow1 = PsyPhy::CreateOpenGLWindowInForm( fovPanel1 );
 				 fovWindow2 = PsyPhy::CreateOpenGLWindowInForm( fovPanel2, fovWindow1->hRC );
+				 fovSweetSpot = new Assembly();
 
+				 Hole *hole = new Hole( 500.0,  2000.0, 2000.0 );
+				 hole->SetColor( 0.15, 0.0, 0.0, 0.75 );	
+				 hole->SetPosition( 0.0, 0.0, -100.0 );
+				 fovSweetSpot->AddComponent( hole );
+
+				 hole = new Hole( 100.0,  2000.0, 2000.0 );
+				 hole->SetColor( 0.0, 0.0, 0.25, 0.5 );	
+				 fovSweetSpot->AddComponent( hole );
+
+				 Bar *bar = new Bar( 2000.0, 5.0, 5.0 );
+				 bar->SetPosition( 0.0, -1000.0, 0.0 );
+				 bar->SetOrientation( 0.0, 90.0, 0.0 );
+				 bar->SetColor( GRAY );
+				 fovSweetSpot->AddComponent( bar );
+				 bar = new Bar( 2000.0, 5.0, 5.0 );
+				 bar->SetPosition( 1000.0, 0.0, 0.0 );
+				 bar->SetOrientation( 0.0, 0.0, 90.0 );
+				 bar->SetColor( GRAY );
+				 fovSweetSpot->AddComponent( bar );
+
+				 fovSweetSpot->SetOrientation( 0.0, 90.0, 0.0 );
+				 fovSweetSpot->SetPosition( 0.0, 1000.0, 0.0 );
+
+				 Sphere *sphere = new Sphere( 100.0 );
+				 sphere->SetColor( GREEN );	
+				 sphere->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject1->AddComponent( sphere );
+				 alignmentObject2->AddComponent( sphere );
+
+	
 				 // Create a viewpoint that looks at the origin from the negative Y axis.
 				 // This is where the CODAs are with respect to the workspace.
-				 codaViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 10000.0);
-				 codaViewpoint->SetPosition( 0.0, - 2000.0, 0.0 );
+				 codaViewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
 				 codaViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
 
 				 // Initialize the state of the GL graphics engine.
@@ -469,7 +518,7 @@ namespace AlignToRigidBodyGUI {
 				 Enabled = true;
 				 // Prompt for the required action.
 				 instructionsTextBox->Text = "Verify that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
-				 instructionsTextBox2->Text = "Verify that the Chest Marker Support is centered in each Tracker Camera Field-of-View.";
+				 instructionsTextBox2->Text = "Verify that the Green Dot is centered in the crosshairs for each Tracker Camera.";
 
 				 if ( !noCoda ) {
 					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.

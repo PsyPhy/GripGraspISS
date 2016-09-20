@@ -715,10 +715,11 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 
 #define STRUCTURE_BALL_RADIUS 15.0
 #define STRUCTURE_BAR_RADIUS 15.0
+#define LEDON 0.0, 0.7, 0.4
 
 void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
-		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( GREEN );
+		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( LEDON );
 		else component[mrk]->SetColor( BLACK );
 	}
 }
@@ -801,7 +802,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_
 	structure->AddComponent( frame );
 
 
-	structure->SetColor( Translucid( YELLOW ) );
+	structure->SetColor( Translucid( Translucid( GRAY ) ) );
 //	structure->SetOrientation( 0.0, 0.0, 90.0 );
 	return( structure );
 }
@@ -855,9 +856,9 @@ MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model
 	plate->SetPosition( -10.0, 0.0, 0.0 );
 	frame->AddComponent( plate );
 
-	square->SetColor( Translucid( YELLOW ) );
-	diamond->SetColor( Translucid( RED ) );
-	plate->SetColor( Translucid( ORANGE ) );
+	square->SetColor( Translucid( GRAY ) );
+	diamond->SetColor( Translucid( GRAY ) );
+	plate->SetColor( Translucid( GRAY ) );
 	frame->SetOffset( 0.0, 0.0, 70.0 );
 
 	structure->AddComponent( frame );
@@ -877,7 +878,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][X] = 130.0;
 	vertices[3][Y] = -90.0;
 	Extrusion *plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
-	plate->SetColor( Translucid( YELLOW ) );
+	plate->SetColor( 0.5, 0.5, 0.5, 0.25 );
 	plate->SetPosition( 0.0, 0.0, 60.0 );
 	structure->AddComponent( plate );
 
@@ -891,7 +892,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][Y] = 0.0;
 	plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
 	plate->SetPosition( 0.0, 0.0,  0.0 );
-	plate->SetColor( Translucid( ORANGE ) );
+	plate->SetColor(  0.25, 0.25, 0.25, 0.25  );
 	structure->AddComponent( plate );
 
 	return( structure );
