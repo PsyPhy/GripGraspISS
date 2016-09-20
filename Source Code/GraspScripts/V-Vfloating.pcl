@@ -3,7 +3,7 @@
 402; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
 403; COMMAND; Training Head Straight; Executables\Grasp.bat --VtoV --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 404; COMMAND; Training Head Tilted; Executables\Grasp.bat --training --VtoV --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-405; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat ---VtoV --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-406; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\HeadTiltGraspSequence.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+405; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat ---VtoV --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+406; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 410; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 499; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
