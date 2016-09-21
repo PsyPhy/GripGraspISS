@@ -189,11 +189,11 @@ void CodaRTnetDaemonTracker::Shutdown( void ) {
 	// Need to quit to close the socket connection.
 	Quit();
 	// Now shutdown the daemon.
-	system( "TaskKill /IM GraspTrackerDaemon.exe" );
+	WinExec( "TaskKill /IM GraspTrackerDaemon.exe", SW_MINIMIZE );
 	Sleep( 2000 );
 }
 void CodaRTnetDaemonTracker::Startup( void ) {
-	system( "Start \"GRASP Tracker\" /MIN Executables\\GraspTrackerDaemon.exe" );
+	WinExec( "Executables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
 	// Re-establish a connection with the daemon.
 	Initialize();
 }
