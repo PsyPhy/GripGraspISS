@@ -161,8 +161,6 @@ namespace AlignToRigidBodyGUI {
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject1->SetPose( pose.pose );
-				alignmentObject1->SetPosition( 0.0, 2000.0, -300.0 );
-				alignmentObject1->SetOrientation( 0.0, -90.0, 0.0 );
 				alignmentObject1->Enable();
 			}
 			else alignmentObject1->Disable();
@@ -172,8 +170,6 @@ namespace AlignToRigidBodyGUI {
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject2->SetPose( pose.pose );
-				alignmentObject2->SetPosition( 300.0, 2000.0, 0.0 );
-				alignmentObject2->SetOrientation( 90.0, -90.0, 0.0 );
 				alignmentObject2->Enable();
 			}
 			else alignmentObject2->Disable();
@@ -362,7 +358,7 @@ namespace AlignToRigidBodyGUI {
 			this->busy->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->busy->ForeColor = System::Drawing::Color::IndianRed;
+			this->busy->ForeColor = System::Drawing::Color::Maroon;
 			this->busy->Location = System::Drawing::Point(102, 372);
 			this->busy->Name = L"busy";
 			this->busy->Size = System::Drawing::Size(888, 184);
