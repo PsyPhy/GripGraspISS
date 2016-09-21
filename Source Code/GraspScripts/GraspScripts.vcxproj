@@ -50,6 +50,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="GraspCommissioningSessions.sss" />
     <None Include="GraspMaintenanceSessions.sss" />
     <None Include="GraspNominalSessions.sss" />
     <None Include="K-Kfloating.pcl" />

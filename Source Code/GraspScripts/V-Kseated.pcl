@@ -1,9 +1,7 @@
 # Protocol Definition: Visual Target to Visual Response 
 201; SCRIPT; Preparation; V-KprepareSeated.tsk
 202; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-203; COMMAND; Training Head Straight; Executables\Grasp.bat --VtoK --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-204; COMMAND; Training Head Tilted; Executables\Grasp.bat --training --VtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-205; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat ---VtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-206; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+203; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat ---VtoK --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+204; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 210; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 299; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
