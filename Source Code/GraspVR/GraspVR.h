@@ -46,6 +46,7 @@ namespace Grasp {
 		// Count down of how many cycles that the orientation has been good.
 		static const int secondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		static const int secondsToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static const int handSecondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		Timer	headGoodTimer;
 		Timer	headBadTimer;
 		Timer	handGoodTimer;

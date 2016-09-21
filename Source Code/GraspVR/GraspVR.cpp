@@ -14,6 +14,7 @@ using namespace PsyPhy;
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
 const int GraspVR::secondsToBeGood = 2.0;
+const int GraspVR::handSecondsToBeGood = 3.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
 // The following are tolerances expressed in degrees.
@@ -497,7 +498,7 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
 	desiredHandRoll = desired_roll_angle;
 	desiredHandRollTolerance = tolerance;
-	TimerSet( handGoodTimer, secondsToBeGood );
+	TimerSet( handGoodTimer, handSecondsToBeGood );
 	TimerSet( handBadTimer, 0.0 );
 	return( desiredHandRoll );
 }
@@ -515,7 +516,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
 	if ( lowered == HandleHandElevation() ) {
-		TimerSet( handGoodTimer, secondsToBeGood );
+		TimerSet( handGoodTimer, handSecondsToBeGood );
 		TimerSet( handBadTimer, 0.0 );
 		return( misaligned );
 	}
@@ -554,7 +555,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 				// If the error has endured long enough to trigger the arrow prompt, then
 				// reset the time required to be good again to the full duration.
 				// MICHELE: What do you think? 
-				TimerSet( handGoodTimer, secondsToBeGood );
+				TimerSet( handGoodTimer, handSecondsToBeGood );
 				// Signal that we really are misaligned.
 				return( misaligned );
 			}
