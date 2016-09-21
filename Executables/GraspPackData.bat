@@ -31,8 +31,6 @@ set local_directory=%root:~0,14%
 echo Local directory is %local_directory%
 dir %local_directory%
 
-set local_directory=Results
-
 REM
 REM Copy the data files to DEX.
 REM
@@ -52,6 +50,8 @@ set mm=%date:~3,2%
 set dd=%date:~0,2%
 set TARFILE=g%yy%%mm%%dd%.tar
 echo Tar filename is %TARFILE%
+
+REM Here we are supposed to insert all the pertinent files into the tar.
 Executables\tar.exe --verbose --create --file=%TARFILE% *.dat *.ini *.bat
 
 REM
