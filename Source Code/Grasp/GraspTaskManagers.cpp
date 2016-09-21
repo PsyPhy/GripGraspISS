@@ -35,7 +35,7 @@ double	GraspTaskManager::hapticTargetOrientationTolerance = 10.0;
 
 // It is easy to forget to raise and lower the hand, but it is annoying to be prompted each time.
 // The following parameter set delays before displaying the prompt.
-double GraspTaskManager::handPromptDelay = 2.0;
+double GraspTaskManager::handPromptDelay = 0.0;
 double GraspTaskManager::handErrorDelay = 2.0;
 
 int GraspTaskManager::maxRetries = 9;
