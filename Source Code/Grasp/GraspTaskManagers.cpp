@@ -35,7 +35,8 @@ double	GraspTaskManager::hapticTargetOrientationTolerance = 10.0;
 
 // It is easy to forget to raise and lower the hand, but it is annoying to be prompted each time.
 // The following parameter set delays before displaying the prompt.
-double GraspTaskManager::handPromptDelay = 0.0;
+double GraspTaskManager::lowerHandPromptDelay = 0.0;
+double GraspTaskManager::raiseHandPromptDelay = 2.0;
 double GraspTaskManager::handErrorDelay = 2.0;
 
 int GraspTaskManager::maxRetries = 9;
@@ -427,7 +428,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 	if ( Validate() ) return( AlignHead );
-	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > handPromptDelay ) {
+	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > lowerHandPromptDelay ) {
 		renderer->lowerHandPrompt->Enable();
 	}
 	else renderer->lowerHandPrompt->Disable();
@@ -521,7 +522,7 @@ GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) {
 		return( TrialInterrupted );
 	}
 	// Check if the hand has been raised, and if not, show the prompt.
-	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > raiseHandPromptDelay ) renderer->raiseHandIndicator->Enable();
 	else renderer->raiseHandIndicator->Disable();
 	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
 	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
@@ -561,7 +562,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	AlignmentStatus status = HandleHeadAlignment( true );
 	// The hand must be lowered before leaving this state. If it is still raised after a short
 	// delay, we activate the prompt to remind the subject to lower the arm.
-	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > handPromptDelay ) renderer->lowerHandPrompt->Enable();
+	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > lowerHandPromptDelay ) renderer->lowerHandPrompt->Enable();
 	else renderer->lowerHandPrompt->Disable();
 	// The hand must be lowered before leaving this state.
 	// If we are almost to the end of the time allocated to tilt the head,
@@ -631,7 +632,7 @@ GraspTrialState GraspTaskManager::UpdateVisualResponse( void ) {
 GraspTrialState GraspTaskManager::UpdateKinestheticResponse( void ) { 
 	// Check if the hand has been raised, and if not show the prompt.
 	ArmStatus arm_state = HandleHandElevation();
-	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > raiseHandPromptDelay ) renderer->raiseHandIndicator->Enable();
 	else renderer->raiseHandIndicator->Disable();
 	// If the hand is raised and the subject presses valide, record the response and move one.
 	if ( raised == arm_state && Validate()  ) return( ProvideFeedback );

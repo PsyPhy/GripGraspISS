@@ -25,7 +25,8 @@ namespace Grasp {
 		static double	tiltHeadTimeout;
 		static double	responseTimeout;
 		static double	alignHandTimeout;
-		static double	handPromptDelay;
+		static double	lowerHandPromptDelay;
+		static double	raiseHandPromptDelay;
 		static double	handErrorDelay;
 
 		static double	targetHeadTiltTolerance;
