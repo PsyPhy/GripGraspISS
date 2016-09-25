@@ -758,6 +758,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	case HEAD_MISALIGNMENT: interrupt_indicator = renderer->headMisalignIndicator; break;
 	}
 	interrupt_indicator->Enable();
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 	char tag[32];
 	sprintf( tag, "Itpt%1d.%03d", interruptCondition, currentTrial );
 	dexServices->SnapPicture( tag );
