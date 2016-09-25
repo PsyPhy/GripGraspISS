@@ -71,7 +71,16 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 
 	// Apply a counter rotation to the room as a means to generate conflict.
-	renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
+	 //renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
+	// Compute a counter roll that is opposite to the orientation of the head from zero.
+	Quaternion conjugate, counter_roll;
+	ComputeQuaternionConjugate( conjugate, headPose.pose.orientation );
+	double lambda = conflictGain - 1.0;
+	double alpha = 1 - lambda;
+	double beta = 1 - alpha;
+	for ( int i = 0; i < 4; i++ ) counter_roll[i] = alpha * nullQuaternion[i] + beta * conjugate[i]; 
+	NormalizeQuaternion( counter_roll );
+	renderer->room->SetOrientation( counter_roll );
 
 	// Track movements of the hand marker array.
 	if ( !trackers->GetCurrentHandPose( handPose ) ) {

@@ -508,6 +508,15 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	straightAheadTarget =  CreatePositionOnlyTarget();
 
 	response = CreateResponse();
+	successIndicator = CreateSuccessIndicator();
+
+	// Attach these objects to the room so that they move when conflict is applied.
+	room->AddComponent( orientationTarget );
+	room->AddComponent( positionOnlyTarget );
+	room->AddComponent( straightAheadTarget );
+	room->AddComponent( response );
+	room->AddComponent( successIndicator );
+	
 
 	headTiltPrompt = CreateTiltPrompt();
 	headTiltPrompt->SetColor( 0.5, 0.0, 0.4 );
@@ -516,7 +525,6 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	handRollPrompt->SetColor( 0.0, 0.0, 0.4 );
 	handRollPrompt->SetOffset( 0.0, 0.0, - finger_length / 2.0 );
 
-	successIndicator = CreateSuccessIndicator();
 
 	projectiles = new Assembly;
 	multiProjectile = CreateProjectiles( target_balls - 1 );
@@ -609,10 +617,11 @@ void GraspGLObjects::DrawVR( void ) {
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
 
-	orientationTarget->Draw();
-	positionOnlyTarget->Draw();
-	straightAheadTarget->Draw();
-	response->Draw();
+	//orientationTarget->Draw();
+	//positionOnlyTarget->Draw();
+	//straightAheadTarget->Draw();
+	//response->Draw();
+	//successIndicator->Draw();
 	headTiltPrompt->Draw();
 	handRollPrompt->Draw();
 	vTool->Draw();
@@ -620,7 +629,6 @@ void GraspGLObjects::DrawVR( void ) {
 	kTool->Draw();
 	kkTool->Draw();
 	projectiles->Draw();
-	successIndicator->Draw();
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();

@@ -109,6 +109,7 @@ public:
 	void NormalizeQuaternion( Quaternion q );
 	void MultiplyQuaternions( Quaternion result, const Quaternion q1, const Quaternion q2 );
 	double QuaternionDifference(  Quaternion result, const Quaternion q1, const Quaternion q2 );
+	void ComputeQuaternionConjugate( Quaternion conjugate, Quaternion q );
 	double AngleBetween( const Quaternion q1, const Quaternion q2 );
 	double VectorsMixin::RotationAngle( const Quaternion q1 );
 

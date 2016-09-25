@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Sequences\TestConflict.seq" />
     <None Include="..\..\Sequences\TrainingHeadStraight.seq" />
     <None Include="..\..\Sequences\TrainingHeadTilted.seq" />
   </ItemGroup>

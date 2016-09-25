@@ -3,5 +3,6 @@
   <ItemGroup>
     <None Include="..\..\Sequences\TrainingHeadTilted.seq" />
     <None Include="..\..\Sequences\TrainingHeadStraight.seq" />
+    <None Include="..\..\Sequences\TestConflict.seq" />
   </ItemGroup>
 </Project>

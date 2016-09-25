@@ -612,6 +612,10 @@ void VectorsMixin::SetQuaterniond( Quaternion result, double degrees, const Vect
 	SetQuaternion( result, degrees * pi / 180.0, axis );
 }
 
+void VectorsMixin::ComputeQuaternionConjugate( Quaternion conjugate, Quaternion q ) {
+	conjugate[M] = q[M]; ScaleVector( conjugate, q, -1.0 );
+}
+
 double VectorsMixin::QuaternionDifference( Quaternion result, const Quaternion q1, const Quaternion q2 ) {
 	Quaternion conjugate;
 	double angle;
