@@ -321,6 +321,7 @@ void GraspTaskManager::EnterStartBlock( void ) {
 	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
+	renderer->room->Disable();
 	// Show the hand, just to allow the subject to play a little.
 	renderer->vkTool->Enable();
 }
