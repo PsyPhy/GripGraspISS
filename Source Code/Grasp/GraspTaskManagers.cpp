@@ -266,11 +266,11 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
-			fprintf( pose_fp, "%3d; %6.3f; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
-				currentTrial, TimerElapsedTime( blockTimer ), 
-				headPose.time, headPose.visible, vstr( headPose.pose.position ), qstr( headPose.pose.orientation ), 
-				handPose.time, handPose.visible, vstr( handPose.pose.position ), qstr( handPose.pose.orientation ), 
-				chestPose.time, chestPose.visible, vstr( chestPose.pose.position), qstr( chestPose.pose.orientation ),
+			fprintf( pose_fp, "%3d; %6.3f; %08d %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
+				currentTrial, TimerElapsedTime( blockTimer ), currentState,
+				headPose.time, headPose.visible, (headPose.visible ? vstr( headPose.pose.position ) : vstr( zeroVector )), (headPose.visible ? qstr( headPose.pose.orientation ) : qstr( nullQuaternion )), 
+				handPose.time, handPose.visible, (handPose.visible ? vstr( handPose.pose.position ) : vstr( zeroVector )), (handPose.visible ? qstr( handPose.pose.orientation ) : qstr( nullQuaternion )), 
+				chestPose.time, chestPose.visible, (chestPose.visible ? vstr( chestPose.pose.position ) : vstr( zeroVector )), (chestPose.visible ? qstr( chestPose.pose.orientation ) : qstr( nullQuaternion )), 
 				rollPose.time, rollPose.visible, vstr( rollPose.pose.position), qstr( rollPose.pose.orientation )
 				);
 		}
