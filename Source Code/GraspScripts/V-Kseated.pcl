@@ -1,7 +1,16 @@
-# Protocol Definition: Visual Target to Visual Response 
+# Protocol Definition: Visual Target to Manual Response 
 201; SCRIPT; Preparation; V-KprepareSeated.tsk
 202; SCRIPT; Task Instruction Review; V-Kinstructions.tsk
-203; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat ---VtoK --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-204; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-210; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+211; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --VtoK --sequence=Sequences\WU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+221; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoK --sequence=Sequences\HU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+222; COMMAND; Experiment Trials Block 3; Executables\Grasp.bat --VtoK --sequence=Sequences\HU_Ser2_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+231; COMMAND; Experiment Trials Block 4; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+232; COMMAND; Experiment Trials Block 5; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser1_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+233; COMMAND; Experiment Trials Block 6; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser1_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+234; COMMAND; Experiment Trials Block 7; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser1_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+235; COMMAND; Experiment Trials Block 8; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+236; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+237; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+238; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+290; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 299; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
