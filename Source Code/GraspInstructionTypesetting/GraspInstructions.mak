@@ -11,7 +11,10 @@ SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
 	00IntroV-V.instruction.html 00IntroV-K.instruction.html 00IntroK-K.instruction.html \
-	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html StepReadySeated.prompt.html StepReadyFloating.prompt.html \
+	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html \
+	HMDStructureAssembly.instruction.html \
+	StepReadySeated.prompt.html StepReadyFloating.prompt.html \
+	ObjectPositioningSeated.instruction.html ObjectPositioningFloating.instruction.html\
 	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
@@ -27,9 +30,9 @@ VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Picture
 # and then copy in the newly created files.
 install: $(ALL_HTML)  $(VRIMAGES) GraspInstructions.mak
 	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
-	-mkdir $(INSTRUCTIONS_DESTINATION) 
+	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
 	copy *.html $(INSTRUCTIONS_DESTINATION)
-	-mkdir $(INSTRUCTIONS_DESTINATION)\Pictures
+	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.
 	copy Pictures\*.* $(INSTRUCTIONS_DESTINATION)\Pictures
 	echo %date% %time% > $@
 

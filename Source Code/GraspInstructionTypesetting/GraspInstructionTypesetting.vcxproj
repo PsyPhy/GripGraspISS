@@ -62,8 +62,11 @@
     <None Include="00IntroK-K.instruction.md" />
     <None Include="GraspInstructions.debug.mak" />
     <None Include="GraspInstructions.release.mak" />
+    <None Include="HMDStructureAssembly.instruction.md" />
     <None Include="MaintenanceWelcome.instruction.md" />
     <None Include="NotYetImplemented.md" />
+    <None Include="ObjectPositioningFloating.instruction.md" />
+    <None Include="ObjectPositioningSeated.instruction.md" />
     <None Include="ProtocolFinished.instruction.md" />
     <None Include="SetNoCodaReady.prompt.md" />
     <None Include="SetWithCodaReady.prompt.md" />
