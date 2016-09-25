@@ -122,6 +122,8 @@ namespace Grasp {
 		// Set the local transform to center the world at the current HMD 
 		//  position and orientation.
 		void AlignToHMD( void );
+		// Undo the above transformation to align with the CODA reference frame.
+		void AlignToCODA( void );
 
 		// Draw everything and output to the display.
 		void GraspVR::Render( void );
@@ -156,6 +158,7 @@ namespace Grasp {
 		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 		static double	straightAheadThreshold;
 		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
+		AlignmentStatus HandleGazeDirection( void );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
 		void			HandleSpinningPrompts( void );

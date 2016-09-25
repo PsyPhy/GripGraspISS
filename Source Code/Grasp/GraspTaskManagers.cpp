@@ -406,8 +406,13 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->headTiltPrompt->Disable();
+	// Cancel the current local transformation that was aligned with the head.
+	AlignToCODA();
+	// Prompt the subject to straighten the head on the shoulders. We have two possible methods.
 	if ( manualStraightenHead ) {
+		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
 		renderer->straightenHeadIndicator->Enable();
+		// Halo is blue because we cannot set an stable reference for the desired roll angle.
 		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
 	}
 	else {
@@ -428,14 +433,20 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
-	if ( Validate() ) return( AlignHead );
+	if ( manualStraightenHead ) {
+		if ( aligned == HandleGazeDirection()) {
+			if ( Validate() ) return( AlignHead );
+		}
+	}
+	else {
+		// Update the feedback about the head orientation wrt the desired head orientation.
+		// If the head alignment is satisfactory, move on to the next state.
+		if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
+	}
 	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > lowerHandPromptDelay ) {
 		renderer->lowerHandPrompt->Enable();
 	}
 	else renderer->lowerHandPrompt->Disable();
-	// Update the feedback about the head orientation wrt the desired head orientation.
-	// If the head alignment is satisfactory, move on to the next state.
-	// if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
 	return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {

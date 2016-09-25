@@ -166,19 +166,20 @@ namespace Grasp {
 		Texture			*response_timeout_texture;		
 		static const char *response_timeout_bitmap;	 
 
-		Assembly		*handRotateTimeoutIndicator;	// Shown when the subject takes too long to confirm a response.
+		Assembly		*handRotateTimeoutIndicator;	// Shown when the subject takes too long to rotat the hand to the desired orientation.
 		Texture			*hand_rotate_timeout_texture;		
 		static const char *hand_rotate_timeout_bitmap;	 
 
-		Assembly		*handTooSoonIndicator;			// Shown when the subject takes too long to confirm a response.
+		Assembly		*handTooSoonIndicator;			// Shown when the subject raises the hand too soon.
 		Texture			*hand_too_soon_texture;		
 		static const char *hand_too_soon_bitmap;	 
 
-		Assembly		*handShouldNotBeRaisedIndicator;	// Shown when the subject takes too long to confirm a response.
+		Assembly		*handShouldNotBeRaisedIndicator;	// Shown when the hand is raised and should not be.
 		Texture			*hand_should_not_texture;		
 		static const char *hand_should_not_bitmap;	 
 
-		Assembly		*straightenHeadIndicator;	// Shown when the subject takes too long to confirm a response.
+		Assembly		*straightenHeadIndicator;	// Shown when the subject should straighent the hand on the shoulders.
+		Disk			*gazeStraightAheadIndicator;
 		Texture			*straighten_head_texture;		
 		static const char *straighten_head_bitmap;	 
 

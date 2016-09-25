@@ -451,6 +451,10 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 
 	straighten_head_texture = new Texture( straighten_head_bitmap );
 	straightenHeadIndicator = CreateIndicator( straighten_head_texture );
+	gazeStraightAheadIndicator = new Disk( 30.0 );
+	gazeStraightAheadIndicator->SetColor( GREEN );
+	straightenHeadIndicator->AddComponent( gazeStraightAheadIndicator );
+
 	spinners->AddComponent( straightenHeadIndicator );
 
 	raise_arm_texture = new Texture( raise_arm_bitmap );

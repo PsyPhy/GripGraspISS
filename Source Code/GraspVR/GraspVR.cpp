@@ -137,6 +137,10 @@ void GraspVR::AlignToHMD( void ) {
 	}
 }
 
+void GraspVR::AlignToCODA( void ) {
+	CopyVector( localAlignment.displacement, zeroVector );
+	CopyQuaternion( localAlignment.rotation, nullQuaternion );
+}
 
 
 
@@ -372,6 +376,20 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 		}
 		// The alignment hasn't be bad for long enough to really be considered as bad.
 		else return( transitioningToBad );
+	}
+}
+
+/// Indicate when the subject is looking down the Z axis of the laboratory absolute coordinate frame.
+AlignmentStatus GraspVR::HandleGazeDirection( void ) {
+	Vector3 gaze;
+	RotateVector( gaze, headPose.pose.orientation, kVector );
+	if ( DotProduct( gaze, kVector ) > straightAheadThreshold ) {
+		renderer->gazeStraightAheadIndicator->SetColor( 0.0, 0.25, 0.05 );
+		return( aligned );
+	}
+	else {
+		renderer->gazeStraightAheadIndicator->SetColor( 0.2, 0.0, 0.0 );
+		return( misaligned );
 	}
 }
 
