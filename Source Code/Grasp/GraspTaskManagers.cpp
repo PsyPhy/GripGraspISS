@@ -341,7 +341,7 @@ void  GraspTaskManager::ExitStartBlock( void ) {
 
 //
 // StartTrial
-// Set the new trial parameters. This is where conflict should get turned off or on.
+// Set the new trial parameters. 
 void GraspTaskManager::EnterStartTrial( void ) { 
 
 	// Align with the local reference frame of the subject.
@@ -723,6 +723,7 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 void GraspTaskManager::EnterBlockCompleted( void ) {
 	// Show the success indicator.
 	renderer->blockCompletedIndicator->Enable();
+	renderer->room->Disable();
 	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
