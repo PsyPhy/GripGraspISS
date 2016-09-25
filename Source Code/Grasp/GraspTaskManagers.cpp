@@ -29,8 +29,8 @@ double GraspTaskManager::alignHandTimeout = 30.0;
 // Required precision for aligning the head.
 // I am setting these values to what I think they should be for training.
 // The head tilt tolerances are rather large.
-double	GraspTaskManager::targetHeadTiltTolerance = 10.0;
-double	GraspTaskManager::responseHeadTiltTolerance = 10.0;
+double	GraspTaskManager::targetHeadTiltTolerance = 7.0;
+double	GraspTaskManager::responseHeadTiltTolerance = 7.0;
 double	GraspTaskManager::hapticTargetOrientationTolerance = 10.0;
 
 // It is easy to forget to raise and lower the hand, but it is annoying to be prompted each time.
