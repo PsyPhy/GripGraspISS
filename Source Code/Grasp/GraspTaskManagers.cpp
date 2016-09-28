@@ -231,13 +231,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	sprintf( responseFilename, "%s.rsp", output_filename_root );
 	response_fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-	fprintf( response_fp, "trial; type; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+	fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
 	// Open a file for storing the tracker poses and output a header.
 	sprintf( poseFilename, "%s.pse", output_filename_root );
 	pose_fp = fopen( poseFilename, "w" );
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
-	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
+	fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
@@ -266,7 +266,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
-			fprintf( pose_fp, "%3d; %6.3f; %08d %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
+			fprintf( pose_fp, "%3d; %6.3f; %08d; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
 				currentTrial, TimerElapsedTime( blockTimer ), currentState,
 				headPose.time, headPose.visible, (headPose.visible ? vstr( headPose.pose.position ) : vstr( zeroVector )), (headPose.visible ? qstr( headPose.pose.orientation ) : qstr( nullQuaternion )), 
 				handPose.time, handPose.visible, (handPose.visible ? vstr( handPose.pose.position ) : vstr( zeroVector )), (handPose.visible ? qstr( handPose.pose.orientation ) : qstr( nullQuaternion )), 
@@ -757,7 +757,7 @@ void  GraspTaskManager::ExitBlockCompleted( void ) {
 //  show to the subect the condition that provoked the error.
 // Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
-	fprintf( response_fp, "%f; interrupted\n", 0.0 );
+	fprintf( response_fp, " %f; interrupted\n", 0.0 );
 	// Tell the ground what caused the interruption.
 	ShowProgress( TrialInterrupted, interruptCondition );
 	// Show the cause of the interruption.
