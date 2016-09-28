@@ -39,16 +39,26 @@ double GraspTaskManager::lowerHandPromptDelay = 0.0;
 double GraspTaskManager::raiseHandPromptDelay = 2.0;
 double GraspTaskManager::handErrorDelay = 2.0;
 
-int GraspTaskManager::maxRetries = 9;
+// If the subject makes a procedural error during a trial (timeout, etc.) the trial
+// is aborted and it is added to the end of the list to be repeated. But the number
+// of repetitions is limited to the maximum set below.
+int GraspTaskManager::maxRetries = 7;
 
+// At the beginning of a trial the subject is asked to straighen the head on the shoulders.
+// The pose of the head is then taken as the zero reference for the rest of the trial.
+// We have two methods to validate whether the head is straight. In automatic mode the software
+// attempts to detect when the head is straight based on measurements of the chest marker array.
+// In manual mode, we simply ask the subject to straighten the head and click when it is so.
+// The following flag sets which method to use.
 bool GraspTaskManager::manualStraightenHead = true;
-//
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // A state machine to run through the different state of a block of trials.
 // On entry, the current state is compared to the previous state.
 // If the are different, the machine calls the EnterXXX() method for the current state, where XXX is one of the possible GraspTrialStates.
 // Then, in either case, it calls the UpdateXXX() method, which returns the subsequent state.
 // If the subsequent state is not the same as the current state, the ExitXXX() method is called for the current state before leaving the cycle.
-//
 bool GraspTaskManager::UpdateStateMachine( void ) {
 
 	// If the state has changed, tell the ground where we are.
@@ -190,7 +200,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 }
 
 // The following may be called if there is an anomaly during a trial so as 
-// to repreat it at the end of the block. 
+// to repeat it at the end of the block. 
 void GraspTaskManager::RepeatTrial( int trial ) {
 	// Don't repeat more than allowed.
 	if ( retriesRemaining <= 0 ) {
