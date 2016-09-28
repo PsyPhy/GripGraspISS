@@ -50,7 +50,7 @@ int GraspTaskManager::maxRetries = 7;
 // attempts to detect when the head is straight based on measurements of the chest marker array.
 // In manual mode, we simply ask the subject to straighten the head and click when it is so.
 // The following flag sets which method to use.
-bool GraspTaskManager::manualStraightenHead = true;
+bool GraspTaskManager::manualStraightenHead = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
