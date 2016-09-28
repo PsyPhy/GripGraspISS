@@ -229,6 +229,17 @@ void GraspGLObjects::SetHandColor( Assembly *hand, bool state ) {
 		else hand->component[i]->SetColor( 0.0, 0.0, 0.0, 0.85  );
 	}
 }
+// In a similar vein we need to be able to turn on and off a laser attached to a hand.
+// Again, we exploit the fact that the laser is the last element.
+void GraspGLObjects::EnableHandLaser( Assembly *hand ) {
+	hand->component[ hand->components - 1 ]->Enable();
+}
+void GraspGLObjects::DisableHandLaser( Assembly *hand ) {
+	hand->component[ hand->components - 1 ]->Disable();
+}
+void GraspGLObjects::SetHandLaserEccentricity( Assembly *hand, double projection ) {
+	((FuzzyPointer *)(hand->component[ hand->components - 1 ]))->SetEccentricity( projection );
+}
 
 
 Assembly *GraspGLObjects::CreateVisualTool( void ) {
@@ -258,8 +269,8 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 		tool->AddComponent( finger );
 	}
 	// Add a laser pointer to the end.
-	Assembly *laser = CreateLaserPointer();
-	// This laser is always on and always the same color.
+	Assembly *laser = CreateFuzzyLaserPointer();
+	// This laser is always the same color.
 	laser->SetColor( RED );
 	tool->AddComponent( laser );
 
@@ -282,7 +293,7 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 	sphere->SetPosition( 0.0, 0.0, - finger_length );
 	finger->AddComponent( sphere );
 	// Add a laser pointer to the end.
-	Assembly *laser = CreateLaserPointer();
+	Assembly *laser = CreateFuzzyLaserPointer();
 	finger->AddComponent( laser );
 	// Set a default color. I like blue.
 	// In K-K color will be varied according to the orientation error.
@@ -291,11 +302,22 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 
 }
 
-Assembly * GraspGLObjects::CreateLaserPointer( void ) {
+Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 	Assembly *laserPointer = new Assembly();
 	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
 	sphere->SetPosition( 0.0, 0.0, -(room_length/2.0-1000.0) );
 	laserPointer->AddComponent( sphere );
+	// Laser is off by default.
+	laserPointer->Disable();
+	return laserPointer;
+}
+
+FuzzyPointer *GraspGLObjects::CreateFuzzyLaserPointer( void ) {
+	FuzzyPointer *laserPointer = new FuzzyPointer();
+	laserPointer->SetOffset( 0.0, 0.0, -( room_length / 2.0 - 1000.0 ) );
+	laserPointer->SetColor( 0.0, 0.0, 1.0, 1.0 );
+	// Laser is off by default.
+	laserPointer->Disable();
 	return laserPointer;
 }
 
@@ -495,6 +517,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	SetLighting();
 	CreateTextures();
 
+	fuzzyLaser = CreateFuzzyLaserPointer();
+	fuzzyLaser->SetColor( 0.0, 0.0, 1.0 );
+
 	room = CreateRoom();
 	glasses = CreateGlasses();
 	glasses->SetColor( 0.5, 0.5, 0.5, 0.5 );
@@ -621,11 +646,15 @@ void GraspGLObjects::DrawVR( void ) {
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
 
-	//orientationTarget->Draw();
-	//positionOnlyTarget->Draw();
-	//straightAheadTarget->Draw();
-	//response->Draw();
-	//successIndicator->Draw();
+	// Lasers in the hand should become diffuse if they do not point down the tunnel.
+	Vector3 tunnel_axis, hand_axis;
+	MultiplyVector( tunnel_axis, kVector, room->orientation );
+	MultiplyVector( hand_axis, kVector, hand->orientation );
+	double projection = DotProduct( hand_axis, tunnel_axis );
+	SetHandLaserEccentricity( vkTool, projection );
+	SetHandLaserEccentricity( kTool, projection );
+	SetHandLaserEccentricity( kkTool, projection );
+
 	headTiltPrompt->Draw();
 	handRollPrompt->Draw();
 	vTool->Draw();
@@ -636,10 +665,18 @@ void GraspGLObjects::DrawVR( void ) {
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
+
+	fuzzyLaser->Draw();
+
+	// The following are now attached to the room, so they get drawn with the room, if activated.
+	//orientationTarget->Draw();
+	//positionOnlyTarget->Draw();
+	//straightAheadTarget->Draw();
+	//response->Draw();
+	//successIndicator->Draw();
 	// raiseHandIndicator->Draw();
 
 }
-
 
 // The following objects are not used during the Grasp protocol and are not seen by the subject.
 // Rather, these objects are used in the GraspGUI and elswhere to visualize the subject's pose.
@@ -930,4 +967,54 @@ void Glasses::SetColor( float r, float g, float b, float a = 1.0 ) {
 	Assembly::SetColor( r, g, b, a );
 	blinders->SetColor( BLACK );
 }
+
+
+Vector3 FuzzyPointer::beamOffset[LASER_BEAMS] = {
+		{  0.2,  0.5, 1.0 },
+		{ -0.4,  0.9, 2.0 },
+		{ -0.8, -0.3, 3.0 },
+		{  0.3, -0.9, 4.0 },
+		{  0.6,  0.1, 5.0 },
+		{ -0.3,  0.2, 6.0 },
+		{ -0.2, -0.5, 7.0 }
+	};
+
+FuzzyPointer::FuzzyPointer() {
+
+	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
+		sphere[beam] = new Disk( LASER_FOCUSED_SIZE );
+		AddComponent( sphere[beam] );
+	}
+}
+
+void FuzzyPointer::SetColor( float r, float g, float b, float a ) {
+	a = 0.25f;
+	Assembly::SetColor( r, g, b, a );
+}
+void FuzzyPointer::SetEccentricity( double projection ) {
+	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
+		if ( projection > LASER_CLOSE_ALIGNMENT_THRESHOLD ) {
+			sphere[beam]->SetOffset( 0.0, 0.0, (double) beam );
+			sphere[beam]->SetRadius( LASER_FOCUSED_SIZE );
+		}
+		else {
+			Vector3 offset;
+			double distance = 2000.0 * (LASER_CLOSE_ALIGNMENT_THRESHOLD - projection);
+			double expand = LASER_DIFFUSION_CONSTANT * distance;
+			ScaleVector( offset, beamOffset[beam], 1.25 * expand );
+			sphere[beam]->SetOffset( offset );
+			sphere[beam]->SetRadius( LASER_FOCUSED_SIZE + expand );
+		}
+	}
+}
+
+void FuzzyPointer::Draw( void ) {
+	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
+		double angle = 0.1 * (double) (beam + 7) * (double) GetTickCount() / ((double) (beam + 3.0 ) * 2.0) 
+			+ 60.0 * sin( (double) GetTickCount() / 50.0 / (double) (beam + 7) );
+		sphere[beam]->SetOrientation( angle, 0.0, 0.0 );
+	}
+	Assembly::Draw();
+}
+
 

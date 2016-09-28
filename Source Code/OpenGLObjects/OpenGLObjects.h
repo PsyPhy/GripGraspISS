@@ -283,13 +283,13 @@ protected:
 
 public:
 
-  double radius;
-  int    slices;
-  int    stacks;
-  GLUquadric *quad;
+	double radius;
+	int    slices;
+	int    stacks;
+	GLUquadric *quad;
 
   Sphere( double radius = DEFAULT_RADIUS, int slices = DEFAULT_SLICES, int stacks = DEFAULT_STACKS );
-	void SetRadius( double radius );
+  void SetRadius( double radius );
   void  Draw();
 
 };
