@@ -26,7 +26,7 @@ double	GraspVR::desiredHeadRollSweetZone = 2.0;
 // The next two are angular tolerances as well, but
 // the are expressed as the cosine of the tolerance angle.
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
-double	GraspVR::straightAheadThreshold = 0.99;	// approx. 2.5° Corresponds roughly to center target radius.
+double	GraspVR::straightAheadThreshold = 0.995;	// approx. 2.5° Corresponds roughly to center target radius.
 
 double GraspVR::handFilterConstant = 2.0;
 
@@ -384,11 +384,11 @@ AlignmentStatus GraspVR::HandleGazeDirection( void ) {
 	Vector3 gaze;
 	RotateVector( gaze, headPose.pose.orientation, kVector );
 	if ( DotProduct( gaze, kVector ) > straightAheadThreshold ) {
-		renderer->gazeStraightAheadIndicator->SetColor( 0.0, 0.25, 0.05 );
+		renderer->straightAheadTarget->SetColor( GREEN );
 		return( aligned );
 	}
 	else {
-		renderer->gazeStraightAheadIndicator->SetColor( 0.2, 0.0, 0.0 );
+		renderer->straightAheadTarget->SetColor( ORANGE );
 		return( misaligned );
 	}
 }
@@ -416,6 +416,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	ComputeCrossProduct( straight_behind, left_to_right, chest_to_eyes );
 	NormalizeVector( straight_behind );
 	// Set the color of the spherical target to green if it is centered in the field of view.
+	// Also set the color of the gaze laser to grey when off alignment and magenta when aligned.
 	// Gaze is aligned with straight_ahead when the dot product between straight behind and the HMD k vector is 1.
 	Vector3 gaze;
 	double product;
@@ -423,10 +424,12 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	RotateVector( gaze, headPose.pose.orientation, kVector );
 	if ( (product = DotProduct( gaze, straight_behind )) < straightAheadThreshold ) {
 		centered = false;
-		renderer->gazeLaser->SetColor( MAGENTA );
+		renderer->gazeLaser->SetColor( GRAY );
+		renderer->straightAheadTarget->SetColor( ORANGE );
 	}
 	else {
-		renderer->gazeLaser->SetColor( GREEN );
+		renderer->gazeLaser->SetColor( MAGENTA );
+		renderer->straightAheadTarget->SetColor( GREEN );
 		centered = true;
 	}
 	// Now place the target at the end of the (not visible) tunnel.

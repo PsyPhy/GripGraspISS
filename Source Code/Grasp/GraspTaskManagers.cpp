@@ -416,10 +416,14 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->headTiltPrompt->Disable();
+	// Cancel any preceding conflict gain.
+	conflictGain = 1.0;
 	// Cancel the current local transformation that was aligned with the head.
 	AlignToCODA();
 	// Prompt the subject to straighten the head on the shoulders. We have two possible methods.
 	if ( manualStraightenHead ) {
+		// Show a central target to facilitate straight-ahead gaze.
+		renderer->straightAheadTarget->Enable();
 		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
 		renderer->straightenHeadIndicator->Enable();
 		// Halo is blue because we cannot set an stable reference for the desired roll angle.
@@ -430,7 +434,8 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 		SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
 		renderer->straightAheadTarget->Enable();
-		renderer->gazeLaser->Enable();
+		renderer->straightenHeadIndicator->Enable();
+		//renderer->gazeLaser->Enable();
 	}
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
@@ -444,14 +449,17 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 	if ( manualStraightenHead ) {
-		if ( true || aligned == HandleGazeDirection()) {
+		Grasp::AlignmentStatus status = HandleGazeDirection();
+		if ( status == aligned ) {
 			if ( Validate() ) return( AlignHead );
 		}
 	}
 	else {
 		// Update the feedback about the head orientation wrt the desired head orientation.
 		// If the head alignment is satisfactory, move on to the next state.
-		if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
+		if ( aligned == HandleHeadOnShoulders( false ) ) {
+			if ( Validate() ) return( AlignHead ); 
+		}
 	}
 	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > lowerHandPromptDelay ) {
 		renderer->lowerHandPrompt->Enable();

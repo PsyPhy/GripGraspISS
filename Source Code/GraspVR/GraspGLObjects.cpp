@@ -542,11 +542,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	// Attach these objects to the room so that they move when conflict is applied.
 	room->AddComponent( orientationTarget );
 	room->AddComponent( positionOnlyTarget );
-	room->AddComponent( straightAheadTarget );
 	room->AddComponent( response );
 	room->AddComponent( successIndicator );
 	
-
 	headTiltPrompt = CreateTiltPrompt();
 	headTiltPrompt->SetColor( 0.5, 0.0, 0.4 );
 
@@ -665,13 +663,13 @@ void GraspGLObjects::DrawVR( void ) {
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
+	straightAheadTarget->Draw();
 
 	fuzzyLaser->Draw();
 
 	// The following are now attached to the room, so they get drawn with the room, if activated.
 	//orientationTarget->Draw();
 	//positionOnlyTarget->Draw();
-	//straightAheadTarget->Draw();
 	//response->Draw();
 	//successIndicator->Draw();
 	// raiseHandIndicator->Draw();
