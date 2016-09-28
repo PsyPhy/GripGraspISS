@@ -105,17 +105,10 @@ int DexServices::Connect ( void ) {
 	// If we are not connected to DEX we can still work.
 	unsigned long nonblocking = 1;
 	ioctlsocket( dexSocket, FIONBIO, &nonblocking );
-	if ( connect( dexSocket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR ) {
-		fOutputDebugString( "DexServices: connect() failed: %d (normal behavior for non-blocking connect).\n", WSAGetLastError());
-		return -1;
-	}
-	else
-	{
-		fOutputDebugString( "DexServices: ConnectToDex() OK.\n" );
-		return( 0 );
-	}
+	connect( dexSocket, (struct sockaddr*)&server, sizeof(server) );
 	printDateTime( log );
-	fprintf( log, " Connected to DEX.\n" );
+	fprintf( log, " Connection to DEX pending.\n" );
+	Sleep( 1000 );
 
 };
 
@@ -149,11 +142,6 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 
 int DexServices::SendScienceRealtimeData( void ) {
 
-	if ( log ) {
-		printDateTime( log );
-		fprintf( log, " Sent science realtime info.\n" );
-		fflush( log );
-	}
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[1024];
 	// An object that serializes the data destined for DEX housekeeping telemetry packets.
@@ -164,6 +152,11 @@ int DexServices::SendScienceRealtimeData( void ) {
 
 	// Send it to DEX.
 	int sent = Send( packet, size );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Sent science realtime info (%s).\n", ( sent > 0 ? "OK" : "not sent") );
+		fflush( log );
+	}
 
 	return( sent );
 
@@ -171,12 +164,6 @@ int DexServices::SendScienceRealtimeData( void ) {
 
 int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep, unsigned short tracker_status ) {
 
-	if ( log ) {
-		printDateTime( log );
-		fprintf( log, " Sent task info: %d %d %d %d   %d %d.\n", 
-			user, protocol, task, step, substep, tracker_status );
-		fflush( log );
-	}
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[1024];
 	// An object that serializes the data destined for DEX housekeeping telemetry packets.
@@ -203,6 +190,12 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 
 	// Send it to DEX.
 	int sent = Send( packet, size );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Sent task info: %d %d %d %d   %d %d (%s).\n", 
+			user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
+		fflush( log );
+	}
 
 	return( sent );
 
@@ -240,7 +233,7 @@ int DexServices::SnapPicture( const char *tag ) {
 
 	if ( log ) {
 		printDateTime( log );
-		fprintf( log, " Snapped picture: %s (%s)\n", cam.tag, ( sent == 0 ? "OK" : "not sent" ) );
+		fprintf( log, " Snapped picture: %s (%s)\n", cam.tag, ( sent > 0 ? "OK" : "not sent") );
 		fflush( log );
 	}
 	return( sent );
