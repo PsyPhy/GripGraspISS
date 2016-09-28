@@ -434,7 +434,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 	if ( manualStraightenHead ) {
-		if ( aligned == HandleGazeDirection()) {
+		if ( true || aligned == HandleGazeDirection()) {
 			if ( Validate() ) return( AlignHead );
 		}
 	}

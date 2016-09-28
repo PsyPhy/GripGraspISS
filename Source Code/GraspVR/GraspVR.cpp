@@ -26,7 +26,7 @@ double	GraspVR::desiredHeadRollSweetZone = 2.0;
 // The next two are angular tolerances as well, but
 // the are expressed as the cosine of the tolerance angle.
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
-double	GraspVR::straightAheadThreshold = 0.999;	// approx. 2.5° Corresponds roughly to center target radius.
+double	GraspVR::straightAheadThreshold = 0.99;	// approx. 2.5° Corresponds roughly to center target radius.
 
 double GraspVR::handFilterConstant = 2.0;
 
