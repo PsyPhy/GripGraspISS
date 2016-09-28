@@ -258,6 +258,9 @@ namespace Grasp {
 		// Need to be able to change the color of the fingers according to the position of the hand.
 		// OpenGLObjects does not provide an easy way to override the color, so this hack lets us do it.
 		void SetHandColor( Assembly *hand, bool enabled );
+		// Need to be able to enable or disable a laser attached to a hand.
+		void EnableHandLaser( Assembly *hand );
+		void DisableHandLaser( Assembly *hand );
 		void SetHandLaserEccentricity( Assembly *hand, double projection );
 			
 

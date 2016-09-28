@@ -547,6 +547,7 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	renderer->positionOnlyTarget->Disable();
 	// Hide the visible tools, if any.
 	renderer->kkTool->Disable();
+	renderer->DisableHandLaser( renderer->kkTool );
 	renderer->handRollPrompt->Disable();
 	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
@@ -657,8 +658,10 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	// Hide the hand. To make this routine generic, we 
 	//  hide all possible representations of the hand;
 	renderer->kTool->Disable();
-	renderer->vTool->Disable();
+	renderer->DisableHandLaser( renderer->kTool );
 	renderer->vkTool->Disable();
+	renderer->DisableHandLaser( renderer->vkTool );
+	renderer->vTool->Disable();
 	renderer->wristZone->Disable();
 	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
