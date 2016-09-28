@@ -366,14 +366,6 @@ namespace GraspHardwareStatus {
 			this->oculusPanel->Size = System::Drawing::Size(829, 375);
 			this->oculusPanel->TabIndex = 0;			
 				
-			hmdStationary0 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
-			handStationary0 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
-			chestStationary0 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
-
-			hmdStationary1 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
-			handStationary1 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
-			chestStationary1 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
-
 			// 
 			// label3
 			// 
@@ -501,7 +493,7 @@ namespace GraspHardwareStatus {
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 
-			TrackerPose pose;
+			// TrackerPose pose;
 			MarkerFrame markerFrame;
 			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
 			hmdStationary0->ShowVisibility( markerFrame );
@@ -578,6 +570,7 @@ namespace GraspHardwareStatus {
 			hmdMobile = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
 			handMobile = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chestMobile = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
+
 			// Initially set the hand and chest away from the center.
 			// This will be overidden later when the trackers are active, 
 			// but it is convenient to do this here for testing when the trackers is not used.
@@ -590,6 +583,7 @@ namespace GraspHardwareStatus {
 
 			CreateRefreshTimer( 500 );
 			StartRefreshTimer();
+			button1_Click( sender, e );
 
 		}
 

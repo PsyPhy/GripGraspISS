@@ -150,7 +150,11 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 					taskList[nTasks]->isolated_step->type = "INSTRUCTION";
 					taskList[nTasks]->isolated_step->instruction = gcnew String( token[3] );
 				}
-				else if ( !strcmp( token[1], "COMMAND" ) || !strcmp( token[1], "COMMAND@" ) ) {
+				else if ( !strcmp( token[1], "COMMAND" ) 
+							|| !strcmp( token[1], "COMMAND@" ) 
+							|| !strcmp( token[1], "SYSTEM" ) 
+							|| !strcmp( token[1], "SYSTEM@" ) 
+						) {
 					taskList[nTasks]->isolated_step->type = gcnew String( token[1] );
 					taskList[nTasks]->isolated_step->command = gcnew String( token[3] );
 					if ( tokens < 5 ) taskList[nTasks]->isolated_step->ready = gcnew String( "StepReady.prompt.html" );
@@ -205,7 +209,11 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 			if ( stepList[nSteps]->type->Equals( "INSTRUCTION" ) || stepList[nSteps]->type->Equals( "INSTRUCTION@" ) ) {
 				stepList[nSteps]->instruction = gcnew String( token[2] );
 			}
-			else if ( stepList[nSteps]->type->Equals( "COMMAND" ) || stepList[nSteps]->type->Equals( "COMMAND@" )) {
+			else if ( stepList[nSteps]->type->Equals( "COMMAND" ) 
+						|| stepList[nSteps]->type->Equals( "COMMAND@" )
+						|| stepList[nSteps]->type->Equals( "SYSTEM" )
+						|| stepList[nSteps]->type->Equals( "SYSTEM@" )
+					) {
 				stepList[nSteps]->command = gcnew String( token[2] );
 				stepList[nSteps]->ready = gcnew String( token[3] );
 				stepList[nSteps]->running = gcnew String( token[4] );
@@ -233,6 +241,10 @@ void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^ 
 	if ( currentStep >= nSteps - 1 ) {
 		// End of this set of instructions.
 		if ( !stepList[currentStep]->type->EndsWith("@") ) SelectNextTask();
+		else {
+			taskListBox->SelectedIndex = -1; 
+			currentTask = -1;
+		}
 	}
 	else {
 		currentStep++;
@@ -358,14 +370,20 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
-			String ^cmdline =  stepList[currentStep]->command 
-				+ " --output=" + resultsDirectory + subjectList[currentSubject]->ID + "." + dateTimeString
-				+ " --user=" + subjectID
-				+ " --protocol=" + protocolID
-				+ " --task=" + taskID
-				+ " --step=" + stepID;
-			// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
-			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
+			String ^cmdline;
+			// Add command line arguments to COMMAND or COMMAND@.
+			if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
+				cmdline =  stepList[currentStep]->command 
+					+ " --output=" + resultsDirectory + subjectList[currentSubject]->ID + "." + dateTimeString
+					+ " --user=" + subjectID
+					+ " --protocol=" + protocolID
+					+ " --task=" + taskID
+					+ " --step=" + stepID;
+				// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
+				if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
+			}
+			// SYSTEM or SYSTEM@ do not add command line arguments.
+			else  cmdline = stepList[currentStep]->command;
 
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 

@@ -301,3 +301,6 @@ TestGrasp.dxl
 *.seq
 *.dxl
 DeleteMe.alignment.dat
+DeleteMe*
+Executables/Filezilla*
+*.tar

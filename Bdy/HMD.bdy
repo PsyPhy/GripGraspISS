@@ -7,5 +7,5 @@
 22	-104.850	  76.127	  15.714
 23	 102.662	 -77.496	  27.390
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - RED HMD (original)
 ;;; Created 2016/08/09 18h50m46s GMT

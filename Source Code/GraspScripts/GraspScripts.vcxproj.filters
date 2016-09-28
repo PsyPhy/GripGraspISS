@@ -74,5 +74,8 @@
     <None Include="K-KprepareSeated.tsk">
       <Filter>K-K</Filter>
     </None>
+    <None Include="GraspCommissioningSessions.sss">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>

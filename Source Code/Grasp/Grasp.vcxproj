@@ -83,6 +83,7 @@
   <ItemGroup>
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
     <None Include="Grasp.bat" />
+    <None Include="GraspPackData.bat" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -103,9 +104,6 @@
     <ClCompile Include="VtoVK.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\OculusSDKv1.6\OculusSDK\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
-      <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>

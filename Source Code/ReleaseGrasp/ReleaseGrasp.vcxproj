@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\GraspReleases.log" />
     <None Include="ReleaseGrasp.bat" />
     <None Include="ReleaseGraspDebug.mak" />
     <None Include="ReleaseGraspDraft.mak" />

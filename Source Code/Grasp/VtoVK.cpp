@@ -16,7 +16,7 @@ using namespace PsyPhy;
 void VtoVK::EnterPresentTarget( void ) {
 	// The target is displayed visually.
 	renderer->orientationTarget->Enable();
-	TimerSet( presentTargetTimer, trialParameters[currentTrial].targetPresentationDuration ); 
+	TimerSet( presentTargetTimer, targetPresentationDuration ); 
 	// Do all the default actions as well.
 	GraspTaskManager::EnterPresentTarget();
 }
@@ -25,6 +25,7 @@ void VtoVK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
 	renderer->vkTool->Enable();
+	renderer->EnableHandLaser( renderer->vkTool );
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }

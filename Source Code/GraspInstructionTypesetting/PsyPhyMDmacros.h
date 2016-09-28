@@ -8,13 +8,16 @@
 #define COMMA ,
 
 #define OPNOM(x) *__##x##__*
-#define FFRESTRAINT		OPNOM(Free-floating Restraint)
+#define FFRESTRAINT		OPNOM(Floating Backrest)
 #define CHAIR			OPNOM(GRIP Chair)
 #define TRACKER			OPNOM(Tracking Cameras)
-#define CHESTMARKERS	OPNOM(Chest Marker Support)
-#define HMDMARKERS		OPNOM(Head Marker Support)
-#define HANDMARKERS		OPNOM(Hand Marker Support)
+#define CHESTMARKERS	OPNOM(Chest Marker Array)
+#define HMDMARKERS		OPNOM(Head Marker Array)
+#define HANDMARKERS		OPNOM(Hand Marker Array)
+#define MARKERCABLES	OPNOM(Marker Array Cables)
 #define REMOTE			OPNOM(VR Headset Remote)
+#define HMDCABLE		OPNOM(VR Headset Cable)
 #define HMD				OPNOM(Virtual Reality Headset)
+#define BIB				OPNOM(Marker Support Bib)
 #define HALO			halo
-#define CBUTTON			Center Button
+#define CBUTTON			Select Button

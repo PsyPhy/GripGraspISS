@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "GraspTrackers.h"
 
+// #define BACKGROUND_GET_DATA
+
 using namespace PsyPhy;
 using namespace Grasp;
 
@@ -51,28 +53,37 @@ void GraspTrackers::Release( void ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GraspDexTrackers uses trackers based on the Oculus and DEX/CODA tracker.
-void GraspDexTrackers::Initialize( void ) {
+void GraspDexTrackers::InitializeCodaTrackers( void ) {
 
 	// Initialize the connection to the CODA tracking system.
-	codaTracker.Initialize();
+	codaTracker->Initialize();
 
 	// Start continuous acquisition of Coda marker data for a maximum duration.
-	codaTracker.StartAcquisition( 600.0 );
+	// This is needed if we use the classical CodaRTnet tracker, but is not necessary
+	// if we use the continuous tracker.
+	//codaTracker.StartAcquisition( 600.0 );
 
+#ifdef BACKGROUND_GET_DATA
 	// Initiate real-time retrieval of CODA marker frames in a background thread 
 	// so that waiting for the frame to come back from the CODA does not slow down
 	// the rendering loop.
-	for ( int i = 0; i < nCodaUnits; i++ ) lockSharedMarkerFrame[i] = false;
+	requestSharedMemoryParent = false;
+	requestSharedMemoryChild = false;
+	parentHasPriority = false;
+
 	stopMarkerGrabs = false;
 	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, this, 0, &threadID );
+	// SetThreadPriority( threadHandle, THREAD_PRIORITY_HIGHEST );
+#endif
 
 	// Create PoseTrackers that combine data from multiple CODAs.
 	hmdCascadeTracker = new CascadePoseTracker();
 	handCascadeTracker = new CascadePoseTracker();
 	chestCascadeTracker = new CascadePoseTracker();
 
-	//for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-	for ( int unit = nCodaUnits; unit >= 0 ; unit-- ) {
+	// for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+	for ( int unit = nCodaUnits - 1; unit >= 0 ; unit -- ) {
+
 		hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 		fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
 		hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
@@ -82,6 +93,7 @@ void GraspDexTrackers::Initialize( void ) {
 		fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing toolCodaPoseTracker[%d].", unit );
 		handCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
 		handCascadeTracker->AddTracker( handCodaPoseTracker[unit] );
+
 		chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 		fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing torsoCodaPoseTracker[%d].", unit );
 		chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
@@ -95,18 +107,159 @@ void GraspDexTrackers::Initialize( void ) {
 	fAbortMessageOnCondition( !chestCascadeTracker->Initialize(), "GraspVR", "Error initializing chestCascadeTracker." );
 	/////////////////////////////////////// TO BE TESTED ////////////////////////////////////////////////////////////
 
-	// Create a pose tracker that combines Coda and Oculus data.
-	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdCascadeTracker );
-	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
-
 	// Create pose trackers that simply filter the coda trackers.
+	hmdFilteredTracker = new PoseTrackerFilter( hmdCascadeTracker, 2.0 );
+	hmdFilteredTracker->Initialize();
 	handFilteredTracker = new PoseTrackerFilter( handCascadeTracker, 2.0 );
 	handFilteredTracker->Initialize();
 	chestFilteredTracker = new PoseTrackerFilter( chestCascadeTracker, 10.0 );
 	chestFilteredTracker->Initialize();
 
+}
+
+void GraspDexTrackers::GetMarkerData( void ) {
+#ifdef BACKGROUND_GET_DATA
+	// Get the current position of the CODA markers.
+	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+		GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
+	}
+#else 
+	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+		codaTracker->GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
+	}
+#endif
+}
+void GraspDexTrackers::UpdatePoseTrackers( void ) {
+	// The base class does this nicely.
+	GraspTrackers::Update();
+}
+
+void GraspDexTrackers::Update( void ) {
+		
+	// Check if the thread is still running.
+	// I don't know why it should stop, but it seems to be happening in Release mode.
+	if ( threadHandle ) {
+		int result = WaitForSingleObject( threadHandle, 0 );
+		if ( result == WAIT_OBJECT_0 ) fAbortMessage( "GraspTrackers", "Retrieval thread has unexpectedly terminated!" );
+	}
+
+	// Retrieve the marker data from the CODA.
+	GetMarkerData();
+	// Compute the poses.
+	UpdatePoseTrackers();
+}
+
+// Construct a number that indicates the number of visible markers in each structure.
+unsigned int GraspDexTrackers::GetTrackerStatus( void ) {
+
+	unsigned int status = 0;
+	int group, id, mrk, unit;
+	for ( group = 0, id = 0; group < 3 && id < MAX_MARKERS; group ++ ) {
+		int group_count = 0;
+		for ( mrk = 0; mrk < 8 && id < MAX_MARKERS; mrk++ , id++ ) {
+			bool visibility = false;
+			for ( unit = 0; unit < nCodaUnits; unit++ ) {
+				if ( markerFrame[unit].marker[id].visibility ) visibility = true;
+			}
+			if ( visibility ) group_count++;
+		}
+		status = status + pow(10.0,group) * group_count;
+	}
+	return( status );
+}
+
+void GraspDexTrackers::Release( void ) {
+
+	// Do what all flavors of GraspTrackers do.
+	GraspTrackers::Release();
+
+	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
+	if ( threadHandle ) {
+		stopMarkerGrabs = true;
+		WaitForSingleObject( threadHandle, INFINITE );
+	}
+	// Halt the continuous Coda acquisition.
+	codaTracker->AbortAcquisition();
+	codaTracker->Quit();
+
+}
+
+void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
+
+	// Output the CODA data to a file.
+	char filename[MAX_PATH];
+	strncpy( filename, filename_root, sizeof( filename ) );
+	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
+	fOutputDebugString( "Writing CODA data to %s.\n", filename );
+	FILE *fp = fopen( filename, "w" );
+	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
+
+	fprintf( fp, "%s\n", filename );
+	fprintf( fp, "Tracker Units: %d\n", codaTracker->GetNumberOfUnits() );
+	fprintf( fp, "Frame\tTime" );
+	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+		for ( int unit = 0; unit < codaTracker->GetNumberOfUnits(); unit++ ) {
+			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+		}
+	}
+	fprintf( fp, "\n" );
+
+	for ( unsigned int frm = 0; frm < codaTracker->nFrames; frm++ ) {
+		fprintf( fp, "%05d %9.3f", frm, codaTracker->recordedMarkerFrames[0][frm].time );
+		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+			for ( int unit = 0; unit < codaTracker->GetNumberOfUnits(); unit++ ) {
+				fprintf( fp, " %1d",  codaTracker->recordedMarkerFrames[unit][frm].marker[mrk].visibility );
+				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker->recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
+			}
+		}
+		fprintf( fp, "\n" );
+	}
+	fclose( fp );
+	fOutputDebugString( "File %s closed.\n", filename );
+}
+
+void GraspDexTrackers::Initialize( void ) {
+
+	// Initialize all of the low-level coda-based pose trackers.
+	InitializeCodaTrackers();
+
+	//// Create a tracker to control the roll orientation via the mouse.
+	//OculusRemotePoseTracker *oculusRemoteRollTracker;
+	//oculusRemoteRollTracker = new PsyPhy::OculusRemotePoseTracker( mouseGain );
+	//fAbortMessageOnCondition( !oculusRemoteRollTracker->Initialize(), "GraspVR", "Error initializing OculusRemotePoseTracker." );
+
+	// Now assign the trackers to each body part.
+	hmdTracker = hmdFilteredTracker;
+	handTracker = handFilteredTracker;
+	chestTracker = chestFilteredTracker;
+	
+	// Place the hand at a constant position relative to the origin.
+	rollTracker->OffsetTo( handPoseV );
+	//handTracker->OffsetTo( handPoseK );
+
+	// Give the trackers a chance to get started.
+	Sleep( 200 );
+	// Allow them to update.
+	Update();
+} 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GraspOculusCodaTrackers is a version of GraspTrackers that uses a combination
+//  of Coda and Oculus trackers.
+
+void GraspOculusCodaTrackers::Initialize( void ) {
+
+	// Initialize all of the low-leve coda-based pose trackers.
+	InitializeCodaTrackers();
+
+	// Create a pose tracker that combines Coda and Oculus data for head tracking.
+	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdFilteredTracker );
+	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
+
 	// Create a tracker to control the roll orientation via the mouse.
-	mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
+	// Here we use the mouse tracker tied to the OculusMapper. 
+	MouseRollPoseTracker *mouseRollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
 	// Now assign the trackers to each body part.
@@ -123,69 +276,7 @@ void GraspDexTrackers::Initialize( void ) {
 	Sleep( 200 );
 	// Allow them to update.
 	Update();
-
-}
-
-void GraspDexTrackers::Update( void ) {
-
-	// Get the current position of the CODA markers.
-	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-		GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
-	}
-
-	// Do what all flavors of GraspTrackers do.
-	GraspTrackers::Update();
-
-}
-
-void GraspDexTrackers::Release( void ) {
-
-	// Do what all flavors of GraspTrackers do.
-	GraspTrackers::Release();
-
-	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
-	stopMarkerGrabs = true;
-	WaitForSingleObject( threadHandle, INFINITE );
-	// Halt the continuous Coda acquisition.
-	codaTracker.AbortAcquisition();
-
-}
-
-void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
-
-	// Output the CODA data to a file.
-	char filename[MAX_PATH];
-	strncpy( filename, filename_root, sizeof( filename ) );
-	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
-	fOutputDebugString( "Writing CODA data to %s.\n", filename );
-	FILE *fp = fopen( filename, "w" );
-	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
-
-	fprintf( fp, "%s\n", filename );
-	fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
-	fprintf( fp, "Frame\tTime" );
-	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-		for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-		}
-	}
-	fprintf( fp, "\n" );
-
-	for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-		fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
-			}
-		}
-		fprintf( fp, "\n" );
-	}
-	fclose( fp );
-	fOutputDebugString( "File %s closed.\n", filename );
-}
-
-
+} 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

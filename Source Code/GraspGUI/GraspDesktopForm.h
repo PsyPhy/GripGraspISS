@@ -56,9 +56,11 @@ namespace GraspGUI {
 		unsigned short stepExecutionState;
 
 	private: System::Windows::Forms::CheckBox^  unitTestingMode;
+	private: System::Windows::Forms::Button^  repeatButton;
+
 
 		// A timer to handle animations and screen refresh, and associated actions.
-		static Timer^ refreshTimer;
+		static System::Windows::Forms::Timer^ refreshTimer;
 		void SendProgressInfo( void ) {
 			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
@@ -208,6 +210,7 @@ namespace GraspGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->statusButton = (gcnew System::Windows::Forms::Button());
 			this->quitButton = (gcnew System::Windows::Forms::Button());
@@ -230,6 +233,7 @@ namespace GraspGUI {
 			this->execBackButton = (gcnew System::Windows::Forms::Button());
 			this->execSkipButton = (gcnew System::Windows::Forms::Button());
 			this->normalNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->repeatButton = (gcnew System::Windows::Forms::Button());
 			this->previousButton = (gcnew System::Windows::Forms::Button());
 			this->nextButton = (gcnew System::Windows::Forms::Button());
 			this->stepHeaderGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -504,7 +508,7 @@ namespace GraspGUI {
 			this->executeButton->Name = L"executeButton";
 			this->executeButton->Size = System::Drawing::Size(127, 44);
 			this->executeButton->TabIndex = 14;
-			this->executeButton->Text = L"Execute";
+			this->executeButton->Text = L"Start";
 			this->executeButton->UseVisualStyleBackColor = true;
 			this->executeButton->Click += gcnew System::EventHandler(this, &GraspDesktop::startButton_Click);
 			// 
@@ -536,6 +540,7 @@ namespace GraspGUI {
 			// 
 			// normalNavigationGroupBox
 			// 
+			this->normalNavigationGroupBox->Controls->Add(this->repeatButton);
 			this->normalNavigationGroupBox->Controls->Add(this->previousButton);
 			this->normalNavigationGroupBox->Controls->Add(this->nextButton);
 			this->normalNavigationGroupBox->Location = System::Drawing::Point(14, 911);
@@ -543,6 +548,19 @@ namespace GraspGUI {
 			this->normalNavigationGroupBox->Size = System::Drawing::Size(591, 68);
 			this->normalNavigationGroupBox->TabIndex = 12;
 			this->normalNavigationGroupBox->TabStop = false;
+			// 
+			// repeatButton
+			// 
+			this->repeatButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->repeatButton->Location = System::Drawing::Point(326, 19);
+			this->repeatButton->Name = L"repeatButton";
+			this->repeatButton->Size = System::Drawing::Size(124, 42);
+			this->repeatButton->TabIndex = 14;
+			this->repeatButton->Text = L"Repeat";
+			this->repeatButton->UseVisualStyleBackColor = true;
+			this->repeatButton->Visible = false;
+			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
 			// 
 			// previousButton
 			// 
@@ -639,10 +657,11 @@ namespace GraspGUI {
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->ForeColor = System::Drawing::SystemColors::ControlText;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
-			this->Text = L"GRASP@ISS";
+			this->Text = L"GRASP";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspDesktop::GraspDesktop_Paint);
@@ -775,6 +794,10 @@ namespace GraspGUI {
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			if ( taskListBox->SelectedIndex < 0 ) {
+				ShowLogon();
+				return;
+			}
 			// Check if the subject was supposed to execute a command and if so, verify that
 			// they really want to leave the current step without doing so.
 			if ( verifyNext || ( currentStep > 0 && currentStep < nSteps - 1 ) ) {
@@ -804,7 +827,11 @@ namespace GraspGUI {
 				if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "INSTRUCTION" ) ) {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
-				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) ) {
+				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND@" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM" ) 
+							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM@" ) 
+					) {
 					stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
 					stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
 					stepList[0]->running = taskList[taskListBox->SelectedIndex]->isolated_step->running;
@@ -845,6 +872,8 @@ namespace GraspGUI {
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
 
-	};
+	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			 }
+};
 }
 

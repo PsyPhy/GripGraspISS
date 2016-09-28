@@ -13,30 +13,52 @@ using namespace PsyPhy;
 
 // Defined constants
 
+// Amount of time to show a visual target.
+double	GraspTaskManager::targetPresentationDuration = 3.0;
+
 // Time to show the trial success indicator.
-// It is currently set to 0 so that there is no presentation of the success indicator.
-double GraspTaskManager::indicatorDisplayDuration = 0.0;	
+// If it is set to 0 there is no presentation of the success indicator.
+double GraspTaskManager::indicatorDisplayDuration = 1.0;	
 
 // Time limits to accomplish different actions.
-double GraspTaskManager::alignHeadTimeout = 10.0;
-double GraspTaskManager::tiltHeadTimeout = 10.0;
+double GraspTaskManager::alignHeadTimeout = 30.0;
+double GraspTaskManager::tiltHeadTimeout = 5.0;
 double GraspTaskManager::responseTimeout = 10.0;
-double GraspTaskManager::alignHandTimeout = 10.0;
+double GraspTaskManager::alignHandTimeout = 30.0;
+
+// Required precision for aligning the head.
+// I am setting these values to what I think they should be for training.
+// The head tilt tolerances are rather large.
+double	GraspTaskManager::targetHeadTiltTolerance = 7.0;
+double	GraspTaskManager::responseHeadTiltTolerance = 7.0;
+double	GraspTaskManager::hapticTargetOrientationTolerance = 10.0;
 
 // It is easy to forget to raise and lower the hand, but it is annoying to be prompted each time.
 // The following parameter set delays before displaying the prompt.
-double GraspTaskManager::handPromptDelay = 2.0;
+double GraspTaskManager::lowerHandPromptDelay = 0.0;
+double GraspTaskManager::raiseHandPromptDelay = 2.0;
 double GraspTaskManager::handErrorDelay = 2.0;
 
-int GraspTaskManager::maxRetries = 9;
+// If the subject makes a procedural error during a trial (timeout, etc.) the trial
+// is aborted and it is added to the end of the list to be repeated. But the number
+// of repetitions is limited to the maximum set below.
+int GraspTaskManager::maxRetries = 7;
 
-//
+// At the beginning of a trial the subject is asked to straighen the head on the shoulders.
+// The pose of the head is then taken as the zero reference for the rest of the trial.
+// We have two methods to validate whether the head is straight. In automatic mode the software
+// attempts to detect when the head is straight based on measurements of the chest marker array.
+// In manual mode, we simply ask the subject to straighten the head and click when it is so.
+// The following flag sets which method to use.
+bool GraspTaskManager::manualStraightenHead = true;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // A state machine to run through the different state of a block of trials.
 // On entry, the current state is compared to the previous state.
 // If the are different, the machine calls the EnterXXX() method for the current state, where XXX is one of the possible GraspTrialStates.
 // Then, in either case, it calls the UpdateXXX() method, which returns the subsequent state.
 // If the subsequent state is not the same as the current state, the ExitXXX() method is called for the current state before leaving the cycle.
-//
 bool GraspTaskManager::UpdateStateMachine( void ) {
 
 	// If the state has changed, tell the ground where we are.
@@ -149,21 +171,14 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for read.", filename );
 	while ( fgets( line, sizeof( line ), fp ) ) {
 
-		int items = sscanf( line, "%lf; %lf; %lf; %lf; %lf; %lf;  %lf; %lf; %lf; %lf; %lf; %d",
+		int items = sscanf( line, "%lf; %lf; %lf; %lf; %d",
 			&trialParameters[nTrials].targetHeadTilt,
-			&trialParameters[nTrials].targetHeadTiltTolerance,
-			&trialParameters[nTrials].targetHeadTiltDuration,
 			&trialParameters[nTrials].targetOrientation,
-			&trialParameters[nTrials].hapticTargetOrientationTolerance,
-			&trialParameters[nTrials].targetPresentationDuration,
 			&trialParameters[nTrials].responseHeadTilt,
-			&trialParameters[nTrials].responseHeadTiltTolerance,
-			&trialParameters[nTrials].responseHeadTiltDuration,
-			&trialParameters[nTrials].responseTimeout,
 			&trialParameters[nTrials].conflictGain,
 			&trialParameters[nTrials].provideFeedback );
 
-		if ( items == 12 ) {
+		if ( items == 5 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
 				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
 			}
@@ -185,7 +200,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 }
 
 // The following may be called if there is an anomaly during a trial so as 
-// to repreat it at the end of the block. 
+// to repeat it at the end of the block. 
 void GraspTaskManager::RepeatTrial( int trial ) {
 	// Don't repeat more than allowed.
 	if ( retriesRemaining <= 0 ) {
@@ -226,13 +241,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	sprintf( responseFilename, "%s.rsp", output_filename_root );
 	response_fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-	fprintf( response_fp, "trial; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+	fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
 	// Open a file for storing the tracker poses and output a header.
 	sprintf( poseFilename, "%s.pse", output_filename_root );
 	pose_fp = fopen( poseFilename, "w" );
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
-	fprintf( pose_fp, "trial; time; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
+	fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation\n" );
 
 	// Call the paradigm-specific preparation, if any.
 	Prepare();
@@ -250,16 +265,22 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	// Enter into the rendering loop and handle other messages.
 	while ( oculusDisplay->HandleMessages() ) {
 
+		static int cycle_counter = 0;
+
+		if ( cycle_counter % 1000 == 0 ) fOutputDebugString( "GraspTaskManager cycle: %d  %f\n", cycle_counter, TimerElapsedTime( blockTimer ) );
+		cycle_counter++;
+
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
+		dexServices->SendTrackerStatus( trackers->GetTrackerStatus() );
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
-			fprintf( pose_fp, "%3d; %6.3f; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
-				currentTrial, TimerElapsedTime( blockTimer ), 
-				headPose.time, headPose.visible, vstr( headPose.pose.position ), qstr( headPose.pose.orientation ), 
-				handPose.time, handPose.visible, vstr( handPose.pose.position ), qstr( handPose.pose.orientation ), 
-				chestPose.time, chestPose.visible, vstr( chestPose.pose.position), qstr( chestPose.pose.orientation ),
+			fprintf( pose_fp, "%3d; %6.3f; %08d; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s; %6.3f; %1d; %s; %s\n", 
+				currentTrial, TimerElapsedTime( blockTimer ), currentState,
+				headPose.time, headPose.visible, (headPose.visible ? vstr( headPose.pose.position ) : vstr( zeroVector )), (headPose.visible ? qstr( headPose.pose.orientation ) : qstr( nullQuaternion )), 
+				handPose.time, handPose.visible, (handPose.visible ? vstr( handPose.pose.position ) : vstr( zeroVector )), (handPose.visible ? qstr( handPose.pose.orientation ) : qstr( nullQuaternion )), 
+				chestPose.time, chestPose.visible, (chestPose.visible ? vstr( chestPose.pose.position ) : vstr( zeroVector )), (chestPose.visible ? qstr( chestPose.pose.orientation ) : qstr( nullQuaternion )), 
 				rollPose.time, rollPose.visible, vstr( rollPose.pose.position), qstr( rollPose.pose.orientation )
 				);
 		}
@@ -305,10 +326,14 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 // StartBlock
 // Wait until the subject is in the HMD and ready to start.
 void GraspTaskManager::EnterStartBlock( void ) {
-	// The desired orientation of the head is upright (0°). This is not essential, but it allows us to show the colors already.
-	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, trialParameters[0].targetHeadTiltTolerance );
+	// The desired orientation of the head is upright (0°). 
+	// This is not essential, but it allows us to show the colors already.
+	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, targetHeadTiltTolerance );
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
+	renderer->room->Disable();
+	// Show the hand, just to allow the subject to play a little.
+	renderer->vkTool->Enable();
 }
 GraspTrialState GraspTaskManager::UpdateStartBlock( void ) { 
 	// Modulate the halo color, even though it does not matter, so
@@ -321,11 +346,12 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 }
 void  GraspTaskManager::ExitStartBlock( void ) {
 	renderer->readyToStartIndicator->Disable();
+	renderer->vkTool->Disable();
 }
 
 //
 // StartTrial
-// Set the new trial parameters. This is where conflict should get turned off or on.
+// Set the new trial parameters. 
 void GraspTaskManager::EnterStartTrial( void ) { 
 
 	// Align with the local reference frame of the subject.
@@ -338,21 +364,22 @@ void GraspTaskManager::EnterStartTrial( void ) {
 	//  we need to avoid sudden jumps of the tunnel orientation.
 
 	// Output the parameters of this trial to the response file.
-	fprintf( response_fp, "%d;  %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
+	fprintf( response_fp, "%d;  %s; %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
 		currentTrial,
+		tag,
 
 		trialParameters[currentTrial].targetHeadTilt,
-		trialParameters[currentTrial].targetHeadTiltTolerance,
-		trialParameters[currentTrial].targetHeadTiltDuration,
+		targetHeadTiltTolerance,
+		alignHeadTimeout,
 
 		trialParameters[currentTrial].targetOrientation,
-		trialParameters[currentTrial].hapticTargetOrientationTolerance,
-		trialParameters[currentTrial].targetPresentationDuration,
+		hapticTargetOrientationTolerance,
+		targetPresentationDuration,
 
 		trialParameters[currentTrial].responseHeadTilt,
-		trialParameters[currentTrial].responseHeadTiltTolerance,
-		trialParameters[currentTrial].responseHeadTiltDuration,
-		trialParameters[currentTrial].responseTimeout,
+		responseHeadTiltTolerance,
+		tiltHeadTimeout,
+		responseTimeout,
 
 		trialParameters[currentTrial].conflictGain,
 		trialParameters[currentTrial].provideFeedback );
@@ -389,11 +416,22 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	renderer->room->Disable();
 	// Make sure that the head tilt prompt is not still present.
 	renderer->headTiltPrompt->Disable();
-	// The desired orientation of the head to zero in preparation for applying conflict (if any).
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
-	// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
-	renderer->straightAheadTarget->Enable();
-	renderer->gazeLaser->Enable();
+	// Cancel the current local transformation that was aligned with the head.
+	AlignToCODA();
+	// Prompt the subject to straighten the head on the shoulders. We have two possible methods.
+	if ( manualStraightenHead ) {
+		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
+		renderer->straightenHeadIndicator->Enable();
+		// Halo is blue because we cannot set an stable reference for the desired roll angle.
+		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
+	}
+	else {
+		// The desired orientation of the head to zero in preparation for applying conflict (if any).
+		SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
+		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
+		renderer->straightAheadTarget->Enable();
+		renderer->gazeLaser->Enable();
+	}
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
 	// Set a timeout to wait for head at proper alignment.
@@ -405,14 +443,20 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
-	if ( Validate() ) return( AlignHead );
-	// Time spent with the hand in the field of view does not count against the timeout.
-	// This is a little risky because it could run forever.
-	if ( raised == HandleHandElevation() ) TimerPause( straightenHeadTimer );
-	else TimerResume( straightenHeadTimer );
-	// Update the feedback about the head orientation wrt the desired head orientation.
-	// If the head alignment is satisfactory, move on to the next state.
-	if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
+	if ( manualStraightenHead ) {
+		if ( true || aligned == HandleGazeDirection()) {
+			if ( Validate() ) return( AlignHead );
+		}
+	}
+	else {
+		// Update the feedback about the head orientation wrt the desired head orientation.
+		// If the head alignment is satisfactory, move on to the next state.
+		if ( aligned == HandleHeadOnShoulders( false ) ) return( AlignHead ); 
+	}
+	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > lowerHandPromptDelay ) {
+		renderer->lowerHandPrompt->Enable();
+	}
+	else renderer->lowerHandPrompt->Disable();
 	return( currentState );
 }
 void GraspTaskManager::ExitStraightenHead( void ) {
@@ -427,6 +471,7 @@ void GraspTaskManager::ExitStraightenHead( void ) {
 	renderer->lowerHandIndicator->Disable();
 	renderer->lowerHandPrompt->Disable();
 	renderer->kTool->Disable();
+	renderer->straightenHeadIndicator->Disable();
 	// Logically one might want to enable rendering of the room before leaving this state.
 	// But that causes an artifact because the room gets drawn once at the 'old' alignment.
 	// So I move enabling of the room to the next state.
@@ -442,7 +487,7 @@ void GraspTaskManager::EnterAlignHead( void ) {
 	// See above.
 	renderer->room->Enable();
 	// The desired orientation of the head to the specified head orientation.
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
 	// Set a time limit to achieve the desired head orientation.
 	TimerSet( alignHeadTimer,  alignHeadTimeout ); 
 }
@@ -499,7 +544,7 @@ GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) {
 		return( TrialInterrupted );
 	}
 	// Check if the hand has been raised, and if not, show the prompt.
-	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	if ( lowered == HandleHandElevation() && TimerElapsedTime( alignHandTimer ) > raiseHandPromptDelay ) renderer->raiseHandIndicator->Enable();
 	else renderer->raiseHandIndicator->Disable();
 	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
 	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
@@ -512,6 +557,7 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	renderer->positionOnlyTarget->Disable();
 	// Hide the visible tools, if any.
 	renderer->kkTool->Disable();
+	renderer->DisableHandLaser( renderer->kkTool );
 	renderer->handRollPrompt->Disable();
 	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
@@ -530,7 +576,7 @@ void GraspTaskManager::EnterTiltHead( void ) {
 	TimerSet( tiltHeadTimer, tiltHeadTimeout ); 
 	// Set the desired tilt of the head.
 	// Normally this would come from the stimulus sequence.
-	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, trialParameters[currentTrial].responseHeadTiltTolerance );
+	SetDesiredHeadRoll( trialParameters[currentTrial].responseHeadTilt, responseHeadTiltTolerance );
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
 }
@@ -539,7 +585,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	AlignmentStatus status = HandleHeadAlignment( true );
 	// The hand must be lowered before leaving this state. If it is still raised after a short
 	// delay, we activate the prompt to remind the subject to lower the arm.
-	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > handPromptDelay ) renderer->lowerHandPrompt->Enable();
+	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > lowerHandPromptDelay ) renderer->lowerHandPrompt->Enable();
 	else renderer->lowerHandPrompt->Disable();
 	// The hand must be lowered before leaving this state.
 	// If we are almost to the end of the time allocated to tilt the head,
@@ -563,7 +609,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
-	if ( oculusDisplay->KeyDownEvents['G'] && status == aligned ) return( ObtainResponse ); 
+	if ( oculusDisplay->KeyDownEvents[' '] && status == aligned ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
@@ -609,7 +655,7 @@ GraspTrialState GraspTaskManager::UpdateVisualResponse( void ) {
 GraspTrialState GraspTaskManager::UpdateKinestheticResponse( void ) { 
 	// Check if the hand has been raised, and if not show the prompt.
 	ArmStatus arm_state = HandleHandElevation();
-	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > handPromptDelay ) renderer->raiseHandIndicator->Enable();
+	if ( lowered == arm_state && TimerElapsedTime( responseTimer ) > raiseHandPromptDelay ) renderer->raiseHandIndicator->Enable();
 	else renderer->raiseHandIndicator->Disable();
 	// If the hand is raised and the subject presses valide, record the response and move one.
 	if ( raised == arm_state && Validate()  ) return( ProvideFeedback );
@@ -622,8 +668,10 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	// Hide the hand. To make this routine generic, we 
 	//  hide all possible representations of the hand;
 	renderer->kTool->Disable();
-	renderer->vTool->Disable();
+	renderer->DisableHandLaser( renderer->kTool );
 	renderer->vkTool->Disable();
+	renderer->DisableHandLaser( renderer->vkTool );
+	renderer->vTool->Disable();
 	renderer->wristZone->Disable();
 	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
@@ -672,7 +720,7 @@ void  GraspTaskManager::ExitProvideFeedback( void ) {
 // Then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialCompleted( void ) {
 	// Put the target head orientation back to upright so that the subject can start moving there already.
-	SetDesiredHeadRoll( 0.0, trialParameters[currentTrial].targetHeadTiltTolerance );
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 	// Show the success indicator.
 	renderer->successIndicator->Enable();
 	// Show it for a fixed time.
@@ -699,7 +747,8 @@ void  GraspTaskManager::ExitTrialCompleted( void ) {
 void GraspTaskManager::EnterBlockCompleted( void ) {
 	// Show the success indicator.
 	renderer->blockCompletedIndicator->Enable();
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, trialParameters[currentTrial].targetHeadTiltTolerance );
+	renderer->room->Disable();
+	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
@@ -718,7 +767,7 @@ void  GraspTaskManager::ExitBlockCompleted( void ) {
 //  show to the subect the condition that provoked the error.
 // Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
-	fprintf( response_fp, "%f; interrupted\n", 0.0 );
+	fprintf( response_fp, " %f; interrupted\n", 0.0 );
 	// Tell the ground what caused the interruption.
 	ShowProgress( TrialInterrupted, interruptCondition );
 	// Show the cause of the interruption.
@@ -734,6 +783,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	case HEAD_MISALIGNMENT: interrupt_indicator = renderer->headMisalignIndicator; break;
 	}
 	interrupt_indicator->Enable();
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 	char tag[32];
 	sprintf( tag, "Itpt%1d.%03d", interruptCondition, currentTrial );
 	dexServices->SnapPicture( tag );

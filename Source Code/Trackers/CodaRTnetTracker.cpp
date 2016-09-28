@@ -66,7 +66,34 @@ void CodaRTnetTracker::Initialize( const char *ini_filename ) {
 		
 		// Connect to the server.
 		cl.connect( (p << 24) + (q << 16) + (r << 8) + s, serverPort );
+
+	}
+	catch(NetworkException& exNet)
+	{
+		print_network_error( exNet );
+		fOutputDebugString( "Caught (NetworkException& exNet)\n" );
+		MessageBox( NULL, "DexRTnet() failed.\n(NetworkException& exNet)", "CodaRTnetTracker", MB_OK );
+		exit( RTNET_INITERROR );
+	}
+	catch(DeviceStatusArray& array)
+	{
+		print_devicestatusarray_errors(array);
+		fOutputDebugString( "Caught (DeviceStatusArray& array)\n" );
+		MessageBox( NULL, "DexRTnet() failed.\n(DeviceStatusArray& array)", "CodaRTnetTracker", MB_OK );
+		exit( RTNET_INITERROR );
+	}
+
+	// Initialization automatically includes starting up the CODA system.
+	Startup();
 		
+}
+	
+// Startup the CODA system. This may be done as part of initialization, or it may be done
+// internally when the state of the CODA needs to be reset.
+void CodaRTnetTracker::Startup( void ) {
+
+	try {
+
 		// Check that the server has at least the expected number of configurations.
 		cl.enumerateHWConfig(configs);
 		// Print config names for debugging purposes.
@@ -251,7 +278,7 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 	nFrames = cl.getAcqBufferNumPackets( cx1Device );
 	if ( nFrames > MAX_FRAMES ) nFrames = MAX_FRAMES;
 
-	int frm;
+	unsigned int frm;
 	int unit_count;
 	int retry;
 	
@@ -355,7 +382,7 @@ int CodaRTnetTracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_fr
 		return( 0 );
 	}
 	//* Loop through and get them all.
-	for ( int frm = 0; frm < nFrames; frm++ ) {
+	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
 		CopyMarkerFrame( frames[frm], recordedMarkerFrames[unit][frm] );
 	}
 	return( nFrames );
@@ -366,7 +393,7 @@ int CodaRTnetTracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_fr
 // Rather, we compute a simple average of visible markers. 
 int CodaRTnetTracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) {
 	//* Loop through and get them all.
-	for ( int frm = 0; frm < nFrames; frm++ ) {
+	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
 		frames[frm].time = recordedMarkerFrames[0][frm].time;
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			CopyVector( frames[frm].marker[mrk].position, zeroVector );
@@ -543,6 +570,7 @@ void CodaRTnetTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotati
 	}
 }
 
+/// Perform the standard Charnwood alignment using markers to define the origin, the x direction and the y direction.
 int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
 
 	// Get what are the alignment transformations before doing the alignment.
@@ -573,31 +601,12 @@ int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_posit
 	return( response );
 }
 
-void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
-	SetAlignment( nullptr, nullptr, filename );
-}
+///
+/// Custom alignment procedures.
+///
 
-// Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
-//  compute and set the alignment file that the CODA uses to align the units and send it to the server.
-void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
-
-	Vector3 offset[MAX_UNITS];
-	Matrix3x3 rotation[MAX_UNITS], transpose_matrix;
-
-	for ( int unit = 0; unit < nUnits; unit++ ) {
-		// The pose gives us the orientation as a quaternion. 
-		// CODA wants it as a rotation matrix.
-		QuaternionToMatrix( rotation[unit], pose[unit].orientation );
-		// The offset that the CODA appears to use is the computed from the measured offset
-		// in intrinsic coordinates transformed by the inverse rotation (transpose).
-		// NB The transpose may come from the fact that I use row vectors.
-		// In any case, I came up with this by trial and error.
-		TransposeMatrix( transpose_matrix, rotation[unit] );
-		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
-	}
-	SetAlignment( offset, rotation, filename );
-
-}
+/// The RTNet SDK does not provide for setting the alignment transformations. So what we do instead
+/// is write the transforms to a file that is then sent to the CODA server and read on startup.
 
 // Send the alignment transformations specified as offset and rotation matrix to the CODA.
 void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename ) {
@@ -656,7 +665,37 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 	// WinExec() returns right away if GetMessage() is not called within a timeout, but WinSCP doesn't call it.
 	// So I sleep here to let the command to finish.
 	Sleep( 2000 );
+	// The CODA needs to be shutdown and restarted to take into account the new alignment.
+	Shutdown();
+	Startup();
+
 }	
+
+void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
+	SetAlignment( nullptr, nullptr, filename );
+}
+
+// Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
+//  compute and set the alignment file that the CODA uses to align the units and send it to the server.
+void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename ) {
+
+	Vector3 offset[MAX_UNITS];
+	Matrix3x3 rotation[MAX_UNITS], transpose_matrix;
+
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		// The pose gives us the orientation as a quaternion. 
+		// CODA wants it as a rotation matrix.
+		QuaternionToMatrix( rotation[unit], pose[unit].orientation );
+		// The offset that the CODA appears to use is the computed from the measured offset
+		// in intrinsic coordinates transformed by the inverse rotation (transpose).
+		// NB The transpose may come from the fact that I use row vectors.
+		// In any case, I came up with this by trial and error.
+		TransposeMatrix( transpose_matrix, rotation[unit] );
+		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
+	}
+	SetAlignment( offset, rotation, filename );
+
+}
 
 /*********************************************************************************/
 
@@ -689,7 +728,7 @@ void CodaRTnetTracker::WriteMarkerFile( char *filename ) {
 	}
 	fprintf( fp, "\n" );
 
-	for ( int frm = 0; frm < nFrames; frm++ ) {
+	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
 		fprintf( fp, "%05d %9.3f", frm, recordedMarkerFrames[0][frm].time );
 		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 			for ( int unit = 0; unit < nUnits; unit++ ) {
@@ -908,119 +947,4 @@ int CodaRTnetTracker::print_alignment_status( const DWORD* marker_id_array,  con
 
 }
 
-
-
-/*********************************************************************************/
-
-void CodaRTnetContinuousTracker::StartAcquisition( void ) {
-	
-	for ( int unit = 0; unit < nUnits; unit++ ) nFramesPerUnit[unit] = 0;
-	overrun = false;
-	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
-	OutputDebugString( "cl.startAcqContinuous()\n" );
-	cl.startAcqContinuous();
-	
-}
-
-void CodaRTnetContinuousTracker::StopAcquisition( void ) {
-	// Attempt to halt an ongoing aquisition. 
-	// Does not care if it was actually acquiring or not.
-	// Does not retrieve the data.
-	OutputDebugString( "Aborting acquisition ..." );
-	cl.stopAcq();
-	OutputDebugString( "OK.\n" );
-}
-
-int CodaRTnetContinuousTracker::Update( void ) {
-	
-	int mrk;
-	
-	int nChecksumErrors = 0;
-	int nTimeouts = 0;
-	int nUnexpectedPackets = 0;
-	int nFailedFrames = 0;
-	int nSuccessfullPackets = 0;
-
-	bool status = false;
-
-	// Time out means there are no new packets available.
-	while ( stream.receivePacket(packet, 100) != CODANET_STREAMTIMEOUT ) {
-	
-		// Check if the packet is corrupted.
-		if ( !packet.verifyCheckSum() ) {
-			nChecksumErrors++;
-		}
-
-		// Check if it is a 3D marker packet. It could conceivably  be a packet
-		// from the ADC device, although we don't plan to use the CODA ADC at the moment.
-		else if ( !decode3D.decode( packet ) ) {
-			nUnexpectedPackets++;
-		}
-
-		// If we get this far, it is a valid marker packet.
-		else {
-			// Count the total number of valid packets..
-			nSuccessfullPackets++;
-			// find number of markers included in the packet.
-			int n_markers = decode3D.getNumMarkers();
-
-			// Single shots can return 56 marker positions, even if we are using
-			// 200 Hz / 28 markers for continuous acquisition. Stay within bounds.
-			if ( n_markers > MAX_MARKERS ) {
-				n_markers = MAX_MARKERS;
-			}
-			
-			// The 'page' number is used to say which CODA unit the packet belongs to.
-			int   unit = decode3D.getPage();
-			if ( unit >= nUnits ) {
-				// I don't believe that we should ever get here, but who knows?
-				MessageBox( NULL, "Which unit?!?!", "Dexterous", MB_OK );
-				exit( RTNET_RETRIEVEERROR );
-			}
-			
-			// Compute the time from the tick counter in the packet and the tick duration.
-			// Actually, I am not sure if the tick is defined on a single shot acquistion.
-			int index = nFramesPerUnit[unit];
-			MarkerFrame *frame = &recordedMarkerFrames[unit][index];
-			frame->time = decode3D.getTick() * cl.getDeviceTickSeconds( DEVICEID_CX1 );
-
-			// Get the marker data from the CODA packet.
-			for ( mrk = 0; mrk < n_markers; mrk++ ) {
-				float *pos = decode3D.getPosition( mrk );
-				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] = pos[i];
-				frame->marker[mrk].visibility = ( decode3D.getValid( mrk ) != 0 );
-			}
-
-			// If the packet contains fewer markers than the nominal number for
-			//  the apparatus, set the other markers to be out of sight..
-			for ( mrk = mrk; mrk < nMarkers; mrk++ ) {
-				float *pos = decode3D.getPosition( mrk );
-				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] =INVISIBLE;
-				frame->marker[mrk].visibility = false;
-			}
-			if ( nFramesPerUnit[unit] < MAX_FRAMES - 1 ) nFramesPerUnit[unit]++;
-			
-			// Signal that we got the data that we were seeking.
-			status = true;
-		}
-	}
-	nFrames = nFramesPerUnit[0];
-	for ( int unit = 1; unit < nUnits; unit++ ) {
-		if ( nFramesPerUnit[unit] < nFrames ) nFrames =  nFramesPerUnit[unit];
-	}
-
-	return( status );
-	
-}
-
-bool CodaRTnetContinuousTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
-	// Make sure that any packets that were sent were read.
-	Update();
-	// Copy the most recent packet for the unit in question.
-	if ( nFramesPerUnit[selected_unit] <= 0 ) return( false );
-	else {
-		CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFramesPerUnit[selected_unit] - 1] );
-		return true;
-	}
-}
 

@@ -58,9 +58,9 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 			}
 		}
 	}
-	if ( true || validated_markers < visible_markers ) {
-		fOutputDebugString( "Visible Markers: %d Rejected %d markers.\n", visible_markers, visible_markers - validated_markers );
-	}
+	//if ( validated_markers < visible_markers ) {
+	//	fOutputDebugString( "%08x Visible Markers: %d Rejected %d markers.\n", (unsigned int) this, visible_markers, visible_markers - validated_markers );
+	//}
 
 	if ( validated_markers < 4 ) pose.visible = false;
 	// ComputeRigidBodyPose() does it all!
@@ -87,12 +87,12 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 	Vector3 centroid = {0.0, 0.0, 0.0};
 
 	int visible_markers = 0;
-	char invisible[1024] = "";
+	char invisible[256] = "";
 	for ( int mrk = 0; mrk < n_markers; mrk++ ) {
 		int id = marker_list[mrk];
 		fAbortMessageOnCondition( ( id < 0 || id >= MAX_MARKERS ), "MeasureModelMarkerPositions()", "Marker %d ID = %d out of range [0 %d].", mrk, id, MAX_MARKERS - 1 );
 		if ( !frame->marker[ id ].visibility ) {
-			char tochar[16];
+			char tochar[256];
 			sprintf( tochar, " %02d", id );
 			strcat( invisible, tochar );
 		}
@@ -110,7 +110,7 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 		if ( response == IDCANCEL ) return( 0 );
 	}
 
-	if ( visible_markers < n_markers ) {
+	if ( visible_markers < 4 ) {
 		int response;
 		response = fMessageBox( MB_OKCANCEL | MB_ICONQUESTION, "CodaPoseTracker::SetModelMarkerPositions", "Not enough markers to define rigid body pose.\nNumber of visibles markers: %d\n\nContinue anyway?", visible_markers );
 		if ( response == IDCANCEL ) return( 0 );

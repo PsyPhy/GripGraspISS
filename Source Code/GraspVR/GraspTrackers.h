@@ -25,6 +25,9 @@
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetContinuousTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
+#include "../Trackers/CodaRTnetNullTracker.h"
 
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaPoseTracker.h"
@@ -33,6 +36,11 @@
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/MousePoseTrackers.h"
+#include "../Trackers/OculusRemotePoseTracker.h"
+
+#include "../DexServices/DexServices.h"
+
+#define MAX_ISI 100000
 
 namespace Grasp {
 
@@ -58,6 +66,20 @@ namespace Grasp {
 		GraspTrackers() {}
 		virtual void Initialize( void ) = 0;
 		virtual void Update( void );
+		virtual bool GetCurrentHMDPose( TrackerPose &pose ) {
+			return( hmdTracker->GetCurrentPose( pose ) );
+		}
+		virtual bool GetCurrentHandPose( TrackerPose &pose ) {
+			return( handTracker->GetCurrentPose( pose ) );
+		}
+		virtual bool GetCurrentChestPose( TrackerPose &pose ) {
+			return( chestTracker->GetCurrentPose( pose ) );
+		}
+		virtual unsigned int GetTrackerStatus( void ) {
+			return( TRACKERSTATUS_UNKNOWN );
+		}
+
+
 		virtual void Release( void );
 		virtual void WriteDataFiles( char *filename_root ){};
 
@@ -84,14 +106,14 @@ namespace Grasp {
 
 	class GraspDexTrackers : public GraspTrackers {
 
-	protected:
+	public:
 
 		int nMarkers;
 		int nCodaUnits;
 
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
-		CodaRTnetTracker codaTracker;
+		CodaRTnetTracker *codaTracker;
 
 		// Buffers to hold the most recent frame of marker data.
 		MarkerFrame markerFrame[MAX_UNITS];
@@ -111,30 +133,28 @@ namespace Grasp {
 		CascadePoseTracker *handCascadeTracker;
 		CascadePoseTracker *chestCascadeTracker;
 
-		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
-		OculusCodaPoseTracker *oculusCodaPoseTracker;
-
-		// For the other two coda-only tracker we probably need to filter.
+		// Filtered versions of the coda-based trackers.
+		PoseTrackerFilter *hmdFilteredTracker;
 		PoseTrackerFilter *handFilteredTracker;
 		PoseTrackerFilter *chestFilteredTracker;
 
-		// We will need a mouse tracker of some kind to do the V-V protocol.
-		MouseRollPoseTracker *mouseRollTracker;
-		// Or we can use the Oculus remote.
-		OculusRemoteRollPoseTracker *oculusRollTracker;
+		void GetMarkerData( void );
+		void UpdatePoseTrackers( void );
 
 	public:
-
-		void Initialize( void );
-		void Update( void );
-		void Release( void );
-		void WriteDataFiles( char *filename_root );
-
-		GraspDexTrackers( OculusMapper *mapper ) {
-			oculusMapper = mapper;
+		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) : threadHandle( nullptr ) {
 			nMarkers = 24;
 			nCodaUnits = 2;
+			codaTracker = tracker;
+			rollTracker = roll;
 		}
+		virtual void Initialize( void );
+		virtual void InitializeCodaTrackers( void );
+		virtual unsigned int GetTrackerStatus( void );
+		virtual void Update( void );
+		virtual void Release( void );
+		virtual void WriteDataFiles( char *filename_root );
+
 		~GraspDexTrackers( void ) {}
 
 	private:
@@ -143,16 +163,27 @@ namespace Grasp {
 		// We use a thread to get the CODA pose data in the background.
 		// The following provides the means to use a thread.
 
-		bool			lockSharedMarkerFrame[MAX_UNITS];
+		bool			requestSharedMemoryParent;
+		bool			requestSharedMemoryChild;
+		bool			parentHasPriority;
+
 		MarkerFrame		sharedMarkerFrame[MAX_UNITS];
 		bool			stopMarkerGrabs;
 		HANDLE			threadHandle;
 		DWORD			threadID;
 
+	protected:
+
 		// A static function that will be run in a separate thread.
 		// It sits in the background and acquires the latest marker frames from CODA.
 		static DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
 
+#ifdef _DEBUG
+			// A buffer to hold sample times, used to debug loop times.
+			static double	isi[MAX_ISI];
+			unsigned long	n_isi;
+			n_isi = 0;
+#endif
 			// The function passed to a new thread takes a single pointer as an argument.
 			// The GraspDexTrackers instance that creates the thread passes a pointer to itself 
 			//  as the argument and here we cast it back to a GraspDexTrackers pointer.
@@ -161,31 +192,75 @@ namespace Grasp {
 			// A buffer to hold one frame of marker data.
 			MarkerFrame localFrame;
 
+			// A cycle counter and timer just for debugging.
+			int count = 0;
+			Timer timer;
+			TimerStart( timer );
+
 			// Loop until the main thread tells us to stop.
 			while ( !caller->stopMarkerGrabs ) {
+
 				for ( int unit = 0; unit < caller->nCodaUnits; unit++ ) {
+
 					// Get the latest marker data into a local frame buffer.
-					caller->codaTracker.GetCurrentMarkerFrameUnit( localFrame, unit );
+					caller->codaTracker->GetCurrentMarkerFrameUnit( localFrame, unit );
 					// Copy it to a shared buffer, being careful not to allow simultaneous access.
-					while ( caller->lockSharedMarkerFrame[unit] );
-					caller->lockSharedMarkerFrame[unit] = true;
+					caller->requestSharedMemoryChild = true;
+					caller->parentHasPriority = true;
+					while ( caller->requestSharedMemoryParent && caller->parentHasPriority ) Sleep( 1 );
 					memcpy( &caller->sharedMarkerFrame[unit], &localFrame, sizeof( caller->sharedMarkerFrame[unit] ) );
-					caller->lockSharedMarkerFrame[unit] = false;
+					caller->requestSharedMemoryChild = false;
+
 				}
+				if ( !( count % 1000 ) ) fOutputDebugString( "Background cycle count: %d %.3f\n", count, TimerElapsedTime( timer ) );
+				count++;
+#ifdef _DEBUG
+				isi[n_isi] = TimerElapsedTime( timer );
+				if ( n_isi < MAX_ISI ) n_isi++;
+#endif
+				Sleep( 1 );
 			}
 			OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
+#ifdef _DEBUG
+			fOutputDebugString( "GraspTrackers Updates: %d of %d\n", n_isi, MAX_ISI );
+			for ( unsigned long i = 1; i < n_isi; i++ ) {
+				double delta;
+				if ( ( delta = isi[i] - isi[i-1] ) >= 0.002 ) fOutputDebugString( "%d %.3f\n", i, isi[i] - isi[i-1] );
+			}
+#endif
 			return NULL;
 		}
-		
+
 		void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
-			while ( lockSharedMarkerFrame[unit] );
-			lockSharedMarkerFrame[unit] = true;
+
+			requestSharedMemoryParent = true;
+			parentHasPriority = false;
+			while ( requestSharedMemoryChild && !parentHasPriority ) Sleep( 1 );
 			memcpy( destination, &sharedMarkerFrame[unit], sizeof( *destination ) );
-			lockSharedMarkerFrame[unit] = false;
+			requestSharedMemoryParent = true;
+
 		}
 
 	};
 
-}
+	class GraspOculusCodaTrackers : public GraspDexTrackers {
+	public:
+		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
+		OculusCodaPoseTracker *oculusCodaPoseTracker;
+		GraspOculusCodaTrackers( void ) {}
+		GraspOculusCodaTrackers( OculusMapper *mapper, CodaRTnetTracker *tracker ) {
+			oculusMapper = mapper;
+			codaTracker = tracker;
+			GraspOculusCodaTrackers();
+		}
+		void GraspOculusCodaTrackers::Initialize( void );
+	};
+
+};
+
+
+
+
+
 
 

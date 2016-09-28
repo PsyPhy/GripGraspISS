@@ -497,7 +497,6 @@ double VectorsMixin::RollAngleFromMatrix( const Matrix3x3 m ) {
 	SetRotationMatrix( aim, kVector, m[Z] );
 	//printf( "\n%s\n", mstr( pitchMyawMt ) );
 	//printf( "%s\n", mstr( aim ) );
-	Matrix3x3 CHK;
 	Matrix3x3 aimT;
 	TransposeMatrix( aimT, aim );
 	MultiplyMatrices( rollM, pitchMyawMt, aimT );
@@ -613,6 +612,10 @@ void VectorsMixin::SetQuaterniond( Quaternion result, double degrees, const Vect
 	SetQuaternion( result, degrees * pi / 180.0, axis );
 }
 
+void VectorsMixin::ComputeQuaternionConjugate( Quaternion conjugate, Quaternion q ) {
+	conjugate[M] = q[M]; ScaleVector( conjugate, q, -1.0 );
+}
+
 double VectorsMixin::QuaternionDifference( Quaternion result, const Quaternion q1, const Quaternion q2 ) {
 	Quaternion conjugate;
 	double angle;
@@ -627,6 +630,11 @@ double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 	Quaternion discard;
 	return( QuaternionDifference( discard, q1, q2 ) );
 
+}
+
+double VectorsMixin::RotationAngle( const Quaternion q1 ) {
+	double hypotenuse = sqrt( q1[X] * q1[X] + q1[Y] * q1[Y] +  q1[Z] * q1[Z] );
+	return( 2.0 * atan2( hypotenuse, q1[M] ) );
 }
 
 void VectorsMixin::TransformPose( Pose &result, Transform &xform, Pose &source ) {
@@ -825,7 +833,7 @@ char *VectorsMixin::vstr( const Vector3 v ) {
 	instance %= 256;
 
 	// Create the string here.
-	sprintf( str[instance], "<%8.3f %8.3f %8.3f>", v[X], v[Y], v[Z] );
+	sprintf( str[instance], "<%+8.3f %+8.3f %+8.3f>", v[X], v[Y], v[Z] );
 
 	return( str[instance] );
 
@@ -838,7 +846,7 @@ char *VectorsMixin::qstr( const Quaternion q ) {
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], "{%8.3fi + %8.3fj + %8.3fk + %8.3f}", q[X], q[Y], q[Z], q[M] );
+	sprintf( str[instance], "{%6.3fi %+6.3fj %+6.3fk %+6.3f}", q[X], q[Y], q[Z], q[M] );
 	return( str[instance] );
 }
 

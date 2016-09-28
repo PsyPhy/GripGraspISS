@@ -64,6 +64,9 @@
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <EmbeddedResource>
+      <LogicalName>GraspGUI.GraspDesktop.resources</LogicalName>
+    </EmbeddedResource>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -78,6 +81,9 @@
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <EmbeddedResource>
+      <LogicalName>GraspGUI.GraspDesktop.resources</LogicalName>
+    </EmbeddedResource>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -87,7 +93,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +117,7 @@
     <EmbeddedResource Include="GraspDesktopForm.resX">
       <DependentUpon>GraspDesktopForm.h</DependentUpon>
       <SubType>Designer</SubType>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

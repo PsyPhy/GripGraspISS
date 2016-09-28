@@ -109,8 +109,10 @@ public:
 	void NormalizeQuaternion( Quaternion q );
 	void MultiplyQuaternions( Quaternion result, const Quaternion q1, const Quaternion q2 );
 	double QuaternionDifference(  Quaternion result, const Quaternion q1, const Quaternion q2 );
+	void ComputeQuaternionConjugate( Quaternion conjugate, Quaternion q );
 	double AngleBetween( const Quaternion q1, const Quaternion q2 );
-	
+	double VectorsMixin::RotationAngle( const Quaternion q1 );
+
 	void SetRotationMatrix( Matrix3x3 result, double radians, const Vector3 axis );
 	// Compute a rotation matrix that will align v1 with v2, ignoring the roll around the vectors.
 	void SetRotationMatrix( Matrix3x3 result, const Vector3 v2, const Vector3 v1 );

@@ -32,6 +32,21 @@ namespace Grasp {
 
 	using namespace PsyPhy;
 
+#define LASER_BEAMS 7
+#define LASER_FOCUSED_SIZE 20.0
+#define LASER_DIFFUSION_CONSTANT 1.0
+#define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.99
+
+	class FuzzyPointer : public PsyPhy::Assembly {
+	public:
+		Disk *sphere[LASER_BEAMS];
+		static Vector3 beamOffset[LASER_BEAMS];
+		void SetColor( float r, float g, float b, float a = 1.0f );
+		void SetEccentricity( double projection );
+		void Draw( void );
+		FuzzyPointer();
+	};
+
 	class Glasses : public PsyPhy::Assembly {
 
 	public:
@@ -166,17 +181,22 @@ namespace Grasp {
 		Texture			*response_timeout_texture;		
 		static const char *response_timeout_bitmap;	 
 
-		Assembly		*handRotateTimeoutIndicator;	// Shown when the subject takes too long to confirm a response.
+		Assembly		*handRotateTimeoutIndicator;	// Shown when the subject takes too long to rotat the hand to the desired orientation.
 		Texture			*hand_rotate_timeout_texture;		
 		static const char *hand_rotate_timeout_bitmap;	 
 
-		Assembly		*handTooSoonIndicator;			// Shown when the subject takes too long to confirm a response.
+		Assembly		*handTooSoonIndicator;			// Shown when the subject raises the hand too soon.
 		Texture			*hand_too_soon_texture;		
 		static const char *hand_too_soon_bitmap;	 
 
-		Assembly		*handShouldNotBeRaisedIndicator;	// Shown when the subject takes too long to confirm a response.
+		Assembly		*handShouldNotBeRaisedIndicator;	// Shown when the hand is raised and should not be.
 		Texture			*hand_should_not_texture;		
 		static const char *hand_should_not_bitmap;	 
+
+		Assembly		*straightenHeadIndicator;	// Shown when the subject should straighent the hand on the shoulders.
+		Disk			*gazeStraightAheadIndicator;
+		Texture			*straighten_head_texture;		
+		static const char *straighten_head_bitmap;	 
 
 	public:
 
@@ -192,6 +212,7 @@ namespace Grasp {
 		Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
 		Assembly		*headTiltPrompt;		// Shows the subject which direction to turn the head when the error is large.
 		Assembly		*gazeLaser;				// A virtual laser pointer that moves with the line of gaze, making it easier to center the gaze at the start of a trial.
+		FuzzyPointer	*fuzzyLaser;
 
 		Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial (currently not used).
 
@@ -237,6 +258,11 @@ namespace Grasp {
 		// Need to be able to change the color of the fingers according to the position of the hand.
 		// OpenGLObjects does not provide an easy way to override the color, so this hack lets us do it.
 		void SetHandColor( Assembly *hand, bool enabled );
+		// Need to be able to enable or disable a laser attached to a hand.
+		void EnableHandLaser( Assembly *hand );
+		void DisableHandLaser( Assembly *hand );
+		void SetHandLaserEccentricity( Assembly *hand, double projection );
+			
 
 		// Create all the objects needed for VR.
 		void CreateVRObjects( void );
@@ -248,6 +274,7 @@ namespace Grasp {
 		Assembly *CreateVisualTool( void );
 		Assembly *CreateKinestheticTool( void );
 		Assembly *CreateLaserPointer(void);
+		FuzzyPointer *CreateFuzzyLaserPointer( void );
 		Assembly *CreateProjectiles( int fingers );
 		Yoke	 *CreateHand(void);
 		Yoke	 *CreateHUD(void);

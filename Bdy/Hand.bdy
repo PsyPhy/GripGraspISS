@@ -7,5 +7,5 @@
 14	 -78.246	  72.178	  34.867
 15	  61.819	  75.863	  54.491
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - RED Hand (original)
 ;;; Created 2016/08/09 18h50m33s GMT

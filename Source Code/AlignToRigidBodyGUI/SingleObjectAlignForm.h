@@ -63,6 +63,7 @@ namespace AlignToRigidBodyGUI {
 		PsyPhy::Viewpoint						*codaViewpoint, *objectViewpoint;
 		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
+		PsyPhy::Assembly						*fovSweetSpot;
 
 		PsyPhy::CodaRTnetDaemonTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
@@ -126,15 +127,17 @@ namespace AlignToRigidBodyGUI {
 			visibilityWindow1->Swap();
 
 			fovWindow2->Activate();
-			fovWindow2->Clear( 0.05, 0.05, 0.15 );
+			fovWindow2->Clear( 0.0, 0.0, 0.0 );
 			codaViewpoint->Apply( fovWindow2, CYCLOPS );
 			alignmentObject2->Draw();
+			fovSweetSpot->Draw();
 			fovWindow2->Swap();
 
 			fovWindow1->Activate();
-			fovWindow1->Clear( 0.025, 0.025, 0.1 );
+			fovWindow1->Clear( 0.0, 0.0, 0.0 );
 			codaViewpoint->Apply( fovWindow1, CYCLOPS );
 			alignmentObject1->Draw();
+			fovSweetSpot->Draw();
 			fovWindow1->Swap();
 
 		}
@@ -158,14 +161,18 @@ namespace AlignToRigidBodyGUI {
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject1->SetPose( pose.pose );
+				alignmentObject1->Enable();
 			}
+			else alignmentObject1->Disable();
 			coda->GetCurrentMarkerFrameUnit( codaFrame, 1 );
 			visibilityObject2->ShowVisibility( codaFrame );
 			alignmentObject2->ShowVisibility( codaFrame );
 			poseTracker->GetCurrentPose( pose );
 			if ( pose.visible ) {
 				alignmentObject2->SetPose( pose.pose );
+				alignmentObject2->Enable();
 			}
+			else alignmentObject2->Disable();
 
 			Render();
 
@@ -351,7 +358,7 @@ namespace AlignToRigidBodyGUI {
 			this->busy->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->busy->ForeColor = System::Drawing::Color::IndianRed;
+			this->busy->ForeColor = System::Drawing::Color::Maroon;
 			this->busy->Location = System::Drawing::Point(102, 372);
 			this->busy->Name = L"busy";
 			this->busy->Size = System::Drawing::Size(888, 184);
@@ -399,7 +406,15 @@ namespace AlignToRigidBodyGUI {
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
+				 Sphere *sphere1 = new Sphere( 100.0 );
+				 sphere1->SetColor( GREEN );	
+				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject1->AddComponent( sphere1 );
 				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
+				 Sphere *sphere2 = new Sphere( 100.0 );
+				 sphere1->SetColor( GREEN );	
+				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject2->AddComponent( sphere2 );
 				 visibilityObject1 = objects->CreateChestMarkerStructure( model_file );
 				 visibilityObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
@@ -417,11 +432,41 @@ namespace AlignToRigidBodyGUI {
 				 // Create windows and viewpoints to show what the CODA units are seeing.
 				 fovWindow1 = PsyPhy::CreateOpenGLWindowInForm( fovPanel1 );
 				 fovWindow2 = PsyPhy::CreateOpenGLWindowInForm( fovPanel2, fovWindow1->hRC );
+				 fovSweetSpot = new Assembly();
 
+				 Hole *hole = new Hole( 500.0,  2000.0, 2000.0 );
+				 hole->SetColor( 0.15, 0.0, 0.0, 0.75 );	
+				 hole->SetPosition( 0.0, 0.0, -100.0 );
+				 fovSweetSpot->AddComponent( hole );
+
+				 hole = new Hole( 100.0,  2000.0, 2000.0 );
+				 hole->SetColor( 0.0, 0.0, 0.25, 0.5 );	
+				 fovSweetSpot->AddComponent( hole );
+
+				 Bar *bar = new Bar( 2000.0, 5.0, 5.0 );
+				 bar->SetPosition( 0.0, -1000.0, 0.0 );
+				 bar->SetOrientation( 0.0, 90.0, 0.0 );
+				 bar->SetColor( GRAY );
+				 fovSweetSpot->AddComponent( bar );
+				 bar = new Bar( 2000.0, 5.0, 5.0 );
+				 bar->SetPosition( 1000.0, 0.0, 0.0 );
+				 bar->SetOrientation( 0.0, 0.0, 90.0 );
+				 bar->SetColor( GRAY );
+				 fovSweetSpot->AddComponent( bar );
+
+				 fovSweetSpot->SetOrientation( 0.0, 90.0, 0.0 );
+				 fovSweetSpot->SetPosition( 0.0, 1000.0, 0.0 );
+
+				 Sphere *sphere = new Sphere( 100.0 );
+				 sphere->SetColor( GREEN );	
+				 sphere->SetOffset( 0.0, 300.0, 0.0 );
+				 alignmentObject1->AddComponent( sphere );
+				 alignmentObject2->AddComponent( sphere );
+
+	
 				 // Create a viewpoint that looks at the origin from the negative Y axis.
 				 // This is where the CODAs are with respect to the workspace.
-				 codaViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 10000.0);
-				 codaViewpoint->SetPosition( 0.0, - 2000.0, 0.0 );
+				 codaViewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
 				 codaViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
 
 				 // Initialize the state of the GL graphics engine.
@@ -442,25 +487,25 @@ namespace AlignToRigidBodyGUI {
 				 // because it will take some time.
 				 Refresh();
 				 Application::DoEvents();
-
-				 if ( noCoda ) Sleep( 2000 );
-				 else {
-					 // Create the CODA tracker.
-					 coda = new CodaRTnetDaemonTracker();
-					 // Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
-					 // Send a message to ground to show our progress.
-					 dex->SendSubstep( ANNUL_ALIGNMENT );
-					 instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
-					 Refresh();
-					 Application::DoEvents();
-					 char *tempfile = ".nullalignment.tmp";
-					 coda->AnnulAlignment( tempfile );
-					 DeleteFile( tempfile );
-					 // Create and start up the CODA tracker.
-					 coda->Initialize();
-					 coda->StartAcquisition( 600.0 );
-				 }
-
+				 // Wait to make sure that the tracker is up and running so that we can kill it.
+				 Sleep( 5000 );
+				
+				// Create the CODA tracker.
+				coda = new CodaRTnetDaemonTracker();
+				// Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
+				// Send a message to ground to show our progress.
+				dex->SendSubstep( ANNUL_ALIGNMENT );
+				instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
+				Refresh();
+				Application::DoEvents();
+				char *tempfile = ".nullalignment.tmp";
+				// Reset the alignment transformation.
+				coda->AnnulAlignment( tempfile );
+				DeleteFile( tempfile );
+				
+				// Start up the CODA tracker.
+				coda->Initialize();
+				 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
 				 // Hide the tracker message.
@@ -469,7 +514,7 @@ namespace AlignToRigidBodyGUI {
 				 Enabled = true;
 				 // Prompt for the required action.
 				 instructionsTextBox->Text = "Verify that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
-				 instructionsTextBox2->Text = "Verify that the Chest Marker Support is centered in each Tracker Camera Field-of-View.";
+				 instructionsTextBox2->Text = "Verify that the Green Dot is centered in the crosshairs for each Tracker Camera.";
 
 				 if ( !noCoda ) {
 					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
@@ -515,14 +560,7 @@ namespace AlignToRigidBodyGUI {
 				 // Take a picture of the setup as seen from the CODA.
 				 dex->SnapPicture( "ALIGNMENT" );
 
-				 if ( !noCoda ) {
-					 // We have to stop the CODA acquisiton, so we have to halt the update of the VR display.
-					 StopRefreshTimer();
-					 // Stop the ongoing acquisition and discard the recorded data.
-					 coda->AbortAcquisition();	
-					 // Unfortunately, we have to shutdown and restart to do a new acquisition.
-					 coda->Shutdown();
-				 }
+				 StopRefreshTimer();
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
@@ -553,18 +591,17 @@ namespace AlignToRigidBodyGUI {
 				 Sleep( 10 );
 				 Refresh();
 				 Application::DoEvents();
-				 Sleep( 1000 );
-				 coda->Initialize();
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_INTRINSIC );
 
-				 // Get the pre-alignment transformation and make sure that it is null.
+				 //// Get the pre-alignment transformation and make sure that it is null.
 				 //Vector3 current_offset[MAX_UNITS];
 				 //Matrix3x3 current_rotation[MAX_UNITS];
 				 //coda->GetAlignment( current_offset, current_rotation );
 				 //// If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
 				 //fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
+
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
@@ -585,11 +622,6 @@ namespace AlignToRigidBodyGUI {
 				 coda->WriteMarkerFile( raw_file );
 				 fprintf( stderr, "OK.\n" );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( raw_file ) );
-
-				 // We have to shut down in order to install a new alignment transformation and to allow for another acquisition.
-				 dex->SendSubstep( SHUTDOWN_INTRINSIC );
-				 coda->Shutdown();
-				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the intrinsic frame of the CODA unit.
 				 // We will then invert the pose to compute the transformation required by each unit.
@@ -632,9 +664,7 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
 				 Refresh();
 				 Application::DoEvents();
-				 coda->Shutdown();
-				 coda->Quit();
-				 coda->Initialize();
+
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_ALIGNED );
 				 fprintf( stderr, "Starting ALIGNED acquisition ... " );
@@ -643,6 +673,7 @@ namespace AlignToRigidBodyGUI {
 				 // Just wait for the acquisition to finish. 
 				 while ( coda->GetAcquisitionState() ) {
 					 fprintf( stderr, "." );
+					 Application::DoEvents();
 					 Sleep( 20 );
 				 }
 				 coda->StopAcquisition();
@@ -658,7 +689,6 @@ namespace AlignToRigidBodyGUI {
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( aligned_file ) );
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( SHUTDOWN_ALIGNED );
-				 coda->Quit();
 
 				 // Use a CodaPoseTracker to compute the pose of the marker structure in the newly aligned frame.
 				 // We should get position zero and null orientation in each case.
@@ -687,6 +717,8 @@ namespace AlignToRigidBodyGUI {
 				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK | MB_ICONEXCLAMATION , "AlignToRigidBodyGUI", msg );
 				 if ( !well_aligned ) Environment::ExitCode = -2;
 				 else Environment::ExitCode = 0;
+				 // Here we quit, but we leave the daemon running.
+				 coda->Quit();
 				 // Close the form. 
 				 Close();
 

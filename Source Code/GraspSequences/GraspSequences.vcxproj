@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Sequences\DemoGraspSequence.seq" />
+    <None Include="..\..\Sequences\TestConflict.seq" />
+    <None Include="..\..\Sequences\TrainingHeadStraight.seq" />
+    <None Include="..\..\Sequences\TrainingHeadTilted.seq" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A063702B-6BE1-4939-96F1-19FB77921C29}</ProjectGuid>

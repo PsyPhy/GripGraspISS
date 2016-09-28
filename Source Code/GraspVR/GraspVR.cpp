@@ -14,6 +14,7 @@ using namespace PsyPhy;
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
 const int GraspVR::secondsToBeGood = 2.0;
+const int GraspVR::handSecondsToBeGood = 3.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
 // The following are tolerances expressed in degrees.
@@ -25,7 +26,7 @@ double	GraspVR::desiredHeadRollSweetZone = 2.0;
 // The next two are angular tolerances as well, but
 // the are expressed as the cosine of the tolerance angle.
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
-double	GraspVR::straightAheadThreshold = 0.999;	// approx. 2.5° Corresponds roughly to center target radius.
+double	GraspVR::straightAheadThreshold = 0.99;	// approx. 2.5° Corresponds roughly to center target radius.
 
 double GraspVR::handFilterConstant = 2.0;
 
@@ -56,7 +57,7 @@ void GraspVR::UpdateTrackers( void ) {
 	// Get the position and orientation of the head and update the viewpoint accordingly.
 	// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 	// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-	if ( !trackers->hmdTracker->GetCurrentPose( headPose ) ) {
+	if ( !trackers->GetCurrentHMDPose( headPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading head pose tracker (%03d).\n", ++pose_error_counter );
 	}
@@ -70,10 +71,19 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 
 	// Apply a counter rotation to the room as a means to generate conflict.
-	renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
+	 //renderer->room->SetOrientation( ( 1.0 - conflictGain ) * ObjectRollAngle( renderer->glasses ), 0.0, 0.0 );
+	// Compute a counter roll that is opposite to the orientation of the head from zero.
+	Quaternion conjugate, counter_roll;
+	ComputeQuaternionConjugate( conjugate, headPose.pose.orientation );
+	double lambda = conflictGain - 1.0;
+	double alpha = 1 - lambda;
+	double beta = 1 - alpha;
+	for ( int i = 0; i < 4; i++ ) counter_roll[i] = alpha * nullQuaternion[i] + beta * conjugate[i]; 
+	NormalizeQuaternion( counter_roll );
+	renderer->room->SetOrientation( counter_roll );
 
 	// Track movements of the hand marker array.
-	if ( !trackers->handTracker->GetCurrentPose( handPose ) ) {
+	if ( !trackers->GetCurrentHandPose( handPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
@@ -82,7 +92,7 @@ void GraspVR::UpdateTrackers( void ) {
 		renderer->hand->SetPose( handPose.pose );
 	}
 
-	if ( !trackers->chestTracker->GetCurrentPose( chestPose ) ) {
+	if ( !trackers->GetCurrentChestPose( chestPose ) ) {
 		static int pose_error_counter = 0;
 		// fOutputDebugString( "Error reading chest tracker (%03d).\n", ++pose_error_counter );
 	}
@@ -127,6 +137,10 @@ void GraspVR::AlignToHMD( void ) {
 	}
 }
 
+void GraspVR::AlignToCODA( void ) {
+	CopyVector( localAlignment.displacement, zeroVector );
+	CopyQuaternion( localAlignment.rotation, nullQuaternion );
+}
 
 
 
@@ -365,6 +379,20 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	}
 }
 
+/// Indicate when the subject is looking down the Z axis of the laboratory absolute coordinate frame.
+AlignmentStatus GraspVR::HandleGazeDirection( void ) {
+	Vector3 gaze;
+	RotateVector( gaze, headPose.pose.orientation, kVector );
+	if ( DotProduct( gaze, kVector ) > straightAheadThreshold ) {
+		renderer->gazeStraightAheadIndicator->SetColor( 0.0, 0.25, 0.05 );
+		return( aligned );
+	}
+	else {
+		renderer->gazeStraightAheadIndicator->SetColor( 0.2, 0.0, 0.0 );
+		return( misaligned );
+	}
+}
+
 /// Prompt the subject to redress the head on the shoulders and look straight ahead.
 AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
@@ -497,7 +525,7 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
 	desiredHandRoll = desired_roll_angle;
 	desiredHandRollTolerance = tolerance;
-	TimerSet( handGoodTimer, secondsToBeGood );
+	TimerSet( handGoodTimer, handSecondsToBeGood );
 	TimerSet( handBadTimer, 0.0 );
 	return( desiredHandRoll );
 }
@@ -515,7 +543,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
 	if ( lowered == HandleHandElevation() ) {
-		TimerSet( handGoodTimer, secondsToBeGood );
+		TimerSet( handGoodTimer, handSecondsToBeGood );
 		TimerSet( handBadTimer, 0.0 );
 		return( misaligned );
 	}
@@ -554,7 +582,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 				// If the error has endured long enough to trigger the arrow prompt, then
 				// reset the time required to be good again to the full duration.
 				// MICHELE: What do you think? 
-				TimerSet( handGoodTimer, secondsToBeGood );
+				TimerSet( handGoodTimer, handSecondsToBeGood );
 				// Signal that we really are misaligned.
 				return( misaligned );
 			}

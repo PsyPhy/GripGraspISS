@@ -16,31 +16,32 @@ namespace Grasp {
 
 	class GraspTaskManager : public GraspVR {
 
-
 	public:
 
-		static double indicatorDisplayDuration;
-		static double alignHeadTimeout;
-		static double tiltHeadTimeout;
-		static double responseTimeout;
-		static double alignHandTimeout;
-		static double handPromptDelay;
-		static double handErrorDelay;
+		static double	targetPresentationDuration;
+		static double	indicatorDisplayDuration;
+
+		static double	alignHeadTimeout;
+		static double	tiltHeadTimeout;
+		static double	responseTimeout;
+		static double	alignHandTimeout;
+		static double	lowerHandPromptDelay;
+		static double	raiseHandPromptDelay;
+		static double	handErrorDelay;
+
+		static double	targetHeadTiltTolerance;
+		static double	responseHeadTiltTolerance;
+		static double	hapticTargetOrientationTolerance;
 
 		static int maxRetries;
+
+		static bool manualStraightenHead;
 
 		// List of paramters for each trial.
 		struct {
 			double	targetHeadTilt;
-			double	targetHeadTiltTolerance;
-			double	targetHeadTiltDuration;
 			double	targetOrientation;
-			double  hapticTargetOrientationTolerance;
-			double	targetPresentationDuration;
 			double	responseHeadTilt;
-			double	responseHeadTiltTolerance;
-			double	responseHeadTiltDuration;
-			double  responseTimeout;
 			double	conflictGain;
 			bool	provideFeedback;
 		} trialParameters[MAX_GRASP_TRIALS];
@@ -51,6 +52,7 @@ namespace Grasp {
 
 		// Derived classes must provide a method identifying which paradigm it implements.
 		virtual Paradigm GetParadigm( void ) = 0;
+		char *tag;
 
 		int LoadTrialParameters( char *filename );
 		void RepeatTrial( int trial );
@@ -83,10 +85,19 @@ namespace Grasp {
 		::Timer blockTimer;
 
 		// Detect action of the subject to record a response.
+		bool waitForUp;
 		bool Validate( void ) {
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-			return( (oculusDisplay->Button[MOUSE_LEFT]) || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter) );
+			bool current_state = 
+				( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
+			if ( waitForUp && current_state ) return( false );
+			if ( !current_state ) {
+				waitForUp = false;
+				return( false );
+			}
+			waitForUp = true;
+			return( true );
 		}
 
 		// 
@@ -172,22 +183,28 @@ namespace Grasp {
 
 	public:
 		// Constructor, with initialization of some elements.
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), waitForUp(true), tag("??to??" ) {}
 		~GraspTaskManager(){}
 		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServices = dex;
 			GraspVR::Initialize( instance, display, mapper, trkrs );
+			// Initialize state for button pushes.
+			ovrInputState state;
+			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
+			waitForUp = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
 		}
 		void Release( void ) {
 			GraspVR::Release();
 		}
+
+
 
 	};
 
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( VTOV ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->vTool; }
+		void Prepare( void ) { renderer->selectedTool = renderer->vTool; tag = "VtoV"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateVisualResponse(); }
 		void EnterObtainResponse( void );
@@ -196,7 +213,7 @@ namespace Grasp {
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( VTOVK ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoVK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );
@@ -205,7 +222,7 @@ namespace Grasp {
 	// V-K protocol. 
 	class VtoK : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( VTOK ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );
@@ -214,7 +231,7 @@ namespace Grasp {
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( KTOK ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->hand; }
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "KtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateKinestheticTarget(); }
 		GraspTrialState UpdateObtainResponse( void ) { return UpdateKinestheticResponse(); }
 		void EnterPresentTarget( void );

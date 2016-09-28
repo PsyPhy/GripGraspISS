@@ -46,6 +46,7 @@ namespace Grasp {
 		// Count down of how many cycles that the orientation has been good.
 		static const int secondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		static const int secondsToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static const int handSecondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
 		Timer	headGoodTimer;
 		Timer	headBadTimer;
 		Timer	handGoodTimer;
@@ -121,6 +122,8 @@ namespace Grasp {
 		// Set the local transform to center the world at the current HMD 
 		//  position and orientation.
 		void AlignToHMD( void );
+		// Undo the above transformation to align with the CODA reference frame.
+		void AlignToCODA( void );
 
 		// Draw everything and output to the display.
 		void GraspVR::Render( void );
@@ -155,6 +158,7 @@ namespace Grasp {
 		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 		static double	straightAheadThreshold;
 		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
+		AlignmentStatus HandleGazeDirection( void );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
 		void			HandleSpinningPrompts( void );

@@ -79,6 +79,15 @@
     </None>
     <None Include="GraspInstructions.release.mak" />
     <None Include="GraspInstructions.debug.mak" />
+    <None Include="ObjectPositioningFloating.instruction.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="ObjectPositioningSeated.instruction.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="HMDStructureAssembly.instruction.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

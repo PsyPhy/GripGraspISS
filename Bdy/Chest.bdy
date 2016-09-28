@@ -7,5 +7,5 @@
 6	   1.393	 -43.080	 -12.947
 7	  95.793	 -70.920	  28.692
 
-;;; Rigid Body Model File
+;;; Rigid Body Model File - RED Chest (original)
 ;;; Created 2016/08/09 18h50m21s GMT

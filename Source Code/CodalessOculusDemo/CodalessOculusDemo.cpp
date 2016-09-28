@@ -21,6 +21,7 @@ Joe McIntyre
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/NullPoseTracker.h"
 #include "../OculusInterface/OculusPoseTracker.h"
 
 // OpenGL rendering based on PsyPhy OpenGLObjects.
