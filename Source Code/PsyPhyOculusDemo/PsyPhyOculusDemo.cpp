@@ -31,6 +31,8 @@ bool mirror = true;			// Do we mirror to the console or not?
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetContinuousTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/PoseTrackers.h"
@@ -47,7 +49,7 @@ bool mirror = true;			// Do we mirror to the console or not?
 
 // A device that records 3D marker positions.
 // Those marker positions will also drive the 6dof pose trackers.
-PsyPhy::CodaRTnetTracker codaTracker;
+PsyPhy::CodaRTnetContinuousTracker codaTracker;
 
 using namespace OVR;
 using namespace PsyPhy;
@@ -79,40 +81,8 @@ int nMarkers = 24;
 #define MAX_CODA_UNITS	8
 int nCodaUnits = 2;
 
-/*****************************************************************************/
-
-// Polling the CODA in the rendering loop can cause non-smooth updating.
-// Here we use a thread to get the CODA pose data in the background.
-bool lockCoda[MAX_CODA_UNITS] = { false, false, false, false, false, false, false, false };
-bool stopMarkerGrabs = false;
-MarkerFrame codaBuffer[MAX_CODA_UNITS];
-HANDLE threadHandle;
-
-void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
-	while ( lockCoda[unit] );
-	lockCoda[unit] = true;
-	memcpy( destination, &codaBuffer[unit], sizeof( *destination ) );
-	lockCoda[unit] = false;
-}
-
-DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
-
-	PsyPhy::CodaRTnetTracker *coda = (PsyPhy::CodaRTnetTracker *)prm;
-	MarkerFrame localFrame;
-
-	while ( !stopMarkerGrabs ) {
-		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-			coda->GetCurrentMarkerFrameUnit( localFrame, unit );
-			while ( lockCoda[unit] );
-			lockCoda[unit] = true;
-			memcpy( &codaBuffer[unit], &localFrame, sizeof( codaBuffer[unit] ) );
-			lockCoda[unit] = false;
-		}
-	}
-	OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
-	return NULL;
-}
-
+TrackerPose hmdPoses[MAX_FRAMES];
+int nRecordedFrames = 0;
 
 /*****************************************************************************/
 
@@ -216,7 +186,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	while ( platform->HandleMessages() ) {
 
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-		static float Yaw( 180.0f );  
+		static float Yaw( 0.0f );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
@@ -292,12 +262,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		if ( isVisible && usePsyPhy ) {
 
 			// Get the current position of the CODA markers.
-			// codaTracker.GetCurrentMarkerFrameUnit( primaryMarkerFrame, 0 );
-			// codaTracker.GetCurrentMarkerFrameUnit( secondaryMarkerFrame, 1 );
-			// GetMarkerFrameFromBackground( 0, &primaryMarkerFrame );
-			// GetMarkerFrameFromBackground( 0, &secondaryMarkerFrame );
 			for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-				GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
+				codaTracker.GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
 			}
 			// Perform any periodic updating that the trackers might require.
 			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
@@ -321,6 +287,9 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				fOutputDebugString( "Error reading hmd pose tracker (%03d).\n", ++pose_error_counter );
 			}
 			else {
+				// Store the poses for output to a file.
+				hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
+				if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
 				// The position and orientation of the viewpoint is first set by the player position.
 				// So we use the offset and attitude to turn the viewpoint according to the tracker
 				//  with respect to the player's position.
@@ -386,12 +355,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	fflush( stderr );
 
 	// Initialize the connection to the CODA tracking system.
-	if ( useCoda ) codaTracker.Initialize();
+	if ( useCoda ) {
+		codaTracker.Initialize();
+		nCodaUnits = codaTracker.GetNumberOfCodas();
+	}
 
 	// Initializes LibOVR, and the Rift
-#ifdef USE_OCULUS_O_8
-	OVR::System::Init();
-#endif
 	ovrResult result = ovr_Initialize( nullptr );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );
 
@@ -399,18 +368,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", fullscreen, parent ), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
-	if ( useCoda ) {
-
-		// Start continuous acquisition of Coda marker data for a maximum duration.
-		codaTracker.StartAcquisition( 600.0 );
-
-		// Initiate real-time retrieval of CODA marker frames in a background thread 
-		// so that waiting for the frame to come back from the CODA does not slow down
-		// the rendering loop.
-		DWORD threadID;
-		stopMarkerGrabs = false;
-		threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, &codaTracker, 0, &threadID );
-	}
+	if ( useCoda ) codaTracker.StartAcquisition( 600.0 );
 
 	// Call the main loop.
 	MainLoop( &oculusDisplay );
@@ -419,49 +377,35 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	// I shut it down before halting the CODA just so that the HMD goes dark while the 
 	// CODA frames are being retrieved.
 	ovr_Shutdown();
-#ifdef USE_OCULUS_0_8
-	OVR::System::Destroy();
-#endif
 	oculusDisplay.CloseWindow();
 	oculusDisplay.ReleaseDevice();
 
 	if ( useCoda ) {
 
-		// Halt the Coda real-time frame acquisition that is occuring in a background thread.
-		stopMarkerGrabs = true;
-		WaitForSingleObject( threadHandle, INFINITE );
 		// Halt the continuous Coda acquisition.
-		codaTracker.AbortAcquisition();
-#if 0
+		codaTracker.StopAcquisition();
+
 		// Output the CODA data to a file.
-		char *filename = "Log\\PsyPhyOculusDemo.mrk";
-		fOutputDebugString( "Writing CODA data to %s.\n", filename );
-		FILE *fp = fopen( filename, "w" );
-		if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
+		char *marker_filename = "PsyPhyOculusDemo.mrk";
+		fOutputDebugString( "Writing CODA data to %s.\n", marker_filename );
+		codaTracker.WriteMarkerFile( marker_filename );
+		fOutputDebugString( "File %s closed.\n", marker_filename );
 
-		fprintf( fp, "%s\n", filename );
-		fprintf( fp, "Tracker Units: %d\n", codaTracker.GetNumberOfUnits() );
-		fprintf( fp, "Frame\tTime" );
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-			for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-			}
+		// Output the Pose data to a file.
+		char *pose_filename = "PsyPhyOculusDemo.pse";
+		fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
+		FILE *fp = fopen( pose_filename, "w" );
+		fprintf( fp, "frame; time; visible; position; orientation\n" );
+		for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
+			fprintf( fp, "%d; %.3f; %d; %s; %s\n",
+			frame, hmdPoses[frame].time, hmdPoses[frame].visible,
+			codaTracker.vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker.zeroVector ),
+			codaTracker.qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker.nullQuaternion ) );
 		}
-		fprintf( fp, "\n" );
+		fOutputDebugString( "File %s closed.\n", pose_filename );
 
-		for ( int frm = 0; frm < codaTracker.nFrames; frm++ ) {
-			fprintf( fp, "%05d %9.3f", frm, codaTracker.recordedMarkerFrames[0][frm].time );
-			for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-				for ( int unit = 0; unit < codaTracker.GetNumberOfUnits(); unit++ ) {
-					fprintf( fp, " %1d",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-					for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker.recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
-				}
-			}
-			fprintf( fp, "\n" );
-		}
-		fclose( fp );
-		fOutputDebugString( "File %s closed.\n", filename );
-#endif
+		codaTracker.Quit();
+
 
 	}
 	return(0);

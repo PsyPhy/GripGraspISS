@@ -136,12 +136,14 @@ void GraspDexTrackers::UpdatePoseTrackers( void ) {
 
 void GraspDexTrackers::Update( void ) {
 		
+#ifdef BACKGROUND_GET_DATA
 	// Check if the thread is still running.
 	// I don't know why it should stop, but it seems to be happening in Release mode.
 	if ( threadHandle ) {
 		int result = WaitForSingleObject( threadHandle, 0 );
 		if ( result == WAIT_OBJECT_0 ) fAbortMessage( "GraspTrackers", "Retrieval thread has unexpectedly terminated!" );
 	}
+#endif
 
 	// Retrieve the marker data from the CODA.
 	GetMarkerData();
@@ -173,11 +175,15 @@ void GraspDexTrackers::Release( void ) {
 	// Do what all flavors of GraspTrackers do.
 	GraspTrackers::Release();
 
+#ifdef BACKGROUND_GET_DATA
+
 	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
 	if ( threadHandle ) {
 		stopMarkerGrabs = true;
 		WaitForSingleObject( threadHandle, INFINITE );
 	}
+#endif
+
 	// Halt the continuous Coda acquisition.
 	codaTracker->AbortAcquisition();
 	codaTracker->Quit();

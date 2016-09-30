@@ -181,9 +181,9 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			if ( acquiring ) {
 				if ( nFramesPerUnit[unit] < MAX_FRAMES ) nFramesPerUnit[unit]++;
 				else {
-					fOutputDebugString( "here" );
+					fOutputDebugString( "MAX_FRAMES exceeded. Unit: %d %d \n", unit,  nFramesPerUnit[unit] );
 				}
-				fOutputDebugString( "Unit: %d %d \n", unit,  nFramesPerUnit[unit] );
+				
 			}
 			
 			// Signal that we got some data in this loop.

@@ -142,7 +142,12 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) : threadHandle( nullptr ) {
+		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
+
+#ifdef BACKGROUND_GET_DATA
+			threadHandle = nullptr;
+#endif
+
 			nMarkers = 24;
 			nCodaUnits = 2;
 			codaTracker = tracker;
@@ -158,7 +163,7 @@ namespace Grasp {
 		~GraspDexTrackers( void ) {}
 
 	private:
-
+#ifdef BACKGROUND_GET_DATA
 		// Polling the CODA in the rendering loop can cause non-smooth updating.
 		// We use a thread to get the CODA pose data in the background.
 		// The following provides the means to use a thread.
@@ -240,6 +245,7 @@ namespace Grasp {
 			requestSharedMemoryParent = true;
 
 		}
+#endif
 
 	};
 
