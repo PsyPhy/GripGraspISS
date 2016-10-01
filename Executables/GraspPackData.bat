@@ -7,6 +7,9 @@ REM
 REM A batch file that packages Grasp data files and places them on DEX.
 REM
 
+REM Where the utilities reside.
+set UTILS=Utils
+
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.
 REM Find the filename root amongst the parameters.
 REM The GraspGUI shell puts the results file root in the form --output=FNROOT.
@@ -57,20 +60,20 @@ echo Packing data into tar file: %TARFILE%
 set here=%CD%
 pushd "%local_directory%"
 REM First create an MD5 checksum for each data file.
-"%here%"\Executables\md5.exe * > %FILESMD5%
+"%here%"\%UTILS%\md5.exe * > %FILESMD5%
 REM Now put all the files in a tar archive, including the MD5s.
-"%here%"\Executables\tar.exe --verbose --create --file=%TARFILE% * 
+"%here%"\%UTILS%\tar.exe --verbose --create --file=%TARFILE% * 
 REM Move it up to the Results root.
 move /Y %TARFILE% "%here%\Results"
 popd
 
 pushd Results
 echo Zipping the tar file.
-"%here%"\Executables\gzip.exe --stdout %TARFILE% > %ZIPFILE%
+"%here%"\%UTILS%\gzip.exe --stdout %TARFILE% > %ZIPFILE%
 echo Split into manageable chunks.
-"%here%"\Executables\split.exe --bytes=40m %ZIPFILE% %gROOT%.
+"%here%"\%UTILS%\split.exe --bytes=40m %ZIPFILE% %gROOT%.
 echo Create MD5 checksums for archive and chunks.
-"%here%"\Executables\md5.exe %gRoot%.* > "%here%"\%TARMD5%
+"%here%"\%UTILS%\md5.exe %gRoot%.* > "%here%"\%TARMD5%
 move "%here%"\%TARMD5% .
 
 echo Transfer by FTP to GRIP.
@@ -88,10 +91,10 @@ set DIRECTORY=GDLK
 REM
 REM Make the directory on the host. This might fail if the directory is already there, so ignore any errors.
 REM
-"%here%"\Executables\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "mkdir %DIRECTORY%"  "exit" 
+"%here%"\%UTILS%\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "mkdir %DIRECTORY%"  "exit" 
 if ERRORLEVEL == 1 GOTO IGNORE
 :IGNORE
-"%here%"\Executables\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %gROOT%.??"  "put  %gROOT%.md5" "exit" 
+"%here%"\%UTILS%\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %gROOT%.??"  "put  %gROOT%.md5" "exit" 
 REM if ERRORLEVEL == 1 GOTO ERREXIT
 
 REM Normal Exit

@@ -7,7 +7,7 @@ REM
 REM A batch file that creates a tar archive with the GRASPonISS runtime installation.
 
 setlocal
-set TAR=Executables\tar.exe
+set TAR=Utils\tar.exe
 set VERBOSE=
 
 REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy.

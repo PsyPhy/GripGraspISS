@@ -5,7 +5,7 @@
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
 INSTRUCTIONS_DESTINATION=..\..\Instructions
-EXECUTABLES=..\..\Executables
+EXECUTABLES=..\..\Utils
 SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=512
 
 # This should be a list of all the HTML files that you want to generate.

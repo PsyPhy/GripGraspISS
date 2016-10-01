@@ -5,7 +5,7 @@
 # A program that converts .tiff to .bmp.
 # This is used to convert images generated in PowerPoint into usable .bmp files.
 # In theory, PowerPoint can save directly in .bmp format, but it gives strange results for me.
-CONVERTER = ..\..\Executables\tiff2bmp.exe --height=512 --width=512
+CONVERTER = ..\..\Utils\tiff2bmp.exe --height=512 --width=512
 
 # Define the path to the pandoc.exe program that does the conversion.
 PANDOC=pandoc.exe
@@ -29,7 +29,7 @@ STATICBMPS =	StaticBitmaps\metal.bmp StaticBitmaps\NightSky.bmp StaticBitmaps\Ro
 DESTINATION = ..\..\Bmp
 
 # This is where we can find the tools need to do the build.
-EXECUTABLES=..\..\Executables
+EXECUTABLES=..\..\Utils
 
 # This is going to install the bitmaps in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
