@@ -199,6 +199,8 @@ public:
 	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
 
 	virtual void	WriteMarkerFile( char *filename );
+	void WriteColumnHeadings( FILE *fp, int unit );
+	void WriteMarkerData( FILE *fp, MarkerFrame &frame );
 
 protected:
 	// These are used internally to start and stop the CODA system, e.g. when setting a new alignment.

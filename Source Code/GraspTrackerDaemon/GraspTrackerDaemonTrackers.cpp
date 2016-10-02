@@ -57,6 +57,7 @@ namespace GraspTrackerDaemon {
 		static double angle = 0.0;
 		int unit, mrk, id;
 		for ( unit = 0; unit < coda->nUnits; unit++ ) {
+			coda->recordedMarkerFrames[unit][0].time = (double) record.count / 200.0;
 			for ( mrk = 0; mrk < trackers->hmdCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
 				id = trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].id;
 				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
@@ -81,7 +82,6 @@ namespace GraspTrackerDaemon {
 			// The following code causes intermittent occlusions of the simulated markers.
 			for ( int unit = 0; unit < record.nUnits; unit++ ) {
 				int mrk;
-				record.frame[unit].time = (double) record.count / 200.0;
 				for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
 					if ( ( (mrk + record.count / 10 ) / 8 ) % 6 == unit ) coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = false;
 					else coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = true;
@@ -130,7 +130,7 @@ namespace GraspTrackerDaemon {
 		trackers->handTracker->CopyTrackerPose( poseData[nPoseSamples].hand, record.hand );
 		trackers->chestTracker->CopyTrackerPose( poseData[nPoseSamples].chest, record.chest );
 
-		if (recording) nPoseSamples = (++nPoseSamples) % MAX_FRAMES;
+		if (recording) nPoseSamples = ( ++nPoseSamples ) % MAX_FRAMES;
 
 		// Broadcast the record.
 		if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)

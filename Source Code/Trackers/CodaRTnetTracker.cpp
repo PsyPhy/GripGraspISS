@@ -715,27 +715,34 @@ void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &r
 
 }
 
+void CodaRTnetTracker::WriteColumnHeadings( FILE *fp, int unit ) {
+	fprintf( fp, "Time.%1d;", unit );
+	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
+		fprintf( fp, " M%02d.%1d.V; M%02d.%1d.X; M%02d.%1d.Y; M%02d.%1d.Z;", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+	}
+}
+
+void CodaRTnetTracker::WriteMarkerData( FILE *fp, MarkerFrame &frame ) {
+	fprintf( fp, "%9.3f;", frame.time );
+	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+		fprintf( fp, " %1d;",  frame.marker[mrk].visibility );
+		for ( int i = 0; i < 3; i++ ) fprintf( fp, "%9.3f;",  frame.marker[mrk].position[i] );
+	}
+}
+
 void CodaRTnetTracker::WriteMarkerFile( char *filename ) {
 	FILE *fp = fopen( filename, "w" );
 	fAbortMessageOnCondition( !fp, "Error opening %s for writing.", filename );
 	fprintf( fp, "%s\n", filename );
 	fprintf( fp, "Tracker Units: %d\n", nUnits );
-	fprintf( fp, "Frame\tTime" );
-	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
-		for ( int unit = 0; unit < nUnits; unit++ ) {
-			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-		}
-	}
+	fprintf( fp, "Markers: %d\n", nMarkers );
+	fprintf( fp, "Frames: %d\n", nFrames );
+	fprintf( fp, "Frame;" );
+	for ( int unit = 0; unit < nUnits; unit++ ) WriteColumnHeadings( fp, unit );
 	fprintf( fp, "\n" );
-
 	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
-		fprintf( fp, "%05d %9.3f", frm, recordedMarkerFrames[0][frm].time );
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-			for ( int unit = 0; unit < nUnits; unit++ ) {
-				fprintf( fp, " %1d",  recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
-			}
-		}
+		fprintf( fp, "%8u;", frm );
+		for ( int unit = 0; unit < nUnits; unit++ ) WriteMarkerData( fp, recordedMarkerFrames[unit][frm] );
 		fprintf( fp, "\n" );
 	}
 	fclose( fp );
