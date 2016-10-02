@@ -49,7 +49,7 @@ bool mirror = true;			// Do we mirror to the console or not?
 
 // A device that records 3D marker positions.
 // Those marker positions will also drive the 6dof pose trackers.
-PsyPhy::CodaRTnetContinuousTracker codaTracker;
+PsyPhy::CodaRTnetTracker *codaTracker;
 
 using namespace OVR;
 using namespace PsyPhy;
@@ -261,9 +261,11 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		// Render the world using the PsyPhy 3D modelling routines.
 		if ( isVisible && usePsyPhy ) {
 
-			// Get the current position of the CODA markers.
-			for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-				codaTracker.GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
+			if ( useCoda ) {
+				// Get the current position of the CODA markers.
+				for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+					codaTracker->GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
+				}
 			}
 			// Perform any periodic updating that the trackers might require.
 			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
@@ -343,7 +345,19 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	HWND parent = 0;
 	char *ptr;
 
-	if ( strstr( command_line, "--nocoda" ) ) useCoda = false;
+	CodaRTnetContinuousTracker *continuousTracker = new CodaRTnetContinuousTracker();
+	CodaRTnetDaemonTracker *daemonTracker = new CodaRTnetDaemonTracker();
+
+	if ( strstr( command_line, "--coda" ) ) {
+		codaTracker = continuousTracker;
+		useCoda = true;
+	}
+	else if ( strstr( command_line, "--daemon" ) ) {
+		codaTracker = daemonTracker;
+		useCoda = true;
+	}
+	else useCoda = false;
+
 	if ( ptr = (char *)strstr( command_line, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parent );
 	if ( strstr( command_line, "--fullscreen" ) ) fullscreen = true;
 	if ( strstr( command_line, "--secret" ) ) mirror = false;
@@ -356,8 +370,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 
 	// Initialize the connection to the CODA tracking system.
 	if ( useCoda ) {
-		codaTracker.Initialize();
-		nCodaUnits = codaTracker.GetNumberOfCodas();
+		codaTracker->Initialize();
+		nCodaUnits = codaTracker->GetNumberOfCodas();
 	}
 
 	// Initializes LibOVR, and the Rift
@@ -368,7 +382,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", fullscreen, parent ), "PsyPhyOculus", "Failed to open window." );
 
 	// Start an acquisition on the CODA.
-	if ( useCoda ) codaTracker.StartAcquisition( 600.0 );
+	if ( useCoda ) codaTracker->StartAcquisition( 600.0 );
 
 	// Call the main loop.
 	MainLoop( &oculusDisplay );
@@ -383,12 +397,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	if ( useCoda ) {
 
 		// Halt the continuous Coda acquisition.
-		codaTracker.StopAcquisition();
+		codaTracker->StopAcquisition();
 
 		// Output the CODA data to a file.
 		char *marker_filename = "PsyPhyOculusDemo.mrk";
 		fOutputDebugString( "Writing CODA data to %s.\n", marker_filename );
-		codaTracker.WriteMarkerFile( marker_filename );
+		codaTracker->WriteMarkerFile( marker_filename );
 		fOutputDebugString( "File %s closed.\n", marker_filename );
 
 		// Output the Pose data to a file.
@@ -399,13 +413,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 		for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
 			fprintf( fp, "%d; %.3f; %d; %s; %s\n",
 			frame, hmdPoses[frame].time, hmdPoses[frame].visible,
-			codaTracker.vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker.zeroVector ),
-			codaTracker.qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker.nullQuaternion ) );
+			codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
+			codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ) );
 		}
 		fOutputDebugString( "File %s closed.\n", pose_filename );
-
-		codaTracker.Quit();
-
+		codaTracker->Quit();
 
 	}
 	return(0);

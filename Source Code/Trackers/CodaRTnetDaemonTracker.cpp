@@ -29,7 +29,7 @@ using namespace PsyPhy;
 
 /*********************************************************************************/
 
-void CodaRTnetDaemonTracker::StartAcquisition( double duration ) {
+void CodaRTnetDaemonTracker::StartAcquisition( float duration ) {
 	overrun = false;
 	acquiring = true;
 	TimerSet( timer, duration );

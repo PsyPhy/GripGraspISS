@@ -31,5 +31,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\PsyPhyOculusDemo.mrk" />
+    <None Include="..\..\PsyPhyOculusDemo.pse" />
   </ItemGroup>
 </Project>

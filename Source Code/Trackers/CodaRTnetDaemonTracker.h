@@ -41,7 +41,7 @@ public:
 
 	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {}
 	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
-	virtual void StartAcquisition( double max_seconds );
+	virtual void StartAcquisition( float max_seconds );
 	virtual bool GetAcquisitionState( void );
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
 	virtual void StopAcquisition( void );

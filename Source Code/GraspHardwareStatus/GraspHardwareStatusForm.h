@@ -590,7 +590,7 @@ namespace GraspHardwareStatus {
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
 			char cmd[1024];
-			sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --nocoda --parent=%d", parent );
+			sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --daemon --parent=%d", parent );
 			system( cmd );
 		}
 
