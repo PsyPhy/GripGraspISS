@@ -346,7 +346,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			SYSTEMTIME st;
 			GetSystemTime( &st );
 			char datetimestr[MAX_PATH];
-			sprintf( datetimestr, "%02d%02d%02d.%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+			sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 			String ^dateTimeString = gcnew String( datetimestr );
 
 			// Show the current form as being disabled.
@@ -374,7 +374,11 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Add command line arguments to COMMAND or COMMAND@.
 			if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
 				cmdline =  stepList[currentStep]->command 
-					+ " --output=" + resultsDirectory + subjectList[currentSubject]->ID + "." + dateTimeString
+					+ " --output=" + resultsDirectory 
+						+ subjectList[currentSubject]->ID + "_" 
+						+ protocolID + "_" 
+						+ taskID + "_" 
+						+ dateTimeString
 					+ " --user=" + subjectID
 					+ " --protocol=" + protocolID
 					+ " --task=" + taskID
