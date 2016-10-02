@@ -17,6 +17,7 @@ EXECUTABLES = ..\$(BUILDCONFIGURATION)\Grasp.exe ..\Grasp\Grasp.bat ..\Grasp\Gra
 	RunGRASP.bat
 
 install: $(EXECUTABLES) InstallGrasp.mak 
+	-del /Q ..\..\Executables\*
 	copy ..\$(BUILDCONFIGURATION)\OculusMouse.exe ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\Grasp.exe ..\..\Executables
 	copy ..\Grasp\Grasp.bat ..\..\Executables
@@ -40,4 +41,5 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\..\..\Installers\CodaCalFiles\FM2 ..\..\Executables\CodaCalFiles
 	copy ..\..\..\Installers\CodaCalFiles\GM ..\..\Executables\CodaCalFiles
 	copy ..\..\..\Installers\CodaCalFiles\SM ..\..\Executables\CodaCalFiles
+	copy ..\DLLs\*.dll ..\..\Executables
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

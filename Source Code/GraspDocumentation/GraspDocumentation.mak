@@ -2,7 +2,7 @@
 ### It uses the GraspVR package to create images that are up to date.
 
 DOCUMENTATION_DESTINATION=..\..\Documentation
-EXECUTABLES=..\..\Utils
+EXECUTABLES=..\..\BuildTools
 INSTRUCTIONS=..\..\Instructions
 GUI=GUIScreenshots
 VRMESSAGES=..\GraspBMPs

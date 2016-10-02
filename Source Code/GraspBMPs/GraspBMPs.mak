@@ -2,14 +2,13 @@
 ### Create the .bmp files needed by the Grasp VR environment.
 ###
 
+# This is where we can find the tools need to do the build.
+EXECUTABLES=..\..\BuildTools
+
 # A program that converts .tiff to .bmp.
 # This is used to convert images generated in PowerPoint into usable .bmp files.
 # In theory, PowerPoint can save directly in .bmp format, but it gives strange results for me.
-CONVERTER = ..\..\Utils\tiff2bmp.exe --height=512 --width=512
-
-# Define the path to the pandoc.exe program that does the conversion.
-PANDOC=pandoc.exe
-PANDOC_OPTIONS=
+CONVERTER = $(EXECUTABLES)\tiff2bmp.exe --height=512 --width=512
 
 # This is the list of btimaps generated from Powerpoint. In general, they are messages that are
 # presented in a circular format with the VR presentation.
@@ -27,9 +26,6 @@ STATICBMPS =	StaticBitmaps\metal.bmp StaticBitmaps\NightSky.bmp StaticBitmaps\Ro
 
 # The bitmaps are moved to this directory to be included in the execution environment.
 DESTINATION = ..\..\Bmp
-
-# This is where we can find the tools need to do the build.
-EXECUTABLES=..\..\Utils
 
 # This is going to install the bitmaps in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed

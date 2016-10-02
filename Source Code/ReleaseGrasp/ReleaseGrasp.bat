@@ -22,6 +22,7 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --create %VERBOSE% --file=%ARCHIVE% Bdy/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Executables/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Utils/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Instructions/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Scripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
@@ -29,11 +30,6 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% *.bat
 %TAR% --append %VERBOSE% --file=%ARCHIVE% *.ini.*
-REM Need to have a fake .flg cookie in case NoCoda.flg is not there
-REM so that tar will not choke on *.flg.
-echo ignore > ignore.flg
-%TAR% --append %VERBOSE% --file=%ARCHIVE% *.flg
-del /F /Q ignore.flg
 
 REM Create an empty log directory to put in the release archive.
 REM We hide the current LOG directory so as not to loose what we have there.
