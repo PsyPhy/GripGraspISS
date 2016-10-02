@@ -197,32 +197,17 @@ void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
 	strncpy( filename, filename_root, sizeof( filename ) );
 	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
 	fOutputDebugString( "Writing CODA data to %s.\n", filename );
-	FILE *fp = fopen( filename, "w" );
-	if ( !fp ) fMessageBox( MB_OK, "File Error", "Error opening %s for write.", filename );
-
-	fprintf( fp, "%s\n", filename );
-	fprintf( fp, "Tracker Units: %d\n", codaTracker->GetNumberOfUnits() );
-	fprintf( fp, "Frame\tTime" );
-	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-		for ( int unit = 0; unit < codaTracker->GetNumberOfUnits(); unit++ ) {
-			fprintf( fp, "\tM%02d.%1d.V\tM%02d.%1d.X\tM%02d.%1d.Y\tM%02d.%1d.Z", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-		}
-	}
-	fprintf( fp, "\n" );
-
-	for ( unsigned int frm = 0; frm < codaTracker->nFrames; frm++ ) {
-		fprintf( fp, "%05d %9.3f", frm, codaTracker->recordedMarkerFrames[0][frm].time );
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-			for ( int unit = 0; unit < codaTracker->GetNumberOfUnits(); unit++ ) {
-				fprintf( fp, " %1d",  codaTracker->recordedMarkerFrames[unit][frm].marker[mrk].visibility );
-				for ( int i = 0; i < 3; i++ ) fprintf( fp, " %9.3f",  codaTracker->recordedMarkerFrames[unit][frm].marker[mrk].position[i] );
-			}
-		}
-		fprintf( fp, "\n" );
-	}
-	fclose( fp );
+	codaTracker->WriteMarkerFile( filename );
 	fOutputDebugString( "File %s closed.\n", filename );
 }
+
+void GraspDexTrackers::WriteAdditionalColumnHeadings( FILE *fp ) {
+	for ( int unit = 0; unit < codaTracker->nUnits; unit++ ) codaTracker->WriteColumnHeadings( fp, unit );
+}
+void GraspDexTrackers::WriteAdditionalTrackerData( FILE *fp ) {
+	for ( int unit = 0; unit < codaTracker->nUnits; unit++ ) codaTracker->WriteMarkerData( fp, markerFrame[unit] );
+}
+
 
 void GraspDexTrackers::Initialize( void ) {
 

@@ -81,7 +81,10 @@ namespace Grasp {
 
 
 		virtual void Release( void );
-		virtual void WriteDataFiles( char *filename_root ){};
+
+		virtual void WriteDataFiles( char *filename_root ){}
+		virtual void WriteAdditionalColumnHeadings( FILE *fp ) {}
+		virtual void WriteAdditionalTrackerData( FILE *fp ){}
 
 	protected:
 		~GraspTrackers() {}
@@ -159,6 +162,8 @@ namespace Grasp {
 		virtual void Update( void );
 		virtual void Release( void );
 		virtual void WriteDataFiles( char *filename_root );
+		void WriteAdditionalColumnHeadings( FILE *fp );
+		void WriteAdditionalTrackerData( FILE *fp );
 
 		~GraspDexTrackers( void ) {}
 
