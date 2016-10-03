@@ -50,7 +50,7 @@ int GraspTaskManager::maxRetries = 7;
 // attempts to detect when the head is straight based on measurements of the chest marker array.
 // In manual mode, we simply ask the subject to straighten the head and click when it is so.
 // The following flag sets which method to use.
-bool GraspTaskManager::manualStraightenHead = true;
+StraightenHeadMethod GraspTaskManager::straightenHeadMethod = MANUAL_STRAIGHTEN;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -426,21 +426,35 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	// Cancel the current local transformation that was aligned with the head.
 	AlignToCODA();
 	// Prompt the subject to straighten the head on the shoulders. We have two possible methods.
-	if ( manualStraightenHead ) {
+	switch ( straightenHeadMethod ) {
+
+	case CODA_STRAIGHTEN:
 		// Show a central target to facilitate straight-ahead gaze.
 		renderer->straightAheadTarget->Enable();
 		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
 		renderer->straightenHeadIndicator->Enable();
 		// Halo is blue because we cannot set an stable reference for the desired roll angle.
 		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
-	}
-	else {
+		break;
+	
+	case CHEST_STRAIGHTEN:
 		// The desired orientation of the head to zero in preparation for applying conflict (if any).
 		SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
-		// Show a central target and a laser pointer that moves with the head to facilitate straight-ahead gaze.
+		// Show a central target to facilitate straight-ahead gaze.
 		renderer->straightAheadTarget->Enable();
+		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
 		renderer->straightenHeadIndicator->Enable();
 		//renderer->gazeLaser->Enable();
+		break;
+
+	case MANUAL_STRAIGHTEN:
+	default:
+		// Use a circular text indicator to ask the subject to straighten the head on the shoulders.
+		renderer->straightenHeadIndicator->Enable();
+		// Halo is blue because we cannot set an stable reference for the desired roll angle.
+		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
+		break;
+
 	}
 	// The hand must be lowered during this phase. Show the position of the hand to remind the subject.
 	renderer->kTool->Enable();
@@ -453,18 +467,27 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
-	if ( manualStraightenHead ) {
-		Grasp::AlignmentStatus status = HandleGazeDirection();
-		if ( true || status == aligned ) {
+
+	switch ( straightenHeadMethod ) {
+
+	case CODA_STRAIGHTEN:
+		if ( aligned == HandleGazeDirection() ) {
 			if ( Validate() ) return( AlignHead );
 		}
-	}
-	else {
+		break;
+
+	case CHEST_STRAIGHTEN:
 		// Update the feedback about the head orientation wrt the desired head orientation.
 		// If the head alignment is satisfactory, move on to the next state.
 		if ( aligned == HandleHeadOnShoulders( false ) ) {
 			if ( Validate() ) return( AlignHead ); 
 		}
+
+	case MANUAL_STRAIGHTEN:
+	default:
+		if ( Validate() ) return( AlignHead );
+		break;
+
 	}
 	if ( raised == HandleHandElevation() && TimerElapsedTime( straightenHeadTimer ) > lowerHandPromptDelay ) {
 		renderer->lowerHandPrompt->Enable();

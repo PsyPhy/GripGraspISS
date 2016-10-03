@@ -13,7 +13,7 @@ namespace Grasp {
 					ProvideFeedback = 36, TrialCompleted = 39, 
 					TrialInterrupted = 40, ExitStateMachine = 99 } GraspTrialState;
 	typedef enum { RAISE_HAND_TIMEOUT = 1, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } Anomaly;
-
+	typedef enum { MANUAL_STRAIGHTEN, CODA_STRAIGHTEN, CHEST_STRAIGHTEN } StraightenHeadMethod;
 	class GraspTaskManager : public GraspVR {
 
 	public:
@@ -35,7 +35,7 @@ namespace Grasp {
 
 		static int maxRetries;
 
-		static bool manualStraightenHead;
+		static StraightenHeadMethod straightenHeadMethod;
 
 		// List of paramters for each trial.
 		struct {
