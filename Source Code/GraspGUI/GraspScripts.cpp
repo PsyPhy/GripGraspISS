@@ -167,7 +167,7 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 						taskList[nTasks]->isolated_step->exit[1] = gcnew String( "StepErrorFinish.status.html" );
 					}
 					else {
-						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( tokens - 5 );
+						taskList[nTasks]->isolated_step->exit = gcnew array<String ^>( tokens - 6 );
 						for ( int i = 6, j = 0; i < tokens; i++, j++ ) taskList[nTasks]->isolated_step->exit[j] = gcnew String( token[i] );
 					}
 				}
@@ -398,6 +398,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 			int return_code = system( cmd );
+			if ( return_code > 127 ) return_code = - return_code;
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 
 			// Map exit codes to the results pages defined in the step definition.
@@ -425,7 +426,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				// Indicate in the script engine status that the command exited with an exit
 				//  code corresponding to an anomolous situation and specify the specific return code.
 				// Because stepExecutionState must be an unsigned short, we take the absolute value of the return code.
-				stepExecutionState = STEP_FINISHED_ABNORMAL + abs( return_code );
+				stepExecutionState = STEP_FINISHED_ABNORMAL + exit_choice;
 			}
 			else {
 				normalNavigationGroupBox->Visible = true;
