@@ -88,9 +88,9 @@ namespace GraspHardwareStatus {
 		MarkerStructureGLObject *handStationary1;
 		MarkerStructureGLObject *chestStationary1;
 		// Another set of objects that will move around according to the tracker.
-		Assembly *hmdMobile;
-		Assembly *handMobile;
-		Assembly *chestMobile;
+		MarkerStructureGLObject *hmdMobile;
+		MarkerStructureGLObject *handMobile;
+		MarkerStructureGLObject *chestMobile;
 		// Just a way to refer to all the mobile objects together.
 		// It makes it easier to draw all of them. 
 		Yoke *mobiles;
@@ -474,17 +474,42 @@ namespace GraspHardwareStatus {
 
 		void Render( void ) {
 		
+			MarkerFrame markerFrame;
+
 			// Show the visibility of each marker superimposed on it's marker 
 			// structure, each structure in a separate window for each CODA unit.
+			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
+			hmdStationary0->ShowVisibility( markerFrame );
+			handStationary0->ShowVisibility( markerFrame );
+			chestStationary0->ShowVisibility( markerFrame );
+
 			RenderWindow( hmdWindow0, objectViewpoint, hmdStationary0 );
-			RenderWindow( hmdWindow1, objectViewpoint, hmdStationary1 );
 			RenderWindow( handWindow0, objectViewpoint, handStationary0 );
-			RenderWindow( handWindow1, objectViewpoint, handStationary1 );
 			RenderWindow( chestWindow0, objectViewpoint, chestStationary0 );
-			RenderWindow( chestWindow1, objectViewpoint, chestStationary1 );
+
 			// Show the position and orientation of each marker structure
 			// from the perspective of each CODA unit.
+			hmdMobile->ShowVisibility( markerFrame );
+			handMobile->ShowVisibility( markerFrame );
+			chestMobile->ShowVisibility( markerFrame );
 			RenderWindow( vrWindow0, codaViewpoint0, mobiles );
+
+			// Show the visibility of each marker superimposed on it's marker 
+			// structure, each structure in a separate window for each CODA unit.
+			coda->GetCurrentMarkerFrameUnit( markerFrame, 1 );
+			hmdStationary1->ShowVisibility( markerFrame );
+			handStationary1->ShowVisibility( markerFrame );
+			chestStationary1->ShowVisibility( markerFrame );
+
+			RenderWindow( hmdWindow1, objectViewpoint, hmdStationary1 );
+			RenderWindow( handWindow1, objectViewpoint, handStationary1 );
+			RenderWindow( chestWindow1, objectViewpoint, chestStationary1 );
+
+			// Show the position and orientation of each marker structure
+			// from the perspective of each CODA unit.
+			hmdMobile->ShowVisibility( markerFrame );
+			handMobile->ShowVisibility( markerFrame );
+			chestMobile->ShowVisibility( markerFrame );
 			RenderWindow( vrWindow1, codaViewpoint1, mobiles );
 		
 		}
@@ -492,25 +517,6 @@ namespace GraspHardwareStatus {
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-
-			// TrackerPose pose;
-			MarkerFrame markerFrame;
-			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
-			hmdStationary0->ShowVisibility( markerFrame );
-			handStationary0->ShowVisibility( markerFrame );
-			chestStationary0->ShowVisibility( markerFrame );
-			//poseTracker->GetCurrentPose( pose );
-			//if ( pose.visible ) {
-			//	alignmentObject1->SetPose( pose.pose );
-			//}
-			coda->GetCurrentMarkerFrameUnit( markerFrame, 1 );
-			hmdStationary1->ShowVisibility( markerFrame );
-			handStationary1->ShowVisibility( markerFrame );
-			chestStationary1->ShowVisibility( markerFrame );
-			//poseTracker->GetCurrentPose( pose );
-			//if ( pose.visible ) {
-			//	alignmentObject2->SetPose( pose.pose );
-			//}
 
 			Render();
 
@@ -590,7 +596,7 @@ namespace GraspHardwareStatus {
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
 			char cmd[1024];
-			sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --daemon --parent=%d", parent );
+			sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
 			system( cmd );
 		}
 

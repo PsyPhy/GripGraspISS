@@ -186,11 +186,14 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	while ( platform->HandleMessages() ) {
 
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
-		static float Yaw( 0.0f );  
+		// Yaw is expressed here in radians.
+		static float Yaw( (float) Pi );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
-		if ( platform->Key['B'] ) hmdTracker->Boresight();
+		if ( platform->Key['B'] ) {
+			hmdTracker->Boresight();
+		}
 		if ( platform->Key['U'] ) hmdTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
@@ -380,6 +383,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 
 	// Initialize the Oculus-enabled Windows platform.
 	fAbortMessageOnCondition( !oculusDisplay.InitWindow( hinst, L"GraspOnOculus", fullscreen, parent ), "PsyPhyOculus", "Failed to open window." );
+	oculusDisplay.SetBackgroundMessage( 0, "You should soon see a 3D virtual world appear here and in the HMD." );
+	oculusDisplay.SetBackgroundMessage( 1, "If not, try pressing the Select button on the VR Remote for 2 seconds." );
+	oculusDisplay.SetBackgroundMessage( 2, "Press 'Escape' on the keyboard or close window to force quit." );
 
 	// Start an acquisition on the CODA.
 	if ( useCoda ) codaTracker->StartAcquisition( 600.0 );

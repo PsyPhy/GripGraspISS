@@ -51,8 +51,8 @@ void CreatePsyPhyObjects ( void ) {
 
 	// A disk on the front wall, something to look at.
 	disk = new Disk( 4.0 );
-	disk->SetPosition( 0.0, 0.0, - 9.0 );
-	disk->SetColor( ORANGE );
+	disk->SetPosition( 0.0, 0.0, -9.0 );
+	disk->SetColor( 0.0, 0.1, 0.0 );
 	room->AddComponent( disk );
 
 	// The center of the room is at the origin.
@@ -64,7 +64,7 @@ void CreatePsyPhyObjects ( void ) {
 	tool = new Assembly();
 	sphere = new Sphere( 0.5 );
 	sphere->SetPosition( 0.0, 0.0, 0.0 );
-	sphere->SetColor( RED );
+	sphere->SetColor( MAGENTA );
 	tool->AddComponent( sphere );
 	cylinder = new Cylinder( 0.25, 0.25, 2.0 );
 	cylinder->SetColor( BLUE );
@@ -75,7 +75,7 @@ void CreatePsyPhyObjects ( void ) {
 	cylinder->SetOrientation( -90.0, cylinder->jVector );
 	tool->AddComponent( cylinder );
 
-	tool->SetPosition( 0.0, 0.0, 2.0 );
+	tool->SetPosition( 0.0, 0.0, 4.0 );
 
 }
 

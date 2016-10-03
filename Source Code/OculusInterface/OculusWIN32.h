@@ -32,7 +32,8 @@ OculusWIN32.h
 
 #ifndef UNDEFINED
 #define UNDEFINED -1
-#endif 
+#endif  
+#define BACKGROUND_MESSAGE_LINES 5
 
 #ifndef VALIDATE
 #define VALIDATE(x, msg) if (!(x)) { MessageBoxA(NULL, (msg), "OculusWIN32", MB_ICONERROR | MB_OK); exit(-1); }
@@ -255,6 +256,8 @@ struct OculusDisplayOGL
 	HINSTANCE               hInstance;
 	HWND					parentWindow;
 
+	char *backgroundMessage[BACKGROUND_MESSAGE_LINES];
+
 	static const int MARGIN = 100;
 	int       pointerLastX;
 	int       pointerLastY;
@@ -265,6 +268,8 @@ struct OculusDisplayOGL
 
 
 	static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam) {
+		
+		// Point to the instance that invoked this callback.
 		OculusDisplayOGL *p = reinterpret_cast<OculusDisplayOGL *>(GetWindowLongPtr(hWnd, 0));
 
 		// Variables used to handle mouse movements.
@@ -298,15 +303,20 @@ struct OculusDisplayOGL
 			// Clear the screen.
 			brush = CreateSolidBrush( RGB( 0, 0, 25 ) );
 			GetClientRect( hWnd, &rect );
-			FillRect( hDC, &ps.rcPaint, brush );
+			// Hacks to fill the whole window.
+			// I don't know why the client rectangle is not correct.
+			rect.right += 10;
+			rect.bottom += 40;
+			FillRect( hDC, &rect, brush );
 			DeleteObject( brush );
 
 			// Set the text drawing color and mode.
-			SetTextColor( hDC,RGB( 255, 0, 255 ) );
+			SetTextColor( hDC,RGB( 0, 255, 255 ) );
 			SetBkMode( hDC,TRANSPARENT);
 
 			// A large message saying what is going on just above the centerline.
 			// Scale the text to the size of the window.
+			GetClientRect( hWnd, &rect );
 			font_size = ( rect.right - rect.left ) / 20;
 			hFont = CreateFont( font_size, 0, 0, 0, FW_BOLD, FALSE,
 				FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
@@ -327,7 +337,10 @@ struct OculusDisplayOGL
 			hOldFont = (HFONT)SelectObject( hDC, hFont);
 			GetClientRect( hWnd, &rect );
 			rect.top = ( rect.top + rect.bottom ) / 2 + 50;
-			DrawText(hDC, "Press 'Escape' on keyboard to force exit.", -1, &rect, DT_SINGLELINE | DT_NOCLIP | DT_CENTER | DT_TOP ) ;
+			for (int i = 0; i < BACKGROUND_MESSAGE_LINES; i++) {
+				DrawText(hDC, p->backgroundMessage[i], -1, &rect, DT_SINGLELINE | DT_NOCLIP | DT_CENTER | DT_TOP ) ;
+				rect.top += (int)((double)font_size * 0.6);
+			}
 			SelectObject( hDC, hOldFont); 
 			DeleteObject( hFont );
 
@@ -486,12 +499,19 @@ struct OculusDisplayOGL
 		for (int i = 0; i < sizeof(Key) / sizeof(Key[0]); ++i) Key[i] = false;
 		for (int i = 0; i < sizeof(Button) / sizeof(Button[0]); ++i) Button[i] = false;
 		ClearKeyDownEvents();
+
+		backgroundMessage[0] = "Press 'Escape' on keyboard to force exit.";
+		for (int i = 1; i < BACKGROUND_MESSAGE_LINES; i++) backgroundMessage[i] = "";
 	}
 
 	~OculusDisplayOGL()
 	{
 		ReleaseDevice();
 		CloseWindow();
+	}
+
+	void SetBackgroundMessage( int line, char *text ) {
+		if ( line < BACKGROUND_MESSAGE_LINES ) backgroundMessage[line] = text;
 	}
 
 	bool InitWindow( HINSTANCE hInst, LPCWSTR title, bool fullscreen = true, HWND parent = 0 )
