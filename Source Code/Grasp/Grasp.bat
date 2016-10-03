@@ -11,6 +11,7 @@ REM
 REM Execute Grasp.exe with all the arguments.
 REM
 Executables\Grasp.exe %*
+set GRASPERRORLEVEL=%ERRORLEVEL%
 
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.
 REM Find the filename root amongst the parameters.
@@ -54,5 +55,7 @@ Utils\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROO
 if ERRORLEVEL == 1 GOTO IGNORE
 :IGNORE
 Utils\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %2.*"  "exit" 
+set FTPERRORLEVEL=%ERRORLEVEL%
 
-exit 0
+if %GRASPERRORLEVEL% == "0" exit %FTPERRORLEVEL%
+exit %GRASPERRORLEVEL%
