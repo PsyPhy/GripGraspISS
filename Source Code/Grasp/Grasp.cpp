@@ -107,7 +107,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
 
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers, dex );
-	grasp->RunTrialBlock( sequence_filename, output_filename_root );
+	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 
 	dex->SnapPicture( "RELEASE" );
@@ -115,7 +115,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->Disconnect();
 	dex->Release();
 
-	exit( 0 );
+	exit( return_code );
 
 }
 

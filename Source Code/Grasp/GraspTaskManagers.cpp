@@ -268,8 +268,6 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	while ( oculusDisplay->HandleMessages() ) {
 
 		static int cycle_counter = 0;
-
-		if ( cycle_counter % 1000 == 0 ) fOutputDebugString( "GraspTaskManager cycle: %d  %f\n", cycle_counter, TimerElapsedTime( blockTimer ) );
 		cycle_counter++;
 
 		// Update pose of tracked objects, including the viewpoint.
@@ -314,7 +312,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	if ( pose_fp ) fclose( pose_fp );
 	pose_fp = NULL;
 
-	return 0;
+	if ( currentTrial < nTrials ) return( -2 );
+	else return 0;
 
 }
 
