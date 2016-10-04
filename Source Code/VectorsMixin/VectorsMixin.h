@@ -42,6 +42,7 @@ public:
 	static const Quaternion nullQuaternion;
 	static const Matrix3x3 identityMatrix;
 	static const Matrix3x3 zeroMatrix;
+	static const Pose nullPose;
 
 	static const Vector3 iVector;
 	static const Vector3 jVector;

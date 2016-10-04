@@ -32,6 +32,8 @@ const Vector3 VectorsMixin::kVectorMinus = { 0.0, 0.0, -1.0 };
 
 const Quaternion VectorsMixin::nullQuaternion = {0.0, 0.0, 0.0, 1.0};
 
+const Pose VectorsMixin::nullPose = {{ 0.0, 0.0, 0.0 }, {0.0, 0.0, 0.0, 1.0}};
+
 const Matrix3x3 VectorsMixin::identityMatrix = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
 const Matrix3x3 VectorsMixin::zeroMatrix =     {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
 
