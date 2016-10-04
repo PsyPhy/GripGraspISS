@@ -42,6 +42,7 @@ public:
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
 	virtual void StopAcquisition( void );
 	virtual int  Update( void );
+	virtual void  Quit( void );
 
 	virtual void StartContinuousAcquisition( void );
 	virtual void StopContinuousAcquisition( void );

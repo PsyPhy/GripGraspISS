@@ -61,6 +61,11 @@ void CodaRTnetContinuousTracker::StopContinuousAcquisition( void ) {
 	OutputDebugString( "OK.\n" );
 }
 
+void CodaRTnetContinuousTracker::Quit( void ) {
+	StopContinuousAcquisition();
+	CodaRTnetTracker::Quit();
+}
+
 // Start and stop reading marker frames into a buffer.
 // We assume that continuous acquisitions are already occuring, so all we do 
 // is say to start inserting the data from the beginning of the buffer.
