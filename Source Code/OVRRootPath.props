@@ -4,7 +4,9 @@
   <PropertyGroup Label="UserMacros">
     <OVRSDKROOT0_8>../../../GraspOculusSDKv0.8/</OVRSDKROOT0_8>
     <OVRSDKROOT1_3>../../../GraspOculusSDKv1.3/OculusSDK/</OVRSDKROOT1_3>
-    <OVRSDKROOT>../../../GraspOculusSDKv1.6/OculusSDK/</OVRSDKROOT>
+    <OVRSDKROOT1_6>../../../GraspOculusSDKv1.6/OculusSDK/</OVRSDKROOT1_6>
+    <OVRSDKROOT1_8>../../../GraspOculusSDKv1.8/OculusSDK/</OVRSDKROOT1_8>
+    <OVRSDKROOT>../../../GraspOculusSDKv1.9/</OVRSDKROOT>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -21,6 +23,18 @@
     </BuildMacro>
  </ItemGroup>
  <ItemGroup>
+    <BuildMacro Include="OVRSDKROOT1_6">
+      <Value>$(OVRSDKROOT1_6)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+ </ItemGroup>
+ <ItemGroup>
+    <BuildMacro Include="OVRSDKROOT1_8">
+      <Value>$(OVRSDKROOT1_8)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+ </ItemGroup>
+<ItemGroup>
     <BuildMacro Include="OVRSDKROOT">
       <Value>$(OVRSDKROOT)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
