@@ -27,7 +27,7 @@ bool mirror = true;			// Do we mirror to the console or not?
 #include "../OculusInterface/OculusInterface.h"
 
 // OpenGL rendering functions for Room Tiny.
-#include "TinyRoomSceneRenderer.h"
+#include "TinyRoomSceneRenderer.h" 
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
@@ -82,7 +82,14 @@ int nMarkers = 24;
 int nCodaUnits = 2;
 
 TrackerPose hmdPoses[MAX_FRAMES];
+TrackerPose codaPoses[MAX_FRAMES];
+PsyPhy::Vector3 accelerations[MAX_FRAMES];
+PsyPhy::Vector3 gyros[MAX_FRAMES];
+PsyPhy::Vector3 derivatives[MAX_FRAMES];
 int nRecordedFrames = 0;
+
+typedef enum { NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES } TrackerStyle;
+TrackerStyle defaultMode = CODA_PLUS_DERIVATIVES;
 
 /*****************************************************************************/
 
@@ -122,6 +129,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 	// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 	OculusCodaPoseTracker *oculusCodaPoseTracker;
+	OculusCodaPoseTracker *oculusDerivativesPoseTracker;
+	OculusCodaPoseTracker *oculusGroundedDerivativesPoseTracker;
 
 	// Pointers to the PoseTrackers that are actually selected.
 	PoseTracker *hmdTracker;
@@ -150,22 +159,49 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			chestCodaPoseTracker[unit]->positionScaleFactor = 0.001; // Convert to meters.
 			fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing torsoCodaPoseTracker[%d].", unit );
-			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
+			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
 			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
 
 		// Create a pose tracker that combines Coda and Oculus data.
 		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
-		//oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
 		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
-		// Pick which PoseTrackers to use.
+
+	}
+	// Create a tracker that integrates Oculus derivatives, without an absolute reference tracker.
+	oculusDerivativesPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
+	fAbortMessageOnCondition( !oculusDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusDerivativesPoseTracker." );
+
+	// Create a tracker that integrates Oculus derivatives that is anchored to the null pose.
+	oculusGroundedDerivativesPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullPoseTracker );
+	fAbortMessageOnCondition( !oculusGroundedDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusGroundedDerivativesPoseTracker." );
+
+	// Pick which PoseTrackers to use.
+	switch ( defaultMode ) {
+	case NONE:
+		hmdTracker = nullPoseTracker;
+		break;
+	case OCULUS:
+		hmdTracker = oculusPoseTracker;
+		break;
+	case DERIVATIVES:
+		hmdTracker = oculusDerivativesPoseTracker;
+		break;
+	case CODA_PLUS_DERIVATIVES:
 		hmdTracker = oculusCodaPoseTracker;
+		break;
+	case CODA:
+		hmdTracker = hmdCascadeTracker;
+		break;
+	case NULL_PLUS_DERIVATIVES:
+		hmdTracker = oculusGroundedDerivativesPoseTracker;
+		break;
+	}
+	if ( useCoda ) {
 		handTracker = handCascadeTracker;
 		chestTracker = chestCascadeTracker;
 	}
 	else {
-		// If we are not using the Coda, we can still use the Oculus to measure HMD movements.
-		hmdTracker = oculusPoseTracker;
 		// For now, we don't use any tracker other than the Coda-based trackers for the hand and torso.
 		handTracker = nullPoseTracker;
 		chestTracker =nullPoseTracker;
@@ -286,14 +322,17 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Get the position and orientation of the head and add them to the Player position and orientation.
 			// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 			// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
-			PsyPhy::TrackerPose headPose;
+			PsyPhy::TrackerPose headPose, codaPose;
 			if ( !hmdTracker->GetCurrentPose( headPose ) ) {
 				static int pose_error_counter = 0;
-				fOutputDebugString( "Error reading hmd pose tracker (%03d).\n", ++pose_error_counter );
+				fOutputDebugString( "Error reading pose trackers (%03d).\n", ++pose_error_counter );
 			}
 			else {
+
 				// Store the poses for output to a file.
 				hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
+				handTracker->GetCurrentPose( codaPose );
+				handTracker->CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
 				if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
 				// The position and orientation of the viewpoint is first set by the player position.
 				// So we use the offset and attitude to turn the viewpoint according to the tracker
@@ -361,6 +400,13 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	}
 	else useCoda = false;
 
+	// NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES
+	if ( strstr( command_line, "--coda_plus_derivatives" ) ) defaultMode = CODA_PLUS_DERIVATIVES;
+	if ( strstr( command_line, "--null_plus_derivatives" ) ) defaultMode = NULL_PLUS_DERIVATIVES;
+	if ( strstr( command_line, "--oculus_only" ) ) defaultMode = OCULUS;
+	if ( strstr( command_line, "--derivatives_only" ) ) defaultMode = DERIVATIVES;
+	if ( strstr( command_line, "--coda_only" ) ) defaultMode = CODA;
+
 	if ( ptr = (char *)strstr( command_line, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parent );
 	if ( strstr( command_line, "--fullscreen" ) ) fullscreen = true;
 	if ( strstr( command_line, "--secret" ) ) mirror = false;
@@ -411,20 +457,27 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 		codaTracker->WriteMarkerFile( marker_filename );
 		fOutputDebugString( "File %s closed.\n", marker_filename );
 
-		// Output the Pose data to a file.
-		char *pose_filename = "PsyPhyOculusDemo.pse";
-		fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
-		FILE *fp = fopen( pose_filename, "w" );
-		fprintf( fp, "frame; time; visible; position; orientation\n" );
-		for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
-			fprintf( fp, "%d; %.3f; %d; %s; %s\n",
-			frame, hmdPoses[frame].time, hmdPoses[frame].visible,
-			codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
-			codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ) );
-		}
-		fOutputDebugString( "File %s closed.\n", pose_filename );
 		codaTracker->Quit();
 
 	}
+
+	// Output the Pose data to a file.
+	char *pose_filename = "PsyPhyOculusDemo.pse";
+	fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
+	FILE *fp = fopen( pose_filename, "w" );
+	fprintf( fp, "%s\n", command_line );
+	fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation\n" );
+	for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
+		fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s\n",
+		frame, 
+		hmdPoses[frame].time, hmdPoses[frame].visible,
+		codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
+		codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
+		codaPoses[frame].time, codaPoses[frame].visible,
+		codaTracker->vstr( codaPoses[frame].visible ? codaPoses[frame].pose.position : codaTracker->zeroVector ),
+		codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ) );
+	}
+	fOutputDebugString( "File %s closed.\n", pose_filename );
+
 	return(0);
 }
