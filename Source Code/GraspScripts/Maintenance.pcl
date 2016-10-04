@@ -1,5 +1,5 @@
 # Protocol Definition: Maintenance Tasks 
-900; INSTRUCTION; Maintenance Tasks; MaintenanceWelcome.instruction.html
+900; INSTRUCTION@; Maintenance Tasks; MaintenanceWelcome.instruction.html
 901; SYSTEM@; Use HMD Tracking Only; echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
 902; SYSTEM@; Use GRIP 3D (CODA) tracker; del /F /Q NoCoda.flg; SetWithCodaReady.prompt.html
 903; SYSTEM@; Use FM Marker Structures; copy /Y Bdy\FM\*.bdy Bdy; StepReady.prompt.html

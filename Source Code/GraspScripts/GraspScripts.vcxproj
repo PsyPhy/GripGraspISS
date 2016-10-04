@@ -50,6 +50,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="DataTransfer.tsk" />
     <None Include="GraspCommissioningSessions.sss" />
     <None Include="GraspMaintenanceSessions.sss" />
     <None Include="GraspNominalSessions.sss" />

@@ -13,5 +13,5 @@ CENTER( IMAGE( Pictures/AlignmentFloating.jpg, 200 ) )
 
 - Check that the field of view of the TRACKER is free of obstructions.
  
-SUBHEADER( Press __'Execute'__ to perform alignment. ) 
+SUBHEADER( Press __'Start'__ to perform alignment. ) 
 

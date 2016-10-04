@@ -1,0 +1,5 @@
+# Instructions and commands to guide the installation for the seated posture.
+# We use COMMAND@ in the next line, rather than COMMAND so that pressing Enter does not cause the task to proceed.
+01; COMMAND@; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+02; INSTRUCTION; TaskFinished.instruction.html
+

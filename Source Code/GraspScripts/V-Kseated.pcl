@@ -12,5 +12,5 @@
 236; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 237; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 238; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --VtoK --sequence=Sequences\HT_Ser2_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-290; COMMAND; Data Transfer; Executables\GraspPackData.bat; StepReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+290; SCRIPT; Data Transfer; DataTransfer.tsk
 299; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

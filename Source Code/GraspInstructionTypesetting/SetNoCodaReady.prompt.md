@@ -9,5 +9,5 @@ is simulated with the mouse and arrow keys.
 This trackerless version allows for debugging of the user interface, procedures and operations without 
 the need for connection to the GRIP hardware.
  
-SUBHEADER( Press __'Execute'__ to continue. )
+SUBHEADER( Press __'Start'__ to continue. )
 
