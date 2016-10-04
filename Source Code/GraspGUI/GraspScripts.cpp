@@ -146,8 +146,10 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 				// Create a record of a single-step task.
 				// This means recording all the information that defines a step.
 				taskList[nTasks]->isolated_step = gcnew Step();
-				if ( !strcmp( token[1], "INSTRUCTION" ) ) {
-					taskList[nTasks]->isolated_step->type = "INSTRUCTION";
+				if ( !strcmp( token[1], "INSTRUCTION" ) 
+						|| !strcmp( token[1], "INSTRUCTION@" )
+					) {
+					taskList[nTasks]->isolated_step->type = gcnew String( token[1] );
 					taskList[nTasks]->isolated_step->instruction = gcnew String( token[3] );
 				}
 				else if ( !strcmp( token[1], "COMMAND" ) 
@@ -256,7 +258,7 @@ void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^ 
 void GraspDesktop::skipButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	if ( verifyNext ) {
 		System::Windows::Forms::DialogResult response;
-		response = MessageBox( "Are you sure you want to continue without executing step?", "Grasp@ISS", MessageBoxButtons::YesNo );
+		response = MessageBox( "Are you sure you want to continue without executing step?", "Grasp User Interface", MessageBoxButtons::YesNo );
 		if ( response == System::Windows::Forms::DialogResult::No ) return;
 		normalNavigationGroupBox->Visible = true;
 		normalNavigationGroupBox->Enabled = true;
@@ -266,7 +268,7 @@ void GraspDesktop::skipButton_Click(System::Object^  sender, System::EventArgs^ 
 
 void GraspDesktop::SelectNextTask ( void ) {
 	if ( taskListBox->SelectedIndex >= nTasks - 1 ) {
-		MessageBox( "Protocol Completed.\nLogging off.",   "GRASP@ISS", MessageBoxButtons::OK );
+		MessageBox( "Protocol Completed.\nLogging off.",   "GRASP User Interface", MessageBoxButtons::OK );
 		taskListBox->Items->Clear(); currentTask = -1;
 		protocolListBox->Items->Clear(); currentProtocol = -1;
 		subjectListBox->SelectedIndex = -1; currentSubject = -1;
@@ -281,7 +283,7 @@ void GraspDesktop::ShowStep( void ) {
 	// If we are doing a ShowStep, then make sure that the navigation buttons are enabled.
 	normalNavigationGroupBox->Visible = true;
 	normalNavigationGroupBox->Enabled = true;
-	this->AcceptButton = this->nextButton;
+	//this->AcceptButton = this->nextButton;
 	// Previous button is only active if we are not in the first step.
 	previousButton->Enabled = (currentStep > 0);
 	previousButton->Visible = true;
@@ -297,21 +299,26 @@ void GraspDesktop::ShowStep( void ) {
 	// true at the appropriate time, when a command has been cued, but by default it should be false.
 	cueStepCommand = false;
 	// Handle the step definition, depending on whether it is a command or an instruction.
-	if ( !stepList[currentStep]->type->CompareTo( "INSTRUCTION" ) ) {
+	if ( stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
 		// Show the instruction.
 		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->instruction );
+		// Enable moving on with Enter, or not.
+		if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
+		else this->AcceptButton = this->nextButton;
 		// No need to ask for verification if user tries to skip to the next page.
 		verifyNext = false;
 		stepExecutionState = STEP_SHOWN;
 	}
 	else {
-		// Enable the "Execute", "Skip" and "Previous" buttons.
-		commandNavigationGroupBox->Visible = true;
-		commandNavigationGroupBox->Enabled = true;
-		this->AcceptButton = this->executeButton;
 		// Hide the normal navigation buttons.
 		normalNavigationGroupBox->Visible = false;
 		normalNavigationGroupBox->Enabled = false;
+		// Enable the "Execute", "Skip" and "Previous" buttons.
+		commandNavigationGroupBox->Visible = true;
+		commandNavigationGroupBox->Enabled = true;
+		// Enable moving on with Enter, or not.
+		if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
+		else this->AcceptButton = this->executeButton;
 		// Ask for verification if user tries to skip to the next page before executing the command.
 		verifyNext = true;
 		// Show the 'ready' page for the command.
@@ -418,7 +425,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				errorCodeTextBox->Text = return_code.ToString();
 				errorNavigationGroupBox->Enabled = true;
 				errorNavigationGroupBox->Visible = true;
-				this->AcceptButton = this->retryButton;
+				//this->AcceptButton = this->retryButton;
 				// Make sure that the normal navigation buttons are hidden.
 				// I think they already are, but to be sure I do it again.
 				normalNavigationGroupBox->Visible = false;
@@ -431,7 +438,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			else {
 				normalNavigationGroupBox->Visible = true;
 				normalNavigationGroupBox->Enabled = true;
-				this->AcceptButton = this->nextButton;
+				// Enable moving on with Enter, or not.
+				if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
+				else this->AcceptButton = this->nextButton;
 				// Indicate in the script engine status that the command exited with an exit
 				//  code corresponding to a normal situation and specify the specific return code.
 				stepExecutionState = STEP_FINISHED_NORMAL + return_code;

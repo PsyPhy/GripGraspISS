@@ -647,7 +647,6 @@ namespace GraspGUI {
 			// 
 			// GraspDesktop
 			// 
-			this->AcceptButton = this->executeButton;
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
@@ -824,7 +823,7 @@ namespace GraspGUI {
 				stepList[0] = gcnew Step();
 				stepList[0]->number = 1;
 				stepList[0]->type = taskList[taskListBox->SelectedIndex]->type;
-				if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "INSTRUCTION" ) ) {
+				if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "INSTRUCTION" ) ) {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
 				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) 
