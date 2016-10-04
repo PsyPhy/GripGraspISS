@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
 	}
 	int key = _getch(); // Clear the _kbhit().
 	codaTracker->AbortAcquisition();
+	codaTracker->Quit();
 
 	fprintf( stderr, "\nCodaVisibility terminated. Press <Return> to close window.\n" );
 	_getch();
