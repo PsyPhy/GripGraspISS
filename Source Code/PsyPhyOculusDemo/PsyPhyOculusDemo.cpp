@@ -333,6 +333,20 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
 				handTracker->GetCurrentPose( codaPose );
 				handTracker->CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
+
+				derivatives[nRecordedFrames][X] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.x;
+				gyros[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Gyro.x;
+				accelerations[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Accelerometer.x;
+
+				derivatives[nRecordedFrames][Y] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.y;
+				gyros[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Gyro.y;
+				accelerations[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Accelerometer.y;
+			
+				derivatives[nRecordedFrames][Z] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.z;
+				gyros[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Gyro.z;
+				accelerations[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Accelerometer.z;
+			
+			
 				if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
 				// The position and orientation of the viewpoint is first set by the player position.
 				// So we use the offset and attitude to turn the viewpoint according to the tracker
@@ -468,14 +482,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	fprintf( fp, "%s\n", command_line );
 	fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation\n" );
 	for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
-		fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s\n",
+		fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s; %s; %s; %s\n",
 		frame, 
 		hmdPoses[frame].time, hmdPoses[frame].visible,
 		codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
 		codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
 		codaPoses[frame].time, codaPoses[frame].visible,
 		codaTracker->vstr( codaPoses[frame].visible ? codaPoses[frame].pose.position : codaTracker->zeroVector ),
-		codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ) );
+		codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
+		codaTracker->vstr( gyros[frame] ), codaTracker->vstr( derivatives[frame] ), codaTracker->vstr( accelerations[frame] )
+		);
 	}
 	fOutputDebugString( "File %s closed.\n", pose_filename );
 

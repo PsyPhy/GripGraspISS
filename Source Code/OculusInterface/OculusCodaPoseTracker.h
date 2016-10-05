@@ -31,6 +31,9 @@ class OculusCodaPoseTracker : public PoseTracker {
 
 		double InertialWeighting;
 
+		ovrTrackingState sensorState;
+		ovrSensorData rawSensorData;
+
 		OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda );
 		~OculusCodaPoseTracker();
 
