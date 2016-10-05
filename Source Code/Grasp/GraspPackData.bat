@@ -23,7 +23,7 @@ goto FIND
 
 :NOTFOUND 
 echo Could not find filename root.
-goto :eof
+exit -5
 
 :FOUND
 set local_directory=%2
@@ -92,10 +92,10 @@ REM
 REM Make the directory on the host. This might fail if the directory is already there, so ignore any errors.
 REM
 "%here%"\%UTILS%\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "mkdir %DIRECTORY%"  "exit" 
-if ERRORLEVEL == 1 GOTO IGNORE
+if ERRORLEVEL == 1 GOTO :IGNORE
 :IGNORE
 "%here%"\%UTILS%\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %gROOT%.??"  "put  %gROOT%.md5" "exit" 
-REM if ERRORLEVEL == 1 GOTO ERREXIT
+if ERRORLEVEL == 1 GOTO :ERREXIT
 
 REM Normal Exit
 REM Clean up.
@@ -105,7 +105,7 @@ exit 0
 
 :ERREXIT
 echo Error during file transfer to GRIP.
-exit -1
+exit -10
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :DateToOrdinal %yy% %mm% %dd% year day
