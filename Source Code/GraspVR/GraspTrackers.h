@@ -58,6 +58,9 @@ namespace Grasp {
 
 	public: 
 
+		// Buffers to hold the most recent frame of marker data.
+		MarkerFrame markerFrame[MAX_UNITS];
+
 		PoseTracker *hmdTracker;
 		PoseTracker *handTracker;
 		PoseTracker *chestTracker;
@@ -117,9 +120,6 @@ namespace Grasp {
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
 		CodaRTnetTracker *codaTracker;
-
-		// Buffers to hold the most recent frame of marker data.
-		MarkerFrame markerFrame[MAX_UNITS];
 
 		// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
 		// We use one for each Coda unit, but we could use more.

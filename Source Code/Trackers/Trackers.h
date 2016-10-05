@@ -81,7 +81,7 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual void	WaitAcquisitionCompleted( void );
 		virtual bool	CheckAcquisitionOverrun( void );
 		// Retieve all the marker data 
-		virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) = 0;
+		virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 		virtual int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
 
 		virtual bool	GetCurrentMarkerFrame( MarkerFrame &frame );

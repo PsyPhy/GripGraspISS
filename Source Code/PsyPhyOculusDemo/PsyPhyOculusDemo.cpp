@@ -163,11 +163,13 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
 
-		// Create a pose tracker that combines Coda and Oculus data.
-		oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
-		fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
 
 	}
+	// Create a pose tracker that combines Coda and Oculus data.
+	if ( useCoda ) oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, hmdCascadeTracker );
+	else oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
+	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusCodaPoseTracker." );
+
 	// Create a tracker that integrates Oculus derivatives, without an absolute reference tracker.
 	oculusDerivativesPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
 	fAbortMessageOnCondition( !oculusDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusDerivativesPoseTracker." );
@@ -194,6 +196,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		hmdTracker = hmdCascadeTracker;
 		break;
 	case NULL_PLUS_DERIVATIVES:
+	default:
 		hmdTracker = oculusGroundedDerivativesPoseTracker;
 		break;
 	}
@@ -307,6 +310,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				}
 			}
 			// Perform any periodic updating that the trackers might require.
+			fAbortMessageOnCondition( !oculusCodaPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusCodaPoseTracker pose tracker." );
 			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
 			fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
 			fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
@@ -415,11 +419,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	else useCoda = false;
 
 	// NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES
-	if ( strstr( command_line, "--coda_plus_derivatives" ) ) defaultMode = CODA_PLUS_DERIVATIVES;
-	if ( strstr( command_line, "--null_plus_derivatives" ) ) defaultMode = NULL_PLUS_DERIVATIVES;
-	if ( strstr( command_line, "--oculus_only" ) ) defaultMode = OCULUS;
-	if ( strstr( command_line, "--derivatives_only" ) ) defaultMode = DERIVATIVES;
-	if ( strstr( command_line, "--coda_only" ) ) defaultMode = CODA;
+	defaultMode = NULL_PLUS_DERIVATIVES;
+	if ( strstr( command_line, "--derivatives_plus_coda" ) ) defaultMode = CODA_PLUS_DERIVATIVES;
+	if ( strstr( command_line, "--derivatives_plus_null" ) ) defaultMode = NULL_PLUS_DERIVATIVES;
+	if ( strstr( command_line, "--only_oculus" ) ) defaultMode = OCULUS;
+	if ( strstr( command_line, "--only_derivatives" ) ) defaultMode = DERIVATIVES;
+	if ( strstr( command_line, "--only_coda" ) ) defaultMode = CODA;
 
 	if ( ptr = (char *)strstr( command_line, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parent );
 	if ( strstr( command_line, "--fullscreen" ) ) fullscreen = true;
