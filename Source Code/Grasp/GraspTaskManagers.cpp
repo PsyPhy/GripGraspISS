@@ -315,6 +315,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	pose_fp = NULL;
 
 	if ( currentTrial < nTrials ) return( -2 );
+	else if ( retriesRemaining <= 0 ) return( -3 );
 	else return 0;
 
 }
@@ -836,7 +837,7 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 		// Move on to the next trial.
 		currentTrial++;
 		if ( currentTrial < nTrials ) return( StartTrial ); 
-		else return( ExitStateMachine );
+		else return( BlockCompleted );
 	}
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
