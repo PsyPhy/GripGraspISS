@@ -404,8 +404,25 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			char *cmd;
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
+			
+			// Keep track of where we are in case we need to restart.
+			char *action_filename = "GraspLastAction.txt";
+			FILE *action_fp;
+			
+			action_fp = fopen( action_filename, "w" );
+			if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing action record.", action_filename );
+			fprintf( action_fp, "Executing: %s", cmd );
+			fclose( action_fp );
+
 			int return_code = system( cmd );
-			if ( return_code > 127 ) return_code = - return_code;
+			if ( return_code > 127 ) return_code -= 128;
+
+			action_fp = fopen( action_filename, "w" );
+			if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", action_filename );
+			if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
+			else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
+			fclose( action_fp );
+
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 
 			// Map exit codes to the results pages defined in the step definition.
