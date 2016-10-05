@@ -29,6 +29,6 @@ CodaServerLogin = administrator
 CodaServerPassword = dex
 
 ;;; Local path to where WinSCP.com resides.
-LocalExecutablesPath = Executables\
+LocalExecutablesPath = Utils\
 
 
