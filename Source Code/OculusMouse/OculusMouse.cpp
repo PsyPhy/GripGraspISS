@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
+#include "../Useful/Timers.h"
 
 // The following includes comes from the Oculus OVR source files.
 // The path is set via the user macro $(OVRSDKROOT) and via the property pages
@@ -28,6 +29,9 @@ INPUT KeyShiftDownInput;
 INPUT KeyShiftUpInput;
 
 int n_inputs = 1;
+
+double holdDelay = 1.0;
+Timer holdTimer;
 
 int main(int argc, char *argv[])
 {
@@ -147,15 +151,27 @@ int main(int argc, char *argv[])
 		if ( MouseMoveInput.mi.dx != 0 || MouseMoveInput.mi.dy != 0 ) SendInput( n_inputs, &MouseMoveInput, sizeof( MouseMoveInput ) );
 
 		// Center button is mapped to left mouse click.
-		if ( state.Buttons & ovrButton_Enter && !enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftDownInput, sizeof( MouseLeftDownInput ) );
+		if ( state.Buttons & ovrButton_Enter && !enterPreviouslyDown )  {
+			SendInput( n_inputs, &MouseLeftDownInput, sizeof( MouseLeftDownInput ) );
+		}
+		
 		if ( !(state.Buttons & ovrButton_Enter) && enterPreviouslyDown )  SendInput( n_inputs, &MouseLeftUpInput, sizeof( MouseLeftUpInput ) );
 		enterPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Enter));
-
+		
 		// Back button is mapped to <Enter>.
 		if ( state.Buttons & ovrButton_Back && !backPreviouslyDown )  {
 			SendInput( n_inputs, &KeyReturnDownInput, sizeof( KeyReturnDownInput ) );
+			TimerSet( holdTimer, holdDelay );
 		}
-		if ( !(state.Buttons & ovrButton_Back ) && backPreviouslyDown )  SendInput( n_inputs, &KeyReturnUpInput, sizeof( KeyReturnUpInput ) );
+		if ( state.Buttons & ovrButton_Back && TimerTimeout( holdTimer ) )  {
+			SendInput( n_inputs, &KeyReturnUpInput, sizeof( KeyReturnUpInput ) );
+			Sleep( 200 );
+			SendInput( n_inputs, &KeyReturnDownInput, sizeof( KeyReturnDownInput ) );
+			TimerSet( holdTimer, holdDelay );
+		}
+		if ( !(state.Buttons & ovrButton_Back ) && backPreviouslyDown )  {
+			SendInput( n_inputs, &KeyReturnUpInput, sizeof( KeyReturnUpInput ) );
+		}
 		backPreviouslyDown = ( 0 != (state.Buttons & ovrButton_Back));
 
 		// Home button is mapped to right mouse click.
