@@ -3,7 +3,8 @@
 #pragma once
 
 #include "../Trackers/Trackers.h"
-
+#include "../VectorsMixin/VectorsMixin.h"
+#include "TMData.h"
 
 // Connection to Dex hardware via the ET port.
 #define DEFAULT_SERVER "10.80.12.103"
@@ -23,7 +24,7 @@
 
 namespace Grasp {
 
-	class DexServices 
+	class DexServices : public PsyPhy::VectorsMixin
 	{
 
 	private:
@@ -46,10 +47,21 @@ namespace Grasp {
 		int static_substep;
 		int static_tracker_status;
 
+		Timer	slice_timer;
+		int		slice_count;
+		Timer	stream_timer;
+		int		stream_count;
+		Timer	info_timer;
+
+		// An object that serializes the data destined for DEX housekeeping telemetry packets.
+		RT_packet rt;
+
 	public:
 		
 		DexServices( void ) :
 		
+		  slice_count(0),
+		  stream_count(0),
 		  not_sent_countdown(10),
 		  static_user(0),
 		  static_protocol(0),
@@ -59,6 +71,9 @@ namespace Grasp {
 		  static_tracker_status(TRACKERSTATUS_UNKNOWN)
 		{
 		  strncpy( log_filename, "DexServices.dxl", sizeof( log_filename ) );
+		  TimerSet( slice_timer, RT_SLICE_INTERVAL );
+		  TimerSet( info_timer, HK_PACKET_INTERVAL );
+		  TimerStart( stream_timer );
 		 }
 
 		void Initialize( char *filename = nullptr );
@@ -66,6 +81,8 @@ namespace Grasp {
 		int Send( const unsigned char *packet, int size ) ;
 		void Disconnect( void );
 		void Release( void );
+
+		void AddDataSlice(  unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
 
 		int SendTaskInfo( int user, int protocol, int task, int step, 
 			unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN );

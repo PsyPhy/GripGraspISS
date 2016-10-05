@@ -11,18 +11,17 @@
 #include <string.h>
 #include <time.h>
 
+#include "../Trackers/PoseTrackers.h"
+#include "DexServices.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/fMessageBox.h"
-
-#include "TMData.h"
-#include "DexServices.h"
 
 using namespace Grasp;
 
 void DexServices::printDateTime( FILE *fp ) {
 	SYSTEMTIME st;
 	GetSystemTime( &st );
-	fprintf( fp, "%4d-%02d-%02d %02d:%02d:%02d.%3d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
+	fprintf( fp, "%4d-%02d-%02d %02d:%02d:%02d.%03d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
 }
 
 
@@ -33,7 +32,6 @@ void DexServices::Initialize( char *filename ) {
 	fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", log_filename );
 	printDateTime( log );
 	fprintf( log, " File %s open for logging services.\n", log_filename );
-
 }
 
 int DexServices::Connect ( void ) {
@@ -87,10 +85,7 @@ int DexServices::Connect ( void ) {
 		WSACleanup();
 		return -1;
 	}
-	else
-	{
-		fOutputDebugString( "Client: socket() OK.\n" );
-	}
+	fOutputDebugString( "Client: socket() OK.\n" );
 	// Set TCP_NODELAY to reduce jitter
 	unsigned int flag = 1;
 	setsockopt( dexSocket,	/* socket affected */
@@ -109,6 +104,7 @@ int DexServices::Connect ( void ) {
 	printDateTime( log );
 	fprintf( log, " Connection to DEX pending.\n" );
 	Sleep( 1000 );
+	return 0;
 
 };
 
@@ -140,12 +136,34 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
+void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
+	PsyPhy::PoseTracker pm;
+	Tracker		tr;
+	rt.Slice[slice_count].fillTime = TimerElapsedTime( stream_timer );
+	rt.Slice[slice_count].globalCount = stream_count++;
+	rt.Slice[slice_count].objectStateBits = objectStateBits;
+	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
+	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, hmd );
+	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hmd );
+	pm.CopyTrackerPose( rt.Slice[slice_count].chest, hmd );
+	pm.CopyTrackerPose( rt.Slice[slice_count].mouse, hmd );
+	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[0], frame[0] );
+	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[1], frame[1] );
+
+	if ( TimerTimeout( slice_timer ) ) {
+		slice_count++;
+		if ( slice_count >= RT_SLICES_PER_PACKET ) {
+			SendScienceRealtimeData();
+			slice_count = 0;
+		}
+		TimerSet( slice_timer, RT_SLICE_INTERVAL );
+	}
+}
+
 int DexServices::SendScienceRealtimeData( void ) {
 
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[1024];
-	// An object that serializes the data destined for DEX housekeeping telemetry packets.
-	RT_packet rt;
 
 	// Turn the data structure into a string of bytes with header etc.
 	u32 size = rt.serialize( packet );
@@ -176,28 +194,32 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 	static_step = step;
 	static_substep = substep;
 	static_tracker_status = tracker_status;
+	
+	if ( TimerTimeout( info_timer ) ) {
+		// Fill the packet with info.
+		hk.current_protocol = protocol;
+		hk.current_user = user;
+		hk.current_task = task;
+		hk.current_step = step;
+		hk.scriptengine_status = substep;
+		hk.motiontracker_status = tracker_status;
 
-	// Fill the packet with info.
-	hk.current_protocol = protocol;
-	hk.current_user = user;
-	hk.current_task = task;
-	hk.current_step = step;
-	hk.scriptengine_status = substep;
-	hk.motiontracker_status = tracker_status;
+		// Turn the data structure into a string of bytes with header etc.
+		u32 size = hk.serialize( packet );
 
-	// Turn the data structure into a string of bytes with header etc.
-	u32 size = hk.serialize( packet );
+		// Send it to DEX.
+		int sent = Send( packet, size );
+		if ( log ) {
+			printDateTime( log );
+			fprintf( log, " Sent task info: %d %d %d %d   %d %d (%s).\n", 
+				user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
+			fflush( log );
+		}
+		TimerSet( info_timer, HK_PACKET_INTERVAL );
+		return( sent );
 
-	// Send it to DEX.
-	int sent = Send( packet, size );
-	if ( log ) {
-		printDateTime( log );
-		fprintf( log, " Sent task info: %d %d %d %d   %d %d (%s).\n", 
-			user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
-		fflush( log );
 	}
-
-	return( sent );
+	else return( 0 );
 
 }
 

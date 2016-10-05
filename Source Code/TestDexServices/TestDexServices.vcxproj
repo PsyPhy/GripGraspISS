@@ -80,8 +80,14 @@
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Trackers\Trackers.vcxproj">
+      <Project>{964bbd65-c198-4a02-8255-349803bdb59d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
+      <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

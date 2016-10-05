@@ -8,6 +8,7 @@
 #include <WinSock2.h>
 #include <conio.h>
 
+#include "../Trackers/PoseTrackers.h"
 #include "../DexServices/DexServices.h"
 
 using namespace Grasp;
@@ -30,8 +31,19 @@ int main(int argc, char *argv[])
 	fprintf( stderr, "OK.\n" );
 
 	fprintf( stderr, "DexServices: Send dummy HK packet ... " );
-	if ( 0 < dex->SendTaskInfo( 110, 220, 33, 44 ) ) fprintf( stderr, "OK.\n" );
-	else fprintf( stderr, "not sent.\n" );
+	for ( int i = 0; i < 100; i++ ) {
+		if ( 0 < dex->SendTaskInfo( 110, 220, 33, 44 ) ) fprintf( stderr, "OK.\n" );
+		else fprintf( stderr, "not sent.\n" );
+		Sleep( 100 );
+	}
+
+	fprintf( stderr, "DexServices: Send dummy RT packets ... " );
+	static MarkerFrame frames[2];
+	for ( int i = 0; i < 1000; i++ ) {
+		dex->AddDataSlice( 0x12345678, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
+		Sleep( 1 );
+	}
+	fprintf( stderr, "OK.\n" );
 
 	fprintf( stderr, "DexServices: Snap a picture ... " );
 	if ( 0 < dex->SnapPicture( "JOE" ) ) fprintf( stderr, "OK.\n" );
