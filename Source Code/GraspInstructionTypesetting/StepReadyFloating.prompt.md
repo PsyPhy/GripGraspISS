@@ -10,7 +10,7 @@ HEADER( __Ready to Start__ )
 
 - Take the REMOTE in your *__left__* hand.
 
-CENTER( IMAGE(Pictures/Floating.jpg, 200) )
+CENTER( IMAGE(Pictures/SubjectPositioningFreeFloating.gif, 350) )
  
-CENTER(Pull the HMD over your eyes then press the Center Button on the REMOTE to begin. )
+CENTER(Pull the HMD over your eyes then press the CBUTTON on the REMOTE to begin. )
 

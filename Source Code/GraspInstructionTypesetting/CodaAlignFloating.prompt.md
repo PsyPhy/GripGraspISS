@@ -9,7 +9,7 @@ __Note__: Alignment of the marker structure on the restraint plate is critical.
 Please ensure that the top edge of the CHESTMARKERS is aligned with the edge of the 
 plate nearest the deck of the ISS module.
 
-CENTER( IMAGE( Pictures/AlignmentFloating.jpg, 200 ) )
+CENTER( IMAGE( Pictures/AlignmentFreeFloating.jpg, 350 ) )
 
 - Check that the field of view of the TRACKER is free of obstructions.
  

@@ -8,7 +8,7 @@ attached with velcro to the backrest.
 __Note__: Alignment of the CHESTMARKERS on the backrest is critical. 
 Please ensure that the top edge of the marker structure is aligned with the top edge of the backrest.
 
-CENTER( IMAGE( Pictures/AlignmentSeated.jpg, 200 ) )
+CENTER( IMAGE( Pictures/AlignmentSeated.jpg, 350 ) )
 
 - Check that the field of view of the TRACKER is free of obstructions.
 

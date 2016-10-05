@@ -15,6 +15,7 @@ ALL_HTML=GraspWelcome.html \
 	HMDStructureAssembly.instruction.html \
 	StepReadySeated.prompt.html StepReadyFloating.prompt.html \
 	ObjectPositioningSeated.instruction.html ObjectPositioningFloating.instruction.html\
+	00StraightenHead.instruction.html \
 	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
@@ -55,6 +56,10 @@ Pictures\StraightenHeadGreen.bmp: redo
 	move ..\..\$(@F) Pictures\.
 
 Pictures\StraightenHeadCyan.bmp: redo
+	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=3.0  $(@F)
+	move ..\..\$(@F) Pictures\.
+
+Pictures\StraightenHeadBlue.bmp: redo
 	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=3.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 

@@ -1,4 +1,4 @@
-HEADER( __Task Terminated__ )
+HEADER( __Task Completed__ )
 
 CENTER( IMAGE(Pictures/checklist.jpg, 240) )
  

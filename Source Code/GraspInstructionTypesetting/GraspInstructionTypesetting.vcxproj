@@ -60,6 +60,7 @@
     <None Include="CodaAlignFloating.prompt.md" />
     <None Include="CodaAlignSeated.prompt.md" />
     <None Include="00IntroK-K.instruction.md" />
+    <None Include="FileTransferReady.prompt.md" />
     <None Include="GraspInstructions.debug.mak" />
     <None Include="GraspInstructions.release.mak" />
     <None Include="HMDStructureAssembly.instruction.md" />

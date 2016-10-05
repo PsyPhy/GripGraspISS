@@ -88,6 +88,9 @@
     <None Include="HMDStructureAssembly.instruction.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="FileTransferReady.prompt.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

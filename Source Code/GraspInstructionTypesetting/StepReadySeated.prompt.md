@@ -1,5 +1,7 @@
 HEADER( __Ready to Start__ )
 
+- Replace the Cushion on the CHAIR.
+
 - Adopt the *__seated__* posture in the CHAIR.
 
 - Attach CHESTMARKERS to your torso and verify that it is well centered left-to-right on your chest.
@@ -10,7 +12,7 @@ HEADER( __Ready to Start__ )
 
 - Take the REMOTE in your *__left__* hand.
 
-CENTER( IMAGE(Pictures/Seated.jpg, 200) )
+CENTER( IMAGE(Pictures/SubjectPositioningSeated.gif, 350) )
  
-CENTER(Pull the HMD over your eyes then press the Center Button on the REMOTE to begin. )
+CENTER(Pull the HMD over your eyes then press the CBUTTON on the REMOTE to begin. )
 

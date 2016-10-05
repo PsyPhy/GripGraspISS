@@ -20,4 +20,4 @@
 #define HMD				OPNOM(Virtual Reality Headset)
 #define BIB				OPNOM(Marker Support Bib)
 #define HALO			halo
-#define CBUTTON			Select Button
+#define CBUTTON			__*Select Button*__

@@ -1,4 +1,4 @@
-HEADER( __Subsession Terminated__ )
+HEADER( __Subsession Completed__ )
 
 CENTER( IMAGE(Pictures/finish-line.png, 300) )
  

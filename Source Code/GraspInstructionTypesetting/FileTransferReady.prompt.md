@@ -6,6 +6,5 @@ The Perspectives computer (this computer) must be connected to the GRIP hardware
  
 SUBHEADER( Press the __'Start'__ button below to continue. )
 
-CENTER(__NB__: *Pressing 'Enter' will not work here.*)
-CENTER(*You must click on the 'Start' button below.*)
+CENTER(__NB__: *Pressing 'Enter' will not work here.<br>You must click on the 'Start' button below.*)
 
