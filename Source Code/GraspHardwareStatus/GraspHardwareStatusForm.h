@@ -91,7 +91,9 @@ namespace GraspHardwareStatus {
 		MarkerStructureGLObject *hmdMobile;
 		MarkerStructureGLObject *handMobile;
 		MarkerStructureGLObject *chestMobile;
-		// Just a way to refer to all the mobile objects together.
+	private: System::Windows::Forms::Button^  closeButton;
+
+			 // Just a way to refer to all the mobile objects together.
 		// It makes it easier to draw all of them. 
 		Yoke *mobiles;
 
@@ -185,6 +187,7 @@ namespace GraspHardwareStatus {
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->vrPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->closeButton = (gcnew System::Windows::Forms::Button());
 			this->chestGroupBox->SuspendLayout();
 			this->handGroupBox->SuspendLayout();
 			this->hmdGroupBox->SuspendLayout();
@@ -364,8 +367,7 @@ namespace GraspHardwareStatus {
 			this->oculusPanel->Location = System::Drawing::Point(17, 31);
 			this->oculusPanel->Name = L"oculusPanel";
 			this->oculusPanel->Size = System::Drawing::Size(829, 375);
-			this->oculusPanel->TabIndex = 0;			
-				
+			this->oculusPanel->TabIndex = 0;
 			// 
 			// label3
 			// 
@@ -394,7 +396,6 @@ namespace GraspHardwareStatus {
 			this->groupBox2->TabIndex = 7;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"3D Tracking";
-			this->groupBox2->Enter += gcnew System::EventHandler(this, &Form1::groupBox2_Enter);
 			// 
 			// label8
 			// 
@@ -432,17 +433,34 @@ namespace GraspHardwareStatus {
 			this->vrPanel0->Size = System::Drawing::Size(408, 375);
 			this->vrPanel0->TabIndex = 0;
 			// 
+			// closeButton
+			// 
+			this->closeButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
+			this->closeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->closeButton->Location = System::Drawing::Point(1330, 899);
+			this->closeButton->Name = L"closeButton";
+			this->closeButton->Size = System::Drawing::Size(114, 42);
+			this->closeButton->TabIndex = 8;
+			this->closeButton->Text = L"Close";
+			this->closeButton->UseVisualStyleBackColor = true;
+			this->closeButton->Click += gcnew System::EventHandler(this, &Form1::button1_Click_1);
+			// 
 			// Form1
 			// 
+			this->AcceptButton = this->closeButton;
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1454, 896);
+			this->CancelButton = this->closeButton;
+			this->ClientSize = System::Drawing::Size(1454, 953);
+			this->Controls->Add(this->closeButton);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->hmdGroupBox);
 			this->Controls->Add(this->handGroupBox);
 			this->Controls->Add(this->chestGroupBox);
 			this->Name = L"Form1";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GRASP Hardware Status";
 			this->Shown += gcnew System::EventHandler(this, &Form1::Form1_Shown);
 			this->chestGroupBox->ResumeLayout(false);
@@ -600,7 +618,8 @@ namespace GraspHardwareStatus {
 			system( cmd );
 		}
 
-private: System::Void groupBox2_Enter(System::Object^  sender, System::EventArgs^  e) {
+private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
+			 Close();
 		 }
 };
 
