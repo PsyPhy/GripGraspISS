@@ -81,6 +81,8 @@ namespace AlignToRigidBodyGUI {
 	private: System::Windows::Forms::GroupBox^  groupBox2;
 	private: System::Windows::Forms::Panel^  fovPanel1;
 	private: System::Windows::Forms::Label^  busy;
+	private: System::Windows::Forms::TextBox^  instructionsTextBox3;
+
 
 	protected: 
 		double maxOrientationError;
@@ -224,6 +226,7 @@ namespace AlignToRigidBodyGUI {
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->fovPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->busy = (gcnew System::Windows::Forms::Label());
+			this->instructionsTextBox3 = (gcnew System::Windows::Forms::TextBox());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
 			this->groupBox1->SuspendLayout();
@@ -234,11 +237,11 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(749, 899);
+			this->alignButton->Location = System::Drawing::Point(550, 805);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
-			this->alignButton->Text = L"Align";
+			this->alignButton->Text = L"OK";
 			this->alignButton->UseVisualStyleBackColor = true;
 			this->alignButton->Click += gcnew System::EventHandler(this, &SingleObjectForm::alignButton_Click);
 			// 
@@ -247,7 +250,7 @@ namespace AlignToRigidBodyGUI {
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(177, 899);
+			this->cancelButton->Location = System::Drawing::Point(1090, 805);
 			this->cancelButton->Name = L"cancelButton";
 			this->cancelButton->Size = System::Drawing::Size(159, 56);
 			this->cancelButton->TabIndex = 3;
@@ -260,7 +263,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox2->Controls->Add(this->visibilityPanel2);
 			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox2->Location = System::Drawing::Point(552, 74);
+			this->vrGroupBox2->Location = System::Drawing::Point(909, 22);
 			this->vrGroupBox2->Name = L"vrGroupBox2";
 			this->vrGroupBox2->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox2->TabIndex = 5;
@@ -279,7 +282,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox1->Controls->Add(this->visibilityPanel1);
 			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox1->Location = System::Drawing::Point(12, 74);
+			this->vrGroupBox1->Location = System::Drawing::Point(369, 22);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
 			this->vrGroupBox1->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox1->TabIndex = 4;
@@ -297,30 +300,28 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox->Location = System::Drawing::Point(12, 22);
+			this->instructionsTextBox->Location = System::Drawing::Point(12, 59);
 			this->instructionsTextBox->Multiline = true;
 			this->instructionsTextBox->Name = L"instructionsTextBox";
-			this->instructionsTextBox->Size = System::Drawing::Size(1060, 46);
+			this->instructionsTextBox->Size = System::Drawing::Size(324, 291);
 			this->instructionsTextBox->TabIndex = 6;
-			this->instructionsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// instructionsTextBox2
 			// 
-			this->instructionsTextBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, 
+			this->instructionsTextBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox2->Location = System::Drawing::Point(12, 432);
+			this->instructionsTextBox2->Location = System::Drawing::Point(12, 417);
 			this->instructionsTextBox2->Multiline = true;
 			this->instructionsTextBox2->Name = L"instructionsTextBox2";
-			this->instructionsTextBox2->Size = System::Drawing::Size(1060, 46);
+			this->instructionsTextBox2->Size = System::Drawing::Size(324, 358);
 			this->instructionsTextBox2->TabIndex = 13;
-			this->instructionsTextBox2->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// groupBox1
 			// 
 			this->groupBox1->Controls->Add(this->fovPanel2);
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(552, 484);
+			this->groupBox1->Location = System::Drawing::Point(909, 380);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(520, 409);
 			this->groupBox1->TabIndex = 12;
@@ -339,7 +340,7 @@ namespace AlignToRigidBodyGUI {
 			this->groupBox2->Controls->Add(this->fovPanel1);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(12, 484);
+			this->groupBox2->Location = System::Drawing::Point(369, 380);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(520, 409);
 			this->groupBox2->TabIndex = 11;
@@ -359,12 +360,23 @@ namespace AlignToRigidBodyGUI {
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->busy->ForeColor = System::Drawing::Color::Maroon;
-			this->busy->Location = System::Drawing::Point(102, 372);
+			this->busy->Location = System::Drawing::Point(276, 346);
 			this->busy->Name = L"busy";
 			this->busy->Size = System::Drawing::Size(888, 184);
 			this->busy->TabIndex = 15;
 			this->busy->Text = L"Alignment in progress.\r\nPlease wait ...";
 			this->busy->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			// 
+			// instructionsTextBox3
+			// 
+			this->instructionsTextBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->instructionsTextBox3->Location = System::Drawing::Point(3, 793);
+			this->instructionsTextBox3->Multiline = true;
+			this->instructionsTextBox3->Name = L"instructionsTextBox3";
+			this->instructionsTextBox3->Size = System::Drawing::Size(333, 68);
+			this->instructionsTextBox3->TabIndex = 16;
+			this->instructionsTextBox3->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// SingleObjectForm
 			// 
@@ -372,8 +384,9 @@ namespace AlignToRigidBodyGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(1082, 967);
+			this->ClientSize = System::Drawing::Size(1441, 876);
 			this->ControlBox = false;
+			this->Controls->Add(this->instructionsTextBox3);
 			this->Controls->Add(this->busy);
 			this->Controls->Add(this->instructionsTextBox2);
 			this->Controls->Add(this->groupBox1);
@@ -406,15 +419,23 @@ namespace AlignToRigidBodyGUI {
 				 objects = new Grasp::GraspGLObjects();
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
-				 Sphere *sphere1 = new Sphere( 100.0 );
+				 Sphere *sphere1 = new Sphere( 140.0 );
 				 sphere1->SetColor( GREEN );	
 				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
 				 alignmentObject1->AddComponent( sphere1 );
+				 for ( int i = 0; i < alignmentObject1->components - 1; i++ ) {
+					 alignmentObject1->component[i]->Disable();
+				 }
+
 				 alignmentObject2 = objects->CreateChestMarkerStructure( model_file );
-				 Sphere *sphere2 = new Sphere( 100.0 );
-				 sphere1->SetColor( GREEN );	
-				 sphere1->SetOffset( 0.0, 300.0, 0.0 );
+				 Sphere *sphere2 = new Sphere( 140.0 );
+				 sphere2->SetColor( GREEN );	
+				 sphere2->SetOffset( 0.0, 300.0, 0.0 );
 				 alignmentObject2->AddComponent( sphere2 );
+				 for ( int i = 0; i < alignmentObject2->components - 1; i++ ) {
+					 alignmentObject2->component[i]->Disable();
+				 }
+
 				 visibilityObject1 = objects->CreateChestMarkerStructure( model_file );
 				 visibilityObject2 = objects->CreateChestMarkerStructure( model_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
@@ -440,7 +461,7 @@ namespace AlignToRigidBodyGUI {
 				 fovSweetSpot->AddComponent( hole );
 
 				 hole = new Hole( 100.0,  2000.0, 2000.0 );
-				 hole->SetColor( 0.0, 0.0, 0.25, 0.5 );	
+				 hole->SetColor( 0.0, 0.0, 0.5, 0.5 );	
 				 fovSweetSpot->AddComponent( hole );
 
 				 Bar *bar = new Bar( 2000.0, 5.0, 5.0 );
@@ -495,7 +516,7 @@ namespace AlignToRigidBodyGUI {
 				// Annul the previous alignment to get data in coordinates intrinsic to each CODA unit.
 				// Send a message to ground to show our progress.
 				dex->SendSubstep( ANNUL_ALIGNMENT );
-				instructionsTextBox->Text = "[ Cancelling previous alignment ... ]";
+				instructionsTextBox->Text = "[ Cancelling previous ... ]";
 				Refresh();
 				Application::DoEvents();
 				char *tempfile = ".nullalignment.tmp";
@@ -513,8 +534,9 @@ namespace AlignToRigidBodyGUI {
 				 // Re-enable the Form as being inactive.
 				 Enabled = true;
 				 // Prompt for the required action.
-				 instructionsTextBox->Text = "Verify that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
-				 instructionsTextBox2->Text = "Verify that the Green Dot is centered in the crosshairs for each Tracker Camera.";
+				 instructionsTextBox->Text = "Check that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
+				 instructionsTextBox2->Text = "Adjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.";
+				 instructionsTextBox3->Text = "When all conditions are met, press 'OK'.";
 
 				 if ( !noCoda ) {
 					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
@@ -565,6 +587,7 @@ namespace AlignToRigidBodyGUI {
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
 				 instructionsTextBox2->Text = "";
+				 instructionsTextBox3->Text = "";
 				 Refresh();
 				 Application::DoEvents();
 				 // Show a message while we are busy acquiring and computing the new alignment.
@@ -627,7 +650,7 @@ namespace AlignToRigidBodyGUI {
 				 // We will then invert the pose to compute the transformation required by each unit.
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( COMPUTE_ALIGNMENT );
-				 instructionsTextBox->Text = "[ Computing alignment transformations ... ]";
+				 instructionsTextBox->Text = "[ Computing transformations ... ]";
 				 Refresh();
 				 Application::DoEvents();
 				 MarkerFrame avgFrame;
@@ -661,7 +684,7 @@ namespace AlignToRigidBodyGUI {
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( STARTUP_ALIGNED );
-				 instructionsTextBox->Text = "[ Acquiring for confirmation ... ]";
+				 instructionsTextBox->Text = "[ Acquiring to confirm ... ]";
 				 Refresh();
 				 Application::DoEvents();
 

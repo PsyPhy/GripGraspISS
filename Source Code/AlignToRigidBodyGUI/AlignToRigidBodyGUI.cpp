@@ -15,6 +15,11 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
+	HWND hwnd;
+	hwnd = FindWindow( NULL, "c:\\windows\\system32\\cmd.exe" );
+	// hwnd = FindWindow( NULL, "Command Prompt" );
+	if ( hwnd ) ShowWindow( hwnd, SW_FORCEMINIMIZE );
+
 	// Parse the command line arguments.
 	// Note that unrecognized arguments will be ignored here, but they might be recognized
 	//  further down when DexServices parses the command line arguments as well.

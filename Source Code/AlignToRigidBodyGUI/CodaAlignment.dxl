@@ -3,3 +3,11 @@
 2016-08-23 15:15:59. 14 File CodaAlignment.dxl open for logging services.
 2016-08-23 15:15:59. 14 Attempting connection to DEX.
 2016-08-23 15:15:59. 26 Sent task info: 0 0 0 0   30000 55555.
+2016-10-06 05:59:00.170 File CodaAlignment.dxl open for logging services.
+2016-10-06 05:59:00.170 Attempting connection to DEX.
+2016-10-06 05:59:00.175 Connection to DEX pending.
+2016-10-06 05:59:01.176 Sent task info: 0 0 0 0   30000 55555 (not sent).
+2016-10-06 06:15:46.190 File CodaAlignment.dxl open for logging services.
+2016-10-06 06:15:46.190 Attempting connection to DEX.
+2016-10-06 06:15:46.195 Connection to DEX pending.
+2016-10-06 06:15:47.196 Sent task info: 0 0 0 0   30000 55555 (not sent).
