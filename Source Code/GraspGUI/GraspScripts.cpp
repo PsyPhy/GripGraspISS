@@ -396,6 +396,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// SYSTEM or SYSTEM@ do not add command line arguments.
 			else  cmdline = stepList[currentStep]->command;
 
+
 			// Run the command.
 			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
@@ -405,6 +406,8 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 			
+			ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_MINIMIZE );
+
 			// Keep track of where we are in case we need to restart.
 			char *action_filename = "GraspLastAction.txt";
 			FILE *action_fp;
@@ -415,6 +418,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			fclose( action_fp );
 
 			int return_code = system( cmd );
+			// int return_code = WinExec( cmd, SW_SHOWNORMAL );
 			if ( return_code > 127 ) return_code -= 128;
 
 			action_fp = fopen( action_filename, "w" );
@@ -422,6 +426,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
 			else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
 			fclose( action_fp );
+			ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_RESTORE );
 
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 
