@@ -19,6 +19,7 @@ cls
 
 REM Now start up Oculus.
 Start /MIN /WAIT Executables\StartOculus.exe 
+Start /WAIT Executables\OculusStartupCheck.exe 
 
 REM Now start up OculuseMouse to be able to move the mouse pointer and click using the Oculus Remote.
 REM When GRASP exits, OculusMouse will still be running so that if the exit was accidental

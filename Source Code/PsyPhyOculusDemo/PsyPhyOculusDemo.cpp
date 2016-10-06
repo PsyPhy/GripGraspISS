@@ -88,8 +88,8 @@ PsyPhy::Vector3 gyros[MAX_FRAMES];
 PsyPhy::Vector3 derivatives[MAX_FRAMES];
 int nRecordedFrames = 0;
 
-typedef enum { NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES } TrackerStyle;
-TrackerStyle defaultMode = CODA_PLUS_DERIVATIVES;
+typedef enum { NONE, OCULUS, CODA, DERIVATIVES, FUSION, GROUNDED } TrackerStyle;
+TrackerStyle defaultMode = GROUNDED;
 
 /*****************************************************************************/
 
@@ -130,7 +130,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 	OculusCodaPoseTracker *oculusCodaPoseTracker;
 	OculusCodaPoseTracker *oculusDerivativesPoseTracker;
-	OculusCodaPoseTracker *oculusGroundedDerivativesPoseTracker;
+	OculusCodaPoseTracker *oculusGroundedPoseTracker;
 
 	// Pointers to the PoseTrackers that are actually selected.
 	PoseTracker *hmdTracker;
@@ -144,6 +144,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		handCascadeTracker = new CascadePoseTracker();
 		chestCascadeTracker = new CascadePoseTracker();
 		for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+
 			hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			hmdCodaPoseTracker[unit]->positionScaleFactor = 0.001; // Convert to meters.
 			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing hmdCodaPoseTracker[%d].", unit );
@@ -159,7 +160,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			chestCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 			chestCodaPoseTracker[unit]->positionScaleFactor = 0.001; // Convert to meters.
 			fAbortMessageOnCondition( !chestCodaPoseTracker[unit]->Initialize(), "PsyPhyOculusDemo", "Error initializing torsoCodaPoseTracker[%d].", unit );
-			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
+			chestCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
 			chestCascadeTracker->AddTracker( chestCodaPoseTracker[unit] );
 		}
 
@@ -175,8 +176,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	fAbortMessageOnCondition( !oculusDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusDerivativesPoseTracker." );
 
 	// Create a tracker that integrates Oculus derivatives that is anchored to the null pose.
-	oculusGroundedDerivativesPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullPoseTracker );
-	fAbortMessageOnCondition( !oculusGroundedDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusGroundedDerivativesPoseTracker." );
+	oculusGroundedPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullPoseTracker );
+	fAbortMessageOnCondition( !oculusGroundedPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusGroundedPoseTracker." );
 
 	// Pick which PoseTrackers to use.
 	switch ( defaultMode ) {
@@ -189,15 +190,15 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 	case DERIVATIVES:
 		hmdTracker = oculusDerivativesPoseTracker;
 		break;
-	case CODA_PLUS_DERIVATIVES:
+	case FUSION:
 		hmdTracker = oculusCodaPoseTracker;
 		break;
 	case CODA:
 		hmdTracker = hmdCascadeTracker;
 		break;
-	case NULL_PLUS_DERIVATIVES:
+	case GROUNDED:
 	default:
-		hmdTracker = oculusGroundedDerivativesPoseTracker;
+		hmdTracker = oculusGroundedPoseTracker;
 		break;
 	}
 	if ( useCoda ) {
@@ -308,12 +309,15 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 					codaTracker->GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
 				}
+				fAbortMessageOnCondition( !hmdCascadeTracker->Update(), "PsyPhyOculusDemo", "Error updating hmdCascadeTracker pose tracker." );
+				fAbortMessageOnCondition( !handCascadeTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
+				fAbortMessageOnCondition( !chestCascadeTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
+				fAbortMessageOnCondition( !oculusCodaPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusCodaPoseTracker pose tracker." );
 			}
 			// Perform any periodic updating that the trackers might require.
-			fAbortMessageOnCondition( !oculusCodaPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusCodaPoseTracker pose tracker." );
-			fAbortMessageOnCondition( !hmdTracker->Update(), "PsyPhyOculusDemo", "Error updating hmd pose tracker." );
-			fAbortMessageOnCondition( !handTracker->Update(), "PsyPhyOculusDemo", "Error updating hand pose tracker." );
-			fAbortMessageOnCondition( !chestTracker->Update(), "PsyPhyOculusDemo", "Error updating chest pose tracker." );
+			fAbortMessageOnCondition( !oculusDerivativesPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusDerivativesPoseTracker pose tracker." );
+			fAbortMessageOnCondition( !oculusPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusPoseTracker pose tracker." );
+			fAbortMessageOnCondition( !oculusGroundedPoseTracker->Update(), "PsyPhyOculusDemo", "Error updating oculusGroundedPoseTracker pose tracker." );
 
 			// Set the baseline orientation of the viewpoint to the player's position.
 			PsyPhy::Vector3 pos;
@@ -327,37 +331,31 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 			// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
 			PsyPhy::TrackerPose headPose, codaPose;
-			if ( !hmdTracker->GetCurrentPose( headPose ) ) {
-				static int pose_error_counter = 0;
-				fOutputDebugString( "Error reading pose trackers (%03d).\n", ++pose_error_counter );
-			}
-			else {
 
-				// Store the poses for output to a file.
-				hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
-				handTracker->GetCurrentPose( codaPose );
-				handTracker->CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
+			// Store the poses for output to a file.
+			hmdTracker->GetCurrentPose( headPose );
+			hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
+			handTracker->GetCurrentPose( codaPose );
+			handTracker->CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
 
-				derivatives[nRecordedFrames][X] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.x;
-				gyros[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Gyro.x;
-				accelerations[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Accelerometer.x;
+			derivatives[nRecordedFrames][X] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.x;
+			gyros[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Gyro.x;
+			accelerations[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Accelerometer.x;
 
-				derivatives[nRecordedFrames][Y] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.y;
-				gyros[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Gyro.y;
-				accelerations[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Accelerometer.y;
+			derivatives[nRecordedFrames][Y] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.y;
+			gyros[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Gyro.y;
+			accelerations[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Accelerometer.y;
 			
-				derivatives[nRecordedFrames][Z] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.z;
-				gyros[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Gyro.z;
-				accelerations[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Accelerometer.z;
+			derivatives[nRecordedFrames][Z] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.z;
+			gyros[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Gyro.z;
+			accelerations[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Accelerometer.z;
 			
-			
-				if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
-				// The position and orientation of the viewpoint is first set by the player position.
-				// So we use the offset and attitude to turn the viewpoint according to the tracker
-				//  with respect to the player's position.
-				viewpoint->SetOffset( headPose.pose.position );
-				viewpoint->SetAttitude( headPose.pose.orientation );
-			}
+			if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
+			// The position and orientation of the viewpoint is first set by the player position.
+			// So we use the offset and attitude to turn the viewpoint according to the tracker
+			//  with respect to the player's position.
+			viewpoint->SetOffset( headPose.pose.position );
+			viewpoint->SetAttitude( headPose.pose.orientation );
 
 			// Prepare the GL graphics state for drawing in a way that is compatible 
 			//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
@@ -419,9 +417,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	else useCoda = false;
 
 	// NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES
-	defaultMode = NULL_PLUS_DERIVATIVES;
-	if ( strstr( command_line, "--derivatives_plus_coda" ) ) defaultMode = CODA_PLUS_DERIVATIVES;
-	if ( strstr( command_line, "--derivatives_plus_null" ) ) defaultMode = NULL_PLUS_DERIVATIVES;
+	defaultMode = GROUNDED;
+	if ( strstr( command_line, "--derivatives_plus_coda" ) ) defaultMode = FUSION;
+	if ( strstr( command_line, "--derivatives_plus_null" ) ) defaultMode = GROUNDED;
 	if ( strstr( command_line, "--only_oculus" ) ) defaultMode = OCULUS;
 	if ( strstr( command_line, "--only_derivatives" ) ) defaultMode = DERIVATIVES;
 	if ( strstr( command_line, "--only_coda" ) ) defaultMode = CODA;

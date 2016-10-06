@@ -37,11 +37,11 @@ int main(int argc, char* argv[])
 	while ( !IsWindowVisible( hwnd ) ) Sleep( 200 );
 	ShowWindow( hwnd, SW_FORCEMINIMIZE );
 
-	// Have the subject press the Select button on the Oculus remote to get rid of the 
-	//  Health and Safety warning.
-	MessageBox( NULL, 
-		"Press Select button (center button)\n on VR Remote and hold for 2 seconds.\n\nThen press 'OK' below.", 
-		"Startup Oculus", MB_OK | MB_ICONASTERISK );
+	//// Have the subject press the Select button on the Oculus remote to get rid of the 
+	////  Health and Safety warning.
+	//MessageBox( NULL, 
+	//	"Press Select button (center button)\n on VR Remote and hold for 2 seconds.\n\nThen press 'OK' below.", 
+	//	"Startup Oculus", MB_OK | MB_ICONASTERISK );
 		
 	return 0;
 }

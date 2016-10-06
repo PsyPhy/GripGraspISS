@@ -41,6 +41,9 @@
     <ProjectReference Include="..\OculusMouse\OculusMouse.vcxproj">
       <Project>{9e5d3f95-06ba-42a2-8956-f82f126cf7a6}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\OculusStartupCheck\OculusStartupCheck.vcxproj">
+      <Project>{465aefc2-b087-4ff6-b090-b60b01af175f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PsyPhyOculusDemo\PsyPhyOculusDemo.vcxproj">
       <Project>{92626b0e-65f3-4caa-927c-3246d766c7be}</Project>
     </ProjectReference>
@@ -55,13 +58,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\RunGRASP.bat">
-      <FileType>Document</FileType>
-    </None>
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.mak" />
     <None Include="InstallGrasp.release.mak" />
     <None Include="LoadCodaCals.bat" />
+    <None Include="RunGRASP.bat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}</ProjectGuid>
