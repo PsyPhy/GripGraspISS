@@ -8,12 +8,13 @@
 #include "../Trackers/PoseTrackers.h"
 // GraspTrackerDaemon will output data on this port.
 #define TRACKER_DAEMON_PORT		1706
+#define TRACKER_DAEMON_PORTS	4
 // Currently I broadcast only to the local host because everything is running
 // on the same machine. Note that when I had 'localhost" instead of "127.0.0.1", things 
 // ran slower when my wifi was connected. I don't know what would happen when the ethernet
 // is connected (as it will be for Grasp) but I am hoping that using 127.0.0.1 will restrict
 // the broadcast to the local machine.
-#define TRACKER_BROADCAST_ADDRESS	"127.0.0.1"
+#define TRACKER_BROADCAST_ADDRESS "127.0.0.1"
 
 #ifdef  __cplusplus
 extern "C" {

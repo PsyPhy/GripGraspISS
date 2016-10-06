@@ -45,9 +45,6 @@ namespace GraspTrackerDaemon {
 			fAbortMessage( "GraspTrackerDaemon", "Error setting broadcast options." );		
 		}
 
-		Sender_addr.sin_family = AF_INET;
-		Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT );
-		Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 	}
 
 	// If we are not connected to actual codas, we simulate markers going in 
@@ -133,11 +130,17 @@ namespace GraspTrackerDaemon {
 		if (recording) nPoseSamples = ( ++nPoseSamples ) % MAX_FRAMES;
 
 		// Broadcast the record.
-		if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
-		{
-			int error_value = WSAGetLastError();
-			closesocket( sock );
-			fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );		
+		for ( int prt = 0; prt < TRACKER_DAEMON_PORTS; prt++ ) { 
+			Sender_addr.sin_family = AF_INET;
+			Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT + prt );
+			Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
+
+			if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
+			{
+				int error_value = WSAGetLastError();
+				closesocket( sock );
+				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );	
+			}
 		}
 
 		// Update the screen display.

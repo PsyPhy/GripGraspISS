@@ -82,6 +82,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		if ( nError == WSAEWOULDBLOCK ) break;
 		// Treat all other errors rather dramatically by aborting.
 		if ( nError != 0 ) fAbortMessage( "CodaRTnetDaemonTracker", "recvfrom() failed with error code : %d" , nError );
+		fprintf( stderr, "R%08d  ", record.count );
 		// Here I check if the record is the right size. From what I have gotten off of the internet, this should
 		// should always be true. But I thought I would check anyway.
 		if ( recv_len != sizeof( record ) ) fAbortMessage( "TestTrackerDaemon", "recvfrom() returned unexpected byte count: %d vs. %d" , recv_len, sizeof( record ) );
@@ -91,14 +92,12 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		for ( int unit = 0; unit < nUnits; unit++ ) CopyMarkerFrame( recordedMarkerFrames[unit][nFrames % MAX_FRAMES], record.frame[unit] );
 		// If the time limit has expired, we stop acquiring a time series of frames.
 		if ( TimerTimeout( timer ) ) acquiring = false;
-
 		// If we are acquiring, move on to the next frame. Note the % (remainder) in the previous lines. We implement
 		//  a circular buffer that never overflows, but that can lose early data points.
 		if ( acquiring ) nFrames++;
 	}
 	if ( packet_count >= UDP_BUFFER_SIZE_IN_PACKETS ) fOutputDebugString( "Daemon Tracker Update: %d %d\n", cycle_counter, packet_count );
 	cycle_counter++;
-	fOutputDebugString( "nUnits %d recv_len %d  nError  %d  Packet count: %d\n", nUnits, recv_len, nError, packet_count );
 	return( true );
 	
 }
@@ -134,13 +133,13 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	if (daemonSocket == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
 
 	// Set SO_REUSEADDR for the socket so that other processes can listen to the same data stream.
-	bool enabled = true;
-	if ( setsockopt( daemonSocket, SOL_SOCKET, SO_REUSEADDR, (char*) &enabled, sizeof(enabled)) < 0 ) 
-	{
-		closesocket( daemonSocket );
-		daemonSocket = NULL;
-		fAbortMessage( "CodaRTnetDaemonTracker", "Error setting broadcast options." );		
-	}
+	//bool enabled = true;
+	//if ( setsockopt( daemonSocket, SOL_SOCKET, SO_REUSEADDR, (char*) &enabled, sizeof(enabled)) < 0 ) 
+	//{
+	//	closesocket( daemonSocket );
+	//	daemonSocket = NULL;
+	//	fAbortMessage( "CodaRTnetDaemonTracker", "Error setting broadcast options." );		
+	//}
 
 	// Make the receiver buffer bigger so that we don't miss any packets.
 	int bufferSize = UDP_BUFFER_SIZE_IN_PACKETS * sizeof( GraspTrackerRecord );
@@ -150,16 +149,21 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	// Listen for datagrams from the specified address.
 	struct sockaddr_in Recv_addr;
 	Recv_addr.sin_family = AF_INET;
-	Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT );
 	Recv_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
-	
 	int bind_value;
-	if ( (bind_value = bind( daemonSocket, (sockaddr*) &Recv_addr, sizeof( Recv_addr )) ) == SOCKET_ERROR )
+
+	for ( int prt = 0; prt < TRACKER_DAEMON_PORTS; prt++ ) {
+		Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT + prt );
+		bind_value = bind( daemonSocket, (sockaddr*) &Recv_addr, sizeof( Recv_addr ) );
+		if ( bind_value != SOCKET_ERROR ) break;
+	}
+	if ( bind_value == SOCKET_ERROR )
 	{
 		int error_value = WSAGetLastError();
 		closesocket( daemonSocket );
 		daemonSocket = NULL;
-		fAbortMessage( "CodaRTnetDaemonTracker", "Error binding socket (%d %d).", bind_value, error_value  );		
+		fAbortMessage( "CodaRTnetDaemonTracker", "Error binding socket (%d %d) ports %d - %d.", 
+			bind_value, error_value,  TRACKER_DAEMON_PORT, TRACKER_DAEMON_PORT + TRACKER_DAEMON_PORTS - 1 );		
 	}
 	// Set the socket to do nonblocking calls to allow performing other actions while waiting for new data.
 	unsigned long noBlock = 1;
