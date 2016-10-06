@@ -843,7 +843,7 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			system( "Executables\\GraspHardwareStatus.exe" );
+			WinExec( "Executables\\GraspHardwareStatus.exe", SW_SHOW );
 		}
 
 	private:
