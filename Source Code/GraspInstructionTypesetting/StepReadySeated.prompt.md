@@ -8,7 +8,7 @@ HEADER( __Ready to Start__ )
 
 - Place the HMD on your forehead in preparation for performing science tasks.
 
-- Attach the HANDMARKERS to your *__right__* hand.
+- Attach the HANDMARKERS to your *__right__* hand and attach strap on cable to forearm near elbow.
 
 - Take the REMOTE in your *__left__* hand.
 
