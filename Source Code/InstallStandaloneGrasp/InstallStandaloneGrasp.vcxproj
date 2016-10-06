@@ -56,6 +56,9 @@
     <ProjectReference Include="..\WaitAndGo\WaitAndGo.vcxproj">
       <Project>{4edd9ace-948c-4fe7-94b2-3fc787f2bbda}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\WaitForCodaDaemon\WaitForCodaDaemon.vcxproj">
+      <Project>{c8fb03d6-66af-46cd-a8fa-0d70b32a68c0}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="InstallGrasp.debug.mak" />
