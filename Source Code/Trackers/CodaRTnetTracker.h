@@ -136,7 +136,7 @@ public:
 		strncpy( serverPassword, "dex", sizeof( serverPassword ) );
 		strncpy( codaCalDirectory, "CodaMotion\\RTNet\\Binaries\\", sizeof( codaCalDirectory ) );
 		strncpy( codaAlignmentFilename, "codaRTModuleCX1-Alignment.dat", sizeof( codaAlignmentFilename ) );
-		strncpy( executablesPath, "Executables\\", sizeof( executablesPath ) );
+		strncpy( executablesPath, "Utils\\", sizeof( executablesPath ) );
 
 		// Define the CODA cx1 serial numbers.
 		// I set them to "0000" here and check later to see if the correct values have been
