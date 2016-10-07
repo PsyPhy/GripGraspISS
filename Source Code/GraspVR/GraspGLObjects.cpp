@@ -35,6 +35,8 @@ const char *GraspGLObjects::hand_too_soon_bitmap = "Bmp\\HandTooSoon.bmp";
 const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
 const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
 const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
+const char *GraspGLObjects::vr_completed_bitmap = "Bmp\\VRCompleted.bmp";
+const char *GraspGLObjects::demo_bitmap = "Bmp\\DemoWorking.bmp";
 			
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
@@ -450,6 +452,14 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	block_completed_texture = new Texture( block_completed_bitmap );
 	blockCompletedIndicator = CreateIndicator( block_completed_texture );
 	spinners->AddComponent( blockCompletedIndicator );
+
+	vr_completed_texture = new Texture( vr_completed_bitmap );
+	vrCompletedIndicator = CreateIndicator( vr_completed_texture );
+	spinners->AddComponent( vrCompletedIndicator );
+
+	demo_texture = new Texture( demo_bitmap );
+	demoIndicator = CreateIndicator( demo_texture );
+	spinners->AddComponent( demoIndicator );
 
 	timeout_texture = new Texture( timeout_bitmap );
 	timeoutIndicator = CreateIndicator( timeout_texture );

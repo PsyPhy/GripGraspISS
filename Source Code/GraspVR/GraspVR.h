@@ -99,19 +99,19 @@ namespace Grasp {
 
 			{}
 
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs ) {
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow, GraspTrackers *trkrs ) {
 				hInstance = instance;
 				oculusDisplay = display;
 				oculusMapper = mapper;
 				trackers = trkrs;
-				InitializeVR( hInstance );
+				InitializeVR( hInstance, parentWindow );
 				InitializeTrackers();
 		}
 		void Release( void );
 		~GraspVR( void ) {}
 
 		// Create the necessary VR objects.
-		virtual void InitializeVR( HINSTANCE hinst );
+		virtual void InitializeVR( HINSTANCE hinst, HWND parentWindow );
 
 		// Initialize the chosen set of tracker.
 		virtual void InitializeTrackers( const char *filename_root = nullptr );

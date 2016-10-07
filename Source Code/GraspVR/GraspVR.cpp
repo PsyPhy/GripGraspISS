@@ -150,7 +150,7 @@ void GraspVR::AlignToCODA( void ) {
 // VR 
 //
 
-void GraspVR::InitializeVR( HINSTANCE hinst ) {
+void GraspVR::InitializeVR( HINSTANCE hinst, HWND parent ) {
 
 	ovrResult result;
 
@@ -159,7 +159,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	static const bool fullscreen = true;
 	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
 	// what is going on in the HMD. To do so, set the following to false;
-	static const bool mirror = true;
+	static const bool mirror = false;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8
@@ -172,14 +172,14 @@ void GraspVR::InitializeVR( HINSTANCE hinst ) {
 	}
 
 	// Initialize the Oculus-enabled Windows platform.
-	result = oculusDisplay->InitWindow( hinst, L"GraspVR", fullscreen );
+	result = oculusDisplay->InitWindow( hinst, L"GraspVR", ( parent ? false : fullscreen ), parent );
 	if ( OVR_FAILURE( result ) ) {
 		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusDisplay (ovrError %d).", result );
 		exit( OCULUS_ERROR );
 	}
 
 	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper->Initialize( oculusDisplay, mirror );
+	result = oculusMapper->Initialize( oculusDisplay, ( parent ? true : mirror ) );
 	if ( OVR_FAILURE( result ) ) {
 		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusMapper (ovrError %d).", result );
 		exit( OCULUS_ERROR );

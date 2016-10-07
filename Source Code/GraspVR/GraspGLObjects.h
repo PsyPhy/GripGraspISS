@@ -198,6 +198,14 @@ namespace Grasp {
 		Texture			*straighten_head_texture;		
 		static const char *straighten_head_bitmap;	 
 
+		Assembly		*vrCompletedIndicator;	// Shown in a special case to indicate that the session is over.
+		Texture			*vr_completed_texture;		
+		static const char *vr_completed_bitmap;	 
+
+		Assembly		*demoIndicator;	// Shown when the subject should straighent the hand on the shoulders.
+		Texture			*demo_texture;		
+		static const char *demo_bitmap;	 
+
 	public:
 
 		Assembly		*orientationTarget;		// Shows the target orientation.

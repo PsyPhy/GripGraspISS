@@ -15,7 +15,8 @@ CONVERTER = $(EXECUTABLES)\tiff2bmp.exe --height=512 --width=512
 FROMTIFFS = ReadyToStart.bmp BlockCompleted.bmp \
 			LowerArm.bmp LowerArmTimeout.bmp RaiseArm.bmp RaiseArmTimeout.bmp \
 			HeadMisalignment.bmp HeadAlignmentTimeout.bmp ResponseTimeout.bmp TimeLimit.bmp  \
-			HandRotateTimeout.bmp HandTooSoon.bmp HandShouldNot.bmp StraightenHead.bmp
+			HandRotateTimeout.bmp HandTooSoon.bmp HandShouldNot.bmp StraightenHead.bmp \
+			VRCompleted.bmp DemoWorking.bmp
 
 # The GRASP VR world requires a few bitmaps to decorate the walls. We keep copies in the source file tree
 # then copy as needed to the exection tree. That way, by maintaining this makefile up to date, only those
@@ -121,6 +122,16 @@ HandShouldNot.bmp: GraspCircularPrompts\Diapositive14.tiff
 	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
 
 StraightenHead.bmp: GraspCircularPrompts\Diapositive15.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
+
+VRCompleted.bmp: GraspCircularPrompts\Diapositive16.tiff
+	copy /Y $** $(@B).tiff
+	$(CONVERTER) -i $(@B).tiff
+	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html
+
+DemoWorking.bmp: GraspCircularPrompts\Diapositive17.tiff
 	copy /Y $** $(@B).tiff
 	$(CONVERTER) -i $(@B).tiff
 	echo ^<img src="$@" size=50 /^> ^<br^> $(@B)  >$@.html

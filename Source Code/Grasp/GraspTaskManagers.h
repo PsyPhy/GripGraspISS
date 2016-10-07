@@ -5,13 +5,13 @@
 
 namespace Grasp {
 
-	typedef enum { unknown = 0, VTOV, VTOK, KTOK, VTOVK, VKTOVK } Paradigm;
+	typedef enum { unknown = 0, VTOV, VTOK, KTOK, VTOVK, VKTOVK, QUITVR, DEMO } Paradigm;
 	typedef enum { NullState = 0, StartBlock = 10, BlockCompleted = 19, 
 					StartTrial = 20, 
 					StraightenHead = 31, AlignHead = 32, 
 					PresentTarget = 33, TiltHead = 34, ObtainResponse = 35, 
 					ProvideFeedback = 36, TrialCompleted = 39, 
-					TrialInterrupted = 40, ExitStateMachine = 99 } GraspTrialState;
+					TrialInterrupted = 40, VRCompleted = 50, Demo = 98, ExitStateMachine = 99 } GraspTrialState;
 	typedef enum { RAISE_HAND_TIMEOUT = 1, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT } Anomaly;
 	typedef enum { MANUAL_STRAIGHTEN, CODA_STRAIGHTEN, CHEST_STRAIGHTEN } StraightenHeadMethod;
 	class GraspTaskManager : public GraspVR {
@@ -172,6 +172,18 @@ namespace Grasp {
 		virtual GraspTrialState UpdateBlockCompleted( void );
 		virtual void ExitBlockCompleted( void );
 
+		// VRCompleted
+		// Show the subject the results of their response.
+		virtual void EnterVRCompleted( void );
+		virtual GraspTrialState UpdateVRCompleted( void );
+		virtual void ExitVRCompleted( void );
+
+		// Demo
+		// Show the subject the results of their response.
+		virtual void EnterDemo( void );
+		virtual GraspTrialState UpdateDemo( void );
+		virtual void ExitDemo( void );
+
 		// TrialInterrupted
 		// The variable interruptCondition should have been set to indicate the cause.
 		Anomaly interruptCondition;
@@ -185,9 +197,9 @@ namespace Grasp {
 		// Constructor, with initialization of some elements.
 		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), waitForUp(true), tag("??to??" ) {}
 		~GraspTaskManager(){}
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, GraspTrackers *trkrs, DexServices *dex ) {
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServices = dex;
-			GraspVR::Initialize( instance, display, mapper, trkrs );
+			GraspVR::Initialize( instance, display, mapper, parentWindow, trkrs );
 			// Initialize state for button pushes.
 			ovrInputState state;
 			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
@@ -237,7 +249,17 @@ namespace Grasp {
 		void EnterPresentTarget( void );
 		void EnterObtainResponse( void );
 	};
+	// DEMO protocol. 
+	class DemoP : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( DEMO ); }
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "DEMO"; }
+	};
 
+	// QuitVR protocol. 
+	class QuitVR : public GraspTaskManager {
+		Paradigm GetParadigm( void ) { return( QUITVR ); }
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "QUIT"; }
+	};
 
 };
 

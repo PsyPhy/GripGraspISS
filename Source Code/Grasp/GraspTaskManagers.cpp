@@ -144,6 +144,20 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		if ( nextState != currentState ) ExitBlockCompleted();
 		break;
 
+	case VRCompleted:
+
+		if ( currentState != previousState ) EnterVRCompleted();
+		nextState = UpdateVRCompleted();
+		if ( nextState != currentState ) ExitVRCompleted();
+		break;
+
+	case Demo:
+
+		if ( currentState != previousState ) EnterDemo();
+		nextState = UpdateDemo();
+		if ( nextState != currentState ) ExitDemo();
+		break;
+
 	case TrialInterrupted:
 
 		if ( currentState != previousState ) EnterTrialInterrupted();
@@ -228,38 +242,59 @@ void GraspTaskManager::ShowProgress( int phase, int characteristic ) {
 
 int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filename_root ) {
 
-	// Load the trial parameters.
-	int trials = LoadTrialParameters( sequence_filename );
-	fAbortMessageOnCondition( ( trials <= 0 ), "GraspTaskManager", "No valid trials loaded from file %s.", sequence_filename );
-	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
-	currentTrial = 0;
 
-	// Initiliaze the counter that limits the number of retries.
-	retriesRemaining = maxRetries;
+	if ( DEMO == GetParadigm() ) {
+		// Call the paradigm-specific preparation, if any.
+		Prepare();
+		// Initialize the state machine.
+		previousState = NullState;
+		currentState = Demo;
+		// Tell the ground what we are about to start doing.
+		ShowProgress( currentState, GetParadigm() );
+	}
+	else if ( QUITVR == GetParadigm() ) {
+		// Call the paradigm-specific preparation, if any.
+		Prepare();
+		// Initialize the state machine.
+		previousState = NullState;
+		currentState = VRCompleted;
+		// Tell the ground what we are about to start doing.
+		ShowProgress( currentState, GetParadigm() );
+	}
+	else {
 
-	// Open a file for storing the responses and output a header.
-	sprintf( responseFilename, "%s.rsp", output_filename_root );
-	response_fp = fopen( responseFilename, "w" );
-	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-	fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+		// Load the trial parameters.
+		int trials = LoadTrialParameters( sequence_filename );
+		fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
+		currentTrial = 0;
 
-	// Open a file for storing the tracker poses and output a header.
-	sprintf( poseFilename, "%s.pse", output_filename_root );
-	pose_fp = fopen( poseFilename, "w" );
-	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
-	fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation;" );
-	trackers->WriteAdditionalColumnHeadings( pose_fp );
-	fprintf( pose_fp, "\n" );
+		// Initiliaze the counter that limits the number of retries.
+		retriesRemaining = maxRetries;
 
-	// Call the paradigm-specific preparation, if any.
-	Prepare();
+		// Open a file for storing the responses and output a header.
+		sprintf( responseFilename, "%s.rsp", output_filename_root );
+		response_fp = fopen( responseFilename, "w" );
+		fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
+		fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
 
-	// Initialize the state machine.
-	previousState = NullState;
-	currentState = StartBlock;
+		// Open a file for storing the tracker poses and output a header.
+		sprintf( poseFilename, "%s.pse", output_filename_root );
+		pose_fp = fopen( poseFilename, "w" );
+		fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
+		fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation;" );
+		trackers->WriteAdditionalColumnHeadings( pose_fp );
+		fprintf( pose_fp, "\n" );
 
-	// Tell the ground what we are about to start doing.
-	ShowProgress( StartBlock, GetParadigm() );
+		// Call the paradigm-specific preparation, if any.
+		Prepare();
+
+		// Initialize the state machine.
+		previousState = NullState;
+		currentState = StartBlock;
+
+		// Tell the ground what we are about to start doing.
+		ShowProgress( StartBlock, GetParadigm() );
+	}
 
 	// Measure the time since this block was initiated.
 	TimerStart( blockTimer );
@@ -787,7 +822,7 @@ void GraspTaskManager::EnterBlockCompleted( void ) {
 	// Show the success indicator.
 	renderer->blockCompletedIndicator->Enable();
 	renderer->room->Disable();
-	SetDesiredHeadRoll( trialParameters[currentTrial].targetHeadTilt, targetHeadTiltTolerance );
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
@@ -799,6 +834,49 @@ GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) {
 void  GraspTaskManager::ExitBlockCompleted( void ) {
 	renderer->blockCompletedIndicator->Disable();
 }
+
+// VRCompleted
+// Provide an indication that all current VR activities are done.
+// Promt the subject to doff the HMD.
+void GraspTaskManager::EnterVRCompleted( void ) {
+	// Show the success indicator.
+	renderer->vrCompletedIndicator->Enable();
+	renderer->room->Enable();
+	renderer->starrySky->Enable();
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
+}
+GraspTrialState GraspTaskManager::UpdateVRCompleted( void ) { 
+	// After timer runs out, move on to the next trial or exit.
+	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
+	// Otherwise, continue in this state.
+	HandleHeadAlignment( false );
+	return( currentState );
+}
+void  GraspTaskManager::ExitVRCompleted( void ) {
+	renderer->vrCompletedIndicator->Disable();
+}
+
+// Demo
+// Just show the VR world and prompt to exit.
+// Promt the subject to doff the HMD.
+void GraspTaskManager::EnterDemo( void ) {
+	// Show the success indicator.
+	renderer->demoIndicator->Enable();
+	renderer->room->Enable();
+	renderer->starrySky->Enable();
+	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
+}
+GraspTrialState GraspTaskManager::UpdateDemo( void ) { 
+	// After timer runs out, move on to the next trial or exit.
+	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
+	// Otherwise, continue in this state.
+	HandleHeadAlignment( false );
+	return( currentState );
+}
+void  GraspTaskManager::ExitDemo( void ) {
+	renderer->demoIndicator->Disable();
+}
+
 
 // TrialInterrupted
 // Occurs on various error conditons.
