@@ -237,7 +237,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(550, 805);
+			this->alignButton->Location = System::Drawing::Point(641, 805);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
@@ -250,7 +250,7 @@ namespace AlignToRigidBodyGUI {
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(1090, 805);
+			this->cancelButton->Location = System::Drawing::Point(1181, 805);
 			this->cancelButton->Name = L"cancelButton";
 			this->cancelButton->Size = System::Drawing::Size(159, 56);
 			this->cancelButton->TabIndex = 3;
@@ -263,7 +263,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox2->Controls->Add(this->visibilityPanel2);
 			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox2->Location = System::Drawing::Point(909, 22);
+			this->vrGroupBox2->Location = System::Drawing::Point(1000, 22);
 			this->vrGroupBox2->Name = L"vrGroupBox2";
 			this->vrGroupBox2->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox2->TabIndex = 5;
@@ -282,7 +282,7 @@ namespace AlignToRigidBodyGUI {
 			this->vrGroupBox1->Controls->Add(this->visibilityPanel1);
 			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox1->Location = System::Drawing::Point(369, 22);
+			this->vrGroupBox1->Location = System::Drawing::Point(460, 22);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
 			this->vrGroupBox1->Size = System::Drawing::Size(520, 341);
 			this->vrGroupBox1->TabIndex = 4;
@@ -300,7 +300,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox->Location = System::Drawing::Point(12, 59);
+			this->instructionsTextBox->Location = System::Drawing::Point(61, 59);
 			this->instructionsTextBox->Multiline = true;
 			this->instructionsTextBox->Name = L"instructionsTextBox";
 			this->instructionsTextBox->Size = System::Drawing::Size(324, 291);
@@ -310,7 +310,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->instructionsTextBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox2->Location = System::Drawing::Point(12, 417);
+			this->instructionsTextBox2->Location = System::Drawing::Point(61, 417);
 			this->instructionsTextBox2->Multiline = true;
 			this->instructionsTextBox2->Name = L"instructionsTextBox2";
 			this->instructionsTextBox2->Size = System::Drawing::Size(324, 358);
@@ -321,7 +321,7 @@ namespace AlignToRigidBodyGUI {
 			this->groupBox1->Controls->Add(this->fovPanel2);
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(909, 380);
+			this->groupBox1->Location = System::Drawing::Point(1000, 380);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(520, 409);
 			this->groupBox1->TabIndex = 12;
@@ -340,7 +340,7 @@ namespace AlignToRigidBodyGUI {
 			this->groupBox2->Controls->Add(this->fovPanel1);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(369, 380);
+			this->groupBox2->Location = System::Drawing::Point(460, 380);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(520, 409);
 			this->groupBox2->TabIndex = 11;
@@ -360,7 +360,7 @@ namespace AlignToRigidBodyGUI {
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->busy->ForeColor = System::Drawing::Color::Maroon;
-			this->busy->Location = System::Drawing::Point(276, 346);
+			this->busy->Location = System::Drawing::Point(382, 346);
 			this->busy->Name = L"busy";
 			this->busy->Size = System::Drawing::Size(888, 184);
 			this->busy->TabIndex = 15;
@@ -371,7 +371,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->instructionsTextBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox3->Location = System::Drawing::Point(3, 793);
+			this->instructionsTextBox3->Location = System::Drawing::Point(52, 793);
 			this->instructionsTextBox3->Multiline = true;
 			this->instructionsTextBox3->Name = L"instructionsTextBox3";
 			this->instructionsTextBox3->Size = System::Drawing::Size(333, 68);
@@ -384,7 +384,7 @@ namespace AlignToRigidBodyGUI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(1441, 876);
+			this->ClientSize = System::Drawing::Size(1652, 876);
 			this->ControlBox = false;
 			this->Controls->Add(this->instructionsTextBox3);
 			this->Controls->Add(this->busy);
