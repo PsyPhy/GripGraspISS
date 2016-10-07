@@ -3,12 +3,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--VtoV --sequence=Sequences\TrainingHeadStraight.seq --output=TestGrasp </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--demo --output=TestGrasp </LocalDebuggerCommandArguments>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> --VtoV  --nocoda --sequence=Sequences\TestConflict.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> --VtoV  --sequence=Sequences\null.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

@@ -45,7 +45,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	
 	bool useCoda = true;
-	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining } paradigm = doVtoV;
+	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
 
 	char sequence_filename[FILENAME_MAX];
 	char output_filename_root[FILENAME_MAX];
@@ -60,13 +60,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
 	if ( strstr( lpCmdLine, "--VtoK" ) ) paradigm = doVtoK;
 	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
+	if ( strstr( lpCmdLine, "--demo" ) ) paradigm = doDemo;
+	if ( strstr( lpCmdLine, "--doff" ) ) paradigm = doDoff;
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	if ( ptr = strstr( lpCmdLine, "--output" ) ) items = sscanf( ptr, "--output=%s", output_filename_root );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 
+
 	GraspTaskManager	*grasp;
 	GraspTrackers		*trackers;
+	HWND				parentWindow = nullptr;
+
+	if ( ptr = strstr( lpCmdLine, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parentWindow );
 
 	DexServices *dex = new DexServices();
 	dex->ParseCommandLine( lpCmdLine );
@@ -98,15 +104,23 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		break;
 
 	case doVtoV:
-	default:
 		grasp = new VtoV();
+		break;
+
+	case doDoff:
+		grasp = new QuitVR();
+		break;
+
+	case doDemo:
+	default:
+		grasp = new DemoP();
 		break;
 
 	}
 
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
 
-	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, trackers, dex );
+	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 
