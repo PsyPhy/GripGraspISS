@@ -406,7 +406,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 			
-			if ( stepList[currentStep]->type->EndsWith("@") ) ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_MINIMIZE );
+			// if ( stepList[currentStep]->type->EndsWith("@") ) ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_MINIMIZE );
 
 			// Keep track of where we are in case we need to restart.
 			char *action_filename = "GraspLastAction.txt";
@@ -426,9 +426,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
 			else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
 			fclose( action_fp );
-			if ( stepList[currentStep]->type->EndsWith("@") ) {
-				ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_NORMAL );
-			}
+			// if ( stepList[currentStep]->type->EndsWith("@") ) ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_NORMAL );
 
 			Marshal::FreeHGlobal( IntPtr( cmd ) );
 
