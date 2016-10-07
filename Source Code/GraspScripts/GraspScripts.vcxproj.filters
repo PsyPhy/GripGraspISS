@@ -83,5 +83,20 @@
     <None Include="Short.pcl">
       <Filter>Generic</Filter>
     </None>
+    <None Include="PrepareFloating.pcl">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="PrepareFloating.tsk">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="PrepareSeated.pcl">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="PrepareSeated.tsk">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="DataTransfer.pcl">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>

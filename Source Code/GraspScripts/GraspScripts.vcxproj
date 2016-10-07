@@ -50,6 +50,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="DataTransfer.pcl" />
     <None Include="DataTransfer.tsk" />
     <None Include="GraspCommissioningSessions.sss" />
     <None Include="GraspMaintenanceSessions.sss" />
@@ -60,6 +61,10 @@
     <None Include="K-KprepareSeated.tsk" />
     <None Include="K-Kseated.pcl" />
     <None Include="Maintenance.pcl" />
+    <None Include="PrepareFloating.pcl" />
+    <None Include="PrepareFloating.tsk" />
+    <None Include="PrepareSeated.pcl" />
+    <None Include="PrepareSeated.tsk" />
     <None Include="Short.pcl" />
     <None Include="Subjects.sbj" />
     <None Include="GraspScripts.mak" />
