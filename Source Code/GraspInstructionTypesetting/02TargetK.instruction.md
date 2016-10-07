@@ -14,5 +14,5 @@ CENTER( IMAGE(Pictures/KTargetGreen.jpg, 200) )
 When the target disappears, lower your arm to a neutral position on your lap.
 
 __Note__: Please *__do not__* try to maintain the memorised roll orientation of the hand.
-You should return your hand to the same neutral position on every trial.
+After target acquisition you should return your hand to the same neutral position on every trial.
 
