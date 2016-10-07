@@ -66,7 +66,7 @@ namespace GraspTrackerDaemon {
 				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
 					trackers->handCodaPoseTracker[unit]->modelMarker[mrk].position );
 				coda->recordedMarkerFrames[unit][0].marker[id].position[Z] -= 300.0;
-				coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 50.0;
+				coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 250.0;
 				coda->recordedMarkerFrames[unit][0].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
 				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
 			}
