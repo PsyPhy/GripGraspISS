@@ -30,7 +30,7 @@ The crew member may then be prompted to launch a particular action.
 In the example shown here, the system is ready to perform the tracker alignment. 
 The crew member presses the 'Execute' button to initiate the action. 
 He or she may also press 'Back' to return to the previous action or instruction (except when it is the first step in a task). 
-In exceptional cases, the subject may be told by POCC to press 'Skip' to move on to the next step without performing the action.
+In exceptional cases, the subject may be told by COL-CC to press 'Skip' to move on to the next step without performing the action.
 
 CENTER( IMAGE(GUIScreenshots\Execute.png, PROMPTSIZE) )
 

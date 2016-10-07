@@ -6,6 +6,8 @@ CENTER( IMAGE( Pictures/MountingHMDMarkerSupport.gif, 400 ) )
 
 - Secure with velcro staps on top and bottom.
 
+- Attach the small junction box on the HMDMARKERS cable to the top strap of the HMD.
+
 __Note__: Alignment of the Marker Structure to the HMD is critical. 
 Please ensure that the strucure is parallel to the front face of the HMD.
 

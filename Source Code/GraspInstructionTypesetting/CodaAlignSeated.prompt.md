@@ -1,14 +1,16 @@
 HEADER( __Tracker Alignment__ )
 
-Ready to perform the alignment procedure for the 3D tracker:
+Prepare to perform the alignment procedure for the 3D tracker:
 
-- Verify that the CHAIR is installed as shown with the seat back deployed and the CHESTMARKERS
-attached with velcro to the backrest.
-
-__Note__: Alignment of the CHESTMARKERS on the backrest is critical. 
-Please ensure that the top edge of the marker structure is aligned with the top edge of the backrest.
+- Check that the CHAIR is installed with the seat back deployed and the CHESTMARKERS, HANDMARKERS and HMDMARKERS
+are attached with velcro to the CHAIR as shown.
 
 CENTER( IMAGE( Pictures/AlignmentSeated.jpg, 350 ) )
+
+__Note__: Alignment of the CHESTMARKERS on the backrest is critical. 
+Please ensure that the top edge of the CHESTMARKERS is aligned with 
+the top edge of the backrest with the cable exiting to the right side of the chair
+(subject''s right side when seated facing the TRACKER).
 
 - Check that the field of view of the TRACKER is free of obstructions.
 

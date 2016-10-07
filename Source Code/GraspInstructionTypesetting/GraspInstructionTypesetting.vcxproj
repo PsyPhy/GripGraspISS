@@ -50,6 +50,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="00StraightenHead.instruction.md" />
     <None Include="01StraightenHead.instruction.md" />
     <None Include="02TargetK.instruction.md" />
     <None Include="02TargetV.instruction.md" />

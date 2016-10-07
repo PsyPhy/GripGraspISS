@@ -91,6 +91,9 @@
     <None Include="FileTransferReady.prompt.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="00StraightenHead.instruction.md">
+      <Filter>Science</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

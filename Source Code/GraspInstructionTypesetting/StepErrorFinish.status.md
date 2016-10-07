@@ -9,5 +9,5 @@ CENTER( IMAGE(Pictures/exclamation-blue.png, 240) )
 
  - __'Restart'__ to restart this task or select another.
 
- __Recommendation:__ Attempt __'Retry'__ no more than once or twice before consulting with POCC.
+ __Recommendation:__ Attempt __'Retry'__ no more than once or twice before consulting with COL-CC.
  __'Ignore'__ and __'Restart'__ should not be used without POCC autorization.

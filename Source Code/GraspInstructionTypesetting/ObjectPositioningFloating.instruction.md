@@ -6,7 +6,7 @@ Place the objects as shown to prepare for experiment execution:
 
 CENTER( IMAGE( Pictures/ObjectPositioningFreeFloating.jpg, 380 ) )
 
-- Verify that the MARKERCABLES and HMDCABLE pass __behind__ the FFRESTRAINT. 
+- Ensure that the MARKERCABLES and HMDCABLE pass __behind__ the FFRESTRAINT. 
 
 SUBHEADER( Press __'Next'__ to continue. )
 

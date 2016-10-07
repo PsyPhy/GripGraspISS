@@ -4,6 +4,5 @@ CENTER( IMAGE(Pictures/GraspLOGO.jpg, 400) )
 
 In the menus to the left:
 
-- Choose your User ID.
-- Select a posture and then a protocol per *__Execution Note__*.
-- Use the windows and buttons at the right to execute each task in order.
+- Select your User ID and Subsession per *__Execution Note__*.
+
