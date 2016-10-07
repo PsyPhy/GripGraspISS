@@ -80,5 +80,8 @@
     <None Include="DataTransfer.tsk">
       <Filter>Generic</Filter>
     </None>
+    <None Include="Short.pcl">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>

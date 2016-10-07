@@ -1,0 +1,6 @@
+# Instructions and commands to guide the installation for the seated posture.
+01; COMMAND@; Executables\AlignToRigidBodyGUI.exe --body=Bdy\Chest.bdy; CodaAlignFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+02; INSTRUCTION; HMDStructureAssembly.instruction.html
+03; INSTRUCTION; ObjectPositioningFloating.instruction.html
+04; INSTRUCTION; TaskFinished.instruction.html
+

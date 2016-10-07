@@ -60,6 +60,7 @@
     <None Include="K-KprepareSeated.tsk" />
     <None Include="K-Kseated.pcl" />
     <None Include="Maintenance.pcl" />
+    <None Include="Short.pcl" />
     <None Include="Subjects.sbj" />
     <None Include="GraspScripts.mak" />
     <None Include="V-Kfloating.pcl" />
