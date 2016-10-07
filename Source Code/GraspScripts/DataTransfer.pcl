@@ -1,2 +1,2 @@
-# Protocol Definition: Prepare for seated operations. 
+# Protocol Definition: Transfer of data to GRIP
 011; SCRIPT; Data Transfer; DataTransfer.tsk
