@@ -5,6 +5,7 @@
 
 #include "GraspDesktopForm.h"
 #include "GraspScripts.h"
+#include "../Useful/WindowFocus.h"
 
 using namespace GraspGUI;
 // We need InteropServics in order to convert a String to a char *.
@@ -330,7 +331,8 @@ void GraspDesktop::ShowStep( void ) {
 void GraspDesktop::startButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	// Disable the navigation buttons while we are running.
 	// This is perhaps not necessary, as the event loop will stop while the command is running.
-	commandNavigationGroupBox->Enabled = true;
+	commandNavigationGroupBox->Visible = false;
+	commandNavigationGroupBox->Enabled = false;
 	// The user has executed the command, so we don't need to ask for verification any longer.
 	verifyNext = false;
 	// Show the 'running' page.
@@ -341,154 +343,174 @@ void GraspDesktop::startButton_Click(System::Object^  sender, System::EventArgs^
 
 // Trigger commands as needed after allowing the html viewer to fully load files.
 void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, System::Windows::Forms::WebBrowserDocumentCompletedEventArgs^  e) {
-		// Make sure that the windows have refreshed  before executing the command.
-		Refresh();
-		Application::DoEvents();
-		if ( cueStepCommand ) {
+	// Make sure that the windows have refreshed  before executing the command.
+	Refresh();
+	Application::DoEvents();
+	if ( cueStepCommand ) {
 
-			// Don't trigger again on the next DocumentCompleted event.
-			cueStepCommand = false;
+		// Don't trigger again on the next DocumentCompleted event.
+		cueStepCommand = false;
 
-			// Create an output filename.
-			SYSTEMTIME st;
-			GetSystemTime( &st );
-			char datetimestr[MAX_PATH];
-			sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-			String ^dateTimeString = gcnew String( datetimestr );
+		// Create an output filename.
+		SYSTEMTIME st;
+		GetSystemTime( &st );
+		char datetimestr[MAX_PATH];
+		sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		String ^dateTimeString = gcnew String( datetimestr );
 
-			// Show the current form as being disabled.
-			Enabled = false;
+		// Show the current form as being disabled.
+		// Enabled = false;
 
-			// Snap a picture.
-			dex->SnapPicture( "PreExec" );
+		// Snap a picture.
+		dex->SnapPicture( "PreExec" );
 
-			// Show the status of the current command.
-			stepExecutionState = STEP_EXECUTING;
-			SendProgressInfo();
+		// Show the status of the current command.
+		stepExecutionState = STEP_EXECUTING;
+		SendProgressInfo();
 
-			// Disconnect from DEX telemetry services so that the task program can connect.
-			dex->Disconnect();
+		// Disconnect from DEX telemetry services so that the task program can connect.
+		dex->Disconnect();
 
-			// Construct the command line from the entry in the task or step file.
-			// To the entry from the script we add a specification of the output filename root, including path
-			// and specification of the user, protocol, task an subject ID. The client process will incorporate these
-			// values into the HK packets that get sent to DEX for transmission to the ground.
-			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
-			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
-			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
-			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
-			String ^cmdline;
-			// Add command line arguments to COMMAND or COMMAND@.
-			if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
-				cmdline =  stepList[currentStep]->command 
-					+ " --output=" + resultsDirectory 
-						+ subjectList[currentSubject]->ID + "_" 
-						+ protocolID + "_" 
-						+ taskID + "_" 
-						+ dateTimeString
-					+ " --user=" + subjectID
-					+ " --protocol=" + protocolID
-					+ " --task=" + taskID
-					+ " --step=" + stepID;
-				// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
-				if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
-			}
-			// SYSTEM or SYSTEM@ do not add command line arguments.
-			else  cmdline = stepList[currentStep]->command;
+		// Construct the command line from the entry in the task or step file.
+		// To the entry from the script we add a specification of the output filename root, including path
+		// and specification of the user, protocol, task an subject ID. The client process will incorporate these
+		// values into the HK packets that get sent to DEX for transmission to the ground.
+		int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
+		int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
+		int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
+		int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+		String ^cmdline;
+		// Add command line arguments to COMMAND or COMMAND@.
+		if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
+			cmdline =  stepList[currentStep]->command 
+				+ " --output=" + resultsDirectory 
+				+ subjectList[currentSubject]->ID + "_" 
+				+ protocolID + "_" 
+				+ taskID + "_" 
+				+ dateTimeString
+				+ " --user=" + subjectID
+				+ " --protocol=" + protocolID
+				+ " --task=" + taskID
+				+ " --step=" + stepID;
+			// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
+			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
+		}
+		// SYSTEM or SYSTEM@ do not add command line arguments.
+		else  cmdline = stepList[currentStep]->command;
 
+		// Run the command.
+		// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
+		//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
+		//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
+		// We have to use Marshal::StringToHGlobalAnsi() to create ANSI strings to pass to the system() command.
+		char *cmd;
+		if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
+		else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 
-			// Run the command.
-			// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
-			//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
-			//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
-			// We have to use Marshal::StringToHGlobalAnsi() to create ANSI strings to pass to the system() command.
-			char *cmd;
-			if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
-			else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
-			
-			// if ( stepList[currentStep]->type->EndsWith("@") ) ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_MINIMIZE );
+		// Hide the window so as not to intefere with windows opened
+		// by the new process that we are about to launch.
+		//WindowState = FormWindowState::Minimized;
+		Visible = false;
 
-			// Keep track of where we are in case we need to restart.
-			char *action_filename = "GraspLastAction.txt";
-			FILE *action_fp;
-			
-			action_fp = fopen( action_filename, "w" );
-			if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing action record.", action_filename );
-			fprintf( action_fp, "Executing: %s", cmd );
-			fclose( action_fp );
+		// Keep track of where we are in case we need to restart.
+		char *action_filename = "GraspLastAction.txt";
+		FILE *action_fp;
 
-			int return_code = system( cmd );
-			// int return_code = WinExec( cmd, SW_SHOWNORMAL );
-			if ( return_code > 127 ) return_code -= 128;
+		action_fp = fopen( action_filename, "w" );
+		if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing action record.", action_filename );
+		fprintf( action_fp, "Executing: %s", cmd );
+		fclose( action_fp );
 
-			action_fp = fopen( action_filename, "w" );
-			if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", action_filename );
-			if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
-			else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
-			fclose( action_fp );
-			// if ( stepList[currentStep]->type->EndsWith("@") ) ShowWindow( static_cast<HWND>( this->Handle.ToPointer() ), SW_NORMAL );
+		int return_code = system( cmd );
+		if ( return_code > 127 ) return_code -= 128;
 
-			Marshal::FreeHGlobal( IntPtr( cmd ) );
+		action_fp = fopen( action_filename, "w" );
+		if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", action_filename );
+		if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
+		else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
+		fclose( action_fp );
 
-			// Map exit codes to the results pages defined in the step definition.
-			// The absolute value of the code determines which page is shown, i.e.
-			// codes -1 and 1 will show the same page, -2 and 2 the same page, etc,
-			// but the behavior will be that of a normal exit if positive and an 
-			// error exit if negative.
-			int exit_possibilities = stepList[currentStep]->exit->Length;
-			// If the exit code is higher than the highest defined return page, default to the highest defined return page.
-			int exit_choice = min( exit_possibilities - 1, abs( return_code ) );
-			// Hide the buttons used to initiate a command.
-			commandNavigationGroupBox->Enabled = false;
-			commandNavigationGroupBox->Visible = false;
-			// If the return code was negative, display the error code and show the navigation buttons that 
-			// allow to proceed appropriately in the case of an error exit.
-			if ( return_code < 0 ) {
-				errorCodeTextBox->Text = return_code.ToString();
-				errorNavigationGroupBox->Enabled = true;
-				errorNavigationGroupBox->Visible = true;
-				//this->AcceptButton = this->retryButton;
-				// Make sure that the normal navigation buttons are hidden.
-				// I think they already are, but to be sure I do it again.
-				normalNavigationGroupBox->Visible = false;
-				normalNavigationGroupBox->Enabled = false;
-				// Indicate in the script engine status that the command exited with an exit
-				//  code corresponding to an anomolous situation and specify the specific return code.
-				// Because stepExecutionState must be an unsigned short, we take the absolute value of the return code.
-				stepExecutionState = STEP_FINISHED_ABNORMAL + exit_choice;
-			}
-			else {
-				normalNavigationGroupBox->Visible = true;
-				normalNavigationGroupBox->Enabled = true;
-				// Enable moving on with Enter, or not.
-				if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
-				else this->AcceptButton = this->nextButton;
-				// Indicate in the script engine status that the command exited with an exit
-				//  code corresponding to a normal situation and specify the specific return code.
-				stepExecutionState = STEP_FINISHED_NORMAL + return_code;
-			}
+		Marshal::FreeHGlobal( IntPtr( cmd ) );
 
-			// Show the corresponding page.
-			instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
+		// Restore the form.	
+		//WindowState = FormWindowState::Normal;
+		Visible=true;
+		// And make sure that it is on top again.
+		Sleep(100);
+		Activate();
 
-			// Reconnect to DEX for telemetry.
-			dex->Connect();
-
-			// Inform ground about the completion status.
-			SendProgressInfo();
-
-			// Snap a picture.
-			dex->SnapPicture( "PostExec" );
-
-			// Re-enable the form.	
-			Enabled = true;
-			// And make sure that it is on top again.
-			Activate();
-
+		// Map exit codes to the results pages defined in the step definition.
+		// The absolute value of the code determines which page is shown, i.e.
+		// codes -1 and 1 will show the same page, -2 and 2 the same page, etc,
+		// but the behavior will be that of a normal exit if positive and an 
+		// error exit if negative.
+		int exit_possibilities = stepList[currentStep]->exit->Length;
+		// If the exit code is higher than the highest defined return page, default to the highest defined return page.
+		int exit_choice = min( exit_possibilities - 1, abs( return_code ) );
+		// Hide the buttons used to initiate a command.
+		commandNavigationGroupBox->Enabled = false;
+		commandNavigationGroupBox->Visible = false;
+		// If the return code was negative, display the error code and show the navigation buttons that 
+		// allow to proceed appropriately in the case of an error exit.
+		if ( return_code < 0 ) {
+			errorCodeTextBox->Text = return_code.ToString();
+			errorNavigationGroupBox->Enabled = true;
+			errorNavigationGroupBox->Visible = true;
+			this->AcceptButton = nullptr;
+			// Make sure that the normal navigation buttons are hidden.
+			// I think they already are, but to be sure I do it again.
+			normalNavigationGroupBox->Visible = false;
+			normalNavigationGroupBox->Enabled = false;
+			// Indicate in the script engine status that the command exited with an exit
+			//  code corresponding to an anomolous situation and specify the specific return code.
+			// Because stepExecutionState must be an unsigned short, we take the absolute value of the return code.
+			stepExecutionState = STEP_FINISHED_ABNORMAL + exit_choice;
+		}
+		else {
+			normalNavigationGroupBox->Visible = true;
+			normalNavigationGroupBox->Enabled = true;
+			// Enable moving on with Enter, or not.
 			if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
 			else this->AcceptButton = this->nextButton;
-
+			// Indicate in the script engine status that the command exited with an exit
+			//  code corresponding to a normal situation and specify the specific return code.
+			stepExecutionState = STEP_FINISHED_NORMAL + return_code;
+			if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
+			else this->AcceptButton = this->nextButton;
 		}
+
+		// Show the corresponding page.
+		instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[exit_choice] );
+
+		// Reconnect to DEX for telemetry.
+		dex->Connect();
+
+		// Inform ground about the completion status.
+		SendProgressInfo();
+
+		// Snap a picture.
+		dex->SnapPicture( "PostExec" );
+
+
+
+	}
+	else if ( taskListBox->SelectedIndex >= 0 ) {
+
+		//// Do everything that I can to force windows to give focus back to me.
+
+		// Position the mouse pointer in the middle of the instruction viewer
+		// and then force a mouse click.
+		// This has the effect of setting the focus to the GUI, but does not 
+		// have the effect of clicking on a button if focus is already there.
+		// Hopefully, the GraspGUI window is on top as planned.
+		HWND targetWindow = static_cast<HWND>( instructionViewer->Handle.ToPointer() );
+		RECT rect;
+		GetWindowRect( targetWindow, &rect );
+		SetCursorPos( ( rect.right + rect.left ) / 2, rect.bottom - 5 );
+		PhantomLeftClick();
+
+	}
+
 }
 
 // Retry the step, if desired, in the case of error exit.

@@ -55,10 +55,6 @@ namespace GraspGUI {
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
 
-	private: System::Windows::Forms::CheckBox^  unitTestingMode;
-	private: System::Windows::Forms::Button^  repeatButton;
-
-
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void SendProgressInfo( void ) {
@@ -83,7 +79,6 @@ namespace GraspGUI {
 		void StopRefreshTimer( void ) {
 			refreshTimer->Stop();
 		}		
-
 
 	public:
 		GraspDesktop( void )
@@ -157,6 +152,8 @@ namespace GraspGUI {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::CheckBox^  unitTestingMode;
+	private: System::Windows::Forms::Button^  repeatButton;
 	private: System::Windows::Forms::GroupBox^  navigatorGroupBox;
 	private: System::Windows::Forms::GroupBox^  subjectGroupBox;
 	private: System::Windows::Forms::ListBox^  subjectListBox;
