@@ -658,8 +658,10 @@ namespace GraspGUI {
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GRASP";
+			this->Activated += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Activated);
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
+			this->VisibleChanged += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_VisibleChanged);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspDesktop::GraspDesktop_Paint);
 			this->navigatorGroupBox->ResumeLayout(false);
 			this->taskGroupBox->ResumeLayout(false);
@@ -870,6 +872,10 @@ namespace GraspGUI {
 
 	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
+private: System::Void GraspDesktop_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void GraspDesktop_Activated(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }
 
