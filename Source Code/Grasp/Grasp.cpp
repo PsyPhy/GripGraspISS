@@ -1,6 +1,7 @@
 // Grasp.cpp : Defines the entry point for the application.
 //
 #include "stdafx.h"
+#include <io.h>
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
@@ -119,6 +120,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
+	if ( 0 == _access_s( "CodaAlignGaze.flg", 0x00 ) ) grasp->straightenHeadMethod = CODA_STRAIGHTEN;
+	if ( 0 == _access_s( "ChestAlignGaze.flg", 0x00 ) ) grasp->straightenHeadMethod = CHEST_STRAIGHTEN;
 
 	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
