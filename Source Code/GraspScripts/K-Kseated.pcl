@@ -1,6 +1,5 @@
 # Protocol Definition: Manual Stimulus to Manual Response 
-301; SCRIPT; Preparation; K-KprepareSeated.tsk
-302; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
+301; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
 311; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --KtoK --sequence=Sequences\WU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 321; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --KtoK --sequence=Sequences\HU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 322; COMMAND; Experiment Trials Block 3; Executables\Grasp.bat --KtoK --sequence=Sequences\HU_Ser2_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
@@ -12,5 +11,5 @@
 336; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 337; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 338; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-390; SCRIPT; Data Transfer; DataTransfer.tsk
-399; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
+339; COMMAND@; End of Trials; Executables\Grasp.bat --doff; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+349; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
