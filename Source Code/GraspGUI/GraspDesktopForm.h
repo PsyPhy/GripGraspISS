@@ -813,7 +813,7 @@ namespace GraspGUI {
 			}
 			currentTask = taskListBox->SelectedIndex;
 			stepHeaderTextBox->Text = taskListBox->Text;
-			if (  !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SCRIPT" ) ) {
+			if (  taskList[taskListBox->SelectedIndex]->type->StartsWith( "SCRIPT" ) ) {
 				// Read a series of steps from a script file.
 				ParseTaskFile( scriptDirectory + taskList[taskListBox->SelectedIndex]->task_file );
 			}
@@ -825,10 +825,8 @@ namespace GraspGUI {
 				if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "INSTRUCTION" ) ) {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
-				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND@" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM@" ) 
+				else if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "COMMAND" )  
+							|| taskList[taskListBox->SelectedIndex]->type->StartsWith( "SYSTEM" ) 
 					) {
 					stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
 					stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;

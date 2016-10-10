@@ -139,7 +139,7 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 			int number;
 			sscanf( token[0], "%d", &number );
 			taskList[nTasks] = gcnew Task( number, token[1], token[2] );
-			if ( !strcmp( token[1], "SCRIPT" ) ) {
+			if ( !strcmp( token[1], "SCRIPT" ) || !strcmp( token[1], "SCRIPT=" ) ) {
 				// Record the info about the script file.
 				taskList[nTasks]->task_file = gcnew String( token[3] );
 			}
@@ -149,13 +149,16 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 				taskList[nTasks]->isolated_step = gcnew Step();
 				if ( !strcmp( token[1], "INSTRUCTION" ) 
 						|| !strcmp( token[1], "INSTRUCTION@" )
+						|| !strcmp( token[1], "INSTRUCTION=" )
 					) {
 					taskList[nTasks]->isolated_step->type = gcnew String( token[1] );
 					taskList[nTasks]->isolated_step->instruction = gcnew String( token[3] );
 				}
 				else if ( !strcmp( token[1], "COMMAND" ) 
 							|| !strcmp( token[1], "COMMAND@" ) 
+							|| !strcmp( token[1], "COMMAND=" ) 
 							|| !strcmp( token[1], "SYSTEM" ) 
+							|| !strcmp( token[1], "SYSTEM=" ) 
 							|| !strcmp( token[1], "SYSTEM@" ) 
 						) {
 					taskList[nTasks]->isolated_step->type = gcnew String( token[1] );
@@ -209,14 +212,10 @@ void GraspDesktop::ParseTaskFile( String ^filename ) {
 			sscanf( token[0], "%d", &number );
 			stepList[nSteps]->number = number;
 			stepList[nSteps]->type = gcnew String(  token[1] );
-			if ( stepList[nSteps]->type->Equals( "INSTRUCTION" ) || stepList[nSteps]->type->Equals( "INSTRUCTION@" ) ) {
+			if ( stepList[nSteps]->type->StartsWith( "INSTRUCTION" ) ) {
 				stepList[nSteps]->instruction = gcnew String( token[2] );
 			}
-			else if ( stepList[nSteps]->type->Equals( "COMMAND" ) 
-						|| stepList[nSteps]->type->Equals( "COMMAND@" )
-						|| stepList[nSteps]->type->Equals( "SYSTEM" )
-						|| stepList[nSteps]->type->Equals( "SYSTEM@" )
-					) {
+			else if ( stepList[nSteps]->type->StartsWith( "COMMAND" ) || stepList[nSteps]->type->StartsWith( "SYSTEM" ) ) {
 				stepList[nSteps]->command = gcnew String( token[2] );
 				stepList[nSteps]->ready = gcnew String( token[3] );
 				stepList[nSteps]->running = gcnew String( token[4] );
@@ -243,7 +242,7 @@ void GraspDesktop::previousButton_Click(System::Object^  sender, System::EventAr
 void GraspDesktop::nextButton_Click(System::Object^  sender, System::EventArgs^  e) {
 	if ( currentStep >= nSteps - 1 ) {
 		// End of this set of instructions.
-		if ( !stepList[currentStep]->type->EndsWith("@") ) SelectNextTask();
+		if ( !stepList[currentStep]->type->EndsWith("=") ) SelectNextTask();
 		else {
 			taskListBox->SelectedIndex = -1; 
 			currentTask = -1;
@@ -317,9 +316,8 @@ void GraspDesktop::ShowStep( void ) {
 		// Enable the "Execute", "Skip" and "Previous" buttons.
 		commandNavigationGroupBox->Visible = true;
 		commandNavigationGroupBox->Enabled = true;
-		// Enable moving on with Enter, or not.
-		if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
-		else this->AcceptButton = this->executeButton;
+		// Enable moving on with Enter.
+		this->AcceptButton = this->executeButton;
 		// Ask for verification if user tries to skip to the next page before executing the command.
 		verifyNext = true;
 		// Show the 'ready' page for the command.
@@ -475,8 +473,6 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Indicate in the script engine status that the command exited with an exit
 			//  code corresponding to a normal situation and specify the specific return code.
 			stepExecutionState = STEP_FINISHED_NORMAL + return_code;
-			if ( stepList[currentStep]->type->EndsWith("@") ) this->AcceptButton = nullptr;
-			else this->AcceptButton = this->nextButton;
 		}
 
 		// Show the corresponding page.
