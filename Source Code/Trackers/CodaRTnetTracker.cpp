@@ -287,6 +287,8 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 	int nUnexpectedPackets = 0;
 	int nFailedFrames = 0;
 	int nSuccessfullPackets = 0;
+
+	bool truncateMarkerList = false;
 	
 	fOutputDebugString( "\nStart retrieval of Marker data (%d frames).\n", nFrames );
 
@@ -328,9 +330,11 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 					nSuccessfullPackets++;
 					// find number of marker positions available
 					DWORD nMarkers = decode3D.getNumMarkers();
-					if ( nMarkers > MAX_MARKERS ) {
-						fMessageBox(  MB_OK, "CodaRTnetTracker", "How many markers?!?!\n   %d > %d", nMarkers, MAX_MARKERS  );
-						exit( RTNET_RETRIEVEERROR );
+					if ( nMarkers > MAX_MARKERS && !truncateMarkerList ) {
+						int answer = fMessageBox(  MB_YESNO, "CodaRTnetTracker", "How many markers?!?!\n   %d > %d\nTruncate?", nMarkers, MAX_MARKERS  );
+						if ( answer == IDNO ) exit( RTNET_RETRIEVEERROR );
+						nMarkers = MAX_MARKERS;
+						truncateMarkerList = true;
 					}
 					int   unit = decode3D.getPage();
 					if ( unit >= nUnits ) {
