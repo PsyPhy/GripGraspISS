@@ -98,5 +98,8 @@
     <None Include="DataTransfer.pcl">
       <Filter>Generic</Filter>
     </None>
+    <None Include="SoftwareConfigure.pcl">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -3,3 +3,5 @@
 951; SYSTEM=; Align Gaze to CODA; del /F /Q ChestAlignGaze.flg & echo "AlignCoda" > CodaAlignGaze.flg; StepReady.prompt.html
 952; SYSTEM=; Align Gaze to Chest; del /F /Q CodaAlignGaze.flg & echo "AlignChest" > ChestAlignGaze.flg; StepReady.prompt.html
 953; SYSTEM=; Gaze Self-Alignment; del /F /Q CodaAlignGaze.flg ChestAlignGaze.flg; StepReady.prompt.html
+954; SYSTEM=; Use +10 Chair Tilt; del /F /Q Bdy\ChestTilted.bdy & copy /Y Bdy\TweakedChestModels\ChestPitchPlus10.bdy Bdy\ChestTilted.bdy; StepReady.prompt.html
+955; SYSTEM=; Use -10 Chair Tilt; del /F /Q Bdy\ChestTilted.bdy & copy /Y Bdy\TweakedChestModels\ChestPitchMinus10.bdy Bdy\ChestTilted.bdy; StepReady.prompt.html
