@@ -1,6 +1,8 @@
 // Grasp.cpp : Defines the entry point for the application.
 //
 #include "stdafx.h"
+#include <io.h>
+
 #include "../OculusInterface/OculusInterface.h"
 
 #include "../Useful/Timers.h"
@@ -349,7 +351,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	if ( pose_fp ) fclose( pose_fp );
 	pose_fp = NULL;
 
-	if ( currentTrial < nTrials ) return( -2 );
+	if ( DEMO == GetParadigm() || QUITVR == GetParadigm() ) return( 0 );
+	else if ( currentTrial < nTrials ) return( -2 );
 	else if ( retriesRemaining <= 0 ) return( -3 );
 	else return 0;
 

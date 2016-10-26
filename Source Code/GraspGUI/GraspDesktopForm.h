@@ -55,10 +55,6 @@ namespace GraspGUI {
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
 
-	private: System::Windows::Forms::CheckBox^  unitTestingMode;
-	private: System::Windows::Forms::Button^  repeatButton;
-
-
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void SendProgressInfo( void ) {
@@ -83,7 +79,6 @@ namespace GraspGUI {
 		void StopRefreshTimer( void ) {
 			refreshTimer->Stop();
 		}		
-
 
 	public:
 		GraspDesktop( void )
@@ -157,6 +152,8 @@ namespace GraspGUI {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::CheckBox^  unitTestingMode;
+	private: System::Windows::Forms::Button^  repeatButton;
 	private: System::Windows::Forms::GroupBox^  navigatorGroupBox;
 	private: System::Windows::Forms::GroupBox^  subjectGroupBox;
 	private: System::Windows::Forms::ListBox^  subjectListBox;
@@ -661,8 +658,10 @@ namespace GraspGUI {
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GRASP";
+			this->Activated += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Activated);
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
+			this->VisibleChanged += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_VisibleChanged);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspDesktop::GraspDesktop_Paint);
 			this->navigatorGroupBox->ResumeLayout(false);
 			this->taskGroupBox->ResumeLayout(false);
@@ -814,7 +813,7 @@ namespace GraspGUI {
 			}
 			currentTask = taskListBox->SelectedIndex;
 			stepHeaderTextBox->Text = taskListBox->Text;
-			if (  !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SCRIPT" ) ) {
+			if (  taskList[taskListBox->SelectedIndex]->type->StartsWith( "SCRIPT" ) ) {
 				// Read a series of steps from a script file.
 				ParseTaskFile( scriptDirectory + taskList[taskListBox->SelectedIndex]->task_file );
 			}
@@ -826,10 +825,8 @@ namespace GraspGUI {
 				if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "INSTRUCTION" ) ) {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
-				else if ( !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "COMMAND@" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM" ) 
-							|| !taskList[taskListBox->SelectedIndex]->type->CompareTo( "SYSTEM@" ) 
+				else if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "COMMAND" )  
+							|| taskList[taskListBox->SelectedIndex]->type->StartsWith( "SYSTEM" ) 
 					) {
 					stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
 					stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
@@ -873,6 +870,10 @@ namespace GraspGUI {
 
 	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
+private: System::Void GraspDesktop_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void GraspDesktop_Activated(System::Object^  sender, System::EventArgs^  e) {
+		 }
 };
 }
 

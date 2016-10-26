@@ -81,6 +81,7 @@
     <ClCompile Include="ParseCommaDelimitedLine.c" />
     <ClCompile Include="timeofday.c" />
     <ClCompile Include="Timers.cpp" />
+    <ClCompile Include="WindowFocus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fMessageBox.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="ParseCommaDelimitedLine.h" />
     <ClInclude Include="Timers.h" />
     <ClInclude Include="Useful.h" />
+    <ClInclude Include="WindowFocus.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

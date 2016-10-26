@@ -207,6 +207,7 @@ namespace TaskProcessUnitTester {
 			// 
 			// Form1
 			// 
+			this->AcceptButton = this->exitZeroButton;
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(759, 572);

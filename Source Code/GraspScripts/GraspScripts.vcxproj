@@ -66,6 +66,7 @@
     <None Include="PrepareSeated.pcl" />
     <None Include="PrepareSeated.tsk" />
     <None Include="Short.pcl" />
+    <None Include="SoftwareConfigure.pcl" />
     <None Include="Subjects.sbj" />
     <None Include="GraspScripts.mak" />
     <None Include="V-Kfloating.pcl" />

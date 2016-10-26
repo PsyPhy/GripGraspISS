@@ -116,6 +116,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\GraspOculus
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusStartupCheck", "OculusStartupCheck\OculusStartupCheck.vcxproj", "{465AEFC2-B087-4FF6-B090-B60B01AF175F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiveFocusDamnIt", "GiveFocusDamnIt\GiveFocusDamnIt.vcxproj", "{FC7A2632-0A84-4E2E-B852-1AC3A2908325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -517,6 +519,14 @@ Global
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.Release|Win32.Build.0 = Release|Win32
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.TestRelease|Win32.Build.0 = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Debug|Win32.Build.0 = Debug|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.DraftRelease|Win32.Build.0 = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Release|Win32.ActiveCfg = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Release|Win32.Build.0 = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

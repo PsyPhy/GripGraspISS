@@ -8,6 +8,7 @@
     <ClCompile Include="ParseCommaDelimitedLine.c" />
     <ClCompile Include="timeofday.c" />
     <ClCompile Include="ini.c" />
+    <ClCompile Include="WindowFocus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fMessageBox.h" />
@@ -17,5 +18,6 @@
     <ClInclude Include="ParseCommaDelimitedLine.h" />
     <ClInclude Include="Timers.h" />
     <ClInclude Include="ini.h" />
+    <ClInclude Include="WindowFocus.h" />
   </ItemGroup>
 </Project>
