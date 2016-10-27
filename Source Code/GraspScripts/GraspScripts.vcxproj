@@ -55,10 +55,12 @@
     <None Include="GraspCommissioningSessions.sss" />
     <None Include="GraspMaintenanceSessions.sss" />
     <None Include="GraspNominalSessions.sss" />
+    <None Include="GraspTrainingSessions.sss" />
     <None Include="K-Kfloating.pcl" />
     <None Include="K-Kinstructions.tsk" />
     <None Include="K-KprepareFloating.tsk" />
     <None Include="K-KprepareSeated.tsk" />
+    <None Include="K-Kseated-training.pcl" />
     <None Include="K-Kseated.pcl" />
     <None Include="Maintenance.pcl" />
     <None Include="PrepareFloating.pcl" />
@@ -73,11 +75,13 @@
     <None Include="V-Kinstructions.tsk" />
     <None Include="V-KprepareFloating.tsk" />
     <None Include="V-KprepareSeated.tsk" />
+    <None Include="V-Kseated-training.pcl" />
     <None Include="V-Kseated.pcl" />
     <None Include="V-Vfloating.pcl" />
     <None Include="V-Vinstructions.tsk" />
     <None Include="V-VprepareFloating.tsk" />
     <None Include="V-VprepareSeated.tsk" />
+    <None Include="V-Vseated-training.pcl" />
     <None Include="V-Vseated.pcl" />
   </ItemGroup>
   <ItemGroup>

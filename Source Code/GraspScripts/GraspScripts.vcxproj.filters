@@ -101,5 +101,17 @@
     <None Include="SoftwareConfigure.pcl">
       <Filter>Generic</Filter>
     </None>
+    <None Include="GraspTrainingSessions.sss">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="V-Vseated-training.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-Kseated-training.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="K-Kseated-training.pcl">
+      <Filter>K-K</Filter>
+    </None>
   </ItemGroup>
 </Project>

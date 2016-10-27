@@ -159,7 +159,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst, HWND parent ) {
 	static const bool fullscreen = true;
 	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
 	// what is going on in the HMD. To do so, set the following to false;
-	static const bool mirror = false;
+	static const bool mirror = true;
 
 	// Initializes LibOVR, and the Rift
 #ifdef USE_OCULUS_O_8
