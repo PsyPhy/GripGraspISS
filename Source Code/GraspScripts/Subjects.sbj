@@ -8,6 +8,6 @@
 07; S7;	Subject 7;GraspNominalSessions.sss
 08; S8;	Subject 8;GraspNominalSessions.sss
 09; S9;	Subject 9;GraspNominalSessions.sss
-10; S9;	Subject 10;GraspNominalSessions.sss
+97; TR;	Training;GraspTrainingSessions.sss
 98; CM; Commissioning; GraspCommissioningSessions.sss
 99; SM; Maintenance; GraspMaintenanceSessions.sss
