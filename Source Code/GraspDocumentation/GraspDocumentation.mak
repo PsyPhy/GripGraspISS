@@ -43,7 +43,7 @@ SCREENSHOTS = ready.bmp \
 GUISHOTS = $(GUI)\Alert.png  $(GUI)\Execute.png  $(GUI)\Instruction.png   $(GUI)\Success.png   $(GUI)\Login.png  $(GUI)\SelectSubsession.png  $(GUI)\StartTask.png 
 
 install: $(DOCUMENTS)
-	rmdir /S /Q $(DOCUMENTATION_DESTINATION)
+	-rmdir /S /Q $(DOCUMENTATION_DESTINATION)
 	mkdir $(DOCUMENTATION_DESTINATION)
 	copy *.pdf $(DOCUMENTATION_DESTINATION)
 	mkdir $(DOCUMENTATION_DESTINATION)\Images
@@ -190,9 +190,6 @@ ManualManualScenes.pdf: ManualManualScenes.html
 # Create a document describing the GUI pages.
 GraspGUIScreens.html: $(GUISHOTS) GraspGUIScreens.md GraspDocumentation.mak
 	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  GraspGUIScreens.md | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
-
-GraspGUIScreens.docx: $(GUISHOTS) GraspGUIScreens.html GraspDocumentation.mak
-	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  GraspGUIScreens.md | $(PANDOC) $(PANDOC_OPTIONS) --to=docx -o $@
 
 GraspGUIScreens.pdf: GraspGUIScreens.html
 	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A4  --default-header --header-left "GRASP Software User Interface" --header-font-size 8 --margin-bottom 10 --margin-top 20  --header-spacing 4 $(**) $@

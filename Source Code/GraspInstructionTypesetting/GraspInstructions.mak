@@ -30,7 +30,7 @@ VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Picture
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
 # and then copy in the newly created files.
 install: $(ALL_HTML)  $(VRIMAGES) GraspInstructions.mak
-	rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
+	-rmdir /S /Q $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION) & echo Ignoring any failures of the mkdir command.
 	copy *.html $(INSTRUCTIONS_DESTINATION)
 	mkdir $(INSTRUCTIONS_DESTINATION)\Pictures & echo Ignoring any failures of the mkdir command.

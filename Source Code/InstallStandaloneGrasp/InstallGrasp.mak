@@ -18,7 +18,8 @@ EXECUTABLES = ..\$(BUILDCONFIGURATION)\Grasp.exe ..\Grasp\Grasp.bat ..\Grasp\Gra
 	RunGRASP.bat
 
 install: $(EXECUTABLES) InstallGrasp.mak 
-	-del /Q ..\..\Executables\*
+	-rmdir /S /Q ..\..\Executables
+	mkdir ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\OculusMouse.exe ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\Grasp.exe ..\..\Executables
 	copy ..\Grasp\Grasp.bat ..\..\Executables
