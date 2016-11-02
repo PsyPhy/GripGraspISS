@@ -11,7 +11,7 @@ SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=
 # This should be a list of all the HTML files that you want to generate.
 ALL_HTML=GraspWelcome.html \
 	00IntroV-V.instruction.html 00IntroV-K.instruction.html 00IntroK-K.instruction.html \
-	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html \
+	CodaAlignFloating.prompt.html CodaAlignSeated.prompt.html AlignmentRunning.instruction.html \
 	HMDStructureAssembly.instruction.html \
 	StepReadySeated.prompt.html StepReadyFloating.prompt.html \
 	ObjectPositioningSeated.instruction.html ObjectPositioningFloating.instruction.html\

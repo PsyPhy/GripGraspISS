@@ -14,4 +14,4 @@ CENTER( IMAGE(Pictures/AimResponseK.jpg, 200) )
 With your left hand, press the CBUTTON on the REMOTE to validate your response 
 once you think your hand is aligned with the memorised target.
 
-CENTER( IMAGE(Pictures/VRRemote.tiff, 180) )
+CENTER( IMAGE(Pictures/VRRemote.png, 180) )
