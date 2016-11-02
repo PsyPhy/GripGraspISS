@@ -307,9 +307,9 @@ DeleteMe.alignment.dat
 DeleteMe*
 Executables/Filezilla*
 Executables/*
-Executables\*
 Executables
 Documentation/*
+Documentation
 *.tar
 GraspLastAction.txt
 FakeCoda.flg
