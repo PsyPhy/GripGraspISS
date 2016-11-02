@@ -124,6 +124,7 @@ int _tmain(int argc, char *argv[])
 	objects->positionOnlyTarget->Disable();
 	objects->straightAheadTarget->Disable();
 	objects->response->Disable();
+	objects->straightenHeadIndicator->Disable();
 	objects->headTiltPrompt->Disable();
 	objects->handRollPrompt->Disable();
 	objects->vTool->Disable();
@@ -170,6 +171,11 @@ int _tmain(int argc, char *argv[])
 			objects->hand->SetOrientation( angle, 0.0, 0.0 );
 		}
 
+		else if ( !strcmp( argv[arg], "--shoulders" )) {
+			objects->glasses->SetColor( 0.0, 0.0, 1.0, 0.5 );
+			objects->straightenHeadIndicator->Enable();		
+		} 
+
 		else if ( !strcmp( argv[arg], "--vkTool" )) {
 			objects->vkTool->Enable();
 		}
@@ -213,6 +219,10 @@ int _tmain(int argc, char *argv[])
 
 		else if ( !strcmp( argv[arg], "--BlockCompleted" )) {
 			objects->blockCompletedIndicator->Enable();
+		}
+
+		else if ( !strcmp( argv[arg], "--VRCompleted" )) {
+			objects->vrCompletedIndicator->Enable();
 		}
 
 		else if ( !strcmp( argv[arg], "--TrialCompleted" )) {

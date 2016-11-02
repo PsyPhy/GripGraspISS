@@ -8,6 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--NoRoom --hand=20 --targetSphere  --handArrowRight --kkTool --handError=4.0 --head=15.0 --headError=10.0 --confirm  </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--VRCompleted --confirm  </LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
