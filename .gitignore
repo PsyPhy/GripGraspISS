@@ -307,6 +307,7 @@ DeleteMe.alignment.dat
 DeleteMe*
 Executables/Filezilla*
 Executables/*
+Executables
 Documentation/*
 *.tar
 GraspLastAction.txt
