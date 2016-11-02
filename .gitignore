@@ -297,6 +297,9 @@ NoCoda.flg
 DexServices.dxl
 GraspGUI.dxl
 Source Code/TestDexServices/TestDexServices.dxl
+Source Code/GraspDocumentation/*.bmp
+Source Code/GraspDocumentation/*.pdf
+Source Code/GraspDocumentation/*.html
 TestGrasp.dxl
 *.seq
 *.dxl
