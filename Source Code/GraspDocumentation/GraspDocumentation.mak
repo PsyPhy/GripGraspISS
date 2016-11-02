@@ -28,7 +28,7 @@ SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=
 
 ### A list of the documents that we want to produce.
 DOCUMENTS=AllGraspScreensForReview.pdf  \
-	GraspGUIScreens.pdf GraspGUIScreens.docx \
+	GraspGUIScreens.pdf \
 	InstallSeated.pdf InstallFloating.pdf ManualManualInstructions.pdf VisualManualInstructions.pdf VisualVisualInstructions.pdf \
 	VisualVisualScenes.pdf VisualManualScenes.pdf  ManualManualScenes.pdf GraspIntro.pdf
 
