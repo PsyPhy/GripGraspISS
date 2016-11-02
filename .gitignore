@@ -319,8 +319,6 @@ Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadGreen.bmp
 Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadRed.bmp
 Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadYellow.bmp
 Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadBlue.bmp
-*/install
-Source Code/GraspBMPs/install
 Source Code/GraspBMPs/install
 Source Code/GraspDocumentation/install
 Source Code/GraspInstructionTypesetting/install
@@ -328,7 +326,3 @@ Source Code/GraspScripts/install
 Source Code/InstallStandaloneGrasp/install
 Source Code/GraspInstructionTypesetting/redo
 Utils/WinSCP.ini
-Utils/WinSCP.ini
-Source Code/GraspBMPs/GraspVRMessages.pdf
-Source Code/GraspDocumentation/install
-Source Code/GraspBMPs/install
