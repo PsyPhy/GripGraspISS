@@ -738,6 +738,23 @@ namespace GraspGUI {
 			StartRefreshTimer();
 		}
 
+		virtual bool VerifyInterruptStep( void ) {
+			// Check if the subject was supposed to execute a command and if so, verify that
+			// they really want to leave the current step without doing so.
+			if ( verifyNext || ( currentStep > 0 && currentStep < nSteps - 1 ) ) {
+				System::Windows::Forms::DialogResult response;
+				response = MessageBox( "Are you sure you want to interrupt the current step?", "GraspGUI", MessageBoxButtons::YesNo );
+				if ( response == System::Windows::Forms::DialogResult::No ) {
+					taskListBox->SelectedIndex = currentTask;
+					return false;
+				}
+				verifyNext = false;
+				normalNavigationGroupBox->Visible = true;
+				normalNavigationGroupBox->Enabled = true;
+				commandNavigationGroupBox->Visible = false;
+				commandNavigationGroupBox->Enabled = false;
+			}
+			return true;
 		}
 
 		System::Void subjectListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -868,6 +885,53 @@ namespace GraspGUI {
 	/// 
 	public ref class GraspMMI : public GraspDesktop
 	{
+	
+	protected:
+
+		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int phase ) {
+
+			static int previous_subject = -9999;
+			static int previous_protocol = -9999;
+			static int previous_task = -9999;
+			static int previous_step = -9999;
+
+			int i;
+
+			if ( subject_id != previous_subject ) {
+				for ( i = 0; i < nSubjects; i++ ) {
+					if ( subjectList[i]->number == subject_id ) break;
+				}
+				if ( i == nSubjects ) i = -1;
+				subjectListBox->SelectedIndex = i;
+				previous_subject = subject_id;
+				Refresh();
+				Application::DoEvents();
+			}
+
+			if ( protocol_id != previous_protocol ) {
+				for ( i = 0; i < nProtocols; i++ ) {
+					if ( protocolList[i]->number == protocol_id ) break;
+				}
+				if ( i == nProtocols ) i = -1;
+				protocolListBox->SelectedIndex = i;
+				previous_protocol = protocol_id;
+				Refresh();
+				Application::DoEvents();
+			}
+
+			if ( task_id != previous_task ) {
+				for ( i = 0; i < nTasks; i++ ) {
+					if ( taskList[i]->number == task_id ) break;
+				}
+				if ( i == nTasks ) i = -1;
+				taskListBox->SelectedIndex = i;
+				previous_task = task_id;
+				Refresh();
+				Application::DoEvents();
+			}
+
+		}
+
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) override {
 			InitializeForm();
@@ -877,6 +941,18 @@ namespace GraspGUI {
 		}
 		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) override {
 		}
+		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) override {
+
+			static int task = 201;
+			NavigateTo( 4, 200, task++, 20, 0 );
+		}
+		// In GUI mode, the gui will ask for confirmation if the user breaks the normal sequence.
+		// In MMI mode, confirmation is given automatically.
+		virtual bool VerifyInterruptStep( void ) override {
+			return true;
+		}
+
 	};
+
 }
 
