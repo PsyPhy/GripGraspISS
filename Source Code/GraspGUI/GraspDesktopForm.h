@@ -86,7 +86,7 @@ namespace GraspGUI {
 
 			// The lists of subjects, protocols, tasks and steps are dynamically
 			//  read from text files. Here we initialize the lists.
-			// I treating the lists as arrays and defining a separate counter to keep
+			// I treat the lists as arrays and define a separate counter to keep
 			//  track of how many items in each list. There is probably a way to treat
 			//  the arrays as actual lists with dynamic size, but I don't remember how.
 			subjectList = gcnew array<GraspGUI::Subject ^>(MAX_SUBJECTS);
@@ -159,8 +159,8 @@ namespace GraspGUI {
 	private: System::Windows::Forms::ListBox^  subjectListBox;
 	private: System::Windows::Forms::GroupBox^  taskGroupBox;
 	private: System::Windows::Forms::ListBox^  taskListBox;
-	// Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
-	// That is why the variable name is "protocolListBox" instead of "protocolComboBox".
+			 // Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
+			 // That is why the variable name is "protocolListBox" instead of "protocolComboBox".
 	private: System::Windows::Forms::GroupBox^  protocolGroupBox;
 	private: System::Windows::Forms::ComboBox^  protocolListBox;
 
@@ -826,12 +826,12 @@ namespace GraspGUI {
 					stepList[0]->instruction = taskList[taskListBox->SelectedIndex]->isolated_step->instruction;
 				}
 				else if ( taskList[taskListBox->SelectedIndex]->type->StartsWith( "COMMAND" )  
-							|| taskList[taskListBox->SelectedIndex]->type->StartsWith( "SYSTEM" ) 
+					|| taskList[taskListBox->SelectedIndex]->type->StartsWith( "SYSTEM" ) 
 					) {
-					stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
-					stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
-					stepList[0]->running = taskList[taskListBox->SelectedIndex]->isolated_step->running;
-					stepList[0]->exit = taskList[taskListBox->SelectedIndex]->isolated_step->exit;
+						stepList[0]->command = taskList[taskListBox->SelectedIndex]->isolated_step->command;
+						stepList[0]->ready = taskList[taskListBox->SelectedIndex]->isolated_step->ready;
+						stepList[0]->running = taskList[taskListBox->SelectedIndex]->isolated_step->running;
+						stepList[0]->exit = taskList[taskListBox->SelectedIndex]->isolated_step->exit;
 				}
 				nSteps = 1;
 			}
@@ -870,10 +870,10 @@ namespace GraspGUI {
 
 	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			 }
-private: System::Void GraspDesktop_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void GraspDesktop_Activated(System::Object^  sender, System::EventArgs^  e) {
-		 }
-};
+	private: System::Void GraspDesktop_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	private: System::Void GraspDesktop_Activated(System::Object^  sender, System::EventArgs^  e) {
+			 }
+	};
 }
 
