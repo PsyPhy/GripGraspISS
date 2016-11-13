@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Useful/fOutputDebugString.h"
 #include "GraspScripts.h"
 #include "../DexServices/DexServices.h"
 
@@ -734,7 +735,7 @@ namespace GraspGUI {
 			TweakForm();
 			InitializeMenus();
 			// Show progess on ground.
-			CreateRefreshTimer( 1000 );
+			CreateRefreshTimer( 3000 );
 			StartRefreshTimer();
 		}
 
@@ -767,7 +768,8 @@ namespace GraspGUI {
 			if ( currentSubject >= 0 ) {
 				ParseSessionFile( scriptDirectory + subjectList[currentSubject]->file );
 				currentProtocol = -1;
-				taskListBox->Items->Clear(); currentTask = -1;
+				taskListBox->Items->Clear(); 
+				currentTask = -1;
 			}
 			ShowLogon();
 		}
@@ -790,9 +792,6 @@ namespace GraspGUI {
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-
-			// If the task that is selected already is clicked, do nothing.
-			if ( taskListBox->SelectedIndex == currentTask ) return;
 
 			// Check if the subject was supposed to execute a command and if so, verify that
 			// they really want to leave the current step without doing so.
@@ -837,7 +836,7 @@ namespace GraspGUI {
 			WinExec( "Executables\\GraspHardwareStatus.exe", SW_SHOW );
 		}
 
-	private:
+	protected:
 
 		// The following methods deal with navigating through the scripts.
 		// I have chosen to group them together in GraspScripts.cpp, even the ones
@@ -888,7 +887,7 @@ namespace GraspGUI {
 	
 	protected:
 
-		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int phase ) {
+		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state ) {
 
 			static int previous_subject = -9999;
 			static int previous_protocol = -9999;
@@ -926,10 +925,45 @@ namespace GraspGUI {
 				if ( i == nTasks ) i = -1;
 				taskListBox->SelectedIndex = i;
 				previous_task = task_id;
-				Refresh();
-				Application::DoEvents();
 			}
+			Refresh();
+			Application::DoEvents();
+			if ( taskListBox->SelectedIndex >= 0 ) {
+				currentStep = step_id;
+				ShowStep();
 
+				// Hide all the navigation buttons by default.
+				// The appropriate ones will then be rendered visible below.
+				normalNavigationGroupBox->Visible = false;
+				normalNavigationGroupBox->Enabled = false;
+				errorNavigationGroupBox->Visible = false;
+				errorNavigationGroupBox->Enabled = false;
+				commandNavigationGroupBox->Visible = false;
+				commandNavigationGroupBox->Enabled = false;
+
+				if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
+					if ( state == STEP_READY_TO_EXECUTE ) {
+						commandNavigationGroupBox->Visible = true;
+						commandNavigationGroupBox->Enabled = true;
+					}
+					else if ( state == STEP_EXECUTING ) {
+						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
+					}
+					else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
+						normalNavigationGroupBox->Visible = true;
+						normalNavigationGroupBox->Enabled = true;
+						int code = state - STEP_FINISHED_NORMAL;
+						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+					}
+					else if ( state >= STEP_FINISHED_ABNORMAL ) {
+						errorNavigationGroupBox->Visible = true;
+						errorNavigationGroupBox->Enabled = true;
+						int code = state - STEP_FINISHED_ABNORMAL;
+						errorCodeTextBox->Text = code.ToString();
+						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+					}
+				}
+			}
 		}
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
@@ -943,8 +977,32 @@ namespace GraspGUI {
 		}
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) override {
 
-			static int task = 201;
-			NavigateTo( 4, 200, task++, 20, 0 );
+			static int user = 4;
+			static int protocol = 100;
+			static int task = 131;
+			static int step = 0;
+			static int state = 20000;
+
+			// Stop the refresh timer, in case it takes us longer than 1 refresh cycle to complete the actions.
+			StopRefreshTimer();
+			// Get the current state and update the GUI.
+			fOutputDebugString( "User %d  Protocol: %d  Task: %d  Step: %d  State: %8d\n", user, protocol, task, step, state );
+			NavigateTo( user, protocol, task, step, state );
+			step++;
+			if ( step >= nSteps ) {
+				step = 0;
+				task++;
+				if ( task > protocol + 49 ) {
+					protocol += 100;
+					task = protocol + 1;
+				}
+			}
+			state += 10000;
+			if ( state == STEP_FINISHED_ABNORMAL ) state++;
+			if ( state > 60000 ) state = 20000;
+
+			// Restart the timer so that we get called again.
+			StartRefreshTimer();
 		}
 		// In GUI mode, the gui will ask for confirmation if the user breaks the normal sequence.
 		// In MMI mode, confirmation is given automatically.
