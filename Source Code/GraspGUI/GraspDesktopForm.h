@@ -19,7 +19,7 @@ namespace GraspGUI {
 	public ref class GraspDesktop : public System::Windows::Forms::Form
 	{
 
-	private:
+	protected:
 
 		Grasp::DexServices	*dex;
 
@@ -57,16 +57,6 @@ namespace GraspGUI {
 
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
-		void SendProgressInfo( void ) {
-			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
-			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
-			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
-			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
-			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
-		}
-		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-			SendProgressInfo();
-		}
 
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
@@ -152,43 +142,45 @@ namespace GraspGUI {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::CheckBox^  unitTestingMode;
-	private: System::Windows::Forms::Button^  repeatButton;
-	private: System::Windows::Forms::GroupBox^  navigatorGroupBox;
-	private: System::Windows::Forms::GroupBox^  subjectGroupBox;
-	private: System::Windows::Forms::ListBox^  subjectListBox;
-	private: System::Windows::Forms::GroupBox^  taskGroupBox;
-	private: System::Windows::Forms::ListBox^  taskListBox;
-			 // Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
-			 // That is why the variable name is "protocolListBox" instead of "protocolComboBox".
-	private: System::Windows::Forms::GroupBox^  protocolGroupBox;
-	private: System::Windows::Forms::ComboBox^  protocolListBox;
 
-	private: System::Windows::Forms::Button^  statusButton;
-	private: System::Windows::Forms::Button^  quitButton;
+	protected:
+	  System::Windows::Forms::CheckBox^  unitTestingMode;
+	  System::Windows::Forms::Button^  repeatButton;
+	  System::Windows::Forms::GroupBox^  navigatorGroupBox;
+	  System::Windows::Forms::GroupBox^  subjectGroupBox;
+	  System::Windows::Forms::ListBox^  subjectListBox;
+	  System::Windows::Forms::GroupBox^  taskGroupBox;
+	  System::Windows::Forms::ListBox^  taskListBox;
+	// Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
+	// That is why the variable name is "protocolListBox" instead of "protocolComboBox".
+	  System::Windows::Forms::GroupBox^  protocolGroupBox;
+	  System::Windows::Forms::ComboBox^  protocolListBox;
 
-	private: System::Windows::Forms::GroupBox^  instructionsGroupBox;
-	private: System::Windows::Forms::WebBrowser^  instructionViewer;
-	private: System::Windows::Forms::GroupBox^  htmlGroupBox;
-	private: System::Windows::Forms::GroupBox^  stepHeaderGroupBox;
-	private: System::Windows::Forms::TextBox^  stepCounterTextBox;
-	private: System::Windows::Forms::TextBox^  stepHeaderTextBox;
+	  System::Windows::Forms::Button^  statusButton;
+	  System::Windows::Forms::Button^  quitButton;
 
-	private: System::Windows::Forms::GroupBox^  normalNavigationGroupBox;
-	private: System::Windows::Forms::Button^  previousButton;
-	private: System::Windows::Forms::Button^  nextButton;
+	  System::Windows::Forms::GroupBox^  instructionsGroupBox;
+	  System::Windows::Forms::WebBrowser^  instructionViewer;
+	  System::Windows::Forms::GroupBox^  htmlGroupBox;
+	  System::Windows::Forms::GroupBox^  stepHeaderGroupBox;
+	  System::Windows::Forms::TextBox^  stepCounterTextBox;
+	  System::Windows::Forms::TextBox^  stepHeaderTextBox;
 
-	private: System::Windows::Forms::GroupBox^  commandNavigationGroupBox;
-	private: System::Windows::Forms::Button^  executeButton;
-	private: System::Windows::Forms::Button^  execBackButton;
-	private: System::Windows::Forms::Button^  execSkipButton;
+	  System::Windows::Forms::GroupBox^  normalNavigationGroupBox;
+	  System::Windows::Forms::Button^  previousButton;
+	  System::Windows::Forms::Button^  nextButton;
 
-	private: System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
-	private: System::Windows::Forms::TextBox^  errorCodeTextBox;
-	private: System::Windows::Forms::Label^  errorCodeLabel;
-	private: System::Windows::Forms::Button^  retryButton;
-	private: System::Windows::Forms::Button^  restartButton;
-	private: System::Windows::Forms::Button^  ignoreButton;
+	  System::Windows::Forms::GroupBox^  commandNavigationGroupBox;
+	  System::Windows::Forms::Button^  executeButton;
+	  System::Windows::Forms::Button^  execBackButton;
+	  System::Windows::Forms::Button^  execSkipButton;
+
+	  System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
+	  System::Windows::Forms::TextBox^  errorCodeTextBox;
+	  System::Windows::Forms::Label^  errorCodeLabel;
+	  System::Windows::Forms::Button^  retryButton;
+	  System::Windows::Forms::Button^  restartButton;
+	  System::Windows::Forms::Button^  ignoreButton;
 
 
 
@@ -674,20 +666,37 @@ namespace GraspGUI {
 		}
 #pragma endregion
 
-		// The following declarations were generated automatically by the Forms designer.
-		// I am not sure that they are absolutely necessary.
-	private: 
-		System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-			dex->SendTaskInfo(  0, 0, 0, 0 );
-			fOutputDebugString( "dex->SendTaskInfo( 0, 0, 0, 0 );\n" );
-			dex->Disconnect();
-			dex->Release();
-		}
-
+	protected: 
 		// Here I create my own MessageBox method. So far I am using the standard MessageBox, but
 		//  I place it here so that later I can change it to use a larger font.
 		System::Windows::Forms::DialogResult MessageBox( String^ message, String^ caption, MessageBoxButtons buttons ) {
 			return( MessageBox::Show( message, caption, buttons ) );
+		}
+
+		//
+		// Methods to communicate progress information to ground via DEX.
+		//
+		void ConnectToDEX ( void ) {
+			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
+			fOutputDebugString( "Connecting to DEX ... " );
+			dex = new Grasp::DexServices();
+			dex->Initialize( "GraspGUI.dxl" );
+			dex->Connect();
+			fOutputDebugString( "OK.\n" );
+		}
+
+		void SendProgressInfo( void ) {
+			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
+			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
+			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
+			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
+		}
+		void DisconnectFromDEX ( void ) {
+			dex->SendTaskInfo(  0, 0, 0, 0 );
+			fOutputDebugString( "dex->SendTaskInfo( 0, 0, 0, 0 );\n" );
+			dex->Disconnect();
+			dex->Release();
 		}
 
 		System::Void CancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -695,14 +704,23 @@ namespace GraspGUI {
 			Close();
 		}
 
-		System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
-
+		System::Void TweakForm( void ) {
 			// The text box used to hold the header is clipping descenders on lowercase letters.
 			// From the internet I found that one needs to turn AutoSize off to change the height.
 			// Since I can't do that in the designer, I do it here.
 			stepHeaderTextBox->AutoSize = false;
 			stepHeaderTextBox->Height = 36;
 			stepHeaderTextBox->Text = "";
+#ifdef _DEBUG
+			// There is a check box that can be used to put the GUI into unit testing mode.
+			// In this mode, external commands are not actually executed. Rather, a popup window
+			//  is shown allowing the user to simulate return from the command with different error codes.
+			// We only show this checkbox in debug builds.
+			unitTestingMode->Visible = true;
+#endif
+		}
+
+		System::Void InitializeMenus( void ) {
 			// Initialize the login and task selection menus.
 			subjectListBox->Items->Clear();
 			protocolListBox->Items->Clear(); 
@@ -711,39 +729,23 @@ namespace GraspGUI {
 			ParseSubjectFile( scriptDirectory + "Subjects.sbj" );
 			// Show a welcome screen.
 			instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
-
-#ifdef _DEBUG
-			// There is a check box that can be used to put the GUI into unit testing mode.
-			// In this mode, external commands are not actually executed. Rather, a popup window
-			//  is shown allowing the user to simulate return from the command with different error codes.
-			// We only show this checkbox in debug builds.
-			unitTestingMode->Visible = true;
-#endif
-
-			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
-			fOutputDebugString( "Connecting to DEX ... " );
-			dex = new Grasp::DexServices();
-			dex->Initialize( "GraspGUI.dxl" );
-			dex->Connect();
-			fOutputDebugString( "OK.\n" );
+		}	
+		System::Void InitializeForm( void ) {
+			TweakForm();
+			InitializeMenus();
 			// Show progess on ground.
 			CreateRefreshTimer( 1000 );
 			StartRefreshTimer();
+		}
 
 		}
 
 		System::Void subjectListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			// If the subject that is selected already is clicked, do nothing.
 			if ( subjectListBox->SelectedIndex == currentSubject ) return;
-			// Check if a task is running and if so, request confirmation.
-			else if ( currentStep > 0 ) {
-				System::Windows::Forms::DialogResult response;				
-				response = MessageBox( "Are you sure that you want to interrupt the currently running task?", "Grasp@ISS", MessageBoxButtons::YesNo );
-				if ( response == System::Windows::Forms::DialogResult::Yes ) {
-					subjectListBox->SelectedIndex = currentSubject;
-					return;
-				}
-			}
+			// Check if the subject was supposed to execute a command and if so, verify that
+			// they really want to leave the current step without doing so.
+			if ( !VerifyInterruptStep() ) return;
 			currentSubject = subjectListBox->SelectedIndex;
 			if ( currentSubject >= 0 ) {
 				ParseSessionFile( scriptDirectory + subjectList[currentSubject]->file );
@@ -755,22 +757,12 @@ namespace GraspGUI {
 
 		System::Void protocolListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			// If the protocol that is selected already is clicked, do nothing.
-			// if ( protocolListBox->SelectedIndex == currentProtocol ) return;
+			if ( protocolListBox->SelectedIndex == currentProtocol ) return;
+
 			// Check if the subject was supposed to execute a command and if so, verify that
 			// they really want to leave the current step without doing so.
-			if ( verifyNext || currentStep > 0 ) {
-				System::Windows::Forms::DialogResult response;
-				response = MessageBox( "Are you sure you want to interrupt the current step?", "Grasp@ISS", MessageBoxButtons::YesNo );
-				if ( response == System::Windows::Forms::DialogResult::No ) {
-					protocolListBox->SelectedIndex = currentProtocol;
-					return;
-				}
-				verifyNext = false;
-				normalNavigationGroupBox->Visible = true;
-				normalNavigationGroupBox->Enabled = true;
-				commandNavigationGroupBox->Visible = false;
-				commandNavigationGroupBox->Enabled = false;
-			}
+			if ( !VerifyInterruptStep() ) return;
+
 			currentProtocol = protocolListBox->SelectedIndex;
 			ParseProtocolFile( scriptDirectory + protocolList[currentProtocol]->file );
 			// Preselect the first task in the newly selected protocol.
@@ -781,26 +773,22 @@ namespace GraspGUI {
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+			// If the task that is selected already is clicked, do nothing.
+			if ( taskListBox->SelectedIndex == currentTask ) return;
+
+			// Check if the subject was supposed to execute a command and if so, verify that
+			// they really want to leave the current step without doing so.
+			if ( !VerifyInterruptStep() ) return;
+
+			currentTask = taskListBox->SelectedIndex;
+
+			// If no task is selected, then we continue to show the logon page.
 			if ( taskListBox->SelectedIndex < 0 ) {
 				ShowLogon();
 				return;
 			}
-			// Check if the subject was supposed to execute a command and if so, verify that
-			// they really want to leave the current step without doing so.
-			if ( verifyNext || ( currentStep > 0 && currentStep < nSteps - 1 ) ) {
-				System::Windows::Forms::DialogResult response;
-				response = MessageBox( "Are you sure you want to interrupt the current step?", "Grasp@ISS", MessageBoxButtons::YesNo );
-				if ( response == System::Windows::Forms::DialogResult::No ) {
-					taskListBox->SelectedIndex = currentTask;
-					return;
-				}
-				verifyNext = false;
-				normalNavigationGroupBox->Visible = true;
-				normalNavigationGroupBox->Enabled = true;
-				commandNavigationGroupBox->Visible = false;
-				commandNavigationGroupBox->Enabled = false;
-			}
-			currentTask = taskListBox->SelectedIndex;
+
 			stepHeaderTextBox->Text = taskListBox->Text;
 			if (  taskList[taskListBox->SelectedIndex]->type->StartsWith( "SCRIPT" ) ) {
 				// Read a series of steps from a script file.
@@ -856,6 +844,24 @@ namespace GraspGUI {
 		void retryButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
+
+	protected:
+
+		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+			DisconnectFromDEX();
+		}
+
+		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
+			ConnectToDEX();
+			InitializeForm();
+		}
+
+		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			SendProgressInfo();
+		}
+
+
+	};
 
 	};
 }
