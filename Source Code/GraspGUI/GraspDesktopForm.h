@@ -310,7 +310,6 @@ namespace GraspGUI {
 			this->taskGroupBox->TabIndex = 7;
 			this->taskGroupBox->TabStop = false;
 			this->taskGroupBox->Text = L"Task";
-			this->taskGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::TaskGroupBox_Enter);
 			// 
 			// taskListBox
 			// 
@@ -338,7 +337,6 @@ namespace GraspGUI {
 			this->protocolGroupBox->TabIndex = 6;
 			this->protocolGroupBox->TabStop = false;
 			this->protocolGroupBox->Text = L"Subsession";
-			this->protocolGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::ProtocolGroupBox_Enter);
 			// 
 			// protocolListBox
 			// 
@@ -366,7 +364,6 @@ namespace GraspGUI {
 			this->subjectGroupBox->TabIndex = 5;
 			this->subjectGroupBox->TabStop = false;
 			this->subjectGroupBox->Text = L"User ID";
-			this->subjectGroupBox->Enter += gcnew System::EventHandler(this, &GraspDesktop::SubjectGroupBox_Enter);
 			// 
 			// subjectListBox
 			// 
@@ -557,7 +554,6 @@ namespace GraspGUI {
 			this->repeatButton->Text = L"Repeat";
 			this->repeatButton->UseVisualStyleBackColor = true;
 			this->repeatButton->Visible = false;
-			this->repeatButton->Click += gcnew System::EventHandler(this, &GraspDesktop::repeatButton_Click);
 			// 
 			// previousButton
 			// 
@@ -658,11 +654,8 @@ namespace GraspGUI {
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GRASP";
-			this->Activated += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Activated);
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
-			this->VisibleChanged += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_VisibleChanged);
-			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspDesktop::GraspDesktop_Paint);
 			this->navigatorGroupBox->ResumeLayout(false);
 			this->taskGroupBox->ResumeLayout(false);
 			this->protocolGroupBox->ResumeLayout(false);
@@ -684,10 +677,6 @@ namespace GraspGUI {
 		// The following declarations were generated automatically by the Forms designer.
 		// I am not sure that they are absolutely necessary.
 	private: 
-		System::Void GraspDesktop_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {}
-		System::Void SubjectGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
-		System::Void ProtocolGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
-		System::Void TaskGroupBox_Enter(System::Object^  sender, System::EventArgs^  e) {}
 		System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 			dex->SendTaskInfo(  0, 0, 0, 0 );
 			fOutputDebugString( "dex->SendTaskInfo( 0, 0, 0, 0 );\n" );
@@ -868,12 +857,6 @@ namespace GraspGUI {
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
 
-	private: System::Void repeatButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			 }
-	private: System::Void GraspDesktop_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
-			 }
-	private: System::Void GraspDesktop_Activated(System::Object^  sender, System::EventArgs^  e) {
-			 }
 	};
 }
 
