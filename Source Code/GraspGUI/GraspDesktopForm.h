@@ -56,6 +56,10 @@ namespace GraspGUI {
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
 
+
+
+	protected: 
+
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 
@@ -145,44 +149,55 @@ namespace GraspGUI {
 		}
 
 	protected:
-	  System::Windows::Forms::CheckBox^  unitTestingMode;
-	  System::Windows::Forms::Button^  repeatButton;
-	  System::Windows::Forms::GroupBox^  navigatorGroupBox;
-	  System::Windows::Forms::GroupBox^  subjectGroupBox;
-	  System::Windows::Forms::ListBox^  subjectListBox;
-	  System::Windows::Forms::GroupBox^  taskGroupBox;
-	  System::Windows::Forms::ListBox^  taskListBox;
-	// Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
-	// That is why the variable name is "protocolListBox" instead of "protocolComboBox".
-	  System::Windows::Forms::GroupBox^  protocolGroupBox;
-	  System::Windows::Forms::ComboBox^  protocolListBox;
+		System::Windows::Forms::CheckBox^  unitTestingMode;
+		System::Windows::Forms::Button^  repeatButton;
+		System::Windows::Forms::GroupBox^  navigatorGroupBox;
+		System::Windows::Forms::GroupBox^  subjectGroupBox;
+		System::Windows::Forms::ListBox^  subjectListBox;
+		System::Windows::Forms::GroupBox^  taskGroupBox;
+		System::Windows::Forms::ListBox^  taskListBox;
+		// Originally I used a listBox for the protocols, but I changed it later to a ComboBox.
+		// That is why the variable name is "protocolListBox" instead of "protocolComboBox".
+		System::Windows::Forms::GroupBox^  protocolGroupBox;
+		System::Windows::Forms::ComboBox^  protocolListBox;
 
-	  System::Windows::Forms::Button^  statusButton;
-	  System::Windows::Forms::Button^  quitButton;
+		System::Windows::Forms::Button^  statusButton;
+		System::Windows::Forms::Button^  quitButton;
 
-	  System::Windows::Forms::GroupBox^  instructionsGroupBox;
-	  System::Windows::Forms::WebBrowser^  instructionViewer;
-	  System::Windows::Forms::GroupBox^  htmlGroupBox;
-	  System::Windows::Forms::GroupBox^  stepHeaderGroupBox;
-	  System::Windows::Forms::TextBox^  stepCounterTextBox;
-	  System::Windows::Forms::TextBox^  stepHeaderTextBox;
+		System::Windows::Forms::GroupBox^  instructionsGroupBox;
+		System::Windows::Forms::WebBrowser^  instructionViewer;
+		System::Windows::Forms::GroupBox^  htmlGroupBox;
+		System::Windows::Forms::GroupBox^  stepHeaderGroupBox;
+		System::Windows::Forms::TextBox^  stepCounterTextBox;
+		System::Windows::Forms::TextBox^  stepHeaderTextBox;
 
-	  System::Windows::Forms::GroupBox^  normalNavigationGroupBox;
-	  System::Windows::Forms::Button^  previousButton;
-	  System::Windows::Forms::Button^  nextButton;
+		System::Windows::Forms::GroupBox^  normalNavigationGroupBox;
+		System::Windows::Forms::Button^  previousButton;
+		System::Windows::Forms::Button^  nextButton;
 
-	  System::Windows::Forms::GroupBox^  commandNavigationGroupBox;
-	  System::Windows::Forms::Button^  executeButton;
-	  System::Windows::Forms::Button^  execBackButton;
-	  System::Windows::Forms::Button^  execSkipButton;
+		System::Windows::Forms::GroupBox^  commandNavigationGroupBox;
+		System::Windows::Forms::Button^  executeButton;
+		System::Windows::Forms::Button^  execBackButton;
+		System::Windows::Forms::Button^  execSkipButton;
 
-	  System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
-	  System::Windows::Forms::TextBox^  errorCodeTextBox;
-	  System::Windows::Forms::Label^  errorCodeLabel;
-	  System::Windows::Forms::Button^  retryButton;
-	  System::Windows::Forms::Button^  restartButton;
-	  System::Windows::Forms::Button^  ignoreButton;
+		System::Windows::Forms::GroupBox^  errorNavigationGroupBox;
+		System::Windows::Forms::TextBox^  errorCodeTextBox;
+		System::Windows::Forms::Label^  errorCodeLabel;
+		System::Windows::Forms::Button^  retryButton;
+		System::Windows::Forms::Button^  restartButton;
+		System::Windows::Forms::Button^  ignoreButton;
 
+		System::Windows::Forms::GroupBox^  stepProgressGroupBox;
+		System::Windows::Forms::Label^  hmdVisibilityLabel;
+		System::Windows::Forms::ProgressBar^  hmdVisibilityBar;
+		System::Windows::Forms::Label^  handVisibilityLabel;
+		System::Windows::Forms::ProgressBar^  handVisibilityBar;
+		System::Windows::Forms::Label^  chestVisibilityLabel;
+		System::Windows::Forms::ProgressBar^  chestVisibilityBar;
+		System::Windows::Forms::Label^  label1;
+protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
+
+		System::Windows::Forms::Label^  trialsRemainingLabel;
 
 
 	protected: 
@@ -226,6 +241,16 @@ namespace GraspGUI {
 			this->repeatButton = (gcnew System::Windows::Forms::Button());
 			this->previousButton = (gcnew System::Windows::Forms::Button());
 			this->nextButton = (gcnew System::Windows::Forms::Button());
+			this->stepProgressGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->hmdVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->hmdVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->handVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->handVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->chestVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->chestVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->trialsRemainingTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->trialsRemainingLabel = (gcnew System::Windows::Forms::Label());
 			this->stepHeaderGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->stepCounterTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -239,6 +264,7 @@ namespace GraspGUI {
 			this->errorNavigationGroupBox->SuspendLayout();
 			this->commandNavigationGroupBox->SuspendLayout();
 			this->normalNavigationGroupBox->SuspendLayout();
+			this->stepProgressGroupBox->SuspendLayout();
 			this->stepHeaderGroupBox->SuspendLayout();
 			this->htmlGroupBox->SuspendLayout();
 			this->SuspendLayout();
@@ -378,6 +404,7 @@ namespace GraspGUI {
 			this->instructionsGroupBox->Controls->Add(this->errorNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->commandNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->normalNavigationGroupBox);
+			this->instructionsGroupBox->Controls->Add(this->stepProgressGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->stepHeaderGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->htmlGroupBox);
 			this->instructionsGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
@@ -576,6 +603,104 @@ namespace GraspGUI {
 			this->nextButton->UseVisualStyleBackColor = true;
 			this->nextButton->Click += gcnew System::EventHandler(this, &GraspDesktop::nextButton_Click);
 			// 
+			// stepProgressGroupBox
+			// 
+			this->stepProgressGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->stepProgressGroupBox->Controls->Add(this->hmdVisibilityLabel);
+			this->stepProgressGroupBox->Controls->Add(this->hmdVisibilityBar);
+			this->stepProgressGroupBox->Controls->Add(this->handVisibilityLabel);
+			this->stepProgressGroupBox->Controls->Add(this->handVisibilityBar);
+			this->stepProgressGroupBox->Controls->Add(this->chestVisibilityLabel);
+			this->stepProgressGroupBox->Controls->Add(this->chestVisibilityBar);
+			this->stepProgressGroupBox->Controls->Add(this->label1);
+			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingTextBox);
+			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingLabel);
+			this->stepProgressGroupBox->Enabled = false;
+			this->stepProgressGroupBox->ForeColor = System::Drawing::Color::DarkMagenta;
+			this->stepProgressGroupBox->Location = System::Drawing::Point(14, 911);
+			this->stepProgressGroupBox->Name = L"stepProgressGroupBox";
+			this->stepProgressGroupBox->Size = System::Drawing::Size(591, 68);
+			this->stepProgressGroupBox->TabIndex = 20;
+			this->stepProgressGroupBox->TabStop = false;
+			this->stepProgressGroupBox->Visible = false;
+			// 
+			// hmdVisibilityLabel
+			// 
+			this->hmdVisibilityLabel->Location = System::Drawing::Point(496, 19);
+			this->hmdVisibilityLabel->Name = L"hmdVisibilityLabel";
+			this->hmdVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->hmdVisibilityLabel->TabIndex = 23;
+			this->hmdVisibilityLabel->Text = L"HMD";
+			// 
+			// hmdVisibilityBar
+			// 
+			this->hmdVisibilityBar->Location = System::Drawing::Point(500, 41);
+			this->hmdVisibilityBar->Maximum = 8;
+			this->hmdVisibilityBar->Name = L"hmdVisibilityBar";
+			this->hmdVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->hmdVisibilityBar->TabIndex = 22;
+			this->hmdVisibilityBar->Value = 5;
+			// 
+			// handVisibilityLabel
+			// 
+			this->handVisibilityLabel->Location = System::Drawing::Point(397, 18);
+			this->handVisibilityLabel->Name = L"handVisibilityLabel";
+			this->handVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->handVisibilityLabel->TabIndex = 21;
+			this->handVisibilityLabel->Text = L"Hand";
+			// 
+			// handVisibilityBar
+			// 
+			this->handVisibilityBar->Location = System::Drawing::Point(401, 41);
+			this->handVisibilityBar->Maximum = 8;
+			this->handVisibilityBar->Name = L"handVisibilityBar";
+			this->handVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->handVisibilityBar->TabIndex = 20;
+			this->handVisibilityBar->Value = 5;
+			// 
+			// chestVisibilityLabel
+			// 
+			this->chestVisibilityLabel->Location = System::Drawing::Point(296, 18);
+			this->chestVisibilityLabel->Name = L"chestVisibilityLabel";
+			this->chestVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->chestVisibilityLabel->TabIndex = 19;
+			this->chestVisibilityLabel->Text = L"Chest";
+			// 
+			// chestVisibilityBar
+			// 
+			this->chestVisibilityBar->Location = System::Drawing::Point(300, 41);
+			this->chestVisibilityBar->Maximum = 8;
+			this->chestVisibilityBar->Name = L"chestVisibilityBar";
+			this->chestVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->chestVisibilityBar->TabIndex = 18;
+			this->chestVisibilityBar->Value = 5;
+			// 
+			// label1
+			// 
+			this->label1->Location = System::Drawing::Point(199, 18);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(90, 42);
+			this->label1->TabIndex = 17;
+			this->label1->Text = L"Visible Markers";
+			// 
+			// trialsRemainingTextBox
+			// 
+			this->trialsRemainingTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->trialsRemainingTextBox->Location = System::Drawing::Point(113, 25);
+			this->trialsRemainingTextBox->Name = L"trialsRemainingTextBox";
+			this->trialsRemainingTextBox->Size = System::Drawing::Size(65, 30);
+			this->trialsRemainingTextBox->TabIndex = 16;
+			this->trialsRemainingTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// trialsRemainingLabel
+			// 
+			this->trialsRemainingLabel->Location = System::Drawing::Point(16, 18);
+			this->trialsRemainingLabel->Name = L"trialsRemainingLabel";
+			this->trialsRemainingLabel->Size = System::Drawing::Size(91, 47);
+			this->trialsRemainingLabel->TabIndex = 15;
+			this->trialsRemainingLabel->Text = L"Trials Remaining";
+			// 
 			// stepHeaderGroupBox
 			// 
 			this->stepHeaderGroupBox->Controls->Add(this->stepCounterTextBox);
@@ -659,6 +784,8 @@ namespace GraspGUI {
 			this->commandNavigationGroupBox->ResumeLayout(false);
 			this->commandNavigationGroupBox->PerformLayout();
 			this->normalNavigationGroupBox->ResumeLayout(false);
+			this->stepProgressGroupBox->ResumeLayout(false);
+			this->stepProgressGroupBox->PerformLayout();
 			this->stepHeaderGroupBox->ResumeLayout(false);
 			this->stepHeaderGroupBox->PerformLayout();
 			this->htmlGroupBox->ResumeLayout(false);
@@ -884,10 +1011,10 @@ namespace GraspGUI {
 	/// 
 	public ref class GraspMMI : public GraspDesktop
 	{
-	
+
 	protected:
 
-		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state ) {
+		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state, int status ) {
 
 			static int previous_subject = -9999;
 			static int previous_protocol = -9999;
@@ -940,25 +1067,30 @@ namespace GraspGUI {
 				errorNavigationGroupBox->Enabled = false;
 				commandNavigationGroupBox->Visible = false;
 				commandNavigationGroupBox->Enabled = false;
+				stepProgressGroupBox->Visible = false;
+				stepProgressGroupBox->Enabled = false;
 
 				if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
-					if ( state == STEP_READY_TO_EXECUTE ) {
+					if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
 						commandNavigationGroupBox->Visible = true;
-						commandNavigationGroupBox->Enabled = true;
 					}
-					else if ( state == STEP_EXECUTING ) {
+					else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
+						stepProgressGroupBox->Visible = true;
+						int remaining = (state - STEP_EXECUTING) / 100;
+						trialsRemainingTextBox->Text = remaining.ToString();
+						hmdVisibilityBar->Value = status % 10;
+						handVisibilityBar->Value = (status / 10) % 10;
+						chestVisibilityBar->Value = (status / 100) % 10;;
 						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
 					}
 					else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
 						normalNavigationGroupBox->Visible = true;
-						normalNavigationGroupBox->Enabled = true;
-						int code = state - STEP_FINISHED_NORMAL;
+						int code = (state - STEP_FINISHED_NORMAL) % 100;
 						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
 					}
 					else if ( state >= STEP_FINISHED_ABNORMAL ) {
 						errorNavigationGroupBox->Visible = true;
-						errorNavigationGroupBox->Enabled = true;
-						int code = state - STEP_FINISHED_ABNORMAL;
+						int code = (state - STEP_FINISHED_ABNORMAL) % 100;
 						errorCodeTextBox->Text = code.ToString();
 						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
 					}
@@ -983,11 +1115,15 @@ namespace GraspGUI {
 			static int step = 0;
 			static int state = 20000;
 
+			static int trials = 7;
+
+			static int status = 321;
+
 			// Stop the refresh timer, in case it takes us longer than 1 refresh cycle to complete the actions.
 			StopRefreshTimer();
 			// Get the current state and update the GUI.
-			fOutputDebugString( "User %d  Protocol: %d  Task: %d  Step: %d  State: %8d\n", user, protocol, task, step, state );
-			NavigateTo( user, protocol, task, step, state );
+			fOutputDebugString( "User %d  Protocol: %d  Task: %d  Step: %d  State: %8d  Tracker Status: %8d \n", user, protocol, task, step, state );
+			NavigateTo( user, protocol, task, step, state + ( trials-- * 100), status );
 			step++;
 			if ( step >= nSteps ) {
 				step = 0;
@@ -1000,6 +1136,9 @@ namespace GraspGUI {
 			state += 10000;
 			if ( state == STEP_FINISHED_ABNORMAL ) state++;
 			if ( state > 60000 ) state = 20000;
+
+			status += 111;
+			if ( status > 899) status = 210;
 
 			// Restart the timer so that we get called again.
 			StartRefreshTimer();
