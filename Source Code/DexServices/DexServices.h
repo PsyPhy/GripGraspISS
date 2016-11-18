@@ -71,8 +71,8 @@ namespace Grasp {
 		  static_tracker_status(TRACKERSTATUS_UNKNOWN)
 		{
 		  strncpy( log_filename, "DexServices.dxl", sizeof( log_filename ) );
-		  TimerSet( slice_timer, RT_SLICE_INTERVAL );
-		  TimerSet( info_timer, HK_PACKET_INTERVAL );
+		  TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
+		  TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
 		  TimerStart( stream_timer );
 		 }
 

@@ -147,7 +147,7 @@ u32 RT_packet::serialize(u8 *buffer ) const {
     p=addTM(rtdata_acq_id, buffer, p);
     p=addTM(rtdata_pkt_counter, buffer, p);
 
-	for ( int i = 0; i < RT_SLICES_PER_PACKET; i++ ) {
+	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
 		p = addTM( Slice[i].fillTime, buffer, p );
 		p = addTM( (u32) Slice[i].globalCount, buffer, p );
 		p = addTM( (u32) Slice[i].objectStateBits, buffer, p );

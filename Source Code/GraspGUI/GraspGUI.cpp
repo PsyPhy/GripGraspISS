@@ -10,12 +10,23 @@ using namespace GraspGUI;
 [STAThreadAttribute]
 int main( array<System::String ^> ^args )
 {
+
+	String^ packetRoot = gcnew String( "GripPackets" );
+	bool run_mmi = false;
 	// Enabling Windows XP visual effects before any controls are created
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	// Create the main window and run it
-	Application::Run( gcnew GraspMMI() );
+	// Create the main window and run it.
+	if ( run_mmi ) {
+		GraspMMI^ mmi = gcnew GraspMMI();
+		mmi->packetRoot = packetRoot;
+		Application::Run( mmi );
+	}
+	else {
+		GraspDesktop^ gui = gcnew GraspDesktop();
+		Application::Run( gui );
+	}
 	return 0;
 }
 

@@ -3,6 +3,7 @@
 #include "../Useful/fOutputDebugString.h"
 #include "GraspScripts.h"
 #include "../DexServices/DexServices.h"
+#include "../../../GripMMI/GripSourceCode/Grip/GripPackets.h"
 
 namespace GraspGUI {
 
@@ -1012,9 +1013,13 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 	public ref class GraspMMI : public GraspDesktop
 	{
 
+	public:
+		
+		String^ packetRoot;
+
 	protected:
 
-		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state, int status ) {
+		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state, int status, int snapshots ) {
 
 			static int previous_subject = -9999;
 			static int previous_protocol = -9999;
@@ -1030,7 +1035,6 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 				if ( i == nSubjects ) i = -1;
 				subjectListBox->SelectedIndex = i;
 				previous_subject = subject_id;
-				Refresh();
 				Application::DoEvents();
 			}
 
@@ -1041,7 +1045,6 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 				if ( i == nProtocols ) i = -1;
 				protocolListBox->SelectedIndex = i;
 				previous_protocol = protocol_id;
-				Refresh();
 				Application::DoEvents();
 			}
 
@@ -1052,49 +1055,58 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 				if ( i == nTasks ) i = -1;
 				taskListBox->SelectedIndex = i;
 				previous_task = task_id;
+				Application::DoEvents();
+				previous_step = -1;
 			}
-			Refresh();
-			Application::DoEvents();
 			if ( taskListBox->SelectedIndex >= 0 ) {
-				currentStep = step_id;
-				ShowStep();
+				for ( i = nSteps - 1; i >= 0; i-- ) {
+					if ( stepList[i]->number == step_id ) break;
+				}
+				currentStep = i;
+				if ( currentStep >= 0 && currentStep != previous_step ) {
+					
+					previous_step = currentStep;
+					ShowStep();
+					Sleep( 1000 );
 
-				// Hide all the navigation buttons by default.
-				// The appropriate ones will then be rendered visible below.
-				normalNavigationGroupBox->Visible = false;
-				normalNavigationGroupBox->Enabled = false;
-				errorNavigationGroupBox->Visible = false;
-				errorNavigationGroupBox->Enabled = false;
-				commandNavigationGroupBox->Visible = false;
-				commandNavigationGroupBox->Enabled = false;
-				stepProgressGroupBox->Visible = false;
-				stepProgressGroupBox->Enabled = false;
+					// Hide all the navigation buttons by default.
+					// The appropriate ones will then be rendered visible below.
+					normalNavigationGroupBox->Visible = false;
+					normalNavigationGroupBox->Enabled = false;
+					errorNavigationGroupBox->Visible = false;
+					errorNavigationGroupBox->Enabled = false;
+					commandNavigationGroupBox->Visible = false;
+					commandNavigationGroupBox->Enabled = false;
+					stepProgressGroupBox->Visible = false;
+					stepProgressGroupBox->Enabled = false;
 
-				if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
-					if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
-						commandNavigationGroupBox->Visible = true;
-					}
-					else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
-						stepProgressGroupBox->Visible = true;
-						int remaining = (state - STEP_EXECUTING) / 100;
-						trialsRemainingTextBox->Text = remaining.ToString();
-						hmdVisibilityBar->Value = status % 10;
-						handVisibilityBar->Value = (status / 10) % 10;
-						chestVisibilityBar->Value = (status / 100) % 10;;
-						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
-					}
-					else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
-						normalNavigationGroupBox->Visible = true;
-						int code = (state - STEP_FINISHED_NORMAL) % 100;
-						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
-					}
-					else if ( state >= STEP_FINISHED_ABNORMAL ) {
-						errorNavigationGroupBox->Visible = true;
-						int code = (state - STEP_FINISHED_ABNORMAL) % 100;
-						errorCodeTextBox->Text = code.ToString();
-						instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+					if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
+						if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
+							commandNavigationGroupBox->Visible = true;
+						}
+						else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
+							stepProgressGroupBox->Visible = true;
+							int remaining = (state - STEP_EXECUTING) / 100;
+							trialsRemainingTextBox->Text = remaining.ToString();
+							hmdVisibilityBar->Value = status % 10;
+							handVisibilityBar->Value = (status / 10) % 10;
+							chestVisibilityBar->Value = (status / 100) % 10;;
+							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
+						}
+						else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
+							normalNavigationGroupBox->Visible = true;
+							int code = (state - STEP_FINISHED_NORMAL) % 100;
+							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+						}
+						else if ( state >= STEP_FINISHED_ABNORMAL ) {
+							errorNavigationGroupBox->Visible = true;
+							int code = (state - STEP_FINISHED_ABNORMAL) % 100;
+							errorCodeTextBox->Text = code.ToString();
+							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+						}
 					}
 				}
+				Refresh();
 			}
 		}
 
@@ -1109,37 +1121,18 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 		}
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) override {
 
-			static int user = 4;
-			static int protocol = 100;
-			static int task = 131;
-			static int step = 0;
-			static int state = 20000;
-
-			static int trials = 7;
-
-			static int status = 321;
+			GripHealthAndStatusInfo hk;
+			char *filename_root = "..\\GripMMI\\GripCache\\GripPackets.2016.11.15";
 
 			// Stop the refresh timer, in case it takes us longer than 1 refresh cycle to complete the actions.
 			StopRefreshTimer();
-			// Get the current state and update the GUI.
-			fOutputDebugString( "User %d  Protocol: %d  Task: %d  Step: %d  State: %8d  Tracker Status: %8d \n", user, protocol, task, step, state );
-			NavigateTo( user, protocol, task, step, state + ( trials-- * 100), status );
-			step++;
-			if ( step >= nSteps ) {
-				step = 0;
-				task++;
-				if ( task > protocol + 49 ) {
-					protocol += 100;
-					task = protocol + 1;
-				}
-			}
-			state += 10000;
-			if ( state == STEP_FINISHED_ABNORMAL ) state++;
-			if ( state > 60000 ) state = 20000;
 
-			status += 111;
-			if ( status > 899) status = 210;
-
+			// Get the latest HK packet from the cache.
+			GetLastPacketHK( &hk, filename_root );
+			fOutputDebugString( "User: %d  Protocol: %3d  Task: %3d  Step: %2d  Engine: %8d  Tracker: %8d  Camera: %3d\n",
+				 hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
+			NavigateTo( hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
+	
 			// Restart the timer so that we get called again.
 			StartRefreshTimer();
 		}

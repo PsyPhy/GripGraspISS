@@ -61,9 +61,9 @@ class HK_packet : public GraspPacket
         u16 motiontracker_status;
 };
 
-#define RT_SLICES_PER_PACKET 5
-#define RT_SLICE_INTERVAL 0.100
-#define HK_PACKET_INTERVAL 1.0
+#define GRASP_RT_SLICES_PER_PACKET 5
+#define GRASP_RT_SLICE_INTERVAL 0.100
+#define GRASP_HK_PACKET_INTERVAL 1.0
 
 class RT_packet : public GraspPacket
 {
@@ -84,7 +84,7 @@ class RT_packet : public GraspPacket
 			PsyPhy::TrackerPose	chest;
 			PsyPhy::TrackerPose mouse;
 			MarkerFrame markerFrame[2];
-		} Slice[RT_SLICES_PER_PACKET];
+		} Slice[GRASP_RT_SLICES_PER_PACKET];
 
 };
 

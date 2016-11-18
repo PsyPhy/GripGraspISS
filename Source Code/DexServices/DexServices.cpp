@@ -152,11 +152,11 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 
 	if ( TimerTimeout( slice_timer ) ) {
 		slice_count++;
-		if ( slice_count >= RT_SLICES_PER_PACKET ) {
+		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
 			SendScienceRealtimeData();
 			slice_count = 0;
 		}
-		TimerSet( slice_timer, RT_SLICE_INTERVAL );
+		TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
 	}
 }
 
@@ -215,7 +215,7 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 				user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
 			fflush( log );
 		}
-		TimerSet( info_timer, HK_PACKET_INTERVAL );
+		TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
 		return( sent );
 
 	}
