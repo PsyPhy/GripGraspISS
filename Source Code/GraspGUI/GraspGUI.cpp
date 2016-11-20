@@ -11,8 +11,11 @@ using namespace GraspGUI;
 int main( array<System::String ^> ^args )
 {
 
-	String^ packetRoot = gcnew String( "GripPackets" );
-	bool run_mmi = false;
+	String^ packetRoot;
+	if ( args->Length > 0 ) packetRoot = args[0];
+	else packetRoot = gcnew String( "GripPackets" );
+
+	bool run_mmi = true;
 	// Enabling Windows XP visual effects before any controls are created
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 

@@ -893,17 +893,20 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			// they really want to leave the current step without doing so.
 			if ( !VerifyInterruptStep() ) return;
 			currentSubject = subjectListBox->SelectedIndex;
-			if ( currentSubject >= 0 ) {
-				ParseSessionFile( scriptDirectory + subjectList[currentSubject]->file );
-				currentProtocol = -1;
-				taskListBox->Items->Clear(); 
-				currentTask = -1;
-			}
+			// If a subject has been selected, load his or her list of subsessions (protocols). Otherwise clear the subsession menu.
+			if ( currentSubject >= 0 ) ParseSessionFile( scriptDirectory + subjectList[currentSubject]->file );
+			else protocolListBox->Items->Clear();
+			// Don't preselect a protocol.
+			currentProtocol = -1;
+			// And because no protocol is selected there can be no task or step selected.
+			taskListBox->Items->Clear(); 
+			currentTask = -1;
+			currentStep = -1;
 			ShowLogon();
 		}
 
 		System::Void protocolListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			// If the protocol that is selected already is clicked, do nothing.
+			// If the protocol that is already selected is clicked, then do nothing.
 			if ( protocolListBox->SelectedIndex == currentProtocol ) return;
 
 			// Check if the subject was supposed to execute a command and if so, verify that
@@ -911,12 +914,20 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			if ( !VerifyInterruptStep() ) return;
 
 			currentProtocol = protocolListBox->SelectedIndex;
-			ParseProtocolFile( scriptDirectory + protocolList[currentProtocol]->file );
-			// Preselect the first task in the newly selected protocol.
-			stepHeaderTextBox->Text = taskListBox->Text;
-			currentStep = 0;
-			currentTask = 0;
-			taskListBox->SelectedIndex = 0; 
+			if ( currentProtocol >= 0 ) ParseProtocolFile( scriptDirectory + protocolList[currentProtocol]->file );
+			else taskListBox->Items->Clear();
+
+			if ( taskListBox->Items->Count > 0 ) {
+				// Preselect the first task in the newly selected protocol.
+				currentStep = 0;
+				currentTask = 0;
+				taskListBox->SelectedIndex = 0; 
+			}
+			else {
+				currentStep = -1;
+				currentTask = -1;
+				taskListBox->SelectedIndex = -1; 
+			}
 		}
 
 		System::Void taskListBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1010,6 +1021,7 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 	///
 	/// GraspMMI is a descendent of GraspDesktop modified to be used as the ground MMI.
 	/// 
+
 	public ref class GraspMMI : public GraspDesktop
 	{
 
@@ -1025,6 +1037,10 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			static int previous_protocol = -9999;
 			static int previous_task = -9999;
 			static int previous_step = -9999;
+
+			static int previous_status = -9999;
+			static int previous_state = -9999;
+			static enum { PGUNKNOWN, PGINSTRUCTION, PGREADY, PGEXECUTING, PGSUCCESS, PGFAILURE } previous_page = PGUNKNOWN;
 
 			int i;
 
@@ -1067,7 +1083,7 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 					
 					previous_step = currentStep;
 					ShowStep();
-					Sleep( 1000 );
+					Sleep( 10 );
 
 					// Hide all the navigation buttons by default.
 					// The appropriate ones will then be rendered visible below.
@@ -1080,32 +1096,43 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 					stepProgressGroupBox->Visible = false;
 					stepProgressGroupBox->Enabled = false;
 
-					if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
-						if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
-							commandNavigationGroupBox->Visible = true;
-						}
-						else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
-							stepProgressGroupBox->Visible = true;
-							int remaining = (state - STEP_EXECUTING) / 100;
-							trialsRemainingTextBox->Text = remaining.ToString();
-							hmdVisibilityBar->Value = status % 10;
-							handVisibilityBar->Value = (status / 10) % 10;
-							chestVisibilityBar->Value = (status / 100) % 10;;
-							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
-						}
-						else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
-							normalNavigationGroupBox->Visible = true;
-							int code = (state - STEP_FINISHED_NORMAL) % 100;
-							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
-						}
-						else if ( state >= STEP_FINISHED_ABNORMAL ) {
-							errorNavigationGroupBox->Visible = true;
-							int code = (state - STEP_FINISHED_ABNORMAL) % 100;
-							errorCodeTextBox->Text = code.ToString();
-							instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
-						}
+					previous_status = -9999;
+					previous_state = -9999;
+					previous_page = PGUNKNOWN;
+
+				}
+
+				if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
+					if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
+						commandNavigationGroupBox->Visible = true;
+						previous_page = PGREADY;
+					}
+					else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
+						stepProgressGroupBox->Visible = true;
+						int remaining = (state - STEP_EXECUTING) / 100;
+						trialsRemainingTextBox->Text = remaining.ToString();
+						hmdVisibilityBar->Value = status % 10;
+						handVisibilityBar->Value = (status / 10) % 10;
+						chestVisibilityBar->Value = (status / 100) % 10;
+						if ( previous_page != PGEXECUTING ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
+						previous_page = PGEXECUTING;
+					}
+					else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
+						normalNavigationGroupBox->Visible = true;
+						int code = (state - STEP_FINISHED_NORMAL) % 100;
+						if ( previous_page != PGSUCCESS ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+						previous_page = PGSUCCESS;
+					}
+					else if ( state >= STEP_FINISHED_ABNORMAL ) {
+						errorNavigationGroupBox->Visible = true;
+						int code = (state - STEP_FINISHED_ABNORMAL) % 100;
+						errorCodeTextBox->Text = code.ToString();
+						if ( previous_page != PGFAILURE ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+						previous_page = PGFAILURE;
 					}
 				}
+				previous_state = state;
+				previous_status = status;
 				Refresh();
 			}
 		}
@@ -1122,16 +1149,27 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) override {
 
 			GripHealthAndStatusInfo hk;
-			char *filename_root = "..\\GripMMI\\GripCache\\GripPackets.2016.11.15";
 
 			// Stop the refresh timer, in case it takes us longer than 1 refresh cycle to complete the actions.
 			StopRefreshTimer();
+
+			// We need InteropServics in order to convert a String to a char *.
+			using namespace System::Runtime::InteropServices;
+
+			// Converts the String into a char *.
+			// Don't forget to free it when exiting.
+			char *filename_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetRoot ).ToPointer();
 
 			// Get the latest HK packet from the cache.
 			GetLastPacketHK( &hk, filename_root );
 			fOutputDebugString( "User: %d  Protocol: %3d  Task: %3d  Step: %2d  Engine: %8d  Tracker: %8d  Camera: %3d\n",
 				 hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
+			
+			// Show where the user is in the menus.
 			NavigateTo( hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
+		
+			// Release the memory used to create the ANSI string.
+			Marshal::FreeHGlobal( IntPtr( filename_root ) );
 	
 			// Restart the timer so that we get called again.
 			StartRefreshTimer();
