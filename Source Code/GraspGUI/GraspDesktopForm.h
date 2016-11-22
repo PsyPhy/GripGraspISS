@@ -57,8 +57,6 @@ namespace GraspGUI {
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
 
-
-
 	protected: 
 
 		// A timer to handle animations and screen refresh, and associated actions.
@@ -187,18 +185,36 @@ namespace GraspGUI {
 		System::Windows::Forms::Button^  retryButton;
 		System::Windows::Forms::Button^  restartButton;
 		System::Windows::Forms::Button^  ignoreButton;
+protected: System::Windows::Forms::GroupBox^  dexStatusGroupBox;
+	protected: System::Windows::Forms::GroupBox^  stepProgressGroupBox;
+	protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
+	protected: System::Windows::Forms::Label^  trialsRemainingLabel;
+	protected: System::Windows::Forms::Label^  scriptEngineLabel;
+	protected: System::Windows::Forms::TextBox^  scriptEngineTextBox;
+	protected: System::Windows::Forms::Label^  label1;
+	protected: System::Windows::Forms::TextBox^  programStateTextBox;
+	protected: System::Windows::Forms::TextBox^  programStateEnumTextBox;
+	protected: System::Windows::Forms::Label^  label2;
+	protected: System::Windows::Forms::TextBox^  stepTextBox;
+	protected: System::Windows::Forms::GroupBox^  commandGroupBox;
+	protected: System::Windows::Forms::TextBox^  commandTextBox;
 
-		System::Windows::Forms::GroupBox^  stepProgressGroupBox;
+
+
 		System::Windows::Forms::Label^  hmdVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  hmdVisibilityBar;
 		System::Windows::Forms::Label^  handVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  handVisibilityBar;
 		System::Windows::Forms::Label^  chestVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  chestVisibilityBar;
-		System::Windows::Forms::Label^  label1;
-protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
+protected: System::Windows::Forms::Label^  visibleMarkersLabel;
 
-		System::Windows::Forms::Label^  trialsRemainingLabel;
+protected: System::Windows::Forms::TextBox^  snapshotsTextBox;
+protected: System::Windows::Forms::Label^  snapshotsLabel;
+
+
+
+
 
 
 	protected: 
@@ -218,6 +234,18 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->dexStatusGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->scriptEngineTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->scriptEngineLabel = (gcnew System::Windows::Forms::Label());
+			this->hmdVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->hmdVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->handVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->handVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->chestVisibilityLabel = (gcnew System::Windows::Forms::Label());
+			this->chestVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
+			this->visibleMarkersLabel = (gcnew System::Windows::Forms::Label());
+			this->snapshotsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->snapshotsLabel = (gcnew System::Windows::Forms::Label());
 			this->statusButton = (gcnew System::Windows::Forms::Button());
 			this->quitButton = (gcnew System::Windows::Forms::Button());
 			this->taskGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -227,6 +255,14 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->subjectGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->subjectListBox = (gcnew System::Windows::Forms::ListBox());
 			this->instructionsGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->stepProgressGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->stepTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->programStateEnumTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->programStateTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->trialsRemainingTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->trialsRemainingLabel = (gcnew System::Windows::Forms::Label());
 			this->errorNavigationGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->errorCodeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->errorCodeLabel = (gcnew System::Windows::Forms::Label());
@@ -242,37 +278,32 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->repeatButton = (gcnew System::Windows::Forms::Button());
 			this->previousButton = (gcnew System::Windows::Forms::Button());
 			this->nextButton = (gcnew System::Windows::Forms::Button());
-			this->stepProgressGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->hmdVisibilityLabel = (gcnew System::Windows::Forms::Label());
-			this->hmdVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
-			this->handVisibilityLabel = (gcnew System::Windows::Forms::Label());
-			this->handVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
-			this->chestVisibilityLabel = (gcnew System::Windows::Forms::Label());
-			this->chestVisibilityBar = (gcnew System::Windows::Forms::ProgressBar());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->trialsRemainingTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->trialsRemainingLabel = (gcnew System::Windows::Forms::Label());
 			this->stepHeaderGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->stepCounterTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->htmlGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->commandGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->commandTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
 			this->navigatorGroupBox->SuspendLayout();
+			this->dexStatusGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
 			this->protocolGroupBox->SuspendLayout();
 			this->subjectGroupBox->SuspendLayout();
 			this->instructionsGroupBox->SuspendLayout();
+			this->stepProgressGroupBox->SuspendLayout();
 			this->errorNavigationGroupBox->SuspendLayout();
 			this->commandNavigationGroupBox->SuspendLayout();
 			this->normalNavigationGroupBox->SuspendLayout();
-			this->stepProgressGroupBox->SuspendLayout();
 			this->stepHeaderGroupBox->SuspendLayout();
 			this->htmlGroupBox->SuspendLayout();
+			this->commandGroupBox->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// navigatorGroupBox
 			// 
 			this->navigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->navigatorGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->navigatorGroupBox->Controls->Add(this->statusButton);
 			this->navigatorGroupBox->Controls->Add(this->quitButton);
 			this->navigatorGroupBox->Controls->Add(this->taskGroupBox);
@@ -288,6 +319,125 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->navigatorGroupBox->TabIndex = 5;
 			this->navigatorGroupBox->TabStop = false;
 			this->navigatorGroupBox->Text = L"Navigator";
+			// 
+			// dexStatusGroupBox
+			// 
+			this->dexStatusGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->dexStatusGroupBox->Controls->Add(this->scriptEngineTextBox);
+			this->dexStatusGroupBox->Controls->Add(this->scriptEngineLabel);
+			this->dexStatusGroupBox->Controls->Add(this->hmdVisibilityLabel);
+			this->dexStatusGroupBox->Controls->Add(this->hmdVisibilityBar);
+			this->dexStatusGroupBox->Controls->Add(this->handVisibilityLabel);
+			this->dexStatusGroupBox->Controls->Add(this->handVisibilityBar);
+			this->dexStatusGroupBox->Controls->Add(this->chestVisibilityLabel);
+			this->dexStatusGroupBox->Controls->Add(this->chestVisibilityBar);
+			this->dexStatusGroupBox->Controls->Add(this->visibleMarkersLabel);
+			this->dexStatusGroupBox->Controls->Add(this->snapshotsTextBox);
+			this->dexStatusGroupBox->Controls->Add(this->snapshotsLabel);
+			this->dexStatusGroupBox->Enabled = false;
+			this->dexStatusGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->dexStatusGroupBox->Location = System::Drawing::Point(14, 911);
+			this->dexStatusGroupBox->Name = L"dexStatusGroupBox";
+			this->dexStatusGroupBox->Size = System::Drawing::Size(599, 68);
+			this->dexStatusGroupBox->TabIndex = 20;
+			this->dexStatusGroupBox->TabStop = false;
+			// 
+			// scriptEngineTextBox
+			// 
+			this->scriptEngineTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->scriptEngineTextBox->Location = System::Drawing::Point(178, 26);
+			this->scriptEngineTextBox->Name = L"scriptEngineTextBox";
+			this->scriptEngineTextBox->Size = System::Drawing::Size(40, 30);
+			this->scriptEngineTextBox->TabIndex = 25;
+			this->scriptEngineTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// scriptEngineLabel
+			// 
+			this->scriptEngineLabel->Location = System::Drawing::Point(116, 18);
+			this->scriptEngineLabel->Name = L"scriptEngineLabel";
+			this->scriptEngineLabel->Size = System::Drawing::Size(63, 47);
+			this->scriptEngineLabel->TabIndex = 24;
+			this->scriptEngineLabel->Text = L"Script Engine";
+			this->scriptEngineLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			// 
+			// hmdVisibilityLabel
+			// 
+			this->hmdVisibilityLabel->Location = System::Drawing::Point(496, 19);
+			this->hmdVisibilityLabel->Name = L"hmdVisibilityLabel";
+			this->hmdVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->hmdVisibilityLabel->TabIndex = 23;
+			this->hmdVisibilityLabel->Text = L"HMD";
+			// 
+			// hmdVisibilityBar
+			// 
+			this->hmdVisibilityBar->Location = System::Drawing::Point(502, 41);
+			this->hmdVisibilityBar->Maximum = 8;
+			this->hmdVisibilityBar->Name = L"hmdVisibilityBar";
+			this->hmdVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->hmdVisibilityBar->TabIndex = 22;
+			this->hmdVisibilityBar->Value = 5;
+			// 
+			// handVisibilityLabel
+			// 
+			this->handVisibilityLabel->Location = System::Drawing::Point(405, 18);
+			this->handVisibilityLabel->Name = L"handVisibilityLabel";
+			this->handVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->handVisibilityLabel->TabIndex = 21;
+			this->handVisibilityLabel->Text = L"Hand";
+			// 
+			// handVisibilityBar
+			// 
+			this->handVisibilityBar->Location = System::Drawing::Point(411, 41);
+			this->handVisibilityBar->Maximum = 8;
+			this->handVisibilityBar->Name = L"handVisibilityBar";
+			this->handVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->handVisibilityBar->TabIndex = 20;
+			this->handVisibilityBar->Value = 5;
+			// 
+			// chestVisibilityLabel
+			// 
+			this->chestVisibilityLabel->Location = System::Drawing::Point(312, 18);
+			this->chestVisibilityLabel->Name = L"chestVisibilityLabel";
+			this->chestVisibilityLabel->Size = System::Drawing::Size(60, 18);
+			this->chestVisibilityLabel->TabIndex = 19;
+			this->chestVisibilityLabel->Text = L"Chest";
+			// 
+			// chestVisibilityBar
+			// 
+			this->chestVisibilityBar->Location = System::Drawing::Point(318, 41);
+			this->chestVisibilityBar->Maximum = 8;
+			this->chestVisibilityBar->Name = L"chestVisibilityBar";
+			this->chestVisibilityBar->Size = System::Drawing::Size(76, 15);
+			this->chestVisibilityBar->TabIndex = 18;
+			this->chestVisibilityBar->Value = 5;
+			// 
+			// visibleMarkersLabel
+			// 
+			this->visibleMarkersLabel->Location = System::Drawing::Point(235, 20);
+			this->visibleMarkersLabel->Name = L"visibleMarkersLabel";
+			this->visibleMarkersLabel->Size = System::Drawing::Size(90, 42);
+			this->visibleMarkersLabel->TabIndex = 17;
+			this->visibleMarkersLabel->Text = L"Visible Markers";
+			// 
+			// snapshotsTextBox
+			// 
+			this->snapshotsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->snapshotsTextBox->Location = System::Drawing::Point(64, 26);
+			this->snapshotsTextBox->Name = L"snapshotsTextBox";
+			this->snapshotsTextBox->Size = System::Drawing::Size(40, 30);
+			this->snapshotsTextBox->TabIndex = 16;
+			this->snapshotsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// snapshotsLabel
+			// 
+			this->snapshotsLabel->Location = System::Drawing::Point(6, 18);
+			this->snapshotsLabel->Name = L"snapshotsLabel";
+			this->snapshotsLabel->Size = System::Drawing::Size(60, 47);
+			this->snapshotsLabel->TabIndex = 15;
+			this->snapshotsLabel->Text = L"Snap- shots";
+			this->snapshotsLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			// 
 			// statusButton
 			// 
@@ -415,6 +565,91 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->instructionsGroupBox->TabIndex = 7;
 			this->instructionsGroupBox->TabStop = false;
 			this->instructionsGroupBox->Text = L"Instructions";
+			// 
+			// stepProgressGroupBox
+			// 
+			this->stepProgressGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->stepProgressGroupBox->Controls->Add(this->label2);
+			this->stepProgressGroupBox->Controls->Add(this->stepTextBox);
+			this->stepProgressGroupBox->Controls->Add(this->programStateEnumTextBox);
+			this->stepProgressGroupBox->Controls->Add(this->label1);
+			this->stepProgressGroupBox->Controls->Add(this->programStateTextBox);
+			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingTextBox);
+			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingLabel);
+			this->stepProgressGroupBox->Enabled = false;
+			this->stepProgressGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->stepProgressGroupBox->Location = System::Drawing::Point(14, 911);
+			this->stepProgressGroupBox->Name = L"stepProgressGroupBox";
+			this->stepProgressGroupBox->Size = System::Drawing::Size(591, 68);
+			this->stepProgressGroupBox->TabIndex = 21;
+			this->stepProgressGroupBox->TabStop = false;
+			this->stepProgressGroupBox->Visible = false;
+			// 
+			// label2
+			// 
+			this->label2->Location = System::Drawing::Point(6, 14);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(46, 47);
+			this->label2->TabIndex = 21;
+			this->label2->Text = L"Step";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			// 
+			// stepTextBox
+			// 
+			this->stepTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->stepTextBox->Location = System::Drawing::Point(58, 22);
+			this->stepTextBox->Name = L"stepTextBox";
+			this->stepTextBox->Size = System::Drawing::Size(42, 30);
+			this->stepTextBox->TabIndex = 20;
+			this->stepTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// programStateEnumTextBox
+			// 
+			this->programStateEnumTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->programStateEnumTextBox->Location = System::Drawing::Point(210, 22);
+			this->programStateEnumTextBox->Name = L"programStateEnumTextBox";
+			this->programStateEnumTextBox->Size = System::Drawing::Size(216, 30);
+			this->programStateEnumTextBox->TabIndex = 19;
+			// 
+			// label1
+			// 
+			this->label1->Location = System::Drawing::Point(106, 14);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(50, 47);
+			this->label1->TabIndex = 18;
+			this->label1->Text = L"State";
+			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			// 
+			// programStateTextBox
+			// 
+			this->programStateTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->programStateTextBox->Location = System::Drawing::Point(162, 22);
+			this->programStateTextBox->Name = L"programStateTextBox";
+			this->programStateTextBox->Size = System::Drawing::Size(42, 30);
+			this->programStateTextBox->TabIndex = 17;
+			this->programStateTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// trialsRemainingTextBox
+			// 
+			this->trialsRemainingTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->trialsRemainingTextBox->Location = System::Drawing::Point(539, 22);
+			this->trialsRemainingTextBox->Name = L"trialsRemainingTextBox";
+			this->trialsRemainingTextBox->Size = System::Drawing::Size(42, 30);
+			this->trialsRemainingTextBox->TabIndex = 16;
+			this->trialsRemainingTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			// 
+			// trialsRemainingLabel
+			// 
+			this->trialsRemainingLabel->Location = System::Drawing::Point(445, 14);
+			this->trialsRemainingLabel->Name = L"trialsRemainingLabel";
+			this->trialsRemainingLabel->Size = System::Drawing::Size(96, 47);
+			this->trialsRemainingLabel->TabIndex = 15;
+			this->trialsRemainingLabel->Text = L"Trials Remaining";
+			this->trialsRemainingLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			// 
 			// errorNavigationGroupBox
 			// 
@@ -604,104 +839,6 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->nextButton->UseVisualStyleBackColor = true;
 			this->nextButton->Click += gcnew System::EventHandler(this, &GraspDesktop::nextButton_Click);
 			// 
-			// stepProgressGroupBox
-			// 
-			this->stepProgressGroupBox->BackColor = System::Drawing::SystemColors::Window;
-			this->stepProgressGroupBox->Controls->Add(this->hmdVisibilityLabel);
-			this->stepProgressGroupBox->Controls->Add(this->hmdVisibilityBar);
-			this->stepProgressGroupBox->Controls->Add(this->handVisibilityLabel);
-			this->stepProgressGroupBox->Controls->Add(this->handVisibilityBar);
-			this->stepProgressGroupBox->Controls->Add(this->chestVisibilityLabel);
-			this->stepProgressGroupBox->Controls->Add(this->chestVisibilityBar);
-			this->stepProgressGroupBox->Controls->Add(this->label1);
-			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingTextBox);
-			this->stepProgressGroupBox->Controls->Add(this->trialsRemainingLabel);
-			this->stepProgressGroupBox->Enabled = false;
-			this->stepProgressGroupBox->ForeColor = System::Drawing::Color::DarkMagenta;
-			this->stepProgressGroupBox->Location = System::Drawing::Point(14, 911);
-			this->stepProgressGroupBox->Name = L"stepProgressGroupBox";
-			this->stepProgressGroupBox->Size = System::Drawing::Size(591, 68);
-			this->stepProgressGroupBox->TabIndex = 20;
-			this->stepProgressGroupBox->TabStop = false;
-			this->stepProgressGroupBox->Visible = false;
-			// 
-			// hmdVisibilityLabel
-			// 
-			this->hmdVisibilityLabel->Location = System::Drawing::Point(496, 19);
-			this->hmdVisibilityLabel->Name = L"hmdVisibilityLabel";
-			this->hmdVisibilityLabel->Size = System::Drawing::Size(60, 18);
-			this->hmdVisibilityLabel->TabIndex = 23;
-			this->hmdVisibilityLabel->Text = L"HMD";
-			// 
-			// hmdVisibilityBar
-			// 
-			this->hmdVisibilityBar->Location = System::Drawing::Point(500, 41);
-			this->hmdVisibilityBar->Maximum = 8;
-			this->hmdVisibilityBar->Name = L"hmdVisibilityBar";
-			this->hmdVisibilityBar->Size = System::Drawing::Size(76, 15);
-			this->hmdVisibilityBar->TabIndex = 22;
-			this->hmdVisibilityBar->Value = 5;
-			// 
-			// handVisibilityLabel
-			// 
-			this->handVisibilityLabel->Location = System::Drawing::Point(397, 18);
-			this->handVisibilityLabel->Name = L"handVisibilityLabel";
-			this->handVisibilityLabel->Size = System::Drawing::Size(60, 18);
-			this->handVisibilityLabel->TabIndex = 21;
-			this->handVisibilityLabel->Text = L"Hand";
-			// 
-			// handVisibilityBar
-			// 
-			this->handVisibilityBar->Location = System::Drawing::Point(401, 41);
-			this->handVisibilityBar->Maximum = 8;
-			this->handVisibilityBar->Name = L"handVisibilityBar";
-			this->handVisibilityBar->Size = System::Drawing::Size(76, 15);
-			this->handVisibilityBar->TabIndex = 20;
-			this->handVisibilityBar->Value = 5;
-			// 
-			// chestVisibilityLabel
-			// 
-			this->chestVisibilityLabel->Location = System::Drawing::Point(296, 18);
-			this->chestVisibilityLabel->Name = L"chestVisibilityLabel";
-			this->chestVisibilityLabel->Size = System::Drawing::Size(60, 18);
-			this->chestVisibilityLabel->TabIndex = 19;
-			this->chestVisibilityLabel->Text = L"Chest";
-			// 
-			// chestVisibilityBar
-			// 
-			this->chestVisibilityBar->Location = System::Drawing::Point(300, 41);
-			this->chestVisibilityBar->Maximum = 8;
-			this->chestVisibilityBar->Name = L"chestVisibilityBar";
-			this->chestVisibilityBar->Size = System::Drawing::Size(76, 15);
-			this->chestVisibilityBar->TabIndex = 18;
-			this->chestVisibilityBar->Value = 5;
-			// 
-			// label1
-			// 
-			this->label1->Location = System::Drawing::Point(199, 18);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(90, 42);
-			this->label1->TabIndex = 17;
-			this->label1->Text = L"Visible Markers";
-			// 
-			// trialsRemainingTextBox
-			// 
-			this->trialsRemainingTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->trialsRemainingTextBox->Location = System::Drawing::Point(113, 25);
-			this->trialsRemainingTextBox->Name = L"trialsRemainingTextBox";
-			this->trialsRemainingTextBox->Size = System::Drawing::Size(65, 30);
-			this->trialsRemainingTextBox->TabIndex = 16;
-			this->trialsRemainingTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			// 
-			// trialsRemainingLabel
-			// 
-			this->trialsRemainingLabel->Location = System::Drawing::Point(16, 18);
-			this->trialsRemainingLabel->Name = L"trialsRemainingLabel";
-			this->trialsRemainingLabel->Size = System::Drawing::Size(91, 47);
-			this->trialsRemainingLabel->TabIndex = 15;
-			this->trialsRemainingLabel->Text = L"Trials Remaining";
-			// 
 			// stepHeaderGroupBox
 			// 
 			this->stepHeaderGroupBox->Controls->Add(this->stepCounterTextBox);
@@ -736,12 +873,32 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			// 
 			// htmlGroupBox
 			// 
+			this->htmlGroupBox->Controls->Add(this->commandGroupBox);
 			this->htmlGroupBox->Controls->Add(this->instructionViewer);
 			this->htmlGroupBox->Location = System::Drawing::Point(14, 92);
 			this->htmlGroupBox->Name = L"htmlGroupBox";
 			this->htmlGroupBox->Size = System::Drawing::Size(591, 813);
 			this->htmlGroupBox->TabIndex = 5;
 			this->htmlGroupBox->TabStop = false;
+			// 
+			// commandGroupBox
+			// 
+			this->commandGroupBox->Controls->Add(this->commandTextBox);
+			this->commandGroupBox->Location = System::Drawing::Point(8, 675);
+			this->commandGroupBox->Name = L"commandGroupBox";
+			this->commandGroupBox->Size = System::Drawing::Size(575, 123);
+			this->commandGroupBox->TabIndex = 3;
+			this->commandGroupBox->TabStop = false;
+			this->commandGroupBox->Text = L"External Command";
+			this->commandGroupBox->Visible = false;
+			// 
+			// commandTextBox
+			// 
+			this->commandTextBox->Location = System::Drawing::Point(12, 25);
+			this->commandTextBox->Multiline = true;
+			this->commandTextBox->Name = L"commandTextBox";
+			this->commandTextBox->Size = System::Drawing::Size(555, 92);
+			this->commandTextBox->TabIndex = 0;
 			// 
 			// instructionViewer
 			// 
@@ -776,20 +933,24 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
 			this->navigatorGroupBox->ResumeLayout(false);
+			this->dexStatusGroupBox->ResumeLayout(false);
+			this->dexStatusGroupBox->PerformLayout();
 			this->taskGroupBox->ResumeLayout(false);
 			this->protocolGroupBox->ResumeLayout(false);
 			this->subjectGroupBox->ResumeLayout(false);
 			this->instructionsGroupBox->ResumeLayout(false);
+			this->stepProgressGroupBox->ResumeLayout(false);
+			this->stepProgressGroupBox->PerformLayout();
 			this->errorNavigationGroupBox->ResumeLayout(false);
 			this->errorNavigationGroupBox->PerformLayout();
 			this->commandNavigationGroupBox->ResumeLayout(false);
 			this->commandNavigationGroupBox->PerformLayout();
 			this->normalNavigationGroupBox->ResumeLayout(false);
-			this->stepProgressGroupBox->ResumeLayout(false);
-			this->stepProgressGroupBox->PerformLayout();
 			this->stepHeaderGroupBox->ResumeLayout(false);
 			this->stepHeaderGroupBox->PerformLayout();
 			this->htmlGroupBox->ResumeLayout(false);
+			this->commandGroupBox->ResumeLayout(false);
+			this->commandGroupBox->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -1015,7 +1176,55 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 			SendProgressInfo();
 		}
 
+};
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// This is used to map machine state values to strings for the Grasp.exe program. 
+	// This has to be updated if the Grasp.exe state machine enum is updated.
+
+	enum class GraspMachineState { 
+		NullState = 0, 
+		StartBlock = 10, 
+		BlockCompleted = 19, 
+		StartTrial = 20, 
+		StraightenHead = 31, 
+		AlignHead = 32, 
+		PresentTarget = 33, 
+		TiltHead = 34, 
+		ObtainResponse = 35, 
+		ProvideFeedback = 36, 
+		TrialCompleted = 39, 
+		TrialInterrupted = 40, 
+		RAISE_HAND_TIMEOUT = 41, 
+		LOWER_HAND_TIMEOUT, 
+		RAISED_HAND_VIOLATION, 
+		HAND_TOO_SOON, 
+		ALIGN_HAND_TIMEOUT, 
+		HEAD_ALIGNMENT_TIMEOUT, 
+		HEAD_TILT_TIMEOUT, 
+		HEAD_MISALIGNMENT, 
+		RESPONSE_TIMEOUT,
+		VRCompleted = 50, 
+		Demo = 98, 
+		ExitStateMachine = 99 };
+
+	// This is used to map machine state values to strings for the AlignToRigidBodyGUI.exe program. 
+	// This has to be updated if the AlignToRigidBodyGUI.exe state machine enum is updated.
+	enum class AlignMachineState {
+		STARTUP_VISIBILITY = 10,
+		VISIBILITY = 15,
+		SHUTDOWN_VISIBILITY =	18,
+		ANNUL_ALIGNMENT	=		19,
+		STARTUP_INTRINSIC =		20,
+		ACQUIRE_INTRINSIC =		25,
+		SHUTDOWN_INTRINSIC =	29,
+		COMPUTE_ALIGNMENT =		30,
+		STARTUP_ALIGNED	=		40,
+		ACQUIRE_ALIGNED	=		45,
+		SHUTDOWN_ALIGNED =		49,
+		ALIGNMENT_ERROR	=		99, // Actually 9999, but that overflows the state field.
+		ABORT_REQUESTED	=		88	// Actually 8888.
 	};
 
 	///
@@ -1030,6 +1239,35 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 		String^ packetRoot;
 
 	protected:
+
+		void ShowMarkerStatus( unsigned int tracker_status ) {
+
+			Color color;
+
+
+			// Set the background color of the marker visibility bars according to the state of the tracker.
+			if ( tracker_status >= TRACKER_CONNECTED && tracker_status < TRACKER_PREPARED ) color = Color::LightBlue;
+			else if ( tracker_status >= TRACKER_PREPARED && tracker_status < TRACKER_ACQUIRING ) color = Color::LightGreen;
+			else if ( tracker_status >= TRACKER_ACQUIRING && tracker_status < TRACKER_ANOMALY ) color = SystemColors::Window;
+			else if ( tracker_status == TRACKER_ANOMALY ) color = Color::Magenta;
+			else color = Color::LightSlateGray;
+
+			hmdVisibilityBar->BackColor = color;
+			handVisibilityBar->BackColor = color;
+			chestVisibilityBar->BackColor = color;
+
+			if ( tracker_status < TRACKER_ANOMALY ) {
+				hmdVisibilityBar->Value = tracker_status % 10;
+				handVisibilityBar->Value = (tracker_status / 10) % 10;
+				chestVisibilityBar->Value = (tracker_status / 100) % 10;
+			}
+			else {
+					hmdVisibilityBar->Value = 0;
+					handVisibilityBar->Value = 0;
+					chestVisibilityBar->Value = 0;
+			}
+
+		}
 
 		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state, int status, int snapshots ) {
 
@@ -1085,6 +1323,14 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 					ShowStep();
 					Sleep( 10 );
 
+
+					previous_status = -9999;
+					previous_state = -9999;
+					previous_page = PGUNKNOWN;
+
+				}
+
+				if ( state != previous_state ) {
 					// Hide all the navigation buttons by default.
 					// The appropriate ones will then be rendered visible below.
 					normalNavigationGroupBox->Visible = false;
@@ -1095,25 +1341,40 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 					commandNavigationGroupBox->Enabled = false;
 					stepProgressGroupBox->Visible = false;
 					stepProgressGroupBox->Enabled = false;
-
-					previous_status = -9999;
-					previous_state = -9999;
-					previous_page = PGUNKNOWN;
-
+					commandGroupBox->Visible = false;
+					commandGroupBox->Enabled = false;
 				}
 
-				if ( !stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
+				if ( stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
+					normalNavigationGroupBox->Visible = true;
+				}
+				else {
 					if ( state >= STEP_READY_TO_EXECUTE && state < STEP_EXECUTING) {
 						commandNavigationGroupBox->Visible = true;
 						previous_page = PGREADY;
 					}
 					else if ( state >= STEP_EXECUTING && state < STEP_FINISHED_NORMAL ) {
+						commandTextBox->Text = stepList[currentStep]->command;
+						commandGroupBox->Visible = true;
 						stepProgressGroupBox->Visible = true;
+						stepTextBox->Text = currentStep.ToString();
 						int remaining = (state - STEP_EXECUTING) / 100;
 						trialsRemainingTextBox->Text = remaining.ToString();
-						hmdVisibilityBar->Value = status % 10;
-						handVisibilityBar->Value = (status / 10) % 10;
-						chestVisibilityBar->Value = (status / 100) % 10;
+						int program_state = (state - STEP_EXECUTING) % 100;
+						programStateTextBox->Text = program_state.ToString();
+						// Translate the state machine state to a string and show it depending on what
+						//  command is running. This part has to be customized depending on what executables
+						//  can be called that use DexServices to communicate the current state.
+						if ( stepList[currentStep]->command->Contains( "Grasp.exe" ) || stepList[currentStep]->command->Contains( "Grasp.bat" )) {
+							Object^ o = Enum::Parse( GraspMachineState::typeid, program_state.ToString() );
+							programStateEnumTextBox->Text = o->ToString();
+						}
+						else if ( stepList[currentStep]->command->Contains( "AlignToRigidBodyGUI.exe" ) ) {
+							Object^ o = Enum::Parse( AlignMachineState::typeid, program_state.ToString() );
+							programStateEnumTextBox->Text = o->ToString();
+						}
+						else programStateEnumTextBox->Text = "unknown";
+
 						if ( previous_page != PGEXECUTING ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->running );
 						previous_page = PGEXECUTING;
 					}
@@ -1135,6 +1396,12 @@ protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
 				previous_status = status;
 				Refresh();
 			}
+
+			ShowMarkerStatus( status );
+			snapshotsTextBox->Text = snapshots.ToString();
+			int state_category = (state / 10000);
+			scriptEngineTextBox->Text = state_category.ToString();
+
 		}
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
