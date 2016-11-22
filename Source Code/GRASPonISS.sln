@@ -120,6 +120,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiveFocusDamnIt", "GiveFocu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Grip", "..\..\GripMMI\GripSourceCode\Grip\Grip.vcxproj", "{2B114BED-A19B-4BD5-9CA2-24C6418284F9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMI", "GraspMMI\GraspMMI.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -537,6 +539,14 @@ Global
 		{2B114BED-A19B-4BD5-9CA2-24C6418284F9}.Release|Win32.Build.0 = Release|Win32
 		{2B114BED-A19B-4BD5-9CA2-24C6418284F9}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{2B114BED-A19B-4BD5-9CA2-24C6418284F9}.TestRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.Build.0 = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
