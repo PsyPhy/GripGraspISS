@@ -552,10 +552,10 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			// instructionsGroupBox
 			// 
+			this->instructionsGroupBox->Controls->Add(this->stepProgressGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->errorNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->commandNavigationGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->normalNavigationGroupBox);
-			this->instructionsGroupBox->Controls->Add(this->stepProgressGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->stepHeaderGroupBox);
 			this->instructionsGroupBox->Controls->Add(this->htmlGroupBox);
 			this->instructionsGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
@@ -1244,6 +1244,9 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 
 			Color color;
 
+			// There is a bug in Grasp.exe such that TRACKER_ACQUIRING is not added to the marker visibilty digits.
+			// If there is no high order digit, we assume that the system is acquiring and sending marker status.
+			if ( tracker_status > 0 && tracker_status < TRACKER_CONNECTED ) tracker_status += TRACKER_ACQUIRING;
 
 			// Set the background color of the marker visibility bars according to the state of the tracker.
 			if ( tracker_status >= TRACKER_CONNECTED && tracker_status < TRACKER_PREPARED ) color = Color::LightBlue;
