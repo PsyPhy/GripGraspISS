@@ -191,7 +191,6 @@ namespace GraspGUI {
 						commandTextBox->Text = stepList[currentStep]->command;
 						commandGroupBox->Visible = true;
 						stepProgressGroupBox->Visible = true;
-						stepTextBox->Text = currentStep.ToString();
 						int remaining = (state - STEP_EXECUTING) / 100;
 						trialsRemainingTextBox->Text = remaining.ToString();
 						int program_state = (state - STEP_EXECUTING) % 100;

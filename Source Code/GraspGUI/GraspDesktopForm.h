@@ -194,8 +194,8 @@ protected: System::Windows::Forms::GroupBox^  dexStatusGroupBox;
 	protected: System::Windows::Forms::Label^  label1;
 	protected: System::Windows::Forms::TextBox^  programStateTextBox;
 	protected: System::Windows::Forms::TextBox^  programStateEnumTextBox;
-	protected: System::Windows::Forms::Label^  label2;
-	protected: System::Windows::Forms::TextBox^  stepTextBox;
+
+
 	protected: System::Windows::Forms::GroupBox^  commandGroupBox;
 	protected: System::Windows::Forms::TextBox^  commandTextBox;
 
@@ -256,8 +256,6 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->subjectListBox = (gcnew System::Windows::Forms::ListBox());
 			this->instructionsGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->stepProgressGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->stepTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->programStateEnumTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->programStateTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -570,8 +568,6 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// stepProgressGroupBox
 			// 
 			this->stepProgressGroupBox->BackColor = System::Drawing::SystemColors::Window;
-			this->stepProgressGroupBox->Controls->Add(this->label2);
-			this->stepProgressGroupBox->Controls->Add(this->stepTextBox);
 			this->stepProgressGroupBox->Controls->Add(this->programStateEnumTextBox);
 			this->stepProgressGroupBox->Controls->Add(this->label1);
 			this->stepProgressGroupBox->Controls->Add(this->programStateTextBox);
@@ -586,37 +582,18 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->stepProgressGroupBox->TabStop = false;
 			this->stepProgressGroupBox->Visible = false;
 			// 
-			// label2
-			// 
-			this->label2->Location = System::Drawing::Point(6, 14);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(46, 47);
-			this->label2->TabIndex = 21;
-			this->label2->Text = L"Step";
-			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
-			// 
-			// stepTextBox
-			// 
-			this->stepTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->stepTextBox->Location = System::Drawing::Point(58, 22);
-			this->stepTextBox->Name = L"stepTextBox";
-			this->stepTextBox->Size = System::Drawing::Size(42, 30);
-			this->stepTextBox->TabIndex = 20;
-			this->stepTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			// 
 			// programStateEnumTextBox
 			// 
 			this->programStateEnumTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->programStateEnumTextBox->Location = System::Drawing::Point(210, 22);
+			this->programStateEnumTextBox->Location = System::Drawing::Point(122, 26);
 			this->programStateEnumTextBox->Name = L"programStateEnumTextBox";
-			this->programStateEnumTextBox->Size = System::Drawing::Size(216, 30);
+			this->programStateEnumTextBox->Size = System::Drawing::Size(289, 30);
 			this->programStateEnumTextBox->TabIndex = 19;
 			// 
 			// label1
 			// 
-			this->label1->Location = System::Drawing::Point(106, 14);
+			this->label1->Location = System::Drawing::Point(14, 16);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(50, 47);
 			this->label1->TabIndex = 18;
@@ -627,9 +604,9 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			this->programStateTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->programStateTextBox->Location = System::Drawing::Point(162, 22);
+			this->programStateTextBox->Location = System::Drawing::Point(70, 26);
 			this->programStateTextBox->Name = L"programStateTextBox";
-			this->programStateTextBox->Size = System::Drawing::Size(42, 30);
+			this->programStateTextBox->Size = System::Drawing::Size(46, 30);
 			this->programStateTextBox->TabIndex = 17;
 			this->programStateTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -637,15 +614,15 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			this->trialsRemainingTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->trialsRemainingTextBox->Location = System::Drawing::Point(539, 22);
+			this->trialsRemainingTextBox->Location = System::Drawing::Point(538, 22);
 			this->trialsRemainingTextBox->Name = L"trialsRemainingTextBox";
-			this->trialsRemainingTextBox->Size = System::Drawing::Size(42, 30);
+			this->trialsRemainingTextBox->Size = System::Drawing::Size(34, 30);
 			this->trialsRemainingTextBox->TabIndex = 16;
 			this->trialsRemainingTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
 			// trialsRemainingLabel
 			// 
-			this->trialsRemainingLabel->Location = System::Drawing::Point(445, 14);
+			this->trialsRemainingLabel->Location = System::Drawing::Point(436, 16);
 			this->trialsRemainingLabel->Name = L"trialsRemainingLabel";
 			this->trialsRemainingLabel->Size = System::Drawing::Size(96, 47);
 			this->trialsRemainingLabel->TabIndex = 15;
@@ -856,7 +833,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->stepCounterTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->stepCounterTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->stepCounterTextBox->Location = System::Drawing::Point(450, 20);
+			this->stepCounterTextBox->Location = System::Drawing::Point(481, 20);
 			this->stepCounterTextBox->Name = L"stepCounterTextBox";
 			this->stepCounterTextBox->Size = System::Drawing::Size(98, 34);
 			this->stepCounterTextBox->TabIndex = 1;
@@ -869,7 +846,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 				static_cast<System::Byte>(0)));
 			this->stepHeaderTextBox->Location = System::Drawing::Point(10, 20);
 			this->stepHeaderTextBox->Name = L"stepHeaderTextBox";
-			this->stepHeaderTextBox->Size = System::Drawing::Size(434, 34);
+			this->stepHeaderTextBox->Size = System::Drawing::Size(454, 34);
 			this->stepHeaderTextBox->TabIndex = 0;
 			// 
 			// htmlGroupBox
