@@ -14,6 +14,12 @@
     <ProjectReference Include="..\..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
       <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\CLWSemulator\CLWSemulator.vcxproj">
+      <Project>{ec91da99-703d-46a9-bc18-74d21ace5b66}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
+      <Project>{26c677e6-bba3-4406-9e10-ce856aac42f2}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\AlignToRigidBodyGUI\AlignToRigidBodyGUI.vcxproj">
       <Project>{a924a357-a3f0-4a47-a8b7-cbcf3fe6e3b0}</Project>
     </ProjectReference>
@@ -28,6 +34,9 @@
     </ProjectReference>
     <ProjectReference Include="..\GraspHardwareStatus\GraspHardwareStatus.vcxproj">
       <Project>{3b9ea91d-4b96-465c-94f7-d64d41b29155}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspMMI\GraspMMI.vcxproj">
+      <Project>{ebcf095f-8685-4c8b-9778-502379d0de58}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
       <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
@@ -66,6 +75,7 @@
     <None Include="InstallGrasp.release.mak" />
     <None Include="LoadCodaCals.bat" />
     <None Include="RunGRASP.bat" />
+    <None Include="RunGraspMMI.bat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D372AF87-B6C6-4007-B361-2DADA1A1C9D7}</ProjectGuid>

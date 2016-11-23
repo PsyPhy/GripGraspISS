@@ -6,5 +6,6 @@
     <None Include="InstallGrasp.mak" />
     <None Include="LoadCodaCals.bat" />
     <None Include="RunGRASP.bat" />
+    <None Include="RunGraspMMI.bat" />
   </ItemGroup>
 </Project>
