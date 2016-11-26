@@ -241,12 +241,13 @@ namespace GraspGUI {
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) override {
-			InitializeForm();
 			this->Text = L"GRASP MMI";
+			this->Location = System::Drawing::Point(10, 10);
 			this->navigatorGroupBox->Enabled = false;
 			this->instructionsGroupBox->Enabled = false;
 			this->dexStatusGroupBox->Visible = true;
 			this->packetTimeTextBox->Visible = true;
+			InitializeForm();
 		}
 		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) override {
 		}

@@ -210,7 +210,7 @@ namespace GraspGUI {
 		System::Windows::Forms::Label^  errorCodeNote;
 		System::Windows::Forms::TextBox^  packetTimeTextBox;
 
-	private:
+	protected:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -922,7 +922,7 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
-			this->Location = System::Drawing::Point(-1, 0);
+			this->Location = System::Drawing::Point(10, 10);
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
