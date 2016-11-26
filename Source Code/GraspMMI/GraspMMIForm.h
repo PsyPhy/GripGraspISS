@@ -17,6 +17,7 @@ namespace GraspGUI {
 	enum class GraspMachineState { 
 		NullState = 0, 
 		StartBlock = 10, 
+		StartVtoV, StartVtoK, StartKtoK, StartVtoVK, StartVKtoVK, QuitVR, StartDemo,
 		BlockCompleted = 19, 
 		StartTrial = 20, 
 		StraightenHead = 31, 
@@ -116,6 +117,11 @@ namespace GraspGUI {
 
 			int i;
 
+			// Make sure that these two items were not left visible.
+			commandGroupBox->Visible = false;
+			errorCodeNote->Visible = false;
+
+			// Make selections in each menu.
 			if ( subject_id != previous_subject ) {
 				for ( i = 0; i < nSubjects; i++ ) {
 					if ( subjectList[i]->number == subject_id ) break;
