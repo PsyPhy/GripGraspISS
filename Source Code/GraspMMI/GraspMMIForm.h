@@ -201,6 +201,7 @@ namespace GraspGUI {
 						else if ( stepList[currentStep]->command->Contains( "AlignToRigidBodyGUI.exe" ) ) {
 							Object^ o = Enum::Parse( AlignMachineState::typeid, program_state.ToString() );
 							programStateEnumTextBox->Text = o->ToString();
+							trialsRemainingTextBox->Text = "n/a";
 						}
 						else programStateEnumTextBox->Text = "unknown";
 
@@ -245,6 +246,7 @@ namespace GraspGUI {
 			this->navigatorGroupBox->Enabled = false;
 			this->instructionsGroupBox->Enabled = false;
 			this->dexStatusGroupBox->Visible = true;
+			this->packetTimeTextBox->Visible = true;
 		}
 		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) override {
 		}
@@ -272,16 +274,16 @@ namespace GraspGUI {
 			NavigateTo( hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
 
 			// Show the time of the latest packet.
+			int TimebaseOffset = 16;
+			char label[256];
 			double latest_packet_time = EPMtoSeconds( &header );
 			int day_first = (int) floor(( latest_packet_time + TimebaseOffset )) / (24 * 60 * 60);
 			int since_midnight = ((int) floor( latest_packet_time ) + TimebaseOffset ) % (24 * 60 * 60);
 			int hour = since_midnight / (60 * 60);
 			int minute = (since_midnight % (60 * 60)) / 60;
 			int second = (since_midnight % 60);
-			if ( day_last == day_first ) sprintf( modifier, "" );
-			else sprintf( modifier, "J-%d", day_last - day_first );
-			sprintf( label, "%02d:%02d:%02d %s", hour, minute, second, modifier  );
-			// earliestTextBox->Text = gcnew String( label );
+			sprintf( label, "%02d:%02d:%02d GMT  ", hour, minute, second );
+			packetTimeTextBox->Text = gcnew String( label );
 
 			// Release the memory used to create the ANSI string.
 			Marshal::FreeHGlobal( IntPtr( filename_root ) );

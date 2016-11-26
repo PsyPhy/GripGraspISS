@@ -56,8 +56,6 @@ namespace GraspGUI {
 		bool cueStepCommand;
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
-	private: System::Windows::Forms::TextBox^  packetTimeTextBox;
-	protected: 
 
 	protected: 
 
@@ -210,6 +208,7 @@ namespace GraspGUI {
 		System::Windows::Forms::TextBox^  snapshotsTextBox;
 		System::Windows::Forms::Label^  snapshotsLabel;
 		System::Windows::Forms::Label^  errorCodeNote;
+		System::Windows::Forms::TextBox^  packetTimeTextBox;
 
 	private:
 		/// <summary>
@@ -226,6 +225,7 @@ namespace GraspGUI {
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->packetTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->dexStatusGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->scriptEngineTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->scriptEngineLabel = (gcnew System::Windows::Forms::Label());
@@ -276,7 +276,6 @@ namespace GraspGUI {
 			this->commandGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->commandTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
-			this->packetTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->navigatorGroupBox->SuspendLayout();
 			this->dexStatusGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
@@ -312,6 +311,17 @@ namespace GraspGUI {
 			this->navigatorGroupBox->TabIndex = 5;
 			this->navigatorGroupBox->TabStop = false;
 			this->navigatorGroupBox->Text = L"Navigator";
+			// 
+			// packetTimeTextBox
+			// 
+			this->packetTimeTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->packetTimeTextBox->Location = System::Drawing::Point(476, 13);
+			this->packetTimeTextBox->Name = L"packetTimeTextBox";
+			this->packetTimeTextBox->Size = System::Drawing::Size(132, 19);
+			this->packetTimeTextBox->TabIndex = 21;
+			this->packetTimeTextBox->Text = L"00:00:00";
+			this->packetTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->packetTimeTextBox->Visible = false;
 			// 
 			// dexStatusGroupBox
 			// 
@@ -899,16 +909,6 @@ namespace GraspGUI {
 			this->instructionViewer->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
-			// 
-			// packetTimeTextBox
-			// 
-			this->packetTimeTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
-			this->packetTimeTextBox->Location = System::Drawing::Point(516, 908);
-			this->packetTimeTextBox->Name = L"packetTimeTextBox";
-			this->packetTimeTextBox->Size = System::Drawing::Size(87, 19);
-			this->packetTimeTextBox->TabIndex = 21;
-			this->packetTimeTextBox->Text = L"00:00:00";
-			this->packetTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
 			// GraspDesktop
 			// 
