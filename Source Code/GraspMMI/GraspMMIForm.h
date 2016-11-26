@@ -168,15 +168,11 @@ namespace GraspGUI {
 					// Hide all the navigation buttons by default.
 					// The appropriate ones will then be rendered visible below.
 					normalNavigationGroupBox->Visible = false;
-					normalNavigationGroupBox->Enabled = false;
 					errorNavigationGroupBox->Visible = false;
-					errorNavigationGroupBox->Enabled = false;
 					commandNavigationGroupBox->Visible = false;
-					commandNavigationGroupBox->Enabled = false;
 					stepProgressGroupBox->Visible = false;
-					stepProgressGroupBox->Enabled = false;
 					commandGroupBox->Visible = false;
-					commandGroupBox->Enabled = false;
+					errorCodeNote->Visible = false;
 				}
 
 				if ( stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
@@ -212,13 +208,18 @@ namespace GraspGUI {
 						previous_page = PGEXECUTING;
 					}
 					else if ( state >= STEP_FINISHED_NORMAL && state < STEP_FINISHED_ABNORMAL ) {
+						commandTextBox->Text = stepList[currentStep]->command;
+						commandGroupBox->Visible = true;
 						normalNavigationGroupBox->Visible = true;
 						int code = (state - STEP_FINISHED_NORMAL) % 100;
 						if ( previous_page != PGSUCCESS ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
 						previous_page = PGSUCCESS;
 					}
 					else if ( state >= STEP_FINISHED_ABNORMAL ) {
+						commandTextBox->Text = stepList[currentStep]->command;
+						commandGroupBox->Visible = true;
 						errorNavigationGroupBox->Visible = true;
+						errorCodeNote->Visible = true;
 						int code = (state - STEP_FINISHED_ABNORMAL) % 100;
 						errorCodeTextBox->Text = code.ToString();
 						if ( previous_page != PGFAILURE ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
@@ -250,6 +251,7 @@ namespace GraspGUI {
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) override {
 
 			GripHealthAndStatusInfo hk;
+			EPMTelemetryHeaderInfo header;
 
 			// Stop the refresh timer, in case it takes us longer than 1 refresh cycle to complete the actions.
 			StopRefreshTimer();
@@ -262,13 +264,25 @@ namespace GraspGUI {
 			char *filename_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetRoot ).ToPointer();
 
 			// Get the latest HK packet from the cache.
-			GetLastPacketHK( &hk, filename_root );
+			GetLastPacketHK( &header, &hk, filename_root );
 			fOutputDebugString( "User: %d  Protocol: %3d  Task: %3d  Step: %2d  Engine: %8d  Tracker: %8d  Camera: %3d\n",
 				 hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
 			
 			// Show where the user is in the menus.
 			NavigateTo( hk.user, hk.protocol, hk.task, hk.step, hk.scriptEngineStatusEnum, hk.motionTrackerStatusEnum, hk.crewCameraRate );
-		
+
+			// Show the time of the latest packet.
+			double latest_packet_time = EPMtoSeconds( &header );
+			int day_first = (int) floor(( latest_packet_time + TimebaseOffset )) / (24 * 60 * 60);
+			int since_midnight = ((int) floor( latest_packet_time ) + TimebaseOffset ) % (24 * 60 * 60);
+			int hour = since_midnight / (60 * 60);
+			int minute = (since_midnight % (60 * 60)) / 60;
+			int second = (since_midnight % 60);
+			if ( day_last == day_first ) sprintf( modifier, "" );
+			else sprintf( modifier, "J-%d", day_last - day_first );
+			sprintf( label, "%02d:%02d:%02d %s", hour, minute, second, modifier  );
+			// earliestTextBox->Text = gcnew String( label );
+
 			// Release the memory used to create the ANSI string.
 			Marshal::FreeHGlobal( IntPtr( filename_root ) );
 	

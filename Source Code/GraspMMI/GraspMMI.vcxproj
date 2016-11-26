@@ -86,6 +86,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\GraspGUI\Grasp.ico" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

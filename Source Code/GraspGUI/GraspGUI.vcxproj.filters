@@ -19,6 +19,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="..\GraspMMI\app.ico">
+      <Filter>Source Files\Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGUI.cpp">

@@ -56,6 +56,8 @@ namespace GraspGUI {
 		bool cueStepCommand;
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
+	private: System::Windows::Forms::TextBox^  packetTimeTextBox;
+	protected: 
 
 	protected: 
 
@@ -185,39 +187,29 @@ namespace GraspGUI {
 		System::Windows::Forms::Button^  retryButton;
 		System::Windows::Forms::Button^  restartButton;
 		System::Windows::Forms::Button^  ignoreButton;
-protected: System::Windows::Forms::GroupBox^  dexStatusGroupBox;
-	protected: System::Windows::Forms::GroupBox^  stepProgressGroupBox;
-	protected: System::Windows::Forms::TextBox^  trialsRemainingTextBox;
-	protected: System::Windows::Forms::Label^  trialsRemainingLabel;
-	protected: System::Windows::Forms::Label^  scriptEngineLabel;
-	protected: System::Windows::Forms::TextBox^  scriptEngineTextBox;
-	protected: System::Windows::Forms::Label^  label1;
-	protected: System::Windows::Forms::TextBox^  programStateTextBox;
-	protected: System::Windows::Forms::TextBox^  programStateEnumTextBox;
+		System::Windows::Forms::GroupBox^  dexStatusGroupBox;
+		System::Windows::Forms::GroupBox^  stepProgressGroupBox;
+		System::Windows::Forms::TextBox^  trialsRemainingTextBox;
+		System::Windows::Forms::Label^  trialsRemainingLabel;
+		System::Windows::Forms::Label^  scriptEngineLabel;
+		System::Windows::Forms::TextBox^  scriptEngineTextBox;
+		System::Windows::Forms::Label^  label1;
+		System::Windows::Forms::TextBox^  programStateTextBox;
+		System::Windows::Forms::TextBox^  programStateEnumTextBox;
 
-
-	protected: System::Windows::Forms::GroupBox^  commandGroupBox;
-	protected: System::Windows::Forms::TextBox^  commandTextBox;
-
-
-
+		System::Windows::Forms::GroupBox^  commandGroupBox;
+		System::Windows::Forms::TextBox^  commandTextBox;
 		System::Windows::Forms::Label^  hmdVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  hmdVisibilityBar;
 		System::Windows::Forms::Label^  handVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  handVisibilityBar;
 		System::Windows::Forms::Label^  chestVisibilityLabel;
 		System::Windows::Forms::ProgressBar^  chestVisibilityBar;
-protected: System::Windows::Forms::Label^  visibleMarkersLabel;
+		System::Windows::Forms::Label^  visibleMarkersLabel;
 
-protected: System::Windows::Forms::TextBox^  snapshotsTextBox;
-protected: System::Windows::Forms::Label^  snapshotsLabel;
-
-
-
-
-
-
-	protected: 
+		System::Windows::Forms::TextBox^  snapshotsTextBox;
+		System::Windows::Forms::Label^  snapshotsLabel;
+		System::Windows::Forms::Label^  errorCodeNote;
 
 	private:
 		/// <summary>
@@ -280,9 +272,11 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->stepCounterTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->htmlGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->errorCodeNote = (gcnew System::Windows::Forms::Label());
 			this->commandGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->commandTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
+			this->packetTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->navigatorGroupBox->SuspendLayout();
 			this->dexStatusGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
@@ -301,6 +295,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// navigatorGroupBox
 			// 
 			this->navigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->navigatorGroupBox->Controls->Add(this->packetTimeTextBox);
 			this->navigatorGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->navigatorGroupBox->Controls->Add(this->statusButton);
 			this->navigatorGroupBox->Controls->Add(this->quitButton);
@@ -851,6 +846,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			// htmlGroupBox
 			// 
+			this->htmlGroupBox->Controls->Add(this->errorCodeNote);
 			this->htmlGroupBox->Controls->Add(this->commandGroupBox);
 			this->htmlGroupBox->Controls->Add(this->instructionViewer);
 			this->htmlGroupBox->Location = System::Drawing::Point(14, 92);
@@ -859,10 +855,22 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->htmlGroupBox->TabIndex = 5;
 			this->htmlGroupBox->TabStop = false;
 			// 
+			// errorCodeNote
+			// 
+			this->errorCodeNote->ForeColor = System::Drawing::Color::DarkMagenta;
+			this->errorCodeNote->Location = System::Drawing::Point(23, 737);
+			this->errorCodeNote->Name = L"errorCodeNote";
+			this->errorCodeNote->Size = System::Drawing::Size(544, 68);
+			this->errorCodeNote->TabIndex = 22;
+			this->errorCodeNote->Text = L"Note: The code given below is the number of the PAGE that is being displayed onbo" 
+				L"ard. To know what error caused this page to be presented you must ask the crewme" 
+				L"mber.";
+			this->errorCodeNote->Visible = false;
+			// 
 			// commandGroupBox
 			// 
 			this->commandGroupBox->Controls->Add(this->commandTextBox);
-			this->commandGroupBox->Location = System::Drawing::Point(8, 675);
+			this->commandGroupBox->Location = System::Drawing::Point(8, 607);
 			this->commandGroupBox->Name = L"commandGroupBox";
 			this->commandGroupBox->Size = System::Drawing::Size(575, 123);
 			this->commandGroupBox->TabIndex = 3;
@@ -872,7 +880,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			// commandTextBox
 			// 
-			this->commandTextBox->Location = System::Drawing::Point(12, 25);
+			this->commandTextBox->Location = System::Drawing::Point(10, 25);
 			this->commandTextBox->Multiline = true;
 			this->commandTextBox->Name = L"commandTextBox";
 			this->commandTextBox->Size = System::Drawing::Size(555, 92);
@@ -882,15 +890,25 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			// 
 			this->instructionViewer->AllowWebBrowserDrop = false;
 			this->instructionViewer->IsWebBrowserContextMenuEnabled = false;
-			this->instructionViewer->Location = System::Drawing::Point(8, 25);
+			this->instructionViewer->Location = System::Drawing::Point(10, 25);
 			this->instructionViewer->MinimumSize = System::Drawing::Size(20, 20);
 			this->instructionViewer->Name = L"instructionViewer";
 			this->instructionViewer->ScrollBarsEnabled = false;
-			this->instructionViewer->Size = System::Drawing::Size(568, 773);
+			this->instructionViewer->Size = System::Drawing::Size(564, 773);
 			this->instructionViewer->TabIndex = 2;
 			this->instructionViewer->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
+			// 
+			// packetTimeTextBox
+			// 
+			this->packetTimeTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->packetTimeTextBox->Location = System::Drawing::Point(516, 908);
+			this->packetTimeTextBox->Name = L"packetTimeTextBox";
+			this->packetTimeTextBox->Size = System::Drawing::Size(87, 19);
+			this->packetTimeTextBox->TabIndex = 21;
+			this->packetTimeTextBox->Text = L"00:00:00";
+			this->packetTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
 			// GraspDesktop
 			// 
@@ -904,6 +922,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 				static_cast<System::Byte>(0)));
 			this->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
+			this->Location = System::Drawing::Point(-1, 0);
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -911,6 +930,7 @@ protected: System::Windows::Forms::Label^  snapshotsLabel;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspDesktop::GraspDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
 			this->navigatorGroupBox->ResumeLayout(false);
+			this->navigatorGroupBox->PerformLayout();
 			this->dexStatusGroupBox->ResumeLayout(false);
 			this->dexStatusGroupBox->PerformLayout();
 			this->taskGroupBox->ResumeLayout(false);

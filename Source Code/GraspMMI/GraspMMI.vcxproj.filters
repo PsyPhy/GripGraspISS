@@ -16,6 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="..\GraspGUI\Grasp.ico">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>

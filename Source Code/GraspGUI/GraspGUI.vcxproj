@@ -93,6 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\GraspMMI\app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +119,7 @@
       <DependentUpon>GraspDesktopForm.h</DependentUpon>
       <SubType>Designer</SubType>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
