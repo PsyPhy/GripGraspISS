@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#define MAX_PATHLENGTH	1024
 
 #ifdef __cplusplus
 namespace PsyPhy {

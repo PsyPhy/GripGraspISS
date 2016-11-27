@@ -11,12 +11,14 @@
 #include <string.h>
 #include <time.h>
 
+#include "../../../GripMMI/GripSourceCode/Grip/GripPackets.h"
 #include "../Trackers/PoseTrackers.h"
 #include "DexServices.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/fMessageBox.h"
 
 using namespace Grasp;
+using namespace PsyPhy;
 
 void DexServices::printDateTime( FILE *fp ) {
 	SYSTEMTIME st;
@@ -296,4 +298,136 @@ void DexServices::ParseCommandLine( char *command_line ) {
 		fAbortMessageOnCondition( (items == 0), "DexServices", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 	}
 
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///
+/// Read realtime GRASP science data packets into a local buffer.
+///
+int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root ) {
+
+	// Keep track of the last packet TM counter from previous call.
+	// This is how we know if new data has arrived.
+	static unsigned short previousTMCounter = 0;
+
+	// Keep track of whether we have already seen that the buffers are full.
+	static BOOL buffers_full_alert = FALSE;
+
+	// Buffers and structures to hold data from the real time science packets.
+	EPMTelemetryPacket		packet;
+	EPMTelemetryHeaderInfo	epmHeader;
+	GripRealtimeDataInfo	rt;
+
+	// Will hold the filename (path) of the packet file.
+	char filename[MAX_PATHLENGTH];
+	// Will hold the pointer to the open packet file.
+	int  fid;
+
+	// Various local counters and flags.
+	int bytes_read;
+	int packets_read;
+	int return_code;
+
+	double previous_packet_timestamp;
+	int n_slices;
+
+	// Create the path to the realtime science packet file, based on the root and the packet type.
+	// The global variable 'packetBufferPathRoot' has been initialized elsewhere.
+	CreateGripPacketCacheFilename( filename, sizeof( filename ), GRIP_RT_SCIENCE_PACKET, filename_root );	
+
+	// Attempt to open the packet cache to read the accumulated packets.
+	// If it is not immediately available, keep trying for a few seconds.
+	for ( int retry_count = 0; retry_count  < MAX_OPEN_CACHE_RETRIES; retry_count ++ ) {
+		// Try to open the packet cache file.
+		fid = _sopen( filename, _O_RDONLY | _O_BINARY, _SH_DENYNO, _S_IWRITE | _S_IREAD  );
+		// If open succeeds, it will return zero. So if zero return, break from retry loop.
+		if ( fid >= 0 ) break;
+		// Wait a second before trying again.
+		Sleep( RETRY_PAUSE );
+	}
+	// If fid is negative, file is not open. This should not happen, because GripMMIStartup should verify 
+	// the availability of files containing packets before the GripMMIDesktop form is executed.
+	// But if we do fail to open the file, just signal the error and exit the hard way.
+	if ( fid < 0 ) {
+			fMessageBox( MB_OK, "GripMMI", "Error opening packet file %s.\n\n", filename );
+			exit( -1 );
+	}
+
+	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
+	// By setting it to zero here, the first packet read will be signaled as having arrived after a long delay.
+	previous_packet_timestamp = 0.0;
+
+	// Read in all of the data packets in the file.
+	// Be careful not to overrun the data buffers.
+	packets_read = 0;
+	n_slices = 0;
+	while ( n_slices < max_slices ) {
+
+		// Attempt to read next packet. Any error is terminal.
+		bytes_read = _read( fid, &packet, rtPacketLengthInBytes );
+		if ( bytes_read < 0 ) {
+			fMessageBox( MB_OK, "GripMMI", "Error reading from %s.\n\n", filename );
+			exit( -1 );
+		}
+
+		// If the number of bytes read is less than the expected number
+		//  we are at the end of the file and should break out of the loop.
+		if ( rtPacketLengthInBytes != bytes_read ) break;
+
+		// We have a valid packet.
+		packets_read++;
+
+		// Check that it is a valid GRIP packet. It would be strange if it was not.
+		ExtractEPMTelemetryHeaderInfo( &epmHeader, &packet );
+		if ( epmHeader.epmSyncMarker != EPM_TELEMETRY_SYNC_VALUE || epmHeader.TMIdentifier != GRIP_RT_ID ) {
+			fMessageBox( MB_OK, "GripMMIlite", "Unrecognized packet from %s.\n\n%s", filename );
+			exit( -1 );
+		}
+			
+		// Packets are stings of bytes. Extract the data values into a more usable form.
+		ExtractGripRealtimeDataInfo( &rt, &packet );
+
+		// If there has been a break in the arrival of the packets, insert
+		//  a blank frame into the data buffer. This will cause breaks in
+		//  the traces in the data graphs.
+		if ( (rt.packetTimestamp - previous_packet_timestamp) > PACKET_STREAM_BREAK_THRESHOLD ) {
+			// Subsampling in graphs will be used when the data record is very long.
+			// Insert enough points so that we see the break even if we are sub-sampling in the graphs.
+			// MAX_PLOT_STEP defines the maximum number of frames that will be skipped when plotting.
+			for ( int count = 0; count < PACKET_STREAM_BREAK_INSERT_SAMPLES && n_slices < max_slices - 1; count++ ) {
+				grasp_data_slice[n_slices].timestamp = MISSING_DOUBLE;
+				n_slices++;
+			}
+		}
+		previous_packet_timestamp = rt.packetTimestamp;
+
+		// Each packet is a set of slices. Extract each one.
+		for ( int count = 0; count < GRASP_RT_SLICES_PER_PACKET && n_slices < max_slices; count++ ) {
+			// Get the time of the slice.
+			grasp_data_slice[n_slices].timestamp = 0.0;
+			// Count the number of slices.
+			n_slices++;
+		}
+
+	}
+	// Finished reading. Close the file and check for errors.
+	return_code = _close( fid );
+	if ( return_code ) {
+		fMessageBox( MB_OK, "GripMMI", "Error closing %s after binary read.\nError code: %s\n\n", filename, return_code );
+		exit( return_code );
+	}
+	fOutputDebugString( "Acquired Data Slices (max %d): %d\n", max_slices, n_slices );
+	if ( n_slices >= max_slices ) {
+		char filename2[MAX_PATHLENGTH]; 
+		CreateGripPacketCacheFilename( filename2, sizeof( filename ), GRIP_HK_BULK_PACKET, filename_root );
+		fMessageBox( MB_OK | MB_ICONERROR, "DexServices", 
+			"Internal buffers are full.\n\nYou can continue plotting existing data.\nTracking of script progress will also continue.\n\nTo resume following new data transmissions:\n\n1) Halt all processes.\n2) Rename or move:\n      %s\n      %s\n3) Restart using RunGraspMMI.bat.",
+			filename, filename2 );
+		// Signal for the next call that we have already reached the limit of the buffers.
+		buffers_full_alert = true;
+	}
+	
+	return ( n_slices );
 }

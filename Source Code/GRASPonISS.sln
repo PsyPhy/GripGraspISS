@@ -130,6 +130,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripMMIShowVersionInfo", ".
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DexGroundMonitorClient", "..\..\GripMMI\GripSourceCode\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj", "{26C677E6-BBA3-4406-9E10-CE856AAC42F2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspTelemetryDaemon", "GraspTelemetryDaemon\GraspTelemetryDaemon.vcxproj", "{44066FC7-1873-48A2-8151-C6867A15D0DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -587,6 +589,14 @@ Global
 		{26C677E6-BBA3-4406-9E10-CE856AAC42F2}.Release|Win32.Build.0 = Release|Win32
 		{26C677E6-BBA3-4406-9E10-CE856AAC42F2}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{26C677E6-BBA3-4406-9E10-CE856AAC42F2}.TestRelease|Win32.Build.0 = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.Debug|Win32.Build.0 = Debug|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.DraftRelease|Win32.Build.0 = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.Release|Win32.ActiveCfg = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.Release|Win32.Build.0 = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{44066FC7-1873-48A2-8151-C6867A15D0DF}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

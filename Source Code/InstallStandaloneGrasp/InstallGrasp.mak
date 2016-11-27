@@ -49,9 +49,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy RunGraspMMI.bat ..\..
 	copy GraspPacketsForSimulator.gpk ..\..\Executables
 	-mkdir ..\..\Executables\CodaCalFiles
-	copy ..\..\..\Installers\CodaCalFiles\EM ..\..\Executables\CodaCalFiles
-	copy ..\..\..\Installers\CodaCalFiles\FM2 ..\..\Executables\CodaCalFiles
-	copy ..\..\..\Installers\CodaCalFiles\GM ..\..\Executables\CodaCalFiles
-	copy ..\..\..\Installers\CodaCalFiles\SM ..\..\Executables\CodaCalFiles
-	copy ..\DLLs\*.dll ..\..\Executables
+	-copy ..\..\..\Installers\CodaCalFiles\EM ..\..\Executables\CodaCalFiles
+	-copy ..\..\..\Installers\CodaCalFiles\FM2 ..\..\Executables\CodaCalFiles
+	-copy ..\..\..\Installers\CodaCalFiles\GM ..\..\Executables\CodaCalFiles
+	-copy ..\..\..\Installers\CodaCalFiles\SM ..\..\Executables\CodaCalFiles
+	-copy ..\DLLs\*.dll ..\..\Executables
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

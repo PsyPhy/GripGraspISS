@@ -2,7 +2,18 @@
 
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+#include <share.h>
+#include <sys/stat.h>
+#include <Windows.h>
+
 #include "../Trackers/Trackers.h"
+#include "../Trackers/PoseTrackers.h"
 #include "../VectorsMixin/VectorsMixin.h"
 #include "TMData.h"
 
@@ -21,6 +32,15 @@
 #define TRACKER_ACQUIRING		30000
 #define TRACKER_ANOMALY			44444
 #define TRACKERSTATUS_UNKNOWN	55555
+
+typedef struct {
+	long double timestamp;
+	PsyPhy::TrackerPose	HMD;
+	PsyPhy::TrackerPose	codaHMD;
+	PsyPhy::TrackerPose hand;
+	PsyPhy::TrackerPose chest;
+	PsyPhy::TrackerPose	mouse;
+} GraspRealtimeDataSlice;
 
 namespace Grasp {
 
@@ -95,6 +115,9 @@ namespace Grasp {
 		int SendScienceRealtimeData( void );
 
 		void ParseCommandLine( char *command_line );
+
+		int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root ) {
+
 
 // If the program is being compiled with /clr, then expose these methods that use String objects.
 #ifdef _MANAGED
