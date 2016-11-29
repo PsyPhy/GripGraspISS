@@ -3,4 +3,5 @@
 // are changed infrequently
 #pragma once
 
-// TODO: reference additional headers your program requires here
+// Disable warnings about unsafe string functions.
+#define _CRT_SECURE_NO_WARNINGS

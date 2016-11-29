@@ -107,7 +107,7 @@ REM **************************************************************************
 REM Normally you will not need to edit below this line.
 
 REM Root of the file names for the cache files
-set CacheRoot=GripPackets.%TIMESTAMP%
+set CacheRoot=GraspPackets.%TIMESTAMP%
 
 REM Show where we are for debugging purposes.
 echo %cd%

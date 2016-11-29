@@ -15,7 +15,8 @@
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
 #include "../VectorsMixin/VectorsMixin.h"
-#include "TMData.h"
+
+#include "TMdata.h"
 
 // Connection to Dex hardware via the ET port.
 #define DEFAULT_SERVER "10.80.12.103"
@@ -32,15 +33,6 @@
 #define TRACKER_ACQUIRING		30000
 #define TRACKER_ANOMALY			44444
 #define TRACKERSTATUS_UNKNOWN	55555
-
-typedef struct {
-	long double timestamp;
-	PsyPhy::TrackerPose	HMD;
-	PsyPhy::TrackerPose	codaHMD;
-	PsyPhy::TrackerPose hand;
-	PsyPhy::TrackerPose chest;
-	PsyPhy::TrackerPose	mouse;
-} GraspRealtimeDataSlice;
 
 namespace Grasp {
 
@@ -116,7 +108,7 @@ namespace Grasp {
 
 		void ParseCommandLine( char *command_line );
 
-		int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root ) {
+	
 
 
 // If the program is being compiled with /clr, then expose these methods that use String objects.
