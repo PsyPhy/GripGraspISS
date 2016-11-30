@@ -53,6 +53,17 @@ echo Results files from GRASPonISS goes here. > Results\readme.txt
 rmdir /S /Q Results
 rename HIDEResults Results
 
+REM Create an empty cache directory to put in the release archive.
+REM We hide the current Cache directory so as not to loose what we have there.
+REM Then we create a new empty directory, with just a readme to put in the tar archive.
+REM Finally, we restore the original Cache directlry.
+rename Cache HIDECache
+mkdir Cache
+echo Cache files for GraspMMI goes here. > Cache\readme.txt
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Cache/*
+rmdir /S /Q Cache
+rename HIDECache Cache
+
 REM Keep a record of releases.
 echo %ARCHIVE% >> GraspReleases.log
 
