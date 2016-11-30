@@ -197,7 +197,7 @@ namespace GraspTrackerDaemon {
 			strcat( pose_fn, fn );
 			strcat( pose_fn, ".pse" );
 			FILE *fp = fopen( pose_fn, "w" );
-			for ( int i = 0; i < nPoseSamples; i++ ) {
+			for ( unsigned int i = 0; i < nPoseSamples; i++ ) {
 				fprintf( fp, "%8d", i );
 				fprintf( fp, " %0.3f %s %s", poseData[i].hmd.time, trackers->vstr( poseData[i].hmd.pose.position ), trackers->qstr( poseData[i].hmd.pose.orientation ) );
 				fprintf( fp, " %0.3f %s %s", poseData[i].hand.time, trackers->vstr( poseData[i].hand.pose.position ), trackers->qstr( poseData[i].hand.pose.orientation ) );

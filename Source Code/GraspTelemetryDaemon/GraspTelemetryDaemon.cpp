@@ -165,7 +165,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			// Subsampling in graphs will be used when the data record is very long.
 			// Insert enough points so that we see the break even if we are sub-sampling in the graphs.
 			for ( int count = 0; count < PACKET_STREAM_BREAK_INSERT_SAMPLES && n_slices < max_slices; count++ ) {
-				grasp_data_slice[n_slices].fillTime = MISSING_DOUBLE;
+				grasp_data_slice[n_slices].fillTime = MISSING_FLOAT;
 				n_slices++;
 			}
 		}
