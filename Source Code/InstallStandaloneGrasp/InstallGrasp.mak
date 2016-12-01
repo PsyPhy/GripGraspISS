@@ -1,8 +1,10 @@
-### Keep the GRASP top level execution environment curent.
+### Keep the GRASP top level execution environment current.
 
-EXECUTABLES = ..\$(BUILDCONFIGURATION)\Grasp.exe ..\Grasp\Grasp.bat ..\Grasp\GraspPackData.bat \
+EXECUTABLES = \
+	..\$(BUILDCONFIGURATION)\Grasp.exe \
+	..\Grasp\Grasp.bat \
+	..\Grasp\GraspPackData.bat \
 	..\GraspGUI\Grasp.ico ..\$(BUILDCONFIGURATION)\GraspGUI.exe \
-	..\$(BUILDCONFIGURATION)\GraspMMI.exe \
 	..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe \
 	..\GraspTrackerDaemon\StartGraspTrackerDaemon.bat \
 	..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe \
@@ -18,8 +20,7 @@ EXECUTABLES = ..\$(BUILDCONFIGURATION)\Grasp.exe ..\Grasp\Grasp.bat ..\Grasp\Gra
 	..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe \
 	GraspPacketsForSimulator.gpk \
 	LoadCodaCals.bat \
-	RunGRASP.bat \
-	RunGraspMMI.bat
+	RunGRASP.bat 
 
 install: $(EXECUTABLES) InstallGrasp.mak 
 	-rmdir /S /Q ..\..\Executables
@@ -46,7 +47,6 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe ..\..\Executables
 	copy LoadCodaCals.bat ..\..\Executables
 	copy RunGRASP.bat ..\..
-	copy RunGraspMMI.bat ..\..
 	copy GraspPacketsForSimulator.gpk ..\..\Executables
 	-mkdir ..\..\Executables\CodaCalFiles
 	-copy ..\..\..\Installers\CodaCalFiles\EM ..\..\Executables\CodaCalFiles
