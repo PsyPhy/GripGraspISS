@@ -341,3 +341,6 @@ Source Code/GraspInstructionTypesetting/redo
 Cache/*
 ./RunGraspMMI.bat
 ./RunGrasp.bat
+RunGraspMMI.bat
+RunGRASP.bat
+Source Code/InstallStandaloneGraspMMI/install
