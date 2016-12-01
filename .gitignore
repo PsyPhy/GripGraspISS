@@ -301,7 +301,6 @@ Source Code/GraspDocumentation/*.bmp
 Source Code/GraspDocumentation/*.pdf
 Source Code/GraspDocumentation/*.html
 TestGrasp.dxl
-*.seq
 *.dxl
 DeleteMe
 DeleteMe*
@@ -319,6 +318,8 @@ GraspInstructions/*
 GraspInstructions
 GraspScripts/*
 GraspScripts
+GraspSequences/*
+GraspSequences
 *.tar
 GraspLastAction.txt
 FakeCoda.flg
