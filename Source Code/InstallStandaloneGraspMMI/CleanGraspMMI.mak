@@ -5,9 +5,5 @@
 ### Also delete incidental files that were created while running GraspGUI or Grasp.
 
 default:
-	-rmdir /S /Q ..\..\GraspExecutables
-	mkdir ..\..\GraspExecutables	
-	-del /F /Q ..\..\RunGRASP.bat 
-	-del /F /Q ..\..\RunGraspMMI.bat 
 	-del /F /Q ..\..\*.dxl 
 	-del /F /Q install 

@@ -1,5 +1,6 @@
 ### Keep the GRASP top level execution environment current.
 
+
 EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\Grasp.exe \
 	..\Grasp\Grasp.bat \
