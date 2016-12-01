@@ -4,7 +4,7 @@
 ###		CENTER(x)		centers what is passed to it on the line.
 ###		IMAGE(img,size)	Inserts an image and allows you to set the size.
 
-INSTRUCTIONS_DESTINATION=..\..\Instructions
+INSTRUCTIONS_DESTINATION=..\..\GraspInstructions
 EXECUTABLES=..\..\Utils
 SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=512
 

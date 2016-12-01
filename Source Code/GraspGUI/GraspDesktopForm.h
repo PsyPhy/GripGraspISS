@@ -99,22 +99,21 @@ namespace GraspGUI {
 
 			// It is convenient to define the root directory and predefine the various subdirectories.
 			// The web browser tool used to display instructions requires the full path to the file.
-			// So here we constuct the path to the current (root) directory and to the instructions.
-
-			SYSTEMTIME st;
-			GetSystemTime( &st );
-
+			// So here we constuct the absolute path to the current (root) directory and to the instructions.
 			char root_string[MAX_PATH];
 			int bytes = GetCurrentDirectory( sizeof( root_string ), root_string );
 			fAbortMessageOnCondition( bytes > MAX_PATH, "GraspGUI", "Path to current directory is too long." );
 			rootDirectory = gcnew String( root_string ) + "\\";
-			instructionsDirectory = rootDirectory + "Instructions\\";
+			instructionsDirectory = rootDirectory + "GraspInstructions\\";
 			// Grasp.exe and other programs that may be called do not handle file paths that include spaces.
 			// While we can control that paths below the Grasp root directory do not have spaces, we have no control
 			// on the directories between the file system root and the Grasp root directory. So we do not
 			// add the absolute path to the root directory to the other file paths defined below.
-			scriptDirectory =  "Scripts\\";
+			scriptDirectory =  "GraspScripts\\";
 			execDirectory =  "Executables\\";
+			// Define the name of the subdirectory for today's results and create it if necessary.
+			SYSTEMTIME st;
+			GetSystemTime( &st );
 			char datestr[MAX_PATH];
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			String ^dateString = gcnew String( datestr );
