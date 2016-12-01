@@ -614,7 +614,7 @@ namespace GraspHardwareStatus {
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
 			char cmd[1024];
-			//sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
+			//sprintf( cmd, "Start /min \"VR Test\" GraspExecutables\\PsyPhyOculusDemo.exe --parent=%d", parent );
 			// Create an output filename.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
@@ -623,7 +623,7 @@ namespace GraspHardwareStatus {
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 
-			sprintf( cmd, "Start /min \"VR Test\" Executables\\Grasp.exe --parent=%d --demo --output=Results\\%s\\STATUS_%s", parent, datestr, datetimestr );
+			sprintf( cmd, "Start /min \"VR Test\" GraspExecutables\\Grasp.exe --parent=%d --demo --output=Results\\%s\\STATUS_%s", parent, datestr, datetimestr );
 			system( cmd );
 		}
 

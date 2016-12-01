@@ -10,7 +10,7 @@ REM
 REM
 REM Execute Grasp.exe with all the arguments.
 REM
-Executables\Grasp.exe %*
+GraspExecutables\Grasp.exe %*
 set GRASPERRORLEVEL=%ERRORLEVEL%
 
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.

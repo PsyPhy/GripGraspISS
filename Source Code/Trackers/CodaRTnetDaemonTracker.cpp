@@ -197,7 +197,7 @@ void CodaRTnetDaemonTracker::Shutdown( void ) {
 	Sleep( 2000 );
 }
 void CodaRTnetDaemonTracker::Startup( void ) {
-	WinExec( "Executables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
+	WinExec( "GraspExecutables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
 	// Re-establish a connection with the daemon.
 	Initialize();
 }

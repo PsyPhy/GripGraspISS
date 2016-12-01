@@ -1,6 +1,6 @@
 # Instructions and commands to guide the installation for the floating posture.
 01; INSTRUCTION; 00IntroV-V.instruction.html
-02; COMMAND@; Executables\AlignToRigidBodyGUI.exe --body=Bdy\Chest.bdy; CodaAlignFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+02; COMMAND@; GraspExecutables\AlignToRigidBodyGUI.exe --body=Bdy\Chest.bdy; CodaAlignFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 03; INSTRUCTION; HMDStructureAssembly.instruction.html
 04; INSTRUCTION; ObjectPositioningFloating.instruction.html
 05; INSTRUCTION; TaskFinished.instruction.html

@@ -110,7 +110,7 @@ namespace GraspGUI {
 			// on the directories between the file system root and the Grasp root directory. So we do not
 			// add the absolute path to the root directory to the other file paths defined below.
 			scriptDirectory =  "GraspScripts\\";
-			execDirectory =  "Executables\\";
+			execDirectory =  "GraspExecutables\\";
 			// Define the name of the subdirectory for today's results and create it if necessary.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
@@ -1130,7 +1130,7 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			WinExec( "Executables\\GraspHardwareStatus.exe", SW_SHOW );
+			WinExec( "GraspExecutables\\GraspHardwareStatus.exe", SW_SHOW );
 		}
 
 	protected:

@@ -18,20 +18,20 @@ REM Clear the console window to hide any message about processes that are not pr
 cls
 
 REM Now start up Oculus.
-Start /MIN /WAIT Executables\StartOculus.exe 
-Start /WAIT Executables\OculusStartupCheck.exe 
+Start /MIN /WAIT GraspExecutables\StartOculus.exe 
+Start /WAIT GraspExecutables\OculusStartupCheck.exe 
 
 REM Now start up OculuseMouse to be able to move the mouse pointer and click using the Oculus Remote.
 REM When GRASP exits, OculusMouse will still be running so that if the exit was accidental
 REM  the subject can use the Remote to navigate on the computer and restart.
-Start /MIN "OculusMouse" Executables\OculusMouse.exe 
+Start /MIN "OculusMouse" GraspExecutables\OculusMouse.exe 
 
 REM Start up the CODA system and wait for it to be active.
-Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe
-Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
+Start "GRASP Tracker" GraspExecutables\GraspTrackerDaemon.exe
+Start "Wait For Tracker" /MIN /WAIT GraspExecutables\WaitForCodaDaemon.exe  
 
 REM Here we actually start Grasp as a background process with no console window.
-Start "Grasp Console Window" Executables\GraspGUI.exe
+Start "Grasp Console Window" GraspExecutables\GraspGUI.exe
 
 
 

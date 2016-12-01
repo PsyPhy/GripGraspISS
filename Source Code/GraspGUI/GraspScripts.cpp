@@ -402,7 +402,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
 		// We have to use Marshal::StringToHGlobalAnsi() to create ANSI strings to pass to the system() command.
 		char *cmd;
-		if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "Executables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
+		if ( unitTestingMode->Checked ) cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( "GraspExecutables\\TaskProcessUnitTester.exe " + cmdline ).ToPointer();
 		else cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ;
 
 		// Hide the window so as not to intefere with windows opened

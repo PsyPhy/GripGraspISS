@@ -19,7 +19,7 @@ REM ***                                                                         
 REM ***                                     Chest.bdy                                     ***
 REM ***                                                                                   ***
 REM *****************************************************************************************
-"..\Executables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 0 1 2 3 4 5 6 7 > %DEST%\Chest.bdy
+"..\GraspExecutables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 0 1 2 3 4 5 6 7 > %DEST%\Chest.bdy
 echo ;;; %NAME% - %Description% >>  %DEST%\Chest.bdy
 
 REM *****************************************************************************************
@@ -27,7 +27,7 @@ REM ***                                                                         
 REM ***                                     Hand.bdy                                      ***
 REM ***                                                                                   ***
 REM *****************************************************************************************
-"..\Executables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 8 9 10 11 12 13 14 15 > %DEST%\Hand.bdy
+"..\GraspExecutables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 8 9 10 11 12 13 14 15 > %DEST%\Hand.bdy
 echo ;;; %NAME% - %Description% >>  %DEST%\Hand.bdy
 
 
@@ -36,7 +36,7 @@ REM ***                                                                         
 REM ***                                      HMD.bdy                                      ***
 REM ***                                                                                   ***
 REM *****************************************************************************************
-"..\Executables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 16 17 18 19 20 21 22 23 > %DEST%\HMD.bdy
+"..\GraspExecutables\CreateRigidBodyModelFile.exe" --unit=%UNIT% 16 17 18 19 20 21 22 23 > %DEST%\HMD.bdy
 echo ;;; %NAME% - %Description% >>  %DEST%\HMD.bdy
 
 pause

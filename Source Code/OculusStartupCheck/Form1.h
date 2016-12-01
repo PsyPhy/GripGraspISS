@@ -160,7 +160,7 @@ namespace OculusStartupCheck {
 	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
 				 HWND parent = static_cast<HWND>( panel1->Handle.ToPointer() );
 				 char cmd[1024];
-				 sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
+				 sprintf( cmd, "Start /min \"VR Test\" GraspExecutables\\PsyPhyOculusDemo.exe --parent=%d", parent );
 				 system( cmd );
 			 }
 

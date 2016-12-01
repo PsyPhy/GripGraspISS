@@ -3,14 +3,14 @@
 
 ### Where shall we put the documentation.
 ### Path is relative to the current project directory.
-DOCUMENTATION_DESTINATION=..\..\Documentation
+DOCUMENTATION_DESTINATION=..\..\GraspDocumentation
 
 ### Where we can find the tools we need to make the documents.
 ### Again, relative to the current project directory.
 BUILDTOOLS=..\..\BuildTools
 
 ### Where do the Instructions lie that need to go into the documentation.
-INSTRUCTIONS=..\..\Instructions
+INSTRUCTIONS=..\..\GraspInstructions
 
 ### A local subdirectory where we keep manually-generated screen shots.
 GUI=GUIScreenshots

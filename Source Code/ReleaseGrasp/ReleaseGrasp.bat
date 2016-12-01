@@ -21,14 +21,13 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 
 %TAR% --create %VERBOSE% --file=%ARCHIVE% Bdy/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Executables/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspExecutables/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Utils/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Instructions/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Scripts/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspInstructions/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspScripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% InitFiles/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% RunGRASP.bat
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGRASP.bat
 %TAR% --append %VERBOSE% --file=%ARCHIVE% *.ini.*
 
@@ -38,7 +37,7 @@ REM Then we create a new empty directory, with just a readme to put in the tar a
 REM Finally, we restore the original LOG file.
 rename LOG HIDELOG
 mkdir LOG
-echo Log files from GRASPonISS goes here. > LOG\readme.txt
+echo Log files from GRIP and GRASP go here. > LOG\readme.txt
 %TAR% --append %VERBOSE% --file=%ARCHIVE% LOG/*
 rmdir /S /Q LOG
 rename HIDELOG LOG
@@ -49,7 +48,7 @@ REM Then we create a new empty directory, with just a readme to put in the tar a
 REM Finally, we restore the original Results file.
 rename Results HIDEResults
 mkdir Results
-echo Results files from GRASPonISS goes here. > Results\readme.txt
+echo Results files from GRIP and GRASP go here. > Results\readme.txt
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Results/*
 rmdir /S /Q Results
 rename HIDEResults Results
@@ -60,7 +59,7 @@ REM Then we create a new empty directory, with just a readme to put in the tar a
 REM Finally, we restore the original Cache directlry.
 rename Cache HIDECache
 mkdir Cache
-echo Cache files for GraspMMI goes here. > Cache\readme.txt
+echo Cache files for GripMMI and GraspMMI go here. > Cache\readme.txt
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Cache/*
 rmdir /S /Q Cache
 rename HIDECache Cache
