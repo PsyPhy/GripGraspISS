@@ -320,6 +320,7 @@ GraspScripts/*
 GraspScripts
 GraspSequences/*
 GraspSequences
+install
 *.tar
 GraspLastAction.txt
 FakeCoda.flg
