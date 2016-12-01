@@ -26,11 +26,11 @@ set ARCHIVE="..\GraspMMI %1 %TAG%.tar"
 echo Creating GRASPonISS Runtime Release %ARCHIVE%
 
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Executables/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Instructions/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Scripts/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIExecutables/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspInstructions/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspScripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGraspMMI.bat
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMI_Installation_Instructions.txt
 
@@ -40,7 +40,7 @@ REM Then we create a new empty directory, with just a readme to put in the tar a
 REM Finally, we restore the original Cache directlry.
 rename Cache HIDECache
 mkdir Cache
-echo Cache files for GraspMMI goes here. > Cache\readme.txt
+echo Cache files for GripMMI and GraspMMI go here. > Cache\readme.txt
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Cache/*
 rmdir /S /Q Cache
 rename HIDECache Cache

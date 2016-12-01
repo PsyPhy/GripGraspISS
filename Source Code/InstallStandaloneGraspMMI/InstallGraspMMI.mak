@@ -5,14 +5,15 @@ EXECUTABLES = \
 	GraspPacketsForSimulator.gpk \
 	RunGraspMMI.bat
 
+DESTINATION=..\..\GraspMMIExecutables
+
 install: $(EXECUTABLES) InstallGraspMMI.mak 
-	-rmdir /S /Q ..\..\Executables
-	-del /F /Q ..\..\RunGrasp.bat
-	mkdir ..\..\Executables
-	copy ..\$(BUILDCONFIGURATION)\GraspMMI.exe ..\..\Executables
-	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe ..\..\Executables
-	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe ..\..\Executables
+	-rmdir /S /Q $(DESTINATION)
+	mkdir $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GraspMMI.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy RunGraspMMI.bat ..\..
-	copy GraspPacketsForSimulator.gpk ..\..\Executables
-	-copy ..\DLLs\*.dll ..\..\Executables
+	copy GraspPacketsForSimulator.gpk $(DESTINATION)
+	-copy ..\DLLs\*.dll $(DESTINATION)
 	echo $(BUILDCONFIGURATION) %date% %time% > $@
