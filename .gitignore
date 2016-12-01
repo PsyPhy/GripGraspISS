@@ -303,13 +303,14 @@ Source Code/GraspDocumentation/*.html
 TestGrasp.dxl
 *.seq
 *.dxl
-DeleteMe.alignment.dat
+DeleteMe
 DeleteMe*
-Executables/Filezilla*
 Executables/*
 Executables
 Documentation/*
 Documentation
+GraspInstructions/*
+GraspInstructions
 *.tar
 GraspLastAction.txt
 FakeCoda.flg

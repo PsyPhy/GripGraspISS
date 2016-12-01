@@ -1,7 +1,0 @@
-# Protocol Definition: Visual Stimulus to Kinesthetic Response 
-901; SCRIPT; Prepare Seated; InstallSeated.tsk
-902; COMMAND; Check Seated; CodaInstallationCheck.exe -seated -hmd -chest -tool; CodaInstallationCheckSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-903; COMMAND; Align Seated; CodaAlignOnObjects.exe -seated -hmd -chest -tool; CodaAlignSeated.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-910; SCRIPT; Prepare Quasi-Freefloating; InstallFloating.tsk
-911; COMMAND; Check Quasti-Freefloating; CodaInstallationCheck.exe -floating -hmd -chest -tool; CodaInstallationCheckFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
-912; COMMAND; Align Quasi-Freefloating; CodaAlignOnObjects.exe -floating -hmd -chest -tool; CodaAlignFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
