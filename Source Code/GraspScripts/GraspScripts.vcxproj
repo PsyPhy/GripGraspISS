@@ -37,7 +37,8 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeReBuildCommandLine>
-    <NMakeOutput>install</NMakeOutput>
+    <NMakeOutput>
+    </NMakeOutput>
     <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
