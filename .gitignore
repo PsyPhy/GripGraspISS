@@ -329,6 +329,8 @@ Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadRed.bmp
 Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadYellow.bmp
 Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadBlue.bmp
 Source Code/GraspBMPs/install
+Source Code/GraspBMPs/*.bmp
+Source Code/GraspBMPs/*.tiff
 Source Code/GraspDocumentation/install
 Source Code/GraspInstructionTypesetting/install
 Source Code/GraspScripts/install
@@ -339,4 +341,3 @@ Source Code/GraspInstructionTypesetting/redo
 Cache/*
 ./RunGraspMMI.bat
 ./RunGrasp.bat
-RunGraspMMI.bat
