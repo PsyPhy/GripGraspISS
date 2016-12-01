@@ -25,7 +25,7 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Utils/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspInstructions/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspScripts/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspSequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% InitFiles/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGRASP.bat

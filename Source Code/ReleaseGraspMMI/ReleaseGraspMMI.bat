@@ -29,7 +29,7 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIExecutables/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspInstructions/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspScripts/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspSequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGraspMMI.bat
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMI_Installation_Instructions.txt
