@@ -67,7 +67,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CleanGrasp.bat" />
+    <None Include="CleanGrasp.mak" />
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.mak" />
     <None Include="InstallGrasp.release.mak" />
@@ -103,7 +103,7 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGrasp.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGrasp.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>CleanGrasp.bat</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>NMake /NOLOGO CleanGrasp.mak</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>

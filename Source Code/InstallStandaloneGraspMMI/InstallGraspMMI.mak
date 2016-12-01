@@ -7,6 +7,7 @@ EXECUTABLES = \
 
 install: $(EXECUTABLES) InstallGraspMMI.mak 
 	-rmdir /S /Q ..\..\Executables
+	-del /F /Q ..\..\RunGrasp.bat
 	mkdir ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\GraspMMI.exe ..\..\Executables
 	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe ..\..\Executables

@@ -28,7 +28,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CleanGraspMMI.bat" />
+    <None Include="CleanGraspMMI.mak" />
     <None Include="InstallGraspMMI.debug.mak" />
     <None Include="InstallGraspMMI.mak" />
     <None Include="InstallGraspMMI.release.mak" />
@@ -64,7 +64,7 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspMMI.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>CleanGraspMMI.bat</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>NMake /NOLOGO CleanGraspMMI.mak</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>
