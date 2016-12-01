@@ -15,6 +15,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>GraspTelemetryDaemon</RootNamespace>
+    <ProjectName>GraspMMIDataPlots</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -86,7 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="GraspTelemetryDaemon.cpp" />
+    <ClCompile Include="GraspMMIDataPlots.cpp" />
+    <ClCompile Include="GraspMMIGraphs.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -96,6 +98,7 @@
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="GraspMMIDataPlots.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -112,6 +115,9 @@
     <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\Grip\Grip.vcxproj">
       <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
+      <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
@@ -124,6 +130,20 @@
     <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
       <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\GLAUX.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\GLU32.LIB">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\glut32.lib">
+      <FileType>Document</FileType>
+    </Library>
+    <Library Include="..\Lib\OPENGL32.LIB">
+      <FileType>Document</FileType>
+    </Library>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

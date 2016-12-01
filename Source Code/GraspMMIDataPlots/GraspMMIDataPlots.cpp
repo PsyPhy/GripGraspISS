@@ -3,35 +3,14 @@
 #include "stdafx.h"
 
 #include "Form1.h"
-#include "../DexServices/TMdata.h"
-#include "../DexServices/DexServices.h"
-#include "../../../GripMMI/GripSourceCode/Grip/GripPackets.h"
-#include "../Useful/fMessageBox.h"
-#include "../Useful/fOutputDebugString.h"
+#include "GraspMMIDataPlots.h"
 
-using namespace GraspTelemetryDaemon;
+using namespace GraspMMI;
 using namespace Grasp;
 using namespace PsyPhy;
 
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct {
-	f32 fillTime;
-	u32 globalCount;
-	u32 objectStateBits;
-	PsyPhy::TrackerPose	HMD;
-	PsyPhy::TrackerPose	codaHMD;
-	PsyPhy::TrackerPose hand;
-	PsyPhy::TrackerPose chest;
-	PsyPhy::TrackerPose	mouse;
-} GraspRealtimeDataSlice;
-
-#define MAX_SLICES	(24*60*60*10)
 GraspRealtimeDataSlice graspDataSlice[MAX_SLICES];
-
-int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );
+unsigned int nDataSlices = 0;
 
 void ExtractGraspRealtimeDataInfo( GraspRealtimeDataSlice grasp_data_slice[], EPMTelemetryPacket &packet ) {
 
@@ -101,8 +80,6 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 	int bytes_read;
 	int packets_read;
 	int return_code;
-
-	double previous_packet_timestamp;
 	int n_slices;
 
 	// Create the path to the realtime science packet file, based on the root and the packet type.
@@ -128,8 +105,16 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 	}
 
 	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
-	// By setting it to zero here, the first packet read will be signaled as having arrived after a long delay.
-	previous_packet_timestamp = 0.0;
+	// By setting it to a really high number here (100 years into the future) we are sure that the 
+	//  calculate difference between this value and the first frame will be negative, as if there was no gap.
+	double previous_packet_timestamp = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
+
+	// Similarly, we look for resets of the fill time for each slice, and when the latest fill time is less
+	// than the previous fill time, we reset the reference time to the time that the packet was received.
+	// By setting the previous fill time to a really large number, the reference time will be established 
+	// by the packet time of the first packet and slice.
+	double previous_fill_time = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
+	double absolute_time_reference = 0.0;
 
 	// Read in all of the data packets in the file.
 	// Be careful not to overrun the data buffers.
@@ -151,7 +136,8 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 		// We have a valid packet.
 		packets_read++;
 
-		// Check that it is a valid GRIP packet. It would be strange if it was not.
+		// Check that it is a valid GRIP packet. It would be strange if it was not, because we are supposed
+		//  to be reading a cache file that has been filled by DexGroundMonitorClient with only GRIP RT packets.
 		ExtractEPMTelemetryHeaderInfo( &epmHeader, &packet );
 		if ( epmHeader.epmSyncMarker != EPM_TELEMETRY_SYNC_VALUE || epmHeader.TMIdentifier != GRIP_RT_ID ) {
 			fMessageBox( MB_OK, "GripMMIlite", "Unrecognized packet from %s.\n\n%s", filename );
@@ -166,16 +152,23 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			// Insert enough points so that we see the break even if we are sub-sampling in the graphs.
 			for ( int count = 0; count < PACKET_STREAM_BREAK_INSERT_SAMPLES && n_slices < max_slices; count++ ) {
 				grasp_data_slice[n_slices].fillTime = MISSING_FLOAT;
+				grasp_data_slice[n_slices].absoluteTime = MISSING_DOUBLE;
 				n_slices++;
 			}
 		}
-		previous_packet_timestamp = EPMtoSeconds( &epmHeader );
 
 		// Each packet is a set of slices. Extract each one.
 		if ( n_slices < max_slices - GRASP_RT_SLICES_PER_PACKET ) {
 			ExtractGraspRealtimeDataInfo( &grasp_data_slice[n_slices], packet );
-			n_slices += GRASP_RT_SLICES_PER_PACKET;
+			// If fill time has moved backwards, take the packet header time as the new reference time for 
+			// this and subsequent packets.
+			if ( ( grasp_data_slice[n_slices].fillTime - previous_fill_time ) < ( EPMtoSeconds( &epmHeader ) - previous_packet_timestamp ) ) absolute_time_reference = EPMtoSeconds( &epmHeader );
+			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) grasp_data_slice[n_slices + s].absoluteTime = grasp_data_slice[n_slices + s].fillTime  + absolute_time_reference;
 		}
+
+		previous_packet_timestamp = EPMtoSeconds( &epmHeader );
+		previous_fill_time = grasp_data_slice[n_slices].fillTime;
+		n_slices += GRASP_RT_SLICES_PER_PACKET;
 
 	}
 	// Finished reading. Close the file and check for errors.
@@ -206,7 +199,7 @@ int main(array<System::String ^> ^args)
 
 	// Read the cached packets.
 	// This is here temporarily just for testing.
-	GetGraspRT( graspDataSlice, MAX_SLICES, "GraspPackets" );
+	nDataSlices = GetGraspRT( graspDataSlice, MAX_SLICES, "GraspPackets.2016.11.30" );
 
 	// Create the main window and run it
 	Application::Run(gcnew Form1());
