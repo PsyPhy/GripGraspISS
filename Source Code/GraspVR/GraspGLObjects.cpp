@@ -278,7 +278,7 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 	// Add a laser pointer to the end.
 	Assembly *laser = CreateFuzzyLaserPointer();
 	// This laser is always the same color.
-	laser->SetColor( RED );
+	laser->SetColor( BLUE );
 	tool->AddComponent( laser );
 
 	SetHandColor( tool, true );
