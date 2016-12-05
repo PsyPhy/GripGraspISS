@@ -57,7 +57,8 @@ const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 //  way to tilt the head, in addition to color cues.
 const double GraspGLObjects::prompt_radius = 60.0;
 const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
-const double GraspGLObjects::visor_radius = 320.0;
+double GraspGLObjects::outer_visor_radius = 320.0;
+double GraspGLObjects::inner_visor_radius = 250.0;
 
 Vector3 GraspGLObjects::desired_wrist_location = { 0.0, 0.0, -400.0 };
 
@@ -74,6 +75,10 @@ const double GraspGLObjects::finger_length = 100.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
 const double GraspGLObjects::hmdTransparency = 0.25;
+
+// A generic parameter that sets the number of facets in rounded objects.
+// More facets means smoother surfaces, but slower drawing times;
+int GraspGLObjects::curve_facets = 20;
 
 // Transparency of objects that change color according to roll angle.
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
@@ -215,7 +220,7 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 Glasses *GraspGLObjects::CreateGlasses( void ) {
 
 	// Create a circular portal to look through to avoid visual cues about the egocentric reference frame.
-	Glasses *glasses = new Glasses( visor_radius - 70.0, visor_radius, room_radius, room_radius, 16 );
+	Glasses *glasses = new Glasses( inner_visor_radius, outer_visor_radius, room_radius, room_radius, 16 );
 	return glasses;
 }
 
@@ -341,11 +346,11 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	static double size = 0.85;
 	double guage =  prompt_radius / 10.0;
 
-	Annulus *donut = new Annulus( prompt_radius, guage, size, 20, 20 );
+	Annulus *donut = new Annulus( prompt_radius, guage, size, curve_facets, curve_facets );
 	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
-	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, 20 );
+	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, curve_facets );
 	tip->SetAttitude( 0.0, 90.0, 0.0 );
 	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );

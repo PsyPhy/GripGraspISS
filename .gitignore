@@ -333,6 +333,7 @@ Source Code/GraspInstructionTypesetting/Pictures/StraightenHeadBlue.bmp
 Source Code/GraspBMPs/install
 Source Code/GraspBMPs/*.bmp
 Source Code/GraspBMPs/*.tiff
+Source Code/GraspScreenShots/*.bmp
 Source Code/GraspDocumentation/install
 Source Code/GraspInstructionTypesetting/install
 Source Code/GraspScripts/install

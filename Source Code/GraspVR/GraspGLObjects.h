@@ -103,7 +103,8 @@ namespace Grasp {
 		static const Vector3 sky_location;
 		static const Vector3 prompt_location;
 		static const double prompt_radius;
-		static const double visor_radius;
+		static double inner_visor_radius;
+		static double outer_visor_radius;
 		static Vector3 desired_wrist_location;
 
 		static const double target_ball_radius;
@@ -116,6 +117,8 @@ namespace Grasp {
 
 		static const double errorColorMapTransparency;
 		static const double errorColorMapFadeDistance;
+
+		static int GraspGLObjects::curve_facets;
 
 	protected:
 
