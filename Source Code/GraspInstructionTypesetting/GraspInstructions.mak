@@ -24,7 +24,7 @@ ALL_HTML=GraspWelcome.html \
 
 # This is a list of images that are created here in the makefile.
 # There are other images that are needed to create the html files, but they sit statically in the Pictures subdirectory.
-VRIMAGES=Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
+VRIMAGES=Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
 
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
@@ -52,25 +52,29 @@ redo: ..\$(BUILDCONFIGURATION)\GraspScreenshots.exe
 	echo echo %date% %time% > $@
 
 Pictures\StraightenHeadGreen.bmp: redo
+	dir
 	cd ..\.. & $(SCREENSHOTEXE) --NoRoom --Redress --size=512 --headError=0.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
 Pictures\StraightenHeadCyan.bmp: redo
+	dir
 	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=3.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
 Pictures\StraightenHeadBlue.bmp: redo
+	dir
 	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=3.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
 Pictures\StraightenHeadYellow.bmp: redo
+	dir
 	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=10.0  $(@F)
 	move ..\..\$(@F) Pictures\.
 
 Pictures\StraightenHeadRed.bmp: redo
+	dir
 	cd ..\.. & $(SCREENSHOTEXE)  --NoRoom --Redress --size=512 --headError=30.0  $(@F)
 	move ..\..\$(@F) Pictures\.
-
 
 .SUFFIXES: .html .md .tex
 .md.html:
