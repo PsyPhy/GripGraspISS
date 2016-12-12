@@ -56,25 +56,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	int items;
 	char *ptr;
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
-	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
-	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
-	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
-	if ( strstr( lpCmdLine, "--VtoK" ) ) paradigm = doVtoK;
-	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
-	if ( strstr( lpCmdLine, "--demo" ) ) paradigm = doDemo;
-	if ( strstr( lpCmdLine, "--doff" ) ) paradigm = doDoff;
+
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+
 	if ( ptr = strstr( lpCmdLine, "--output" ) ) items = sscanf( ptr, "--output=%s", output_filename_root );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 
-
-	GraspTaskManager	*grasp;
-	GraspTrackers		*trackers;
-	HWND				parentWindow = nullptr;
-
+	HWND parentWindow = nullptr;
 	if ( ptr = strstr( lpCmdLine, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parentWindow );
 
+	//
+	// Connect to dex for telemetry and snapshots.
+	//
 	DexServices *dex = new DexServices();
 	dex->ParseCommandLine( lpCmdLine );
 	strcpy( dex_log_filename, output_filename_root );
@@ -84,12 +78,36 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->SendSubstep( 0 );
 	dex->SnapPicture( "STARTUP" );
 
+	//
+	// Start up the VR display. 
+	//
+	GraspDisplay *display = new GraspDisplay();
+	display->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow );
+
+	// 
+	// Select a set of trackers and start them up.
+	//
+	GraspTrackers *trackers;
+	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
 	if ( useCoda ) {
 		CodaRTnetTracker *codaTracker = new CodaRTnetDaemonTracker();
 		trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
 	}
 	else trackers = new GraspSimTrackers( &_oculusMapper );
+	trackers->Initialize();
 	
+	// 
+	// Select the paradigm and create the corresponding object.
+	//
+	GraspTaskManager	*grasp;
+
+	if ( strstr( lpCmdLine, "--VtoV" ) ) paradigm = doVtoV;
+	if ( strstr( lpCmdLine, "--VtoVK" ) ) paradigm = doVtoVK;
+	if ( strstr( lpCmdLine, "--VtoK" ) ) paradigm = doVtoK;
+	if ( strstr( lpCmdLine, "--KtoK" ) ) paradigm = doKtoK;
+	if ( strstr( lpCmdLine, "--demo" ) ) paradigm = doDemo;
+	if ( strstr( lpCmdLine, "--doff" ) ) paradigm = doDoff;
+
 	switch ( paradigm ) {
 
 	case doVtoVK:
@@ -119,11 +137,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	}
 
+	//
+	// Perform some hacks to handle some specific cases.
+	//
+
+	// During training, timeout for tilting the head is set very long.
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
+
+	// Select the method for guiding the subject to the initial head position.
 	if ( 0 == _access_s( "CodaAlignGaze.flg", 0x00 ) ) grasp->straightenHeadMethod = CODA_STRAIGHTEN;
 	if ( 0 == _access_s( "ChestAlignGaze.flg", 0x00 ) ) grasp->straightenHeadMethod = CHEST_STRAIGHTEN;
 
-	grasp->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow, trackers, dex );
+	grasp->Initialize( display, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
 

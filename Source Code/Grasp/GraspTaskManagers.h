@@ -84,22 +84,6 @@ namespace Grasp {
 		::Timer trialCompletedTimer;
 		::Timer blockTimer;
 
-		// Detect action of the subject to record a response.
-		bool waitForUp;
-		bool Validate( void ) {
-			ovrInputState state;
-			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-			bool current_state = 
-				( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
-			if ( waitForUp && current_state ) return( false );
-			if ( !current_state ) {
-				waitForUp = false;
-				return( false );
-			}
-			waitForUp = true;
-			return( true );
-		}
-
 		// 
 		// Now define the handlers for each possible GraspTrialState.
 		// All of these methods are declared virtual, with the expectation
@@ -195,20 +179,20 @@ namespace Grasp {
 
 	public:
 		// Constructor, with initialization of some elements.
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), waitForUp(true), tag("??to??" ) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), tag("??to??" ) {}
 		~GraspTaskManager(){}
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow, GraspTrackers *trkrs, DexServices *dex ) {
+		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServices = dex;
-			GraspVR::Initialize( instance, display, mapper, parentWindow, trkrs );
-			// Initialize state for button pushes.
-			ovrInputState state;
-			ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
-			waitForUp = ( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
+			GraspVR::Initialize( dsply, trkrs );
 		}
 		void Release( void ) {
+			display->Release();
 			GraspVR::Release();
 		}
 
+		bool Validate( void ) {
+			return display->Validate();
+		}
 
 
 	};

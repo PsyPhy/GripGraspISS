@@ -93,7 +93,6 @@
     <ClInclude Include="CodaSimTracker.h" />
     <ClInclude Include="MousePoseTrackers.h" />
     <ClInclude Include="OculusInterface.h" />
-    <ClInclude Include="OculusLocal.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
     <ClInclude Include="OculusMapper.h" />
     <ClInclude Include="OculusViewpoint.h" />

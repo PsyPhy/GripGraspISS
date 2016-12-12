@@ -1,4 +1,3 @@
-// This is the main DLL file.
 
 #include "stdafx.h"
 #include "GraspVR.h"
@@ -44,8 +43,7 @@ double GraspVR::prompt_spin_speed = - 0.75;
 // Trackers 
 //
 
-void GraspVR::InitializeTrackers( const char *filename_root ) {
-	trackers->Initialize();
+void GraspVR::InitializeTrackers( void ) {
 	CopyVector( localAlignment.displacement, zeroVector );
 	CopyQuaternion( localAlignment.rotation, nullQuaternion );
 }
@@ -150,40 +148,7 @@ void GraspVR::AlignToCODA( void ) {
 // VR 
 //
 
-void GraspVR::InitializeVR( HINSTANCE hinst, HWND parent ) {
-
-	ovrResult result;
-
-	// Decide if we are in full screen mode or not.
-	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
-	static const bool fullscreen = true;
-	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
-	// what is going on in the HMD. To do so, set the following to false;
-	static const bool mirror = true;
-
-	// Initializes LibOVR, and the Rift
-#ifdef USE_OCULUS_O_8
-	OVR::System::Init();
-#endif
-	result = ovr_Initialize( nullptr );
-	if ( OVR_FAILURE( result ) ) {
-		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize libOVR (ovrError %d).", result );
-		exit( OCULUS_ERROR );
-	}
-
-	// Initialize the Oculus-enabled Windows platform.
-	result = oculusDisplay->InitWindow( hinst, L"GraspVR", ( parent ? false : fullscreen ), parent );
-	if ( OVR_FAILURE( result ) ) {
-		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusDisplay (ovrError %d).", result );
-		exit( OCULUS_ERROR );
-	}
-
-	// Initialize the interface to the Oculus HMD.
-	result = oculusMapper->Initialize( oculusDisplay, ( parent ? true : mirror ) );
-	if ( OVR_FAILURE( result ) ) {
-		fMessageBox( MB_OK | MB_ICONERROR, "GraspVR", "Error initializing VR Headset.\n - Failed to initialize oculusMapper (ovrError %d).", result );
-		exit( OCULUS_ERROR );
-	}
+void GraspVR::InitializeVR( void ) {
 
 	// Set up a default GL rendering context.
 	glUsefulInitializeDefault();
@@ -197,7 +162,7 @@ void GraspVR::InitializeVR( HINSTANCE hinst, HWND parent ) {
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
 	// Our basic units are millimeters, so set the near and far accordingly.
-	viewpoint = new OculusViewpoint( oculusMapper, interpupillary_distance, near_clipping, far_clipping );
+	viewpoint = display->CreateViewpoint( interpupillary_distance, near_clipping, far_clipping );
 
 	// Set the player's position and orientation to the null position and orientation.
 	// Note that the head tracking will be applied relative to this pose.
@@ -240,13 +205,8 @@ void GraspVR::Release( void ) {
 	// Shutdown the trackers.
 	ReleaseTrackers();
 
-	// Shutdown the Rift.
-	ovr_Shutdown();
-#ifdef USE_OCULUS_0_8
-	OVR::System::Destroy();
-#endif
-	oculusDisplay->CloseWindow();
-	oculusDisplay->ReleaseDevice();
+	// Shutdown the display.
+	display->Release();
 
 }
 
@@ -626,38 +586,39 @@ void GraspVR::Render( void ) {
 	for (int eye = 0; eye < 2; ++eye) {
 
 		// Get ready to draw into one of the eyes.
-		oculusMapper->SelectEye( eye );
+		display->SelectEye( eye );
 
 		// Set up the viewing transformations.
-		viewpoint->Apply( eye );
+		display->ApplyViewpoint( viewpoint, (Eye) eye );
+
 		// Draw the objects in the world.
 		renderer->DrawVR();
 
 		// Take care of an Oculus bug.
-		oculusMapper->DeselectEye( eye );
+		display->DeselectEye( eye );
 
 	}
 
 	// Do distortion rendering, Present and flush/sync
-	ovrResult result = oculusMapper->BlastIt();
-	// fOutputDebugString( "BlastIt() returns: %d\n", result );
+	display->Present();
+
 }
 
 // A rendering loop that allows one to toggle on and off the various VR objects.
 void GraspVR::DebugLoop( void ) {
 
 	// Enter into the rendering loop and handle other messages.
-	while ( oculusDisplay->HandleMessages() ) {
+	while ( display->oculusDisplay->HandleMessages() ) {
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 
 		// Boresight the HMD tracker on 'B'.
-		if ( oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
-		if ( oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
+		if ( display->oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
+		if ( display->oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
 
 		// Handle triggering and moving the projectiles.
-		if ( ( oculusDisplay->Key[VK_RETURN] || oculusDisplay->Button[MOUSE_LEFT] ) && currentProjectileState == cocked ) TriggerProjectiles();
+		if ( ( display->oculusDisplay->Key[VK_RETURN] || display->oculusDisplay->Button[MOUSE_LEFT] ) && currentProjectileState == cocked ) TriggerProjectiles();
 		HandleProjectiles();
 
 		// Prompt the subject to achieve the desired head orientation.
@@ -668,7 +629,7 @@ void GraspVR::DebugLoop( void ) {
 		//
 
 		// Disable drawing of all objects.
-		if ( oculusDisplay->Key[VK_SPACE] ) {
+		if ( display->oculusDisplay->Key[VK_SPACE] ) {
 			renderer->orientationTarget->Disable();
 			renderer->positionOnlyTarget->Disable();
 			renderer->straightAheadTarget->Disable();
@@ -684,34 +645,34 @@ void GraspVR::DebugLoop( void ) {
 			renderer->room->Disable();
 		}
 		// Show the room.
-		if ( oculusDisplay->Key['R'] ) {
+		if ( display->oculusDisplay->Key['R'] ) {
 			renderer->room->Enable();
 		}
 		// Show the target and the target-specific sky behind it.
-		if ( oculusDisplay->Key['T'] ) {
+		if ( display->oculusDisplay->Key['T'] ) {
 			renderer->orientationTarget->Enable();
 			renderer->starrySky->Disable();
 			renderer->darkSky->Enable();
 		}
 		// Show the hand/tool.
-		if ( oculusDisplay->Key['H'] ) {
+		if ( display->oculusDisplay->Key['H'] ) {
 			renderer->vTool->Enable();
 			renderer->kTool->Disable();
 			renderer->kkTool->Disable();
 		}
-		if ( oculusDisplay->Key['K'] ) {
+		if ( display->oculusDisplay->Key['K'] ) {
 			renderer->vTool->Disable();
 			renderer->kTool->Disable();
 			renderer->kkTool->Enable();
 		}
-		if ( oculusDisplay->Key['J'] ) {
+		if ( display->oculusDisplay->Key['J'] ) {
 			renderer->vTool->Disable();
 			renderer->kTool->Enable();
 			renderer->kkTool->Disable();
 		}
 
 		// Show the tilt prompt.
-		if ( oculusDisplay->Key['P'] ) renderer->headTiltPrompt->Enable();
+		if ( display->oculusDisplay->Key['P'] ) renderer->headTiltPrompt->Enable();
 
 		Render();
 	}

@@ -21,12 +21,18 @@ OculusViewpoint::OculusViewpoint( OculusMapper *oculusMapper, double ipd, double
 	Viewpoint( ipd, fov, nearest, farthest );
 }
 
-void OculusViewpoint::Apply( int eye ) {
+void OculusViewpoint::Apply( OpenGLWindow *window, Eye eye ) {
+
+	// An OpenGLViewpoint can be applied to more than one OpenGLWindow, so a handle to the window
+	// was included in the definition of Apply(). The OculusViewpoint goes implicitly to the 
+	// Oculus rendering buffers of the appropriate size. So the window handle is ignored here.
+	window = window;
 
 	// Set the size of the viewport into GL. The OVR system creates a bitmap of this size for each eye.
 	int eye_buffer_width = oculusMapper->idealTextureSize.w;
 	int eye_buffer_height = oculusMapper->idealTextureSize.h;
 	double aspect = (double) eye_buffer_width / (double) eye_buffer_height;
+
 	// Use crop to speed up rendering. Not a nice solution.
 	int crop = 0;	
 

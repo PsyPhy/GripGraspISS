@@ -82,12 +82,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraspDisplays.h" />
     <ClInclude Include="GraspGLObjects.h" />
     <ClInclude Include="GraspTrackers.h" />
     <ClInclude Include="GraspVR.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GraspDisplays.cpp" />
     <ClCompile Include="GraspGLObjects.cpp" />
     <ClCompile Include="GraspTrackers.cpp" />
     <ClCompile Include="GraspVR.cpp" />

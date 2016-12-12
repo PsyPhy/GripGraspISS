@@ -302,7 +302,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	TimerStart( blockTimer );
 
 	// Enter into the rendering loop and handle other messages.
-	while ( oculusDisplay->HandleMessages() ) {
+	while ( display->oculusDisplay->HandleMessages() ) {
 
 		static int cycle_counter = 0;
 		cycle_counter++;
@@ -330,9 +330,9 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Boresight the HMD tracker on 'B' or align to the HMD on 'A'.
 		// This is here for debugging and should probably be removed.
-		if ( oculusDisplay->KeyDownEvents['A'] ) AlignToHMD();
-		if ( oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
-		if ( oculusDisplay->KeyDownEvents['U'] ) trackers->hmdTracker->Unboresight();
+		if ( display->oculusDisplay->KeyDownEvents['A'] ) AlignToHMD();
+		if ( display->oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
+		if ( display->oculusDisplay->KeyDownEvents['U'] ) trackers->hmdTracker->Unboresight();
 
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.
@@ -344,7 +344,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		Render();
 
 		// Clear any accumulated keydown events in preparation for the next cycle.
-		oculusDisplay->ClearKeyDownEvents();
+		display->ClearKeyDownEvents();
 	}
 	if ( response_fp ) fclose( response_fp );
 	response_fp = NULL;
@@ -686,7 +686,7 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	// Allow an operator to force a move forward. This can be used in a training situation
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
-	if ( oculusDisplay->KeyDownEvents[' '] && status == aligned ) return( ObtainResponse ); 
+	if ( display->KeyDownEvents(' ') && status == aligned ) return( ObtainResponse ); 
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
@@ -829,7 +829,7 @@ void GraspTaskManager::EnterBlockCompleted( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
-	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
+	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
 	return( currentState );
@@ -850,7 +850,7 @@ void GraspTaskManager::EnterVRCompleted( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateVRCompleted( void ) { 
 	// After timer runs out, move on to the next trial or exit.
-	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
+	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
 	return( currentState );
@@ -871,7 +871,7 @@ void GraspTaskManager::EnterDemo( void ) {
 }
 GraspTrialState GraspTaskManager::UpdateDemo( void ) { 
 	// After timer runs out, move on to the next trial or exit.
-	if ( Validate() ||  oculusDisplay->KeyDownEvents['\r'] ) return( ExitStateMachine );
+	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
 	return( currentState );

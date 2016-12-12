@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="OpenGLColors.h" />
     <ClInclude Include="OpenGLObjects.h" />
+    <ClInclude Include="OpenGLWindows.h" />
     <ClInclude Include="OpenGLYoke.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
