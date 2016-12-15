@@ -3,7 +3,6 @@
 #include "../GraspVR/GraspTrackers.h"
 #include "../Trackers/NullPoseTracker.h"
 #include "GraspTrackerDaemon.h"
-
 #include "GraspTrackerDaemonForm.h"
 
 using namespace PsyPhy;
@@ -47,60 +46,25 @@ namespace GraspTrackerDaemon {
 
 	}
 
-	// If we are not connected to actual codas, we simulate markers going in 
-	// and out of view for debugging purposes. This should probably be integrated
-	// into the CodaRTnetNullTracker.
-	void Form1::FakeTheCodaData( void ) {
-		static double angle = 0.0;
-		int unit, mrk, id;
-		for ( unit = 0; unit < coda->nUnits; unit++ ) {
-			coda->recordedMarkerFrames[unit][0].time = (double) record.count / 200.0;
-			for ( mrk = 0; mrk < trackers->hmdCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-				id = trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].id;
-				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-					trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].position );
-				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-			}
-			for ( mrk = 0; mrk < trackers->handCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-				id = trackers->handCodaPoseTracker[unit]->modelMarker[mrk].id;
-				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-					trackers->handCodaPoseTracker[unit]->modelMarker[mrk].position );
-				coda->recordedMarkerFrames[unit][0].marker[id].position[Z] -= 300.0;
-				coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 250.0;
-				coda->recordedMarkerFrames[unit][0].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
-				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-			}
-			for ( mrk = 0; mrk < trackers->chestCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
-				id = trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].id;
-				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
-					trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].position );
-				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
-			}
-			// The following code causes intermittent occlusions of the simulated markers.
-			for ( int unit = 0; unit < record.nUnits; unit++ ) {
-				int mrk;
-				for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-					if ( ( (mrk + record.count / 10 ) / 8 ) % 6 == unit ) coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = false;
-					else coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = true;
-				}
-			}
-		}
-		angle += 0.05;
-	}
-
 	void Form1::InitializeCoda( void ) {
 
+		VectorsMixin vm;
+
+		// Select which tracker to use to provide the marker data.
 		if ( use_coda ) coda = new CodaRTnetContinuousTracker();
 		else coda = new CodaRTnetNullTracker();
 
+		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
+		// for the HMD, hand and chest. But GraspDexTrackers also requires a tracker to
+		// allow the subject to adjust the hand orientation in -V protocols. So here
+		// we create a null pose tracker just to fill in.
 		PoseTracker *roll = new NullPoseTracker();
-
+		// Create a set of Pose tracker so that poses can be computed here in the daemon.
 		trackers = new GraspDexTrackers( coda, roll );
 		trackers->Initialize();
 		for ( int unit = 0; unit < trackers->codaTracker->nUnits; unit++ ) {
 			trackers->codaTracker->GetAlignment( record.alignmentOffset, record.alignmentRotation );
 		}
-		if ( !use_coda ) FakeTheCodaData();
 	}
 
 	void Form1::ReleaseCoda( void ) {
@@ -111,7 +75,6 @@ namespace GraspTrackerDaemon {
 
 		record.nUnits = trackers->codaTracker->nUnits;
 		record.count++;
-		if ( !use_coda ) FakeTheCodaData();
 
 		trackers->Update();
 		// Fill the record with the marker data from the CODA system.
@@ -178,14 +141,14 @@ namespace GraspTrackerDaemon {
 			sprintf( str, "%s %s", trackers->vstr( record.hand.pose.position ), trackers->qstr( record.hand.pose.orientation ) );
 			handPoseTextBox->Text = gcnew String( str );
 		}
-		else handPoseTextBox->Text = "                        (obscured)";
+		else handPoseTextBox->Text = "                         (obscured)";
 
 		if ( record.chest.visible ) {
 			char str[256];
 			sprintf( str, "%s %s", trackers->vstr( record.chest.pose.position ), trackers->qstr( record.chest.pose.orientation ) );
 			chestPoseTextBox->Text = gcnew String( str );
 		}
-		else chestPoseTextBox->Text = "                       (obscured)";
+		else chestPoseTextBox->Text = "                         (obscured)";
 
 	}
 

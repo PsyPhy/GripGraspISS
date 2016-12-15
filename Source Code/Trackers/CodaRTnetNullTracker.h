@@ -23,19 +23,15 @@ class CodaRTnetNullTracker : public CodaRTnetTracker {
 
 protected:
 		
-	// The CODA continuously sends separate packets for each CODA unit. It is conceivable that
-	// the two packets from a given time slice could be read on separate calls to Update().
-	// So we keep track of the number of acquired frames for each CODA unit separately.
-	// The common parameter nFrames is nevertheless maintained and set to the smaller of the
-	// individual frame counters.
-	unsigned int nFramesPerUnit[MAX_UNITS];
-
 	Timer	acquisitionTimer;
 	bool	acquiring;
+	void FakeMovementData( int unit, int index );
 
 public:
 
-	CodaRTnetNullTracker( void ) : acquiring(false) {}
+	bool	fakeMovements;
+
+	CodaRTnetNullTracker( void ) : acquiring(false), fakeMovements(false)  {}
 	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartContinuousAcquisition( void );
 	virtual void StartAcquisition( double duration );

@@ -29,27 +29,26 @@ void CodaRTnetNullTracker::Initialize( const char *ini_filename ) {
 	overrun = false;
 	nUnits = 2;
 	nMarkers = 24;
+	nFrames = 0;
 	// Fill the last frame with a record in which all the markers are invisible.
 	// This will be sent as the current frame until such time that a real frame has been read.
-	unsigned int index = 0;
+	unsigned int index = nFrames % MAX_FRAMES;
 	for ( int unit = 0; unit < nUnits; unit++ ) {
-		nFramesPerUnit[unit] = 1;
 		recordedMarkerFrames[unit][index].time = 0.0;
-		for ( int mrk = 0; mrk < nMarkers; mrk++ ) recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
+		for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+			recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
+			CopyVector( recordedMarkerFrames[unit][index].marker[mrk].position, zeroVector );
+		}
 	}
-	nFrames = 1;
 	Sleep( 3000 );
+	TimerStart( acquisitionTimer );
 }
 
 void CodaRTnetNullTracker::StartContinuousAcquisition( void ) {}
 
 void CodaRTnetNullTracker::StartAcquisition( double duration ) {
 	TimerSet( acquisitionTimer, duration );
-	for ( int unit = 0; unit < nUnits; unit++ ) {
-		nFramesPerUnit[unit] = 1;
-		recordedMarkerFrames[unit][0].time = TimerElapsedTime( acquisitionTimer );
-	}
-	nFrames = 1;
+	nFrames = 0;
 	overrun = false;
 	acquiring = true;
 	StartContinuousAcquisition();
@@ -70,11 +69,23 @@ bool CodaRTnetNullTracker::GetAcquisitionState( void ) {
 }
 
 int CodaRTnetNullTracker::Update( void ) {
-	if ( acquiring ) {
-		for ( int unit = 0; unit < nUnits; unit++ ) {
-			recordedMarkerFrames[unit][nFramesPerUnit[unit]].time = TimerElapsedTime( acquisitionTimer );
-			if ( nFramesPerUnit[unit] < MAX_FRAMES - 1 ) nFramesPerUnit[unit]++;
+
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		int index = nFrames % MAX_FRAMES;
+		recordedMarkerFrames[unit][index].time = TimerElapsedTime( acquisitionTimer );
+		if ( fakeMovements ) FakeMovementData( unit, index );
+		else {
+			for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+				recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
+				CopyVector( recordedMarkerFrames[unit][index].marker[mrk].position, zeroVector );
+			}
 		}
+		// If we are acquiring a buffer full of data, then advance to the next frame,
+		// taking care not to overrun the buffers.
+	}
+	if ( acquiring ) {
+		if ( nFrames < MAX_FRAMES ) nFrames++;
+		else fOutputDebugString( "MAX_FRAMES exceeded: %d \n", nFrames );
 	}
 	return( true );
 }
@@ -82,7 +93,14 @@ int CodaRTnetNullTracker::Update( void ) {
 bool CodaRTnetNullTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit ) {
 	// Make sure that any packets that were sent were read.
 	Update();
-	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][nFramesPerUnit[selected_unit] - 1] );
+	unsigned int index;
+	// If we are acquiring a time series, nFramesPerUnit points is one more than the index of the last acquired sample.
+	// So we back up one sample and send that frame.
+	if ( acquiring ) index = ( nFrames - 1 ) % MAX_FRAMES;
+	// If we are not acquiring a time series, the most recent data is copied into the location pointed to by nFramesPerUnit,
+	//  which does not advance.
+	else index = nFrames % MAX_FRAMES;
+	CopyMarkerFrame( frame, recordedMarkerFrames[selected_unit][index] );
 	return true;
 }
 
@@ -93,4 +111,39 @@ void CodaRTnetNullTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 ro
 	}
 }
 
+void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {
 
+	static double angle = 0.0;
+	int mrk, id;
+	static int count = 0;
+
+	for ( mrk = 0; mrk < 8; mrk++ ) {
+		id = mrk;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, zeroVector );
+		recordedMarkerFrames[unit][index].marker[id].visibility = true;
+	}
+	for ( mrk = 8; mrk < 16; mrk++ ) {
+		id = mrk;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, zeroVector );
+		recordedMarkerFrames[unit][index].marker[id].position[Z] -= 300.0;
+		recordedMarkerFrames[unit][index].marker[id].position[Y] -= 250.0;
+		recordedMarkerFrames[unit][index].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
+		recordedMarkerFrames[unit][index].marker[id].visibility = true;
+	}
+	for ( mrk = 16; mrk < 24; mrk++ ) {
+		id = mrk;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, zeroVector );
+		recordedMarkerFrames[unit][index].marker[id].visibility = true;
+	}
+	// The following code causes intermittent occlusions of the simulated markers.
+	for ( int unit = 0; unit < nUnits; unit++ ) {
+		int mrk;
+		for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+			if ( ( (mrk + count / 10 ) / 8 ) % 6 == unit ) recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
+			else recordedMarkerFrames[unit][index].marker[mrk].visibility = true;
+		}
+	}
+	
+	angle += 0.05;
+	count++;
+}
