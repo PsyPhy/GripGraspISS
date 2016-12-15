@@ -10,6 +10,7 @@
 #include <tchar.h>
 #include <math.h>
 #include <time.h>
+#include <WinSock2.h>
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -18,30 +19,31 @@
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetContinuousTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 
 using namespace PsyPhy;
-
-// A device that records 3D marker positions that will drive the 6dof pose trackers.
-// This has to be a static variable because otherwise it overflows the stack.
-CodaRTnetTracker codaTracker;
 
 void usage ( void ) {
 	fAbortMessage( "CreateRigidBodyModelFile", 
 		"Usage:\n\n  CreateRigidBodyModelFile [--confirm] [--unit=#] m1 m1 ... \n\nm1 ... mn are zero-based marker numbers.\n# is the zero-based CODA cx1 unit number.\nAttention: no spaces around '='." );
 }
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int mrk_list[MAX_MARKERS];
 	int mrk_list_length = 0;
 	int coda_unit = 0;
-
+	bool use_daemon = false;
 	bool confirm = false;
+
+	// A device that records 3D marker positions that will drive the 6dof pose trackers.
+	CodaRTnetTracker *codaTracker;
 
 	for ( int arg = 1; arg < argc; arg++ ) {
 		if ( !strcmp( argv[arg], "--confirm" ) ) confirm = true;
+		else if ( !strcmp( "--daemon", argv[arg] ) ) use_daemon = true;
 		else if ( !strncmp( argv[arg], "--unit=", strlen( "--unit=" ) ) ) {
 			int items = sscanf( argv[arg], "--unit=%d", &coda_unit );
 			if ( items != 1 ) usage();
@@ -57,7 +59,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// Initialize the connection to the CODA tracking system.
 	fprintf( stderr, "Initializing CODA system ..." );
-	codaTracker.Initialize();
+	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
+	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
+	codaTracker->Initialize();
 	fprintf( stderr, "OK.\n" );
 
 	// Acquire the current marker positions for the head tracker.
@@ -69,14 +73,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	fprintf( stderr, " ] ... " );
 	// Acquire a sample for 5 seconds.
-	codaTracker.StartAcquisition( 5.0 );
-	while ( codaTracker.GetAcquisitionState() ) Sleep( 10 );
-	codaTracker.StopAcquisition();
+	codaTracker->StartAcquisition( 5.0 );
+	while ( codaTracker->GetAcquisitionState() ) Sleep( 10 );
+	codaTracker->StopAcquisition();
 	fprintf( stderr, "OK.\n" );
 
 	// Compute the average marker positions for the acquired sample.
 	fprintf( stderr, "Computing model ... " );
-	codaTracker.ComputeAverageMarkerFrame( avgFrame, codaTracker.recordedMarkerFrames[coda_unit], codaTracker.nFrames );
+	codaTracker->ComputeAverageMarkerFrame( avgFrame, codaTracker->recordedMarkerFrames[coda_unit], codaTracker->nFrames );
 	// Set the position of the model markers from the average acquired sample.
 	CodaPoseTracker *codaPoseTracker = new CodaPoseTracker( nullptr );
 	int nmarkers = codaPoseTracker->SetModelMarkerPositions( mrk_list_length, mrk_list, &avgFrame );
