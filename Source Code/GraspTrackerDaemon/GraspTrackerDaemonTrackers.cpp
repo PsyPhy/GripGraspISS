@@ -52,7 +52,12 @@ namespace GraspTrackerDaemon {
 
 		// Select which tracker to use to provide the marker data.
 		if ( use_coda ) coda = new CodaRTnetContinuousTracker();
-		else coda = new CodaRTnetNullTracker();
+		else if ( use_legacy ) coda = new CodaLegacyPolledTracker();
+		else {
+			CodaRTnetNullTracker *null_tracker = new CodaRTnetNullTracker();
+			null_tracker->fakeMovements = true;
+			coda = null_tracker;
+		}
 
 		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
 		// for the HMD, hand and chest. But GraspDexTrackers also requires a tracker to
@@ -62,8 +67,14 @@ namespace GraspTrackerDaemon {
 		// Create a set of Pose tracker so that poses can be computed here in the daemon.
 		trackers = new GraspDexTrackers( coda, roll );
 		trackers->Initialize();
-		for ( int unit = 0; unit < trackers->codaTracker->nUnits; unit++ ) {
-			trackers->codaTracker->GetAlignment( record.alignmentOffset, record.alignmentRotation );
+		// This is a temporary hack until the legacy CODA trackers can provide the alignment
+		// transformations.
+		if ( use_coda ) coda->GetAlignmentTransforms( record.alignmentOffset, record.alignmentRotation );
+		else {
+			for ( int unit = 0; unit < coda->nUnits; unit++ ) {
+				vm.CopyVector( record.alignmentOffset[unit], vm.zeroVector );
+				vm.CopyMatrix( record.alignmentRotation[unit], vm.identityMatrix );
+			}
 		}
 	}
 

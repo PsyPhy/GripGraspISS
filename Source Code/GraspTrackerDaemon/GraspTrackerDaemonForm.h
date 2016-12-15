@@ -25,7 +25,10 @@ namespace GraspTrackerDaemon {
 	public:
 
 		bool use_coda;
-		PsyPhy::CodaRTnetTracker *coda;
+		bool use_legacy;
+		bool autohide;
+
+		PsyPhy::Tracker *coda;
 		Grasp::GraspDexTrackers *trackers;
 		bool recording;
 		unsigned int nPoseSamples;
@@ -37,10 +40,11 @@ namespace GraspTrackerDaemon {
 	public: 
 		PsyPhy::VectorsMixin	*vm;
 
-		Form1(void) : use_coda( true ), recording( false ), nPoseSamples( 0 )
+		Form1(void) : use_coda( true ), use_legacy( false ), autohide( false ), recording( false ), nPoseSamples( 0 )
 		{
 			InitializeComponent();
 			if ( 0 == _access_s( "FakeCoda.flg", 0x00 ) ) use_coda = false;
+			if ( 0 == _access_s( "LegacyCoda.flg", 0x00 ) ) { use_coda = false; use_legacy = true; }
 			vm = new VectorsMixin();
 		}
 
@@ -73,7 +77,7 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::Button^  stopButton;
 		System::Windows::Forms::Button^  saveButton;
 		System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
-		System::Windows::Forms::Button^  button1;
+
 		System::Windows::Forms::GroupBox^  groupBox3;
 		System::Windows::Forms::TextBox^  chestPoseTextBox;
 		System::Windows::Forms::TextBox^  handPoseTextBox;
@@ -113,7 +117,6 @@ namespace GraspTrackerDaemon {
 			this->stopButton = (gcnew System::Windows::Forms::Button());
 			this->saveButton = (gcnew System::Windows::Forms::Button());
 			this->saveFileDialog1 = (gcnew System::Windows::Forms::SaveFileDialog());
-			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox3->SuspendLayout();
@@ -344,23 +347,12 @@ namespace GraspTrackerDaemon {
 			this->saveFileDialog1->DefaultExt = L"mrk";
 			this->saveFileDialog1->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &Form1::saveFileDialog1_FileOk);
 			// 
-			// button1
-			// 
-			this->button1->Location = System::Drawing::Point(465, 265);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(80, 30);
-			this->button1->TabIndex = 10;
-			this->button1->Text = L"Decal";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click_1);
-			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->exitButton;
 			this->ClientSize = System::Drawing::Size(735, 313);
-			this->Controls->Add(this->button1);
 			this->Controls->Add(this->saveButton);
 			this->Controls->Add(this->stopButton);
 			this->Controls->Add(this->startButton);
@@ -389,6 +381,7 @@ namespace GraspTrackerDaemon {
 #pragma endregion
 	private: 
 		System::Void exitButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			this->Enabled = false;
 			Close();
 		}
 
@@ -396,7 +389,6 @@ namespace GraspTrackerDaemon {
 		void InitializeCoda( void );
 		void ReleaseCoda( void );
 		void InitializeSocket( void );
-		void FakeTheCodaData( void );
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
@@ -413,7 +405,8 @@ namespace GraspTrackerDaemon {
 
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
-			WindowState = System::Windows::Forms::FormWindowState::Minimized;
+			if ( autohide ) WindowState = System::Windows::Forms::FormWindowState::Minimized;
+			 
 		}
 
 		System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
@@ -441,30 +434,28 @@ namespace GraspTrackerDaemon {
 		}		
 
 
-private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			 startButton->Enabled = false;
-			 stopButton->Enabled = true;
-			 saveButton->Enabled = false;
-			 trackers->codaTracker->StartAcquisition( 1000.0 );
-			 nPoseSamples = 0;
-			 recording = true;
-		 }
-private: System::Void stopButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			 startButton->Enabled = true;
-			 stopButton->Enabled = false;
-			 saveButton->Enabled = true;
-			 trackers->codaTracker->StopAcquisition();
-			 recording = false;
-		 }
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			 recording = false;
-			 saveFileDialog1->ShowDialog();
-		 }
+	private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
+				 startButton->Enabled = false;
+				 stopButton->Enabled = true;
+				 saveButton->Enabled = false;
+				 trackers->codaTracker->StartAcquisition( 1000.0 );
+				 nPoseSamples = 0;
+				 recording = true;
+			 }
+	private: System::Void stopButton_Click(System::Object^  sender, System::EventArgs^  e) {
+				 startButton->Enabled = true;
+				 stopButton->Enabled = false;
+				 saveButton->Enabled = true;
+				 trackers->codaTracker->StopAcquisition();
+				 recording = false;
+			 }
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+				 recording = false;
+				 saveFileDialog1->ShowDialog();
+			 }
 
-private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e);
-private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
-			 trackers->codaTracker->AnnulAlignment();
-		 }
-};
+	private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e);
+
+	};
 }
 
