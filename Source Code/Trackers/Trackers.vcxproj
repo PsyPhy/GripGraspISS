@@ -77,6 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CascadePoseTracker.h" />
+    <ClInclude Include="CodaLegacyContinuousTracker.h" />
+    <ClInclude Include="CodaLegacyPolledTracker.h" />
     <ClInclude Include="CodaPoseTracker.h" />
     <ClInclude Include="CodaRTnetContinuousTracker.h" />
     <ClInclude Include="CodaRTnetDaemonTracker.h" />
@@ -92,11 +94,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CascadePoseTracker.cpp" />
+    <ClCompile Include="CodaLegacyContinuousTracker.cpp" />
+    <ClCompile Include="CodaLegacyPolledTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
     <ClCompile Include="CodaRTnetContinuousTracker.cpp" />
     <ClCompile Include="CodaRTnetDaemonTracker.cpp" />
     <ClCompile Include="CodaRTnetNullTracker.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
+    <ClCompile Include="CodaUtilities.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="NullPoseTracker.cpp" />
     <ClCompile Include="OculusRemotePoseTracker.cpp" />
     <ClCompile Include="PoseTrackerFilter.cpp" />
@@ -116,6 +123,9 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="codasys.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

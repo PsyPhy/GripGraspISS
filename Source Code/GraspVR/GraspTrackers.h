@@ -23,11 +23,14 @@
 #include "../VectorsMixin/VectorsMixin.h"
 
 // Include 3D and 6D tracking capabilities.
+#include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaRTnetNullTracker.h"
+#include "../Trackers/CodaLegacyPolledTracker.h"
+#include "../Trackers/CodaLegacyContinuousTracker.h"
 
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaPoseTracker.h"
@@ -119,7 +122,7 @@ namespace Grasp {
 
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
-		CodaRTnetTracker *codaTracker;
+		Tracker *codaTracker;
 
 		// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
 		// We use one for each Coda unit, but we could use more.
@@ -145,7 +148,7 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
+		GraspDexTrackers ( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
 
 #ifdef BACKGROUND_GET_DATA
 			threadHandle = nullptr;

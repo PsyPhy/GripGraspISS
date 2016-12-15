@@ -121,6 +121,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 		acquiring = false;
 	}
 
+	// Retrieve any UDP packets that have been sent by the CodaRTnet server since the last call.
 	while ( true ) {
 
 		// CodaRTnet packet-handling objects cannot be reused for more than one packet.
@@ -134,7 +135,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 		codaRTNet::PacketDecode3DResultExt	local_decode3D;		// 3D measurements (CX1)
 
 		// We set an extremely short timeout to effectively make a non-blocking call.
-		// Time out means there are no new packets available.
+		// Timeout means there are no new packets available.
 		if ( stream.receivePacket( local_packet, 100) == CODANET_STREAMTIMEOUT) break; 
 
 		// Check if the packet is corrupted.
@@ -151,8 +152,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			// find number of markers included in the packet.
 			int n_markers = local_decode3D.getNumMarkers();
 
-			// Single shots can return 56 marker positions, even if we are using
-			// 200 Hz / 28 markers for continuous acquisition. Stay within bounds.
+			// Stay within bounds.
 			if ( n_markers > MAX_MARKERS ) n_markers = MAX_MARKERS;
 			
 			// The 'page' number is used to say which CODA unit the packet belongs to.
@@ -164,7 +164,6 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			}
 			
 			// Compute the time from the tick counter in the packet and the tick duration.
-			// Actually, I am not sure if the tick is defined on a single shot acquistion.
 			int index = nFramesPerUnit[unit] % MAX_FRAMES;
 			MarkerFrame *frame = &recordedMarkerFrames[unit][index];
 			frame->time = local_decode3D.getTick() * cl.getDeviceTickSeconds( DEVICEID_CX1 );
@@ -183,6 +182,8 @@ int CodaRTnetContinuousTracker::Update( void ) {
 				for ( int i = 0; i < 3; i++ ) frame->marker[mrk].position[i] =INVISIBLE;
 				frame->marker[mrk].visibility = false;
 			}
+			// If we are acquiring a buffer full of data, then advance to the next frame,
+			// taking care not to overrun the buffers.
 			if ( acquiring ) {
 				if ( nFramesPerUnit[unit] < MAX_FRAMES ) nFramesPerUnit[unit]++;
 				else {

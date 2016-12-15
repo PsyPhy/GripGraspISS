@@ -97,12 +97,6 @@ protected:
 	codaRTNet::DataStream		stream;
 	CODANET_HWCONFIG_DEVICEENABLE devices;
 
-public:
-	// Buffers to hold the data retrieved from the CODA units.
-	// I am making them public so that the calling program can access them directly,
-	// rather than going through RetrieveMarkerFramesUnit();
-	MarkerFrame		recordedMarkerFrames[MAX_UNITS][MAX_FRAMES];
-
 protected:
 
 public:
@@ -168,7 +162,7 @@ protected:
 	}
 
 public:
-	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual int  Update( void );
 	virtual void Quit( void );
 
@@ -197,10 +191,6 @@ public:
 		fMessageBox( MB_OK, "CodaRTnetTracker", "GetUnitPlacement() not yet implemented." );
 	}
 	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
-
-	virtual void	WriteMarkerFile( char *filename );
-	void WriteColumnHeadings( FILE *fp, int unit );
-	void WriteMarkerData( FILE *fp, MarkerFrame &frame );
 
 protected:
 	// These are used internally to start and stop the CODA system, e.g. when setting a new alignment.

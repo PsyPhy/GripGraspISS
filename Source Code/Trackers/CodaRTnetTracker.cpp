@@ -560,8 +560,7 @@ int CodaRTnetTracker::GetNumberOfCodas( void ) {
 }
 
 void CodaRTnetTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] ) {
-	// Get what are the alignment transformations before doing the alignment.
-	// This is just for debugging. Set a breakpoint to see the results.
+	// Get what are the alignment transformations.
 	DeviceInfoUnitCoordSystem pre_xforms;
 	cl.getDeviceInfo( pre_xforms );
 	for ( int unit = 0; unit < nUnits; unit++ ) {
@@ -717,39 +716,6 @@ void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &r
 		}
 	}
 
-}
-
-void CodaRTnetTracker::WriteColumnHeadings( FILE *fp, int unit ) {
-	fprintf( fp, "Time.%1d;", unit );
-	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
-		fprintf( fp, " M%02d.%1d.V; M%02d.%1d.X; M%02d.%1d.Y; M%02d.%1d.Z;", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-	}
-}
-
-void CodaRTnetTracker::WriteMarkerData( FILE *fp, MarkerFrame &frame ) {
-	fprintf( fp, "%9.3f;", frame.time );
-	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-		fprintf( fp, " %1d;",  frame.marker[mrk].visibility );
-		for ( int i = 0; i < 3; i++ ) fprintf( fp, "%9.3f;",  frame.marker[mrk].position[i] );
-	}
-}
-
-void CodaRTnetTracker::WriteMarkerFile( char *filename ) {
-	FILE *fp = fopen( filename, "w" );
-	fAbortMessageOnCondition( !fp, "Error opening %s for writing.", filename );
-	fprintf( fp, "%s\n", filename );
-	fprintf( fp, "Tracker Units: %d\n", nUnits );
-	fprintf( fp, "Markers: %d\n", nMarkers );
-	fprintf( fp, "Frames: %d\n", nFrames );
-	fprintf( fp, "Frame;" );
-	for ( int unit = 0; unit < nUnits; unit++ ) WriteColumnHeadings( fp, unit );
-	fprintf( fp, "\n" );
-	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
-		fprintf( fp, "%8u;", frm );
-		for ( int unit = 0; unit < nUnits; unit++ ) WriteMarkerData( fp, recordedMarkerFrames[unit][frm] );
-		fprintf( fp, "\n" );
-	}
-	fclose( fp );
 }
 
 
