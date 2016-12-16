@@ -149,6 +149,8 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
+	// There is a bug in the following. The hmd pose is sent in the place of the hand, chest and mouse.
+	// This needs to be fixed, but I am leaving it like this for now to be consistent with the flight software.
 	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
 	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, hmd );
 	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hmd );
@@ -157,6 +159,13 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[0], frame[0] );
 	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[1], frame[1] );
 
+	// Dex RT Packets can only be sent two times per second. 
+	// So we pack multiple data slices into a single packet.
+	// We set a minimum time between slices and if the caller 
+	// sends a new slice before the timer runs out, we overwrite
+	// the previous slice. When the timer does run out we increment
+	// to the next slice. When there are enough slices to fill the
+	// packet, it gets sent.
 	if ( TimerTimeout( slice_timer ) ) {
 		slice_count++;
 		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {

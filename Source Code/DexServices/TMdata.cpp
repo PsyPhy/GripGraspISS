@@ -131,6 +131,12 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 		p = addTM( Slice[i].hand, buffer, p );
 		p = addTM( Slice[i].chest, buffer, p );
 		p = addTM( Slice[i].mouse, buffer, p );
+		// There is a bug in the following line. Each slice has two
+		// marker frames, so one should specify Slice[i].markerFrame[j].
+		// But the [j] is missing. This caused addTM to interpret the first
+		// parameter as a bool and placed only one byte into the stream, instead
+		// of copying the entire markerFrame. I need to fix this, but I leave it
+		// like this for now to stay consistent with the flight model.
 		for ( int j = 0; j < 2; j++ ) p = addTM( Slice[i].markerFrame, buffer, p );
 	}
 	// Fill the rest of the buffer with a constant value.
