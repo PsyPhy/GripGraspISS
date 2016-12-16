@@ -8,10 +8,10 @@ using namespace PsyPhy;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// GraspDisplay
+// GraspOculusDisplay
 //
 
-void GraspDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parent_window ) {
+void GraspOculusDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parent_window ) {
 
 	ovrResult result;
 
@@ -54,7 +54,7 @@ void GraspDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *display, Oc
 
 }
 
-void GraspDisplay::Release( void ) {
+void GraspOculusDisplay::Release( void ) {
 
 	// Shutdown the Rift.
 	ovr_Shutdown();
@@ -65,28 +65,32 @@ void GraspDisplay::Release( void ) {
 
 // The OpenGlObjects package needs a viewpoint object that depends on the display.
 // So we have GraspDisplay create and apply the appropriate Viewpoint object.
-OculusViewpoint *GraspDisplay::CreateViewpoint( double ipd, double nearest, double farthest ) {
+OculusViewpoint *GraspOculusDisplay::CreateViewpoint( double ipd, double nearest, double farthest ) {
 	OculusViewpoint *viewpoint = new OculusViewpoint( oculusMapper, ipd, nearest, farthest );
 	return( viewpoint );
 }
 
-void GraspDisplay::ApplyViewpoint( Viewpoint *viewpoint, Eye eye ) {
+void GraspOculusDisplay::ApplyViewpoint( Viewpoint *viewpoint, Eye eye ) {
 	viewpoint->Apply( nullptr, eye );
 }
 
 // Prepare to render into the display for the specified eye.
-void GraspDisplay::SelectEye( int eye ) {
+void GraspOculusDisplay::SelectEye( int eye ) {
 	oculusMapper->SelectEye( eye );
 }
 
 // Finish up with the specified eye.
 // This is mainly here because Oculus has (had?) a bug that has to be taken care of.
-void GraspDisplay::DeselectEye( int eye ) {
+void GraspOculusDisplay::DeselectEye( int eye ) {
 	// Take care of an Oculus bug.
 	oculusMapper->DeselectEye( eye );
 }
 
-void GraspDisplay::Present( void ) {
+bool GraspOculusDisplay::HandleMessages( void ) {
+	return( oculusDisplay->HandleMessages() );
+}
+
+void GraspOculusDisplay::Present( void ) {
 	// Do distortion rendering, Present and flush/sync
 	ovrResult result = oculusMapper->BlastIt();
 	// fOutputDebugString( "BlastIt() returns: %d\n", result );
@@ -94,7 +98,7 @@ void GraspDisplay::Present( void ) {
 
 // Wait for a reaction from the user/subject to validate the current condition.
 // Typically, this is a press of a key or button, but that depends on the hardware.
-bool GraspDisplay::Validate( void ) {
+bool GraspOculusDisplay::Validate( void ) {
 	ovrInputState state;
 	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
 	bool current_state = 
@@ -108,10 +112,10 @@ bool GraspDisplay::Validate( void ) {
 	return( true );
 }
 
-bool GraspDisplay::KeyDownEvents( int key ) {
+bool GraspOculusDisplay::KeyDownEvents( int key ) {
 	return( oculusDisplay->KeyDownEvents[ key ] > 0 );
 }
-void GraspDisplay::ClearKeyDownEvents( void ) {
+void GraspOculusDisplay::ClearKeyDownEvents( void ) {
 	oculusDisplay->ClearKeyDownEvents();
 }
 

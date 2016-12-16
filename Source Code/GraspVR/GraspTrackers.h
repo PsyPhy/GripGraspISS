@@ -33,6 +33,7 @@
 #include "../Trackers/CodaLegacyContinuousTracker.h"
 
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/NullPoseTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../Trackers/CascadePoseTracker.h"
 #include "../Trackers/PoseTrackerFilter.h"
@@ -89,6 +90,8 @@ namespace Grasp {
 		virtual void Release( void );
 
 		virtual void WriteDataFiles( char *filename_root ){}
+		// The base class GraspTrackers takes care of writing out the pose data from each cycle.
+		// Derived classes are given the chance to add additional columns to the data file.
 		virtual void WriteAdditionalColumnHeadings( FILE *fp ) {}
 		virtual void WriteAdditionalTrackerData( FILE *fp ){}
 
@@ -97,19 +100,11 @@ namespace Grasp {
 
 	};
 
-	class GraspSimTrackers : public GraspTrackers {
+	class GraspSimulatedTrackers : public GraspTrackers {
 	public:
-
-		// We will need a mouse tracker of some kind to do the V-V protocol.
-		MouseRollPoseTracker *mouseRollTracker;
-
-		PoseTracker *chestTrackerRaw;
-
 		virtual void Initialize( void );
-		GraspSimTrackers( OculusMapper *mapper ) {
-			oculusMapper = mapper;
-		}
-		~GraspSimTrackers( void ) {}
+		GraspSimulatedTrackers( void ) {}
+		~GraspSimulatedTrackers( void ) {}
 	};
 
 
@@ -270,11 +265,23 @@ namespace Grasp {
 		void GraspOculusCodaTrackers::Initialize( void );
 	};
 
+	class GraspOculusOnlyTrackers : public GraspTrackers {
+	public:
+
+		// We will need a mouse tracker of some kind to do the V-V protocol.
+		MouseRollPoseTracker *mouseRollTracker;
+
+		PoseTracker *chestTrackerRaw;
+
+		virtual void Initialize( void );
+		GraspOculusOnlyTrackers( OculusMapper *mapper ) {
+			oculusMapper = mapper;
+		}
+		~GraspOculusOnlyTrackers( void ) {}
+	};
+
+
 };
-
-
-
-
 
 
 

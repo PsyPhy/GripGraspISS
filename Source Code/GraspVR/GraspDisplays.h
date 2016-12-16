@@ -1,4 +1,4 @@
-// GraspVR.h
+// GraspDisplays.h
 
 #pragma once
 
@@ -19,7 +19,11 @@
 // Exit codes.
 // These get passed back to the calling shell program, which then puts up 
 //  a message page describing the error and possible actions to take.
-// It it good if they can be unique.
+// It is good if they can be unique.
+// These should probably be defined in a different place, because they are
+//  not specific to GraspDisplays, but I don't know where yet.
+
+// Normal exit typically returns a 0.
 #define NORMAL_EXIT		0
 // Lots of routines and programs use -1 as a generic exit code, so I reseve it here just in case.
 #define GENERIC_ERROR	-1
@@ -36,29 +40,101 @@ namespace Grasp {
 	public:
 
 		HINSTANCE			hInstance;
-		OculusDisplayOGL	*oculusDisplay;
-		OculusMapper		*oculusMapper;
 
-		GraspDisplay( void )  : hInstance( nullptr ), oculusDisplay( nullptr ), oculusMapper( nullptr ) {}
-		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow );
-		void Release( void );
+		GraspDisplay( void ) {}
 		~GraspDisplay( void ) {}
 
-		OculusViewpoint *GraspDisplay::CreateViewpoint( double ipd, double nearest, double farthest );
-		void ApplyViewpoint( Viewpoint *viewpoint, Eye eye );
-		void SelectEye( int eye );
-		void DeselectEye( int eye );
-		void Present( void );
+		virtual void Initialize( void ){};
+		virtual void Release( void ){};
+		virtual Viewpoint *CreateViewpoint( double ipd, double nearest, double farthest ){ 
+			return( new PsyPhy::Viewpoint() ); 
+		}
+		virtual void ApplyViewpoint( Viewpoint *viewpoint, Eye eye ){};
+		virtual void SelectEye( int eye ){};
+		virtual void DeselectEye( int eye ){};
+		virtual bool HandleMessages( void ){ return false; }
+		virtual void Present( void ){};
 
 		// Detect action of the subject to record a response.
-		bool waitForUp;
-		bool Validate( void );
-		bool KeyDownEvents( int key );
-		void ClearKeyDownEvents( void );
+		virtual bool Validate( void ) { return false; }
+		virtual bool KeyDownEvents( int key ){ return false; }
+		virtual void ClearKeyDownEvents( void ){};
 
 	};
 
+	//
+	// GraspOculusDisplay
+	// A display that can drive the Oculus Rift.
+	//
+	class GraspOculusDisplay : public GraspDisplay
+	{
+
+	private:
+
+		// Detect action of the subject to record a response.
+		bool waitForUp;
+
+	public:
+
+		HINSTANCE			hInstance;
+		OculusDisplayOGL	*oculusDisplay;
+		OculusMapper		*oculusMapper;
+
+		GraspOculusDisplay( void )  : hInstance( nullptr ), oculusDisplay( nullptr ), oculusMapper( nullptr ) {}
+		~GraspOculusDisplay( void ) {}
+
+		virtual void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow );
+		virtual void Release( void );
+		virtual OculusViewpoint *CreateViewpoint( double ipd, double nearest, double farthest );
+		virtual void ApplyViewpoint( Viewpoint *viewpoint, Eye eye );
+		virtual void SelectEye( int eye );
+		virtual void DeselectEye( int eye );
+		virtual bool HandleMessages( void );
+		virtual void Present( void );
+
+		virtual bool Validate( void );
+		virtual bool KeyDownEvents( int key );
+		virtual void ClearKeyDownEvents( void );
+
+	};
+
+
+
+	// 
+	// GraspWindowsDisplay
+	// VR is displayed only on the Windows computer.
+	//
+	class GraspWindowsDisplay : public GraspDisplay
+	{
+
+	private:
+
+		// Detect action of the subject to record a response.
+		bool waitForUp;
+
+	public:
+
+		bool			fullScreen;
+
+		HINSTANCE		hInstance;
+		OpenGLWindow	*window;
+
+		GraspWindowsDisplay( void ) : fullScreen( false ) {}
+		~GraspWindowsDisplay( void ) {}
+
+		virtual void Initialize( HINSTANCE instance, HWND parentWindow );
+		virtual void Release( void );
+		virtual Viewpoint *CreateViewpoint( double ipd, double nearest, double farthest );
+		virtual void ApplyViewpoint( Viewpoint *viewpoint, Eye eye );
+		virtual void SelectEye( int eye );
+		virtual void DeselectEye( int eye );
+		virtual bool HandleMessages( void );
+		virtual void Present( void );
+
+		virtual bool Validate( void );
+		virtual bool KeyDownEvents( int key );
+		virtual void ClearKeyDownEvents( void );
+
+	};
 }
-
-
 

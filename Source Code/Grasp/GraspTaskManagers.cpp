@@ -302,7 +302,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	TimerStart( blockTimer );
 
 	// Enter into the rendering loop and handle other messages.
-	while ( display->oculusDisplay->HandleMessages() ) {
+	while ( display->HandleMessages() ) {
 
 		static int cycle_counter = 0;
 		cycle_counter++;
@@ -310,8 +310,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 		dexServices->SendTrackerStatus( trackers->GetTrackerStatus() );
-		dexServices->AddDataSlice( 0x00, 
-			headPose, headPose, handPose, chestPose, rollPose, trackers->markerFrame );
+		dexServices->AddDataSlice( 0x00, headPose, headPose, handPose, chestPose, rollPose, trackers->markerFrame );
 
 		// Output the poses to a file.
 		if ( pose_fp ) {
@@ -330,9 +329,9 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Boresight the HMD tracker on 'B' or align to the HMD on 'A'.
 		// This is here for debugging and should probably be removed.
-		if ( display->oculusDisplay->KeyDownEvents['A'] ) AlignToHMD();
-		if ( display->oculusDisplay->KeyDownEvents['B'] ) trackers->hmdTracker->Boresight();
-		if ( display->oculusDisplay->KeyDownEvents['U'] ) trackers->hmdTracker->Unboresight();
+		if ( display->KeyDownEvents( 'A' ) ) AlignToHMD();
+		if ( display->KeyDownEvents( 'B' ) ) trackers->hmdTracker->Boresight();
+		if ( display->KeyDownEvents( 'U' ) ) trackers->hmdTracker->Unboresight();
 
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.

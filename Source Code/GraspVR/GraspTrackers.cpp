@@ -11,6 +11,8 @@
 #include "stdafx.h"
 #include "GraspTrackers.h"
 
+// At one point I used a background thread to get the data from the codas.
+// This was to keep from blocking the refresh loop. But 
 // #define BACKGROUND_GET_DATA
 
 using namespace PsyPhy;
@@ -53,14 +55,17 @@ void GraspTrackers::Release( void ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GraspDexTrackers uses trackers based on the Oculus and DEX/CODA tracker.
+
 void GraspDexTrackers::InitializeCodaTrackers( void ) {
 
 	// Initialize the connection to the CODA tracking system.
 	codaTracker->Initialize();
 
 	// Start continuous acquisition of Coda marker data for a maximum duration.
-	// This is needed if we use the classical CodaRTnet tracker, but is not necessary
-	// if we use the continuous tracker.
+	// This is needed if we use the buffered CodaRTnet tracker, but is not necessary
+	// if we use the continuous tracker. But we no longer know when we get here
+	// which tracker was assigned, so we really shoudn't do this any more. I leave
+	// it in comments here just until I get a chance to do a rigorous cleanup.
 	//codaTracker.StartAcquisition( 600.0 );
 
 #ifdef BACKGROUND_GET_DATA
@@ -201,6 +206,9 @@ void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
 	fOutputDebugString( "File %s closed.\n", filename );
 }
 
+// The base class GraspTrackers takes care of writing out the pose data from each cycle.
+// Derived classes are given the chance to add additional columns to the data file.
+// When it is a Dex tracker, we use this feature to add the marker data to the file.
 void GraspDexTrackers::WriteAdditionalColumnHeadings( FILE *fp ) {
 	for ( int unit = 0; unit < codaTracker->nUnits; unit++ ) codaTracker->WriteColumnHeadings( fp, unit );
 }
@@ -236,8 +244,7 @@ void GraspDexTrackers::Initialize( void ) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// GraspOculusCodaTrackers is a version of GraspTrackers that uses a combination
-//  of Coda and Oculus trackers.
+// GraspOculusCodaTrackers is a version of GraspTrackers that uses a combination of Coda and Oculus trackers.
 
 void GraspOculusCodaTrackers::Initialize( void ) {
 
@@ -271,9 +278,9 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// GraspSIM is a version of GraspVR that uses only the Oculus and simulated trackers.
+// GraspOculusOnlyTrackers is a version that uses only the Oculus and simulated trackers.
 
-void GraspSimTrackers::Initialize( void ) {
+void GraspOculusOnlyTrackers::Initialize( void ) {
 
 	// Create a pose tracker that uses only the Oculus.
 	
@@ -315,3 +322,15 @@ void GraspSimTrackers::Initialize( void ) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// GraspSimulatedTrackers avoids all specific hardware. For now, it does no tracking at all.
+
+void GraspSimulatedTrackers::Initialize( void ) {
+
+	 hmdTracker = new PsyPhy::NullPoseTracker();
+	 handTracker = new PsyPhy::NullPoseTracker();
+	 chestTracker = new PsyPhy::NullPoseTracker();
+	 rollTracker = new PsyPhy::NullPoseTracker();
+
+}

@@ -608,17 +608,17 @@ void GraspVR::Render( void ) {
 void GraspVR::DebugLoop( void ) {
 
 	// Enter into the rendering loop and handle other messages.
-	while ( display->oculusDisplay->HandleMessages() ) {
+	while ( display->HandleMessages() ) {
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
 
 		// Boresight the HMD tracker on 'B'.
-		if ( display->oculusDisplay->Key['B'] ) trackers->hmdTracker->Boresight();
-		if ( display->oculusDisplay->Key['U'] ) trackers->hmdTracker->Unboresight();
+		if ( display->KeyDownEvents( 'B' ) ) trackers->hmdTracker->Boresight();
+		if ( display->KeyDownEvents( 'U' ) ) trackers->hmdTracker->Unboresight();
 
 		// Handle triggering and moving the projectiles.
-		if ( ( display->oculusDisplay->Key[VK_RETURN] || display->oculusDisplay->Button[MOUSE_LEFT] ) && currentProjectileState == cocked ) TriggerProjectiles();
+		if ( ( display->KeyDownEvents( VK_RETURN ) || display->KeyDownEvents( MOUSE_LEFT ) ) && currentProjectileState == cocked ) TriggerProjectiles();
 		HandleProjectiles();
 
 		// Prompt the subject to achieve the desired head orientation.
@@ -629,7 +629,7 @@ void GraspVR::DebugLoop( void ) {
 		//
 
 		// Disable drawing of all objects.
-		if ( display->oculusDisplay->Key[VK_SPACE] ) {
+		if ( display->KeyDownEvents( VK_SPACE ) ) {
 			renderer->orientationTarget->Disable();
 			renderer->positionOnlyTarget->Disable();
 			renderer->straightAheadTarget->Disable();
@@ -645,34 +645,34 @@ void GraspVR::DebugLoop( void ) {
 			renderer->room->Disable();
 		}
 		// Show the room.
-		if ( display->oculusDisplay->Key['R'] ) {
+		if ( display->KeyDownEvents( 'R' ) ) {
 			renderer->room->Enable();
 		}
 		// Show the target and the target-specific sky behind it.
-		if ( display->oculusDisplay->Key['T'] ) {
+		if ( display->KeyDownEvents( 'T' ) ) {
 			renderer->orientationTarget->Enable();
 			renderer->starrySky->Disable();
 			renderer->darkSky->Enable();
 		}
 		// Show the hand/tool.
-		if ( display->oculusDisplay->Key['H'] ) {
+		if ( display->KeyDownEvents( 'H' ) ) {
 			renderer->vTool->Enable();
 			renderer->kTool->Disable();
 			renderer->kkTool->Disable();
 		}
-		if ( display->oculusDisplay->Key['K'] ) {
+		if ( display->KeyDownEvents( 'K' ) ) {
 			renderer->vTool->Disable();
 			renderer->kTool->Disable();
 			renderer->kkTool->Enable();
 		}
-		if ( display->oculusDisplay->Key['J'] ) {
+		if ( display->KeyDownEvents( 'J' ) ) {
 			renderer->vTool->Disable();
 			renderer->kTool->Enable();
 			renderer->kkTool->Disable();
 		}
 
 		// Show the tilt prompt.
-		if ( display->oculusDisplay->Key['P'] ) renderer->headTiltPrompt->Enable();
+		if ( display->KeyDownEvents( 'P' ) ) renderer->headTiltPrompt->Enable();
 
 		Render();
 	}
