@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "codasys.h"
-#include "CodaUtilities.h"
+#include "../Include/codasys.h"
+#include "../CodaLegacySDK/CodaUtilities.h"
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
@@ -36,7 +36,6 @@ void CodaLegacyContinuousTracker::Initialize( const char *ini_filename ) {
 
 	// Initialize the CODA hardware.
 	CodaConnectStartAndPrepare( NULL ); // Hard coded for the moment.
-	float rate;
 	samplePeriod = 0.010;	
 	nAvailableMarkers = CodaGetNumMarkers();
 

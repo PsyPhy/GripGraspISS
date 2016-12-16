@@ -18,7 +18,7 @@ extern "C" {
  */
 #define CODA_HOST_ENV "CodaHost"
 
-#include "codasys.h"
+#include "../Include/codasys.h"
 
 
 /*

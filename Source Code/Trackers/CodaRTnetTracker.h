@@ -12,6 +12,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "../Useful/fOutputDebugString.h"
+#include "../Useful/fMessageBox.h"
 #include "Trackers.h"
 
 // RTNet C++ includes

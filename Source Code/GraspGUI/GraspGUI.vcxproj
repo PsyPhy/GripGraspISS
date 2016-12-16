@@ -59,7 +59,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
@@ -76,7 +76,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>

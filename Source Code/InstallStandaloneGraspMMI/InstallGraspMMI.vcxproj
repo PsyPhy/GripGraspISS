@@ -64,7 +64,8 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspMMI.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>NMake /NOLOGO CleanGraspMMI.mak</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>
+    </NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>
@@ -72,7 +73,8 @@
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGraspMMI.release.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGraspMMI.release.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>CleanGraspMMI.bat</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>
+    </NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

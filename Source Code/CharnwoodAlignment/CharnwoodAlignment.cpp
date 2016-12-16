@@ -3,9 +3,6 @@
 
 #include "stdafx.h"
 
-// Some convenient routines for outputing debug messages.
-#include "../Useful/fMessageBox.h"
-#include "../Useful/fOutputDebugString.h"
 
 // Coda tracker and equivalents.
 #include "../Trackers/CodaRTnetTracker.h"

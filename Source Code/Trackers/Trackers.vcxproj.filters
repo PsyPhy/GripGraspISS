@@ -35,10 +35,6 @@
     <ClCompile Include="OculusRemotePoseTracker.cpp" />
     <ClCompile Include="NullPoseTracker.cpp" />
     <ClCompile Include="CodaLegacyContinuousTracker.cpp" />
-    <ClCompile Include="CodaUtilities.c" />
     <ClCompile Include="CodaLegacyPolledTracker.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="codasys.lib" />
   </ItemGroup>
 </Project>

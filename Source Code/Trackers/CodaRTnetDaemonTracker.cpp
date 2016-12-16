@@ -82,7 +82,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		if ( nError == WSAEWOULDBLOCK ) break;
 		// Treat all other errors rather dramatically by aborting.
 		if ( nError != 0 ) fAbortMessage( "CodaRTnetDaemonTracker", "recvfrom() failed with error code : %d" , nError );
-		fprintf( stderr, "R%08d  ", record.count );
+		// fprintf( stderr, "R%08d  ", record.count );
 		// Here I check if the record is the right size. From what I have gotten off of the internet, this should
 		// should always be true. But I thought I would check anyway.
 		if ( recv_len != sizeof( record ) ) fAbortMessage( "TestTrackerDaemon", "recvfrom() returned unexpected byte count: %d vs. %d" , recv_len, sizeof( record ) );

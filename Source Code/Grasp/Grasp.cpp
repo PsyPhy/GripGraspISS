@@ -78,12 +78,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->SendSubstep( 0 );
 	dex->SnapPicture( "STARTUP" );
 
-	//
-	// Start up the VR display. 
-	//
-	GraspDisplay *display = new GraspDisplay();
-	display->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow );
-
 	// 
 	// Select a set of trackers and start them up.
 	//
@@ -95,6 +89,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	else trackers = new GraspSimTrackers( &_oculusMapper );
 	trackers->Initialize();
+
+	//
+	// Start up the VR display. 
+	//
+	GraspDisplay *display = new GraspDisplay();
+	display->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow );
+
 	
 	// 
 	// Select the paradigm and create the corresponding object.

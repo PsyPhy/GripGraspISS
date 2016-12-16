@@ -11,6 +11,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "../Trackers/CodaRTnetNullTracker.h"
 #include "../Trackers/PoseTrackers.h"
 #include "TMdata.h"
 #include "DexServices.h"
@@ -139,9 +140,9 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 }
 
 void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
-	PsyPhy::PoseTracker pm;
-	Tracker		tr;
-	rt.Slice[slice_count].fillTime = TimerElapsedTime( stream_timer );
+	PsyPhy::PoseTracker			pm;
+	CodaRTnetNullTracker		tr;
+	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
 	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );

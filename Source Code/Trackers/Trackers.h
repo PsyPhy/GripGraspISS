@@ -13,6 +13,9 @@
 
 
 #pragma once
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "../Useful/Timers.h"
 #include "../Useful/Useful.h"
 #include "../VectorsMixin/VectorsMixin.h"

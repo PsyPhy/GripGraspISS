@@ -19,8 +19,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "codasys.h"
-#include "CodaUtilities.h"
+#include "../Include/codasys.h"
+#include "../CodaLegacySDK/CodaUtilities.h"
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
@@ -35,8 +35,8 @@ using namespace PsyPhy;
 void CodaLegacyPolledTracker::Initialize( const char *ini_filename ) {
 
 	// Initialize the CODA hardware.
-	CodaConnectStartAndPrepare( NULL ); // Hard coded for the moment.
-	samplePeriod = 0.005;	// Assuming the default for CodaConnectStartAndPrepare();
+	CodaConnectStartAndPrepare( NULL );		// Will get the host address from an Environment variable.
+	samplePeriod = 0.005;					// Assuming the default for CodaConnectStartAndPrepare();
 
 	// Prepare for acquiring single frames of marker data.
 	coda_data_frame.dwChannelStart = 0;

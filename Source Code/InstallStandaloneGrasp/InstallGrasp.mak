@@ -21,6 +21,8 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe \
 	GraspPacketsForSimulator.gpk \
 	LoadCodaCals.bat \
+	MakeRigidBodies.bat \
+	RunDaemon.bat \
 	RunGRASP.bat 
 
 install: $(EXECUTABLES) InstallGrasp.mak 
@@ -47,7 +49,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe ..\..\GraspExecutables
 	copy LoadCodaCals.bat ..\..\GraspExecutables
+	copy MakeRigidBodies.bat ..\..\Bdy
 	copy RunGRASP.bat ..\..
+	copy RunDaemon.bat ..\..
 	copy GraspPacketsForSimulator.gpk ..\..\GraspExecutables
 	-mkdir ..\..\GraspExecutables\CodaCalFiles
 	-copy ..\CodaCalFiles\EM ..\..\GraspExecutables\CodaCalFiles

@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <windows.h>
 
-#include "codasys.h"
+#include "../Include/codasys.h"
 #include "CodaUtilities.h"
 
 /*
@@ -227,7 +227,7 @@ void CodaQuit( void ) {
 
 	int status;
 
-	char msg[512];
+	char msg[CODA_ERROR_MESSAGE_LENGTH];
 
 	/* 
 	* Stop any acquisitions that may be in progress. 

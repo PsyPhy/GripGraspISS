@@ -14,8 +14,8 @@
 
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/Timers.h"
-#include "codasys.h"
-#include "CodaUtilities.h"
+#include "../Include/codasys.h"
+#include "../CodaLegacySDK/CodaUtilities.h"
 #include "Trackers.h"
 
 #define C

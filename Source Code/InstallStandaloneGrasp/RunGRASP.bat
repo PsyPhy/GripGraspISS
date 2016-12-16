@@ -27,7 +27,7 @@ REM  the subject can use the Remote to navigate on the computer and restart.
 Start /MIN "OculusMouse" GraspExecutables\OculusMouse.exe 
 
 REM Start up the CODA system and wait for it to be active.
-Start "GRASP Tracker" GraspExecutables\GraspTrackerDaemon.exe
+Start "GRASP Tracker" GraspExecutables\GraspTrackerDaemon.exe --hide
 Start "Wait For Tracker" /MIN /WAIT GraspExecutables\WaitForCodaDaemon.exe  
 
 REM Here we actually start Grasp as a background process with no console window.
