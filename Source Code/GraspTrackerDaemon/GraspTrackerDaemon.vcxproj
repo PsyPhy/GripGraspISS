@@ -119,6 +119,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
+      <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspVR\GraspVR.vcxproj">
       <Project>{266170c2-0878-422f-a262-d1023c084b26}</Project>
     </ProjectReference>
