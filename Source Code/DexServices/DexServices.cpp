@@ -140,8 +140,12 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 }
 
 void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
-	PsyPhy::PoseTracker			pm;
-	CodaRTnetNullTracker		tr;
+
+	// We need a Pose Tracker and a Tracker just to get access to their internal copy functions.
+	// I declare them static here so that they don't explode the stack.
+	static PsyPhy::PoseTracker		pm;
+	static CodaRTnetNullTracker		tr;
+	// Fill the current slice with the new data.
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
