@@ -47,8 +47,8 @@ void CodaLegacyPolledTracker::Initialize( const char *ini_filename ) {
 	// How many CODA units are there?
 	// It would be nice if we could read this value from the CODA system.
 	// Alternatively, we should read it from the ini file.
-	// Here we get it from a static variable in CodaUtilies.
-	nUnits = codaUnits;
+	// Here we are setting by default to 1 unit, for use by Michele.
+	nUnits = 1;
 
 	acquiring = false;
 	// Fill the first frame with a record in which all the markers are invisible.
