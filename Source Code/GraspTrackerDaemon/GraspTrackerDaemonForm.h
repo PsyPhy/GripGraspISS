@@ -43,6 +43,8 @@ namespace GraspTrackerDaemon {
 		Form1(void) : use_coda( true ), use_legacy( false ), autohide( false ), recording( false ), nPoseSamples( 0 )
 		{
 			InitializeComponent();
+			// By default, the daemon uses a CodaRTnet tracker to interface to the tracking hardware.
+			// One can change for other trackers by creating different cookie files.
 			if ( 0 == _access_s( "FakeCoda.flg", 0x00 ) ) use_coda = false;
 			if ( 0 == _access_s( "LegacyCoda.flg", 0x00 ) ) { use_coda = false; use_legacy = true; }
 			vm = new VectorsMixin();
@@ -340,7 +342,7 @@ namespace GraspTrackerDaemon {
 			this->saveButton->TabIndex = 9;
 			this->saveButton->Text = L"Save";
 			this->saveButton->UseVisualStyleBackColor = true;
-			this->saveButton->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			this->saveButton->Click += gcnew System::EventHandler(this, &Form1::saveButton_Click);
 			// 
 			// saveFileDialog1
 			// 
@@ -380,19 +382,10 @@ namespace GraspTrackerDaemon {
 		}
 #pragma endregion
 	private: 
-		System::Void exitButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			this->Enabled = false;
-			Close();
-		}
-
-		void ProcessCodaInputs( void );
-		void InitializeCoda( void );
-		void ReleaseCoda( void );
-		void InitializeSocket( void );
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-			visibilityTextBox0->Text = " Initializing CODA ... ";
+			visibilityTextBox0->Text = " Initializing TRACKER ... ";
 			visibilityTextBox1->Text = "   (Please wait.)";
 			Refresh();
 			Application::DoEvents();
@@ -401,7 +394,7 @@ namespace GraspTrackerDaemon {
 			InitializeCoda();
 
 			visibilityTextBox1->Text = "";
-			visibilityTextBox0->Text = " Initializing CfODA ... OK.";
+			visibilityTextBox0->Text = " Initializing TRACKER ... OK.";
 
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
@@ -434,6 +427,10 @@ namespace GraspTrackerDaemon {
 		}		
 
 
+	private: System::Void exitButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			this->Enabled = false;
+			Close();
+		}
 	private: System::Void startButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 startButton->Enabled = false;
 				 stopButton->Enabled = true;
@@ -449,12 +446,19 @@ namespace GraspTrackerDaemon {
 				 trackers->codaTracker->StopAcquisition();
 				 recording = false;
 			 }
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void saveButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 recording = false;
 				 saveFileDialog1->ShowDialog();
 			 }
 
 	private: System::Void saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e);
+	
+	private:
+		
+		void InitializeCoda( void );
+		void ProcessCodaInputs( void );
+		void ReleaseCoda( void );
+		void InitializeSocket( void );
 
 	};
 }
