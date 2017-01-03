@@ -4,22 +4,25 @@
 #define OpenGLObjectsH 
 
 //---------------------------------------------------------------------------
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
-#include <mmsystem.h>
 #include <math.h>
 #include <float.h>
-
-
-#include "../Useful/Useful.h"
-#include "../VectorsMixin/VectorsMixin.h"
+#include <windows.h>
+#include <mmsystem.h>
 
 #include <gl\gl.h>
 #include <gl\glu.h>
 #include "../Include/glaux.h"
+
+#include "../Useful/Useful.h"
 #include "../Useful/OpenGLUseful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+
+#include "../VectorsMixin/VectorsMixin.h"
 
 #include "OpenGLWindows.h"
 #include "OpenGLColors.h"

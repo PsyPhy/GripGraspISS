@@ -136,6 +136,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodLegacyAlignment", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodaLegacySDK", "CodaLegacySDK\CodaLegacySDK.vcxproj", "{5D0D4793-8F87-4A92-B6AA-1F48F18615E8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlignToAxisMarkersGUI", "AlignToAxisMarkersGUI\AlignToAxisMarkersGUI.vcxproj", "{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -731,6 +733,16 @@ Global
 		{5D0D4793-8F87-4A92-B6AA-1F48F18615E8}.Release|Win32.Build.0 = Release|Win32
 		{5D0D4793-8F87-4A92-B6AA-1F48F18615E8}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{5D0D4793-8F87-4A92-B6AA-1F48F18615E8}.TestRelease|Win32.Build.0 = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Debug|Win32.Build.0 = Debug|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Draft|Win32.ActiveCfg = Debug|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Draft|Win32.Build.0 = Debug|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.DraftRelease|Win32.Build.0 = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Release|Win32.ActiveCfg = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.Release|Win32.Build.0 = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{9AA8F18B-FDE0-4B5B-8399-A5FE017305D7}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

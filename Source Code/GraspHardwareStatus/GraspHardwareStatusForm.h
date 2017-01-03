@@ -1,12 +1,5 @@
 #pragma once
 
-#include <Windows.h>
-
-#include "../OculusInterface/OculusInterface.h"
-
-#include <gl/gl.h>
-#include <gl/glu.h>
-
 #include "../Useful/Useful.h"
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
@@ -18,14 +11,12 @@
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "../OpenGLObjects/OpenGLTextures.h"
+#include "../OpenGLObjects/OpenGLWindowsInForms.h"
 
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
-
-// The following should be integrated elsewhere.
-#include "../GraspGUIBellsAndWhistles/OpenGLWindowsInForms.h"
 
 #include "../DexServices/DexServices.h"
 
