@@ -21,13 +21,14 @@
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
+#include "../Trackers/CodaLegacyPolledTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 
 using namespace PsyPhy;
 
 void usage ( void ) {
 	fAbortMessage( "CreateRigidBodyModelFile", 
-		"Usage:\n\n  CreateRigidBodyModelFile [--confirm] [--unit=#] m1 m1 ... \n\nm1 ... mn are zero-based marker numbers.\n# is the zero-based CODA cx1 unit number.\nAttention: no spaces around '='." );
+		"Usage:\n\n  CreateRigidBodyModelFile [--confirm] [--daemon OR --legacy OR none] [--unit=#] m1 m1 ... \n\nm1 ... mn are zero-based marker numbers.\n# is the zero-based CODA cx1 unit number.\nAttention: no spaces around '='." );
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -36,14 +37,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	int mrk_list_length = 0;
 	int coda_unit = 0;
 	bool use_daemon = false;
+	bool use_legacy = false;
 	bool confirm = false;
 
 	// A device that records 3D marker positions that will drive the 6dof pose trackers.
-	CodaRTnetTracker *codaTracker;
+	Tracker *codaTracker;
 
 	for ( int arg = 1; arg < argc; arg++ ) {
 		if ( !strcmp( argv[arg], "--confirm" ) ) confirm = true;
 		else if ( !strcmp( "--daemon", argv[arg] ) ) use_daemon = true;
+		else if ( !strcmp( "--legacy", argv[arg] ) ) use_legacy = true;
 		else if ( !strncmp( argv[arg], "--unit=", strlen( "--unit=" ) ) ) {
 			int items = sscanf( argv[arg], "--unit=%d", &coda_unit );
 			if ( items != 1 ) usage();
@@ -60,6 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Initialize the connection to the CODA tracking system.
 	fprintf( stderr, "Initializing CODA system ..." );
 	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
+	else if ( use_legacy ) codaTracker = new PsyPhy::CodaLegacyPolledTracker();
 	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
 	codaTracker->Initialize();
 	fprintf( stderr, "OK.\n" );
