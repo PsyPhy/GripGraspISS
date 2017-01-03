@@ -179,11 +179,12 @@ public:
 	virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 	virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 
-	// Need to add the following.
 	virtual int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
 	virtual void	AnnulAlignment( const char *filename = nullptr );
-	virtual void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
-	virtual void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
+	virtual void	GetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	virtual void	SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename );
+	virtual void	SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	
 	// This is a little different from the above. If we have the pose of an object in the intrinsic frame,
 	// the transformation has to be inverted before sending it to the CODA system.
 	virtual void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
@@ -191,7 +192,8 @@ public:
 	virtual void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) {
 		fMessageBox( MB_OK, "CodaRTnetTracker", "GetUnitPlacement() not yet implemented." );
 	}
-	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
+	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+	virtual void	SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
 
 protected:
 	// These are used internally to start and stop the CODA system, e.g. when setting a new alignment.

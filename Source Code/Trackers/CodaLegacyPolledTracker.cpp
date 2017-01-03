@@ -35,7 +35,8 @@ using namespace PsyPhy;
 void CodaLegacyPolledTracker::Initialize( const char *ini_filename ) {
 
 	// Initialize the CODA hardware.
-	CodaConnectStartAndPrepare( NULL );		// Will get the host address from an Environment variable.
+	int status = CodaConnectStartAndPrepare( NULL );		// Will get the host address from an Environment variable.
+	fAbortMessageOnCondition( status != CODA_OK, "CodaLegacyPolledTracker", "Error initializing tracker." );
 	samplePeriod = 0.005;					// Assuming the default for CodaConnectStartAndPrepare();
 
 	// Prepare for acquiring single frames of marker data.
@@ -203,3 +204,31 @@ bool CodaLegacyPolledTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int
 	return true;
 }
 
+// Acquire data in the intrinsic coordinates of the CODA. We use the generic routine that back calculates
+// the unaligned data using the inverse of the alignment transformations. So all we need to do is get the
+// current alignment transformations from the CODA.
+void CodaLegacyPolledTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	CODA_TRANSFORM_STRUCT  codaTransform;
+	codaTransform.dwUnit = unit;
+	if ( CodaGetTransform( &codaTransform ) != CODA_OK ) {
+		MessageBox( NULL, "CodaGetTransform() failed!", "CodaSaveAlignment()", MB_OK );
+		exit( CODA_ERROR );
+	}
+	for ( int i = 0; i < 3; i++ ) {
+		offset[i] = codaTransform.fOffset[i];
+		for ( int j = 0; j < 3; j++ ) rotation[j][i] = codaTransform.fTransform[i*3+j];
+	}
+}
+
+void CodaLegacyPolledTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	CODA_TRANSFORM_STRUCT  codaTransform;
+	codaTransform.dwUnit = unit;
+	for ( int i = 0; i < 3; i++ ) {
+		codaTransform.fOffset[i] = (float) offset[i];
+		for ( int j = 0; j < 3; j++ ) codaTransform.fTransform[j*3+i] = (float) rotation[i][j];
+	}
+	if ( CodaSetTransform( &codaTransform ) != CODA_OK ) {
+		MessageBox( NULL, "CodaSetTransform() failed!", "CodaSaveAlignment()", MB_OK );
+		exit( CODA_ERROR );
+	}
+}

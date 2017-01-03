@@ -111,7 +111,9 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual int		GetNumberOfUnits( void );
 		virtual int		GetNumberOfMarkers( void );
 		virtual void	GetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
+		virtual void	SetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
 		virtual void	GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
+		virtual void	SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 
 		void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );

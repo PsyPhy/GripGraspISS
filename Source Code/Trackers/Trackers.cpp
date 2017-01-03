@@ -143,16 +143,29 @@ void Tracker::WriteMarkerFile( char *filename ) {
 // Get the latest frame of marker data from the specified unit.
 // Marker positions are expressed in the intrinsic reference frame of the unit.
 
-// Provide a method to retrieve the transformation for a given unit from 
-//  the intrinsic to aligned reference frames.
+// Provide methods to set and retrieve the alignment transformation for a given unit from 
+//  the intrinsic to aligned reference frames. The base class assumes that no alignment is necessary.
 void Tracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
 	CopyVector( offset, zeroVector );
 	CopyMatrix( rotation, identityMatrix );
 }
+void Tracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	static bool first_call = true;
+	if ( first_call ) {
+		int response = fMessageBox( MB_YESNO, "Tracker", "Warning - SetUnitTransform() not handled by this tracker.\nDo you want to continue?" );
+		if ( response == IDNO) exit( -1 );
+		first_call = false;
+	}
+}
 
+// Get the entire set of transforms.
 void Tracker::GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) GetUnitTransform( unit, offsets[unit], rotations[unit] );
 }
+void Tracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) SetUnitTransform( unit, offsets[unit], rotations[unit] );
+}
+
 
 // Now provide the means to retrieve the frames and express the data in the intinsic frame.
 // Note that there is not a "combined" version of this because it makes no sense

@@ -52,6 +52,9 @@ public:
 	virtual void StartContinuousAcquisition( void );
 	virtual void StopContinuousAcquisition( void );
 
+	virtual void GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+	virtual void SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+
 };
 
 };
