@@ -87,6 +87,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
+      <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Trackers\Trackers.vcxproj">
       <Project>{964bbd65-c198-4a02-8255-349803bdb59d}</Project>
     </ProjectReference>
