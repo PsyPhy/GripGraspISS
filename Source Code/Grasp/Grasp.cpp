@@ -46,7 +46,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	
 	bool useCoda = true;
-	bool useHMD = false;
+	bool useHMD = true;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
 
 	char sequence_filename[FILENAME_MAX];
