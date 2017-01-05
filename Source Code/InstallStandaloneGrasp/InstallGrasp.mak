@@ -14,6 +14,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\OculusMouse.exe \
 	..\$(BUILDCONFIGURATION)\GraspScreenshots.exe \
 	..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe \
+	..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe \
 	..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe  \
 	..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe \
 	..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe \
@@ -36,6 +37,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\GraspMMI.exe ..\..\GraspExecutables
 	copy ..\GraspGUI\Grasp.ico ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe ..\..\GraspExecutables
+	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe ..\..\GraspExecutables
