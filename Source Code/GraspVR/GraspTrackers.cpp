@@ -60,6 +60,7 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 
 	// Initialize the connection to the CODA tracking system.
 	codaTracker->Initialize();
+	nCodaUnits = codaTracker->nUnits;
 
 	// Start continuous acquisition of Coda marker data for a maximum duration.
 	// This is needed if we use the buffered CodaRTnet tracker, but is not necessary
