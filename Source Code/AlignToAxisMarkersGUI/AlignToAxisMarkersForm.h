@@ -14,9 +14,12 @@
 
 #define ROD_RADIUS	5.0
 #define ROD_LENGTH	800.0
-#define ZOOM 35.0
-#define SIZE 40.0
+#define WORLD_ZOOM 35.0
+#define CODA_ZOOM 45.0
+#define MARKER_SIZE 20.0
 #define N_SAMPLES 500
+
+char *iniFilename = "AlignToAxisMarkers.ini";
 
 namespace AlignToAxisMarkersGUI {
 
@@ -43,14 +46,18 @@ namespace AlignToAxisMarkersGUI {
 		PsyPhy::Box								*block;
 
 		PsyPhy::Cylinder						*xBar, *yBar, *zBar;
-		PsyPhy::Patch							*floor;
+		PsyPhy::Patch							*xyPatch, *xzPatch, *yzPatch;
 
-	private: System::Windows::Forms::GroupBox^  groupBox1;
-	private: System::Windows::Forms::RadioButton^  xz;
-	private: System::Windows::Forms::Button^  button1;
+
+
+
 	private: System::Windows::Forms::GroupBox^  groupBox2;
 	private: System::Windows::Forms::Panel^  worldPanel;
-
+	private: System::Windows::Forms::GroupBox^  fovGroupBox1;
+	private: System::Windows::Forms::Panel^  fovPanel1;
+	private: System::Windows::Forms::GroupBox^  fovGroupBox2;
+	private: System::Windows::Forms::GroupBox^  groupBox5;
+	private: System::Windows::Forms::GroupBox^  groupBox4;
 	private: System::Windows::Forms::GroupBox^  groupBox3;
 	private: System::Windows::Forms::ComboBox^  maxZ;
 	private: System::Windows::Forms::Label^  label6;
@@ -66,12 +73,16 @@ namespace AlignToAxisMarkersGUI {
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::ComboBox^  minX;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::RadioButton^  yz;
-	private: System::Windows::Forms::GroupBox^  groupBox4;
-	private: System::Windows::Forms::RadioButton^  floorXZ;
-	private: System::Windows::Forms::RadioButton^  floorYZ;
-	private: System::Windows::Forms::RadioButton^  floorXY;
+	private: System::Windows::Forms::Button^  goButton;
+
+	private: System::Windows::Forms::RadioButton^  xz;
 	private: System::Windows::Forms::RadioButton^  xy;
+	private: System::Windows::Forms::CheckBox^  showYZ;
+	private: System::Windows::Forms::CheckBox^  showXZ;
+	private: System::Windows::Forms::CheckBox^  showXY;
+	private: System::Windows::Forms::Panel^  fovPanel2;
 
 	public:
 		AlignToAxisMarkersForm(void)
@@ -90,10 +101,6 @@ namespace AlignToAxisMarkersGUI {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::GroupBox^  fovGroupBox1;
-	private: System::Windows::Forms::Panel^  fovPanel1;
-	private: System::Windows::Forms::GroupBox^  fovGroupBox2;
-	private: System::Windows::Forms::Panel^  fovPanel2;
 
 	private:
 		/// <summary>
@@ -112,13 +119,10 @@ namespace AlignToAxisMarkersGUI {
 			this->fovPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->fovGroupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->fovPanel2 = (gcnew System::Windows::Forms::Panel());
-			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->yz = (gcnew System::Windows::Forms::RadioButton());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->xz = (gcnew System::Windows::Forms::RadioButton());
-			this->xy = (gcnew System::Windows::Forms::RadioButton());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->worldPanel = (gcnew System::Windows::Forms::Panel());
+			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			this->maxZ = (gcnew System::Windows::Forms::ComboBox());
 			this->label6 = (gcnew System::Windows::Forms::Label());
@@ -134,134 +138,98 @@ namespace AlignToAxisMarkersGUI {
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->minX = (gcnew System::Windows::Forms::ComboBox());
-			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
-			this->floorXZ = (gcnew System::Windows::Forms::RadioButton());
-			this->floorYZ = (gcnew System::Windows::Forms::RadioButton());
-			this->floorXY = (gcnew System::Windows::Forms::RadioButton());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->yz = (gcnew System::Windows::Forms::RadioButton());
+			this->goButton = (gcnew System::Windows::Forms::Button());
+			this->xz = (gcnew System::Windows::Forms::RadioButton());
+			this->xy = (gcnew System::Windows::Forms::RadioButton());
+			this->showXY = (gcnew System::Windows::Forms::CheckBox());
+			this->showXZ = (gcnew System::Windows::Forms::CheckBox());
+			this->showYZ = (gcnew System::Windows::Forms::CheckBox());
 			this->fovGroupBox1->SuspendLayout();
 			this->fovGroupBox2->SuspendLayout();
-			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
-			this->groupBox3->SuspendLayout();
+			this->groupBox5->SuspendLayout();
 			this->groupBox4->SuspendLayout();
+			this->groupBox3->SuspendLayout();
+			this->groupBox1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// fovGroupBox1
 			// 
 			this->fovGroupBox1->Controls->Add(this->fovPanel1);
-			this->fovGroupBox1->Location = System::Drawing::Point(13, 10);
+			this->fovGroupBox1->Location = System::Drawing::Point(10, 12);
 			this->fovGroupBox1->Name = L"fovGroupBox1";
-			this->fovGroupBox1->Size = System::Drawing::Size(500, 500);
+			this->fovGroupBox1->Size = System::Drawing::Size(1100, 995);
 			this->fovGroupBox1->TabIndex = 0;
 			this->fovGroupBox1->TabStop = false;
 			this->fovGroupBox1->Text = L"CODA 1";
 			// 
 			// fovPanel1
 			// 
-			this->fovPanel1->Location = System::Drawing::Point(9, 26);
+			this->fovPanel1->Location = System::Drawing::Point(5, 24);
 			this->fovPanel1->Name = L"fovPanel1";
-			this->fovPanel1->Size = System::Drawing::Size(480, 460);
+			this->fovPanel1->Size = System::Drawing::Size(1090, 965);
 			this->fovPanel1->TabIndex = 0;
 			// 
 			// fovGroupBox2
 			// 
 			this->fovGroupBox2->Controls->Add(this->fovPanel2);
-			this->fovGroupBox2->Location = System::Drawing::Point(12, 516);
+			this->fovGroupBox2->Location = System::Drawing::Point(1129, 12);
 			this->fovGroupBox2->Name = L"fovGroupBox2";
-			this->fovGroupBox2->Size = System::Drawing::Size(500, 500);
+			this->fovGroupBox2->Size = System::Drawing::Size(710, 540);
 			this->fovGroupBox2->TabIndex = 1;
 			this->fovGroupBox2->TabStop = false;
 			this->fovGroupBox2->Text = L"CODA 2";
 			// 
 			// fovPanel2
 			// 
-			this->fovPanel2->Location = System::Drawing::Point(10, 26);
+			this->fovPanel2->Location = System::Drawing::Point(13, 27);
 			this->fovPanel2->Name = L"fovPanel2";
-			this->fovPanel2->Size = System::Drawing::Size(480, 460);
+			this->fovPanel2->Size = System::Drawing::Size(684, 496);
 			this->fovPanel2->TabIndex = 0;
-			// 
-			// groupBox1
-			// 
-			this->groupBox1->Controls->Add(this->yz);
-			this->groupBox1->Controls->Add(this->button1);
-			this->groupBox1->Controls->Add(this->xz);
-			this->groupBox1->Controls->Add(this->xy);
-			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(1648, 866);
-			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(194, 148);
-			this->groupBox1->TabIndex = 12;
-			this->groupBox1->TabStop = false;
-			this->groupBox1->Text = L"Alignment Vectors";
-			// 
-			// yz
-			// 
-			this->yz->AutoSize = true;
-			this->yz->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->yz->Location = System::Drawing::Point(127, 35);
-			this->yz->Name = L"yz";
-			this->yz->Size = System::Drawing::Size(58, 29);
-			this->yz->TabIndex = 17;
-			this->yz->TabStop = true;
-			this->yz->Text = L"YZ";
-			this->yz->UseVisualStyleBackColor = true;
-			// 
-			// button1
-			// 
-			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(36, 75);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(131, 55);
-			this->button1->TabIndex = 16;
-			this->button1->Text = L"GO";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &AlignToAxisMarkersForm::button1_Click);
-			// 
-			// xz
-			// 
-			this->xz->AutoSize = true;
-			this->xz->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->xz->Location = System::Drawing::Point(68, 35);
-			this->xz->Name = L"xz";
-			this->xz->Size = System::Drawing::Size(59, 29);
-			this->xz->TabIndex = 15;
-			this->xz->TabStop = true;
-			this->xz->Text = L"XZ";
-			this->xz->UseVisualStyleBackColor = true;
-			// 
-			// xy
-			// 
-			this->xy->AutoSize = true;
-			this->xy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->xy->Location = System::Drawing::Point(10, 35);
-			this->xy->Name = L"xy";
-			this->xy->Size = System::Drawing::Size(60, 29);
-			this->xy->TabIndex = 14;
-			this->xy->TabStop = true;
-			this->xy->Text = L"XY";
-			this->xy->UseVisualStyleBackColor = true;
 			// 
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->worldPanel);
-			this->groupBox2->Location = System::Drawing::Point(519, 10);
+			this->groupBox2->Location = System::Drawing::Point(1129, 554);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(1123, 1004);
+			this->groupBox2->Size = System::Drawing::Size(498, 453);
 			this->groupBox2->TabIndex = 18;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"World Coordinates";
 			// 
 			// worldPanel
 			// 
-			this->worldPanel->Location = System::Drawing::Point(8, 25);
+			this->worldPanel->Location = System::Drawing::Point(5, 25);
 			this->worldPanel->Name = L"worldPanel";
-			this->worldPanel->Size = System::Drawing::Size(1107, 973);
+			this->worldPanel->Size = System::Drawing::Size(488, 422);
 			this->worldPanel->TabIndex = 0;
+			// 
+			// groupBox5
+			// 
+			this->groupBox5->Controls->Add(this->groupBox4);
+			this->groupBox5->Controls->Add(this->groupBox3);
+			this->groupBox5->Controls->Add(this->groupBox1);
+			this->groupBox5->Location = System::Drawing::Point(1633, 554);
+			this->groupBox5->Name = L"groupBox5";
+			this->groupBox5->Size = System::Drawing::Size(206, 453);
+			this->groupBox5->TabIndex = 20;
+			this->groupBox5->TabStop = false;
+			// 
+			// groupBox4
+			// 
+			this->groupBox4->Controls->Add(this->showYZ);
+			this->groupBox4->Controls->Add(this->showXZ);
+			this->groupBox4->Controls->Add(this->showXY);
+			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox4->Location = System::Drawing::Point(6, 222);
+			this->groupBox4->Name = L"groupBox4";
+			this->groupBox4->Size = System::Drawing::Size(194, 70);
+			this->groupBox4->TabIndex = 21;
+			this->groupBox4->TabStop = false;
+			this->groupBox4->Text = L"Show Plane";
 			// 
 			// groupBox3
 			// 
@@ -281,10 +249,10 @@ namespace AlignToAxisMarkersGUI {
 			this->groupBox3->Controls->Add(this->minX);
 			this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox3->Location = System::Drawing::Point(1648, 575);
+			this->groupBox3->Location = System::Drawing::Point(6, 10);
 			this->groupBox3->Name = L"groupBox3";
 			this->groupBox3->Size = System::Drawing::Size(193, 206);
-			this->groupBox3->TabIndex = 19;
+			this->groupBox3->TabIndex = 22;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Axis Markers";
 			// 
@@ -451,68 +419,109 @@ namespace AlignToAxisMarkersGUI {
 			this->minX->Size = System::Drawing::Size(53, 33);
 			this->minX->TabIndex = 18;
 			// 
-			// groupBox4
+			// groupBox1
 			// 
-			this->groupBox4->Controls->Add(this->floorXZ);
-			this->groupBox4->Controls->Add(this->floorYZ);
-			this->groupBox4->Controls->Add(this->floorXY);
-			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->groupBox1->Controls->Add(this->yz);
+			this->groupBox1->Controls->Add(this->goButton);
+			this->groupBox1->Controls->Add(this->xz);
+			this->groupBox1->Controls->Add(this->xy);
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox4->Location = System::Drawing::Point(1648, 787);
-			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(194, 70);
-			this->groupBox4->TabIndex = 17;
-			this->groupBox4->TabStop = false;
-			this->groupBox4->Text = L"Floor Plane";
+			this->groupBox1->Location = System::Drawing::Point(6, 301);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(194, 148);
+			this->groupBox1->TabIndex = 20;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Alignment Vectors";
 			// 
-			// floorXZ
+			// yz
 			// 
-			this->floorXZ->AutoSize = true;
-			this->floorXZ->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->yz->AutoSize = true;
+			this->yz->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->floorXZ->Location = System::Drawing::Point(68, 30);
-			this->floorXZ->Name = L"floorXZ";
-			this->floorXZ->Size = System::Drawing::Size(59, 29);
-			this->floorXZ->TabIndex = 16;
-			this->floorXZ->TabStop = true;
-			this->floorXZ->Text = L"XZ";
-			this->floorXZ->UseVisualStyleBackColor = true;
+			this->yz->Location = System::Drawing::Point(127, 35);
+			this->yz->Name = L"yz";
+			this->yz->Size = System::Drawing::Size(58, 29);
+			this->yz->TabIndex = 17;
+			this->yz->TabStop = true;
+			this->yz->Text = L"YZ";
+			this->yz->UseVisualStyleBackColor = true;
 			// 
-			// floorYZ
+			// goButton
 			// 
-			this->floorYZ->AutoSize = true;
-			this->floorYZ->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->goButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->floorYZ->Location = System::Drawing::Point(128, 30);
-			this->floorYZ->Name = L"floorYZ";
-			this->floorYZ->Size = System::Drawing::Size(58, 29);
-			this->floorYZ->TabIndex = 15;
-			this->floorYZ->TabStop = true;
-			this->floorYZ->Text = L"YZ";
-			this->floorYZ->UseVisualStyleBackColor = true;
+			this->goButton->Location = System::Drawing::Point(36, 75);
+			this->goButton->Name = L"goButton";
+			this->goButton->Size = System::Drawing::Size(131, 55);
+			this->goButton->TabIndex = 16;
+			this->goButton->Text = L"GO";
+			this->goButton->UseVisualStyleBackColor = true;
+			this->goButton->Click += gcnew System::EventHandler(this, &AlignToAxisMarkersForm::goButton_Click);
 			// 
-			// floorXY
+			// xz
 			// 
-			this->floorXY->AutoSize = true;
-			this->floorXY->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->xz->AutoSize = true;
+			this->xz->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->floorXY->Location = System::Drawing::Point(8, 30);
-			this->floorXY->Name = L"floorXY";
-			this->floorXY->Size = System::Drawing::Size(60, 29);
-			this->floorXY->TabIndex = 14;
-			this->floorXY->TabStop = true;
-			this->floorXY->Text = L"XY";
-			this->floorXY->UseVisualStyleBackColor = true;
+			this->xz->Location = System::Drawing::Point(68, 35);
+			this->xz->Name = L"xz";
+			this->xz->Size = System::Drawing::Size(59, 29);
+			this->xz->TabIndex = 15;
+			this->xz->TabStop = true;
+			this->xz->Text = L"XZ";
+			this->xz->UseVisualStyleBackColor = true;
+			// 
+			// xy
+			// 
+			this->xy->AutoSize = true;
+			this->xy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->xy->Location = System::Drawing::Point(10, 35);
+			this->xy->Name = L"xy";
+			this->xy->Size = System::Drawing::Size(60, 29);
+			this->xy->TabIndex = 14;
+			this->xy->TabStop = true;
+			this->xy->Text = L"XY";
+			this->xy->UseVisualStyleBackColor = true;
+			// 
+			// showXY
+			// 
+			this->showXY->AutoSize = true;
+			this->showXY->Location = System::Drawing::Point(11, 30);
+			this->showXY->Name = L"showXY";
+			this->showXY->Size = System::Drawing::Size(52, 24);
+			this->showXY->TabIndex = 0;
+			this->showXY->Text = L"XY";
+			this->showXY->UseVisualStyleBackColor = true;
+			// 
+			// showXZ
+			// 
+			this->showXZ->AutoSize = true;
+			this->showXZ->Location = System::Drawing::Point(71, 30);
+			this->showXZ->Name = L"showXZ";
+			this->showXZ->Size = System::Drawing::Size(51, 24);
+			this->showXZ->TabIndex = 1;
+			this->showXZ->Text = L"XZ";
+			this->showXZ->UseVisualStyleBackColor = true;
+			// 
+			// showYZ
+			// 
+			this->showYZ->AutoSize = true;
+			this->showYZ->Location = System::Drawing::Point(131, 30);
+			this->showYZ->Name = L"showYZ";
+			this->showYZ->Size = System::Drawing::Size(50, 24);
+			this->showYZ->TabIndex = 2;
+			this->showYZ->Text = L"YZ";
+			this->showYZ->UseVisualStyleBackColor = true;
 			// 
 			// AlignToAxisMarkersForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1848, 1023);
-			this->Controls->Add(this->groupBox4);
-			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
-			this->Controls->Add(this->groupBox1);
+			this->Controls->Add(this->groupBox5);
 			this->Controls->Add(this->fovGroupBox2);
 			this->Controls->Add(this->fovGroupBox1);
 			this->Name = L"AlignToAxisMarkersForm";
@@ -522,13 +531,14 @@ namespace AlignToAxisMarkersGUI {
 			this->Shown += gcnew System::EventHandler(this, &AlignToAxisMarkersForm::AlignToAxisMarkersForm_Shown);
 			this->fovGroupBox1->ResumeLayout(false);
 			this->fovGroupBox2->ResumeLayout(false);
-			this->groupBox1->ResumeLayout(false);
-			this->groupBox1->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
-			this->groupBox3->ResumeLayout(false);
-			this->groupBox3->PerformLayout();
+			this->groupBox5->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox4->PerformLayout();
+			this->groupBox3->ResumeLayout(false);
+			this->groupBox3->PerformLayout();
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox1->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -562,8 +572,8 @@ namespace AlignToAxisMarkersGUI {
 							 block->Draw();
 						 }
 						 else {
-							 if ( mrk == origin->SelectedIndex ) ball->SetRadius( SIZE * 2.0 );
-							 else ball->SetRadius( 20.0 );
+							 if ( mrk == origin->SelectedIndex ) ball->SetRadius( MARKER_SIZE * 1.25 );
+							 else ball->SetRadius( MARKER_SIZE );
 							 ball->SetColor( Translucid( SelectMarkerColor( mrk ) ) );
 							 ball->SetPosition( codaFrame.marker[mrk].position );
 							 ball->Draw();
@@ -592,20 +602,11 @@ namespace AlignToAxisMarkersGUI {
 				 worldWindow->Activate();
 				 worldWindow->Clear( 0.0, 0.0, 0.0 );
 				 worldViewpoint->Apply( worldWindow, CYCLOPS );
-				 if ( floorXZ->Checked ) {
-					 floor->SetOrientation( 0.0, -90.0, 0.0 );
-					 worldViewpoint->SetPosition( 500.0, 2000.0, 3000.0 );
-					 worldViewpoint->SetOrientation( 0.0, 35.0, -5.0 );
-				 }
-				 if ( floorYZ->Checked ) {
-					 floor->SetOrientation( 0.0,   0.0, 90.0 );
-					 worldViewpoint->SetPosition( 3000.0, 500.0, 0.0 );
-					 worldViewpoint->SetOrientation( 160.0, 25.0, -90.0 );
-				 }
-				 if ( floorXY->Checked ) {
-					 floor->SetOrientation( 0.0,   0.0,  0.0 );
-				 }
-				 floor->Draw();
+
+				 if (showXY->Checked) xyPatch->Draw();
+				 if (showXZ->Checked) xzPatch->Draw();
+				 if (showYZ->Checked) yzPatch->Draw();
+
 				 xBar->Draw();
 				 yBar->Draw();
 				 zBar->Draw();
@@ -635,6 +636,47 @@ namespace AlignToAxisMarkersGUI {
 			refreshTimer->Stop();
 		}		
 
+	private: 
+
+		void ReadMarkerAssignments( void ) {
+
+			FILE *fp = fopen( iniFilename, "r" );
+			int o = -1, xm = -1, xp = -1, ym = -1, yp = -1, zm = -1, zp = -1;
+
+			if ( !fp ) {
+				fMessageBox( MB_OK, "AlignToAxisMarkers", "Error opening %s for read.", iniFilename );
+			}
+			else {		
+				fscanf( fp, "%d   %d %d   %d %d   %d %d", &o, &xm, &xp, &ym, &yp, &zm, &zp );
+				origin->SelectedIndex = o;
+				minX->SelectedIndex = xm;
+				maxX->SelectedIndex = xp;
+				minY->SelectedIndex = ym;
+				maxY->SelectedIndex = yp;
+				minZ->SelectedIndex = zm;
+				maxZ->SelectedIndex = zp;
+				fclose( fp );
+			}
+		}
+
+		void WriteMarkerAssignments( void ) {
+
+			FILE *fp = fopen( iniFilename, "w" );
+			if ( !fp ) {
+				fMessageBox( MB_OK, "AlignToAxisMarkers", "Error opening %s for write.", iniFilename );
+			}
+			else {
+				fprintf( fp, "%d   %d %d   %d %d   %d %d\n", 
+					origin->SelectedIndex ,
+					minX->SelectedIndex ,
+					maxX->SelectedIndex,
+					minY->SelectedIndex,
+					maxY->SelectedIndex,
+					minZ->SelectedIndex,
+					maxZ->SelectedIndex );
+				fclose( fp );
+			}
+		}
 
 	private: System::Void AlignToAxisMarkersForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 
@@ -672,21 +714,28 @@ namespace AlignToAxisMarkersGUI {
 
 				 // Create a viewpoint that looks from the origin along the positive Y axis.
 				 // This is the view from the CODA in intrinsic coordinates.
-				 codaViewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
+				 codaViewpoint = new Viewpoint( 6.0, CODA_ZOOM, 10.0, 10000.0);
+				 // CODA cx1 intrinsic coordinate system has Y for the depth dimension.
+				 // So we rotate the viewpoint to look down the Y axis.
 				 codaViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
+				 // CODA cx1 intrinsic origin is at the center of camera A, which is offset
+				 // about 30 cm from it's center. So we shift the viewpoint so that when the
+				 // markers are in the center of the field of view, they are centered in the
+				 // 3D volume displayed on the screen.
+				 codaViewpoint->SetPosition( -300.0, 0.0, 0.0 );
 
 				 // Look down on the world coordinate system.
-				 worldViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0 );
+				 worldViewpoint = new Viewpoint( 6.0, 35.0, 10.0, 10000.0 );
 				 worldViewpoint->SetPosition( 500.0, 2000.0, 3000.0 );
-				 worldViewpoint->SetOrientation( 0.0, ZOOM, -5.0 );
+				 worldViewpoint->SetOrientation( 0.0, WORLD_ZOOM, -5.0 );
 
 				 // Initialize the state of the GL graphics engine.
 				 // Some of this will be overridden by the object renderer.
 				 glUsefulInitializeDefault();
 				 glUsefulDefaultSpecularLighting( 0.75 );
 
-				 ball = new Sphere( SIZE );
-				 block = new Box( SIZE, SIZE, SIZE );
+				 ball = new Sphere( MARKER_SIZE );
+				 block = new Box( MARKER_SIZE, MARKER_SIZE, MARKER_SIZE );
 
 				 xBar = new Cylinder( ROD_RADIUS, ROD_RADIUS, ROD_LENGTH );
 				 xBar->SetColor( RED );
@@ -700,9 +749,19 @@ namespace AlignToAxisMarkersGUI {
 				 zBar->SetColor( BLUE );
 				 zBar->SetOffset( 0.0, 0.0, ROD_LENGTH / 2.0 );
 
-				 floor = new Patch( ROD_LENGTH, ROD_LENGTH );
-				 floor->SetOffset( ROD_LENGTH / 2.0, ROD_LENGTH / 2.0, 0.0 );
-				 floor->SetColor( Translucid( GRAY ) );
+				 xyPatch = new Patch( ROD_LENGTH, ROD_LENGTH );
+				 xyPatch->SetOffset( ROD_LENGTH / 2.0, ROD_LENGTH / 2.0, 0.0 );
+				 xyPatch->SetColor( 1.0, 1.0, 1.0, 0.1 );
+
+				 xzPatch = new Patch( ROD_LENGTH, ROD_LENGTH );
+				 xzPatch->SetOffset( ROD_LENGTH / 2.0, ROD_LENGTH / 2.0, 0.0 );
+				 xzPatch->SetOrientation( 0.0, -90.0, 0.0 );
+				 xzPatch->SetColor( 1.0, 1.0, 1.0, 0.1 );
+
+				 yzPatch = new Patch( ROD_LENGTH, ROD_LENGTH );
+				 yzPatch->SetOffset( ROD_LENGTH / 2.0, ROD_LENGTH / 2.0, 0.0 );
+				 yzPatch->SetOrientation( 0.0, 0.0, 90.0 );
+				 yzPatch->SetColor( 1.0, 1.0, 1.0, 0.1 );
 
 				 // Drop boxes to select which markers define each axis.
 				 origin->Items->Clear();
@@ -721,11 +780,8 @@ namespace AlignToAxisMarkersGUI {
 					 minZ->Items->Add( mrk );
 					 maxZ->Items->Add( mrk );
 				 }
-				 origin->SelectedIndex = 8;
-				 minX->SelectedIndex = 8;
-				 minY->SelectedIndex = 8;
-				 maxX->SelectedIndex = 15;
-				 maxY->SelectedIndex = 11;
+
+				 ReadMarkerAssignments();
 
 				 // Create the CODA tracker.
 				 coda = new CodaLegacyPolledTracker();
@@ -738,28 +794,31 @@ namespace AlignToAxisMarkersGUI {
 				 Enabled = true;
 
 			 }
+
 	private: System::Void AlignToAxisMarkersForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 				 Enabled = false;
+				 WriteMarkerAssignments();
 				 coda->Quit();
 			 }
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	private: System::Void goButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
 				 static MarkerFrame codaFrame[N_SAMPLES];
 				 MarkerFrame averageFrame;
 
-				 Vector3	i_vector, j_vector, k_vector, cross;
+				 Vector3	i_vector, j_vector, k_vector;
 				 Vector3	x_vector, y_vector, z_vector;
 				 Vector3	offset;
-				 Matrix3x3	rotation, transpose;
+				 Matrix3x3	rotation;
 
 				 Enabled = false;
 				 if ( xy->Checked && ( minX->SelectedIndex < 0 || maxX->SelectedIndex < 0 || minY->SelectedIndex < 0 || maxY->SelectedIndex < 0 ) ) {
-					fMessageBox( MB_OK, "AlignToAxisMarkersGUI", "X and Y axis markers not defined." );
+					fMessageBox( MB_OK | MB_ICONEXCLAMATION, "AlignToAxisMarkersGUI", "X and Y axis markers not defined." );
 				 }
 				 else if ( xz->Checked && (minX->SelectedIndex < 0 || maxX->SelectedIndex < 0 || minZ->SelectedIndex < 0 || maxZ->SelectedIndex < 0 )) {
-					fMessageBox( MB_OK, "AlignToAxisMarkersGUI", "X and Z axis markers not defined." );
+					fMessageBox( MB_OK | MB_ICONEXCLAMATION, "AlignToAxisMarkersGUI", "X and Z axis markers not defined." );
 				 }
-				 else {
+				 else if ( xy->Checked ) {
 					 for ( int unit = 0; unit < coda->nUnits; unit++ ) {
 						 for ( int sample = 0; sample < N_SAMPLES; sample++ ) {
 							 coda->GetCurrentMarkerFrameIntrinsic( codaFrame[sample], unit );
@@ -788,7 +847,9 @@ namespace AlignToAxisMarkersGUI {
 						 }
 					 }
 				 }
-				 
+				 else if ( xz->Checked ) fMessageBox( MB_OK | MB_ICONEXCLAMATION, "AlignToAxisMarkersGUI", "Alignment to XZ plane not yet implemented." );
+				 else if ( yz->Checked ) fMessageBox( MB_OK | MB_ICONEXCLAMATION, "AlignToAxisMarkersGUI", "Alignment to YZ plane not yet implemented." );
+				 else fMessageBox( MB_OK | MB_ICONEXCLAMATION, "AlignToAxisMarkersGUI", "Please select which axes to use for the alignment.\nNB: Only XY is currently implemented." );
 				 Enabled = true;
 
 			 }
