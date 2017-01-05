@@ -101,8 +101,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// Select a set of trackers and start them up.
 	//
 	GraspTrackers *trackers;
+	CodaRTnetTracker *codaTracker;
 	if ( useCoda ) {
-		CodaRTnetTracker *codaTracker = new CodaRTnetDaemonTracker();
+	    codaTracker = new CodaRTnetDaemonTracker();
 		trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
 	}
 	else if ( useHMD ) {
@@ -113,9 +114,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 	trackers->Initialize();
 
-
-
-	
 	// 
 	// Select the paradigm and create the corresponding object to run the paradigm.
 	//
@@ -149,6 +147,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	grasp->Initialize( display, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();
+
+	trackers->Release();
+	if ( useCoda ) codaTracker->Quit();
 
 	// Ask DEX to take a final snapshot and then disconnect.
 	dex->SnapPicture( "RELEASE" );
