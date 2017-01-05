@@ -119,10 +119,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//
 	GraspTaskManager	*grasp;
 
-	if ( strstr( lpCmdLine, "--VtoV" ) ) grasp = new VtoVK();
-	else if ( strstr( lpCmdLine, "--VtoVK" ) ) grasp = new VtoK();
-	else if ( strstr( lpCmdLine, "--VtoK" ) ) grasp = new KtoK();
-	else if ( strstr( lpCmdLine, "--KtoK" ) ) grasp = new VtoV();
+	if ( strstr( lpCmdLine, "--VtoV" ) ) grasp = new VtoV();
+	else if ( strstr( lpCmdLine, "--VtoVK" ) ) grasp = new VtoVK();
+	else if ( strstr( lpCmdLine, "--VtoK" ) ) grasp = new VtoK();
+	else if ( strstr( lpCmdLine, "--KtoK" ) ) grasp = new KtoK();
 	else if ( strstr( lpCmdLine, "--demo" ) ) grasp = new DemoP();
 	else if ( strstr( lpCmdLine, "--doff" ) ) grasp = new QuitVR();
 	else grasp = new DemoP();
