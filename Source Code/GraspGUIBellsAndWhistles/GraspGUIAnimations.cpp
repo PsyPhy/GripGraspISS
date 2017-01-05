@@ -15,7 +15,7 @@
 
 #include "../GraspVR/GraspGLObjects.h"
 #include "../Trackers/PoseTrackers.h"
-#include "OpenGLWindowsInForms.h"
+#include "../OpenGLObjects/OpenGLWindowsInForms.h"
 #include "GraspDesktopForm.h"
 
 using namespace GraspGUI;
