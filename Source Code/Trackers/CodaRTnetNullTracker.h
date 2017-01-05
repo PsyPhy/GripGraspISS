@@ -37,7 +37,10 @@ public:
 	virtual void StartAcquisition( double duration );
 	virtual bool GetAcquisitionState();
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
-	virtual void SetUnitTransform( Vector3 offset, Matrix3x3 rotation );
+	virtual void SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+	virtual void GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+	virtual void GetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	virtual void SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
 	virtual void StopAcquisition( void );
 	virtual void AbortAcquisition( void );
 	virtual void Quit( void );
