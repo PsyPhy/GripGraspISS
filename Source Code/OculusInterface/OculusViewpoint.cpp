@@ -27,6 +27,10 @@ void OculusViewpoint::Apply( OpenGLWindow *window, Eye eye ) {
 	// was included in the definition of Apply(). The OculusViewpoint goes implicitly to the 
 	// Oculus rendering buffers of the appropriate size. So the window handle is ignored here.
 	window = window;
+	Apply( eye );
+
+}
+void OculusViewpoint::Apply( Eye eye ) {
 
 	// Set the size of the viewport into GL. The OVR system creates a bitmap of this size for each eye.
 	int eye_buffer_width = oculusMapper->idealTextureSize.w;
