@@ -1,5 +1,9 @@
 #pragma once
+
 #define _USE_MATH_DEFINES
+
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #define MAX_PATHLENGTH	1024
@@ -23,7 +27,9 @@ namespace PsyPhy {
 #define MISSING_DOUBLE	999999.999999
 #define MISSING_FLOAT	999999.999999f
 #define MISSING_CHAR	127
-#define NaN				-9999999999999.9999999999999
+
+static unsigned long __nan = 0x7ff7ffff;
+#define NaN				(*((double *) &__nan))
 
 #define Pi	M_PI
 
