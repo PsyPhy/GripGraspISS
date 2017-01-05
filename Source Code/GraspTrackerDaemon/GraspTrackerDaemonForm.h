@@ -411,7 +411,17 @@ namespace GraspTrackerDaemon {
 		}
 
 		System::Void Form1_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+
 			StopRefreshTimer();
+
+			// Disable the form to indicate that the buttons will not work.
+			Enabled = false;
+			Refresh();
+
+			visibilityTextBox0->Text = " Shutting down TRACKER ... ";
+			visibilityTextBox1->Text = "   (Please wait.)";
+			Refresh();
+
 			ReleaseCoda();
 		}
 

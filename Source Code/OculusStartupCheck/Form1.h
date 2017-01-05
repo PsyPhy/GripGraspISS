@@ -91,9 +91,9 @@ namespace OculusStartupCheck {
 			// 
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(18, 514);
+			this->label1->Location = System::Drawing::Point(30, 514);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(954, 128);
+			this->label1->Size = System::Drawing::Size(927, 128);
 			this->label1->TabIndex = 2;
 			this->label1->Text = resources->GetString(L"label1.Text");
 			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;

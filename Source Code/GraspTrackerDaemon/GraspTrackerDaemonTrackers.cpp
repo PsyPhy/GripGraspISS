@@ -51,12 +51,19 @@ namespace GraspTrackerDaemon {
 		// Select which tracker to use to provide the marker data.
 		// The flags are set when the Form is instantiated. Here we
 		// do the actual work to create an instance of the appropriate tracker.
-		if ( use_coda ) coda = new CodaRTnetContinuousTracker();
-		else if ( use_legacy ) coda = new CodaLegacyPolledTracker();
+		if ( use_coda ) {
+			coda = new CodaRTnetContinuousTracker();
+			this->Text = this->Text + " (Coda RTnet Tracker)";
+		}
+		else if ( use_legacy ) {
+			coda = new CodaLegacyPolledTracker();
+			this->Text = this->Text + " (Coda Legacy Tracker)";
+		}
 		else {
 			CodaRTnetNullTracker *null_tracker = new CodaRTnetNullTracker();
 			null_tracker->fakeMovements = true;
 			coda = null_tracker;
+			this->Text = this->Text + " (Null Tracker)";
 		}
 
 		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
