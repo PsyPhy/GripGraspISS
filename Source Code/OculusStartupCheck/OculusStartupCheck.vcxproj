@@ -118,6 +118,9 @@
     <ProjectReference Include="..\OculusInterface\OculusInterface.vcxproj">
       <Project>{44ec28d5-22d2-414a-9f40-1bf29ef832d9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Useful\Useful.vcxproj">
+      <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

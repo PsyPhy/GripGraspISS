@@ -385,6 +385,10 @@ namespace GraspTrackerDaemon {
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
+			// Disable the form to indicate that the buttons will not work.
+			Enabled = false;
+			Refresh();
+
 			visibilityTextBox0->Text = " Initializing TRACKER ... ";
 			visibilityTextBox1->Text = "   (Please wait.)";
 			Refresh();
@@ -398,6 +402,10 @@ namespace GraspTrackerDaemon {
 
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
+
+			// Renable the form now that we are ready to respond to the buttons.
+			Enabled = true;
+
 			if ( autohide ) WindowState = System::Windows::Forms::FormWindowState::Minimized;
 			 
 		}
