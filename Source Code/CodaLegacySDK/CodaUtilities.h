@@ -57,7 +57,7 @@ extern "C" {
 
 #define CODA_DEFAULT_DECIMATION 1
 #define CODA_DEFAULT_MARKER_MODE modeMarker200
-#define CODA_DEFAULT_MAX_MARKER 56
+#define CODA_DEFAULT_MAX_MARKER 28
 
 int CodaConnectOnly( char *hostname );
 void CodaPrepare( void );
