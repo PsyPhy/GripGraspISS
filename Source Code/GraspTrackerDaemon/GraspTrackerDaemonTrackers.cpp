@@ -180,9 +180,9 @@ namespace GraspTrackerDaemon {
 			fprintf( fp, " %0.3f %s %s", poseData[i].hand.time, trackers->vstr( poseData[i].hand.pose.position ), trackers->qstr( poseData[i].hand.pose.orientation ) );
 			fprintf( fp, " %0.3f %s %s", poseData[i].chest.time, trackers->vstr( poseData[i].chest.pose.position ), trackers->qstr( poseData[i].chest.pose.orientation ) );
 			fprintf( fp, " %0.3f %0.3f %0.3f", 
-				trackers->ToDegrees( trackers->AngleBetween( poseData[i].hmd.pose.orientation,  poseData[i].hand.pose.orientation )),
-				trackers->ToDegrees( trackers->AngleBetween( poseData[i].hand.pose.orientation,  poseData[i].chest.pose.orientation )),
-				trackers->ToDegrees( trackers->AngleBetween( poseData[i].chest.pose.orientation,  poseData[i].hmd.pose.orientation ))
+				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].hmd.pose.orientation,  poseData[i].hand.pose.orientation )),
+				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].hand.pose.orientation,  poseData[i].chest.pose.orientation )),
+				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].chest.pose.orientation,  poseData[i].hmd.pose.orientation ))
 				);
 			fprintf( fp, " %0.3f %0.3f %0.3f", 
 				trackers->ToDegrees( trackers->RotationAngle( poseData[i].hmd.pose.orientation )),
