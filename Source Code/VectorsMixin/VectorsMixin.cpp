@@ -643,6 +643,33 @@ double VectorsMixin::RotationAngle( const Quaternion q1 ) {
 	return( 2.0 * atan2( hypotenuse, q1[M] ) );
 }
 
+// Compute the roll component of an arbitray rotation expressed as a quaternion.
+// Here we consider roll to be around the Z axis.
+double VectorsMixin::RollAngle( const Quaternion q1 ) {
+
+	Vector3	sight_axis;
+	Vector3 pitch_yaw_axis;
+	double pitch_yaw_rotation_angle;
+	Quaternion pitch_yaw_transformation;
+	Vector3 up_vector1, up_vector2, up_cross;
+
+	RotateVector( sight_axis, q1, kVector );
+	ComputeCrossProduct( pitch_yaw_axis, kVector, sight_axis );
+	NormalizeVector( pitch_yaw_axis );
+	pitch_yaw_rotation_angle = AngleBetweenVectors( sight_axis, kVector );
+	pitch_yaw_transformation[X] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[X];
+	pitch_yaw_transformation[Y] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[Y];
+	pitch_yaw_transformation[Z] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[Z];
+	pitch_yaw_transformation[M] = cos( pitch_yaw_rotation_angle / 2.0 );
+
+	RotateVector( up_vector1, pitch_yaw_transformation, jVector );
+	RotateVector( up_vector2, q1, jVector );
+	double angle = acos( DotProduct( up_vector1, up_vector2 ) );
+	ComputeCrossProduct( up_cross, up_vector1, up_vector2 );
+	if ( DotProduct( up_cross, sight_axis ) > 0.0 ) return( angle );
+	else return( - angle );
+}
+
 void VectorsMixin::TransformPose( Pose &result, Transform &xform, Pose &source ) {
 	Vector3 x;
 	Quaternion q;
