@@ -177,6 +177,10 @@ double VectorsMixin::DotProduct( const Vector3 v1, const Vector3 v2 ) {
 	return( v1[X] * v2[X] + v1[Y] * v2[Y] + v1[Z] * v2[Z] );
 }
 
+double VectorsMixin::AngleBetweenVectors( const Vector3 v1, const Vector3 v2 ) {
+	return( acos( DotProduct( v1, v2 ) / VectorNorm( v1 ) / VectorNorm( v2 )) );
+}
+
 void VectorsMixin::ComputeCrossProduct( Vector3 result, const Vector3 v1, const Vector3 v2 ) {
 	result[X] = v1[Y] * v2[Z] - v1[Z] * v2[Y];
 	result[Y] = v1[Z] * v2[X] - v1[X] * v2[Z];
@@ -628,7 +632,7 @@ double VectorsMixin::QuaternionDifference( Quaternion result, const Quaternion q
 	return( angle );
 }
 
-double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
+double VectorsMixin::AngleBetweenOrientations( const Quaternion q1, const Quaternion q2 ) {
 	Quaternion discard;
 	return( QuaternionDifference( discard, q1, q2 ) );
 
