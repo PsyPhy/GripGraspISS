@@ -20,6 +20,9 @@
     <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
       <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GraspMMIDataPlots\GraspMMIDataPlots.vcxproj">
+      <Project>{44066fc7-1873-48a2-8151-c6867a15d0df}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspMMI\GraspMMI.vcxproj">
       <Project>{ebcf095f-8685-4c8b-9778-502379d0de58}</Project>
     </ProjectReference>

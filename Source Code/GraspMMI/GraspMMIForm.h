@@ -72,6 +72,8 @@ namespace GraspGUI {
 
 	protected:
 
+		/// Grasp housekeeping telemetry packets include information about the visibility of the CODA markers.
+		/// This routine is used to display the information on a marker support by marker support basis.
 		void ShowMarkerStatus( unsigned int tracker_status ) {
 
 			Color color;
@@ -97,13 +99,14 @@ namespace GraspGUI {
 				chestVisibilityBar->Value = (tracker_status / 100) % 10;
 			}
 			else {
-					hmdVisibilityBar->Value = 0;
-					handVisibilityBar->Value = 0;
-					chestVisibilityBar->Value = 0;
+				hmdVisibilityBar->Value = 0;
+				handVisibilityBar->Value = 0;
+				chestVisibilityBar->Value = 0;
 			}
 
 		}
 
+		/// Navigate in the menus based on the information included in a Grasp housekeeping telemetry packet.
 		void NavigateTo( int subject_id, int protocol_id, int task_id, int step_id, int state, int status, int snapshots ) {
 
 			static int previous_subject = -9999;
@@ -247,8 +250,8 @@ namespace GraspGUI {
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) override {
-			this->Text = L"GRASP MMI";
-			this->Location = System::Drawing::Point(10, 10);
+			this->Text = L"GRASP MMI Mirror";
+			// this->Location = System::Drawing::Point(10, 10);
 			this->navigatorGroupBox->Enabled = false;
 			this->instructionsGroupBox->Enabled = false;
 			this->dexStatusGroupBox->Visible = true;

@@ -10,9 +10,11 @@
 #define CHEST_STRUCTURE	0
 #define HAND_STRUCTURE	1
 #define HMD_STRUCTURE	2
+#define MARKER_STRUCTURES	3
 
 namespace GraspMMI {
 
+	// Data contained in realtime data packets.
 	typedef struct {
 		// Transmitted Items
 		double absoluteTime;
@@ -25,17 +27,23 @@ namespace GraspMMI {
 		PsyPhy::TrackerPose chest;
 		PsyPhy::TrackerPose	mouse;
 		// Computed Items
-		double hmdRotationAngle;		// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
-		double hmdRollAngle;	// Rotation of the HMD around the roll axis.
+		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
+		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
 	} GraspRealtimeDataSlice;
 
+	// Data contained in housekeeping packets.
+	// Most of the values are actually integers, but we store them as doubles because
+	// we want to plot them against time and time is a double. All my graph
+	// routines plot float against float, int against int, etc. so we can't mix types
+	// between the X and Y axes.
 	typedef struct {
 		double		absoluteTime; 
 		double		stepID;
 		double		taskID;
 		double		protocolID;
 		double		userID;
-		int		visibleMarkers[3];
+		double		visibleMarkers[MARKER_STRUCTURES];
+		unsigned int	scriptEngine;
 	} GraspHousekeepingSlice;
 
 	void ExtractGraspRealtimeDataInfo( GraspRealtimeDataSlice grasp_data_slice[], EPMTelemetryPacket &packet );

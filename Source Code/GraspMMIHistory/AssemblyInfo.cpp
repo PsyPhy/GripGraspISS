@@ -11,12 +11,12 @@ using namespace System::Security::Permissions;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("GraspTelemetryDaemon")];
+[assembly:AssemblyTitleAttribute("GraspMMIHistory")];
 [assembly:AssemblyDescriptionAttribute("")];
 [assembly:AssemblyConfigurationAttribute("")];
-[assembly:AssemblyCompanyAttribute("")];
-[assembly:AssemblyProductAttribute("GraspTelemetryDaemon")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c)  2016")];
+[assembly:AssemblyCompanyAttribute("Hewlett-Packard Company")];
+[assembly:AssemblyProductAttribute("GraspMMIHistory")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) Hewlett-Packard Company 2017")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 

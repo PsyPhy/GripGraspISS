@@ -34,7 +34,6 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\Grasp\Grasp.bat ..\..\GraspExecutables
 	copy ..\Grasp\GraspPackData.bat ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\GraspGUI.exe ..\..\GraspExecutables
-	copy ..\$(BUILDCONFIGURATION)\GraspMMI.exe ..\..\GraspExecutables
 	copy ..\GraspGUI\Grasp.ico ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe ..\..\GraspExecutables
@@ -48,8 +47,6 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\StartOculus.exe ..\..\GraspExecutables
 	copy ..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe ..\..\GraspExecutables
-	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe ..\..\GraspExecutables
-	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe ..\..\GraspExecutables
 	copy LoadCodaCals.bat ..\..\GraspExecutables
 	copy MakeRigidBodies.bat ..\..\Bdy
 	copy RunGRASP.bat ..\..

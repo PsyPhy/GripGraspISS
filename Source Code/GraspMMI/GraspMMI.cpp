@@ -15,7 +15,7 @@ int main(array<System::String ^> ^args)
 
 	String^ packetRoot;
 	if ( args->Length > 0 ) packetRoot = args[0];
-	else packetRoot = gcnew String( "GripPackets" );
+	else packetRoot = gcnew String( "GraspPackets" );
 
 	// Create the main window and run it
 	GraspMMI^ mmi = gcnew GraspMMI();

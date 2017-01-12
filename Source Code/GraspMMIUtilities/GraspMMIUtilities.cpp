@@ -16,6 +16,7 @@ using namespace PsyPhy;
 
 namespace GraspMMI {
 
+
 void ExtractGraspRealtimeDataInfo( GraspRealtimeDataSlice grasp_data_slice[], EPMTelemetryPacket &packet ) {
 
 	u8 *buffer = packet.sections.rawData;
@@ -115,8 +116,13 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 	// the availability of files containing packets before the GripMMIDesktop form is executed.
 	// But if we do fail to open the file, just signal the error and exit the hard way.
 	if ( fid < 0 ) {
-			fMessageBox( MB_OK, "GripMMI", "Error opening packet file %s.\n\n", filename );
-			exit( -1 );
+			//fMessageBox( MB_OK, "GripMMI", "Error opening packet file %s.\n\n", filename );
+			//exit( -1 );
+		n_slices = 0;
+		grasp_data_slice[n_slices].fillTime = MISSING_FLOAT;
+		grasp_data_slice[n_slices].absoluteTime = MISSING_DOUBLE;
+		n_slices++;
+		return( n_slices );
 	}
 
 	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
@@ -155,8 +161,8 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 		//  to be reading a cache file that has been filled by DexGroundMonitorClient with only GRIP RT packets.
 		ExtractEPMTelemetryHeaderInfo( &epmHeader, &packet );
 		if ( epmHeader.epmSyncMarker != EPM_TELEMETRY_SYNC_VALUE || epmHeader.TMIdentifier != GRIP_RT_ID ) {
-			fMessageBox( MB_OK, "GripMMIlite", "Unrecognized packet from %s.\n\n%s", filename );
-			exit( -1 );
+			// fMessageBox( MB_OK, "GripMMIlite", "Unrecognized packet from %s.\n\n%s", filename );
+			return( -1 );
 		}
 		
 		// If there has been a break in the arrival of the packets, insert
@@ -187,7 +193,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			// that slice to the timestamp of the packet.
 			double fill_time_increment = grasp_data_slice[n_slices].fillTime - previous_fill_time;
 			if ( fill_time_increment < 0.0 ) {
-				absolute_time_reference = EPMtoSeconds( &epmHeader ) + grasp_data_slice[n_slices].fillTime;
+				absolute_time_reference = EPMtoSeconds( &epmHeader ) - grasp_data_slice[GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
 			}
 			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
 				grasp_data_slice[n_slices + s].absoluteTime = grasp_data_slice[n_slices + s].fillTime  + absolute_time_reference;
@@ -287,6 +293,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			trace[packets_read].taskID = MISSING_DOUBLE;
 			trace[packets_read].protocolID = MISSING_DOUBLE;
 			trace[packets_read].userID = MISSING_DOUBLE;
+			trace[packets_read].scriptEngine = MISSING_INT;
 		}
 		else {
 			trace[packets_read].absoluteTime = EPMtoSeconds( &epm_header );
@@ -294,10 +301,14 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			trace[packets_read].taskID = hk.task;
 			trace[packets_read].protocolID = hk.protocol;
 			trace[packets_read].userID = hk.user;
+			trace[packets_read].scriptEngine = hk.scriptEngineStatusEnum;
 		}
-		for ( int bdy = HAND_STRUCTURE; bdy <= HMD_STRUCTURE; bdy++ ) {
-			if ( hk.motionTrackerStatusEnum < TRACKER_ANOMALY ) trace[packets_read].visibleMarkers[bdy] = (hk.motionTrackerStatusEnum / (int) pow( 10.0, bdy )) % 10;
-			else trace[packets_read].visibleMarkers[bdy] = MISSING_INT;
+		for ( int bdy = 0; bdy < MARKER_STRUCTURES; bdy++ ) {
+			if ( hk.motionTrackerStatusEnum < TRACKER_ANOMALY ) {
+				int visible = (hk.motionTrackerStatusEnum / (int) pow( 10.0, bdy )) % 10;
+				trace[packets_read].visibleMarkers[bdy] = visible;
+			}
+			else trace[packets_read].visibleMarkers[bdy] = MISSING_DOUBLE;
 		}
 		packets_read++;
 		if ( packets_read >= max_slices ) break;
