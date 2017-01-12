@@ -1140,7 +1140,6 @@ namespace GraspGUI {
 		//  initially generated automatically by the Forms designer.
 
 		// Parse the file containing the subject names, IDs and protocols.
-		int ParseLine( char *token[], char *line );
 		void ParseSubjectFile( String^ filename );
 		void ParseSessionFile( String^ filename );
 		void ParseProtocolFile( String^ filename );
