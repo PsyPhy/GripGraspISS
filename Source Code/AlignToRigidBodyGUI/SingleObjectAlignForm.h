@@ -728,7 +728,7 @@ namespace AlignToRigidBodyGUI {
 					 bool position_ok = position_error < maxPositionError;
 					 sprintf( line, "%d %s %6.3f %s\n", unit, codaPoseTracker->vstr( tracker_pose.pose.position ), position_error, ( position_ok ? "OK" : "!!" ));
 					 strcat( msg, line );
-					 double orientation_error = codaPoseTracker->AngleBetween( tracker_pose.pose.orientation, codaPoseTracker->nullQuaternion );
+					 double orientation_error = codaPoseTracker->AngleBetweenOrientations( tracker_pose.pose.orientation, codaPoseTracker->nullQuaternion );
 					 bool orientation_ok = orientation_error < maxOrientationError;
 					 sprintf( line, "%d %s %6.3f %s\n", unit,  codaPoseTracker->qstr( tracker_pose.pose.orientation ), orientation_error, ( orientation_ok ? "OK" : "!!" ));
 					 strcat( msg, line );
