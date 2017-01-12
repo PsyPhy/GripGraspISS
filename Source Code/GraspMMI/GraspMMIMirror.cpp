@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "../GraspGUI/GraspDesktopForm.h"
-#include "GraspMMIForm.h"
+#include "GraspMMIMirror.h"
 
 using namespace GraspGUI;
 
@@ -18,7 +18,7 @@ int main(array<System::String ^> ^args)
 	else packetRoot = gcnew String( "GraspPackets" );
 
 	// Create the main window and run it
-	GraspMMI^ mmi = gcnew GraspMMI();
+	GraspMMIMirror^ mmi = gcnew GraspMMIMirror();
 	mmi->packetRoot = packetRoot;
 	Application::Run( mmi );
 	return 0;

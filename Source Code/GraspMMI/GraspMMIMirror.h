@@ -63,7 +63,7 @@ namespace GraspGUI {
 	/// GraspMMI is a descendent of GraspDesktop modified to be used as the ground MMI.
 	/// 
 
-	public ref class GraspMMI : public GraspDesktop
+	public ref class GraspMMIMirror : public GraspDesktop
 	{
 
 	public:
@@ -250,7 +250,7 @@ namespace GraspGUI {
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) override {
-			this->Text = L"GRASP MMI Mirror";
+			this->Text = L"GraspMMI Mirror";
 			// this->Location = System::Drawing::Point(10, 10);
 			this->navigatorGroupBox->Enabled = false;
 			this->instructionsGroupBox->Enabled = false;
