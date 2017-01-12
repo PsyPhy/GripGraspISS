@@ -85,9 +85,6 @@ namespace GraspMMI {
 
 	public: 
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
-	private: System::Windows::Forms::TreeView^  visibleHistoryTree;
-
-
 	public: 
 		String^ scriptDirectory;			// Path to root file of the GUI menu tree.
 
@@ -143,12 +140,18 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Panel^  markerGraphPanel;
 	private: System::Windows::Forms::GroupBox^  groupBox5;
 	private: System::Windows::Forms::TreeView^  historyTree;
+	private: System::Windows::Forms::TreeView^  visibleHistoryTree;
+	private: System::Windows::Forms::ContextMenuStrip^  hmdContextMenu;
+	private: System::Windows::Forms::ToolStripMenuItem^  autoscaleHMD;
+
+
+private: System::ComponentModel::IContainer^  components;
 
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -157,9 +160,10 @@ namespace GraspMMI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::Windows::Forms::TreeNode^  treeNode4 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
-			System::Windows::Forms::TreeNode^  treeNode5 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
-			System::Windows::Forms::TreeNode^  treeNode6 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
+			this->components = (gcnew System::ComponentModel::Container());
+			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
+			System::Windows::Forms::TreeNode^  treeNode2 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
+			System::Windows::Forms::TreeNode^  treeNode3 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->dataLiveCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->lastAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -177,12 +181,15 @@ namespace GraspMMI {
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
 			this->historyTree = (gcnew System::Windows::Forms::TreeView());
 			this->visibleHistoryTree = (gcnew System::Windows::Forms::TreeView());
+			this->hmdContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->autoscaleHMD = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->groupBox2->SuspendLayout();
 			this->groupBox3->SuspendLayout();
 			this->groupBox4->SuspendLayout();
 			this->groupBox5->SuspendLayout();
+			this->hmdContextMenu->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -267,6 +274,7 @@ namespace GraspMMI {
 			// 
 			// hmdGraphPanel
 			// 
+			this->hmdGraphPanel->ContextMenuStrip = this->hmdContextMenu;
 			this->hmdGraphPanel->Location = System::Drawing::Point(6, 28);
 			this->hmdGraphPanel->Name = L"hmdGraphPanel";
 			this->hmdGraphPanel->Size = System::Drawing::Size(1313, 577);
@@ -341,30 +349,45 @@ namespace GraspMMI {
 				static_cast<System::Byte>(0)));
 			this->historyTree->Location = System::Drawing::Point(350, 23);
 			this->historyTree->Name = L"historyTree";
-			treeNode4->ForeColor = System::Drawing::Color::Blue;
-			treeNode4->Name = L"Node0";
-			treeNode4->Text = L"This tree will be hidden.";
-			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode4});
+			treeNode1->ForeColor = System::Drawing::Color::Blue;
+			treeNode1->Name = L"Node0";
+			treeNode1->Text = L"This tree will be hidden.";
+			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode1});
 			this->historyTree->Size = System::Drawing::Size(207, 23);
 			this->historyTree->TabIndex = 0;
 			this->historyTree->Visible = false;
 			// 
 			// visibleHistoryTree
 			// 
+			this->visibleHistoryTree->ContextMenuStrip = this->hmdContextMenu;
 			this->visibleHistoryTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->visibleHistoryTree->Location = System::Drawing::Point(6, 37);
 			this->visibleHistoryTree->Name = L"visibleHistoryTree";
-			treeNode5->ForeColor = System::Drawing::Color::Blue;
-			treeNode5->Name = L"Node0";
-			treeNode5->Text = L"Node0";
-			treeNode6->ForeColor = System::Drawing::SystemColors::WindowText;
-			treeNode6->Name = L"Node1";
-			treeNode6->Text = L"Node1";
-			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode5, treeNode6});
+			treeNode2->ForeColor = System::Drawing::Color::Blue;
+			treeNode2->Name = L"Node0";
+			treeNode2->Text = L"Node0";
+			treeNode3->ForeColor = System::Drawing::SystemColors::WindowText;
+			treeNode3->Name = L"Node1";
+			treeNode3->Text = L"Node1";
+			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
 			this->visibleHistoryTree->Size = System::Drawing::Size(570, 1118);
 			this->visibleHistoryTree->TabIndex = 1;
-			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
+			// 
+			// hmdContextMenu
+			// 
+			this->hmdContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->autoscaleHMD});
+			this->hmdContextMenu->Name = L"contextMenuStrip1";
+			this->hmdContextMenu->ShowCheckMargin = true;
+			this->hmdContextMenu->ShowImageMargin = false;
+			this->hmdContextMenu->Size = System::Drawing::Size(153, 48);
+			// 
+			// autoscaleHMD
+			// 
+			this->autoscaleHMD->CheckOnClick = true;
+			this->autoscaleHMD->Name = L"autoscaleHMD";
+			this->autoscaleHMD->Size = System::Drawing::Size(152, 22);
+			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// GraspMMIGraphsForm
 			// 
@@ -394,6 +417,7 @@ namespace GraspMMI {
 			this->groupBox3->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox5->ResumeLayout(false);
+			this->hmdContextMenu->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -508,9 +532,6 @@ namespace GraspMMI {
 			if ( dataLiveCheckBox->Checked ) StartRefreshTimer();
 			else StopRefreshTimer();
 		}
-
-		System::Void visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e);
-
 };
 }
 

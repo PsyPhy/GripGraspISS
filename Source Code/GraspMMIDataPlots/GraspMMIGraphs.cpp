@@ -11,7 +11,6 @@
 /// Methods for drawing the various graphs on the screen.
 
 #include "stdafx.h"
-#include <Windows.h>
 
 #include "..\Useful\Useful.h"
 #include "..\Useful\fOutputDebugString.h"
@@ -189,7 +188,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	int last_sample;
 	int index;
 
-	int i;
+	int i, j;
 
 	::View view;
 
@@ -229,22 +228,27 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	int row = 0;
 	int axis_color = GREY4;
 	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewSetXLimits( view, first_instant, last_instant );
-	ViewSetYLimits( view, - positionRadius, positionRadius );
 	ViewColor( view, axis_color );
 	ViewBox( view );
 	ViewTitle( view, "HMD Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
-	//if ( autoscaleCheckBox->Checked ) {
-	//	ViewAutoScaleInit( view );
-	//	for ( i = 0;  i < 3; i++ ) {
-	//		ViewAutoScaleAvailableDoubles ( view, 
-	//			&graspDataSlice[0].HMD.pose.position[i], 
-	//			first_sample, last_sample - 1,
-	//			sizeof( graspDataSlice[first_sample] ), 
-	//		MISSING_DOUBLE);
-	//	}
-	//}
+	// Set the plotting limits.
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] > max ) max = graspDataSlice[i].HMD.pose.position[j];
+				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] < min ) min = graspDataSlice[i].HMD.pose.position[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - positionRadius, positionRadius );
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
@@ -259,24 +263,28 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewSetXLimits( view, first_instant, last_instant );
-	ViewSetYLimits( view, - quaternionRadius, quaternionRadius );
 	ViewColor( view, axis_color );
 	ViewBox( view );
 	ViewTitle( view, "HMD Orientation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	ViewColor( view, GREY7 );
 	ViewHorizontalLine( view, 0.0 );
 
-	//if ( autoscaleCheckBox->Checked ) {
-	//	ViewAutoScaleInit( view );
-	//	for ( i = 0;  i < 3; i++ ) {
-	//		ViewAutoScaleAvailableDoubles ( view, 
-	//			&graspDataSlice[0].HMD.pose.orientation[i], 
-	//			first_sample, last_sample - 1,
-	//			sizeof( graspDataSlice[first_sample] ), 
-	//		MISSING_DOUBLE);
-	//	}
-	//}
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] > max ) max = graspDataSlice[i].HMD.pose.orientation[j];
+				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] < min ) min = graspDataSlice[i].HMD.pose.orientation[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - quaternionRadius, quaternionRadius );
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
@@ -303,11 +311,24 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewSetXLimits( view, first_instant, last_instant );
 	ViewColor( view, axis_color );
 	ViewBox( view );
 	ViewTitle( view, "HMD Rotation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	ViewSetYLimits( view, rotationRadius, - rotationRadius );
+	double angle_max = - DBL_MAX;
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].HMD.visible && fabs( graspDataSlice[i].hmdRotationAngle ) > angle_max ) angle_max = fabs( graspDataSlice[i].hmdRotationAngle );
+			}
+		}
+	}
+	else angle_max = rotationRadius;
+
+	ViewSetYLimits( view, angle_max, - angle_max );
+
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -317,7 +338,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
 
-	ViewSetYLimits( view, - rotationRadius, rotationRadius );
+	ViewSetYLimits( view, - angle_max, angle_max );
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -729,10 +750,12 @@ void GraspMMIGraphsForm::FillHistoryTree( void ) {
 }
 
 // Completed nodes that have errors persist as red in the tree.
-System::Void GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
-	if ( e->Button != System::Windows::Forms::MouseButtons::Right ) return;
-	if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) {
-		System::Windows::Forms::DialogResult response = MessageBox::Show( "Clear RED?", "GraspMMI", MessageBoxButtons::YesNo );
-		if ( response == System::Windows::Forms::DialogResult::Yes ) e->Node->ForeColor = System::Drawing::SystemColors::WindowText;
-	}
-}
+// Here we give the user the possibility to clear the red color as a way of acknowledging the error.
+// This makes newly occuring errors stand out more.
+//System::Void GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
+//	if ( e->Button != System::Windows::Forms::MouseButtons::Right ) return;
+//	if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) {
+//		System::Windows::Forms::DialogResult response = MessageBox::Show( "Clear RED?", "GraspMMI", MessageBoxButtons::YesNo );
+//		if ( response == System::Windows::Forms::DialogResult::Yes ) e->Node->ForeColor = System::Drawing::SystemColors::WindowText;
+//	}
+//}

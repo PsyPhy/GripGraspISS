@@ -174,6 +174,11 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			for ( int count = 0; count < PACKET_STREAM_BREAK_INSERT_SAMPLES && n_slices < max_slices; count++ ) {
 				grasp_data_slice[n_slices].fillTime = MISSING_FLOAT;
 				grasp_data_slice[n_slices].absoluteTime = MISSING_DOUBLE;
+				grasp_data_slice[n_slices].HMD.visible = false;
+				grasp_data_slice[n_slices].codaHMD.visible = false;
+				grasp_data_slice[n_slices].hand.visible = false;
+				grasp_data_slice[n_slices].chest.visible = false;
+				grasp_data_slice[n_slices].mouse.visible = false;
 				n_slices++;
 			}
 		}

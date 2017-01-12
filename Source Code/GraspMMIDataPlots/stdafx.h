@@ -18,6 +18,7 @@
 #include <string.h>
 #include <vcclr.h>
 #include <io.h>
+#include <float.h>
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
