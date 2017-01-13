@@ -6,7 +6,7 @@
     <LocalDebuggerCommandArguments>--legacy</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>--daemon</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--legacy</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
