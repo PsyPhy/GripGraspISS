@@ -28,7 +28,7 @@ static unsigned long __nan = 0x7ff7ffff;
 
 #define MISSING_DOUBLE	999999.999999
 #define MISSING_FLOAT	999999.999999f
-#define MISSING_INT		((int)(0x80000000))
+#define MISSING_INT		((int)(MISSING_DOUBLE))
 #define MISSING_CHAR	127
 
 
