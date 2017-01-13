@@ -206,6 +206,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdGraphPanel = (gcnew System::Windows::Forms::Panel());
 			this->hmdContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->autoscaleHMD = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->autoscaleIndicator = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			this->taskGraphPanel = (gcnew System::Windows::Forms::Panel());
 			this->taskContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
@@ -232,9 +233,8 @@ private: System::ComponentModel::IContainer^  components;
 			this->visibleHistoryTree = (gcnew System::Windows::Forms::TreeView());
 			this->taskTreeContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->rebuildTree = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->autoscaleIndicator = (gcnew System::Windows::Forms::TextBox());
 			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
+			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
@@ -343,14 +343,28 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdContextMenu->Name = L"contextMenuStrip1";
 			this->hmdContextMenu->ShowCheckMargin = true;
 			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(139, 26);
+			this->hmdContextMenu->Size = System::Drawing::Size(153, 48);
+			this->hmdContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::hmdContextMenu_ItemClicked);
 			// 
 			// autoscaleHMD
 			// 
 			this->autoscaleHMD->CheckOnClick = true;
 			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(138, 22);
+			this->autoscaleHMD->Size = System::Drawing::Size(152, 22);
 			this->autoscaleHMD->Text = L"Autoscale";
+			// 
+			// autoscaleIndicator
+			// 
+			this->autoscaleIndicator->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->autoscaleIndicator->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->autoscaleIndicator->ForeColor = System::Drawing::Color::Maroon;
+			this->autoscaleIndicator->Location = System::Drawing::Point(1170, 14);
+			this->autoscaleIndicator->Name = L"autoscaleIndicator";
+			this->autoscaleIndicator->ReadOnly = true;
+			this->autoscaleIndicator->Size = System::Drawing::Size(112, 24);
+			this->autoscaleIndicator->TabIndex = 1;
+			this->autoscaleIndicator->Text = L"Autoscale On";
+			this->autoscaleIndicator->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// groupBox3
 			// 
@@ -561,7 +575,7 @@ private: System::ComponentModel::IContainer^  components;
 				this->toolStripSeparator4, this->clearItemErrorHighlight, this->clearAllErrorHighlights});
 			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
 			this->taskTreeContextMenu->ShowImageMargin = false;
-			this->taskTreeContextMenu->Size = System::Drawing::Size(210, 98);
+			this->taskTreeContextMenu->Size = System::Drawing::Size(210, 76);
 			this->taskTreeContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskTreeContextMenu_ItemClicked);
 			// 
 			// rebuildTree
@@ -570,29 +584,16 @@ private: System::ComponentModel::IContainer^  components;
 			this->rebuildTree->Size = System::Drawing::Size(209, 22);
 			this->rebuildTree->Text = L"Rebuild Tree";
 			// 
+			// toolStripSeparator4
+			// 
+			this->toolStripSeparator4->Name = L"toolStripSeparator4";
+			this->toolStripSeparator4->Size = System::Drawing::Size(206, 6);
+			// 
 			// clearItemErrorHighlight
 			// 
 			this->clearItemErrorHighlight->Name = L"clearItemErrorHighlight";
 			this->clearItemErrorHighlight->Size = System::Drawing::Size(209, 22);
 			this->clearItemErrorHighlight->Text = L"Clear This Error Highlight";
-			// 
-			// autoscaleIndicator
-			// 
-			this->autoscaleIndicator->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
-			this->autoscaleIndicator->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->autoscaleIndicator->ForeColor = System::Drawing::Color::Maroon;
-			this->autoscaleIndicator->Location = System::Drawing::Point(1170, 14);
-			this->autoscaleIndicator->Name = L"autoscaleIndicator";
-			this->autoscaleIndicator->ReadOnly = true;
-			this->autoscaleIndicator->Size = System::Drawing::Size(112, 24);
-			this->autoscaleIndicator->TabIndex = 1;
-			this->autoscaleIndicator->Text = L"Autoscale On";
-			this->autoscaleIndicator->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// toolStripSeparator4
-			// 
-			this->toolStripSeparator4->Name = L"toolStripSeparator4";
-			this->toolStripSeparator4->Size = System::Drawing::Size(206, 6);
 			// 
 			// clearAllErrorHighlights
 			// 
@@ -753,7 +754,6 @@ private: System::ComponentModel::IContainer^  components;
 			else StopRefreshTimer();
 		}
 		System::Void taskContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
-			int bottom = 200;
 			if (  e->ClickedItem->Text->Contains( "All") || e->ClickedItem->Text->Contains( "all") ) {
 				taskViewBottom = 0;
 				taskViewTop = 1000.0;
