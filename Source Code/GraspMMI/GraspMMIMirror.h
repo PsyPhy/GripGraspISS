@@ -94,9 +94,9 @@ namespace GraspGUI {
 			chestVisibilityBar->BackColor = color;
 
 			if ( tracker_status < TRACKER_ANOMALY ) {
-				hmdVisibilityBar->Value = tracker_status % 10;
+				chestVisibilityBar->Value = tracker_status % 10;
 				handVisibilityBar->Value = (tracker_status / 10) % 10;
-				chestVisibilityBar->Value = (tracker_status / 100) % 10;
+				hmdVisibilityBar->Value = (tracker_status / 100) % 10;
 			}
 			else {
 				hmdVisibilityBar->Value = 0;
