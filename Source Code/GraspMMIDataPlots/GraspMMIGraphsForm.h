@@ -763,6 +763,7 @@ private: System::ComponentModel::IContainer^  components;
 				taskViewBottom = bottom;
 				taskViewTop = 99.0 + taskViewBottom;
 			}
+			StartRefreshTimer();
 		 }
 
 
@@ -815,6 +816,9 @@ private: System::ComponentModel::IContainer^  components;
 			if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) clearItemErrorHighlight->Enabled = true;
 			else clearItemErrorHighlight->Enabled = false;
 
+		 }
+private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+			StartRefreshTimer();
 		 }
 };
 }
