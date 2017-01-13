@@ -75,8 +75,10 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 	DisplaySetScreenPosition( hmdDisplay, 0, 0 );
 	DisplayInit( hmdDisplay );
 	DisplayErase( hmdDisplay );
-	hmdStripChartLayout = CreateLayout( hmdDisplay, HMD_STRIPCHARTS, 1 );
-	LayoutSetDisplayEdgesRelative( hmdStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
+	hmdStripChartLayout = CreateLayout( hmdDisplay, HMD_STRIPCHARTS - 1, 1 );
+	LayoutSetDisplayEdgesRelative( hmdStripChartLayout, 0.0, 0.1, 1.0, 1.0 );
+	tiltStripChartLayout = CreateLayout( hmdDisplay, 1, 1 );
+	LayoutSetDisplayEdgesRelative( tiltStripChartLayout, 0.0, 0.0, 1.0, 0.1 );
 
 	// Marker Visibility Strip Charts
 	parent = static_cast<HWND>( markerGraphPanel->Handle.ToPointer());
@@ -317,6 +319,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	double angle_max = - DBL_MAX;
 	ViewSetXLimits( view, first_instant, last_instant );
 	if ( autoscaleHMD->Checked ) {
+		autoscaleIndicator->Visible = true;
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.
 		for ( i = first_sample + 1; i < last_sample; i++ ) {
@@ -325,7 +328,10 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 			}
 		}
 	}
-	else angle_max = rotationRadius;
+	else {
+		angle_max = rotationRadius;
+		autoscaleIndicator->Visible = false;
+	}
 
 	ViewSetYLimits( view, angle_max, - angle_max );
 
@@ -357,8 +363,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
 
-	row++;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
+	view = LayoutView( tiltStripChartLayout, 0, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
 	ViewColor( view, axis_color );
 	ViewBox( view );
@@ -417,20 +422,28 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTitle( view, "Chest", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	DisplaySwap( markerDisplay );
 
+	// Plot which protocol and task was executing at each point in time.
 	DisplayActivate( historyDisplay );
 	fOutputDebugString( "DisplayErase( historyDisplay ) started.\n" );
 	DisplayErase( historyDisplay );
 	fOutputDebugString( "DisplayErase( historyDisplay ) finished.\n" );
 
 	row = 0;
+	double bottom = taskViewBottom;
+	double top = taskViewTop;
+
 	view = LayoutView( historyStripChartLayout, row++, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewSetYLimits( view, 0, 1000.0 );
+	ViewSetYLimits( view, bottom, top );
+
+	if ( ( top - bottom ) > 100.0 ) {
+		ViewColor( view, GREY7 );
+		for ( double y = bottom; y < top; y += 200.0 ) ViewHorizontalBand( view, y, y + 100.0 );
+	}
+
 	ViewColor( view, axis_color );
 	ViewBox( view );
 	ViewTitle( view, "Protocol", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	ViewColor( view, GREY7 );
-	for ( double y = 100.0; y < 1000.0; y += 200.0 ) ViewHorizontalBand( view, y, y + 100.0 );
 
 	ViewSelectColor( view, 1 );
 	ViewScatterPlotAvailableDoubles( view, 
@@ -452,15 +465,15 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		MISSING_INT);
 
 	ViewColor( view, axis_color );
-	for ( double y = 100.0; y < 1000.0; y += 200.0 ) {
+	for ( double y = bottom; y < top; y += 200.0 ) {
 		char label[16];
-		sprintf( label, "%3.0f", y );
-		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + 40.0 ), 0.0 );
+		sprintf( label, "%03.0f's", y );
+		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + 50.0 ), 0.0 );
 	}
-	for ( double y = 0.0; y < 1000.0; y += 200.0 ) {
+	for ( double y = bottom + 100.0; y < top; y += 200.0 ) {
 		char label[16];
-		sprintf( label, "%3.0f", y );
-		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + 40.0 ), 0.0 );
+		sprintf( label, "%03.0f's", y );
+		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + 50.0 ), 0.0 );
 	}
 
 	DisplaySwap( historyDisplay );
@@ -611,7 +624,13 @@ void GraspMMIGraphsForm::ParseProtocolFile( System::Windows::Forms::TreeNode^ pr
 	Marshal::FreeHGlobal( IntPtr(fn) );
 }
 
-void GraspMMIGraphsForm::FillHistoryTree( void ) {
+void GraspMMIGraphsForm::RebuildHistoryTree( void ) {
+	visibleHistoryTree->Nodes->Clear();
+	task_tree_current_index = 0;
+	BuildHistoryTree();
+}
+
+void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 
 	// Starting from where we left off, look for the beginning and end of each task.
 	for ( unsigned int index = task_tree_current_index; index < nHousekeepingSlices; index++ ) {
@@ -749,13 +768,4 @@ void GraspMMIGraphsForm::FillHistoryTree( void ) {
 	task_tree_current_index = nHousekeepingSlices;
 }
 
-// Completed nodes that have errors persist as red in the tree.
-// Here we give the user the possibility to clear the red color as a way of acknowledging the error.
-// This makes newly occuring errors stand out more.
-//System::Void GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
-//	if ( e->Button != System::Windows::Forms::MouseButtons::Right ) return;
-//	if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) {
-//		System::Windows::Forms::DialogResult response = MessageBox::Show( "Clear RED?", "GraspMMI", MessageBoxButtons::YesNo );
-//		if ( response == System::Windows::Forms::DialogResult::Yes ) e->Node->ForeColor = System::Drawing::SystemColors::WindowText;
-//	}
-//}
+

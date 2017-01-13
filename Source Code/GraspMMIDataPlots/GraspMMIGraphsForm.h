@@ -38,7 +38,10 @@ namespace GraspMMI {
 		static double	positionRadius = 500.0; // Range of XYZ values around zero in mm.
 		static double	quaternionRadius = 0.5;	// Range for XYZ components of quaternions. Use 1.0 to see 360° rotations.
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
-		static	int		refreshInterval = 2000;	// How often to update the display, in milliseconds.
+		static	int		refreshInterval = 500;	// How often to update the display, in milliseconds.
+
+		double taskViewBottom;
+		double taskViewTop;
 
 		//
 		// Objects used to plot to the screen.
@@ -48,6 +51,7 @@ namespace GraspMMI {
 		Display		markerDisplay;
 		Display		historyDisplay;
 		::Layout	hmdStripChartLayout;
+		::Layout	tiltStripChartLayout;
 		::Layout	markerStripChartLayout;
 		::Layout	historyStripChartLayout;
 
@@ -85,13 +89,18 @@ namespace GraspMMI {
 
 	public: 
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
+
+	public: 
+
+	public: 
+
 	public: 
 		String^ scriptDirectory;			// Path to root file of the GUI menu tree.
 
 	public:
 
 		GraspMMIGraphsForm() : 
-			TimebaseOffset( -16 ), 
+			TimebaseOffset( -17 ), 
 			nDataSlices( 0 ), 
 			nHousekeepingSlices( 0 ),
 			current_subject( 0 ),
@@ -101,7 +110,9 @@ namespace GraspMMI {
 			previous_task_leaf( nullptr ),
 			current_task_start_time( 0.0 ),
 			task_tree_current_index( 0 ),
-			first_step( 0 )
+			first_step( 0 ),
+			taskViewBottom( 0.0 ),
+			taskViewTop( 1000.0 )
 		{
 			InitializeComponent();
 
@@ -143,6 +154,27 @@ namespace GraspMMI {
 	private: System::Windows::Forms::TreeView^  visibleHistoryTree;
 	private: System::Windows::Forms::ContextMenuStrip^  hmdContextMenu;
 	private: System::Windows::Forms::ToolStripMenuItem^  autoscaleHMD;
+	private: System::Windows::Forms::ContextMenuStrip^  taskContextMenu;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem000;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem100;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItemAll;
+	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator1;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem200;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem300;
+	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator2;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem400;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem500;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem600;
+	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator3;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem900;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox1;
+	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox2;
+	private: System::Windows::Forms::ContextMenuStrip^  taskTreeContextMenu;
+	private: System::Windows::Forms::ToolStripMenuItem^  clearItemErrorHighlight;
+	private: System::Windows::Forms::TextBox^  autoscaleIndicator;
+	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator4;
+	private: System::Windows::Forms::ToolStripMenuItem^  clearAllErrorHighlights;
+	private: System::Windows::Forms::ToolStripMenuItem^  rebuildTree;
 
 
 private: System::ComponentModel::IContainer^  components;
@@ -172,8 +204,25 @@ private: System::ComponentModel::IContainer^  components;
 			this->scrollBar = (gcnew System::Windows::Forms::HScrollBar());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->hmdGraphPanel = (gcnew System::Windows::Forms::Panel());
+			this->hmdContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->autoscaleHMD = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			this->taskGraphPanel = (gcnew System::Windows::Forms::Panel());
+			this->taskContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->toolStripMenuItemAll = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripSeparator1 = (gcnew System::Windows::Forms::ToolStripSeparator());
+			this->toolStripTextBox1 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem100 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem200 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem300 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripSeparator2 = (gcnew System::Windows::Forms::ToolStripSeparator());
+			this->toolStripTextBox2 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem400 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem500 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem600 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripSeparator3 = (gcnew System::Windows::Forms::ToolStripSeparator());
+			this->toolStripMenuItem000 = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem900 = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
@@ -181,15 +230,22 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
 			this->historyTree = (gcnew System::Windows::Forms::TreeView());
 			this->visibleHistoryTree = (gcnew System::Windows::Forms::TreeView());
-			this->hmdContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
-			this->autoscaleHMD = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->taskTreeContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
+			this->rebuildTree = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->autoscaleIndicator = (gcnew System::Windows::Forms::TextBox());
+			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
+			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->groupBox2->SuspendLayout();
+			this->hmdGraphPanel->SuspendLayout();
+			this->hmdContextMenu->SuspendLayout();
 			this->groupBox3->SuspendLayout();
+			this->taskContextMenu->SuspendLayout();
 			this->groupBox4->SuspendLayout();
 			this->groupBox5->SuspendLayout();
-			this->hmdContextMenu->SuspendLayout();
+			this->taskTreeContextMenu->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -275,10 +331,26 @@ private: System::ComponentModel::IContainer^  components;
 			// hmdGraphPanel
 			// 
 			this->hmdGraphPanel->ContextMenuStrip = this->hmdContextMenu;
+			this->hmdGraphPanel->Controls->Add(this->autoscaleIndicator);
 			this->hmdGraphPanel->Location = System::Drawing::Point(6, 28);
 			this->hmdGraphPanel->Name = L"hmdGraphPanel";
 			this->hmdGraphPanel->Size = System::Drawing::Size(1313, 577);
 			this->hmdGraphPanel->TabIndex = 0;
+			// 
+			// hmdContextMenu
+			// 
+			this->hmdContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->autoscaleHMD});
+			this->hmdContextMenu->Name = L"contextMenuStrip1";
+			this->hmdContextMenu->ShowCheckMargin = true;
+			this->hmdContextMenu->ShowImageMargin = false;
+			this->hmdContextMenu->Size = System::Drawing::Size(139, 26);
+			// 
+			// autoscaleHMD
+			// 
+			this->autoscaleHMD->CheckOnClick = true;
+			this->autoscaleHMD->Name = L"autoscaleHMD";
+			this->autoscaleHMD->Size = System::Drawing::Size(138, 22);
+			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// groupBox3
 			// 
@@ -288,18 +360,126 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox3->Size = System::Drawing::Size(1326, 287);
 			this->groupBox3->TabIndex = 2;
 			this->groupBox3->TabStop = false;
-			this->groupBox3->Text = L"Task History";
+			this->groupBox3->Text = L"Task Execution";
 			// 
 			// taskGraphPanel
 			// 
+			this->taskGraphPanel->ContextMenuStrip = this->taskContextMenu;
 			this->taskGraphPanel->Location = System::Drawing::Point(6, 31);
 			this->taskGraphPanel->Name = L"taskGraphPanel";
 			this->taskGraphPanel->Size = System::Drawing::Size(1310, 248);
 			this->taskGraphPanel->TabIndex = 1;
 			// 
+			// taskContextMenu
+			// 
+			this->taskContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(14) {this->toolStripMenuItemAll, 
+				this->toolStripSeparator1, this->toolStripTextBox1, this->toolStripMenuItem100, this->toolStripMenuItem200, this->toolStripMenuItem300, 
+				this->toolStripSeparator2, this->toolStripTextBox2, this->toolStripMenuItem400, this->toolStripMenuItem500, this->toolStripMenuItem600, 
+				this->toolStripSeparator3, this->toolStripMenuItem000, this->toolStripMenuItem900});
+			this->taskContextMenu->Name = L"taskContextMenu";
+			this->taskContextMenu->Size = System::Drawing::Size(203, 268);
+			this->taskContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskContextMenu_ItemClicked);
+			// 
+			// toolStripMenuItemAll
+			// 
+			this->toolStripMenuItemAll->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->toolStripMenuItemAll->ImageScaling = System::Windows::Forms::ToolStripItemImageScaling::None;
+			this->toolStripMenuItemAll->Name = L"toolStripMenuItemAll";
+			this->toolStripMenuItemAll->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItemAll->Tag = L"";
+			this->toolStripMenuItemAll->Text = L"Show All";
+			this->toolStripMenuItemAll->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+			// 
+			// toolStripSeparator1
+			// 
+			this->toolStripSeparator1->Name = L"toolStripSeparator1";
+			this->toolStripSeparator1->Size = System::Drawing::Size(199, 6);
+			// 
+			// toolStripTextBox1
+			// 
+			this->toolStripTextBox1->AutoSize = false;
+			this->toolStripTextBox1->Enabled = false;
+			this->toolStripTextBox1->Name = L"toolStripTextBox1";
+			this->toolStripTextBox1->Size = System::Drawing::Size(100, 24);
+			this->toolStripTextBox1->Text = L"Seated";
+			// 
+			// toolStripMenuItem100
+			// 
+			this->toolStripMenuItem100->Name = L"toolStripMenuItem100";
+			this->toolStripMenuItem100->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem100->Tag = L"100";
+			this->toolStripMenuItem100->Text = L"100 Visual-Visual";
+			// 
+			// toolStripMenuItem200
+			// 
+			this->toolStripMenuItem200->Name = L"toolStripMenuItem200";
+			this->toolStripMenuItem200->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem200->Tag = L"200";
+			this->toolStripMenuItem200->Text = L"200 Visual-Manual";
+			// 
+			// toolStripMenuItem300
+			// 
+			this->toolStripMenuItem300->Name = L"toolStripMenuItem300";
+			this->toolStripMenuItem300->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem300->Tag = L"300";
+			this->toolStripMenuItem300->Text = L"300 Manual-Manual";
+			// 
+			// toolStripSeparator2
+			// 
+			this->toolStripSeparator2->Name = L"toolStripSeparator2";
+			this->toolStripSeparator2->Size = System::Drawing::Size(199, 6);
+			// 
+			// toolStripTextBox2
+			// 
+			this->toolStripTextBox2->AutoSize = false;
+			this->toolStripTextBox2->Enabled = false;
+			this->toolStripTextBox2->Name = L"toolStripTextBox2";
+			this->toolStripTextBox2->Size = System::Drawing::Size(100, 24);
+			this->toolStripTextBox2->Text = L"Floating";
+			// 
+			// toolStripMenuItem400
+			// 
+			this->toolStripMenuItem400->Name = L"toolStripMenuItem400";
+			this->toolStripMenuItem400->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem400->Tag = L"400";
+			this->toolStripMenuItem400->Text = L"400 Visual-Visual";
+			// 
+			// toolStripMenuItem500
+			// 
+			this->toolStripMenuItem500->Name = L"toolStripMenuItem500";
+			this->toolStripMenuItem500->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem500->Tag = L"500";
+			this->toolStripMenuItem500->Text = L"500 Visual-Manual";
+			// 
+			// toolStripMenuItem600
+			// 
+			this->toolStripMenuItem600->Name = L"toolStripMenuItem600";
+			this->toolStripMenuItem600->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem600->Tag = L"600";
+			this->toolStripMenuItem600->Text = L"600 Manual-Manual";
+			// 
+			// toolStripSeparator3
+			// 
+			this->toolStripSeparator3->Name = L"toolStripSeparator3";
+			this->toolStripSeparator3->Size = System::Drawing::Size(199, 6);
+			// 
+			// toolStripMenuItem000
+			// 
+			this->toolStripMenuItem000->Name = L"toolStripMenuItem000";
+			this->toolStripMenuItem000->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem000->Tag = L"0";
+			this->toolStripMenuItem000->Text = L"000 Setup / Stow";
+			// 
+			// toolStripMenuItem900
+			// 
+			this->toolStripMenuItem900->Name = L"toolStripMenuItem900";
+			this->toolStripMenuItem900->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem900->Tag = L"900";
+			this->toolStripMenuItem900->Text = L"900 Maintenance";
+			// 
 			// taskRightTimeLimit
 			// 
-			this->taskRightTimeLimit->Location = System::Drawing::Point(1214, 1150);
+			this->taskRightTimeLimit->Location = System::Drawing::Point(1219, 1150);
 			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
 			this->taskRightTimeLimit->Size = System::Drawing::Size(112, 24);
@@ -308,7 +488,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// taskLeftTimeLimit
 			// 
-			this->taskLeftTimeLimit->Location = System::Drawing::Point(31, 1150);
+			this->taskLeftTimeLimit->Location = System::Drawing::Point(20, 1150);
 			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
 			this->taskLeftTimeLimit->Size = System::Drawing::Size(112, 24);
@@ -359,7 +539,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// visibleHistoryTree
 			// 
-			this->visibleHistoryTree->ContextMenuStrip = this->hmdContextMenu;
+			this->visibleHistoryTree->ContextMenuStrip = this->taskTreeContextMenu;
 			this->visibleHistoryTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->visibleHistoryTree->Location = System::Drawing::Point(6, 37);
@@ -373,21 +553,52 @@ private: System::ComponentModel::IContainer^  components;
 			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
 			this->visibleHistoryTree->Size = System::Drawing::Size(570, 1118);
 			this->visibleHistoryTree->TabIndex = 1;
+			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
 			// 
-			// hmdContextMenu
+			// taskTreeContextMenu
 			// 
-			this->hmdContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->autoscaleHMD});
-			this->hmdContextMenu->Name = L"contextMenuStrip1";
-			this->hmdContextMenu->ShowCheckMargin = true;
-			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(153, 48);
+			this->taskTreeContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->rebuildTree, 
+				this->toolStripSeparator4, this->clearItemErrorHighlight, this->clearAllErrorHighlights});
+			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
+			this->taskTreeContextMenu->ShowImageMargin = false;
+			this->taskTreeContextMenu->Size = System::Drawing::Size(210, 98);
+			this->taskTreeContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskTreeContextMenu_ItemClicked);
 			// 
-			// autoscaleHMD
+			// rebuildTree
 			// 
-			this->autoscaleHMD->CheckOnClick = true;
-			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(152, 22);
-			this->autoscaleHMD->Text = L"Autoscale";
+			this->rebuildTree->Name = L"rebuildTree";
+			this->rebuildTree->Size = System::Drawing::Size(209, 22);
+			this->rebuildTree->Text = L"Rebuild Tree";
+			// 
+			// clearItemErrorHighlight
+			// 
+			this->clearItemErrorHighlight->Name = L"clearItemErrorHighlight";
+			this->clearItemErrorHighlight->Size = System::Drawing::Size(209, 22);
+			this->clearItemErrorHighlight->Text = L"Clear This Error Highlight";
+			// 
+			// autoscaleIndicator
+			// 
+			this->autoscaleIndicator->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
+			this->autoscaleIndicator->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->autoscaleIndicator->ForeColor = System::Drawing::Color::Maroon;
+			this->autoscaleIndicator->Location = System::Drawing::Point(1170, 14);
+			this->autoscaleIndicator->Name = L"autoscaleIndicator";
+			this->autoscaleIndicator->ReadOnly = true;
+			this->autoscaleIndicator->Size = System::Drawing::Size(112, 24);
+			this->autoscaleIndicator->TabIndex = 1;
+			this->autoscaleIndicator->Text = L"Autoscale On";
+			this->autoscaleIndicator->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// toolStripSeparator4
+			// 
+			this->toolStripSeparator4->Name = L"toolStripSeparator4";
+			this->toolStripSeparator4->Size = System::Drawing::Size(206, 6);
+			// 
+			// clearAllErrorHighlights
+			// 
+			this->clearAllErrorHighlights->Name = L"clearAllErrorHighlights";
+			this->clearAllErrorHighlights->Size = System::Drawing::Size(209, 22);
+			this->clearAllErrorHighlights->Text = L"Clear All Error Highlights";
 			// 
 			// GraspMMIGraphsForm
 			// 
@@ -414,10 +625,14 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox1->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->EndInit();
 			this->groupBox2->ResumeLayout(false);
+			this->hmdGraphPanel->ResumeLayout(false);
+			this->hmdGraphPanel->PerformLayout();
+			this->hmdContextMenu->ResumeLayout(false);
 			this->groupBox3->ResumeLayout(false);
+			this->taskContextMenu->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox5->ResumeLayout(false);
-			this->hmdContextMenu->ResumeLayout(false);
+			this->taskTreeContextMenu->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -435,7 +650,8 @@ private: System::ComponentModel::IContainer^  components;
 	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
 	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
 	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
-	private: void FillHistoryTree( void );
+	private: void BuildHistoryTree( void );
+	private: void RebuildHistoryTree( void );
 	private:
 
 		// A timer to trigger new polling for packets after a delay.
@@ -463,15 +679,19 @@ private: System::ComponentModel::IContainer^  components;
 			ReadTelemetryCache( packetCacheFileRoot );
 			// Adjust the scrollbar limits according to the newly loaded data.
 			AdjustScrollSpan();
-			// If we are live, shift the limits of the plots to reflect the most recent data.
-			// Otherwise, keep the window span where it is.
-			if ( dataLiveCheckBox->Checked ) MoveToLatest();
-			// Replot all of the strip charts.
+			//// If we are live, shift the limits of the plots to reflect the most recent data.
+			//// Otherwise, keep the window span where it is.
+			if ( dataLiveCheckBox->Checked ) {
+				MoveToLatest();
+				// MoveToLatest() has the side effect of unchecking the live check box, 
+				// becaue it causes a value change in the slider which is presumed to be by user action.
+				// So here we have to reset the check.
+				dataLiveCheckBox->Checked = true;
+			}
 			RefreshGraphics();
 			// Update the history tree.
-			FillHistoryTree();
+			BuildHistoryTree();
 			// Start the timer again to trigger the next cycle after a delay.
-			dataLiveCheckBox->Checked = true;
 			StartRefreshTimer();
 
 		}
@@ -501,7 +721,7 @@ private: System::ComponentModel::IContainer^  components;
 			ReadTelemetryCache( packetCacheFileRoot );
 			AdjustScrollSpan();
 			dataLiveCheckBox->Checked = true;
-			FillHistoryTree();
+			BuildHistoryTree();
 			CreateRefreshTimer( refreshInterval );
 			StartRefreshTimer();
 		}
@@ -532,6 +752,70 @@ private: System::ComponentModel::IContainer^  components;
 			if ( dataLiveCheckBox->Checked ) StartRefreshTimer();
 			else StopRefreshTimer();
 		}
+		System::Void taskContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+			int bottom = 200;
+			if (  e->ClickedItem->Text->Contains( "All") || e->ClickedItem->Text->Contains( "all") ) {
+				taskViewBottom = 0;
+				taskViewTop = 1000.0;
+			}
+			else {
+				int bottom = Convert::ToInt32( e->ClickedItem->Tag );
+				taskViewBottom = bottom;
+				taskViewTop = 99.0 + taskViewBottom;
+			}
+		 }
+
+
+		System::Void taskTreeContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+			TreeNode^ node = visibleHistoryTree->SelectedNode;
+			StopRefreshTimer();
+			if ( e->ClickedItem == clearItemErrorHighlight ) {
+				// Completed nodes that have errors persist as red in the tree.
+				// Here we give the user the possibility to clear the red color as a way of acknowledging the error.
+				// This makes newly occuring errors stand out more.
+				if ( node->Text->EndsWith( "!" ) && node->ForeColor == System::Drawing::Color::Red ) {
+					node->ForeColor = System::Drawing::SystemColors::WindowText;
+				}
+			}
+			else if (  e->ClickedItem == clearAllErrorHighlights ) {
+				// They can all be cleared as once.
+				ClearAllErrorHighlights();
+			}
+			else if (  e->ClickedItem == rebuildTree ) {
+				// Rebuilding the tree restores all of the error hightlights.
+				RebuildHistoryTree();
+			}
+			StartRefreshTimer();
+		}		 
+
+		System::Void ClearAllErrorHighlights( void ) {
+			StopRefreshTimer();
+			for ( int i = 0; i < visibleHistoryTree->Nodes->Count; i++ ) {
+				TreeNode^ subject_node = visibleHistoryTree->Nodes[i];
+				for ( int i = 0; i < subject_node->Nodes->Count; i++ ) {
+					TreeNode^ protocol_node = subject_node->Nodes[i];
+					for ( int i = 0; i < protocol_node->Nodes->Count; i++ ) {
+						TreeNode^ task_node = protocol_node->Nodes[i];
+						for ( int i = 0; i < task_node->Nodes->Count; i++ ) {
+							TreeNode^ task_leaf = task_node->Nodes[i];
+							if ( task_leaf->Text->EndsWith( "!" ) && task_leaf->ForeColor == System::Drawing::Color::Red ) {
+								task_leaf->ForeColor = System::Drawing::SystemColors::WindowText;
+							}
+						}
+					}
+				}
+			}
+			StartRefreshTimer();
+		}		 
+
+		System::Void visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
+			// Normal behavior for a left click is to select the node, but right click leaves the selection unchanged.
+			// Here we force any click to select the node, which is convenient for setting the target of the context menu.
+			visibleHistoryTree->SelectedNode = e->Node;
+			if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) clearItemErrorHighlight->Enabled = true;
+			else clearItemErrorHighlight->Enabled = false;
+
+		 }
 };
 }
 

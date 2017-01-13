@@ -8,6 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>Cache\\GraspPackets.2017.01.07</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>Cache\\GraspPackets.2017.01.13</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
