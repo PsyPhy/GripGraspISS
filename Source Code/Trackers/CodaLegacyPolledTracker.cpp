@@ -41,7 +41,7 @@ void CodaLegacyPolledTracker::Initialize( const char *ini_filename ) {
 
 	// Prepare for acquiring single frames of marker data.
 	coda_data_frame.dwChannelStart = 0;
-	coda_data_frame.dwNumChannels = nMarkers;
+	coda_data_frame.dwNumChannels = CODA_DEFAULT_MAX_MARKER;
 	coda_data_frame.pData = fPosition;
 	coda_data_frame.pValid = bInView;
 
