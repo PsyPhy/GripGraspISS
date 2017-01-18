@@ -10,19 +10,15 @@
 
 #pragma once
 
-// #include "../Useful/Useful.h" 
-
-namespace PsyPhy {
+#include "../Useful/Useful.h"
 
 // I am also putting here support for calculations on 3D rigid bodies.
 // It should probably be a separate class, but I will deal with that later.
 
 #define MAX_RIGID_BODY_MARKERS	256
 
-typedef double Vector3[3];
-typedef float  Vector3f[3];
-typedef double Quaternion[4];
-typedef double Matrix3x3[3][3];
+namespace PsyPhy {
+
 typedef struct {
 	Vector3	position;
 	Quaternion	orientation;
@@ -31,6 +27,7 @@ typedef struct {
 	Vector3	displacement;
 	Quaternion	rotation;
 } Transform;
+
 
 class VectorsMixin {
 
@@ -142,4 +139,4 @@ public:
 
 };
 
-};
+}

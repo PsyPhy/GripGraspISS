@@ -139,9 +139,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\Grip\Grip.vcxproj">
-      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
       <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
     </ProjectReference>

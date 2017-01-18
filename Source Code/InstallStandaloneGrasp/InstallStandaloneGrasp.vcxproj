@@ -14,12 +14,6 @@
     <ProjectReference Include="..\..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
       <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\CLWSemulator\CLWSemulator.vcxproj">
-      <Project>{ec91da99-703d-46a9-bc18-74d21ace5b66}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
-      <Project>{26c677e6-bba3-4406-9e10-ce856aac42f2}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\AlignToAxisMarkersGUI\AlignToAxisMarkersGUI.vcxproj">
       <Project>{9aa8f18b-fde0-4b5b-8399-a5fe017305d7}</Project>
     </ProjectReference>

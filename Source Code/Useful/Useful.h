@@ -5,12 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <windows.h>
 
 #define MAX_PATHLENGTH	1024
-
-#ifdef __cplusplus
-namespace PsyPhy {
-#endif
 
 // Useful constants for accessing components of 
 //  vectors and quaternions.
@@ -31,10 +28,21 @@ static unsigned long __nan = 0x7ff7ffff;
 #define MISSING_INT		((int)(MISSING_DOUBLE))
 #define MISSING_CHAR	127
 
-
 #define Pi	M_PI
+#define PI Pi
+#define DegreesToRadians(x) ((x) * PI / 180.0)
+#define RadiansToDegrees(x) ((x) * 180.0 / PI)
 
-#define UNDEFINED		-1
+#define UNDEFINED	-1
+#define local		static
+
+#ifndef __cplusplus
+#define FALSE 0
+#define TRUE  1
+#endif
+
+#define YES	TRUE
+#define NO	FALSE
 
 // Some useful constants.
 
@@ -45,6 +53,24 @@ static unsigned long __nan = 0x7ff7ffff;
 #define ABORT_EXIT 4
 #define RETRY_EXIT 5
 
+// I define here Vector, Quaternion and Matrix data types.
+// I use them in both standard C code and in C++ code.
+// The problem is that these types are also defined elswhere in 
+// Windows Forms packages. To make them unique, I want to put them
+// in my own namespace. But that cannot work in standard C code.
+// Thus the #ifdef here is to make this header compatible with
+// both my C and my C++ code.
+
 #ifdef __cplusplus
-};
+namespace PsyPhy {
 #endif
+
+typedef double Vector3[3];
+typedef float  Vector3f[3];
+typedef double Quaternion[4];
+typedef double Matrix3x3[3][3];
+
+#ifdef __cplusplus
+}
+#endif
+

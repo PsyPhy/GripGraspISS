@@ -122,17 +122,20 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\Grip\Grip.vcxproj">
-      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
-      <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspMMIUtilities\GraspMMIUtilities.vcxproj">
       <Project>{02a2555c-7310-461e-856d-6b1a75a56c57}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
+      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Grip\Grip.vcxproj">
+      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
+      <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Trackers\Trackers.vcxproj">
       <Project>{964bbd65-c198-4a02-8255-349803bdb59d}</Project>

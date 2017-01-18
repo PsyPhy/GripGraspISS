@@ -17,10 +17,10 @@
 #include "..\Useful\fMessageBox.h"
 
 // We make use of a package of plotting routines that I have had around for decades.
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\OglDisplay.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
+#include "..\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
+#include "..\PsyPhy2dGraphicsLib\OglDisplay.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
 
 #include "GraspMMIGraphsForm.h"
 #include "GraspMMIDataPlotsStartup.h"
@@ -144,16 +144,16 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 	// Adjust the behavior of the scroll bar depending on the selected 
 	// time span of the data window. A large step moves a full window
 	// width, a small step moves 1/10th of the window.
-	scrollBar->LargeChange = span;
-	scrollBar->SmallChange = span / 10.0;
+	scrollBar->LargeChange = (int) span;
+	scrollBar->SmallChange = (int) (span / 10.0);
 	// Set the scroll bar limits to match the limits of the available data.
 	// Note that you cannot not reach the max value of the scroll bar with the user
 	// controls. Best you can do is to get within LargeChange of the maximum. 
 	// We extend the range of the scroll bar by that value so that one can
 	//  reach the end of the data.
-	int top = ceil( max ) + scrollBar->LargeChange;
-	int bottom = floor( min );
-	if ( bottom >= floor( max ) ) bottom = floor( max );
+	int top = (int) ceil( max ) + scrollBar->LargeChange;
+	int bottom = (int) floor( min );
+	if ( bottom >= floor( max ) ) bottom = (int) floor( max );
 	scrollBar->Maximum = top;
 	scrollBar->Minimum = bottom;
 
@@ -178,7 +178,7 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 			break;
 		}
 	}
-	scrollBar->Value = ceil( latest );
+	scrollBar->Value = (int) ceil( latest );
 }
 
 // Here we do the actual work of plotting the strip charts and phase plots.
@@ -636,10 +636,10 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 	for ( unsigned int index = task_tree_current_index; index < nHousekeepingSlices; index++ ) {
 
 		// Get the pertinent data from the housekeeping packet.
-		int subject = graspHousekeepingSlice[index].userID;
-		int protocol = graspHousekeepingSlice[index].protocolID;
-		int task = graspHousekeepingSlice[index].taskID;
-		int step = graspHousekeepingSlice[index].stepID;
+		int subject = (int) graspHousekeepingSlice[index].userID;
+		int protocol = (int) graspHousekeepingSlice[index].protocolID;
+		int task = (int) graspHousekeepingSlice[index].taskID;
+		int step = (int) graspHousekeepingSlice[index].stepID;
 
 		// Ignore 0000 combinations and whenever there is missing data.
 		if ( subject != 0 && protocol != 0 && task != 0 && subject != MISSING_INT && protocol != MISSING_INT && task != MISSING_INT ) {

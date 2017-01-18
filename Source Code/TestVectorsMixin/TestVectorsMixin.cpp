@@ -11,8 +11,6 @@
 #define Y 1
 #define Z 2
 
-using namespace PsyPhy;
-
 VectorsMixin vm;
 
 int main(int argc, char *argv[])

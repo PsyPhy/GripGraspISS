@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\CLWSemulator\CLWSemulator.vcxproj">
+    <ProjectReference Include="..\CLWSemulator\CLWSemulator.vcxproj">
       <Project>{ec91da99-703d-46a9-bc18-74d21ace5b66}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
+    <ProjectReference Include="..\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
       <Project>{26c677e6-bba3-4406-9e10-ce856aac42f2}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">

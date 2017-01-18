@@ -3,11 +3,12 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include "..\PsyPhy2dGraphicsLib\Displays.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
+
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
 #include "../GraspGUI/GraspScripts.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Displays.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
 
 #define MAX_SLICES	(8*60*60*10)
 // Time span in seconds for each position of the span selector.
@@ -193,9 +194,9 @@ private: System::ComponentModel::IContainer^  components;
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
-			System::Windows::Forms::TreeNode^  treeNode2 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
-			System::Windows::Forms::TreeNode^  treeNode3 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
+			System::Windows::Forms::TreeNode^  treeNode4 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
+			System::Windows::Forms::TreeNode^  treeNode5 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
+			System::Windows::Forms::TreeNode^  treeNode6 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->dataLiveCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->lastAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -259,7 +260,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox1->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox1->Size = System::Drawing::Size(1328, 112);
+			this->groupBox1->Size = System::Drawing::Size(1328, 91);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Time Series";
@@ -280,7 +281,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// lastAbsoluteTimeTextBox
 			// 
-			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(1176, 74);
+			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(1176, 58);
 			this->lastAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->lastAbsoluteTimeTextBox->Name = L"lastAbsoluteTimeTextBox";
 			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(112, 24);
@@ -289,7 +290,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// firstAbsoluteTimeTextBox
 			// 
-			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(255, 74);
+			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(256, 58);
 			this->firstAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->firstAbsoluteTimeTextBox->Name = L"firstAbsoluteTimeTextBox";
 			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(112, 24);
@@ -299,7 +300,7 @@ private: System::ComponentModel::IContainer^  components;
 			// spanSelector
 			// 
 			this->spanSelector->LargeChange = 1;
-			this->spanSelector->Location = System::Drawing::Point(14, 30);
+			this->spanSelector->Location = System::Drawing::Point(9, 23);
 			this->spanSelector->Margin = System::Windows::Forms::Padding(4);
 			this->spanSelector->Maximum = 7;
 			this->spanSelector->Name = L"spanSelector";
@@ -312,7 +313,7 @@ private: System::ComponentModel::IContainer^  components;
 			// scrollBar
 			// 
 			this->scrollBar->LargeChange = 25;
-			this->scrollBar->Location = System::Drawing::Point(234, 38);
+			this->scrollBar->Location = System::Drawing::Point(229, 31);
 			this->scrollBar->Name = L"scrollBar";
 			this->scrollBar->Size = System::Drawing::Size(1079, 23);
 			this->scrollBar->TabIndex = 0;
@@ -321,7 +322,7 @@ private: System::ComponentModel::IContainer^  components;
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->hmdGraphPanel);
-			this->groupBox2->Location = System::Drawing::Point(13, 131);
+			this->groupBox2->Location = System::Drawing::Point(15, 111);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(1326, 613);
 			this->groupBox2->TabIndex = 1;
@@ -332,9 +333,9 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->hmdGraphPanel->ContextMenuStrip = this->hmdContextMenu;
 			this->hmdGraphPanel->Controls->Add(this->autoscaleIndicator);
-			this->hmdGraphPanel->Location = System::Drawing::Point(6, 28);
+			this->hmdGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->hmdGraphPanel->Name = L"hmdGraphPanel";
-			this->hmdGraphPanel->Size = System::Drawing::Size(1313, 577);
+			this->hmdGraphPanel->Size = System::Drawing::Size(1313, 582);
 			this->hmdGraphPanel->TabIndex = 0;
 			// 
 			// hmdContextMenu
@@ -343,14 +344,14 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdContextMenu->Name = L"contextMenuStrip1";
 			this->hmdContextMenu->ShowCheckMargin = true;
 			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(153, 48);
+			this->hmdContextMenu->Size = System::Drawing::Size(139, 26);
 			this->hmdContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::hmdContextMenu_ItemClicked);
 			// 
 			// autoscaleHMD
 			// 
 			this->autoscaleHMD->CheckOnClick = true;
 			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(152, 22);
+			this->autoscaleHMD->Size = System::Drawing::Size(138, 22);
 			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// autoscaleIndicator
@@ -379,9 +380,9 @@ private: System::ComponentModel::IContainer^  components;
 			// taskGraphPanel
 			// 
 			this->taskGraphPanel->ContextMenuStrip = this->taskContextMenu;
-			this->taskGraphPanel->Location = System::Drawing::Point(6, 31);
+			this->taskGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->taskGraphPanel->Name = L"taskGraphPanel";
-			this->taskGraphPanel->Size = System::Drawing::Size(1310, 248);
+			this->taskGraphPanel->Size = System::Drawing::Size(1310, 256);
 			this->taskGraphPanel->TabIndex = 1;
 			// 
 			// taskContextMenu
@@ -512,18 +513,18 @@ private: System::ComponentModel::IContainer^  components;
 			// groupBox4
 			// 
 			this->groupBox4->Controls->Add(this->markerGraphPanel);
-			this->groupBox4->Location = System::Drawing::Point(15, 750);
+			this->groupBox4->Location = System::Drawing::Point(15, 730);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(1326, 100);
+			this->groupBox4->Size = System::Drawing::Size(1326, 120);
 			this->groupBox4->TabIndex = 2;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Marker Visibility";
 			// 
 			// markerGraphPanel
 			// 
-			this->markerGraphPanel->Location = System::Drawing::Point(6, 28);
+			this->markerGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->markerGraphPanel->Name = L"markerGraphPanel";
-			this->markerGraphPanel->Size = System::Drawing::Size(1311, 64);
+			this->markerGraphPanel->Size = System::Drawing::Size(1311, 91);
 			this->markerGraphPanel->TabIndex = 0;
 			// 
 			// groupBox5
@@ -543,10 +544,10 @@ private: System::ComponentModel::IContainer^  components;
 				static_cast<System::Byte>(0)));
 			this->historyTree->Location = System::Drawing::Point(350, 23);
 			this->historyTree->Name = L"historyTree";
-			treeNode1->ForeColor = System::Drawing::Color::Blue;
-			treeNode1->Name = L"Node0";
-			treeNode1->Text = L"This tree will be hidden.";
-			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode1});
+			treeNode4->ForeColor = System::Drawing::Color::Blue;
+			treeNode4->Name = L"Node0";
+			treeNode4->Text = L"This tree will be hidden.";
+			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode4});
 			this->historyTree->Size = System::Drawing::Size(207, 23);
 			this->historyTree->TabIndex = 0;
 			this->historyTree->Visible = false;
@@ -556,16 +557,16 @@ private: System::ComponentModel::IContainer^  components;
 			this->visibleHistoryTree->ContextMenuStrip = this->taskTreeContextMenu;
 			this->visibleHistoryTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->visibleHistoryTree->Location = System::Drawing::Point(6, 37);
+			this->visibleHistoryTree->Location = System::Drawing::Point(6, 23);
 			this->visibleHistoryTree->Name = L"visibleHistoryTree";
-			treeNode2->ForeColor = System::Drawing::Color::Blue;
-			treeNode2->Name = L"Node0";
-			treeNode2->Text = L"Node0";
-			treeNode3->ForeColor = System::Drawing::SystemColors::WindowText;
-			treeNode3->Name = L"Node1";
-			treeNode3->Text = L"Node1";
-			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
-			this->visibleHistoryTree->Size = System::Drawing::Size(570, 1118);
+			treeNode5->ForeColor = System::Drawing::Color::Blue;
+			treeNode5->Name = L"Node0";
+			treeNode5->Text = L"Node0";
+			treeNode6->ForeColor = System::Drawing::SystemColors::WindowText;
+			treeNode6->Name = L"Node1";
+			treeNode6->Text = L"Node1";
+			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode5, treeNode6});
+			this->visibleHistoryTree->Size = System::Drawing::Size(570, 1132);
 			this->visibleHistoryTree->TabIndex = 1;
 			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
 			// 

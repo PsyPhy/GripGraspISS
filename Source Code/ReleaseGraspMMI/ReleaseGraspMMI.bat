@@ -46,7 +46,7 @@ rmdir /S /Q Cache
 rename HIDECache Cache
 
 REM Keep a record of releases.
-echo %ARCHIVE% >> GraspReleases.log
+echo %ARCHIVE% >> GraspMMIReleases.log
 
 popd
 
