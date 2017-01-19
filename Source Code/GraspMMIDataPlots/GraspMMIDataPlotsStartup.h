@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Displays.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
+#include "..\PsyPhy2dGraphicsLib\Displays.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
 namespace GraspMMI {
 
 	using namespace System;

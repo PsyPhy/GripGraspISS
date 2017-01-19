@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../Useful/fOutputDebugString.h"
-#include "GraspScripts.h"
 #include "../DexServices/DexServices.h"
-#include "../../../GripMMI/GripSourceCode/Grip/GripPackets.h"
+#include "../Grip/GripPackets.h"
+#include "GraspScripts.h"
 
 namespace GraspGUI {
 
