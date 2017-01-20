@@ -118,14 +118,6 @@ namespace GraspGUI {
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			String ^dateString = gcnew String( datestr );
 			resultsDirectory = "Results\\" +  dateString + "\\";
-			try {
-				if ( !Directory::Exists( resultsDirectory ) ) Directory::CreateDirectory( resultsDirectory );
-			}
-			catch ( Exception^ e ) 
-			{
-				e = e;
-				fAbortMessage( "GraspGUI", "Error creating results directory." );
-			}
 
 			// Standard Windows Forms initialization.
 			InitializeComponent();
@@ -1164,6 +1156,16 @@ namespace GraspGUI {
 		}
 
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) {
+			// Make sure that the results directory is present.
+			try {
+				if ( !Directory::Exists( resultsDirectory ) ) Directory::CreateDirectory( resultsDirectory );
+			}
+			catch ( Exception^ e ) 
+			{
+				e = e;
+				fAbortMessage( "GraspGUI", "Error creating results directory." );
+			}
+			// Connect to DEX for telemetry of housekeeping info.
 			ConnectToDEX();
 			InitializeForm();
 		}

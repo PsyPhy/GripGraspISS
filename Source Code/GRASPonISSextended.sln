@@ -152,6 +152,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InstallStandaloneGripMMI", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripMMIDocumentation", "GripMMIDocumentation\GripMMIDocumentation.vcxproj", "{B089F18B-624D-44C1-A60A-1169AF4F40D8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReleaseGripMMI", "ReleaseGripMMI\ReleaseGripMMI.vcxproj", "{8665AD10-4D79-40B8-B7A2-6109CF281573}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -825,6 +827,16 @@ Global
 		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Release|Win32.Build.0 = Release|Win32
 		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.TestRelease|Win32.Build.0 = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Debug|Win32.Build.0 = Debug|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Draft|Win32.ActiveCfg = Debug|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Draft|Win32.Build.0 = Debug|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.DraftRelease|Win32.Build.0 = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Release|Win32.ActiveCfg = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.Release|Win32.Build.0 = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{8665AD10-4D79-40B8-B7A2-6109CF281573}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

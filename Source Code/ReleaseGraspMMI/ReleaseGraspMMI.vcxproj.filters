@@ -3,9 +3,9 @@
   <ItemGroup>
     <None Include="..\..\GraspReleases.log" />
     <None Include="ReleaseGraspMMI.bat" />
-    <None Include="ReleaseGraspMMIDebug.mak" />
-    <None Include="ReleaseGraspMMIDraft.mak" />
-    <None Include="ReleaseGraspMMIRelease.mak" />
     <None Include="GraspMMI_Installation_Instructions.txt" />
+    <None Include="ReleaseGraspMMI.debug.mak" />
+    <None Include="ReleaseGraspMMI.draft.mak" />
+    <None Include="ReleaseGraspMMI.release.mak" />
   </ItemGroup>
 </Project>
