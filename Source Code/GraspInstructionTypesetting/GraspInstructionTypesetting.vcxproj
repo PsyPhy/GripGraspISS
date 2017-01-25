@@ -34,11 +34,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeOutput>install</NMakeOutput>
+    <NMakeOutput>
+    </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO GraspInstructions.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO GraspInstructions.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del /Q *.html install</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>del /Q *.html install redo</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>install</NMakeOutput>
