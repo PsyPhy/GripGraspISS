@@ -11,14 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CleanGraspMMI.mak" />
+    <None Include="InstallGraspMMI.debug.mak" />
+    <None Include="InstallGraspMMI.mak" />
+    <None Include="InstallGraspMMI.release.mak" />
+    <None Include="RunGraspMMI.bat" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CLWSemulator\CLWSemulator.vcxproj">
       <Project>{ec91da99-703d-46a9-bc18-74d21ace5b66}</Project>
     </ProjectReference>
     <ProjectReference Include="..\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
       <Project>{26c677e6-bba3-4406-9e10-ce856aac42f2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
-      <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspMMIDataPlots\GraspMMIDataPlots.vcxproj">
       <Project>{44066fc7-1873-48a2-8151-c6867a15d0df}</Project>
@@ -26,21 +30,11 @@
     <ProjectReference Include="..\GraspMMI\GraspMMI.vcxproj">
       <Project>{ebcf095f-8685-4c8b-9778-502379d0de58}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
-      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="CleanGraspMMI.mak" />
-    <None Include="InstallGraspMMI.debug.mak" />
-    <None Include="InstallGraspMMI.mak" />
-    <None Include="InstallGraspMMI.release.mak" />
-    <None Include="RunGraspMMI.bat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{240EE129-8610-4694-93D1-0A6FB2161E77}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
-    <ProjectName>InstallStandaloneGraspMMI</ProjectName>
+    <ProjectName>UpdateRuntimeForGraspMMI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
