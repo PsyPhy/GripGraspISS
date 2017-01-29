@@ -310,6 +310,8 @@ GraspMMIExecutables/*
 GraspMMIExecutables
 GraspExecutables/*
 GraspExecutables
+GripMMIExecutables
+GripMMIExecutables/*
 Documentation/*
 Documentation
 GraspDocumentation/*
