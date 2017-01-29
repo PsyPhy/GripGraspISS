@@ -111,7 +111,7 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 
 	double min, max;
-	unsigned long	i;
+	long	i;
 
 	// The time span of data to plot is determined by the slider.
 	double span = windowSpanSeconds[spanSelector->Value];
