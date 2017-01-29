@@ -1,2 +1,2 @@
 default:
-	ReleaseGripMMI.bat Release
+	ReleaseGripMMI.bat Draft

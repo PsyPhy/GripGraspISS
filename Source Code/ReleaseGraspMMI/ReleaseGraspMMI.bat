@@ -21,7 +21,10 @@ pushd %ROOT%
 
 REM Create a file tag with date and time, making sure that the hour has a leading zero.
 if "%time:~0,1%" EQU " " (set HOUR=0%time:~1,1%) else (set HOUR=%time:~0,2%)
-set TAG=(%date:~6,4%-%date:~3,2%-%date:~0,2% %HOUR%h%time:~3,2%m%time:~6,2%s)
+REM Create a date string in the form YYYY-MM-DD, trying to take into account the data format on the machine.
+REM If the first field is the day of the week, then the 4th character will be a blank.
+if "%date:~3,1%" EQU " " (set DTT=%date:~10,4%-%date:~4,2%-%date:~7,2%) else (set DTT=%date:~6,4%-%date:~3,2%-%date:~0,2%)
+set TAG=(%DTT% %HOUR%h%time:~3,2%m%time:~6,2%s)
 set ARCHIVE="..\GraspMMI %1 %TAG%.tar"
 echo Creating GRASPonISS Runtime Release %ARCHIVE%
 
@@ -30,7 +33,6 @@ echo Creating GRASPonISS Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspInstructions/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspScripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspSequences/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGraspMMI.bat
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMI_Installation_Instructions.txt
 
@@ -47,6 +49,7 @@ rename HIDECache Cache
 
 REM Keep a record of releases.
 echo %ARCHIVE% >> GraspMMIReleases.log
+echo %ARCHIVE% >> GripGraspReleases.log
 
 popd
 

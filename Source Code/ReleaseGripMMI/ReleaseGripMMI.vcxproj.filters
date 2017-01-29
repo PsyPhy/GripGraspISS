@@ -5,5 +5,8 @@
     <None Include="GripMMI_Installation_Instructions.txt" />
     <None Include="ReleaseGripMMI.debug.mak" />
     <None Include="ReleaseGripMMI.release.mak" />
+    <None Include="..\..\GripMMIReleases.log" />
+    <None Include="..\..\GripGraspReleases.log" />
+    <None Include="ReleaseGripMMI.draft.mak" />
   </ItemGroup>
 </Project>

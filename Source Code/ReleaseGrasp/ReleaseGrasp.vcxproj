@@ -22,7 +22,7 @@
     <None Include="ReleaseGrasp.release.mak" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj">
+    <ProjectReference Include="..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj">
       <Project>{d372af87-b6c6-4007-b361-2dada1a1c9d7}</Project>
     </ProjectReference>
   </ItemGroup>

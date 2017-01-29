@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\GraspReleases.log" />
+    <None Include="..\..\GraspMMIReleases.log" />
     <None Include="GraspMMI_Installation_Instructions.txt" />
     <None Include="ReleaseGraspMMI.bat" />
     <None Include="ReleaseGraspMMI.debug.mak" />
@@ -23,7 +23,7 @@
     <None Include="ReleaseGraspMMI.release.mak" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InstallStandaloneGraspMMI\InstallGraspMMI.vcxproj">
+    <ProjectReference Include="..\UpdateRuntimeForGraspMMI\UpdateRuntimeForGraspMMI.vcxproj">
       <Project>{240ee129-8610-4694-93d1-0a6fb2161e77}</Project>
     </ProjectReference>
   </ItemGroup>
