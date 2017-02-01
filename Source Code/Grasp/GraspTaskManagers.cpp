@@ -605,12 +605,13 @@ GraspTrialState GraspTaskManager::UpdateVisualTarget( void ) {
 	// Stay in this state for a fixed time.
 	// Nominally, the next step is to tilt the head prior to responding.
 	if ( TimerTimeout( presentTargetTimer ) ) return( TiltHead ); 
-	return( GraspTaskManager::UpdatePresentTarget() );
 	// Check if the hand has been raised, and if so, signal an error.
 	if ( raised == HandleHandElevation() ) {
 		interruptCondition = RAISED_HAND_VIOLATION;
 		return( TrialInterrupted );
 	}
+	// Do the standard processing for any UpdatePresentTarget().
+	return( GraspTaskManager::UpdatePresentTarget() );
 }
 
 GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) { 
