@@ -297,6 +297,8 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// Tell the ground what we are about to start doing.
 		ShowProgress( StartBlock, GetParadigm() );
 	}
+	sprintf( responseFilename, "%s.%s.rsp", output_filename_root, tag );
+	sprintf( poseFilename, "%s.%s.pse", output_filename_root, tag );
 
 	// Measure the time since this block was initiated.
 	TimerStart( blockTimer );
