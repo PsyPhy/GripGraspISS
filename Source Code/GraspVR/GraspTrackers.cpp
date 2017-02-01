@@ -12,7 +12,9 @@
 #include "GraspTrackers.h"
 
 // At one point I used a background thread to get the data from the codas.
-// This was to keep from blocking the refresh loop. But 
+// This was to keep from blocking the refresh loop. But now we use the GraspTrackerDaemon
+// that runs in a separate process to provide the most recent data with virtually zero
+// delay when we ask for the data with the current process.
 // #define BACKGROUND_GET_DATA
 
 using namespace PsyPhy;
@@ -157,7 +159,8 @@ void GraspDexTrackers::Update( void ) {
 	UpdatePoseTrackers();
 }
 
-// Construct a number that indicates the number of visible markers in each structure.
+// Construct a decimal number that indicates the number of visible markers in each structure.
+// 100's digit shows structure 3, 10's digit shows structure 2, 1's digit shows structure 1.
 unsigned int GraspDexTrackers::GetTrackerStatus( void ) {
 
 	unsigned int status = 0;
@@ -196,16 +199,6 @@ void GraspDexTrackers::Release( void ) {
 
 }
 
-void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
-
-	// Output the CODA data to a file.
-	char filename[MAX_PATH];
-	strncpy( filename, filename_root, sizeof( filename ) );
-	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
-	fOutputDebugString( "Writing CODA data to %s.\n", filename );
-	codaTracker->WriteMarkerFile( filename );
-	fOutputDebugString( "File %s closed.\n", filename );
-}
 
 // The base class GraspTrackers takes care of writing out the pose data from each cycle.
 // Derived classes are given the chance to add additional columns to the data file.

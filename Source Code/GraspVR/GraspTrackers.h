@@ -89,7 +89,6 @@ namespace Grasp {
 
 		virtual void Release( void );
 
-		virtual void WriteDataFiles( char *filename_root ){}
 		// The base class GraspTrackers takes care of writing out the pose data from each cycle.
 		// Derived classes are given the chance to add additional columns to the data file.
 		virtual void WriteAdditionalColumnHeadings( FILE *fp ) {}
@@ -159,7 +158,7 @@ namespace Grasp {
 		virtual unsigned int GetTrackerStatus( void );
 		virtual void Update( void );
 		virtual void Release( void );
-		virtual void WriteDataFiles( char *filename_root );
+
 		void WriteAdditionalColumnHeadings( FILE *fp );
 		void WriteAdditionalTrackerData( FILE *fp );
 
