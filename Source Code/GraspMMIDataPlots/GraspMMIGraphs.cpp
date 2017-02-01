@@ -111,14 +111,14 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 
 	double min, max;
-	long	i;
+	unsigned long	i;
 
 	// The time span of data to plot is determined by the slider.
 	double span = windowSpanSeconds[spanSelector->Value];
 
 	// Find the time window of the available data packets.
 	// The global array RealMarkerTime[] has been filled previously.
-	min = 0.0;
+	min = DBL_MAX;
 	for ( i = 0; i < nDataSlices; i++ ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
 			min = graspDataSlice[i].absoluteTime;
@@ -132,11 +132,11 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 		}
 	}
 	max = span;
-	for ( i = nDataSlices - 1; i > 0; i-- ) {
+	for ( i = nDataSlices - 1; i > 0 && nDataSlices > 0; i-- ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) break;
 	}
 	if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE && graspDataSlice[i].absoluteTime > max ) max = graspDataSlice[i].absoluteTime;
-	for ( i = nHousekeepingSlices - 1; i >= 0; i-- ) {
+	for ( i = nHousekeepingSlices - 1; i > 0 && nHousekeepingSlices > 0; i-- ) {
 		if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) break;
 	}
 	if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[i].absoluteTime > max ) max = graspHousekeepingSlice[i].absoluteTime;	

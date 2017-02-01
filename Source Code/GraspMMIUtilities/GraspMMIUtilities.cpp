@@ -114,7 +114,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 	}
 	// If fid is negative, file is not open. This should not happen, because GripMMIStartup should verify 
 	// the availability of files containing packets before the GripMMIDesktop form is executed.
-	// But if we do fail to open the file, just signal the error and exit the hard way.
+	// But if we do fail to open the file, fake a single frame of data with everything missing.
 	if ( fid < 0 ) {
 			//fMessageBox( MB_OK, "GripMMI", "Error opening packet file %s.\n\n", filename );
 			//exit( -1 );
