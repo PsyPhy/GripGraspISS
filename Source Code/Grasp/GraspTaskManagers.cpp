@@ -48,10 +48,12 @@ int GraspTaskManager::maxRetries = 7;
 
 // At the beginning of a trial the subject is asked to straighen the head on the shoulders.
 // The pose of the head is then taken as the zero reference for the rest of the trial.
-// We have two methods to validate whether the head is straight. In automatic mode the software
-// attempts to detect when the head is straight based on measurements of the chest marker array.
+// We have three methods to validate whether the head is straight. In automatic mode the software
+// attempts to detect when the head is straight based either on measurements of the chest marker array
+// or simply based on the Z direction in the laboratory reference frame as defined by the coda alignment.
 // In manual mode, we simply ask the subject to straighten the head and click when it is so.
-// The following flag sets which method to use.
+// The following flag sets which method to use by default, but it is modified by the program that
+// instantiates the GraspTaskManager.
 StraightenHeadMethod GraspTaskManager::straightenHeadMethod = MANUAL_STRAIGHTEN;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
