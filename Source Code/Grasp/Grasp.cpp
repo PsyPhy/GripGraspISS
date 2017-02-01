@@ -49,9 +49,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	bool useHMD = true;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
 
-	char sequence_filename[FILENAME_MAX];
-	char output_filename_root[FILENAME_MAX];
-	char dex_log_filename[FILENAME_MAX];
+	char sequence_filename[FILENAME_MAX] = "";
+	char output_filename_root[FILENAME_MAX] = "";
+	char dex_log_filename[FILENAME_MAX] = "";
 
 	// Parse the command line.
 	int items;

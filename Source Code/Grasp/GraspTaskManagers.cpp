@@ -185,6 +185,11 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 int GraspTaskManager::LoadTrialParameters( char *filename ) {
 
 	char line[2048];
+
+	// If no filename is given, then set the number of trials to 0 and return.
+	if ( !filename || ( strlen( filename ) == 0 ) ) return( nTrials = 0 );
+
+	// Read the trial parameter list from the specivied file.
 	FILE *fp = fopen( filename, "r" );
 	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for read.", filename );
 	while ( fgets( line, sizeof( line ), fp ) ) {
@@ -195,7 +200,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 			&trialParameters[nTrials].responseHeadTilt,
 			&trialParameters[nTrials].conflictGain,
 			&trialParameters[nTrials].provideFeedback );
-
+		// A valid trial description has 5 items.
 		if ( items == 5 ) {
 			if ( nTrials >= MAX_GRASP_TRIALS ) {
 				fOutputDebugString( "Max number of trials (%d) exceeded in file %s\n", MAX_GRASP_TRIALS, filename );
@@ -205,10 +210,16 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 				nTrials++;
 			}
 		}
+		// If one or more items was not parsed by sscanf(), signal the error to the debug console.
 		else if ( items > 0 ) {
 			fOutputDebugString( "Error reading parameter list after item %d.\n", items );
 			fOutputDebugString( line );
+			fAbortMessage( "GraspTaskManager", "Error reading parameter list after item %d.\n:%s", line );
 		}
+		// If the very first element on the line was not a number, then none of the 
+		// items will be correctly parsed by sscanf(). We consider such lines to be
+		// comments. By convention, we start comment lines with a '#', but that is 
+		// not actually a requirement.
 		else {
 			fOutputDebugString( "Comment line: %s", line );
 		}
@@ -247,65 +258,48 @@ void GraspTaskManager::ShowProgress( int phase, int characteristic ) {
 int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filename_root ) {
 
 
-	if ( DEMO == GetParadigm() ) {
-		// Call the paradigm-specific preparation, if any.
-		Prepare();
-		// Initialize the state machine.
-		previousState = NullState;
-		currentState = Demo;
-		// Tell the ground what we are about to start doing.
-		ShowProgress( currentState, GetParadigm() );
-	}
-	else if ( QUITVR == GetParadigm() ) {
-		// Call the paradigm-specific preparation, if any.
-		Prepare();
-		// Initialize the state machine.
-		previousState = NullState;
-		currentState = VRCompleted;
-		// Tell the ground what we are about to start doing.
-		ShowProgress( currentState, GetParadigm() );
-	}
-	else {
+	// Initialize the state machine.
+	previousState = NullState;
+	currentState = StartBlock;
 
-		// Load the trial parameters.
-		int trials = LoadTrialParameters( sequence_filename );
-		fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
-		currentTrial = 0;
+	// Call the paradigm-specific preparation, if any.
+	// The derived class should redefine the currentState, if need be.
+	Prepare();
 
-		// Initiliaze the counter that limits the number of retries.
-		retriesRemaining = maxRetries;
+	// Load the trial parameters. If no sequence file was specified, LoadTrialParameters() will 
+	//  return zero for the number of trials.
+	int trials = LoadTrialParameters( sequence_filename );
+	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
+	currentTrial = 0;
 
-		// Open a file for storing the responses and output a header.
-		sprintf( responseFilename, "%s.rsp", output_filename_root );
-		response_fp = fopen( responseFilename, "w" );
-		fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
-		fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+	// Initiliaze the counter that limits the number of retries.
+	retriesRemaining = maxRetries;
 
-		// Open a file for storing the tracker poses and output a header.
-		sprintf( poseFilename, "%s.pse", output_filename_root );
-		pose_fp = fopen( poseFilename, "w" );
-		fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
-		fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation;" );
-		trackers->WriteAdditionalColumnHeadings( pose_fp );
-		fprintf( pose_fp, "\n" );
-
-		// Call the paradigm-specific preparation, if any.
-		Prepare();
-
-		// Initialize the state machine.
-		previousState = NullState;
-		currentState = StartBlock;
-
-		// Tell the ground what we are about to start doing.
-		ShowProgress( StartBlock, GetParadigm() );
-	}
+	// If we are actually going to do some trials, open a file for storing the responses and output a header.
 	sprintf( responseFilename, "%s.%s.rsp", output_filename_root, tag );
+	response_fp = fopen( responseFilename, "w" );
+	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
+	fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
+
+	// Open a file for storing the tracker poses and output a header.
+	// We open this file even if there are no trials to be performed so that we can have a record of
+	// the object movements and marker positions and visibility during the trial.
 	sprintf( poseFilename, "%s.%s.pse", output_filename_root, tag );
+	pose_fp = fopen( poseFilename, "w" );
+	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
+	fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation;" );
+	trackers->WriteAdditionalColumnHeadings( pose_fp );
+	fprintf( pose_fp, "\n" );
+
+	// Tell the ground what we are about to start doing.
+	ShowProgress( StartBlock, GetParadigm() );
 
 	// Measure the time since this block was initiated.
 	TimerStart( blockTimer );
 
 	// Enter into the rendering loop and handle other messages.
+	// If the user presses ESC on the laptop keyboard, display->HandleMessages()
+	// will return false and this loop will terminate.
 	while ( display->HandleMessages() ) {
 
 		static int cycle_counter = 0;
@@ -353,10 +347,14 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	response_fp = NULL;
 	if ( pose_fp ) fclose( pose_fp );
 	pose_fp = NULL;
-
-	if ( DEMO == GetParadigm() || QUITVR == GetParadigm() ) return( 0 );
-	else if ( currentTrial < nTrials ) return( -2 );
-	else if ( retriesRemaining <= 0 ) return( -3 );
+	
+	// If currentTrial is less than nTrials, then the execution of the 
+	// block of trials was interrupted, presumably by a press of the ESC key.
+	if ( currentTrial < nTrials ) return( MANUAL_BLOCK_INTERRUPTION );
+	// If retriesRemaining is less than zero then the user has exhausted the 
+	// permitted number of trial repetions due to errors.
+	else if ( retriesRemaining <= 0 ) return( MAX_RETRIES_EXCEEDED );
+	// If none of the above is true, then this is a normal exit.
 	else return 0;
 
 }
@@ -593,6 +591,12 @@ void GraspTaskManager::EnterPresentTarget( void ) {
 	dexServices->SnapPicture( tag );
 	renderer->orientationTarget->SetOrientation( trialParameters[currentTrial].targetOrientation, 0.0, 0.0 );
 }
+// Here is a routine that does generic processing that is common 
+// to all target presentation modalities. It simply checks for timeout of
+// the response phase and it handles making sure that the subject
+// maintains the correct head orientation. It does not actually 
+// obtain a response. A derived class will provide the actual 
+// code to obtain the response and then call this common routine.
 GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) { 
 	// Update the visual feedback about the head tilt and see if 
 	// the head is still aligned as needed.
@@ -604,7 +608,9 @@ GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) {
 	// this state for the next cycle.
 	return( currentState );
 }
-
+// Here we provide a common routing to handle updating during a visual 
+// target presentation. It does not get called by the base class, but a derived class
+// can call it from within its own UpdatePresentTarget() handler.
 GraspTrialState GraspTaskManager::UpdateVisualTarget( void ) { 
 	// Stay in this state for a fixed time.
 	// Nominally, the next step is to tilt the head prior to responding.
@@ -617,7 +623,9 @@ GraspTrialState GraspTaskManager::UpdateVisualTarget( void ) {
 	// Do the standard processing for any UpdatePresentTarget().
 	return( GraspTaskManager::UpdatePresentTarget() );
 }
-
+// Here we provide a common routing to handle updating during a manual 
+// target presentation. It does not get called by the base class, but a derived class
+// can call it from within its own UpdatePresentTarget() handler.
 GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) { 
 	// Limit the time allowed to achieve the target hand orientation.
 	if ( TimerTimeout( alignHandTimer ) ) {
@@ -629,9 +637,12 @@ GraspTrialState GraspTaskManager::UpdateKinestheticTarget( void ) {
 	else renderer->raiseHandIndicator->Disable();
 	// Modulate the color of the hand to guide the subject to a kinesthetic target orientation.
 	if ( aligned == HandleHandAlignment( true ) ) return( TiltHead );
+	// Do the standard processing for any UpdatePresentTarget().
 	return( GraspTaskManager::UpdatePresentTarget() );
 }
-
+// This common exit routine cleans up the VR environment whether
+// the target presentation was visual or manual. So no need to replace
+// this one in the derived class.
 void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the visible targets.
 	renderer->orientationTarget->Disable();
@@ -708,6 +719,12 @@ void GraspTaskManager::EnterObtainResponse( void ) {
 	// Show where to aim without showing the target orientation.
 	renderer->positionOnlyTarget->Enable();
 }
+// Here is a routine that does generic processing that is common 
+// to all response modalities. It simply checks for timeout of
+// the response phase and it handles making sure that the subject
+// maintains the correct head orientation. It does not actually 
+// obtain a response. A derived class will provide the actual 
+// code to obtain the response and then call this common routine.
 GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) { 
 	// Limit the time allowed to give a response
 	if ( TimerTimeout( responseTimer ) ) {
@@ -849,7 +866,7 @@ void GraspTaskManager::EnterVRCompleted( void ) {
 	// Show the success indicator.
 	renderer->vrCompletedIndicator->Enable();
 	renderer->room->Enable();
-	renderer->starrySky->Enable();
+	renderer->starrySky->Disable();
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateVRCompleted( void ) { 

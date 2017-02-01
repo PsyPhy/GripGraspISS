@@ -2,6 +2,8 @@
 //
 
 #define MAX_GRASP_TRIALS 64
+#define MANUAL_BLOCK_INTERRUPTION -2
+#define MAX_RETRIES_EXCEEDED -3
 
 namespace Grasp {
 
@@ -236,13 +238,15 @@ namespace Grasp {
 	// DEMO protocol. 
 	class DemoP : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( DEMO ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "DEMO"; }
+		// Initialize the tool to be used and also override the intial state of the state machine.
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "DEMO"; currentState = Demo; }
 	};
 
 	// QuitVR protocol. 
 	class QuitVR : public GraspTaskManager {
 		Paradigm GetParadigm( void ) { return( QUITVR ); }
-		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "QUIT"; }
+		// Initialize the tool to be used and also override the intial state of the state machine.
+		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "QUIT"; currentState = VRCompleted; }
 	};
 
 };
