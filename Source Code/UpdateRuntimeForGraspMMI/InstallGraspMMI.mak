@@ -12,7 +12,10 @@ EXECUTABLES = \
 	GraspPacketsForSimulator.gpk \
 	RunGraspMMI.bat
 
+# Runtime executables will go here.
 DESTINATION=..\..\GraspMMIExecutables
+# The .bat file is placed in the highest level directory.
+ROOT=..\..
 
 install: $(EXECUTABLES) InstallGraspMMI.mak 
 	-rmdir /S /Q $(DESTINATION)
@@ -23,5 +26,5 @@ install: $(EXECUTABLES) InstallGraspMMI.mak
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\*.dll $(DESTINATION)
-	copy RunGraspMMI.bat ..\..
+	copy RunGraspMMI.bat $(ROOT)
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

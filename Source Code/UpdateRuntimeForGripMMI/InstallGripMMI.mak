@@ -12,7 +12,10 @@ EXECUTABLES = \
 	GripPacketsForSimulator.gpk \
 	RunGripMMI.bat
 
+# Runtime executables will go here.
 DESTINATION=..\..\GripMMIExecutables
+# The .bat file is placed in the highest level directory.
+ROOT=..\..
 
 install: $(EXECUTABLES) InstallGripMMI.mak 
 	-rmdir /S /Q $(DESTINATION)
@@ -23,5 +26,5 @@ install: $(EXECUTABLES) InstallGripMMI.mak
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy GripPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\glut32.dll $(DESTINATION)
-	copy RunGripMMI.bat ..\..
+	copy RunGripMMI.bat $(ROOT)
 	echo $(BUILDCONFIGURATION) %date% %time% > $@
