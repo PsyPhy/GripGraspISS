@@ -573,12 +573,17 @@ GraspTrialState GraspTaskManager::UpdateAlignHead( void ) {
 	// Update the feedback about the head orientation wrt the desired head orientation.
 	// If the head alignment is satisfactory and the hand is not raised, move on to the next state.
 	if ( aligned == HandleHeadAlignment( true ) ) return( PresentTarget ); 
-	else if ( TimerTimeout( alignHeadTimer ) ) {
+	if ( TimerTimeout( alignHeadTimer ) ) {
 		renderer->lowerHandPrompt->Disable();
 		interruptCondition = HEAD_ALIGNMENT_TIMEOUT;
 		return( TrialInterrupted );
 	}
-	else return( currentState );
+	// The subject or an operator can abort a trial by pressing Return either on the keyboard or on the remote.
+	if ( display->KeyDownEvents('\r') ) {
+		interruptCondition = MANUAL_REJECT_TRIAL;
+		return( TrialInterrupted ); 
+	}
+	return( currentState );
 }
 void GraspTaskManager::ExitAlignHead( void ) {}
 
@@ -603,6 +608,11 @@ GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) {
 	if ( misaligned == HandleHeadAlignment( false ) ) {
 		interruptCondition = HEAD_MISALIGNMENT;
 		return( TrialInterrupted );
+	}
+	// The subject or an operator can abort a trial by pressing Return either on the keyboard or on the remote.
+	if ( display->KeyDownEvents('\r') ) {
+		interruptCondition = MANUAL_REJECT_TRIAL;
+		return( TrialInterrupted ); 
 	}
 	// If we haven't already returned based on some condition, continue in
 	// this state for the next cycle.
@@ -702,6 +712,11 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	//  where the time allowed to tilt the head is very long but we don't want to wait if the subject
 	//  succeeds in a short amount of time.
 	if ( display->KeyDownEvents(' ') && status == aligned ) return( ObtainResponse ); 
+	// The subject or an operator can abort a trial by pressing Return either on the keyboard or on the remote.
+	if ( display->KeyDownEvents('\r') ) {
+		interruptCondition = MANUAL_REJECT_TRIAL;
+		return( TrialInterrupted ); 
+	}
 	return( currentState );
 }
 void  GraspTaskManager::ExitTiltHead( void ) {
@@ -736,6 +751,11 @@ GraspTrialState GraspTaskManager::UpdateObtainResponse( void ) {
 	if ( misaligned == HandleHeadAlignment( false ) ) {
 		interruptCondition = HEAD_MISALIGNMENT;
 		return( TrialInterrupted );
+	}
+	// The subject or an operator can abort a trial by pressing Return either on the keyboard or on the remote.
+	if ( display->KeyDownEvents('\r') ) {
+		interruptCondition = MANUAL_REJECT_TRIAL;
+		return( TrialInterrupted ); 
 	}
 	return( currentState );
 }
@@ -922,6 +942,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	case HEAD_ALIGNMENT_TIMEOUT: interrupt_indicator = renderer->headAlignTimeoutIndicator; break;
 	case HEAD_TILT_TIMEOUT: interrupt_indicator = renderer->headTiltTimeoutIndicator; break;
 	case HEAD_MISALIGNMENT: interrupt_indicator = renderer->headMisalignIndicator; break;
+	case MANUAL_REJECT_TRIAL: interrupt_indicator = renderer->manualRejectIndicator; break;
 	}
 	interrupt_indicator->Enable();
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );

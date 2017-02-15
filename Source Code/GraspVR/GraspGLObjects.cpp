@@ -35,6 +35,7 @@ const char *GraspGLObjects::hand_too_soon_bitmap = "Bmp\\HandTooSoon.bmp";
 const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
 const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
 const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
+const char *GraspGLObjects::manual_reject_bitmap = "Bmp\\RejectTrial.bmp";
 const char *GraspGLObjects::vr_completed_bitmap = "Bmp\\VRCompleted.bmp";
 const char *GraspGLObjects::demo_bitmap = "Bmp\\DemoWorking.bmp";
 			
@@ -431,6 +432,10 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	head_misalign_texture = new Texture( head_misalign_bitmap );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
 	spinners->AddComponent( headMisalignIndicator );
+
+	manual_reject_texture = new Texture( manual_reject_bitmap );
+	manualRejectIndicator = CreateIndicator( manual_reject_texture );
+	spinners->AddComponent( manualRejectIndicator );
 
 	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
 	headAlignTimeoutIndicator = CreateIndicator( head_align_timeout_texture );

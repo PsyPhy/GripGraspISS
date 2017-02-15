@@ -171,6 +171,10 @@ namespace Grasp {
 		Texture			*head_misalign_texture;		
 		static const char *head_misalign_bitmap;
 
+		Assembly		*manualRejectIndicator;			// Shown when the subject does not maintain the desired head tilt.
+		Texture			*manual_reject_texture;		
+		static const char *manual_reject_bitmap;
+
 		Assembly		*headAlignTimeoutIndicator;
 		Assembly		*headTiltTimeoutIndicator;
 		Texture			*head_align_timeout_texture;		
