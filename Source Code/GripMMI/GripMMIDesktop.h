@@ -432,9 +432,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// LogoPictureBox
 			// 
 			this->LogoPictureBox->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"LogoPictureBox.Image")));
-			this->LogoPictureBox->Location = System::Drawing::Point(15, 32);
+			this->LogoPictureBox->Location = System::Drawing::Point(20, 39);
+			this->LogoPictureBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->LogoPictureBox->Name = L"LogoPictureBox";
-			this->LogoPictureBox->Size = System::Drawing::Size(200, 200);
+			this->LogoPictureBox->Size = System::Drawing::Size(267, 246);
 			this->LogoPictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->LogoPictureBox->TabIndex = 0;
 			this->LogoPictureBox->TabStop = false;
@@ -443,9 +444,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->XYPlot->BackColor = System::Drawing::Color::Maroon;
 			this->XYPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->XYPlot->Location = System::Drawing::Point(18, 25);
+			this->XYPlot->Location = System::Drawing::Point(24, 31);
+			this->XYPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->XYPlot->Name = L"XYPlot";
-			this->XYPlot->Size = System::Drawing::Size(246, 196);
+			this->XYPlot->Size = System::Drawing::Size(327, 241);
 			this->XYPlot->TabIndex = 2;
 			this->XYPlot->TabStop = false;
 			// 
@@ -454,9 +456,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox1->Controls->Add(this->XYPlot);
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(240, 9);
+			this->groupBox1->Location = System::Drawing::Point(320, 11);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(279, 227);
+			this->groupBox1->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox1->Size = System::Drawing::Size(372, 279);
 			this->groupBox1->TabIndex = 4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Frontal (XY)";
@@ -466,9 +470,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox2->Controls->Add(this->ZYPlot);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(525, 9);
+			this->groupBox2->Location = System::Drawing::Point(700, 11);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(279, 227);
+			this->groupBox2->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox2->Size = System::Drawing::Size(372, 279);
 			this->groupBox2->TabIndex = 5;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Sagittal (ZY)";
@@ -477,9 +483,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->ZYPlot->BackColor = System::Drawing::Color::Maroon;
 			this->ZYPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->ZYPlot->Location = System::Drawing::Point(17, 25);
+			this->ZYPlot->Location = System::Drawing::Point(23, 31);
+			this->ZYPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->ZYPlot->Name = L"ZYPlot";
-			this->ZYPlot->Size = System::Drawing::Size(246, 196);
+			this->ZYPlot->Size = System::Drawing::Size(327, 241);
 			this->ZYPlot->TabIndex = 2;
 			this->ZYPlot->TabStop = false;
 			// 
@@ -488,9 +495,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox3->Controls->Add(this->CoPPlot);
 			this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox3->Location = System::Drawing::Point(810, 9);
+			this->groupBox3->Location = System::Drawing::Point(1080, 11);
+			this->groupBox3->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(279, 227);
+			this->groupBox3->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox3->Size = System::Drawing::Size(372, 279);
 			this->groupBox3->TabIndex = 6;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"CoP";
@@ -499,9 +508,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->CoPPlot->BackColor = System::Drawing::Color::Maroon;
 			this->CoPPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->CoPPlot->Location = System::Drawing::Point(18, 25);
+			this->CoPPlot->Location = System::Drawing::Point(24, 31);
+			this->CoPPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->CoPPlot->Name = L"CoPPlot";
-			this->CoPPlot->Size = System::Drawing::Size(246, 196);
+			this->CoPPlot->Size = System::Drawing::Size(327, 241);
 			this->CoPPlot->TabIndex = 2;
 			this->CoPPlot->TabStop = false;
 			// 
@@ -516,9 +526,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox4->Controls->Add(this->filterCheckbox);
 			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox4->Location = System::Drawing::Point(4, 322);
+			this->groupBox4->Location = System::Drawing::Point(5, 396);
+			this->groupBox4->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(1087, 648);
+			this->groupBox4->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox4->Size = System::Drawing::Size(1449, 798);
 			this->groupBox4->TabIndex = 7;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Time Series";
@@ -529,9 +541,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->filterConstantTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->filterConstantTextBox->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->filterConstantTextBox->Location = System::Drawing::Point(928, 0);
+			this->filterConstantTextBox->Location = System::Drawing::Point(1237, 0);
+			this->filterConstantTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->filterConstantTextBox->Name = L"filterConstantTextBox";
-			this->filterConstantTextBox->Size = System::Drawing::Size(47, 22);
+			this->filterConstantTextBox->Size = System::Drawing::Size(61, 26);
 			this->filterConstantTextBox->TabIndex = 26;
 			this->filterConstantTextBox->Text = L"2.0";
 			this->filterConstantTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -544,10 +557,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->rightLimitTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->rightLimitTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->rightLimitTextBox->Location = System::Drawing::Point(1019, 630);
+			this->rightLimitTextBox->Location = System::Drawing::Point(1359, 775);
+			this->rightLimitTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->rightLimitTextBox->Name = L"rightLimitTextBox";
 			this->rightLimitTextBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->rightLimitTextBox->Size = System::Drawing::Size(61, 16);
+			this->rightLimitTextBox->Size = System::Drawing::Size(81, 19);
 			this->rightLimitTextBox->TabIndex = 15;
 			this->rightLimitTextBox->Text = L"00:00:00";
 			this->rightLimitTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -557,9 +571,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->leftLimitTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->leftLimitTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->leftLimitTextBox->Location = System::Drawing::Point(11, 630);
+			this->leftLimitTextBox->Location = System::Drawing::Point(15, 775);
+			this->leftLimitTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->leftLimitTextBox->Name = L"leftLimitTextBox";
-			this->leftLimitTextBox->Size = System::Drawing::Size(87, 16);
+			this->leftLimitTextBox->Size = System::Drawing::Size(116, 19);
 			this->leftLimitTextBox->TabIndex = 15;
 			this->leftLimitTextBox->Text = L"00:00:00";
 			// 
@@ -570,9 +585,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->graphCollectionComboBox->FormattingEnabled = true;
 			this->graphCollectionComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"Summary", L"Kinematics", L"Visibility"});
-			this->graphCollectionComboBox->Location = System::Drawing::Point(704, 0);
+			this->graphCollectionComboBox->Location = System::Drawing::Point(939, 0);
+			this->graphCollectionComboBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->graphCollectionComboBox->Name = L"graphCollectionComboBox";
-			this->graphCollectionComboBox->Size = System::Drawing::Size(142, 23);
+			this->graphCollectionComboBox->Size = System::Drawing::Size(188, 26);
 			this->graphCollectionComboBox->TabIndex = 25;
 			this->graphCollectionComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GripMMIDesktop::graphCollectionComboBox_SelectedIndexChanged);
 			this->graphCollectionComboBox->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &GripMMIDesktop::graphCollectionComboBox_KeyPress);
@@ -584,10 +600,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->autoscaleCheckBox->AutoSize = true;
 			this->autoscaleCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->autoscaleCheckBox->Location = System::Drawing::Point(989, 1);
+			this->autoscaleCheckBox->Location = System::Drawing::Point(1319, 1);
+			this->autoscaleCheckBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->autoscaleCheckBox->Name = L"autoscaleCheckBox";
 			this->autoscaleCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->autoscaleCheckBox->Size = System::Drawing::Size(89, 21);
+			this->autoscaleCheckBox->Size = System::Drawing::Size(105, 24);
 			this->autoscaleCheckBox->TabIndex = 12;
 			this->autoscaleCheckBox->Text = L"Autoscale";
 			this->autoscaleCheckBox->UseVisualStyleBackColor = true;
@@ -595,9 +612,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			// StripCharts
 			// 
-			this->StripCharts->Location = System::Drawing::Point(6, 21);
+			this->StripCharts->Location = System::Drawing::Point(8, 26);
+			this->StripCharts->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->StripCharts->Name = L"StripCharts";
-			this->StripCharts->Size = System::Drawing::Size(1075, 609);
+			this->StripCharts->Size = System::Drawing::Size(1433, 750);
 			this->StripCharts->TabIndex = 0;
 			this->StripCharts->TabStop = false;
 			// 
@@ -606,10 +624,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->filterCheckbox->AutoSize = true;
 			this->filterCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->filterCheckbox->Location = System::Drawing::Point(859, 1);
+			this->filterCheckbox->Location = System::Drawing::Point(1145, 1);
+			this->filterCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->filterCheckbox->Name = L"filterCheckbox";
 			this->filterCheckbox->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->filterCheckbox->Size = System::Drawing::Size(58, 21);
+			this->filterCheckbox->Size = System::Drawing::Size(69, 24);
 			this->filterCheckbox->TabIndex = 9;
 			this->filterCheckbox->Text = L"Filter";
 			this->filterCheckbox->UseVisualStyleBackColor = true;
@@ -626,9 +645,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox5->Controls->Add(this->dataLiveCheckbox);
 			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox5->Location = System::Drawing::Point(4, 242);
+			this->groupBox5->Location = System::Drawing::Point(5, 298);
+			this->groupBox5->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(1087, 74);
+			this->groupBox5->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox5->Size = System::Drawing::Size(1449, 91);
 			this->groupBox5->TabIndex = 8;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Data Display";
@@ -638,10 +659,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->latestTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->latestTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->latestTextBox->Location = System::Drawing::Point(948, 52);
+			this->latestTextBox->Location = System::Drawing::Point(1264, 64);
+			this->latestTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->latestTextBox->Name = L"latestTextBox";
 			this->latestTextBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->latestTextBox->Size = System::Drawing::Size(61, 16);
+			this->latestTextBox->Size = System::Drawing::Size(81, 19);
 			this->latestTextBox->TabIndex = 14;
 			this->latestTextBox->Text = L"00:00:00";
 			this->latestTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -651,9 +673,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->earliestTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->earliestTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->earliestTextBox->Location = System::Drawing::Point(242, 52);
+			this->earliestTextBox->Location = System::Drawing::Point(323, 64);
+			this->earliestTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->earliestTextBox->Name = L"earliestTextBox";
-			this->earliestTextBox->Size = System::Drawing::Size(102, 16);
+			this->earliestTextBox->Size = System::Drawing::Size(136, 19);
 			this->earliestTextBox->TabIndex = 13;
 			this->earliestTextBox->Text = L"00:00:00";
 			// 
@@ -662,19 +685,20 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->Spans->AutoSize = true;
 			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->Spans->Location = System::Drawing::Point(12, 51);
+			this->Spans->Location = System::Drawing::Point(16, 63);
+			this->Spans->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->Spans->Name = L"Spans";
-			this->Spans->Size = System::Drawing::Size(223, 17);
+			this->Spans->Size = System::Drawing::Size(293, 20);
 			this->Spans->TabIndex = 12;
-			this->Spans->Text = L"12h  4h  1h  30m 10m 5m 60s 30s";
+			this->Spans->Text = L"12h  4h   1h    30m 10m  5m  60s  30s";
 			// 
 			// scrollBar
 			// 
 			this->scrollBar->LargeChange = 100000;
-			this->scrollBar->Location = System::Drawing::Point(242, 22);
+			this->scrollBar->Location = System::Drawing::Point(323, 27);
 			this->scrollBar->Maximum = 864000;
 			this->scrollBar->Name = L"scrollBar";
-			this->scrollBar->Size = System::Drawing::Size(767, 25);
+			this->scrollBar->Size = System::Drawing::Size(1023, 25);
 			this->scrollBar->SmallChange = 10000;
 			this->scrollBar->TabIndex = 10;
 			this->scrollBar->Value = 1000;
@@ -685,11 +709,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->spanSelector->AutoSize = false;
 			this->spanSelector->BackColor = System::Drawing::Color::White;
 			this->spanSelector->LargeChange = 1;
-			this->spanSelector->Location = System::Drawing::Point(13, 18);
+			this->spanSelector->Location = System::Drawing::Point(17, 22);
 			this->spanSelector->Margin = System::Windows::Forms::Padding(1);
 			this->spanSelector->Maximum = 7;
 			this->spanSelector->Name = L"spanSelector";
-			this->spanSelector->Size = System::Drawing::Size(219, 32);
+			this->spanSelector->Size = System::Drawing::Size(292, 39);
 			this->spanSelector->TabIndex = 11;
 			this->spanSelector->ValueChanged += gcnew System::EventHandler(this, &GripMMIDesktop::spanSelector_ValueChanged);
 			// 
@@ -700,9 +724,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->dataLiveCheckbox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->dataLiveCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->dataLiveCheckbox->Location = System::Drawing::Point(1024, 31);
+			this->dataLiveCheckbox->Location = System::Drawing::Point(1365, 38);
+			this->dataLiveCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->dataLiveCheckbox->Name = L"dataLiveCheckbox";
-			this->dataLiveCheckbox->Size = System::Drawing::Size(56, 24);
+			this->dataLiveCheckbox->Size = System::Drawing::Size(70, 29);
 			this->dataLiveCheckbox->TabIndex = 0;
 			this->dataLiveCheckbox->Text = L"Live";
 			this->dataLiveCheckbox->UseVisualStyleBackColor = true;
@@ -720,63 +745,71 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox6->Controls->Add(this->dexText);
 			this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox6->Location = System::Drawing::Point(1098, 9);
+			this->groupBox6->Location = System::Drawing::Point(1464, 11);
+			this->groupBox6->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox6->Name = L"groupBox6";
-			this->groupBox6->Size = System::Drawing::Size(423, 457);
+			this->groupBox6->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox6->Size = System::Drawing::Size(564, 562);
 			this->groupBox6->TabIndex = 9;
 			this->groupBox6->TabStop = false;
 			this->groupBox6->Text = L"Workspace Tablet Display";
 			// 
 			// fakeOK
 			// 
-			this->fakeOK->Location = System::Drawing::Point(114, 419);
+			this->fakeOK->Location = System::Drawing::Point(152, 516);
+			this->fakeOK->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeOK->Name = L"fakeOK";
-			this->fakeOK->Size = System::Drawing::Size(104, 32);
+			this->fakeOK->Size = System::Drawing::Size(139, 39);
 			this->fakeOK->TabIndex = 15;
 			this->fakeOK->Text = L"OK";
 			this->fakeOK->UseVisualStyleBackColor = true;
 			// 
 			// fakeInterrupt
 			// 
-			this->fakeInterrupt->Location = System::Drawing::Point(10, 419);
+			this->fakeInterrupt->Location = System::Drawing::Point(13, 516);
+			this->fakeInterrupt->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeInterrupt->Name = L"fakeInterrupt";
-			this->fakeInterrupt->Size = System::Drawing::Size(104, 32);
+			this->fakeInterrupt->Size = System::Drawing::Size(139, 39);
 			this->fakeInterrupt->TabIndex = 14;
 			this->fakeInterrupt->Text = L"Interrupt";
 			this->fakeInterrupt->UseVisualStyleBackColor = true;
 			// 
 			// fakeStatus
 			// 
-			this->fakeStatus->Location = System::Drawing::Point(322, 419);
+			this->fakeStatus->Location = System::Drawing::Point(429, 516);
+			this->fakeStatus->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeStatus->Name = L"fakeStatus";
-			this->fakeStatus->Size = System::Drawing::Size(96, 32);
+			this->fakeStatus->Size = System::Drawing::Size(128, 39);
 			this->fakeStatus->TabIndex = 13;
 			this->fakeStatus->Text = L"Status";
 			this->fakeStatus->UseVisualStyleBackColor = true;
 			// 
 			// fakeCancel
 			// 
-			this->fakeCancel->Location = System::Drawing::Point(218, 419);
+			this->fakeCancel->Location = System::Drawing::Point(291, 516);
+			this->fakeCancel->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeCancel->Name = L"fakeCancel";
-			this->fakeCancel->Size = System::Drawing::Size(104, 32);
+			this->fakeCancel->Size = System::Drawing::Size(139, 39);
 			this->fakeCancel->TabIndex = 12;
 			this->fakeCancel->Text = L"Cancel";
 			this->fakeCancel->UseVisualStyleBackColor = true;
 			// 
 			// fakeRetry
 			// 
-			this->fakeRetry->Location = System::Drawing::Point(114, 420);
+			this->fakeRetry->Location = System::Drawing::Point(152, 517);
+			this->fakeRetry->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeRetry->Name = L"fakeRetry";
-			this->fakeRetry->Size = System::Drawing::Size(104, 32);
+			this->fakeRetry->Size = System::Drawing::Size(139, 39);
 			this->fakeRetry->TabIndex = 11;
 			this->fakeRetry->Text = L"Retry";
 			this->fakeRetry->UseVisualStyleBackColor = true;
 			// 
 			// fakeIgnore
 			// 
-			this->fakeIgnore->Location = System::Drawing::Point(10, 420);
+			this->fakeIgnore->Location = System::Drawing::Point(13, 517);
+			this->fakeIgnore->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->fakeIgnore->Name = L"fakeIgnore";
-			this->fakeIgnore->Size = System::Drawing::Size(104, 32);
+			this->fakeIgnore->Size = System::Drawing::Size(139, 39);
 			this->fakeIgnore->TabIndex = 10;
 			this->fakeIgnore->Text = L"Ignore";
 			this->fakeIgnore->UseVisualStyleBackColor = true;
@@ -784,9 +817,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// dexPicture
 			// 
 			this->dexPicture->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->dexPicture->Location = System::Drawing::Point(11, 111);
+			this->dexPicture->Location = System::Drawing::Point(15, 137);
+			this->dexPicture->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->dexPicture->Name = L"dexPicture";
-			this->dexPicture->Size = System::Drawing::Size(402, 302);
+			this->dexPicture->Size = System::Drawing::Size(535, 371);
 			this->dexPicture->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->dexPicture->TabIndex = 1;
 			this->dexPicture->TabStop = false;
@@ -795,10 +829,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->dexText->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->dexText->Location = System::Drawing::Point(10, 25);
+			this->dexText->Location = System::Drawing::Point(13, 31);
+			this->dexText->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->dexText->Multiline = true;
 			this->dexText->Name = L"dexText";
-			this->dexText->Size = System::Drawing::Size(404, 80);
+			this->dexText->Size = System::Drawing::Size(537, 98);
 			this->dexText->TabIndex = 0;
 			this->dexText->Text = L"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABC" 
 				L"DEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -808,9 +843,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox7->Controls->Add(this->messageTypeBox);
 			this->groupBox7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox7->Location = System::Drawing::Point(1100, 468);
+			this->groupBox7->Location = System::Drawing::Point(1467, 576);
+			this->groupBox7->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox7->Name = L"groupBox7";
-			this->groupBox7->Size = System::Drawing::Size(342, 50);
+			this->groupBox7->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox7->Size = System::Drawing::Size(456, 62);
 			this->groupBox7->TabIndex = 10;
 			this->groupBox7->TabStop = false;
 			this->groupBox7->Text = L"Message Type";
@@ -819,10 +856,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->messageTypeBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->messageTypeBox->Location = System::Drawing::Point(9, 22);
+			this->messageTypeBox->Location = System::Drawing::Point(12, 27);
+			this->messageTypeBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->messageTypeBox->Multiline = true;
 			this->messageTypeBox->Name = L"messageTypeBox";
-			this->messageTypeBox->Size = System::Drawing::Size(324, 22);
+			this->messageTypeBox->Size = System::Drawing::Size(431, 26);
 			this->messageTypeBox->TabIndex = 0;
 			// 
 			// scriptLiveCheckbox
@@ -832,9 +870,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->scriptLiveCheckbox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->scriptLiveCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->scriptLiveCheckbox->Location = System::Drawing::Point(1450, 474);
+			this->scriptLiveCheckbox->Location = System::Drawing::Point(1933, 583);
+			this->scriptLiveCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->scriptLiveCheckbox->Name = L"scriptLiveCheckbox";
-			this->scriptLiveCheckbox->Size = System::Drawing::Size(56, 24);
+			this->scriptLiveCheckbox->Size = System::Drawing::Size(70, 29);
 			this->scriptLiveCheckbox->TabIndex = 11;
 			this->scriptLiveCheckbox->Text = L"Live";
 			this->scriptLiveCheckbox->UseVisualStyleBackColor = true;
@@ -845,9 +884,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->scriptErrorCheckbox->AutoSize = true;
 			this->scriptErrorCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->scriptErrorCheckbox->Location = System::Drawing::Point(1450, 498);
+			this->scriptErrorCheckbox->Location = System::Drawing::Point(1933, 613);
+			this->scriptErrorCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->scriptErrorCheckbox->Name = L"scriptErrorCheckbox";
-			this->scriptErrorCheckbox->Size = System::Drawing::Size(62, 24);
+			this->scriptErrorCheckbox->Size = System::Drawing::Size(75, 29);
 			this->scriptErrorCheckbox->TabIndex = 12;
 			this->scriptErrorCheckbox->TabStop = true;
 			this->scriptErrorCheckbox->Text = L"Error";
@@ -863,9 +903,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox8->Controls->Add(this->subjectIDBox);
 			this->groupBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox8->Location = System::Drawing::Point(1100, 521);
+			this->groupBox8->Location = System::Drawing::Point(1467, 641);
+			this->groupBox8->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox8->Name = L"groupBox8";
-			this->groupBox8->Size = System::Drawing::Size(421, 50);
+			this->groupBox8->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox8->Size = System::Drawing::Size(561, 62);
 			this->groupBox8->TabIndex = 11;
 			this->groupBox8->TabStop = false;
 			this->groupBox8->Text = L"Script Navigator";
@@ -874,9 +916,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->gotoButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->gotoButton->Location = System::Drawing::Point(339, 21);
+			this->gotoButton->Location = System::Drawing::Point(452, 26);
+			this->gotoButton->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->gotoButton->Name = L"gotoButton";
-			this->gotoButton->Size = System::Drawing::Size(72, 26);
+			this->gotoButton->Size = System::Drawing::Size(96, 32);
 			this->gotoButton->TabIndex = 5;
 			this->gotoButton->Text = L"GoTo";
 			this->gotoButton->UseVisualStyleBackColor = true;
@@ -886,9 +929,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->nextButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->nextButton->Location = System::Drawing::Point(9, 21);
+			this->nextButton->Location = System::Drawing::Point(12, 26);
+			this->nextButton->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->nextButton->Name = L"nextButton";
-			this->nextButton->Size = System::Drawing::Size(72, 26);
+			this->nextButton->Size = System::Drawing::Size(96, 32);
 			this->nextButton->TabIndex = 4;
 			this->nextButton->Text = L"Next";
 			this->nextButton->UseVisualStyleBackColor = true;
@@ -898,9 +942,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->stepIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->stepIDBox->Location = System::Drawing::Point(278, 21);
+			this->stepIDBox->Location = System::Drawing::Point(371, 26);
+			this->stepIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->stepIDBox->Name = L"stepIDBox";
-			this->stepIDBox->Size = System::Drawing::Size(47, 24);
+			this->stepIDBox->Size = System::Drawing::Size(61, 28);
 			this->stepIDBox->TabIndex = 3;
 			this->stepIDBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->stepIDBox->Enter += gcnew System::EventHandler(this, &GripMMIDesktop::stepIDBox_Enter);
@@ -911,9 +956,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->taskIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->taskIDBox->Location = System::Drawing::Point(217, 21);
+			this->taskIDBox->Location = System::Drawing::Point(289, 26);
+			this->taskIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->taskIDBox->Name = L"taskIDBox";
-			this->taskIDBox->Size = System::Drawing::Size(47, 24);
+			this->taskIDBox->Size = System::Drawing::Size(61, 28);
 			this->taskIDBox->TabIndex = 2;
 			this->taskIDBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->taskIDBox->Enter += gcnew System::EventHandler(this, &GripMMIDesktop::taskIDBox_Enter);
@@ -924,9 +970,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->protocolIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->protocolIDBox->Location = System::Drawing::Point(156, 21);
+			this->protocolIDBox->Location = System::Drawing::Point(208, 26);
+			this->protocolIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->protocolIDBox->Name = L"protocolIDBox";
-			this->protocolIDBox->Size = System::Drawing::Size(47, 24);
+			this->protocolIDBox->Size = System::Drawing::Size(61, 28);
 			this->protocolIDBox->TabIndex = 1;
 			this->protocolIDBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->protocolIDBox->Enter += gcnew System::EventHandler(this, &GripMMIDesktop::protocolIDBox_Enter);
@@ -939,9 +986,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->subjectIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->subjectIDBox->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->subjectIDBox->Location = System::Drawing::Point(95, 21);
+			this->subjectIDBox->Location = System::Drawing::Point(127, 26);
+			this->subjectIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->subjectIDBox->Name = L"subjectIDBox";
-			this->subjectIDBox->Size = System::Drawing::Size(47, 24);
+			this->subjectIDBox->Size = System::Drawing::Size(61, 28);
 			this->subjectIDBox->TabIndex = 0;
 			this->subjectIDBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->subjectIDBox->Enter += gcnew System::EventHandler(this, &GripMMIDesktop::subjectIDBox_Enter);
@@ -953,9 +1001,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox9->Controls->Add(this->subjectList);
 			this->groupBox9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox9->Location = System::Drawing::Point(1101, 574);
+			this->groupBox9->Location = System::Drawing::Point(1468, 706);
+			this->groupBox9->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox9->Name = L"groupBox9";
-			this->groupBox9->Size = System::Drawing::Size(136, 184);
+			this->groupBox9->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox9->Size = System::Drawing::Size(181, 226);
 			this->groupBox9->TabIndex = 13;
 			this->groupBox9->TabStop = false;
 			this->groupBox9->Text = L"Subject";
@@ -965,10 +1015,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->subjectList->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->subjectList->FormattingEnabled = true;
-			this->subjectList->ItemHeight = 15;
-			this->subjectList->Location = System::Drawing::Point(5, 25);
+			this->subjectList->ItemHeight = 18;
+			this->subjectList->Location = System::Drawing::Point(7, 31);
+			this->subjectList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->subjectList->Name = L"subjectList";
-			this->subjectList->Size = System::Drawing::Size(125, 154);
+			this->subjectList->Size = System::Drawing::Size(165, 184);
 			this->subjectList->TabIndex = 0;
 			this->subjectList->SelectedIndexChanged += gcnew System::EventHandler(this, &GripMMIDesktop::subjectList_SelectedIndexChanged);
 			this->subjectList->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GripMMIDesktop::subjectList_MouseDown);
@@ -978,9 +1029,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox10->Controls->Add(this->protocolList);
 			this->groupBox10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox10->Location = System::Drawing::Point(1101, 767);
+			this->groupBox10->Location = System::Drawing::Point(1468, 944);
+			this->groupBox10->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox10->Name = L"groupBox10";
-			this->groupBox10->Size = System::Drawing::Size(136, 244);
+			this->groupBox10->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox10->Size = System::Drawing::Size(181, 300);
 			this->groupBox10->TabIndex = 14;
 			this->groupBox10->TabStop = false;
 			this->groupBox10->Text = L"Protocol";
@@ -990,10 +1043,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->protocolList->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->protocolList->FormattingEnabled = true;
-			this->protocolList->ItemHeight = 15;
-			this->protocolList->Location = System::Drawing::Point(5, 25);
+			this->protocolList->ItemHeight = 18;
+			this->protocolList->Location = System::Drawing::Point(7, 31);
+			this->protocolList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->protocolList->Name = L"protocolList";
-			this->protocolList->Size = System::Drawing::Size(125, 214);
+			this->protocolList->Size = System::Drawing::Size(165, 256);
 			this->protocolList->TabIndex = 1;
 			this->protocolList->SelectedIndexChanged += gcnew System::EventHandler(this, &GripMMIDesktop::protocolList_SelectedIndexChanged);
 			this->protocolList->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GripMMIDesktop::protocolList_MouseDown);
@@ -1003,9 +1057,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox11->Controls->Add(this->taskList);
 			this->groupBox11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox11->Location = System::Drawing::Point(1243, 573);
+			this->groupBox11->Location = System::Drawing::Point(1657, 705);
+			this->groupBox11->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox11->Name = L"groupBox11";
-			this->groupBox11->Size = System::Drawing::Size(136, 438);
+			this->groupBox11->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox11->Size = System::Drawing::Size(181, 539);
 			this->groupBox11->TabIndex = 15;
 			this->groupBox11->TabStop = false;
 			this->groupBox11->Text = L"Task";
@@ -1015,10 +1071,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->taskList->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskList->FormattingEnabled = true;
-			this->taskList->ItemHeight = 15;
-			this->taskList->Location = System::Drawing::Point(4, 25);
+			this->taskList->ItemHeight = 18;
+			this->taskList->Location = System::Drawing::Point(5, 31);
+			this->taskList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->taskList->Name = L"taskList";
-			this->taskList->Size = System::Drawing::Size(128, 409);
+			this->taskList->Size = System::Drawing::Size(169, 490);
 			this->taskList->TabIndex = 2;
 			this->taskList->SelectedIndexChanged += gcnew System::EventHandler(this, &GripMMIDesktop::taskList_SelectedIndexChanged);
 			this->taskList->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GripMMIDesktop::taskList_MouseDown);
@@ -1028,9 +1085,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->groupBox12->Controls->Add(this->stepList);
 			this->groupBox12->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox12->Location = System::Drawing::Point(1385, 573);
+			this->groupBox12->Location = System::Drawing::Point(1847, 705);
+			this->groupBox12->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox12->Name = L"groupBox12";
-			this->groupBox12->Size = System::Drawing::Size(136, 438);
+			this->groupBox12->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox12->Size = System::Drawing::Size(181, 539);
 			this->groupBox12->TabIndex = 16;
 			this->groupBox12->TabStop = false;
 			this->groupBox12->Text = L"Step";
@@ -1040,10 +1099,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->stepList->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->stepList->FormattingEnabled = true;
-			this->stepList->ItemHeight = 15;
-			this->stepList->Location = System::Drawing::Point(4, 25);
+			this->stepList->ItemHeight = 18;
+			this->stepList->Location = System::Drawing::Point(5, 31);
+			this->stepList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->stepList->Name = L"stepList";
-			this->stepList->Size = System::Drawing::Size(128, 409);
+			this->stepList->Size = System::Drawing::Size(169, 490);
 			this->stepList->TabIndex = 3;
 			this->stepList->SelectedIndexChanged += gcnew System::EventHandler(this, &GripMMIDesktop::stepList_SelectedIndexChanged);
 			this->stepList->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &GripMMIDesktop::stepList_MouseDown);
@@ -1052,9 +1112,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->groupBox13->Controls->Add(this->label1);
 			this->groupBox13->Controls->Add(this->markersTextBox);
-			this->groupBox13->Location = System::Drawing::Point(5, 971);
+			this->groupBox13->Location = System::Drawing::Point(7, 1195);
+			this->groupBox13->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox13->Name = L"groupBox13";
-			this->groupBox13->Size = System::Drawing::Size(302, 40);
+			this->groupBox13->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox13->Size = System::Drawing::Size(403, 49);
 			this->groupBox13->TabIndex = 18;
 			this->groupBox13->TabStop = false;
 			// 
@@ -1064,9 +1126,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label1->ForeColor = System::Drawing::SystemColors::ActiveCaption;
-			this->label1->Location = System::Drawing::Point(8, 13);
+			this->label1->Location = System::Drawing::Point(11, 16);
+			this->label1->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(66, 20);
+			this->label1->Size = System::Drawing::Size(83, 25);
 			this->label1->TabIndex = 20;
 			this->label1->Text = L"Markers";
 			// 
@@ -1074,10 +1137,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->markersTextBox->Font = (gcnew System::Drawing::Font(L"Wingdings", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(2)));
-			this->markersTextBox->Location = System::Drawing::Point(80, 11);
+			this->markersTextBox->Location = System::Drawing::Point(107, 14);
+			this->markersTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->markersTextBox->Multiline = true;
 			this->markersTextBox->Name = L"markersTextBox";
-			this->markersTextBox->Size = System::Drawing::Size(212, 24);
+			this->markersTextBox->Size = System::Drawing::Size(281, 29);
 			this->markersTextBox->TabIndex = 19;
 			this->markersTextBox->Text = L" mmmmmmmm  mmmm  mmmmmmmu\r\n uuuuuuuu  uuuu  uuuuuuuu";
 			this->markersTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -1087,9 +1151,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->groupBox14->Controls->Add(this->targetsTextBox);
 			this->groupBox14->Controls->Add(this->label2);
-			this->groupBox14->Location = System::Drawing::Point(326, 971);
+			this->groupBox14->Location = System::Drawing::Point(435, 1195);
+			this->groupBox14->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox14->Name = L"groupBox14";
-			this->groupBox14->Size = System::Drawing::Size(214, 40);
+			this->groupBox14->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox14->Size = System::Drawing::Size(285, 49);
 			this->groupBox14->TabIndex = 21;
 			this->groupBox14->TabStop = false;
 			// 
@@ -1097,10 +1163,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->targetsTextBox->Font = (gcnew System::Drawing::Font(L"Wingdings", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(2)));
-			this->targetsTextBox->Location = System::Drawing::Point(77, 11);
+			this->targetsTextBox->Location = System::Drawing::Point(103, 14);
+			this->targetsTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->targetsTextBox->Multiline = true;
 			this->targetsTextBox->Name = L"targetsTextBox";
-			this->targetsTextBox->Size = System::Drawing::Size(125, 24);
+			this->targetsTextBox->Size = System::Drawing::Size(165, 29);
 			this->targetsTextBox->TabIndex = 21;
 			this->targetsTextBox->Text = L" mmmmummmmm\r\n mmmmmmmmmummm";
 			this->targetsTextBox->WordWrap = false;
@@ -1111,9 +1178,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label2->ForeColor = System::Drawing::SystemColors::ActiveCaption;
-			this->label2->Location = System::Drawing::Point(8, 13);
+			this->label2->Location = System::Drawing::Point(11, 16);
+			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(63, 20);
+			this->label2->Size = System::Drawing::Size(79, 25);
 			this->label2->TabIndex = 20;
 			this->label2->Text = L"Targets";
 			// 
@@ -1121,9 +1189,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->tonesTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->tonesTextBox->Location = System::Drawing::Point(76, 10);
+			this->tonesTextBox->Location = System::Drawing::Point(101, 12);
+			this->tonesTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->tonesTextBox->Name = L"tonesTextBox";
-			this->tonesTextBox->Size = System::Drawing::Size(102, 26);
+			this->tonesTextBox->Size = System::Drawing::Size(135, 30);
 			this->tonesTextBox->TabIndex = 21;
 			this->tonesTextBox->Text = L"...|...";
 			this->tonesTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -1133,9 +1202,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->groupBox15->Controls->Add(this->tonesTextBox);
 			this->groupBox15->Controls->Add(this->label3);
-			this->groupBox15->Location = System::Drawing::Point(558, 971);
+			this->groupBox15->Location = System::Drawing::Point(744, 1195);
+			this->groupBox15->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox15->Name = L"groupBox15";
-			this->groupBox15->Size = System::Drawing::Size(187, 40);
+			this->groupBox15->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox15->Size = System::Drawing::Size(249, 49);
 			this->groupBox15->TabIndex = 22;
 			this->groupBox15->TabStop = false;
 			// 
@@ -1145,9 +1216,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label3->ForeColor = System::Drawing::SystemColors::ActiveCaption;
-			this->label3->Location = System::Drawing::Point(8, 13);
+			this->label3->Location = System::Drawing::Point(11, 16);
+			this->label3->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(56, 20);
+			this->label3->Size = System::Drawing::Size(70, 25);
 			this->label3->TabIndex = 20;
 			this->label3->Text = L"Sound";
 			// 
@@ -1155,9 +1227,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->groupBox16->Controls->Add(this->cradlesTextBox);
 			this->groupBox16->Controls->Add(this->label4);
-			this->groupBox16->Location = System::Drawing::Point(762, 971);
+			this->groupBox16->Location = System::Drawing::Point(1016, 1195);
+			this->groupBox16->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox16->Name = L"groupBox16";
-			this->groupBox16->Size = System::Drawing::Size(156, 40);
+			this->groupBox16->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox16->Size = System::Drawing::Size(208, 49);
 			this->groupBox16->TabIndex = 23;
 			this->groupBox16->TabStop = false;
 			// 
@@ -1165,9 +1239,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->cradlesTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cradlesTextBox->Location = System::Drawing::Point(76, 10);
+			this->cradlesTextBox->Location = System::Drawing::Point(101, 12);
+			this->cradlesTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->cradlesTextBox->Name = L"cradlesTextBox";
-			this->cradlesTextBox->Size = System::Drawing::Size(70, 26);
+			this->cradlesTextBox->Size = System::Drawing::Size(92, 30);
 			this->cradlesTextBox->TabIndex = 21;
 			this->cradlesTextBox->Text = L"S M L";
 			this->cradlesTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -1179,9 +1254,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label4->ForeColor = System::Drawing::SystemColors::ActiveCaption;
-			this->label4->Location = System::Drawing::Point(8, 13);
+			this->label4->Location = System::Drawing::Point(11, 16);
+			this->label4->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(63, 20);
+			this->label4->Size = System::Drawing::Size(80, 25);
 			this->label4->TabIndex = 20;
 			this->label4->Text = L"Cradles";
 			// 
@@ -1189,9 +1265,11 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->groupBox17->Controls->Add(this->acquisitionTextBox);
 			this->groupBox17->Controls->Add(this->label5);
-			this->groupBox17->Location = System::Drawing::Point(934, 971);
+			this->groupBox17->Location = System::Drawing::Point(1245, 1195);
+			this->groupBox17->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->groupBox17->Name = L"groupBox17";
-			this->groupBox17->Size = System::Drawing::Size(156, 40);
+			this->groupBox17->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox17->Size = System::Drawing::Size(208, 49);
 			this->groupBox17->TabIndex = 24;
 			this->groupBox17->TabStop = false;
 			// 
@@ -1199,9 +1277,10 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			// 
 			this->acquisitionTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->acquisitionTextBox->Location = System::Drawing::Point(76, 10);
+			this->acquisitionTextBox->Location = System::Drawing::Point(101, 12);
+			this->acquisitionTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->acquisitionTextBox->Name = L"acquisitionTextBox";
-			this->acquisitionTextBox->Size = System::Drawing::Size(70, 26);
+			this->acquisitionTextBox->Size = System::Drawing::Size(92, 30);
 			this->acquisitionTextBox->TabIndex = 21;
 			this->acquisitionTextBox->Text = L"A M";
 			this->acquisitionTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -1213,18 +1292,19 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->label5->ForeColor = System::Drawing::SystemColors::ActiveCaption;
-			this->label5->Location = System::Drawing::Point(8, 13);
+			this->label5->Location = System::Drawing::Point(11, 16);
+			this->label5->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(63, 20);
+			this->label5->Size = System::Drawing::Size(79, 25);
 			this->label5->TabIndex = 20;
 			this->label5->Text = L"Acquire";
 			// 
 			// GripMMIDesktop
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::White;
-			this->ClientSize = System::Drawing::Size(1526, 1016);
+			this->ClientSize = System::Drawing::Size(1924, 1060);
 			this->Controls->Add(this->groupBox4);
 			this->Controls->Add(this->groupBox12);
 			this->Controls->Add(this->groupBox11);
@@ -1245,7 +1325,8 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 			this->Controls->Add(this->groupBox15);
 			this->Controls->Add(this->groupBox16);
 			this->Controls->Add(this->groupBox17);
-			this->MaximumSize = System::Drawing::Size(1600, 1200);
+			this->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->MaximumSize = System::Drawing::Size(2131, 1470);
 			this->Name = L"GripMMIDesktop";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GripMMI";

@@ -656,7 +656,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 					if ( current_task_leaf->Text->StartsWith( "Initiated:" ) ) {
 						current_task_leaf->Text += 
 							"Finished: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) +
-							"Duration: " + CreateDurationString( graspHousekeepingSlice[index].absoluteTime - current_task_start_time ) +
+							" Duration: " + CreateDurationString( graspHousekeepingSlice[index].absoluteTime - current_task_start_time ) +
 							current_task_leaf->Tag;
 					}
 					// Set color of the task that just completed according to completion code.
@@ -730,7 +730,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 			// that the task has actually started and we update the indicator and start time accordingly.
 			else if ( current_task_leaf->Text->StartsWith( "Selected:" ) && ( step != first_step || graspHousekeepingSlice[index].scriptEngine >= STEP_EXECUTING )) {
 				// Activity has been detected, so change from "Selected" to "Initiated" and update the time.
-				current_task_leaf->Text = "Initiated: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime );
+				current_task_leaf->Text = "Initiated: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) + " GMT ";
 				current_task_start_time = graspHousekeepingSlice[index].absoluteTime;
 				// Change the color to attract the attention of the user.
 				current_task_leaf->ForeColor = System::Drawing::Color::Magenta;
@@ -739,7 +739,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 			else if ( current_task_leaf->Text->StartsWith( "Initiated:" ) && ( graspHousekeepingSlice[index].scriptEngine >= STEP_FINISHED_ABNORMAL )) {
 				// A task has exited with an error code.
 				// Prepare the tag to be added to the text of the leaf to show that there was a problem during the execution of this task.
-				current_task_leaf->Tag = gcnew String( "      !!!!" );
+				current_task_leaf->Tag = gcnew String( " !!!" );
 				// Add a leaf to the task node that provides information about the completion code.
 				if ( step != current_step ) {
 					int error_code = - ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_ABNORMAL );
