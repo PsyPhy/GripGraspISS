@@ -64,7 +64,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="CleanGrasp.mak" />
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.mak" />
     <None Include="InstallGrasp.release.mak" />

@@ -14,7 +14,7 @@ REM Point to the root level directory from which the tar archive will be created
 set ROOT=..\..
 
 REM Copy the latest installation instructions up to the root to be included with the release.
-copy /Y /V GripMMI_Installation_Instructions.txt %ROOT%
+copy /Y /V GripMMI_Installation_Instructions.txt %ROOT%\GripMMIDocumentation
 
 REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy.
 pushd %ROOT%
@@ -32,7 +32,6 @@ echo Creating GripMMI Runtime Release %ARCHIVE%
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GripScripts/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GripMMIDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGripMMI.bat
-%TAR% --append %VERBOSE% --file=%ARCHIVE% GripMMI_Installation_Instructions.txt
 
 REM Create an empty cache directory to put in the release archive.
 REM We hide the current Cache directory so as not to lose what we have there.

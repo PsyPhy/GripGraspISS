@@ -5,6 +5,5 @@
     <None Include="InstallGraspMMI.mak" />
     <None Include="InstallGraspMMI.release.mak" />
     <None Include="RunGraspMMI.bat" />
-    <None Include="CleanGraspMMI.mak" />
   </ItemGroup>
 </Project>
