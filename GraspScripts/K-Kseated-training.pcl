@@ -6,3 +6,4 @@
 355; COMMAND; Experiment Trials Block 2; GraspExecutables\Grasp.bat --KtoK --sequence=GraspSequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 356; COMMAND@; End of Trials; GraspExecutables\Grasp.bat --doff; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 359; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
+399; COMMAND@; Resume Interrupted Block (per Col-CC); GraspExecutables\Grasp.bat --KtoK --sequence=GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html

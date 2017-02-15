@@ -228,6 +228,36 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 	return( nTrials );
 }
 
+// Write out to a file a temporary sequence/parameter file with all the trials that remain 
+// to be peformed, including those trials that need to be repeated and have been added to the end
+// of the block. This file may be used to restart a block that has been interrupted by a tracker
+// crash or some other incident.
+int GraspTaskManager::WriteRemainingTrialParameters( char *filename ) {
+
+	// Write the trial parameter list to the specified file.
+	FILE *fp = fopen( filename, "w" );
+	fAbortMessageOnCondition( !fp, "GraspTaskManager", "Error opening trial sequence file %s for write.", filename );
+	// Output a header describing the contents of the file.
+	// The '#' at the start of the lines means that they will be treated as a comment if read back as a sequence file.
+	SYSTEMTIME st;
+	GetSystemTime( &st );
+	fprintf( fp, "# Remaining trials for paradigm %s (%04d-%02d-%02d %02d:%02d:%02d)\n", tag, st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+	fprintf( fp, "# Nominal number of trials: %d  Repeats: %d  Remaining: %d\n", 
+		nTrials - (maxRetries - retriesRemaining), maxRetries - retriesRemaining, nTrials - currentTrial );
+	for ( int i = currentTrial; i < nTrials; i++ ) {
+		
+		fprintf( fp, "%lf; %lf; %lf; %lf; %d\n",
+			trialParameters[i].targetHeadTilt,
+			trialParameters[i].targetOrientation,
+			trialParameters[i].responseHeadTilt,
+			trialParameters[i].conflictGain,
+			trialParameters[i].provideFeedback );
+
+	}
+	fclose( fp );
+	return( nTrials - currentTrial );
+}
+
 // The following may be called if there is an anomaly during a trial so as 
 // to repeat it at the end of the block. 
 void GraspTaskManager::RepeatTrial( int trial ) {
@@ -276,7 +306,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	retriesRemaining = maxRetries;
 
 	// If we are actually going to do some trials, open a file for storing the responses and output a header.
-	sprintf( responseFilename, "%s.%s.rsp", output_filename_root, tag );
+	sprintf( responseFilename, "%s.rsp", output_filename_root );
 	response_fp = fopen( responseFilename, "w" );
 	fAbortMessageOnCondition( !response_fp, "GraspTaskManager", "Error opening file %s for writing.", responseFilename );
 	fprintf( response_fp, "trial; trialType; targetHeadTilt; targetHeadTiltTolerance; targetHeadTiltDuration; targetOrientation; hapticTargetOrientationTolerance; targetPresentationDuration; responseHeadTilt; responseHeadTiltTolerance; responseHeadTiltDuration; responseTimeout; conflictGain; feedback (0 or 1); time; response\n" );
@@ -284,7 +314,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	// Open a file for storing the tracker poses and output a header.
 	// We open this file even if there are no trials to be performed so that we can have a record of
 	// the object movements and marker positions and visibility during the trial.
-	sprintf( poseFilename, "%s.%s.pse", output_filename_root, tag );
+	sprintf( poseFilename, "%s.pse", output_filename_root );
 	pose_fp = fopen( poseFilename, "w" );
 	fAbortMessageOnCondition( !pose_fp, "GraspTaskManager", "Error opening file %s for writing.", poseFilename );
 	fprintf( pose_fp, "trial; time; state; head.time; head.visible; head.position; head.orientation; hand.time; hand.visible; hand.position; hand.orientation; chest.time; chest.visible; chest.position; chest.orientation; roll.time; roll.visible; roll.position; roll.orientation;" );
@@ -401,14 +431,9 @@ void  GraspTaskManager::ExitStartBlock( void ) {
 // Set the new trial parameters. 
 void GraspTaskManager::EnterStartTrial( void ) { 
 
-	// Align with the local reference frame of the subject.
-	// Here we just align with the absolute refererence frame, but
-	// in Quasi-Freefloating we will want to align the visual reference frame
-	// in the HMD to the orientation defined by the chest markers.
-
-	// TODO: Need to establish a new CODA reference frame around the chest marker structure.
-	// TODO: Decide what should be the visual conditions when the realignment occurs. Perhaps
-	//  we need to avoid sudden jumps of the tunnel orientation.
+	// Ouput the list of all remaining trials to a temporary file with a fixed file name.
+	// This file can then be used to restart a block of trials that has been interrupted.
+	WriteRemainingTrialParameters( "GraspRemainingTrials.seq" );
 
 	// Output the parameters of this trial to the response file.
 	fprintf( response_fp, "%d;  %s; %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
