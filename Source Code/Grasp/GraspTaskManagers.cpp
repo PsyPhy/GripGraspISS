@@ -44,7 +44,7 @@ double GraspTaskManager::handErrorDelay = 2.0;
 // If the subject makes a procedural error during a trial (timeout, etc.) the trial
 // is aborted and it is added to the end of the list to be repeated. But the number
 // of repetitions is limited to the maximum set below.
-int GraspTaskManager::maxRetries = 7;
+int GraspTaskManager::maxRetries = 21;
 
 // At the beginning of a trial the subject is asked to straighen the head on the shoulders.
 // The pose of the head is then taken as the zero reference for the rest of the trial.
