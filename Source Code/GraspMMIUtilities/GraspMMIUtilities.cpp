@@ -146,7 +146,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 		// Attempt to read next packet. Any error is terminal.
 		bytes_read = _read( fid, &packet, rtPacketLengthInBytes );
 		if ( bytes_read < 0 ) {
-			fMessageBox( MB_OK, "GripMMI", "Error reading from %s.\n\n", filename );
+			fMessageBox( MB_OK, "GraspMMI", "Error reading from %s.\n\n", filename );
 			exit( -1 );
 		}
 
@@ -213,7 +213,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 	// Finished reading. Close the file and check for errors.
 	return_code = _close( fid );
 	if ( return_code ) {
-		fMessageBox( MB_OK, "GripMMI", "Error closing %s after binary read.\nError code: %s\n\n", filename, return_code );
+		fMessageBox( MB_OK, "GraspMMI", "Error closing %s after binary read.\nError code: %s\n\n", filename, return_code );
 		exit( return_code );
 	}
 	fOutputDebugString( "Acquired Data Slices (max %d): %d\n", max_slices, n_slices );
@@ -267,7 +267,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 	// the availability of files containing packets before the GripMMIDesktop form is executed.
 	// So if we do fail to open the file, signal the error and exit.
 	if ( fid < 0 ) {
-		fMessageBox( MB_OK, "GripMMI", "Error reading from %s.", filename );
+		fMessageBox( MB_OK, "GraspMMI", "Error reading from %s.", filename );
 		exit( -1 );
 	}
 
@@ -277,7 +277,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		bytes_read = _read( fid, &packet, hkPacketLengthInBytes );
 		// Return less than zero means read error.
 		if ( bytes_read < 0 ) {
-			fMessageBox( MB_OK, "GripMMI", "Error reading from %s.", filename );
+			fMessageBox( MB_OK, "GraspMMI", "Error reading from %s.", filename );
 			exit( -1 );
 		}
 		// Return less than expected number of bytes means we have read all packets.
@@ -286,7 +286,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		// Check that it is a valid GRIP packet. It would be strange if it was not.
 		ExtractEPMTelemetryHeaderInfo( &epm_header, &packet );
 		if ( epm_header.epmSyncMarker != EPM_TELEMETRY_SYNC_VALUE || epm_header.TMIdentifier != GRIP_HK_ID ) {
-			fMessageBox( MB_OK, "GripMMI", "Unrecognized packet from %s.", filename );
+			fMessageBox( MB_OK, "GraspMMI", "Unrecognized packet from %s.", filename );
 			exit( -1 );
 		}
 		// Extract the interesting info in proper byte order.
@@ -321,7 +321,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 	// Finished reading. Close the file and check for errors.
 	return_code = _close( fid );
 	if ( return_code ) {
-		fMessageBox( MB_OK, "GripMMI", "Error closing %s after binary read.\nError code: %s", filename, return_code );
+		fMessageBox( MB_OK, "GraspMMI", "Error closing %s after binary read.\nError code: %s", filename, return_code );
 		exit( return_code );
 	}
 

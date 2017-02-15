@@ -549,7 +549,7 @@ int GetLastPacketHK( EPMTelemetryHeaderInfo *epmHeader, GripHealthAndStatusInfo 
 	// the availability of files containing packets before the GripMMIDesktop form is executed.
 	// So if we do fail to open the file, signal the error and exit.
 	if ( fid < 0 ) {
-		fMessageBox( MB_OK, "GripMMI", "Error reading from %s.", filename );
+		fMessageBox( MB_OK, "DexPackets", "Error reading from %s.", filename );
 		exit( -1 );
 	}
 
@@ -559,7 +559,7 @@ int GetLastPacketHK( EPMTelemetryHeaderInfo *epmHeader, GripHealthAndStatusInfo 
 		bytes_read = _read( fid, &packet, hkPacketLengthInBytes );
 		// Return less than zero means read error.
 		if ( bytes_read < 0 ) {
-			fMessageBox( MB_OK, "GripMMI", "Error reading from %s.", filename );
+			fMessageBox( MB_OK, "DexPackets", "Error reading from %s.", filename );
 			exit( -1 );
 		}
 		// Return less than expected number of bytes means we have read all packets.
@@ -569,7 +569,7 @@ int GetLastPacketHK( EPMTelemetryHeaderInfo *epmHeader, GripHealthAndStatusInfo 
 		// Check that it is a valid GRIP packet. It would be strange if it was not.
 		ExtractEPMTelemetryHeaderInfo( epmHeader, &packet );
 		if ( epmHeader->epmSyncMarker != EPM_TELEMETRY_SYNC_VALUE || epmHeader->TMIdentifier != GRIP_HK_ID ) {
-			fMessageBox( MB_OK, "GripMMI", "Unrecognized packet from %s.", filename );
+			fMessageBox( MB_OK, "DexPackets", "Unrecognized packet from %s.", filename );
 			exit( -1 );
 		}
 		// Extract the interesting info in proper byte order.
@@ -578,7 +578,7 @@ int GetLastPacketHK( EPMTelemetryHeaderInfo *epmHeader, GripHealthAndStatusInfo 
 	// Finished reading. Close the file and check for errors.
 	return_code = _close( fid );
 	if ( return_code ) {
-		fMessageBox( MB_OK, "GripMMI", "Error closing %s after binary read.\nError code: %s", filename, return_code );
+		fMessageBox( MB_OK, "DexPackets", "Error closing %s after binary read.\nError code: %s", filename, return_code );
 		exit( return_code );
 	}
 
