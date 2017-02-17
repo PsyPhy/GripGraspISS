@@ -22,9 +22,9 @@ void GraspOculusDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *displ
 	// Decide if we are in full screen mode or not.
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
 	static const bool fullscreen = true;
-	// Usually we mirror the Oculus display on the computer screen. But you may want to hide
-	// what is going on in the HMD. To do so, set the following to false;
-	static const bool mirror = true;
+
+	// Mirroring to the console is determined by the presence or absence of a cookie file.
+	if ( FileExists( "Mirroring.flg" ) ) mirror = true;
 
 	// Initializes LibOVR, and the Rift
 	result = ovr_Initialize( nullptr );

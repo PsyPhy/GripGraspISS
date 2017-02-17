@@ -80,7 +80,12 @@ namespace Grasp {
 		OculusDisplayOGL	*oculusDisplay;
 		OculusMapper		*oculusMapper;
 
-		GraspOculusDisplay( void )  : hInstance( nullptr ), oculusDisplay( nullptr ), oculusMapper( nullptr ) {}
+		// Usually we mirror the Oculus display on the computer screen. But you may want to hide
+		// what is going on in the HMD. To do so, set the following to false;
+		bool mirror;
+
+
+		GraspOculusDisplay( void )  : hInstance( nullptr ), oculusDisplay( nullptr ), oculusMapper( nullptr ), mirror( false ) {}
 		~GraspOculusDisplay( void ) {}
 
 		virtual void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow );
