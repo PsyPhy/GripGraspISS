@@ -50,6 +50,12 @@ namespace Grasp {
 
 	using namespace PsyPhy;
 
+	// Grasp requires a set of trackers to follow the hmd, hand and chest, plus
+	// a roll-only tracker used to orient the virtual hand in a visual response mode.
+	// GraspTrackers defines the set of trackers and the functionality that is required
+	// from those trackers. Dervied classes will then define the actual combinations 
+	// of trackers to be used depending on the hardware.
+
 	class GraspTrackers : public VectorsMixin {
 
 	protected:
@@ -90,7 +96,8 @@ namespace Grasp {
 		virtual void Release( void );
 
 		// The base class GraspTrackers takes care of writing out the pose data from each cycle.
-		// Derived classes are given the chance to add additional columns to the data file.
+		// Derived classes are given the chance to add additional columns to the data file
+		// by overlaying the following two routines. By default, they do nothing.
 		virtual void WriteAdditionalColumnHeadings( FILE *fp ) {}
 		virtual void WriteAdditionalTrackerData( FILE *fp ){}
 
@@ -99,6 +106,8 @@ namespace Grasp {
 
 	};
 
+	// GraspSimulatedTrackers are intended to provide simulated movements of the 
+	// individual trackers without any trackign hardware.
 	class GraspSimulatedTrackers : public GraspTrackers {
 	public:
 		virtual void Initialize( void );
@@ -106,7 +115,10 @@ namespace Grasp {
 		~GraspSimulatedTrackers( void ) {}
 	};
 
-
+	// GraspDexTrackers is any set of trackers that relies on the DEX hardware.
+	// It can be used by itself to do marker-only tracking, but it is more
+	// likely to be part of a derived class that combines marker data with the 
+	// Oculus inertial data.
 	class GraspDexTrackers : public GraspTrackers {
 
 	public:
@@ -251,6 +263,9 @@ namespace Grasp {
 
 	};
 
+	// GraspOculusCodaTrackers is nominally the best tracker set for Grasp.
+	// It uses a combined Oculus-Coda tracker for the HMD and marker-based Pose
+	// trackers for the chest and hand.
 	class GraspOculusCodaTrackers : public GraspDexTrackers {
 	public:
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
@@ -264,6 +279,10 @@ namespace Grasp {
 		void GraspOculusCodaTrackers::Initialize( void );
 	};
 
+	// GraspOculusOnlyTrackers provides a solution when the Coda is not available.
+	// For the moment it uses the standard Oculus tracker with its own constellation
+	// system for drift correction, and substitutes mouse and keyboard trackers for
+	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
 	class GraspOculusOnlyTrackers : public GraspTrackers {
 	public:
 

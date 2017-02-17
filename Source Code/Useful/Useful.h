@@ -53,6 +53,10 @@ static unsigned long __nan = 0x7ff7ffff;
 #define ABORT_EXIT 4
 #define RETRY_EXIT 5
 
+// Check if a file exists. Often used to check for 
+// the presence of a "cookie" file.
+#define FileExists(fn) ( 0 == _access_s( fn, 0x00 ))
+
 // I define here Vector, Quaternion and Matrix data types.
 // I use them in both standard C code and in C++ code.
 // The problem is that these types are also defined elswhere in 

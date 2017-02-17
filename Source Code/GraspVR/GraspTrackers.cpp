@@ -228,7 +228,6 @@ void GraspDexTrackers::Initialize( void ) {
 	
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
-	//handTracker->OffsetTo( handPoseK );
 
 	// Give the trackers a chance to get started.
 	Sleep( 200 );
@@ -262,7 +261,6 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
-	//handTracker->OffsetTo( handPoseK );
 
 	// Give the trackers a chance to get started.
 	Sleep( 200 );
@@ -278,7 +276,7 @@ void GraspOculusOnlyTrackers::Initialize( void ) {
 
 	// Create a pose tracker that uses only the Oculus.
 	
-	// Pick one of the two Oculus-only hmd trackers.
+	// Pick one of the two Oculus-only hmd trackers by commenting or uncommenting below:
 	// This one uses the full Oculus tracker, incuding drift compensation with gravity.
 	 hmdTracker = new PsyPhy::OculusPoseTracker( oculusMapper );
 	// The next one uses our own inertial implementation, but we do not give it an absolute tracker for
@@ -306,7 +304,7 @@ void GraspOculusOnlyTrackers::Initialize( void ) {
 	chestTracker = new PoseTrackerFilter( chestTrackerRaw, 2.0 );
 	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspSimTrackers", "Error initializing PoseTrackerFilter." );
 	
-	// Create a tracker to control roll movements of the hand for the toV responses.
+	// Create a tracker to control roll movements of the hand for the *-V responses.
 	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.
