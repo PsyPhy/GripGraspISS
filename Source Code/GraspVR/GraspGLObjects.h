@@ -106,6 +106,7 @@ namespace Grasp {
 		static double inner_visor_radius;
 		static double outer_visor_radius;
 		static Vector3 desired_wrist_location;
+		static Vector3 initial_hand_position;
 
 		static const double target_ball_radius;
 		static const double finger_ball_radius;

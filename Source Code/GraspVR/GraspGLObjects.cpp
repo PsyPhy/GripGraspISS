@@ -62,6 +62,7 @@ double GraspGLObjects::outer_visor_radius = 320.0;
 double GraspGLObjects::inner_visor_radius = 250.0;
 
 Vector3 GraspGLObjects::desired_wrist_location = { 0.0, 0.0, -400.0 };
+Vector3 GraspGLObjects::initial_hand_position = { 0.0, -500.0, 0.0 };
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
@@ -610,6 +611,10 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	// Place the stationary object that shows the subject's response a little bit in front of the targets.
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	wristZone->SetPosition( desired_wrist_location );
+	// Initially set the hand position away from zero. This will be immediately overridden by 
+	// a valid tracker reading. But if the hand is not visible to the tracker, this should 
+	// ensure that the hand is not at the position of the eyes.
+	hand->SetPosition( initial_hand_position );
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
