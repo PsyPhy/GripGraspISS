@@ -1,2 +1,1 @@
-
-char *GripGraspSourceRelease = "Grip/Grasp 1.0";
+char *GripGraspSourceRelease = "Developement Post DEV"; 
