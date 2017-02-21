@@ -10,6 +10,8 @@
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
 #include "../GraspGUI/GraspScripts.h"
 
+#include "../GripGraspVersionControl/GripGraspVersionControl.h"
+
 #define MAX_SLICES	(8*60*60*10)
 // Time span in seconds for each position of the span selector.
 #define SPAN_VALUES	8
@@ -834,9 +836,41 @@ private: System::ComponentModel::IContainer^  components;
 			else clearItemErrorHighlight->Enabled = false;
 
 		 }
-private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+	private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 			StartRefreshTimer();
 		 }
+
+	// Add an 'About ...' item to the system menu. 
+	#define SYSMENU_ABOUT_ID 0x01
+
+	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
+
+					// Do what one would normally do when the handle is created.
+					Form::OnHandleCreated( e );
+
+					// Get a handle to a copy of this form's system (window) menu
+					HWND hWnd;
+					hWnd = static_cast<HWND>( Handle.ToPointer() );
+					HMENU hSysMenu = GetSystemMenu( hWnd, false );
+					// Add a separator
+					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
+					// Add the About menu item
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
+
+				}
+
+	protected:  virtual void WndProc(System::Windows::Forms::Message% m) override {	
+					// Test if the About item was selected from the system menu
+					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
+					{
+						fMessageBox( MB_OK, "GraspMMIDataPlots Version Info", "Source Release:  %s\n         Build Info:  %s", GripGraspSourceRelease, GripGraspBuildInfo );
+						return;
+					}
+					// Do what one would normally do.
+					Form::WndProc( m );
+				}
+
+
 };
 }
 

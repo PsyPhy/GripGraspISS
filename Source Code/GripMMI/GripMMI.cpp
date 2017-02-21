@@ -81,7 +81,7 @@ int main(array<System::String ^> ^args)
 	// Before we do anything else, check if packets are available in the
 	//  cache directory. If not, there is nothing to display.
 	// Here we show a dialog while we are waiting for some packets to appear.
-	GripMMIStartup^ startupForm = gcnew GripMMIStartup( GripMMIVersion );
+	GripMMIStartup^ startupForm = gcnew GripMMIStartup( GripGraspSourceRelease );
 	System::Windows::Forms::DialogResult result = startupForm->ShowDialog();
 	if ( result != System::Windows::Forms::DialogResult::Cancel ) {
 		// Create the main window and run it

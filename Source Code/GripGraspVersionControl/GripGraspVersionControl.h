@@ -20,8 +20,8 @@
 extern "C" {
 #endif
 
-extern char *GripMMIVersion;
-extern char *GripMMIBuildInfo;
+extern char *GripGraspBuildInfo;
+extern char *GripGraspSourceRelease;
 
 #ifdef __cplusplus
 }

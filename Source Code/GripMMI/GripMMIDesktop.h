@@ -33,7 +33,7 @@
 #include "GripMMIAbout.h"
 #include "GripMMIStartup.h"
 #include "GripMMIFullStep.h"
-#include "..\GripMMIVersionControl\GripMMIVersionControl.h"
+#include "..\GripGraspVersionControl\GripGraspVersionControl.h"
 
 
 #include "GripMMIGlobals.h"
@@ -62,12 +62,9 @@ namespace GripMMI {
 			// Now initialize the actual GripMMI Desktop.
 			InitializeComponent();
 
-			// Show the version number in the window title.
-			this->Text = gcnew String( GripMMIVersion );
-
 			// Create other dialog windows.
 			fullStepForm = gcnew GripMMIFullStep();
-			aboutForm = gcnew GripMMIAbout( GripMMIVersion, GripMMIBuildInfo );
+			aboutForm = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo );
 
 		}
 
@@ -159,7 +156,7 @@ namespace GripMMI {
 	private: System::Windows::Forms::TextBox^  earliestTextBox;
 	private: System::Windows::Forms::TextBox^  latestTextBox;
 	private: System::Windows::Forms::TextBox^  rightLimitTextBox;
-private: System::Windows::Forms::TextBox^  filterConstantTextBox;
+	private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 	private: System::Windows::Forms::TextBox^  leftLimitTextBox;
 
 	private: 
@@ -1696,7 +1693,7 @@ private: System::Windows::Forms::TextBox^  filterConstantTextBox;
 	private: System::Void GripMMIDesktop_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 // Show an about box on right click in the main window.
 				 if ( e->Button == System::Windows::Forms::MouseButtons::Right ) {
-					 GripMMIAbout^ about = gcnew GripMMIAbout( GripMMIVersion, GripMMIBuildInfo );
+					 GripMMIAbout^ about = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo );
 					 about->ShowDialog();
 				 }
 			 }

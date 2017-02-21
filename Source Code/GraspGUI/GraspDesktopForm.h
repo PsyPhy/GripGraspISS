@@ -3,6 +3,7 @@
 #include "../Useful/fOutputDebugString.h"
 #include "../DexServices/DexServices.h"
 #include "../Grip/GripPackets.h"
+#include "../GripGraspVersionControl/GripGraspVersionControl.h"
 #include "GraspScripts.h"
 
 namespace GraspGUI {
@@ -111,7 +112,7 @@ namespace GraspGUI {
 			// add the absolute path to the root directory to the other file paths defined below.
 			scriptDirectory =  "GraspScripts\\";
 			execDirectory =  "GraspExecutables\\";
-			// Define the name of the subdirectory for today's results and create it if necessary.
+			// Define the name of the subdirectory for today's results.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
 			char datestr[MAX_PATH];
@@ -1173,6 +1174,37 @@ namespace GraspGUI {
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 			SendProgressInfo();
 		}
+
+	// Add an 'About ...' item to the system menu. 
+	#define SYSMENU_ABOUT_ID 0x01
+
+	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
+
+					// Do what one would normally do when the handle is created.
+					Form::OnHandleCreated( e );
+
+					// Get a handle to a copy of this form's system (window) menu
+					HWND hWnd;
+					hWnd = static_cast<HWND>( Handle.ToPointer() );
+					HMENU hSysMenu = GetSystemMenu( hWnd, false );
+					// Add a separator
+					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
+					// Add the About menu item
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
+
+				}
+
+	protected:  virtual void WndProc(System::Windows::Forms::Message% m) override {	
+					// Test if the About item was selected from the system menu
+					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
+					{
+						fMessageBox( MB_OK, "GraspGUI Version Info", "Source Release:  %s\n         Build Info:  %s", GripGraspSourceRelease, GripGraspBuildInfo );
+						return;
+					}
+					// Do what one would normally do.
+					Form::WndProc( m );
+				}
+
 
 };
 

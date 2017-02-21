@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../GripGraspVersionControl/GripGraspVersionControl.h"
 #include "../GraspGUI/GraspDesktopForm.h"
 
 namespace GraspGUI {
@@ -69,7 +70,8 @@ namespace GraspGUI {
 	public:
 		
 		String^ packetRoot;
-
+		GraspMMIMirror( void ) {
+		}
 	protected:
 
 		/// Grasp housekeeping telemetry packets include information about the visibility of the CODA markers.
@@ -250,7 +252,6 @@ namespace GraspGUI {
 
 		// In MMI mode there is no connection to the DEX services module, so we eliminate that from the opening and closing actions.
 		virtual System::Void GraspDesktop_Shown(System::Object^  sender, System::EventArgs^  e) override {
-			this->Text = L"GraspMMI Mirror";
 			// this->Location = System::Drawing::Point(10, 10);
 			this->navigatorGroupBox->Enabled = false;
 			this->instructionsGroupBox->Enabled = false;
@@ -306,6 +307,17 @@ namespace GraspGUI {
 		virtual bool VerifyInterruptStep( void ) override {
 			return true;
 		}
+
+	protected:  virtual void WndProc(System::Windows::Forms::Message% m) override {	
+					// Test if the About item was selected from the system menu
+					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
+					{
+						fMessageBox( MB_OK, "GraspMMIMirror Version Info", "Source Release:  %s\n         Build Info:  %s", GripGraspSourceRelease, GripGraspBuildInfo );
+						return;
+					}
+					// Do what one would normally do.
+					Form::WndProc( m );
+				}
 
 	};
 }

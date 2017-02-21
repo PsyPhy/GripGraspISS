@@ -29,8 +29,8 @@ namespace GripMMI {
 		GripMMIAbout( const char *version_string, const char *build_string )
 		{
 			InitializeComponent();
-			versionText->Text = gcnew String( version_string );
-			buildText->Text = gcnew String( build_string );
+			versionText->Text = gcnew String( "Source Release: " ) + gcnew String( version_string );
+			buildText->Text =  gcnew String( "Build Info: " ) + gcnew String( build_string );
 		}
 
 	protected:
@@ -82,9 +82,10 @@ namespace GripMMI {
 			// 
 			this->versionText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->versionText->Location = System::Drawing::Point(143, 9);
+			this->versionText->Location = System::Drawing::Point(191, 11);
+			this->versionText->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->versionText->Name = L"versionText";
-			this->versionText->Size = System::Drawing::Size(140, 13);
+			this->versionText->Size = System::Drawing::Size(252, 19);
 			this->versionText->TabIndex = 0;
 			this->versionText->Text = L"GripMMI V \?.\?";
 			this->versionText->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
@@ -93,9 +94,10 @@ namespace GripMMI {
 			// 
 			this->aboutOkButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->aboutOkButton->Location = System::Drawing::Point(177, 100);
+			this->aboutOkButton->Location = System::Drawing::Point(269, 123);
+			this->aboutOkButton->Margin = System::Windows::Forms::Padding(4);
 			this->aboutOkButton->Name = L"aboutOkButton";
-			this->aboutOkButton->Size = System::Drawing::Size(72, 26);
+			this->aboutOkButton->Size = System::Drawing::Size(96, 32);
 			this->aboutOkButton->TabIndex = 5;
 			this->aboutOkButton->Text = L"OK";
 			this->aboutOkButton->UseVisualStyleBackColor = true;
@@ -104,9 +106,10 @@ namespace GripMMI {
 			// LogoPictureBox
 			// 
 			this->LogoPictureBox->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"LogoPictureBox.Image")));
-			this->LogoPictureBox->Location = System::Drawing::Point(2, 2);
+			this->LogoPictureBox->Location = System::Drawing::Point(3, 2);
+			this->LogoPictureBox->Margin = System::Windows::Forms::Padding(4);
 			this->LogoPictureBox->Name = L"LogoPictureBox";
-			this->LogoPictureBox->Size = System::Drawing::Size(132, 132);
+			this->LogoPictureBox->Size = System::Drawing::Size(176, 162);
 			this->LogoPictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->LogoPictureBox->TabIndex = 6;
 			this->LogoPictureBox->TabStop = false;
@@ -116,35 +119,38 @@ namespace GripMMI {
 			this->copyrightText->AutoSize = true;
 			this->copyrightText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->copyrightText->Location = System::Drawing::Point(150, 46);
+			this->copyrightText->Location = System::Drawing::Point(232, 57);
+			this->copyrightText->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->copyrightText->Name = L"copyrightText";
-			this->copyrightText->Size = System::Drawing::Size(126, 39);
+			this->copyrightText->Size = System::Drawing::Size(170, 51);
 			this->copyrightText->TabIndex = 7;
-			this->copyrightText->Text = L"Copyright (c) 2014, 2015 \r\nPsyPhy Consulting\r\nAll rights reserved.";
+			this->copyrightText->Text = L"Copyright (c) 2014 - 2017\r\nPsyPhy Consulting\r\nAll rights reserved.";
 			this->copyrightText->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// buildText
 			// 
 			this->buildText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 6, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->buildText->Location = System::Drawing::Point(143, 24);
+			this->buildText->Location = System::Drawing::Point(191, 23);
+			this->buildText->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->buildText->Name = L"buildText";
-			this->buildText->Size = System::Drawing::Size(140, 13);
+			this->buildText->Size = System::Drawing::Size(252, 26);
 			this->buildText->TabIndex = 8;
 			this->buildText->Text = L"<build info>";
 			this->buildText->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// GripMMIAbout
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::Window;
-			this->ClientSize = System::Drawing::Size(292, 138);
+			this->ClientSize = System::Drawing::Size(456, 170);
 			this->Controls->Add(this->copyrightText);
 			this->Controls->Add(this->LogoPictureBox);
 			this->Controls->Add(this->aboutOkButton);
 			this->Controls->Add(this->versionText);
 			this->Controls->Add(this->buildText);
+			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GripMMIAbout";
 			this->Text = L"GripMMIAbout";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->LogoPictureBox))->EndInit();
@@ -156,5 +162,6 @@ namespace GripMMI {
 	private: System::Void aboutOkButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 this->Close();
 			 }
+
 };
 }

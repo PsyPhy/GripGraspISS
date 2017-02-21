@@ -144,7 +144,7 @@
     <ProjectReference Include="..\..\..\GRASPonISS\Source Code\VectorsMixin\VectorsMixin.vcxproj">
       <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\GripMMIVersionControl\GripMMIVersionControl.vcxproj">
+    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
       <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Grip\Grip.vcxproj">

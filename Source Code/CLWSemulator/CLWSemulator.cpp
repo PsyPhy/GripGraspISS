@@ -20,10 +20,10 @@
 #include "stdafx.h"
 #include "..\Useful\fMessageBox.h"
 #include "..\Useful\fOutputDebugString.h"
+#include "..\GripGraspVersionControl\GripGraspVersionControl.h"
 #include "..\Grip\DexAnalogMixin.h"
 #include "..\Grip\GripPackets.h"
 #include "..\GripMMI\GripMMIGlobals.h"
-#include "..\GripMMIVersionControl\GripMMIVersionControl.h"
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -555,7 +555,7 @@ int _tmain( int argc, char **argv )
 	// A place to store the pertinent information from a client packet in usable form.
 	EPMTransferFrameHeaderInfo transferFrameInfo;
 
-	printf( "CLWS Emulator started.\n%s\n%s\n\n", GripMMIVersion, GripMMIBuildInfo );
+	printf( "CLWS Emulator started.\n%s\n%s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
 	printf( "This is the EPM/GRIP packet server emulator.\n" );
 	printf( "It waits for a client to connect and then sends\n" );
 	printf( " out HK and RT packets.\n" );

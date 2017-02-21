@@ -18,7 +18,7 @@
 #include "..\Grip\GripPackets.h"
 #include "..\Useful\fMessageBox.h"
 #include "..\Useful\fOutputDebugString.h"
-#include "..\GripMMIVersionControl\GripMMIVersionControl.h"
+#include "..\GripGraspVersionControl\GripGraspVersionControl.h"
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -120,7 +120,7 @@ int __cdecl main(int argc, const char **argv)
 	const char *packetCacheFilenameRoot = NULL;
 	const char *server_name = NULL;
 
-	printf( "DexGroundMonitorClient started.\n%s\n%s\n\n", GripMMIVersion, GripMMIBuildInfo );
+	printf( "DexGroundMonitorClient started.\n%s\n%s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
 	printf( "This is the EPM/GRIP packet receiver.\n" );
 	printf( "It waits for a connection to the EPM server,\n then processes incoming packets.\n" );
 	printf( "\n\n" );
