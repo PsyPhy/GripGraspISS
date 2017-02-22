@@ -7,5 +7,6 @@
     <None Include="ReleaseGraspMMI.draft.mak" />
     <None Include="ReleaseGraspMMI.release.mak" />
     <None Include="..\..\GraspMMIReleases.log" />
+    <None Include="ReleaseGraspMMI.test.mak" />
   </ItemGroup>
 </Project>

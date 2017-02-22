@@ -13,6 +13,10 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Test|Win32">
+      <Configuration>Test</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\GraspMMIReleases.log" />
@@ -21,6 +25,7 @@
     <None Include="ReleaseGraspMMI.debug.mak" />
     <None Include="ReleaseGraspMMI.draft.mak" />
     <None Include="ReleaseGraspMMI.release.mak" />
+    <None Include="ReleaseGraspMMI.test.mak" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UpdateRuntimeForGraspMMI\UpdateRuntimeForGraspMMI.vcxproj">
@@ -30,9 +35,14 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4086841F-2D5B-431A-A584-F59D34D3A8F3}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
+    <ProjectName>ReleaseRuntimeForGraspMMI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
@@ -50,6 +60,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -61,6 +74,12 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.debug.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.test.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.test.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
