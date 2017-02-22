@@ -194,7 +194,7 @@ namespace OculusStartupCheck {
 				 char cmd[1024];
 				 fOutputDebugString( "Kill PsyPhyOculusDemo.exe\n" );
 				 system( "TaskKill /F /T /IM PsyPhyOculusDemo.exe" );
-				 sprintf( cmd, "Start /min \"VR Test\" GraspExecutables\\PsyPhyOculusDemo.exe --parent=%d", parent );
+				 sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
 				 fOutputDebugString( "Launch %s\n", cmd );
 				 system( cmd );
 			 }

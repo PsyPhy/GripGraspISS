@@ -7,7 +7,7 @@
 ###  BUILDCONFIGURATION and then includes this file.
 
 # Define where the instructions need to be installed to be accessible in the Grasp runtime environment.
-INSTRUCTIONS_DESTINATION=..\..\GraspInstructions
+INSTRUCTIONS_DESTINATION=..\..\Instructions
 
 
 # This should be a list of all the HTML files that you want to generate.

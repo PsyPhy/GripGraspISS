@@ -3,7 +3,7 @@
 ### What we should do is write a tool to walk the tree, starting from the subject file or files
 ### to copy only the files that will actually be used.
 
-SCRIPT_DESTINATION=..\..\GraspScripts
+SCRIPT_DESTINATION=..\..\Scripts
 install: *.sbj *.sss *.pcl *.tsk
 	-rmdir /S /Q $(SCRIPT_DESTINATION)
 	mkdir $(SCRIPT_DESTINATION)

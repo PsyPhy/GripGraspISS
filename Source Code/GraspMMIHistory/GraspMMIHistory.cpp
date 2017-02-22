@@ -1,7 +1,7 @@
 // GraspMMIHistory.cpp : main project file.
 
 #include "stdafx.h"
-#include "../GraspGUI/GraspScripts.h"
+#include "../GraspGUI/Scripts.h"
 #include "GraspMMIHistory.h"
 
 using namespace GraspMMI;
@@ -85,7 +85,7 @@ void GraspMMIHistoryForm::ParseSubjectFile( System::Windows::Forms::TreeView^ tr
 			// subjectList[nSubjects] = gcnew Subject( number, token[1], token[2], token[3] );
 			System::Windows::Forms::TreeNode^  node = (gcnew System::Windows::Forms::TreeNode( gcnew String( token[1] ) + " " + gcnew String( token[2] ) ));
 			node->Tag = number;
-			ParseSessionFile( node, (gcnew String( "GraspScripts\\" )) + (gcnew String( token[3] )));
+			ParseSessionFile( node, (gcnew String( "Scripts\\" )) + (gcnew String( token[3] )));
 			tree->Nodes->Add( node );
 		}
 		else fAbortMessageOnCondition( (tokens != 0), "GraspGUI", "Invalid number of tokens (%d) in subject file.\n\n  %s", tokens, linebuffer );
@@ -117,7 +117,7 @@ void GraspMMIHistoryForm::ParseSessionFile( System::Windows::Forms::TreeNode^  s
 			System::Windows::Forms::TreeNode^ node = (gcnew System::Windows::Forms::TreeNode( gcnew String( token[0] ) + " " + gcnew String( token[1] ) ));
 			subject->Nodes->Add( node );
 			node->Tag = number;
-			ParseProtocolFile( node, (gcnew String( "GraspScripts\\" )) + (gcnew String( token[2] )));
+			ParseProtocolFile( node, (gcnew String( "Scripts\\" )) + (gcnew String( token[2] )));
 		}
 		else fAbortMessageOnCondition( (tokens != 0), "GraspGUI", "Invalid number of tokens (%d) in session file.\n\n  %s", tokens, linebuffer );
 	}

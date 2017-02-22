@@ -145,7 +145,7 @@ namespace GraspMMI {
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 				 CreateRefreshTimer( 2000 );
 				 //StartRefreshTimer();
-				 ParseSubjectFile( historyTree, gcnew String( "GraspScripts\\Subjects.sbj" ) );
+				 ParseSubjectFile( historyTree, gcnew String( "Scripts\\Subjects.sbj" ) );
 			 }
 
 };

@@ -1,7 +1,0 @@
-# Instructions and commands to guide the installation for the seated posture.
-01; INSTRUCTION; 00IntroV-K.instruction.html
-02; COMMAND@; GraspExecutables\AlignToRigidBodyGUI.exe --body=Bdy\ChestTilted.bdy; CodaAlignSeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-03; INSTRUCTION; HMDStructureAssembly.instruction.html
-04; INSTRUCTION; ObjectPositioningSeated.instruction.html
-04; INSTRUCTION; TaskFinished.instruction.html
-

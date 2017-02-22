@@ -26,7 +26,7 @@ EXECUTABLES = \
 	RunGRASP.bat 
 
 ROOT=..\..
-DESTINATION = $(ROOT)\GraspExecutables
+DESTINATION = $(ROOT)\Executables
 
 install: $(EXECUTABLES) InstallGrasp.mak 
 	-rmdir /S /Q $(DESTINATION)

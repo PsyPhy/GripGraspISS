@@ -202,7 +202,7 @@ void CodaRTnetDaemonTracker::Startup( void ) {
 	// to make sure that we are using a compatible version. It would probably be
 	// good to get this path from the .ini file so that it can be customized for 
 	// different applications.
-	WinExec( "GraspExecutables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
+	WinExec( "Executables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
 	// Re-establish a connection with the daemon.
 	Initialize();
 }

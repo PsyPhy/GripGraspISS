@@ -105,13 +105,13 @@ namespace GraspGUI {
 			int bytes = GetCurrentDirectory( sizeof( root_string ), root_string );
 			fAbortMessageOnCondition( bytes > MAX_PATH, "GraspGUI", "Path to current directory is too long." );
 			rootDirectory = gcnew String( root_string ) + "\\";
-			instructionsDirectory = rootDirectory + "GraspInstructions\\";
+			instructionsDirectory = rootDirectory + "Instructions\\";
 			// Grasp.exe and other programs that may be called do not handle file paths that include spaces.
 			// While we can control that paths below the Grasp root directory do not have spaces, we have no control
 			// on the directories between the file system root and the Grasp root directory. So we do not
 			// add the absolute path to the root directory to the other file paths defined below.
-			scriptDirectory =  "GraspScripts\\";
-			execDirectory =  "GraspExecutables\\";
+			scriptDirectory =  "Scripts\\";
+			execDirectory =  "Executables\\";
 			// Define the name of the subdirectory for today's results.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
@@ -1123,13 +1123,13 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			WinExec( "GraspExecutables\\GraspHardwareStatus.exe", SW_SHOW );
+			WinExec( "Executables\\GraspHardwareStatus.exe", SW_SHOW );
 		}
 
 	protected:
 
 		// The following methods deal with navigating through the scripts.
-		// I have chosen to group them together in GraspScripts.cpp, even the ones
+		// I have chosen to group them together in Scripts.cpp, even the ones
 		//  initially generated automatically by the Forms designer.
 
 		// Parse the file containing the subject names, IDs and protocols.
