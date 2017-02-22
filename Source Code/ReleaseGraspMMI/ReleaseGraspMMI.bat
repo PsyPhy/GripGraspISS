@@ -16,7 +16,7 @@ set ROOT=..\..
 REM Copy the latest installation instructions to be included with the release.
 copy /Y /V GraspMMI_Installation_Instructions.txt %ROOT%\GraspMMIDocumentation
 
-REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy.
+REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directory.
 pushd %ROOT%
 
 REM Create a file tag with date and time, making sure that the hour has a leading zero.
@@ -28,24 +28,10 @@ set TAG=(%DTT% %HOUR%h%time:~3,2%m%time:~6,2%s)
 set ARCHIVE="..\GraspMMI %1 %TAG%.tar"
 echo Creating GRASPonISS Runtime Release %ARCHIVE%
 
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIExecutables/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Instructions/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Scripts/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIMirrorEnvironments/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGraspMMI.bat
-
-REM Create an empty cache directory to put in the release archive.
-REM We hide the current Cache directory so as not to lose what we have there.
-REM Then we create a new empty directory, with just a readme to put in the tar archive.
-REM Finally, we restore the original Cache directlry.
-rename Cache HIDECache
-mkdir Cache
-echo Cache files for GripMMI and GraspMMI go here. > Cache\readme.txt
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Cache/*
-rmdir /S /Q Cache
-rename HIDECache Cache
 
 REM Keep a record of releases.
 echo %ARCHIVE% >> GraspMMIReleases.log

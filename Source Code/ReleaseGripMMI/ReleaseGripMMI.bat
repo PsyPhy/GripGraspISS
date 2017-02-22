@@ -29,7 +29,7 @@ set ARCHIVE="..\GripMMI %1 %TAG%.tar"
 echo Creating GripMMI Runtime Release %ARCHIVE%
 
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GripMMIExecutables/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% GripScripts/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% GripMMIMirrorEnvironments/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GripMMIDocumentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGripMMI.bat
 
