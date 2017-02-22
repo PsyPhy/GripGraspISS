@@ -1,0 +1,12 @@
+# Protocol Definition: Hardware Configuration 
+900; INSTRUCTION=; Hardware Configuration; MaintenanceWelcome.instruction.html
+901; SYSTEM=; Use HMD Tracking Only; echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
+902; SYSTEM=; Use GRIP 3D (CODA) tracker; del /F /Q NoCoda.flg; SetWithCodaReady.prompt.html
+903; SYSTEM=; Use FM Marker Supports; copy /Y Bdy\FM\*.bdy Bdy; StepReady.prompt.html
+904; SYSTEM=; Use RED Marker Supports; copy /Y Bdy\RED\*.bdy Bdy; StepReady.prompt.html
+905; SYSTEM=; Use ALTERNATE RED Marker Supports; copy /Y Bdy\RedAlt\*.bdy Bdy; StepReady.prompt.html
+906; SYSTEM=; Use YELLOW Marker Supports; copy /Y Bdy\YELLOW\*.bdy Bdy; StepReady.prompt.html
+910; SYSTEM=; Use TrM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini; StepReady.prompt.html
+911; SYSTEM=; Use GM  Tracker Units; copy /Y InitFiles\CodaRTnet.ini.GM1  CodaRTnet.ini; StepReady.prompt.html
+912; SYSTEM=; Use ScM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.SM  CodaRTnet.ini; StepReady.prompt.html
+913; SYSTEM=; Use FM2 Tracker Units; copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini; StepReady.prompt.html

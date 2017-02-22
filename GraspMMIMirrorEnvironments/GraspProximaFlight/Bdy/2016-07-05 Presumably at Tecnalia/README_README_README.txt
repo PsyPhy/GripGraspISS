@@ -1,0 +1,1 @@
+Check if the chest rigid body is really the chest. Or is it still the hand that we have been using as a substitute?
