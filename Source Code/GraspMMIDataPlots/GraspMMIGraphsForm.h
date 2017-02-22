@@ -863,7 +863,28 @@ private: System::ComponentModel::IContainer^  components;
 					// Test if the About item was selected from the system menu
 					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
 					{
-						fMessageBox( MB_OK, "GraspMMIDataPlots Version Info", "Source Release:  %s\n         Build Info:  %s", GripGraspSourceRelease, GripGraspBuildInfo );
+						char pwd[MAX_PATH];
+						int bytes = GetCurrentDirectory( sizeof( pwd ), pwd );
+						
+						// We need InteropServics in order to convert a String to a char *.
+						using namespace System::Runtime::InteropServices;
+
+						// Converts the String into a char *.
+						// Don't forget to free it when exiting.
+						char *cache_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetCacheFileRoot ).ToPointer();
+						char hk_file[MAX_PATHLENGTH];
+						char rt_file[MAX_PATHLENGTH];
+
+						// Create the paths to the housekeeping packet file, based on the root and the packet type.
+						CreateGripPacketCacheFilename( hk_file, sizeof( hk_file ), GRIP_HK_BULK_PACKET, cache_root );
+						CreateGripPacketCacheFilename( rt_file, sizeof( rt_file ), GRIP_RT_SCIENCE_PACKET, cache_root );
+
+						fMessageBox( MB_OK, 
+							"GraspMMIMirror Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
+							GripGraspSourceRelease, GripGraspBuildInfo, hk_file, rt_file, pwd );
+						// Release the memory used to create the ANSI string.
+						Marshal::FreeHGlobal( IntPtr( cache_root ) );
+
 						return;
 					}
 					// Do what one would normally do.
