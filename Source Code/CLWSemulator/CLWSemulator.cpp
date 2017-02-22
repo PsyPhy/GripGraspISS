@@ -156,7 +156,7 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 					if ( delta_time < 0 ) delta_time = 1;
 					// If there has been a long real delay, limit it to 30 seconds.
 					if ( delta_time > 30000 ) delta_time = 30000;
-					printf( "G%d", delta_time );
+					printf( " G%d ", delta_time );
 					Sleep( delta_time );
 
 				}
@@ -555,7 +555,7 @@ int _tmain( int argc, char **argv )
 	// A place to store the pertinent information from a client packet in usable form.
 	EPMTransferFrameHeaderInfo transferFrameInfo;
 
-	printf( "CLWS Emulator started.\n%s\n%s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
+	printf( "CLWS Emulator started.\n\nSource Code Release: %s\n         Build Info: %s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
 	printf( "This is the EPM/GRIP packet server emulator.\n" );
 	printf( "It waits for a client to connect and then sends\n" );
 	printf( " out HK and RT packets.\n" );

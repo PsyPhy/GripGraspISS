@@ -120,7 +120,7 @@ int __cdecl main(int argc, const char **argv)
 	const char *packetCacheFilenameRoot = NULL;
 	const char *server_name = NULL;
 
-	printf( "DexGroundMonitorClient started.\n%s\n%s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
+	printf( "DexGroundMonitorClient started.\n\nSource Code Release: %s\n         Build Info: %s\n\n", GripGraspSourceRelease, GripGraspBuildInfo );
 	printf( "This is the EPM/GRIP packet receiver.\n" );
 	printf( "It waits for a connection to the EPM server,\n then processes incoming packets.\n" );
 	printf( "\n\n" );

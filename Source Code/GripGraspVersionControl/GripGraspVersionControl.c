@@ -17,5 +17,5 @@
 #ifdef _DEBUG 
 char *GripGraspBuildInfo = __DATE__" "__TIME__" (debug)";
 #else
-char *GripGraspBuildInfo = "__DATE__" "__TIME__";
+char *GripGraspBuildInfo = __DATE__" "__TIME__;
 #endif
