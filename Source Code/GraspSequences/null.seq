@@ -1,0 +1,3 @@
+#
+# Parameters for a sequence of GRASP trials.
+# There are no valid trials here, which force Grasp.exe to just do a demo.
