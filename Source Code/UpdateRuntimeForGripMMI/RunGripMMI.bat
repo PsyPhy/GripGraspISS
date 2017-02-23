@@ -1,3 +1,4 @@
+@echo OFF
 REM **************************************************************************
 
 REM GraspMMI Startup Script.
@@ -14,6 +15,24 @@ REM *                                                                        *
 REM **************************************************************************
  
 REM
+REM Mirror of GRIP runtime scripts.
+REM
+
+REM The client program will look for the GRIP scripts here.
+REM The mirror directory must contain an exact copy of the runtime scripts that are 
+REM on the GRIP hardware that is generating the telemetry data. You will find one or
+REM more candidates in the GripMMIMirrorEnvironments directory.
+REM The directory specification can be relative to this .bat file. 
+set ScriptDir="GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\Scripts"
+
+REM Provide a set of recorded packets corresponding to the above scripts for simulation mode.
+REM Note that this definition has no effect if you are in "-constructed" mode.
+REM Use PACKET_SOURCE="GripMMIExecutables\GripPacketsForSimulator.gpk" if you do not have a more specific file.
+REM Note that if the scripts do not correspond the behavior is undefined.
+REM Here we have recorded packets that correspond to the scripts above.
+set PACKET_SOURCE="GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\GripESTPacketsForSimulator.gpk"
+
+REM
 REM CLWS Emulator for testing
 REM 
 
@@ -26,10 +45,6 @@ REM It is currently configured to send out pre-recorded packets.
 REM set EMULATE_MODE=-constructed
 set EMULATE_MODE=-recorded
 
-REM You can substitute a different file as the source of the recorded packets
-REM  by changing the following definition. Note that this definition has
-REM  no effect if you are in "-constructed" mode.
-set PACKET_SOURCE="GripMMIExecutables\GripPacketsForSimulator.gpk"
 
 REM Host Name or Address of the CLWS Server.
 REM Should be 'localhost' if running the CLWSemulator on the same machine (see above).
@@ -56,16 +71,7 @@ REM Directory holding cache files
 REM
 
 REM The client program will store packets received from the CLWS in this directory.
-REM Note that you should include a final backslash.
-set CacheDir=Cache\
-
-REM
-REM Directory holding the Grip scripts (.dex)
-REM
-
-REM The client program will look for the GRIP scripts here.
-REM Again, you should include a terminating backslash.
-set ScriptDir=GripScripts\
+set CacheDir=c:\DexCache
 
 REM 
 REM Location of restart batch file.
@@ -81,7 +87,7 @@ REM set RestartDir=.\
 REM
 REM But this directory is probably write protected at CADMOS. 
 REM So I write it to the cache directory instead:
-set RestartDir=%CacheDir%
+set RestartDir=%CacheDir%\
 
 REM
 REM Alternate Software Unit ID.
@@ -131,6 +137,7 @@ REM Normally you will not need to edit below this line.
 
 REM Root of the file names for the cache files
 set CacheRoot=GripPackets.%TIMESTAMP%
+set CachePath=%CacheDir%\%CacheRoot%
 
 REM Show where we are for debugging purposes.
 echo %cd%
@@ -149,22 +156,17 @@ REM First parameter is the path and root for the cache files.
 REM Second is the host name or IP address in dot format of the CLWS server.
 REM The process is launched with /REALTIME priority to help ensure that
 REM  packets from the EPM server are not missed.
-start /REALTIME GripMMIExecutables\DexGroundMonitorClient.exe %CacheDir%%CacheRoot% %HOST%:%PORT% %UNIT%
+start /REALTIME GripMMIExecutables\DexGroundMonitorClient.exe %CachePath% %HOST%:%PORT% %UNIT%
 
 REM Launch a 'lite', text-only version of the MMI, just to see if 
 REM  the servers are running and the cache files are filling up.
 REM Usually this is disables by commenting the next line.
-REM start GripMMIExecutables\GripMMIlite.exe %CacheDir%\%CacheRoot%
-
-REM Start the VC++ 6 version of the Grip MMI.
-REM First parameter is the path to the packet caches that serve as inputs.
-REM Second paramter is the path to the scripts that are installed on board.
-REM start GripMMIExecutables\GripGroundMonitor.exe %CacheDir%\%CacheRoot% %ScriptDir% 
+REM start GripMMIExecutables\GripMMIlite.exe %CachePath% 
 
 REM Start the actual graphical GripMMI.
 REM First parameter is the path to the packet caches that serve as inputs.
 REM Second paramter is the path to the scripts that are installed on board.
-start GripMMIExecutables\GripMMI.exe %CacheDir%\%CacheRoot% %ScriptDir% %TIMEBASE_CORRECTION%
+start GripMMIExecutables\GripMMI.exe %CachePath%  %ScriptDir%\ %TIMEBASE_CORRECTION%
 
 REM Now create a batch file that will make it easier to restart the graphical
 REM GripMMI.exe interface without restarting GripGroundMonitorClient.exe
@@ -182,4 +184,4 @@ echo REM This batch file can also be used to review previously recorded data >> 
 echo REM using the GripMMI graphical interface. >> %restart_file%
 echo REM >> %restart_file%
 echo CD %CD% >> %restart_file%
-echo start GripMMIExecutables\GripMMI.exe %CacheDir%\%CacheRoot% %ScriptDir% %TIMEBASE_CORRECTION% >> %restart_file%
+echo start GripMMIExecutables\GripMMI.exe %CachePath%  %ScriptDir%\ %TIMEBASE_CORRECTION% >> %restart_file%
