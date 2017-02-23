@@ -17,6 +17,6 @@
 ### But I don't care so much when I am in debug mode.
 
 rebuild:
-	echo // Automatic comment generated to force rebuild of dependent projects. > ForceRebuild.c
-	echo // See ForceRebuild.mak in the ForceRebuild project for explanation. >> ForceRebuild.c
-	echo // ForceRebuild %date% %time% >> ForceRebuild.c
+	echo // Automatic comment generated to force rebuild of dependent projects. > ForceRebuild.h
+	echo // See ForceRebuild.mak in the ForceRebuild project for explanation. >> ForceRebuild.h
+	echo // ForceRebuild %date% %time% >> ForceRebuild.h

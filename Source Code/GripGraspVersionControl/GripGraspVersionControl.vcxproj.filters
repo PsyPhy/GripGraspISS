@@ -9,6 +9,5 @@
   <ItemGroup>
     <ClCompile Include="GripGraspVersionControl.c" />
     <ClCompile Include="GripGraspVersionID.c" />
-    <ClCompile Include="..\ForceRebuild\ForceRebuild.c" />
   </ItemGroup>
 </Project>

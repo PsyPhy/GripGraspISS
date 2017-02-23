@@ -27,4 +27,6 @@ install: $(EXECUTABLES) InstallGraspMMI.mak
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\*.dll $(DESTINATION)
 	copy RunGraspMMI.bat $(ROOT)
+	echo GraspMMI Version Information > $(DESTINATION)\GraspMMIVersionInfo.txt
+	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GraspMMIVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

@@ -27,4 +27,6 @@ install: $(EXECUTABLES) InstallGripMMI.mak
 	copy GripPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\glut32.dll $(DESTINATION)
 	copy RunGripMMI.bat $(ROOT)
+	echo GripMMI Version Information > $(DESTINATION)\GripMMIVersionInfo.txt
+	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GripMMIVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

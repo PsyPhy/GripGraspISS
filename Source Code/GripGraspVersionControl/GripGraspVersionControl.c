@@ -12,7 +12,7 @@
 /// When compiled, it defines version and build info for the different project.
 /// Other modules link to it to get the shared version and build info.
 
-/// Edit the lines below prior to compiling a new release.
+#include "../ForceRebuild/ForceRebuild.h"
 
 #ifdef _DEBUG 
 char *GripGraspBuildInfo = __DATE__" "__TIME__" (debug)";

@@ -67,6 +67,9 @@
     <ProjectReference Include="..\GripMMIlite\GripMMIlite.vcxproj">
       <Project>{c7f47a3e-3545-4460-9cb3-1e6a0b434be0}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GripMMIShowVersionInfo\GripMMIShowVersionInfo.vcxproj">
+      <Project>{6da9ed6e-c775-49c7-9526-38ebd30cd8cc}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GripMMI\GripMMI.vcxproj">
       <Project>{f8ab8fa2-a247-457f-ba20-013a097a9bdf}</Project>
     </ProjectReference>

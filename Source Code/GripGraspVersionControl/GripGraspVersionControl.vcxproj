@@ -95,7 +95,6 @@
     <ClInclude Include="GripGraspVersionControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\ForceRebuild\ForceRebuild.c" />
     <ClCompile Include="GripGraspVersionControl.c" />
     <ClCompile Include="GripGraspVersionID.c" />
   </ItemGroup>
