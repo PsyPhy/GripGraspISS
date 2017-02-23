@@ -16,9 +16,20 @@
 #include "stdafx.h"
 #include "../GripGraspVersionControl/GripGraspVersionControl.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char *argv[])
 {
-	printf( "Source release: %s Build Info: %s", GripGraspSourceRelease, GripGraspBuildInfo );
+	if ( argc < 1 ) printf( "Source release: %s Build Info: %s", GripGraspSourceRelease, GripGraspBuildInfo );
+	else {
+		int arg;
+		int i;
+		char tag[256];
+		for ( arg = 1; arg < argc; arg++ ) {
+			if ( !strcmp( "-b", argv[arg] ) ) strcpy( tag, GripGraspBuildInfo );
+			if ( !strcmp( "-r", argv[arg] ) ) strcpy( tag, GripGraspSourceRelease );
+			for ( i = 0; i < strlen( tag ); i++ ) if ( tag[i] == ':' ) tag[i] = '-';
+			printf( "%s", tag );
+		}
+	}
 	return 0;
 }
 

@@ -12,10 +12,10 @@
 /// When compiled, it defines version and build info for the different project.
 /// Other modules link to it to get the shared version and build info.
 
-#include "../ForceRebuild/ForceRebuild.h"
+#include "../ForceRebuild/CommonTimestamp.h"
 
 #ifdef _DEBUG 
-char *GripGraspBuildInfo = __DATE__" "__TIME__" (debug)";
+char *GripGraspBuildInfo = __COMMONTIMESTAMP__ " debug";
 #else
-char *GripGraspBuildInfo = __DATE__" "__TIME__;
+char *GripGraspBuildInfo = __COMMONTIMESTAMP__;
 #endif

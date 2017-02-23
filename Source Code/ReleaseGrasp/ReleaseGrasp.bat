@@ -1,4 +1,5 @@
 @echo OFF
+setlocal
 
 REM 
 REM ReleaseGrasp.bat
@@ -6,21 +7,19 @@ REM
 
 REM A batch file that creates a tar archive with the GRASPonISS runtime installation.
 
-setlocal
+REM Create a file tag based on the compiled build date and time.
+REM The batch file  %temp%\SetCommonTimestamp.bat was created by the CommonTimestamp project.
+REM We call it here to get the timestamp info that was compiled into the executables.
+call %temp%\SetCommonTimestamp.bat
+set TAG=(%__COMMONTIMESTAMP__%)
+set ARCHIVE="..\Grasp %1 %TAG%.tar"
+echo Creating Grasp Runtime Release %ARCHIVE%
+
 set TAR=Utils\tar.exe
 set VERBOSE=
 
 REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy.
 pushd ..\..
-
-REM Create a file tag with date and time, making sure that the hour has a leading zero.
-if "%time:~0,1%" EQU " " (set HOUR=0%time:~1,1%) else (set HOUR=%time:~0,2%)
-REM Create a date string in the form YYYY-MM-DD, trying to take into account the data format on the machine.
-REM If the first field is the day of the week, then the 4th character will be a blank.
-if "%date:~3,1%" EQU " " (set DTT=%date:~10,4%-%date:~4,2%-%date:~7,2%) else (set DTT=%date:~6,4%-%date:~3,2%-%date:~0,2%)
-set TAG=(%DTT% %HOUR%h%time:~3,2%m%time:~6,2%s)
-set ARCHIVE="..\Grasp %1 %TAG%.tar"
-echo Creating GRASPonISS Runtime Release %ARCHIVE%
 
 %TAR% --create %VERBOSE% --file=%ARCHIVE% Bdy/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
