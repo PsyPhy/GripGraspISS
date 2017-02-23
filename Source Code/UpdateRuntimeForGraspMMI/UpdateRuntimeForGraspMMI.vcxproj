@@ -29,6 +29,9 @@
     <ProjectReference Include="..\GraspMMI\GraspMMI.vcxproj">
       <Project>{ebcf095f-8685-4c8b-9778-502379d0de58}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GripMMIShowVersionInfo\GripMMIShowVersionInfo.vcxproj">
+      <Project>{6da9ed6e-c775-49c7-9526-38ebd30cd8cc}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{240EE129-8610-4694-93D1-0A6FB2161E77}</ProjectGuid>
