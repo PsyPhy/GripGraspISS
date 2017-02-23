@@ -64,7 +64,7 @@ namespace GripMMI {
 
 			// Create other dialog windows.
 			fullStepForm = gcnew GripMMIFullStep();
-			aboutForm = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo );
+			aboutForm = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo, scriptDirectory );
 
 		}
 
@@ -430,7 +430,7 @@ namespace GripMMI {
 			// 
 			this->LogoPictureBox->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"LogoPictureBox.Image")));
 			this->LogoPictureBox->Location = System::Drawing::Point(20, 39);
-			this->LogoPictureBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->LogoPictureBox->Margin = System::Windows::Forms::Padding(4);
 			this->LogoPictureBox->Name = L"LogoPictureBox";
 			this->LogoPictureBox->Size = System::Drawing::Size(267, 246);
 			this->LogoPictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -442,7 +442,7 @@ namespace GripMMI {
 			this->XYPlot->BackColor = System::Drawing::Color::Maroon;
 			this->XYPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->XYPlot->Location = System::Drawing::Point(24, 31);
-			this->XYPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->XYPlot->Margin = System::Windows::Forms::Padding(4);
 			this->XYPlot->Name = L"XYPlot";
 			this->XYPlot->Size = System::Drawing::Size(327, 241);
 			this->XYPlot->TabIndex = 2;
@@ -454,9 +454,9 @@ namespace GripMMI {
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox1->Location = System::Drawing::Point(320, 11);
-			this->groupBox1->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox1->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox1->Size = System::Drawing::Size(372, 279);
 			this->groupBox1->TabIndex = 4;
 			this->groupBox1->TabStop = false;
@@ -468,9 +468,9 @@ namespace GripMMI {
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox2->Location = System::Drawing::Point(700, 11);
-			this->groupBox2->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox2->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox2->Size = System::Drawing::Size(372, 279);
 			this->groupBox2->TabIndex = 5;
 			this->groupBox2->TabStop = false;
@@ -481,7 +481,7 @@ namespace GripMMI {
 			this->ZYPlot->BackColor = System::Drawing::Color::Maroon;
 			this->ZYPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->ZYPlot->Location = System::Drawing::Point(23, 31);
-			this->ZYPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->ZYPlot->Margin = System::Windows::Forms::Padding(4);
 			this->ZYPlot->Name = L"ZYPlot";
 			this->ZYPlot->Size = System::Drawing::Size(327, 241);
 			this->ZYPlot->TabIndex = 2;
@@ -493,9 +493,9 @@ namespace GripMMI {
 			this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox3->Location = System::Drawing::Point(1080, 11);
-			this->groupBox3->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox3->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox3->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox3->Size = System::Drawing::Size(372, 279);
 			this->groupBox3->TabIndex = 6;
 			this->groupBox3->TabStop = false;
@@ -506,7 +506,7 @@ namespace GripMMI {
 			this->CoPPlot->BackColor = System::Drawing::Color::Maroon;
 			this->CoPPlot->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->CoPPlot->Location = System::Drawing::Point(24, 31);
-			this->CoPPlot->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->CoPPlot->Margin = System::Windows::Forms::Padding(4);
 			this->CoPPlot->Name = L"CoPPlot";
 			this->CoPPlot->Size = System::Drawing::Size(327, 241);
 			this->CoPPlot->TabIndex = 2;
@@ -524,9 +524,9 @@ namespace GripMMI {
 			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox4->Location = System::Drawing::Point(5, 396);
-			this->groupBox4->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox4->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox4->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox4->Size = System::Drawing::Size(1449, 798);
 			this->groupBox4->TabIndex = 7;
 			this->groupBox4->TabStop = false;
@@ -539,7 +539,7 @@ namespace GripMMI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->filterConstantTextBox->ForeColor = System::Drawing::SystemColors::WindowText;
 			this->filterConstantTextBox->Location = System::Drawing::Point(1237, 0);
-			this->filterConstantTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->filterConstantTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->filterConstantTextBox->Name = L"filterConstantTextBox";
 			this->filterConstantTextBox->Size = System::Drawing::Size(61, 26);
 			this->filterConstantTextBox->TabIndex = 26;
@@ -555,7 +555,7 @@ namespace GripMMI {
 			this->rightLimitTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->rightLimitTextBox->Location = System::Drawing::Point(1359, 775);
-			this->rightLimitTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->rightLimitTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->rightLimitTextBox->Name = L"rightLimitTextBox";
 			this->rightLimitTextBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
 			this->rightLimitTextBox->Size = System::Drawing::Size(81, 19);
@@ -569,7 +569,7 @@ namespace GripMMI {
 			this->leftLimitTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->leftLimitTextBox->Location = System::Drawing::Point(15, 775);
-			this->leftLimitTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->leftLimitTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->leftLimitTextBox->Name = L"leftLimitTextBox";
 			this->leftLimitTextBox->Size = System::Drawing::Size(116, 19);
 			this->leftLimitTextBox->TabIndex = 15;
@@ -583,7 +583,7 @@ namespace GripMMI {
 			this->graphCollectionComboBox->FormattingEnabled = true;
 			this->graphCollectionComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"Summary", L"Kinematics", L"Visibility"});
 			this->graphCollectionComboBox->Location = System::Drawing::Point(939, 0);
-			this->graphCollectionComboBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->graphCollectionComboBox->Margin = System::Windows::Forms::Padding(4);
 			this->graphCollectionComboBox->Name = L"graphCollectionComboBox";
 			this->graphCollectionComboBox->Size = System::Drawing::Size(188, 26);
 			this->graphCollectionComboBox->TabIndex = 25;
@@ -598,7 +598,7 @@ namespace GripMMI {
 			this->autoscaleCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->autoscaleCheckBox->Location = System::Drawing::Point(1319, 1);
-			this->autoscaleCheckBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->autoscaleCheckBox->Margin = System::Windows::Forms::Padding(4);
 			this->autoscaleCheckBox->Name = L"autoscaleCheckBox";
 			this->autoscaleCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
 			this->autoscaleCheckBox->Size = System::Drawing::Size(105, 24);
@@ -610,7 +610,7 @@ namespace GripMMI {
 			// StripCharts
 			// 
 			this->StripCharts->Location = System::Drawing::Point(8, 26);
-			this->StripCharts->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->StripCharts->Margin = System::Windows::Forms::Padding(4);
 			this->StripCharts->Name = L"StripCharts";
 			this->StripCharts->Size = System::Drawing::Size(1433, 750);
 			this->StripCharts->TabIndex = 0;
@@ -622,7 +622,7 @@ namespace GripMMI {
 			this->filterCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->filterCheckbox->Location = System::Drawing::Point(1145, 1);
-			this->filterCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->filterCheckbox->Margin = System::Windows::Forms::Padding(4);
 			this->filterCheckbox->Name = L"filterCheckbox";
 			this->filterCheckbox->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
 			this->filterCheckbox->Size = System::Drawing::Size(69, 24);
@@ -643,9 +643,9 @@ namespace GripMMI {
 			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox5->Location = System::Drawing::Point(5, 298);
-			this->groupBox5->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox5->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox5->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox5->Size = System::Drawing::Size(1449, 91);
 			this->groupBox5->TabIndex = 8;
 			this->groupBox5->TabStop = false;
@@ -657,7 +657,7 @@ namespace GripMMI {
 			this->latestTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->latestTextBox->Location = System::Drawing::Point(1264, 64);
-			this->latestTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->latestTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->latestTextBox->Name = L"latestTextBox";
 			this->latestTextBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
 			this->latestTextBox->Size = System::Drawing::Size(81, 19);
@@ -671,7 +671,7 @@ namespace GripMMI {
 			this->earliestTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->earliestTextBox->Location = System::Drawing::Point(323, 64);
-			this->earliestTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->earliestTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->earliestTextBox->Name = L"earliestTextBox";
 			this->earliestTextBox->Size = System::Drawing::Size(136, 19);
 			this->earliestTextBox->TabIndex = 13;
@@ -722,7 +722,7 @@ namespace GripMMI {
 			this->dataLiveCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->dataLiveCheckbox->Location = System::Drawing::Point(1365, 38);
-			this->dataLiveCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->dataLiveCheckbox->Margin = System::Windows::Forms::Padding(4);
 			this->dataLiveCheckbox->Name = L"dataLiveCheckbox";
 			this->dataLiveCheckbox->Size = System::Drawing::Size(70, 29);
 			this->dataLiveCheckbox->TabIndex = 0;
@@ -743,9 +743,9 @@ namespace GripMMI {
 			this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox6->Location = System::Drawing::Point(1464, 11);
-			this->groupBox6->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox6->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox6->Name = L"groupBox6";
-			this->groupBox6->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox6->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox6->Size = System::Drawing::Size(564, 562);
 			this->groupBox6->TabIndex = 9;
 			this->groupBox6->TabStop = false;
@@ -754,7 +754,7 @@ namespace GripMMI {
 			// fakeOK
 			// 
 			this->fakeOK->Location = System::Drawing::Point(152, 516);
-			this->fakeOK->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeOK->Margin = System::Windows::Forms::Padding(4);
 			this->fakeOK->Name = L"fakeOK";
 			this->fakeOK->Size = System::Drawing::Size(139, 39);
 			this->fakeOK->TabIndex = 15;
@@ -764,7 +764,7 @@ namespace GripMMI {
 			// fakeInterrupt
 			// 
 			this->fakeInterrupt->Location = System::Drawing::Point(13, 516);
-			this->fakeInterrupt->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeInterrupt->Margin = System::Windows::Forms::Padding(4);
 			this->fakeInterrupt->Name = L"fakeInterrupt";
 			this->fakeInterrupt->Size = System::Drawing::Size(139, 39);
 			this->fakeInterrupt->TabIndex = 14;
@@ -774,7 +774,7 @@ namespace GripMMI {
 			// fakeStatus
 			// 
 			this->fakeStatus->Location = System::Drawing::Point(429, 516);
-			this->fakeStatus->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeStatus->Margin = System::Windows::Forms::Padding(4);
 			this->fakeStatus->Name = L"fakeStatus";
 			this->fakeStatus->Size = System::Drawing::Size(128, 39);
 			this->fakeStatus->TabIndex = 13;
@@ -784,7 +784,7 @@ namespace GripMMI {
 			// fakeCancel
 			// 
 			this->fakeCancel->Location = System::Drawing::Point(291, 516);
-			this->fakeCancel->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeCancel->Margin = System::Windows::Forms::Padding(4);
 			this->fakeCancel->Name = L"fakeCancel";
 			this->fakeCancel->Size = System::Drawing::Size(139, 39);
 			this->fakeCancel->TabIndex = 12;
@@ -794,7 +794,7 @@ namespace GripMMI {
 			// fakeRetry
 			// 
 			this->fakeRetry->Location = System::Drawing::Point(152, 517);
-			this->fakeRetry->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeRetry->Margin = System::Windows::Forms::Padding(4);
 			this->fakeRetry->Name = L"fakeRetry";
 			this->fakeRetry->Size = System::Drawing::Size(139, 39);
 			this->fakeRetry->TabIndex = 11;
@@ -804,7 +804,7 @@ namespace GripMMI {
 			// fakeIgnore
 			// 
 			this->fakeIgnore->Location = System::Drawing::Point(13, 517);
-			this->fakeIgnore->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->fakeIgnore->Margin = System::Windows::Forms::Padding(4);
 			this->fakeIgnore->Name = L"fakeIgnore";
 			this->fakeIgnore->Size = System::Drawing::Size(139, 39);
 			this->fakeIgnore->TabIndex = 10;
@@ -815,7 +815,7 @@ namespace GripMMI {
 			// 
 			this->dexPicture->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->dexPicture->Location = System::Drawing::Point(15, 137);
-			this->dexPicture->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->dexPicture->Margin = System::Windows::Forms::Padding(4);
 			this->dexPicture->Name = L"dexPicture";
 			this->dexPicture->Size = System::Drawing::Size(535, 371);
 			this->dexPicture->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -827,7 +827,7 @@ namespace GripMMI {
 			this->dexText->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->dexText->Location = System::Drawing::Point(13, 31);
-			this->dexText->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->dexText->Margin = System::Windows::Forms::Padding(4);
 			this->dexText->Multiline = true;
 			this->dexText->Name = L"dexText";
 			this->dexText->Size = System::Drawing::Size(537, 98);
@@ -841,9 +841,9 @@ namespace GripMMI {
 			this->groupBox7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox7->Location = System::Drawing::Point(1467, 576);
-			this->groupBox7->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox7->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox7->Name = L"groupBox7";
-			this->groupBox7->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox7->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox7->Size = System::Drawing::Size(456, 62);
 			this->groupBox7->TabIndex = 10;
 			this->groupBox7->TabStop = false;
@@ -854,7 +854,7 @@ namespace GripMMI {
 			this->messageTypeBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->messageTypeBox->Location = System::Drawing::Point(12, 27);
-			this->messageTypeBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->messageTypeBox->Margin = System::Windows::Forms::Padding(4);
 			this->messageTypeBox->Multiline = true;
 			this->messageTypeBox->Name = L"messageTypeBox";
 			this->messageTypeBox->Size = System::Drawing::Size(431, 26);
@@ -868,7 +868,7 @@ namespace GripMMI {
 			this->scriptLiveCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->scriptLiveCheckbox->Location = System::Drawing::Point(1933, 583);
-			this->scriptLiveCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->scriptLiveCheckbox->Margin = System::Windows::Forms::Padding(4);
 			this->scriptLiveCheckbox->Name = L"scriptLiveCheckbox";
 			this->scriptLiveCheckbox->Size = System::Drawing::Size(70, 29);
 			this->scriptLiveCheckbox->TabIndex = 11;
@@ -882,7 +882,7 @@ namespace GripMMI {
 			this->scriptErrorCheckbox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->scriptErrorCheckbox->Location = System::Drawing::Point(1933, 613);
-			this->scriptErrorCheckbox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->scriptErrorCheckbox->Margin = System::Windows::Forms::Padding(4);
 			this->scriptErrorCheckbox->Name = L"scriptErrorCheckbox";
 			this->scriptErrorCheckbox->Size = System::Drawing::Size(75, 29);
 			this->scriptErrorCheckbox->TabIndex = 12;
@@ -901,9 +901,9 @@ namespace GripMMI {
 			this->groupBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox8->Location = System::Drawing::Point(1467, 641);
-			this->groupBox8->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox8->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox8->Name = L"groupBox8";
-			this->groupBox8->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox8->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox8->Size = System::Drawing::Size(561, 62);
 			this->groupBox8->TabIndex = 11;
 			this->groupBox8->TabStop = false;
@@ -914,7 +914,7 @@ namespace GripMMI {
 			this->gotoButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->gotoButton->Location = System::Drawing::Point(452, 26);
-			this->gotoButton->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->gotoButton->Margin = System::Windows::Forms::Padding(4);
 			this->gotoButton->Name = L"gotoButton";
 			this->gotoButton->Size = System::Drawing::Size(96, 32);
 			this->gotoButton->TabIndex = 5;
@@ -927,7 +927,7 @@ namespace GripMMI {
 			this->nextButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->nextButton->Location = System::Drawing::Point(12, 26);
-			this->nextButton->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->nextButton->Margin = System::Windows::Forms::Padding(4);
 			this->nextButton->Name = L"nextButton";
 			this->nextButton->Size = System::Drawing::Size(96, 32);
 			this->nextButton->TabIndex = 4;
@@ -940,7 +940,7 @@ namespace GripMMI {
 			this->stepIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->stepIDBox->Location = System::Drawing::Point(371, 26);
-			this->stepIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->stepIDBox->Margin = System::Windows::Forms::Padding(4);
 			this->stepIDBox->Name = L"stepIDBox";
 			this->stepIDBox->Size = System::Drawing::Size(61, 28);
 			this->stepIDBox->TabIndex = 3;
@@ -954,7 +954,7 @@ namespace GripMMI {
 			this->taskIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskIDBox->Location = System::Drawing::Point(289, 26);
-			this->taskIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->taskIDBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskIDBox->Name = L"taskIDBox";
 			this->taskIDBox->Size = System::Drawing::Size(61, 28);
 			this->taskIDBox->TabIndex = 2;
@@ -968,7 +968,7 @@ namespace GripMMI {
 			this->protocolIDBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->protocolIDBox->Location = System::Drawing::Point(208, 26);
-			this->protocolIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->protocolIDBox->Margin = System::Windows::Forms::Padding(4);
 			this->protocolIDBox->Name = L"protocolIDBox";
 			this->protocolIDBox->Size = System::Drawing::Size(61, 28);
 			this->protocolIDBox->TabIndex = 1;
@@ -984,7 +984,7 @@ namespace GripMMI {
 				static_cast<System::Byte>(0)));
 			this->subjectIDBox->ForeColor = System::Drawing::SystemColors::WindowText;
 			this->subjectIDBox->Location = System::Drawing::Point(127, 26);
-			this->subjectIDBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->subjectIDBox->Margin = System::Windows::Forms::Padding(4);
 			this->subjectIDBox->Name = L"subjectIDBox";
 			this->subjectIDBox->Size = System::Drawing::Size(61, 28);
 			this->subjectIDBox->TabIndex = 0;
@@ -999,9 +999,9 @@ namespace GripMMI {
 			this->groupBox9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox9->Location = System::Drawing::Point(1468, 706);
-			this->groupBox9->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox9->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox9->Name = L"groupBox9";
-			this->groupBox9->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox9->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox9->Size = System::Drawing::Size(181, 226);
 			this->groupBox9->TabIndex = 13;
 			this->groupBox9->TabStop = false;
@@ -1014,7 +1014,7 @@ namespace GripMMI {
 			this->subjectList->FormattingEnabled = true;
 			this->subjectList->ItemHeight = 18;
 			this->subjectList->Location = System::Drawing::Point(7, 31);
-			this->subjectList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->subjectList->Margin = System::Windows::Forms::Padding(4);
 			this->subjectList->Name = L"subjectList";
 			this->subjectList->Size = System::Drawing::Size(165, 184);
 			this->subjectList->TabIndex = 0;
@@ -1027,9 +1027,9 @@ namespace GripMMI {
 			this->groupBox10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox10->Location = System::Drawing::Point(1468, 944);
-			this->groupBox10->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox10->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox10->Name = L"groupBox10";
-			this->groupBox10->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox10->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox10->Size = System::Drawing::Size(181, 300);
 			this->groupBox10->TabIndex = 14;
 			this->groupBox10->TabStop = false;
@@ -1042,7 +1042,7 @@ namespace GripMMI {
 			this->protocolList->FormattingEnabled = true;
 			this->protocolList->ItemHeight = 18;
 			this->protocolList->Location = System::Drawing::Point(7, 31);
-			this->protocolList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->protocolList->Margin = System::Windows::Forms::Padding(4);
 			this->protocolList->Name = L"protocolList";
 			this->protocolList->Size = System::Drawing::Size(165, 256);
 			this->protocolList->TabIndex = 1;
@@ -1055,9 +1055,9 @@ namespace GripMMI {
 			this->groupBox11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox11->Location = System::Drawing::Point(1657, 705);
-			this->groupBox11->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox11->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox11->Name = L"groupBox11";
-			this->groupBox11->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox11->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox11->Size = System::Drawing::Size(181, 539);
 			this->groupBox11->TabIndex = 15;
 			this->groupBox11->TabStop = false;
@@ -1070,7 +1070,7 @@ namespace GripMMI {
 			this->taskList->FormattingEnabled = true;
 			this->taskList->ItemHeight = 18;
 			this->taskList->Location = System::Drawing::Point(5, 31);
-			this->taskList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->taskList->Margin = System::Windows::Forms::Padding(4);
 			this->taskList->Name = L"taskList";
 			this->taskList->Size = System::Drawing::Size(169, 490);
 			this->taskList->TabIndex = 2;
@@ -1083,9 +1083,9 @@ namespace GripMMI {
 			this->groupBox12->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox12->Location = System::Drawing::Point(1847, 705);
-			this->groupBox12->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox12->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox12->Name = L"groupBox12";
-			this->groupBox12->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox12->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox12->Size = System::Drawing::Size(181, 539);
 			this->groupBox12->TabIndex = 16;
 			this->groupBox12->TabStop = false;
@@ -1098,7 +1098,7 @@ namespace GripMMI {
 			this->stepList->FormattingEnabled = true;
 			this->stepList->ItemHeight = 18;
 			this->stepList->Location = System::Drawing::Point(5, 31);
-			this->stepList->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->stepList->Margin = System::Windows::Forms::Padding(4);
 			this->stepList->Name = L"stepList";
 			this->stepList->Size = System::Drawing::Size(169, 490);
 			this->stepList->TabIndex = 3;
@@ -1110,9 +1110,9 @@ namespace GripMMI {
 			this->groupBox13->Controls->Add(this->label1);
 			this->groupBox13->Controls->Add(this->markersTextBox);
 			this->groupBox13->Location = System::Drawing::Point(7, 1195);
-			this->groupBox13->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox13->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox13->Name = L"groupBox13";
-			this->groupBox13->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox13->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox13->Size = System::Drawing::Size(403, 49);
 			this->groupBox13->TabIndex = 18;
 			this->groupBox13->TabStop = false;
@@ -1135,7 +1135,7 @@ namespace GripMMI {
 			this->markersTextBox->Font = (gcnew System::Drawing::Font(L"Wingdings", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(2)));
 			this->markersTextBox->Location = System::Drawing::Point(107, 14);
-			this->markersTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->markersTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->markersTextBox->Multiline = true;
 			this->markersTextBox->Name = L"markersTextBox";
 			this->markersTextBox->Size = System::Drawing::Size(281, 29);
@@ -1149,9 +1149,9 @@ namespace GripMMI {
 			this->groupBox14->Controls->Add(this->targetsTextBox);
 			this->groupBox14->Controls->Add(this->label2);
 			this->groupBox14->Location = System::Drawing::Point(435, 1195);
-			this->groupBox14->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox14->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox14->Name = L"groupBox14";
-			this->groupBox14->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox14->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox14->Size = System::Drawing::Size(285, 49);
 			this->groupBox14->TabIndex = 21;
 			this->groupBox14->TabStop = false;
@@ -1161,7 +1161,7 @@ namespace GripMMI {
 			this->targetsTextBox->Font = (gcnew System::Drawing::Font(L"Wingdings", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(2)));
 			this->targetsTextBox->Location = System::Drawing::Point(103, 14);
-			this->targetsTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->targetsTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->targetsTextBox->Multiline = true;
 			this->targetsTextBox->Name = L"targetsTextBox";
 			this->targetsTextBox->Size = System::Drawing::Size(165, 29);
@@ -1187,7 +1187,7 @@ namespace GripMMI {
 			this->tonesTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->tonesTextBox->Location = System::Drawing::Point(101, 12);
-			this->tonesTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->tonesTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->tonesTextBox->Name = L"tonesTextBox";
 			this->tonesTextBox->Size = System::Drawing::Size(135, 30);
 			this->tonesTextBox->TabIndex = 21;
@@ -1200,9 +1200,9 @@ namespace GripMMI {
 			this->groupBox15->Controls->Add(this->tonesTextBox);
 			this->groupBox15->Controls->Add(this->label3);
 			this->groupBox15->Location = System::Drawing::Point(744, 1195);
-			this->groupBox15->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox15->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox15->Name = L"groupBox15";
-			this->groupBox15->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox15->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox15->Size = System::Drawing::Size(249, 49);
 			this->groupBox15->TabIndex = 22;
 			this->groupBox15->TabStop = false;
@@ -1225,9 +1225,9 @@ namespace GripMMI {
 			this->groupBox16->Controls->Add(this->cradlesTextBox);
 			this->groupBox16->Controls->Add(this->label4);
 			this->groupBox16->Location = System::Drawing::Point(1016, 1195);
-			this->groupBox16->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox16->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox16->Name = L"groupBox16";
-			this->groupBox16->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox16->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox16->Size = System::Drawing::Size(208, 49);
 			this->groupBox16->TabIndex = 23;
 			this->groupBox16->TabStop = false;
@@ -1237,7 +1237,7 @@ namespace GripMMI {
 			this->cradlesTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->cradlesTextBox->Location = System::Drawing::Point(101, 12);
-			this->cradlesTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->cradlesTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->cradlesTextBox->Name = L"cradlesTextBox";
 			this->cradlesTextBox->Size = System::Drawing::Size(92, 30);
 			this->cradlesTextBox->TabIndex = 21;
@@ -1263,9 +1263,9 @@ namespace GripMMI {
 			this->groupBox17->Controls->Add(this->acquisitionTextBox);
 			this->groupBox17->Controls->Add(this->label5);
 			this->groupBox17->Location = System::Drawing::Point(1245, 1195);
-			this->groupBox17->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox17->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox17->Name = L"groupBox17";
-			this->groupBox17->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->groupBox17->Padding = System::Windows::Forms::Padding(4);
 			this->groupBox17->Size = System::Drawing::Size(208, 49);
 			this->groupBox17->TabIndex = 24;
 			this->groupBox17->TabStop = false;
@@ -1275,7 +1275,7 @@ namespace GripMMI {
 			this->acquisitionTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->acquisitionTextBox->Location = System::Drawing::Point(101, 12);
-			this->acquisitionTextBox->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->acquisitionTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->acquisitionTextBox->Name = L"acquisitionTextBox";
 			this->acquisitionTextBox->Size = System::Drawing::Size(92, 30);
 			this->acquisitionTextBox->TabIndex = 21;
@@ -1301,7 +1301,7 @@ namespace GripMMI {
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::White;
-			this->ClientSize = System::Drawing::Size(1924, 1060);
+			this->ClientSize = System::Drawing::Size(2033, 1252);
 			this->Controls->Add(this->groupBox4);
 			this->Controls->Add(this->groupBox12);
 			this->Controls->Add(this->groupBox11);
@@ -1322,10 +1322,10 @@ namespace GripMMI {
 			this->Controls->Add(this->groupBox15);
 			this->Controls->Add(this->groupBox16);
 			this->Controls->Add(this->groupBox17);
-			this->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->Margin = System::Windows::Forms::Padding(4);
 			this->MaximumSize = System::Drawing::Size(2131, 1470);
 			this->Name = L"GripMMIDesktop";
-			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GripMMI";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GripMMIDesktop::GripMMIDesktop_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GripMMIDesktop::GripMMIDesktop_Shown);
@@ -1693,7 +1693,7 @@ namespace GripMMI {
 	private: System::Void GripMMIDesktop_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 				 // Show an about box on right click in the main window.
 				 if ( e->Button == System::Windows::Forms::MouseButtons::Right ) {
-					 GripMMIAbout^ about = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo );
+					 GripMMIAbout^ about = gcnew GripMMIAbout( GripGraspSourceRelease, GripGraspBuildInfo, scriptDirectory );
 					 about->ShowDialog();
 				 }
 			 }
