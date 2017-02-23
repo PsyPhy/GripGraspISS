@@ -346,6 +346,7 @@ Source Code/GraspBMPs/*.tiff
 Source Code/GraspBMPs/*.bmp.html
 Source Code/GraspBMPs/GraspVRMessages.pdf
 Source Code/GraspBMPs/GraspVRMessages.html
+Source Code/ForceRebuild/ForceRebuild.h
 # Grasp documentation files are generated automatically in part, so the 
 # intermediate files should not be tracked.
 Source Code/GraspDocumentation/*.bmp
@@ -354,13 +355,11 @@ Source Code/GraspDocumentation/*.html
 # We sometimes use a timestamp file to indicate when another group of files
 # was last built. Those timestamps can be ignored so as to force a rebuild.
 install
-# Building a release creates a tar file from the source files.
-*.tar
 # The following is self explanatory.
 DeleteMe
 DeleteMe*
 # The batch files placed in the root directory to run the different services.
+# These are generated as part of the build process and so should not be tracked.
 RunGRASP.bat
 RunGRIPMMI.bat
 RunGRASPMMI.bat
-Source Code/ForceRebuild/ForceRebuild.h
