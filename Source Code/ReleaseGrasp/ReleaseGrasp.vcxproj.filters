@@ -6,5 +6,6 @@
     <None Include="ReleaseGrasp.release.mak" />
     <None Include="ReleaseGrasp.draft.mak" />
     <None Include="ReleaseGrasp.debug.mak" />
+    <None Include="ReleaseGrasp.test.mak" />
   </ItemGroup>
 </Project>

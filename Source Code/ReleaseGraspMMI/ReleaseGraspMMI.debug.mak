@@ -1,2 +1,2 @@
 default:
-	echo Not creating release in Debug mode.
+	@echo Not creating release in Debug mode.

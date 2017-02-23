@@ -1,2 +1,2 @@
 default:
-	echo Not creating release in Test Release mode.
+	@echo Not creating release in Test Release mode.

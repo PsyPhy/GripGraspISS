@@ -20,21 +20,12 @@
     <None Include="VisualVisualScenes.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
-      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
-      <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
-      <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\InstallStandaloneGrasp\InstallStandaloneGrasp.vcxproj">
-      <Project>{d372af87-b6c6-4007-b361-2dada1a1c9d7}</Project>
-    </ProjectReference>
+    <ClInclude Include="macros.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="macros.h" />
+    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
+      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{19E97A5A-DFCF-45D0-862E-48316001C0CB}</ProjectGuid>

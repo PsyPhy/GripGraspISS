@@ -7,6 +7,8 @@
 
 #include "../VectorsMixin/VectorsMixin.h"
 
+using namespace PsyPhy;
+
 #define X 0
 #define Y 1
 #define Z 2

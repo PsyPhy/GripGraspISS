@@ -8,5 +8,6 @@
     <None Include="..\..\GripMMIReleases.log" />
     <None Include="..\..\GripGraspReleases.log" />
     <None Include="ReleaseGripMMI.draft.mak" />
+    <None Include="ReleaseGripMMI.test.mak" />
   </ItemGroup>
 </Project>

@@ -163,7 +163,7 @@ PREPROCESSOR=cl.exe
 # The /FI forces the inclusion of the preprocessor macros that we have defined. 
 PREPROCESSOR_OPTIONS=/EP /nologo /FI macros.h
 
-GraspIntro.html: GraspIntro.md Documentation.mak
+GraspIntro.html: GraspIntro.md GraspDocumentation.mak
 	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  GraspIntro.md | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
 
 GraspIntro.pdf: GraspIntro.html
@@ -188,7 +188,7 @@ ManualManualScenes.pdf: ManualManualScenes.html
 	$(BUILDTOOLS)\wkhtmltopdf.exe  --minimum-font-size 24 --page-size A4  --default-header --header-left "Manual-Manual VR Sequence" --header-font-size 12 --margin-bottom 25 --margin-top 35  --header-spacing 10  ManualManualScenes.html $@
 
 # Create a document describing the GUI pages.
-GraspGUIScreens.html: $(GUISHOTS) GraspGUIScreens.md Documentation.mak
+GraspGUIScreens.html: $(GUISHOTS) GraspGUIScreens.md GraspDocumentation.mak
 	$(PREPROCESSOR) $(PREPROCESSOR_OPTIONS)  GraspGUIScreens.md | $(PANDOC) $(PANDOC_OPTIONS)  -o $@
 
 GraspGUIScreens.pdf: GraspGUIScreens.html
