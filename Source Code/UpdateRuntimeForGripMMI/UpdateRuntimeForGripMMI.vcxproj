@@ -37,8 +37,7 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGripMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGripMMI.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>
-    </NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
     <NMakeOutput>
     </NMakeOutput>
   </PropertyGroup>
@@ -46,8 +45,7 @@
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>NMake /NOLOGO InstallGripMMI.release.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>NMake /NOLOGO InstallGripMMI.release.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>
-    </NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

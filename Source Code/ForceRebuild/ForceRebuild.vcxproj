@@ -36,15 +36,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>CommonTimestamp.bat</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>CommonTimestamp.bat</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del CommonTimestamp.h</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO CommonTimestamp.debug.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO CommonTimestamp.debug.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; CommonTimestamp &amp; del CommonTimestamp</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>CommonTimestamp.bat</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>CommonTimestamp.bat</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del CommonTimestamp.h</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO CommonTimestamp.release.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO CommonTimestamp.release.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; CommonTimestamp &amp; del CommonTimestamp</NMakeCleanCommandLine>
     <NMakeOutput>
     </NMakeOutput>
   </PropertyGroup>
@@ -55,6 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CommonTimestamp.bat" />
+    <None Include="CommonTimestamp.debug.mak" />
+    <None Include="CommonTimestamp.release.mak" />
+    <None Include="DebugTimestamp.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

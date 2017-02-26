@@ -75,21 +75,25 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.debug.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.test.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.test.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.release.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.release.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Draft|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.draft.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGripMMI.draft.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

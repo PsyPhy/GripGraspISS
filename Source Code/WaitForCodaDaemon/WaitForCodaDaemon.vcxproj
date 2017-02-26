@@ -89,6 +89,9 @@
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
+      <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

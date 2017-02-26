@@ -1,3 +1,4 @@
+@echo off
 setlocal
 
 REM This batch updates a .h file each time it is built and it is always built.

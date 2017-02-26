@@ -37,12 +37,13 @@
     <NMakeBuildCommandLine>nmake /NOLOGO GripMMIDocumentation.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO GripMMIDocumentation.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>nmake /nobanner GripMMIDocumentation.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /nobanner GripMMIDocumentation.mak</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

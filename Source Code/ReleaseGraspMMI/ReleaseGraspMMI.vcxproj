@@ -74,25 +74,25 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.debug.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.test.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.test.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.release.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.release.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Draft|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.draft.mak</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGraspMMI.draft.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
