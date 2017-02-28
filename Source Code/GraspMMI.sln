@@ -108,8 +108,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusStartupCheck", "Oculu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiveFocusDamnIt", "GiveFocusDamnIt\GiveFocusDamnIt.vcxproj", "{FC7A2632-0A84-4E2E-B852-1AC3A2908325}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIMirror", "GraspMMI\GraspMMI.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReleaseRuntimeForGraspMMI", "ReleaseGraspMMI\ReleaseGraspMMI.vcxproj", "{4086841F-2D5B-431A-A584-F59D34D3A8F3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodLegacyAlignment", "CharnwoodLegacyAlignment\CharnwoodLegacyAlignment.vcxproj", "{AA3FEBD9-541F-4F80-9654-2DD3881826E7}"
@@ -147,6 +145,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripGraspVersionControl", "GripGraspVersionControl\GripGraspVersionControl.vcxproj", "{4329F637-D4ED-43C3-B510-6E7CFC14BFA3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonTimestamp", "ForceRebuild\ForceRebuild.vcxproj", "{22A5F628-DC55-43A9-A729-95BD524B7054}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIMirror", "GraspMMIMirror\GraspMMIMirror.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -388,7 +388,6 @@ Global
 		{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{F9B96CFA-CA90-40FA-9248-F7F3B530CDEB}.TestRelease|Win32.Build.0 = Release|Win32
 		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Debug|Win32.Build.0 = Debug|Win32
 		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.DraftRelease|Win32.ActiveCfg = Release|Win32
 		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.DraftRelease|Win32.Build.0 = Release|Win32
 		{19E97A5A-DFCF-45D0-862E-48316001C0CB}.Release|Win32.ActiveCfg = Release|Win32
@@ -546,14 +545,6 @@ Global
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Release|Win32.Build.0 = Release|Win32
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.Build.0 = Debug|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.Build.0 = Release|Win32
 		{4086841F-2D5B-431A-A584-F59D34D3A8F3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4086841F-2D5B-431A-A584-F59D34D3A8F3}.Debug|Win32.Build.0 = Debug|Win32
 		{4086841F-2D5B-431A-A584-F59D34D3A8F3}.DraftRelease|Win32.ActiveCfg = Draft|Win32
@@ -706,6 +697,14 @@ Global
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.Release|Win32.Build.0 = Release|Win32
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.TestRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.Build.0 = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

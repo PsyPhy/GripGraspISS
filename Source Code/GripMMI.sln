@@ -108,8 +108,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusStartupCheck", "Oculu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiveFocusDamnIt", "GiveFocusDamnIt\GiveFocusDamnIt.vcxproj", "{FC7A2632-0A84-4E2E-B852-1AC3A2908325}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIMirror", "GraspMMI\GraspMMI.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CharnwoodLegacyAlignment", "CharnwoodLegacyAlignment\CharnwoodLegacyAlignment.vcxproj", "{AA3FEBD9-541F-4F80-9654-2DD3881826E7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodaLegacySDK", "CodaLegacySDK\CodaLegacySDK.vcxproj", "{5D0D4793-8F87-4A92-B6AA-1F48F18615E8}"
@@ -147,6 +145,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripGraspVersionControl", "GripGraspVersionControl\GripGraspVersionControl.vcxproj", "{4329F637-D4ED-43C3-B510-6E7CFC14BFA3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonTimestamp", "ForceRebuild\ForceRebuild.vcxproj", "{22A5F628-DC55-43A9-A729-95BD524B7054}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIMirror", "GraspMMIMirror\GraspMMIMirror.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -556,14 +556,6 @@ Global
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.Release|Win32.Build.0 = Release|Win32
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{FC7A2632-0A84-4E2E-B852-1AC3A2908325}.TestRelease|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.Build.0 = Debug|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.Build.0 = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.ActiveCfg = Release|Win32
-		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.Build.0 = Release|Win32
 		{AA3FEBD9-541F-4F80-9654-2DD3881826E7}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AA3FEBD9-541F-4F80-9654-2DD3881826E7}.Debug|Win32.Build.0 = Debug|Win32
 		{AA3FEBD9-541F-4F80-9654-2DD3881826E7}.DraftRelease|Win32.ActiveCfg = Release|Win32
@@ -716,6 +708,14 @@ Global
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.Release|Win32.Build.0 = Release|Win32
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.TestRelease|Win32.ActiveCfg = Release|Win32
 		{22A5F628-DC55-43A9-A729-95BD524B7054}.TestRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Debug|Win32.Build.0 = Debug|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.DraftRelease|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Release|Win32.Build.0 = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.ActiveCfg = Release|Win32
+		{EBCF095F-8685-4C8B-9778-502379D0DE58}.TestRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
