@@ -78,6 +78,10 @@
       <EntryPointSymbol>main</EntryPointSymbol>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <EmbeddedResource>
+      <LogicalName>
+      </LogicalName>
+    </EmbeddedResource>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -87,8 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\GraspGUI\Grasp.ico" />
-    <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +122,7 @@
     <EmbeddedResource Include="GraspMMIGraphsForm.resX">
       <DependentUpon>GraspMMIGraphsForm.h</DependentUpon>
       <SubType>Designer</SubType>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspMMI.GraspMMIGraphsForm.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
