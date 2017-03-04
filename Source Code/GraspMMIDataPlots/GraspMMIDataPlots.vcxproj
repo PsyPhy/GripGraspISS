@@ -123,6 +123,7 @@
       <DependentUpon>GraspMMIGraphsForm.h</DependentUpon>
       <SubType>Designer</SubType>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspMMI.GraspMMIGraphsForm.resources</LogicalName>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspMMI.GraspMMIGraphsForm.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
