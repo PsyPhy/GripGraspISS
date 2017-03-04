@@ -25,9 +25,6 @@
     <None Include="GraspNominalSessions.sss">
       <Filter>Generic</Filter>
     </None>
-    <None Include="Subjects.sbj">
-      <Filter>Generic</Filter>
-    </None>
     <None Include="V-Vinstructions.tsk">
       <Filter>V-V</Filter>
     </None>
@@ -112,6 +109,12 @@
     </None>
     <None Include="K-Kseated-training.pcl">
       <Filter>K-K</Filter>
+    </None>
+    <None Include="SubjectsTraining.sbj">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="SubjectsFlight.sbj">
+      <Filter>Generic</Filter>
     </None>
   </ItemGroup>
 </Project>
