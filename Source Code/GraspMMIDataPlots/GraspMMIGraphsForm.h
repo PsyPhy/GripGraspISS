@@ -554,7 +554,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox5->Controls->Add(this->visibleHistoryTree);
 			this->groupBox5->Location = System::Drawing::Point(1113, 4);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(456, 998);
+			this->groupBox5->Size = System::Drawing::Size(437, 998);
 			this->groupBox5->TabIndex = 9;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Task Execution History";
@@ -587,7 +587,7 @@ private: System::ComponentModel::IContainer^  components;
 			treeNode3->Name = L"Node1";
 			treeNode3->Text = L"Node1";
 			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
-			this->visibleHistoryTree->Size = System::Drawing::Size(442, 964);
+			this->visibleHistoryTree->Size = System::Drawing::Size(425, 964);
 			this->visibleHistoryTree->TabIndex = 1;
 			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
 			// 
@@ -626,7 +626,7 @@ private: System::ComponentModel::IContainer^  components;
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->ClientSize = System::Drawing::Size(1572, 1008);
+			this->ClientSize = System::Drawing::Size(1552, 1008);
 			this->Controls->Add(this->groupBox5);
 			this->Controls->Add(this->groupBox4);
 			this->Controls->Add(this->groupBox3);
