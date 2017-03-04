@@ -657,13 +657,13 @@ namespace GripMMI {
 			// Spans
 			// 
 			this->Spans->AutoSize = true;
-			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->Spans->Location = System::Drawing::Point(12, 51);
 			this->Spans->Name = L"Spans";
-			this->Spans->Size = System::Drawing::Size(247, 17);
+			this->Spans->Size = System::Drawing::Size(218, 15);
 			this->Spans->TabIndex = 12;
-			this->Spans->Text = L"12h  4h   1h    30m 10m  5m  60s  30s";
+			this->Spans->Text = L"12h   4h   1h    30m 10m  5m   60s  30s";
 			// 
 			// scrollBar
 			// 
@@ -1556,7 +1556,9 @@ namespace GripMMI {
 	// we need to force an update when the state of these indicators changes.
 	private: System::Void filterCheckbox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 				// Read the filter constant value to be used from the text box on the screen,
-				// taking care that it is a valid number.
+				// taking care that it is a valid number. NOTE: Need to be sure that the 
+				// floating point format in the text box is compatible with the regional settings
+				// with respect to decimal separator.
 				double filter_constant;
 				try {
 					filter_constant = System::Convert::ToDouble( filterConstantTextBox->Text );
