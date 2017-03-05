@@ -63,7 +63,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(OVRSDKROOT)LibOVR/Include/;$(OVRSDKROOT)LibOVRKernel/Src/;$(DXSDK_DIR)/Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,8 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CascadePoseTracker.h" />
-    <ClInclude Include="CodaLegacyContinuousTracker.h" />
-    <ClInclude Include="CodaLegacyPolledTracker.h" />
     <ClInclude Include="CodaPoseTracker.h" />
     <ClInclude Include="CodaRTnetContinuousTracker.h" />
     <ClInclude Include="CodaRTnetDaemonTracker.h" />
@@ -95,8 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CascadePoseTracker.cpp" />
-    <ClCompile Include="CodaLegacyContinuousTracker.cpp" />
-    <ClCompile Include="CodaLegacyPolledTracker.cpp" />
     <ClCompile Include="CodaPoseTracker.cpp" />
     <ClCompile Include="CodaRTnetContinuousTracker.cpp" />
     <ClCompile Include="CodaRTnetDaemonTracker.cpp" />
@@ -113,15 +108,12 @@
     <ClCompile Include="Trackers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
-      <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
       <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
       <Private>true</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>

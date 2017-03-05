@@ -1,2 +1,0 @@
-BUILDCONFIGURATION=Release
-!INCLUDE InstallGripMMI.mak

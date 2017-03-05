@@ -48,6 +48,7 @@ int main(array<System::String ^> ^args)
 
 	// Create the main window and run it
 	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex, noCoda ));
+
 	return( Environment::ExitCode );
 
 }

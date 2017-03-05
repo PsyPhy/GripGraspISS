@@ -1,7 +1,6 @@
 // GraspHardwareStatus.cpp : main project file.
 
-#include "StdAfx.h"
-
+#include "stdafx.h"
 #include "GraspHardwareStatusForm.h"
 #include "../OculusInterface/CodaSimTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"

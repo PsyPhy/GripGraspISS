@@ -13,9 +13,6 @@
 
 
 #pragma once
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "../Useful/Timers.h"
 #include "../Useful/Useful.h"
 #include "../VectorsMixin/VectorsMixin.h"
@@ -34,7 +31,7 @@
 //  2 in order to save buffer space.
 #define MAX_UNITS				2
 // The longest duration of acquisition allowed. (samples/sec * sec/min * min)
-#define MAX_MINUTES	10
+#define MAX_MINUTES	30
 #define MAX_FRAMES				(200 * 60 * MAX_MINUTES)
 #define DEFAULT_SAMPLE_PERIOD	0.005
 #define INVISIBLE				-99999.99999
@@ -57,8 +54,6 @@ typedef struct {
 	int		unitFrames;
 } MarkerFrameSet;
 
-namespace PsyPhy {
-
 class Tracker : public PsyPhy::VectorsMixin {
 
 	private:
@@ -72,33 +67,19 @@ class Tracker : public PsyPhy::VectorsMixin {
 		int nUnits;
 		unsigned int nFrames;
 
-		// Buffers to hold the data retrieved from the CODA units.
-		// I am making them public so that the calling program can access them directly,
-		// rather than going through RetrieveMarkerFramesUnit();
-		MarkerFrame recordedMarkerFrames[MAX_UNITS][MAX_FRAMES];
-
 		double samplePeriod;
 
 		Tracker() : nUnits( 0 ), nMarkers( MAX_MARKERS ), samplePeriod( DEFAULT_SAMPLE_PERIOD ) {} ;
 
-		// These are the core functions that each tracker must provide.
-		virtual void Initialize( const char *ini_filename = "" ) = 0;
-		virtual void StartAcquisition( float max_duration ) = 0;
-		virtual void StopAcquisition( void ) = 0;
-		virtual bool GetAcquisitionState( void ) = 0;
-		virtual bool CheckAcquisitionOverrun( void ) = 0;
-		virtual int  Update( void ) = 0;
-		virtual void Quit( void ) = 0;
+		virtual void Initialize( void );
+		virtual int  Update( void );
+		virtual void Quit( void );
 
-		// This is a useful function that depends on GetAcquisitionState().
+		virtual void	StartAcquisition( float max_duration );
+		virtual void	StopAcquisition( void );
+		virtual bool	GetAcquisitionState( void );
 		virtual void	WaitAcquisitionCompleted( void );
-
-		// AbortAcquisition() may employ a more brute force method than StopAcquisition(),
-		// but by default they are the same.
-		virtual void	AbortAcquisition( void ) {
-			StopAcquisition();
-		}
-
+		virtual bool	CheckAcquisitionOverrun( void );
 		// Retieve all the marker data 
 		virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 		virtual int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
@@ -109,19 +90,10 @@ class Tracker : public PsyPhy::VectorsMixin {
 
 		virtual double	GetSamplePeriod( void );
 		virtual int		GetNumberOfUnits( void );
-		virtual int		GetNumberOfMarkers( void );
-		virtual void	GetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
-		virtual void	SetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
-		virtual void	GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
-		virtual void	SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
+		virtual void	GetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation ) ;
 
 		void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
-		void	WriteColumnHeadings( FILE *fp, int unit ) ;
-		void	WriteMarkerData( FILE *fp, MarkerFrame &frame ) ;
-		void	WriteMarkerFile( char *filename );
 
 };
-
-}
 

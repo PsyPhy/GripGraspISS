@@ -1,3 +1,0 @@
-# Protocol Definition: Prepare for floating operations. 
-021; SCRIPT; Preparation for Free Floating; PrepareFloating.tsk
-029; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

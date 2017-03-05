@@ -1,3 +1,0 @@
-# Protocol Definition: Prepare for seated operations. 
-011; SCRIPT; Preparation; PrepareSeated.tsk
-019; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

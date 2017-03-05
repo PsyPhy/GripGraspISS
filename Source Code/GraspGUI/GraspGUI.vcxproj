@@ -59,7 +59,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
@@ -76,7 +76,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
@@ -93,13 +93,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Executables\Grasp.ico" />
-    <None Include="..\GraspMMI\app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGUI.cpp" />
-    <ClCompile Include="GraspGUIScriptProcessor.cpp" />
     <ClCompile Include="GraspScripts.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -110,7 +107,6 @@
     <ClInclude Include="GraspDesktopForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
-    <ClInclude Include="GraspScripts.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -122,7 +118,6 @@
       <DependentUpon>GraspDesktopForm.h</DependentUpon>
       <SubType>Designer</SubType>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
-      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +135,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
-      <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
@@ -154,12 +146,6 @@
     </ProjectReference>
     <ProjectReference Include="..\GraspScripts\GraspScripts.vcxproj">
       <Project>{06fb1c1d-0fe6-4fb8-91b1-7ddda4165782}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspSequences\GraspSequences.vcxproj">
-      <Project>{a063702b-6be1-4939-96f1-19fb77921c29}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
-      <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
       <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>

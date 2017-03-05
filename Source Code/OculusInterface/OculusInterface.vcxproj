@@ -77,7 +77,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OVRSDKROOT)LibOVR/Include/;$(OVRSDKROOT)LibOVRKernel/Src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -94,6 +93,7 @@
     <ClInclude Include="CodaSimTracker.h" />
     <ClInclude Include="MousePoseTrackers.h" />
     <ClInclude Include="OculusInterface.h" />
+    <ClInclude Include="OculusLocal.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
     <ClInclude Include="OculusMapper.h" />
     <ClInclude Include="OculusViewpoint.h" />

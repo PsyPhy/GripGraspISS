@@ -2,11 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="ReleaseGrasp.bat" />
+    <None Include="ReleaseGraspDebug.mak" />
+    <None Include="ReleaseGraspRelease.mak" />
+    <None Include="ReleaseGraspDraft.mak" />
     <None Include="..\..\GraspReleases.log" />
-    <None Include="ReleaseGrasp.release.mak" />
-    <None Include="ReleaseGrasp.draft.mak" />
-    <None Include="ReleaseGrasp.debug.mak" />
-    <None Include="ReleaseGrasp.test.mak" />
-    <None Include="ReleaseGrasp.training.mak" />
   </ItemGroup>
 </Project>

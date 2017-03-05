@@ -6,7 +6,6 @@
 
 #include "GraspGLObjects.h"
 #include "GraspTrackers.h"
-#include "GraspDisplays.h"
 
 #include "../DexServices/DexServices.h"
 
@@ -16,6 +15,19 @@
 #include "../OculusInterface/OculusPoseTracker.h"
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/OculusViewpoint.h"
+
+// Exit codes.
+// These get passed back to the calling shell program, which then puts up 
+//  a message page describing the error and possible actions to take.
+// It it good if they can be unique.
+#define NORMAL_EXIT		0
+// Lots of routines and programs use -1 as a generic exit code, so I reseve it here just in case.
+#define GENERIC_ERROR	-1
+// The CODA tracker can exit directly with exit codes defined in that package.
+// I should update the tracker package so that it returns an error code rather than exiting directly.
+// Until then, the RTNET return codes should be set to the same value as TRACKER_ERROR in source code.
+#define TRACKER_ERROR	-2
+#define OCULUS_ERROR	-3
 
 namespace Grasp {
 
@@ -61,8 +73,11 @@ namespace Grasp {
 
 	public:
 
-		GraspDisplay	*display;
-		Viewpoint		*viewpoint;
+		HINSTANCE			hInstance;
+		OculusDisplayOGL	*oculusDisplay;
+		OculusMapper		*oculusMapper;
+
+		OculusViewpoint *viewpoint;
 		GraspGLObjects	*renderer;
 		GraspTrackers	*trackers;
 
@@ -71,8 +86,9 @@ namespace Grasp {
 
 		GraspVR( void )  : 
 
-
-			display( nullptr ),
+			hInstance( nullptr ),
+			oculusDisplay( nullptr ),
+			oculusMapper( nullptr ),
 			trackers( nullptr ),
 
 			desiredHeadRoll( 20.0 ), 
@@ -83,20 +99,22 @@ namespace Grasp {
 
 			{}
 
-		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs ) {
-				display = dsply;
+		void Initialize( HINSTANCE instance, OculusDisplayOGL *display, OculusMapper *mapper, HWND parentWindow, GraspTrackers *trkrs ) {
+				hInstance = instance;
+				oculusDisplay = display;
+				oculusMapper = mapper;
 				trackers = trkrs;
-				InitializeVR();
+				InitializeVR( hInstance, parentWindow );
 				InitializeTrackers();
 		}
 		void Release( void );
 		~GraspVR( void ) {}
 
 		// Create the necessary VR objects.
-		virtual void InitializeVR( void );
+		virtual void InitializeVR( HINSTANCE hinst, HWND parentWindow );
 
 		// Initialize the chosen set of tracker.
-		virtual void InitializeTrackers( void );
+		virtual void InitializeTrackers( const char *filename_root = nullptr );
 		// Allow each tracker to update during a rendering loop.
 		virtual void UpdateTrackers( void );
 		// Clean up when finished.

@@ -36,7 +36,7 @@
     <ClCompile Include="GraspGUIAnimations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
+    <ClCompile Include="OpenGLWindowsInForms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

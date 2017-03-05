@@ -369,7 +369,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 				// Get ready to draw into one of the eyes.
 				oculusMapper.SelectEye( eye );
 				// Set up the viewing transformations.
-				viewpoint->Apply( nullptr, (Eye) eye );
+				viewpoint->Apply( eye );
 				// Draw the objects in the world.
 				DrawPsyPhyObjects();
 				// Take care of an Oculus bug.

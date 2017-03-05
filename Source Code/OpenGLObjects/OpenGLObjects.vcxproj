@@ -58,7 +58,6 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x040c</Culture>
@@ -86,7 +85,6 @@
       <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x040c</Culture>
@@ -125,7 +123,6 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="OpenGLWindowsInForms.cpp" />
     <ClCompile Include="OpenGLYoke.cpp" />
     <ClCompile Include="SaveBitmap.cpp" />
   </ItemGroup>
@@ -145,7 +142,6 @@
   <ItemGroup>
     <ClInclude Include="OpenGLColors.h" />
     <ClInclude Include="OpenGLObjects.h" />
-    <ClInclude Include="OpenGLWindows.h" />
     <ClInclude Include="OpenGLYoke.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

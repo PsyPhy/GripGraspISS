@@ -86,7 +86,7 @@ void CodaSimTracker::StopAcquisition( void ) {
 }
 
 bool CodaSimTracker::CheckAcquisitionOverrun( void ) { 
-	return( 0 != TimerTimeout( acquisitionTimer ) );
+	return( (bool) TimerTimeout( acquisitionTimer ) );
 }
 
 // Retrieve the stored CX1 data from a specified unit.

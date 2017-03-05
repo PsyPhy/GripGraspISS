@@ -35,7 +35,6 @@ const char *GraspGLObjects::hand_too_soon_bitmap = "Bmp\\HandTooSoon.bmp";
 const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
 const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
 const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
-const char *GraspGLObjects::manual_reject_bitmap = "Bmp\\RejectTrial.bmp";
 const char *GraspGLObjects::vr_completed_bitmap = "Bmp\\VRCompleted.bmp";
 const char *GraspGLObjects::demo_bitmap = "Bmp\\DemoWorking.bmp";
 			
@@ -58,11 +57,9 @@ const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 //  way to tilt the head, in addition to color cues.
 const double GraspGLObjects::prompt_radius = 60.0;
 const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
-double GraspGLObjects::outer_visor_radius = 320.0;
-double GraspGLObjects::inner_visor_radius = 250.0;
+const double GraspGLObjects::visor_radius = 320.0;
 
 Vector3 GraspGLObjects::desired_wrist_location = { 0.0, 0.0, -400.0 };
-Vector3 GraspGLObjects::initial_hand_position = { 0.0, -500.0, 0.0 };
 
 // The target is a line of spheres.
 const double GraspGLObjects::target_ball_radius = 100.0;
@@ -77,10 +74,6 @@ const double GraspGLObjects::finger_length = 100.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
 const double GraspGLObjects::hmdTransparency = 0.25;
-
-// A generic parameter that sets the number of facets in rounded objects.
-// More facets means smoother surfaces, but slower drawing times;
-int GraspGLObjects::curve_facets = 20;
 
 // Transparency of objects that change color according to roll angle.
 // It is important that the halo (glasses) be transparent. The kkTool will be transparent
@@ -222,7 +215,7 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 Glasses *GraspGLObjects::CreateGlasses( void ) {
 
 	// Create a circular portal to look through to avoid visual cues about the egocentric reference frame.
-	Glasses *glasses = new Glasses( inner_visor_radius, outer_visor_radius, room_radius, room_radius, 16 );
+	Glasses *glasses = new Glasses( visor_radius - 70.0, visor_radius, room_radius, room_radius, 16 );
 	return glasses;
 }
 
@@ -280,7 +273,7 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 	// Add a laser pointer to the end.
 	Assembly *laser = CreateFuzzyLaserPointer();
 	// This laser is always the same color.
-	laser->SetColor( BLUE );
+	laser->SetColor( RED );
 	tool->AddComponent( laser );
 
 	SetHandColor( tool, true );
@@ -348,11 +341,11 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	static double size = 0.85;
 	double guage =  prompt_radius / 10.0;
 
-	Annulus *donut = new Annulus( prompt_radius, guage, size, curve_facets, curve_facets );
+	Annulus *donut = new Annulus( prompt_radius, guage, size, 20, 20 );
 	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
-	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, curve_facets );
+	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, 20 );
 	tip->SetAttitude( 0.0, 90.0, 0.0 );
 	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );
@@ -433,10 +426,6 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	head_misalign_texture = new Texture( head_misalign_bitmap );
 	headMisalignIndicator = CreateIndicator( head_misalign_texture );
 	spinners->AddComponent( headMisalignIndicator );
-
-	manual_reject_texture = new Texture( manual_reject_bitmap );
-	manualRejectIndicator = CreateIndicator( manual_reject_texture );
-	spinners->AddComponent( manualRejectIndicator );
 
 	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
 	headAlignTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
@@ -611,10 +600,6 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	// Place the stationary object that shows the subject's response a little bit in front of the targets.
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	wristZone->SetPosition( desired_wrist_location );
-	// Initially set the hand position away from zero. This will be immediately overridden by 
-	// a valid tracker reading. But if the hand is not visible to the tracker, this should 
-	// ensure that the hand is not at the position of the eyes.
-	hand->SetPosition( initial_hand_position );
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.

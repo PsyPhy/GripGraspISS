@@ -19,8 +19,6 @@
 #include <math.h>
 #include <windows.h> // For the OutputDebugString routine.
 
-#include "../Useful/fMessageBox.h"
-
 // RTNet C++ includes
 #define NO64BIT
 #include "../Include/codaRTNetProtocolCPP/RTNetClient.h"

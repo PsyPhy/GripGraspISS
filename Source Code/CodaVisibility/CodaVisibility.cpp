@@ -19,27 +19,24 @@
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
-#include "../Trackers/CodaLegacyPolledTracker.h"
 
 using namespace PsyPhy;
 
-int nUnits = 0;
+int nUnits = 2;
 
 int main(int argc, char *argv[])
 {
 	
 	bool use_daemon = false;
-	bool use_legacy = false;
 	for ( int i = 0; i < argc; i++ ) {
 		if ( !strcmp( "--daemon", argv[i] ) ) use_daemon = true;
-		else if ( !strcmp( "--legacy", argv[i] ) ) use_legacy = true;
 	}
 
 	// A device that records 3D marker positions.
-	PsyPhy::Tracker *codaTracker;
+	PsyPhy::CodaRTnetTracker *codaTracker;
 	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
-	if ( use_legacy ) codaTracker = new PsyPhy::CodaLegacyPolledTracker();
 	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
+
 
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
 	Sleep( 500 );
@@ -51,7 +48,7 @@ int main(int argc, char *argv[])
 	codaTracker->Initialize();
 	fprintf( stderr, "OK.\n" );
 
-	nUnits = codaTracker->nUnits;
+	nUnits = codaTracker->GetNumberOfCodas();
 
 	while ( _kbhit() == 0 ) {
 		for ( int unit = 0; unit < nUnits; unit++ ) {
@@ -91,7 +88,6 @@ int main(int argc, char *argv[])
 			fprintf( stderr, "%s %s\n", codaTracker->vstr( localFrame[0].marker[which_marker].position), codaTracker->vstr( localFrame[1].marker[which_marker].position ));
 		}
 		else  fprintf( stderr, "%s\n", codaTracker->vstr( localFrame[0].marker[which_marker].position) );
-		Sleep( 5 );
 	}
 	int key = _getch(); // Clear the _kbhit().
 	codaTracker->AbortAcquisition();
