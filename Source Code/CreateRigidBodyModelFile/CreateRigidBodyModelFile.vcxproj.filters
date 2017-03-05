@@ -5,6 +5,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TestBody.bdy" />
-    <None Include="..\..\Bdy\MakeRigidBodies.bat" />
   </ItemGroup>
 </Project>

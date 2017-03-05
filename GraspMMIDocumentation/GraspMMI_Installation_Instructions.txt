@@ -1,0 +1,20 @@
+
+To install the GraspMMI:
+
+1) Copy the contents of this directory to the desired location on the host machine. 
+   May be on a write-protected partition.
+2) Create a directory in a writeable location to hold the captured packets sent by EPM.
+   Edit the variable 'CacheDir' in RunGraspMMI.bat to point to the new location.
+3) Perform initial test using the CLWS emulator and previously captured packets by executing RunGraspMMI.bat.
+4) Exit all 3 processes.
+5) Edit RunGraspMMI.bat to inhibit the CLWS emulator and to connect to the CLWS on 
+   the appropriate IP address, port number and EPM software subunit ID. 
+6) Start CLWS on EPM, GraspASW on DEX and GraspGUI on Perspectives.
+7) Execute RunGraspMMI.bat.
+
+NOTE 1: If a shortcut to RunGraspMMI.bat is created and placed elsewhere (e.g. the
+  desktop, the "Execute in" parameter must point to the directory where RunGraspMMI.bat is located.
+
+NOTE 2: There are extensive comments in RunGraspMMI.bat to guide efforts to edit
+  according to the instructions above.
+

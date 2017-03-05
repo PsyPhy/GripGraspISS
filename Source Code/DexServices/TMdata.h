@@ -1,33 +1,16 @@
-/*!
-*******************************************************************************
-* \file TMdata.h
-* \brief Data types for GRASP dummy TM application
-*
-* <CENTER><B>
-* QinetiQ Space N.V.</B><BR>
-* Hogenakkerhoekstraat 9<BR>
-* B-9150 Kruibeke<BR>
-* Belgium* +32 3 250 14 14<BR>
-* </CENTER>
-*
-* \par Copyright(c), QinetiQ Space N.V. 2016 :
-* <BR>
-* The software contained within this file is proprietary and may
-* not be copied, modified, compiled or used for whatever purpose.
-* People getting hold of this file, must immediately delete it
-* from any data carrier or physically destroy all tangible copies
-* in their possession.
-*
-* Note: File under source code control; refer to project under
-*  http://svn.orion.local:18080/viewvc/dex/ (web browser) or
-*  http://svn.orion.local:18080/svn/dex (SVN client)
-* for change history
-******************************************************************************/
+
+// Telemetry types for GRIP and GRASP, based on example programs from Qinetiq.
+
+#pragma once
 
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
 #include "../VectorsMixin/VectorsMixin.h"
 
+
+#define GRASP_RT_SLICES_PER_PACKET 5
+#define GRASP_RT_SLICE_INTERVAL 0.100
+#define GRASP_HK_PACKET_INTERVAL 1.0
 
 typedef unsigned short u16;
 typedef signed short s16;
@@ -61,10 +44,6 @@ class HK_packet : public GraspPacket
         u16 motiontracker_status;
 };
 
-#define RT_SLICES_PER_PACKET 5
-#define RT_SLICE_INTERVAL 0.100
-#define HK_PACKET_INTERVAL 1.0
-
 class RT_packet : public GraspPacket
 {
     public:
@@ -84,7 +63,7 @@ class RT_packet : public GraspPacket
 			PsyPhy::TrackerPose	chest;
 			PsyPhy::TrackerPose mouse;
 			MarkerFrame markerFrame[2];
-		} Slice[RT_SLICES_PER_PACKET];
+		} Slice[GRASP_RT_SLICES_PER_PACKET];
 
 };
 
@@ -96,4 +75,15 @@ class CameraTrigger_packet : public GraspPacket
 
         sz tag[10];
 };
+
+ u32 extractTM(u16 &tm, u8 *buffer, u32 pos);
+ u32 extractTM(s16 &tm, u8 *buffer, u32 pos);
+ u32 extractTM(u32 &tm, u8 *buffer, u32 pos);
+ u32 extractTM(s32 &tm, u8 *buffer, u32 pos);
+ u32 extractTM(f32 &tm, u8 *buffer, u32 pos);
+ u32 extractTM( u8 &tm, u8 *buffer, u32 pos);
+ u32 extractTM(bool &tm, u8*buffer, u32 pos);
+ u32 extractTM( PsyPhy::TrackerPose &pose, u8 *buffer, u32 pos );
+ u32 extractTM( MarkerState &m, u8 *buffer, u32 pos );
+ u32 extractTM( MarkerFrame &frame, u8 *buffer, u32 pos );
 

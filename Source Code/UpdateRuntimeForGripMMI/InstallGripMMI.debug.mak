@@ -1,0 +1,2 @@
+BUILDCONFIGURATION=Debug
+!INCLUDE InstallGripMMI.mak

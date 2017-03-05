@@ -34,11 +34,11 @@ int main( int argc, char *argv[] )
 	KeyUpInput.type = INPUT_KEYBOARD;
 
 	for ( int line = 1; line < argc; line++ ) {
-		for ( int letter = 0; letter < strlen( argv[line] ); letter++ ) {
+		for ( unsigned int letter = 0; letter < strlen( argv[line] ); letter++ ) {
 
 			printf( "%c\n", toupper( argv[line][letter] ) );
 			bool shift = false;
-			char c = argv[line][letter];
+			unsigned int c = argv[line][letter];
 			if ( c >= 0x41 && c <= 0x5A ) shift = true;
 			c = toupper( c );	
 			if ( c == ' ' ) c = VK_SPACE;
@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
 				SendInput( 1, &KeyDownInput, sizeof( KeyUpInput ) );
 			}
 			
-			send_stroke( c );
+			send_stroke( (char) ( c & 0xFF ) );
 
 			if ( shift ) {
 				KeyUpInput.ki.wVk = VK_LSHIFT;

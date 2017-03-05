@@ -1,28 +1,3 @@
-/*!
-*******************************************************************************
-* \file TMdata.cpp
-* \brief Data operations for GRASP dummy TM application
-*
-* <CENTER><B>
-* QinetiQ Space N.V.</B><BR>
-* Hogenakkerhoekstraat 9<BR>
-* B-9150 Kruibeke<BR>
-* Belgium* +32 3 250 14 14<BR>
-* </CENTER>
-*
-* \par Copyright(c), QinetiQ Space N.V. 2016 :
-* <BR>
-* The software contained within this file is proprietary and may
-* not be copied, modified, compiled or used for whatever purpose.
-* People getting hold of this file, must immediately delete it
-* from any data carrier or physically destroy all tangible copies
-* in their possession.
-*
-* Note: File under source code control; refer to project under
-*  http://svn.orion.local:18080/viewvc/dex/ (web browser) or
-*  http://svn.orion.local:18080/svn/dex (SVN client)
-* for change history
-******************************************************************************/
 
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
@@ -143,11 +118,11 @@ u32 HK_packet::serialize(u8 *buffer) const
 
 u32 RT_packet::serialize(u8 *buffer ) const {
 
-    u32 p= addHeader(buffer);
-    p=addTM(rtdata_acq_id, buffer, p);
-    p=addTM(rtdata_pkt_counter, buffer, p);
+    u32 p = addHeader(buffer);
+    p = addTM( rtdata_acq_id, buffer, p );
+    p = addTM( rtdata_pkt_counter, buffer, p );
 
-	for ( int i = 0; i < RT_SLICES_PER_PACKET; i++ ) {
+	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
 		p = addTM( Slice[i].fillTime, buffer, p );
 		p = addTM( (u32) Slice[i].globalCount, buffer, p );
 		p = addTM( (u32) Slice[i].objectStateBits, buffer, p );
@@ -156,6 +131,12 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 		p = addTM( Slice[i].hand, buffer, p );
 		p = addTM( Slice[i].chest, buffer, p );
 		p = addTM( Slice[i].mouse, buffer, p );
+		// There is a bug in the following line. Each slice has two
+		// marker frames, so one should specify Slice[i].markerFrame[j].
+		// But the [j] is missing. This caused addTM to interpret the first
+		// parameter as a bool and placed only one byte into the stream, instead
+		// of copying the entire markerFrame. I need to fix this, but I leave it
+		// like this for now to stay consistent with the flight model.
 		for ( int j = 0; j < 2; j++ ) p = addTM( Slice[i].markerFrame, buffer, p );
 	}
 	// Fill the rest of the buffer with a constant value.
@@ -176,3 +157,109 @@ u32 CameraTrigger_packet::serialize(u8 *buffer) const
     return p;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+u32 extractTM(u16 &tm, u8 *buffer, u32 pos)
+{
+	tm = buffer[pos] << 8 | buffer[pos+1];
+    return ( pos + 2 );
+}
+
+u32 extractTM(s16 &tm, u8 *buffer, u32 pos)
+{
+ 	tm = buffer[pos] << 8 | buffer[pos+1];
+    return ( pos + 2 );
+}
+
+u32 extractTM(u32 &tm, u8 *buffer, u32 pos)
+{
+	tm = buffer[pos] << 24 | buffer[pos+1] << 16 | buffer[pos+2] << 8 | buffer[pos+3];
+    return ( pos + 4 );
+}
+
+u32 extractTM(s32 &tm, u8 *buffer, u32 pos)
+{
+	tm = buffer[pos] << 24 | buffer[pos+1] << 16 | buffer[pos+2] << 8 | buffer[pos+3];
+    return ( pos + 4 );
+}
+
+u32 extractTM(f32 &tm, u8 *buffer, u32 pos)
+{
+	union {
+		u8 bytes[4];
+		f32 value;
+	} mix;
+	mix.bytes[3] = buffer[pos++];
+	mix.bytes[2] = buffer[pos++];
+	mix.bytes[1] = buffer[pos++];
+	mix.bytes[0] = buffer[pos++];
+	tm = mix.value;
+    return pos;
+}
+
+u32 extractTM( u8 &tm, u8 *buffer, u32 pos)
+{
+    tm = buffer[pos++];
+    return pos;
+}
+
+u32 extractTM(bool &tm, u8*buffer, u32 pos)
+{
+    tm = (bool) buffer[pos++];
+    return pos;
+}
+
+u32 extractTM( PsyPhy::TrackerPose &pose, u8 *buffer, u32 pos ) {
+	short int tenths;
+	f32 value;
+	// Position information in 1Oths of mm.
+	for ( int i = 0; i < 3; i++ ) {
+		pos = extractTM( tenths, buffer, pos );
+		pose.pose.position[i] = (double) tenths / 10.0;
+	}
+	// Orientation quaternion as floats.
+	for ( int i = 0; i < 4; i++ ) {
+		pos = extractTM( value, buffer, pos );
+		pose.pose.orientation[i] = value;
+	}
+	// Visibility
+	pos = extractTM( pose.visible, buffer, pos );
+	// Time stamp
+	pos = extractTM( value, buffer, pos );
+	pose.time = value;
+	return( pos );
+}
+
+u32 extractTM( MarkerState &m, u8 *buffer, u32 pos ) {
+	short int tenths;
+	// Position information in 1Oths of mm.
+	for ( int i = 0; i < 3; i++ ) {
+		pos = extractTM( tenths, buffer, pos );
+		m.position[i] = (double) tenths / 10.0;
+	}
+	// Visibility
+	pos = extractTM( m.visibility, buffer, pos );
+	return( pos );
+}
+
+u32 extractTM( MarkerFrame &frame, u8 *buffer, u32 pos ) {
+	// Position information in 1Oths of mm.
+	short int tenths;
+	u32 visibility_bits;
+	f32 value;
+	for ( int mrk = MAX_MARKERS - 1; mrk >= 0; mrk++ ) {
+		for ( int i = 0; i < 3; i++ ) {
+			pos = extractTM( tenths, buffer, pos );
+			frame.marker[mrk].position[i] = (double) tenths / 10.0;
+		}
+	}
+	pos = extractTM( visibility_bits, buffer, pos );
+	for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		frame.marker[mrk].visibility = visibility_bits & 0x01;
+		visibility_bits = visibility_bits >> 1;
+	}
+	// Timestamp
+	pos = extractTM( value, buffer, pos );
+	frame.time = value;
+	return( pos );
+}
