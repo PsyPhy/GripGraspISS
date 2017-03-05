@@ -93,6 +93,7 @@ namespace GraspMMI {
 	public: 
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
 	private: System::Windows::Forms::Label^  Spans;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	public: 
 
 	public: 
@@ -243,6 +244,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->groupBox2->SuspendLayout();
@@ -253,6 +255,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox4->SuspendLayout();
 			this->groupBox5->SuspendLayout();
 			this->taskTreeContextMenu->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -263,11 +266,11 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox1->Controls->Add(this->firstAbsoluteTimeTextBox);
 			this->groupBox1->Controls->Add(this->spanSelector);
 			this->groupBox1->Controls->Add(this->scrollBar);
-			this->groupBox1->Location = System::Drawing::Point(8, 4);
+			this->groupBox1->Location = System::Drawing::Point(95, 4);
 			this->groupBox1->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox1->Size = System::Drawing::Size(1098, 91);
+			this->groupBox1->Size = System::Drawing::Size(1011, 91);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Time Series";
@@ -277,7 +280,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->Spans->AutoSize = true;
 			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->Spans->Location = System::Drawing::Point(7, 58);
+			this->Spans->Location = System::Drawing::Point(10, 58);
 			this->Spans->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->Spans->Name = L"Spans";
 			this->Spans->Size = System::Drawing::Size(164, 13);
@@ -289,7 +292,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->dataLiveCheckBox->AutoSize = true;
 			this->dataLiveCheckBox->Checked = true;
 			this->dataLiveCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->dataLiveCheckBox->Location = System::Drawing::Point(1040, 33);
+			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
 			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
@@ -300,7 +303,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// lastAbsoluteTimeTextBox
 			// 
-			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(953, 58);
+			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(871, 58);
 			this->lastAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->lastAbsoluteTimeTextBox->Name = L"lastAbsoluteTimeTextBox";
 			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
@@ -309,7 +312,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// firstAbsoluteTimeTextBox
 			// 
-			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(187, 58);
+			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(182, 58);
 			this->firstAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->firstAbsoluteTimeTextBox->Name = L"firstAbsoluteTimeTextBox";
 			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
@@ -319,7 +322,7 @@ private: System::ComponentModel::IContainer^  components;
 			// spanSelector
 			// 
 			this->spanSelector->LargeChange = 1;
-			this->spanSelector->Location = System::Drawing::Point(9, 23);
+			this->spanSelector->Location = System::Drawing::Point(12, 23);
 			this->spanSelector->Margin = System::Windows::Forms::Padding(4);
 			this->spanSelector->Maximum = 7;
 			this->spanSelector->Name = L"spanSelector";
@@ -332,9 +335,9 @@ private: System::ComponentModel::IContainer^  components;
 			// scrollBar
 			// 
 			this->scrollBar->LargeChange = 25;
-			this->scrollBar->Location = System::Drawing::Point(187, 31);
+			this->scrollBar->Location = System::Drawing::Point(182, 31);
 			this->scrollBar->Name = L"scrollBar";
-			this->scrollBar->Size = System::Drawing::Size(838, 23);
+			this->scrollBar->Size = System::Drawing::Size(761, 23);
 			this->scrollBar->TabIndex = 0;
 			this->scrollBar->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::scrollBar_ValueChanged);
 			// 
@@ -623,10 +626,22 @@ private: System::ComponentModel::IContainer^  components;
 			this->clearAllErrorHighlights->Size = System::Drawing::Size(167, 22);
 			this->clearAllErrorHighlights->Text = L"Clear All Error Highlights";
 			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->BackColor = System::Drawing::Color::Transparent;
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(7, 11);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(81, 84);
+			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox1->TabIndex = 10;
+			this->pictureBox1->TabStop = false;
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->ClientSize = System::Drawing::Size(1552, 1008);
+			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->groupBox5);
 			this->Controls->Add(this->groupBox4);
 			this->Controls->Add(this->groupBox3);
@@ -655,6 +670,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox5->ResumeLayout(false);
 			this->taskTreeContextMenu->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
 
 		}
