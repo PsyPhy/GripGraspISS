@@ -1,1 +1,48 @@
-﻿
+﻿  	rmdir /S /Q ..\..\Scripts
+  	mkdir ..\..\Scripts
+  	copy /Y /V *.sss ..\..\Scripts
+  GraspCommissioningSessions.sss
+  GraspMaintenanceSessions.sss
+  GraspNominalSessions.sss
+  GraspTrainingSessions.sss
+          4 file(s) copied.
+  	copy /Y /V *.pcl ..\..\Scripts
+  DataTransfer.pcl
+  Invalid.pcl
+  K-Kfloating.pcl
+  K-Kseated-training.pcl
+  K-Kseated.pcl
+  Maintenance.pcl
+  PrepareFloating.pcl
+  PrepareSeated.pcl
+  Short.pcl
+  SoftwareConfigure.pcl
+  V-Kfloating.pcl
+  V-Kseated-training.pcl
+  V-Kseated.pcl
+  V-Vfloating.pcl
+  V-Vseated-training.pcl
+  V-Vseated.pcl
+         16 file(s) copied.
+  	copy /Y /V *.tsk ..\..\Scripts
+  DataTransfer.tsk
+  K-Kinstructions.tsk
+  K-KprepareFloating.tsk
+  K-KprepareSeated.tsk
+  PrepareFloating.tsk
+  PrepareSeated.tsk
+  V-Kinstructions.tsk
+  V-KprepareFloating.tsk
+  V-KprepareSeated.tsk
+  V-Vinstructions.tsk
+  V-VprepareFloating.tsk
+  V-VprepareSeated.tsk
+         12 file(s) copied.
+  	echo %date% %time% > _common
+  	del /F /Q _flight
+  Could Not Find C:\Users\Joe\Desktop\GripGraspDevelopment\GripGrasp\Source Code\GraspScripts\_flight
+  	echo Installing scripts for TRAINING.
+  Installing scripts for TRAINING.
+  	copy /Y /V SubjectsTraining.sbj ..\..\Scripts\Subjects.sbj
+          1 file(s) copied.
+  	echo %date% %time% > _training

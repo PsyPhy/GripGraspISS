@@ -12,7 +12,7 @@ REM The batch file  %temp%\SetCommonTimestamp.bat was created by the CommonTimes
 REM We call it here to get the timestamp info that was compiled into the executables.
 call %temp%\SetCommonTimestamp.bat
 set TAG=(%__COMMONTIMESTAMP__%)
-set ARCHIVE="..\GripMMI %1 %TAG%.tar"
+set ARCHIVE="..\GripMMI Runtime %1 %TAG%.tar"
 echo Creating GrippMMI Runtime Release %ARCHIVE%
 
 set TAR=Utils\tar.exe
