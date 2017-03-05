@@ -60,6 +60,8 @@
       <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
+      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,6 +76,8 @@
       <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
+      <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;libcd.lib;libcmtd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -87,9 +91,14 @@
     <None Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\GraspGUIBellsAndWhistles\OpenGLWindowsInForms.cpp" />
     <ClCompile Include="..\GraspVR\GraspGLObjects.cpp" />
-    <ClCompile Include="GraspHardwareStatus.cpp" />
+    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GraspHardwareStatus.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

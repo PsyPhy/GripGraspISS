@@ -39,14 +39,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeCleanCommandLine>del /Q /F install allbmps  *.html *.tiff *.bmp *.pdf</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del /Q /F *.pdf *.html *.tiff *.bmp install</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeReBuildCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeReBuildCommandLine>nmake /NOLOGO /f GraspBMPs.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del /Q /F *.pdf *.html *.tiff *.bmp install</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del /Q /F *.pdf *.html *.tiff *.bmp install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

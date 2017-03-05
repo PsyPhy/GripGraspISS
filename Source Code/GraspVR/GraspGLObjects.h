@@ -103,8 +103,10 @@ namespace Grasp {
 		static const Vector3 sky_location;
 		static const Vector3 prompt_location;
 		static const double prompt_radius;
-		static const double visor_radius;
+		static double inner_visor_radius;
+		static double outer_visor_radius;
 		static Vector3 desired_wrist_location;
+		static Vector3 initial_hand_position;
 
 		static const double target_ball_radius;
 		static const double finger_ball_radius;
@@ -116,6 +118,8 @@ namespace Grasp {
 
 		static const double errorColorMapTransparency;
 		static const double errorColorMapFadeDistance;
+
+		static int GraspGLObjects::curve_facets;
 
 	protected:
 
@@ -167,6 +171,10 @@ namespace Grasp {
 		Assembly		*headMisalignIndicator;			// Shown when the subject does not maintain the desired head tilt.
 		Texture			*head_misalign_texture;		
 		static const char *head_misalign_bitmap;
+
+		Assembly		*manualRejectIndicator;			// Shown when the subject does not maintain the desired head tilt.
+		Texture			*manual_reject_texture;		
+		static const char *manual_reject_bitmap;
 
 		Assembly		*headAlignTimeoutIndicator;
 		Assembly		*headTiltTimeoutIndicator;

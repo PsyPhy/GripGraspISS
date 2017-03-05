@@ -82,7 +82,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		if ( nError == WSAEWOULDBLOCK ) break;
 		// Treat all other errors rather dramatically by aborting.
 		if ( nError != 0 ) fAbortMessage( "CodaRTnetDaemonTracker", "recvfrom() failed with error code : %d" , nError );
-		fprintf( stderr, "R%08d  ", record.count );
+		// fprintf( stderr, "R%08d  ", record.count );
 		// Here I check if the record is the right size. From what I have gotten off of the internet, this should
 		// should always be true. But I thought I would check anyway.
 		if ( recv_len != sizeof( record ) ) fAbortMessage( "TestTrackerDaemon", "recvfrom() returned unexpected byte count: %d vs. %d" , recv_len, sizeof( record ) );
@@ -119,10 +119,9 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 		ini_parse( ini_filename, iniHandler, this );
 	}
 
+	// If a socket was already open, close it.
 	if ( daemonSocket != NULL && daemonSocket != INVALID_SOCKET ) closesocket( daemonSocket );
 		
-	daemonAddrLength = sizeof( daemonAddr );
-
 	// Create and prepare the socket used to receive the UDP datagrams from the daemon.
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
 	WSADATA wsaData;
@@ -188,7 +187,6 @@ void CodaRTnetDaemonTracker::Quit(void ) {
 	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
 }
 
-
 void CodaRTnetDaemonTracker::Shutdown( void ) {
 	// Need to quit to close the socket connection.
 	Quit();
@@ -196,7 +194,14 @@ void CodaRTnetDaemonTracker::Shutdown( void ) {
 	WinExec( "TaskKill /IM GraspTrackerDaemon.exe", SW_MINIMIZE );
 	Sleep( 2000 );
 }
+
 void CodaRTnetDaemonTracker::Startup( void ) {
+	// We need a running daemon. This implementation is bad because the path
+	// to the daemon is hard coded and assumes that we are in a GRASPonISS root
+	// directory. But on the other hand, it is good because we can use a relative path
+	// to make sure that we are using a compatible version. It would probably be
+	// good to get this path from the .ini file so that it can be customized for 
+	// different applications.
 	WinExec( "Executables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
 	// Re-establish a connection with the daemon.
 	Initialize();

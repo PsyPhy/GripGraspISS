@@ -13,11 +13,7 @@ using namespace PsyPhy;
 
 /***************************************************************************/
 
-void Tracker::Initialize( void ) {}
-int Tracker::Update( void ) {
-	return( 0 );
-}
-void Tracker::Quit() {}
+// Accesssor methods for some key parameters.
 
 double Tracker::GetSamplePeriod( void ) {
 	return( samplePeriod );
@@ -25,27 +21,19 @@ double Tracker::GetSamplePeriod( void ) {
 int Tracker::GetNumberOfUnits( void ) {
 	return( nUnits );
 }
-
-void Tracker::StartAcquisition( float max_duration ) {}
-void Tracker::StopAcquisition( void ) {}
-bool Tracker::GetAcquisitionState( void ) {
-	return( false );
+int Tracker::GetNumberOfMarkers( void ) {
+	return( nMarkers );
 }
+
+// Wait until an acquisition with a set number of frames has been completed.
 void Tracker::WaitAcquisitionCompleted( void ) {
 	while ( GetAcquisitionState() ) {
 		Update();
 		Sleep( 1 );
 	}
 }
-bool Tracker::CheckAcquisitionOverrun( void ) {
-	return( false );
-}
 
-// Get the most recent frame of marker data.
-// By default, simply take the data from unit 0.
-bool  Tracker::GetCurrentMarkerFrame( MarkerFrame &frame ) { 
-	return( GetCurrentMarkerFrameUnit( frame, 0 ) );
-}
+
 // Should return the most recent frame of data. 
 // If your tracker does not provide this functionality, then simply
 //  return false to signal that no frame is available.
@@ -53,15 +41,37 @@ bool  Tracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit ) {
 	return( false );
 }
 
-int  Tracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) { 
-	return( 0 );
+// Get the most recent frame of marker data from a default unit, or 
+//  data that has been combined on line from multiple units.
+// By default, simply take the data from unit 0.
+bool  Tracker::GetCurrentMarkerFrame( MarkerFrame &frame ) { 
+	return( GetCurrentMarkerFrameUnit( frame, 0 ) );
 }
+
+// After an acquisiton of a fixed time or number of frames, retrieve the full buffer of frames. 
+
+// Note that these definitions are circular. A derived class must either provide a method to retrieve
+//  the frames from a default unit, in which case specifying any unit will get you the default unit
+//  (i.e. unit number is ignored) 
+//           ** OR **
+// provide the means to get the frames from a specified unit and allow unit 0 to be considered as 
+// the default unit. The derived class can, of course, also specify both.
+
+// Get the most recent frame of marker data from a default unit, or 
+//  data that has been combined on line from multiple units.
+int  Tracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) { 
+	// By default, simply take the data from unit 0.
+	return( RetrieveMarkerFramesUnit( frames, max_frames, 0 ) );
+}
+
 int  Tracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit ) { 
 	// If the tracker has no concept of separate units, just get the data from the default unit.
 	return( RetrieveMarkerFrames( frames, max_frames ) );
 }
 
 /**************************************************************************************/
+
+// Provide some generic methods for copying marker frames.
 
 void Tracker::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 	int mrk;
@@ -95,18 +105,67 @@ void	Tracker::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[
 	}
 }
 
+void Tracker::WriteColumnHeadings( FILE *fp, int unit ) {
+	fprintf( fp, "Time.%1d;", unit );
+	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
+		fprintf( fp, " M%02d.%1d.V; M%02d.%1d.X; M%02d.%1d.Y; M%02d.%1d.Z;", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
+	}
+}
+
+void Tracker::WriteMarkerData( FILE *fp, MarkerFrame &frame ) {
+	fprintf( fp, "%9.3f;", frame.time );
+	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
+		fprintf( fp, " %1d;",  frame.marker[mrk].visibility );
+		for ( int i = 0; i < 3; i++ ) fprintf( fp, "%9.3f;",  frame.marker[mrk].position[i] );
+	}
+}
+
+void Tracker::WriteMarkerFile( char *filename ) {
+	FILE *fp = fopen( filename, "w" );
+	fAbortMessageOnCondition( !fp, "Error opening %s for writing.", filename );
+	fprintf( fp, "%s\n", filename );
+	fprintf( fp, "Tracker Units: %d\n", nUnits );
+	fprintf( fp, "Markers: %d\n", nMarkers );
+	fprintf( fp, "Frames: %d\n", nFrames );
+	fprintf( fp, "Frame;" );
+	for ( int unit = 0; unit < nUnits; unit++ ) WriteColumnHeadings( fp, unit );
+	fprintf( fp, "\n" );
+	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
+		fprintf( fp, "%8u;", frm );
+		for ( int unit = 0; unit < nUnits; unit++ ) WriteMarkerData( fp, recordedMarkerFrames[unit][frm] );
+		fprintf( fp, "\n" );
+	}
+	fclose( fp );
+}
 
 /**************************************************************************************/
 
 // Get the latest frame of marker data from the specified unit.
 // Marker positions are expressed in the intrinsic reference frame of the unit.
 
-// Provide a method to retrieve the transformation for a given unit from 
-//  the intrinsic to aligned reference frames.
+// Provide methods to set and retrieve the alignment transformation for a given unit from 
+//  the intrinsic to aligned reference frames. The base class assumes that no alignment is necessary.
 void Tracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
 	CopyVector( offset, zeroVector );
 	CopyMatrix( rotation, identityMatrix );
 }
+void Tracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	static bool first_call = true;
+	if ( first_call ) {
+		int response = fMessageBox( MB_YESNO, "Tracker", "Warning - SetUnitTransform() not handled by this tracker.\nDo you want to continue?" );
+		if ( response == IDNO) exit( -1 );
+		first_call = false;
+	}
+}
+
+// Get the entire set of transforms.
+void Tracker::GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) GetUnitTransform( unit, offsets[unit], rotations[unit] );
+}
+void Tracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) SetUnitTransform( unit, offsets[unit], rotations[unit] );
+}
+
 
 // Now provide the means to retrieve the frames and express the data in the intinsic frame.
 // Note that there is not a "combined" version of this because it makes no sense

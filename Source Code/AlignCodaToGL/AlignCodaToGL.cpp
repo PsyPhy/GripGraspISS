@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 	coda->Initialize();
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Sending CodaToGL alignment ... ");
-	coda->SetAlignment( offset, rotation, "Results\\CodaToGL.alignment.dat" );
+	coda->SetAlignmentTransforms( offset, rotation, "Results\\CodaToGL.alignment.dat" );
 	fprintf( stderr, "OK.\n" );
 	fprintf( stderr, "Shutting down CODA ... ");
 	coda->Quit();
