@@ -1,0 +1,9 @@
+# Special file for debugging.
+CMD_WAIT_SUBJ_READY,***  PREPARING TO START THE TASK  ***\nYou should be lying down with the restraint belts fastened and your legs stretched out.,BeltsSupine.bmp,300
+CMD_WAIT_SUBJ_READY,***  PREPARING TO START THE TASK  ***\nYou should be sitting with the restraint belts fastened.,BeltsSeated.bmp,300
+CMD_WAIT_SUBJ_READY,*** Mass Selection Hardware Tests ***\nPress OK to start.,blank.bmp,300
+CMD_WAIT_SUBJ_READY,***** Target LED Hardware Tests  ****\nVerify that all targets are OFF.\nPress OK to continue.,AllTgtOff.bmp,300
+CMD_WAIT_SUBJ_READY,*********     Slip Test     *********\nRelease manipulandum and press OK.,REMOVE_HAND.bmp,300
+CMD_WAIT_SUBJ_READY,********* Centered Grip Test *********\nRelease manipulandum and press OK.,REMOVE_HAND.bmp,300
+CMD_WAIT_SUBJ_READY,********* Run Self Test *********\nPress OK to start test.,info.bmp,300
+CMD_WAIT_SUBJ_READY,,blank.bmp,300

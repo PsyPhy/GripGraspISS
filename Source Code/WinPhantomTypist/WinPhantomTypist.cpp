@@ -44,11 +44,11 @@ void send_stroke ( char c ) {
 
 void type_sentence ( char *sentence ) {
 
-	for ( int letter = 0; letter < strlen( sentence ); letter++ ) {
+	for ( unsigned int letter = 0; letter < strlen( sentence ); letter++ ) {
 
 		printf( "%c\n", toupper( sentence[letter] ) );
 		bool shift = false;
-		char c = sentence[letter];
+		unsigned int c = sentence[letter];
 		if ( c == '\n' ) {
 			send_stroke( VK_RETURN );
 			Sleep( 1000 );
@@ -70,7 +70,7 @@ void type_sentence ( char *sentence ) {
 				SendInput( 1, &KeyDownInput, sizeof( KeyUpInput ) );
 			}
 
-			send_stroke( c );
+			send_stroke( (char) ( c & 0xFF ) );
 
 			if ( shift ) {
 				KeyUpInput.ki.wVk = VK_LSHIFT;

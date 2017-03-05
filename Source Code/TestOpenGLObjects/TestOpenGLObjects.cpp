@@ -26,7 +26,7 @@ int height = 480;
 bool border = true;
 bool stereo = false;
 bool fullscreen = false;
-double PI=3.14;
+
 // Place the viewer at the origin, looking in the zero orientation.
 double initial_viewpoint_position[3] = { 0.0, 0.0, 0.0 };
 double initial_viewpoint_orientation[3][3] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };

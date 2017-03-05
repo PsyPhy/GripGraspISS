@@ -14,3 +14,9 @@
 
 #include <windows.h>
 #include <mmsystem.h>
+
+#include <gl\gl.h>
+#include <gl\glu.h>
+
+#include "../Include/glaux.h"
+#include "../Useful/OpenGLUseful.h"

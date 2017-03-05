@@ -9,7 +9,6 @@
     <ClInclude Include="OculusWIN32.h" />
     <ClInclude Include="OculusMapper.h" />
     <ClInclude Include="CodaSimTracker.h" />
-    <ClInclude Include="OculusLocal.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

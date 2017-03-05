@@ -118,9 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>A simple scene with a moving object should be visible in the panel above and in the Virtual Reality Helmet.
+    <value>A scene with a moving object should become visible in the panel above and in the Virtual Reality Helmet.
 
-If this is not the case, check that the Virtual Reality Helmet cables are properly connected to the laptop. Then try pressing the Select button (center button) on the VR Helmet Remote, hold for 3 seconds and release. If the VR scene is dispayed, click on 'Close' and continue. If not, contact COL-CC.
+If after 10 seconds this is not the case, check that the Virtual Reality Helmet cables are properly connected to the laptop. Press, hold for 3 seconds and release the Select button (center button) on the VR Helmet Remote, then click 'Retry'. If the VR scene appears, click on 'OK' to continue. If not, contact COL-CC.
 </value>
   </data>
 </root>

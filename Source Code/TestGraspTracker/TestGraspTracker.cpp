@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
 		CodaRTnetTracker *codaTracker = new CodaRTnetDaemonTracker();
 		trackers = new GraspOculusCodaTrackers( &mapper, codaTracker );
 	}
-	else trackers = new GraspSimTrackers( &mapper );
+	else trackers = new GraspSimulatedTrackers();
 
 	ovrResult result = ovr_Initialize( nullptr );
 	fAbortMessageOnCondition( OVR_FAILURE( result ), "PsyPhyOculus", "Failed to initialize libOVR." );

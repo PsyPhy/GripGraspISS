@@ -1,0 +1,112 @@
+# Special file for debugging.
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/3): (Don't start!)\nYou will first pick up the manipulandum at the center between thumb and forefinger.,InHand.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/4): (Don't start!)\nYou will first pick up the manipulandum at the center between thumb and forefinger.,InHand.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/4): (Don't start!)\nYou will first pinch the manipulandum at the center between thumb and forefinger.,coef_frict.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/5): (Don't start!)\nYou will first pick up the manipulandum at the center between thumb and forefinger.,InHand.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/5): (Don't start!)\nYou will move the manipulandum in a specific manner to test the sensors.,diagnostics.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (1/6): (Don't start!)\nYou will first pick up the manipulandum at the center between thumb and forefinger.,InHand.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/3): (Don't start!)\nYou will hold the manipulandum upright and to the right of the blinking Target LED.,MvToBlkTap.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/4): (Don't start!)\nSqueeze according to the instructions that you will receive (firmly\, moderately\, lightly).,coef_frict.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/4): (Don't start!)\nYou will hold the manipulandum upright and to the right of the blinking Target LED.,MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/5): (Don't start!)\nThe manipulandum must be held in a non-standard fashion as shown\, with front face forward.,SensorTestGrip.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/5): (Don't start!)\nYou will hold the manipulandum upright and to the right of the blinking Target LED.,MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/5): (Don't start!)\nYou will hold the manipulandum upright and to the right of the blinking Target LED.,MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/6): (Don't start!)\nTo start\, you will move the manipulandum to the blinking Target LED.,MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (2/6): (Don't start!)\nTo start\, you will move the manipulandum to the blinking Target LED.,MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/3): (Don't start!)\nYou will then tap up or down according to the beeps and targets\, then return to the center.,Collision.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/4): (Don't start!)\nWhen you hear the beep\, rub the fingers up and down on the manipulandum.,coef_frict_fp.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/4): (Don't start!)\nYou will then oscillate between the lit targets\, one full cycle per beep.,OscillateV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/5): (Don't start!)\nMovements of the hand will be in one of 3 directions according to instructions.,SensorTestAll.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/5): (Don't start!)\nYou will move quickly and accurately to each lighted Target LED.,TargetedH.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/5): (Don't start!)\nYou will move quickly and accurately to each lighted Target LED.,TargetedV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/6): (Don't start!)\nOn each beep\, you will move quickly and accurately to the other lit Target LED.,DiscreteH.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (3/6): (Don't start!)\nOn each beep\, you will move quickly and accurately to the other lit Target LED.,DiscreteV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (4/4): (Don't start!)\nWhen the beeps will stop\, you should continue the oscillations.,OscillateV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (4/4): (Don't start!)\nYou will rub for 15 seconds. Move from center to edge and back. Try to maintain pinch force.,coef_frict_fp.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (4/5): (Don't start!)\nMovements should be continuous oscillations (sinusoids)\, with one full cycle per beep.,OscillateST.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (4/5): (Don't start!)\nThe targets will be one of the 4 currently lit Target LEDs (see target array).,info.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (4/6): (Don't start!)\nBefore each trial\, you will be instructed to keep your eyes OPEN or CLOSED.,EyesOpenClosed.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (5/5): (Don't start!)\nBe sure to hold the manipuladum upright and to the right of each Target LED.,MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (5/5): (Don't start!)\nBe sure to hold the manipuladum upright and to the right of each Target LED.,MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (5/5): (Don't start!)\nMovements amplitude should be ~50 cm. (Workspace Tablet edges can be used as a reference.),dimensions.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (5/6): (Don't start!)\nRemember to wait for each beep and come to a full stop at each Target LED.,info.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (6/6): (Don't start!)\nPlace manipulandum upright and to the right of Mast and align center with each target.,MvToBlkVA.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW (6/6): (Don't start!)\nPlace manipulandum upright and to the right of Tablet and align center with each target.,MvToBlkHA.bmp,300
+CMD_WAIT_SUBJ_READY,TASK PREVIEW: You will press\, hold and release each indicated location on Touch Screen.,touch.bmp,300
+CMD_WAIT_SUBJ_READY,Take a seat in GRIP. Attach the restraint belts and attach the cuffs to your right wrist and elbow.,BeltsSeated.bmp,300
+CMD_WAIT_SUBJ_READY,Take manipulandum between fingers as shown and hold steady. Press OK to continue.,SensorTestGrip.bmp,300
+CMD_WAIT_SUBJ_READY,Task completed.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,Test complete. If you did not hear the beeps\, check the hardware and then repeat this task.,confirm.bmp,300
+CMD_WAIT_SUBJ_READY,Test completed.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SEATED.\n- Check target mast on LEFT.\n- Check reference markers visible.,HdwConfDleft.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SEATED.\n- Check target mast on RIGHT.\n- Check reference markers visible.,HdwConfD.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SUPINE.\n- Check target mast on LEFT.\n- Check reference markers visible.,HdwConfB.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SUPINE.\n- Check target mast on RIGHT.\n- Check reference markers visible.\n,HdwConfB.bmp,300
+CMD_WAIT_SUBJ_READY,Unfold the retainer on the Workspace Tablet.,OpenRetainer.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 1),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 10),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 2),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 3),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 4),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 5),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 6),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 7),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 8),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is OFF again.\n(Horizontal Target 9),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 1),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 10),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 2),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 3),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 4),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 5),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 6),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 7),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 8),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Horizontal Target 9),HoriTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 1),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 10),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 11),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 12),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 13),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 2),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 3),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 4),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 5),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 6),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 7),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 8),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that Target LED is ON.\n(Vertical Target 9),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that all Target LEDs are ON.,AllTgtOn.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 1),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 10),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 11),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 12),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 13),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 2),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 3),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 4),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 5),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 6),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 7),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 8),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,Verify that target is OFF again.\n(Vertical Target 9),VertTgts.bmp,300
+CMD_WAIT_SUBJ_READY,You have completed half of the procedure. Press OK to continue.,info.bmp,300
+CMD_WAIT_SUBJ_READY,You should have the heaviest mass in your hand. Notify COL-CC if it does not appear to have a GREATER inertia than the previous.,confirm.bmp,300
+CMD_WAIT_SUBJ_READY,You should have the lightest mass in your hand. Notify COL-CC if it does not appear to have a LOWER inertia than the previous.,confirm.bmp,300
+CMD_WAIT_SUBJ_READY,You should have the lightest mass in your hand. Shake it a bit to get a feel for its inertia.,confirm.bmp,300
+CMD_WAIT_SUBJ_READY,You should have the medium mass in your hand. Notify COL-CC if it does not appear to have a GREATER inertia than the previous.,confirm.bmp,300
+CMD_WAIT_SUBJ_READY,You will perform the next set of discrete movements with eyes CLOSED. (But don't close them yet!).,EyesClosed.bmp,300
+CMD_WAIT_SUBJ_READY,You will perform the next set of discrete movements with eyes OPEN.,Eyesopen.bmp,300
+CMD_WAIT_SUBJ_READY,Tap upward or downward according to the beep and the lighted Target LEDs.,working.bmp,300
+CMD_WAIT_SUBJ_READY,Visibility OK.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,Too long to reach Target.\n- Manipulandum VISIBLE?\n- Manipulandum UPRIGHT?\nPress <Retry> to try again.,MvToBlkHA.bmp,300
+CMD_WAIT_SUBJ_READY,Too long to reach Target.\n- Manipulandum VISIBLE?\n- Manipulandum UPRIGHT?\nPress <Retry> to try again.,MvToBlkTapA.bmp,300
+CMD_WAIT_SUBJ_READY,Too long to reach Target.\n- Manipulandum VISIBLE?\n- Manipulandum UPRIGHT?\nPress <Retry> to try again.,MvToBlkVA.bmp,300
+CMD_WAIT_SUBJ_READY,Too long to reach blinking Target LED.\nPress <Retry> to try again.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Tracker Camera misalignment detected!\n- Check reference markers in view.\nCorrect and <Retry> or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Tracker alignment error.\n- Check Target Mast on LEFT.\n- Check reference markers in view.\nCorrect and <Retry> or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Tracking Camera #1 off center.\n- Check boresighting.\n- Check reference markers in view.\nCorrect and <Retry> or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Tracking Camera #2 off center.\n- Check boresighting.\n- Check reference markers in view.\nCorrect and <Retry> or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SEATED.\nCorrect and <Retry> or call COL-CC.,CalibrateSeatedL.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SEATED.\nCorrect and <Retry> or call COL-CC.,CalibrateSeatedR.bmp,300
+CMD_WAIT_SUBJ_READY,Unexpected Configuration.\n- Check configured for SUPINE.\nCorrect and <Retry> or call COL-CC.,CalibrateSupine.bmp,300

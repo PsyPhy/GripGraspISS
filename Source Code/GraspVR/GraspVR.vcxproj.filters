@@ -10,12 +10,15 @@
     <ClInclude Include="GraspVR.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="GraspTrackers.h" />
+    <ClInclude Include="GraspDisplays.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGLObjects.cpp" />
     <ClCompile Include="GraspVR.cpp" />
     <ClCompile Include="Stdafx.cpp" />
     <ClCompile Include="GraspTrackers.cpp" />
+    <ClCompile Include="GraspOculusDisplay.cpp" />
+    <ClCompile Include="GraspWindowsDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
