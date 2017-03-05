@@ -71,7 +71,7 @@ void setPacketTime( EPMTelemetryHeaderInfo *header ) {
 // This is the routine that sends out packets that were pre-recorded.
 // Takes as its input the socket for outputing packets, the path to the file
 // containing the recorded packets.
-int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_packets = 0 ) {
+int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_packets = 0, int speed = 1 ) {
 
 	// Count the total numbe of packets sent on the socket.
 	static int packetCount = 0;
@@ -80,6 +80,7 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 	int return_code;
 	int bytes_read;
     int iSendResult;
+	int elapsed_packet_count;
 			
 	EPMTelemetryHeaderInfo epmPacketHeaderInfo;
 	EPMTelemetryPacket recordedPacket;
@@ -101,6 +102,7 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 			exit( -1 );
 		}
 		// Skip over a number of packets.
+		elapsed_packet_count = skip_packets;
 		while ( skip_packets > 0 ) {
 			bytes_read = _read( fid, recordedPacket.buffer, sizeof( recordedPacket.buffer ) );
 			if ( bytes_read < 0 ) break;
@@ -156,12 +158,12 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 					if ( delta_time < 0 ) delta_time = 1;
 					// If there has been a long real delay, limit it to 30 seconds.
 					if ( delta_time > 30000 ) delta_time = 30000;
-					printf( " G%d ", delta_time );
-					Sleep( delta_time );
+					printf( " G:%d:%d ", elapsed_packet_count, delta_time );
+					Sleep( delta_time / speed );
 
 				}
 			}
-			
+			elapsed_packet_count++;
 		// Loop until there are no more bytes to read.
 		} while ( bytes_read = _read( fid, recordedPacket.buffer, sizeof( recordedPacket.buffer ) ) );
 
@@ -549,6 +551,8 @@ int _tmain( int argc, char **argv )
 	int packet_count;
 	// Skip over some initial recorded packets.
 	int skip_packets = 0;
+	// Speed up delivery of packets during playback.
+	int speed = 1;
 
 	// A place to store raw command packets received from the client.
 	EPMTelemetryPacket inputPacket;
@@ -576,11 +580,15 @@ int _tmain( int argc, char **argv )
 		// Construct simulated packets.
 		else if ( !strncmp( argv[arg], "-port=", strlen( "-port=" ) ) ) EPMport = argv[arg] + strlen( "-port=" );
 		else if ( !strncmp( argv[arg], "-skip=", strlen( "-skip=" ) ) ) sscanf( argv[arg], "-skip=%d", &skip_packets );
+		else if ( !strncmp( argv[arg], "-speed=", strlen( "-speed=" ) ) ) sscanf( argv[arg], "-speed=%d", &speed );
 		else packet_source_filename = argv[arg];
 	}	
 	if ( packet_source == RECORDED_PACKETS ) {
 		printf( "\nSending pre-recorded packets.\n" );
-		printf( "Packet source file: %s\n\n", packet_source_filename );
+		printf( "Packet source file: %s\n", packet_source_filename );
+		printf( "Skip packets: %d\n", skip_packets );
+		if ( speed <= 0 ) speed = 1;
+		printf( "Playback speed: %d\n\n", speed );
 	}
 	else if ( packet_source == CONSTRUCTED_PACKETS ) {
 		printf( "Constructing simulated packets.\n\n" );
@@ -699,7 +707,7 @@ int _tmain( int argc, char **argv )
 		switch ( packet_source ) {
 
 		case RECORDED_PACKETS:
-			packet_count = sendRecordedPackets( ClientSocket, packet_source_filename, skip_packets );
+			packet_count = sendRecordedPackets( ClientSocket, packet_source_filename, skip_packets, speed );
 			break;
 
 		case CONSTRUCTED_PACKETS:
