@@ -1,4 +1,4 @@
-// GraspScripts.cpp
+// Scripts.cpp
 //
 
 #include "stdafx.h"

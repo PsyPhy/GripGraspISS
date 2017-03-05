@@ -12,7 +12,9 @@
 #include "GraspTrackers.h"
 
 // At one point I used a background thread to get the data from the codas.
-// This was to keep from blocking the refresh loop. But 
+// This was to keep from blocking the refresh loop. But now we use the GraspTrackerDaemon
+// that runs in a separate process to provide the most recent data with virtually zero
+// delay when we ask for the data with the current process.
 // #define BACKGROUND_GET_DATA
 
 using namespace PsyPhy;
@@ -157,7 +159,8 @@ void GraspDexTrackers::Update( void ) {
 	UpdatePoseTrackers();
 }
 
-// Construct a number that indicates the number of visible markers in each structure.
+// Construct a decimal number that indicates the number of visible markers in each structure.
+// 100's digit shows structure 3, 10's digit shows structure 2, 1's digit shows structure 1.
 unsigned int GraspDexTrackers::GetTrackerStatus( void ) {
 
 	unsigned int status = 0;
@@ -196,16 +199,6 @@ void GraspDexTrackers::Release( void ) {
 
 }
 
-void GraspDexTrackers::WriteDataFiles( char *filename_root ) {
-
-	// Output the CODA data to a file.
-	char filename[MAX_PATH];
-	strncpy( filename, filename_root, sizeof( filename ) );
-	strncat( filename, ".mrk", sizeof( filename ) - strlen( ".mrk" ));
-	fOutputDebugString( "Writing CODA data to %s.\n", filename );
-	codaTracker->WriteMarkerFile( filename );
-	fOutputDebugString( "File %s closed.\n", filename );
-}
 
 // The base class GraspTrackers takes care of writing out the pose data from each cycle.
 // Derived classes are given the chance to add additional columns to the data file.
@@ -235,7 +228,6 @@ void GraspDexTrackers::Initialize( void ) {
 	
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
-	//handTracker->OffsetTo( handPoseK );
 
 	// Give the trackers a chance to get started.
 	Sleep( 200 );
@@ -269,7 +261,6 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
-	//handTracker->OffsetTo( handPoseK );
 
 	// Give the trackers a chance to get started.
 	Sleep( 200 );
@@ -285,7 +276,7 @@ void GraspOculusOnlyTrackers::Initialize( void ) {
 
 	// Create a pose tracker that uses only the Oculus.
 	
-	// Pick one of the two Oculus-only hmd trackers.
+	// Pick one of the two Oculus-only hmd trackers by commenting or uncommenting below:
 	// This one uses the full Oculus tracker, incuding drift compensation with gravity.
 	 hmdTracker = new PsyPhy::OculusPoseTracker( oculusMapper );
 	// The next one uses our own inertial implementation, but we do not give it an absolute tracker for
@@ -313,7 +304,7 @@ void GraspOculusOnlyTrackers::Initialize( void ) {
 	chestTracker = new PoseTrackerFilter( chestTrackerRaw, 2.0 );
 	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspSimTrackers", "Error initializing PoseTrackerFilter." );
 	
-	// Create a tracker to control roll movements of the hand for the toV responses.
+	// Create a tracker to control roll movements of the hand for the *-V responses.
 	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
 	// Set the position and orientation of the tool wrt the origin when in V-V mode.

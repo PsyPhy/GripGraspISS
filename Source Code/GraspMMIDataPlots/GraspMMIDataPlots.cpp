@@ -29,7 +29,7 @@ int main(array<System::String ^> ^args)
 
 	// Default locations for packet buffer files.
 	String^ packetRoot = gcnew String( "GraspPackets" );
-	String^ scriptDirectory = gcnew String( "GraspScripts\\" );
+	String^ scriptDirectory = gcnew String( "Scripts\\" );
 
 	// Parse the command line arguments.
 	if ( args->Length > 0 ) packetRoot = args[0];	// Where to look for packets written by GripGroundMonitorClient.exe

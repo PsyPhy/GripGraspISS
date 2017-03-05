@@ -3,11 +3,14 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include "..\PsyPhy2dGraphicsLib\Displays.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
+
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
 #include "../GraspGUI/GraspScripts.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Displays.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
+
+#include "../GripGraspVersionControl/GripGraspVersionControl.h"
 
 #define MAX_SLICES	(8*60*60*10)
 // Time span in seconds for each position of the span selector.
@@ -89,6 +92,9 @@ namespace GraspMMI {
 
 	public: 
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
+	private: System::Windows::Forms::Label^  Spans;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
+	public: 
 
 	public: 
 
@@ -196,7 +202,9 @@ private: System::ComponentModel::IContainer^  components;
 			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
 			System::Windows::Forms::TreeNode^  treeNode2 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
 			System::Windows::Forms::TreeNode^  treeNode3 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspMMIGraphsForm::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->Spans = (gcnew System::Windows::Forms::Label());
 			this->dataLiveCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->lastAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->firstAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -224,8 +232,8 @@ private: System::ComponentModel::IContainer^  components;
 			this->toolStripSeparator3 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->toolStripMenuItem000 = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolStripMenuItem900 = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
+			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->markerGraphPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
@@ -236,6 +244,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->groupBox2->SuspendLayout();
@@ -246,33 +255,47 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox4->SuspendLayout();
 			this->groupBox5->SuspendLayout();
 			this->taskTreeContextMenu->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// groupBox1
 			// 
+			this->groupBox1->Controls->Add(this->Spans);
 			this->groupBox1->Controls->Add(this->dataLiveCheckBox);
 			this->groupBox1->Controls->Add(this->lastAbsoluteTimeTextBox);
 			this->groupBox1->Controls->Add(this->firstAbsoluteTimeTextBox);
 			this->groupBox1->Controls->Add(this->spanSelector);
 			this->groupBox1->Controls->Add(this->scrollBar);
-			this->groupBox1->Location = System::Drawing::Point(13, 13);
+			this->groupBox1->Location = System::Drawing::Point(95, 4);
 			this->groupBox1->Margin = System::Windows::Forms::Padding(4);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Padding = System::Windows::Forms::Padding(4);
-			this->groupBox1->Size = System::Drawing::Size(1328, 112);
+			this->groupBox1->Size = System::Drawing::Size(1011, 91);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Time Series";
+			// 
+			// Spans
+			// 
+			this->Spans->AutoSize = true;
+			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->Spans->Location = System::Drawing::Point(10, 58);
+			this->Spans->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->Spans->Name = L"Spans";
+			this->Spans->Size = System::Drawing::Size(164, 13);
+			this->Spans->TabIndex = 13;
+			this->Spans->Text = L"12h  4h  1h 30m 10m 5m 60s 30s";
 			// 
 			// dataLiveCheckBox
 			// 
 			this->dataLiveCheckBox->AutoSize = true;
 			this->dataLiveCheckBox->Checked = true;
 			this->dataLiveCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->dataLiveCheckBox->Location = System::Drawing::Point(1257, 0);
+			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(56, 22);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -280,30 +303,30 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// lastAbsoluteTimeTextBox
 			// 
-			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(1176, 74);
+			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(871, 58);
 			this->lastAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->lastAbsoluteTimeTextBox->Name = L"lastAbsoluteTimeTextBox";
-			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(112, 24);
+			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
 			this->lastAbsoluteTimeTextBox->TabIndex = 3;
-			this->lastAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->lastAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// firstAbsoluteTimeTextBox
 			// 
-			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(255, 74);
+			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(182, 58);
 			this->firstAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->firstAbsoluteTimeTextBox->Name = L"firstAbsoluteTimeTextBox";
-			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(112, 24);
+			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
 			this->firstAbsoluteTimeTextBox->TabIndex = 2;
-			this->firstAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->firstAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// spanSelector
 			// 
 			this->spanSelector->LargeChange = 1;
-			this->spanSelector->Location = System::Drawing::Point(14, 30);
+			this->spanSelector->Location = System::Drawing::Point(12, 23);
 			this->spanSelector->Margin = System::Windows::Forms::Padding(4);
 			this->spanSelector->Maximum = 7;
 			this->spanSelector->Name = L"spanSelector";
-			this->spanSelector->Size = System::Drawing::Size(199, 53);
+			this->spanSelector->Size = System::Drawing::Size(162, 42);
 			this->spanSelector->TabIndex = 1;
 			this->spanSelector->TickStyle = System::Windows::Forms::TickStyle::TopLeft;
 			this->spanSelector->Value = 2;
@@ -312,18 +335,18 @@ private: System::ComponentModel::IContainer^  components;
 			// scrollBar
 			// 
 			this->scrollBar->LargeChange = 25;
-			this->scrollBar->Location = System::Drawing::Point(234, 38);
+			this->scrollBar->Location = System::Drawing::Point(182, 31);
 			this->scrollBar->Name = L"scrollBar";
-			this->scrollBar->Size = System::Drawing::Size(1079, 23);
+			this->scrollBar->Size = System::Drawing::Size(761, 23);
 			this->scrollBar->TabIndex = 0;
 			this->scrollBar->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::scrollBar_ValueChanged);
 			// 
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->hmdGraphPanel);
-			this->groupBox2->Location = System::Drawing::Point(13, 131);
+			this->groupBox2->Location = System::Drawing::Point(8, 96);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(1326, 613);
+			this->groupBox2->Size = System::Drawing::Size(1098, 532);
 			this->groupBox2->TabIndex = 1;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Head";
@@ -332,9 +355,9 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->hmdGraphPanel->ContextMenuStrip = this->hmdContextMenu;
 			this->hmdGraphPanel->Controls->Add(this->autoscaleIndicator);
-			this->hmdGraphPanel->Location = System::Drawing::Point(6, 28);
+			this->hmdGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->hmdGraphPanel->Name = L"hmdGraphPanel";
-			this->hmdGraphPanel->Size = System::Drawing::Size(1313, 577);
+			this->hmdGraphPanel->Size = System::Drawing::Size(1082, 500);
 			this->hmdGraphPanel->TabIndex = 0;
 			// 
 			// hmdContextMenu
@@ -343,14 +366,14 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdContextMenu->Name = L"contextMenuStrip1";
 			this->hmdContextMenu->ShowCheckMargin = true;
 			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(153, 48);
+			this->hmdContextMenu->Size = System::Drawing::Size(122, 26);
 			this->hmdContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::hmdContextMenu_ItemClicked);
 			// 
 			// autoscaleHMD
 			// 
 			this->autoscaleHMD->CheckOnClick = true;
 			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(152, 22);
+			this->autoscaleHMD->Size = System::Drawing::Size(121, 22);
 			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// autoscaleIndicator
@@ -358,10 +381,10 @@ private: System::ComponentModel::IContainer^  components;
 			this->autoscaleIndicator->BackColor = System::Drawing::SystemColors::ActiveCaptionText;
 			this->autoscaleIndicator->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->autoscaleIndicator->ForeColor = System::Drawing::Color::Maroon;
-			this->autoscaleIndicator->Location = System::Drawing::Point(1170, 14);
+			this->autoscaleIndicator->Location = System::Drawing::Point(947, 14);
 			this->autoscaleIndicator->Name = L"autoscaleIndicator";
 			this->autoscaleIndicator->ReadOnly = true;
-			this->autoscaleIndicator->Size = System::Drawing::Size(112, 24);
+			this->autoscaleIndicator->Size = System::Drawing::Size(112, 21);
 			this->autoscaleIndicator->TabIndex = 1;
 			this->autoscaleIndicator->Text = L"Autoscale On";
 			this->autoscaleIndicator->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -369,9 +392,11 @@ private: System::ComponentModel::IContainer^  components;
 			// groupBox3
 			// 
 			this->groupBox3->Controls->Add(this->taskGraphPanel);
-			this->groupBox3->Location = System::Drawing::Point(16, 856);
+			this->groupBox3->Controls->Add(this->taskLeftTimeLimit);
+			this->groupBox3->Controls->Add(this->taskRightTimeLimit);
+			this->groupBox3->Location = System::Drawing::Point(8, 750);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(1326, 287);
+			this->groupBox3->Size = System::Drawing::Size(1098, 252);
 			this->groupBox3->TabIndex = 2;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Task Execution";
@@ -379,9 +404,9 @@ private: System::ComponentModel::IContainer^  components;
 			// taskGraphPanel
 			// 
 			this->taskGraphPanel->ContextMenuStrip = this->taskContextMenu;
-			this->taskGraphPanel->Location = System::Drawing::Point(6, 31);
+			this->taskGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->taskGraphPanel->Name = L"taskGraphPanel";
-			this->taskGraphPanel->Size = System::Drawing::Size(1310, 248);
+			this->taskGraphPanel->Size = System::Drawing::Size(1082, 190);
 			this->taskGraphPanel->TabIndex = 1;
 			// 
 			// taskContextMenu
@@ -391,7 +416,7 @@ private: System::ComponentModel::IContainer^  components;
 				this->toolStripSeparator2, this->toolStripTextBox2, this->toolStripMenuItem400, this->toolStripMenuItem500, this->toolStripMenuItem600, 
 				this->toolStripSeparator3, this->toolStripMenuItem000, this->toolStripMenuItem900});
 			this->taskContextMenu->Name = L"taskContextMenu";
-			this->taskContextMenu->Size = System::Drawing::Size(203, 268);
+			this->taskContextMenu->Size = System::Drawing::Size(168, 268);
 			this->taskContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskContextMenu_ItemClicked);
 			// 
 			// toolStripMenuItemAll
@@ -399,7 +424,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->toolStripMenuItemAll->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
 			this->toolStripMenuItemAll->ImageScaling = System::Windows::Forms::ToolStripItemImageScaling::None;
 			this->toolStripMenuItemAll->Name = L"toolStripMenuItemAll";
-			this->toolStripMenuItemAll->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItemAll->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItemAll->Tag = L"";
 			this->toolStripMenuItemAll->Text = L"Show All";
 			this->toolStripMenuItemAll->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -407,7 +432,7 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripSeparator1
 			// 
 			this->toolStripSeparator1->Name = L"toolStripSeparator1";
-			this->toolStripSeparator1->Size = System::Drawing::Size(199, 6);
+			this->toolStripSeparator1->Size = System::Drawing::Size(164, 6);
 			// 
 			// toolStripTextBox1
 			// 
@@ -420,28 +445,28 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripMenuItem100
 			// 
 			this->toolStripMenuItem100->Name = L"toolStripMenuItem100";
-			this->toolStripMenuItem100->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem100->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem100->Tag = L"100";
 			this->toolStripMenuItem100->Text = L"100 Visual-Visual";
 			// 
 			// toolStripMenuItem200
 			// 
 			this->toolStripMenuItem200->Name = L"toolStripMenuItem200";
-			this->toolStripMenuItem200->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem200->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem200->Tag = L"200";
 			this->toolStripMenuItem200->Text = L"200 Visual-Manual";
 			// 
 			// toolStripMenuItem300
 			// 
 			this->toolStripMenuItem300->Name = L"toolStripMenuItem300";
-			this->toolStripMenuItem300->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem300->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem300->Tag = L"300";
 			this->toolStripMenuItem300->Text = L"300 Manual-Manual";
 			// 
 			// toolStripSeparator2
 			// 
 			this->toolStripSeparator2->Name = L"toolStripSeparator2";
-			this->toolStripSeparator2->Size = System::Drawing::Size(199, 6);
+			this->toolStripSeparator2->Size = System::Drawing::Size(164, 6);
 			// 
 			// toolStripTextBox2
 			// 
@@ -454,85 +479,85 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripMenuItem400
 			// 
 			this->toolStripMenuItem400->Name = L"toolStripMenuItem400";
-			this->toolStripMenuItem400->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem400->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem400->Tag = L"400";
 			this->toolStripMenuItem400->Text = L"400 Visual-Visual";
 			// 
 			// toolStripMenuItem500
 			// 
 			this->toolStripMenuItem500->Name = L"toolStripMenuItem500";
-			this->toolStripMenuItem500->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem500->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem500->Tag = L"500";
 			this->toolStripMenuItem500->Text = L"500 Visual-Manual";
 			// 
 			// toolStripMenuItem600
 			// 
 			this->toolStripMenuItem600->Name = L"toolStripMenuItem600";
-			this->toolStripMenuItem600->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem600->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem600->Tag = L"600";
 			this->toolStripMenuItem600->Text = L"600 Manual-Manual";
 			// 
 			// toolStripSeparator3
 			// 
 			this->toolStripSeparator3->Name = L"toolStripSeparator3";
-			this->toolStripSeparator3->Size = System::Drawing::Size(199, 6);
+			this->toolStripSeparator3->Size = System::Drawing::Size(164, 6);
 			// 
 			// toolStripMenuItem000
 			// 
 			this->toolStripMenuItem000->Name = L"toolStripMenuItem000";
-			this->toolStripMenuItem000->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem000->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem000->Tag = L"0";
 			this->toolStripMenuItem000->Text = L"000 Setup / Stow";
 			// 
 			// toolStripMenuItem900
 			// 
 			this->toolStripMenuItem900->Name = L"toolStripMenuItem900";
-			this->toolStripMenuItem900->Size = System::Drawing::Size(202, 22);
+			this->toolStripMenuItem900->Size = System::Drawing::Size(167, 22);
 			this->toolStripMenuItem900->Tag = L"900";
 			this->toolStripMenuItem900->Text = L"900 Maintenance";
 			// 
-			// taskRightTimeLimit
-			// 
-			this->taskRightTimeLimit->Location = System::Drawing::Point(1219, 1150);
-			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
-			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
-			this->taskRightTimeLimit->Size = System::Drawing::Size(112, 24);
-			this->taskRightTimeLimit->TabIndex = 8;
-			this->taskRightTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			// 
 			// taskLeftTimeLimit
 			// 
-			this->taskLeftTimeLimit->Location = System::Drawing::Point(20, 1150);
+			this->taskLeftTimeLimit->Location = System::Drawing::Point(12, 220);
 			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
-			this->taskLeftTimeLimit->Size = System::Drawing::Size(112, 24);
+			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 21);
 			this->taskLeftTimeLimit->TabIndex = 7;
-			this->taskLeftTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->taskLeftTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// taskRightTimeLimit
+			// 
+			this->taskRightTimeLimit->Location = System::Drawing::Point(1016, 220);
+			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
+			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
+			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 21);
+			this->taskRightTimeLimit->TabIndex = 8;
+			this->taskRightTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// groupBox4
 			// 
 			this->groupBox4->Controls->Add(this->markerGraphPanel);
-			this->groupBox4->Location = System::Drawing::Point(15, 750);
+			this->groupBox4->Location = System::Drawing::Point(8, 629);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(1326, 100);
+			this->groupBox4->Size = System::Drawing::Size(1098, 120);
 			this->groupBox4->TabIndex = 2;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Marker Visibility";
 			// 
 			// markerGraphPanel
 			// 
-			this->markerGraphPanel->Location = System::Drawing::Point(6, 28);
+			this->markerGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->markerGraphPanel->Name = L"markerGraphPanel";
-			this->markerGraphPanel->Size = System::Drawing::Size(1311, 64);
+			this->markerGraphPanel->Size = System::Drawing::Size(1082, 91);
 			this->markerGraphPanel->TabIndex = 0;
 			// 
 			// groupBox5
 			// 
 			this->groupBox5->Controls->Add(this->historyTree);
 			this->groupBox5->Controls->Add(this->visibleHistoryTree);
-			this->groupBox5->Location = System::Drawing::Point(1348, 13);
+			this->groupBox5->Location = System::Drawing::Point(1113, 4);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(584, 1161);
+			this->groupBox5->Size = System::Drawing::Size(437, 998);
 			this->groupBox5->TabIndex = 9;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Task Execution History";
@@ -541,7 +566,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->historyTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->historyTree->Location = System::Drawing::Point(350, 23);
+			this->historyTree->Location = System::Drawing::Point(199, 8);
 			this->historyTree->Name = L"historyTree";
 			treeNode1->ForeColor = System::Drawing::Color::Blue;
 			treeNode1->Name = L"Node0";
@@ -556,7 +581,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->visibleHistoryTree->ContextMenuStrip = this->taskTreeContextMenu;
 			this->visibleHistoryTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->visibleHistoryTree->Location = System::Drawing::Point(6, 37);
+			this->visibleHistoryTree->Location = System::Drawing::Point(6, 23);
 			this->visibleHistoryTree->Name = L"visibleHistoryTree";
 			treeNode2->ForeColor = System::Drawing::Color::Blue;
 			treeNode2->Name = L"Node0";
@@ -565,7 +590,7 @@ private: System::ComponentModel::IContainer^  components;
 			treeNode3->Name = L"Node1";
 			treeNode3->Text = L"Node1";
 			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
-			this->visibleHistoryTree->Size = System::Drawing::Size(570, 1118);
+			this->visibleHistoryTree->Size = System::Drawing::Size(425, 964);
 			this->visibleHistoryTree->TabIndex = 1;
 			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
 			// 
@@ -575,46 +600,56 @@ private: System::ComponentModel::IContainer^  components;
 				this->toolStripSeparator4, this->clearItemErrorHighlight, this->clearAllErrorHighlights});
 			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
 			this->taskTreeContextMenu->ShowImageMargin = false;
-			this->taskTreeContextMenu->Size = System::Drawing::Size(210, 76);
+			this->taskTreeContextMenu->Size = System::Drawing::Size(168, 76);
 			this->taskTreeContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskTreeContextMenu_ItemClicked);
 			// 
 			// rebuildTree
 			// 
 			this->rebuildTree->Name = L"rebuildTree";
-			this->rebuildTree->Size = System::Drawing::Size(209, 22);
+			this->rebuildTree->Size = System::Drawing::Size(167, 22);
 			this->rebuildTree->Text = L"Rebuild Tree";
 			// 
 			// toolStripSeparator4
 			// 
 			this->toolStripSeparator4->Name = L"toolStripSeparator4";
-			this->toolStripSeparator4->Size = System::Drawing::Size(206, 6);
+			this->toolStripSeparator4->Size = System::Drawing::Size(164, 6);
 			// 
 			// clearItemErrorHighlight
 			// 
 			this->clearItemErrorHighlight->Name = L"clearItemErrorHighlight";
-			this->clearItemErrorHighlight->Size = System::Drawing::Size(209, 22);
+			this->clearItemErrorHighlight->Size = System::Drawing::Size(167, 22);
 			this->clearItemErrorHighlight->Text = L"Clear This Error Highlight";
 			// 
 			// clearAllErrorHighlights
 			// 
 			this->clearAllErrorHighlights->Name = L"clearAllErrorHighlights";
-			this->clearAllErrorHighlights->Size = System::Drawing::Size(209, 22);
+			this->clearAllErrorHighlights->Size = System::Drawing::Size(167, 22);
 			this->clearAllErrorHighlights->Text = L"Clear All Error Highlights";
+			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->BackColor = System::Drawing::Color::Transparent;
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(7, 11);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(81, 84);
+			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox1->TabIndex = 10;
+			this->pictureBox1->TabStop = false;
 			// 
 			// GraspMMIGraphsForm
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(9, 18);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1933, 1188);
+			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
+			this->ClientSize = System::Drawing::Size(1552, 1008);
+			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->groupBox5);
 			this->Controls->Add(this->groupBox4);
-			this->Controls->Add(this->taskRightTimeLimit);
-			this->Controls->Add(this->taskLeftTimeLimit);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->groupBox1);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Location = System::Drawing::Point(10, 20);
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspMMIGraphsForm";
@@ -630,12 +665,13 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdGraphPanel->PerformLayout();
 			this->hmdContextMenu->ResumeLayout(false);
 			this->groupBox3->ResumeLayout(false);
+			this->groupBox3->PerformLayout();
 			this->taskContextMenu->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox5->ResumeLayout(false);
 			this->taskTreeContextMenu->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -711,7 +747,7 @@ private: System::ComponentModel::IContainer^  components;
 			int hour = since_midnight / (60 * 60);
 			int minute = (since_midnight % (60 * 60)) / 60;
 			int second = (since_midnight % 60);
-			sprintf( label, "%02d:%02d:%02d GMT  ", hour, minute, second );
+			sprintf( label, "%02d:%02d:%02d", hour, minute, second );
 			return gcnew String( label );
 		}
 
@@ -817,9 +853,62 @@ private: System::ComponentModel::IContainer^  components;
 			else clearItemErrorHighlight->Enabled = false;
 
 		 }
-private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+	private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 			StartRefreshTimer();
 		 }
+
+	// Add an 'About ...' item to the system menu. 
+	#define SYSMENU_ABOUT_ID 0x01
+
+	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
+
+					// Do what one would normally do when the handle is created.
+					Form::OnHandleCreated( e );
+
+					// Get a handle to a copy of this form's system (window) menu
+					HWND hWnd;
+					hWnd = static_cast<HWND>( Handle.ToPointer() );
+					HMENU hSysMenu = GetSystemMenu( hWnd, false );
+					// Add a separator
+					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
+					// Add the About menu item
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
+
+				}
+
+	protected:  virtual void WndProc(System::Windows::Forms::Message% m) override {	
+					// Test if the About item was selected from the system menu
+					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
+					{
+						char pwd[MAX_PATH];
+						int bytes = GetCurrentDirectory( sizeof( pwd ), pwd );
+						
+						// We need InteropServics in order to convert a String to a char *.
+						using namespace System::Runtime::InteropServices;
+
+						// Converts the String into a char *.
+						// Don't forget to free it when exiting.
+						char *cache_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetCacheFileRoot ).ToPointer();
+						char hk_file[MAX_PATHLENGTH];
+						char rt_file[MAX_PATHLENGTH];
+
+						// Create the paths to the housekeeping packet file, based on the root and the packet type.
+						CreateGripPacketCacheFilename( hk_file, sizeof( hk_file ), GRIP_HK_BULK_PACKET, cache_root );
+						CreateGripPacketCacheFilename( rt_file, sizeof( rt_file ), GRIP_RT_SCIENCE_PACKET, cache_root );
+
+						fMessageBox( MB_OK, 
+							"GraspMMIMirror Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
+							GripGraspSourceRelease, GripGraspBuildInfo, hk_file, rt_file, pwd );
+						// Release the memory used to create the ANSI string.
+						Marshal::FreeHGlobal( IntPtr( cache_root ) );
+
+						return;
+					}
+					// Do what one would normally do.
+					Form::WndProc( m );
+				}
+
+
 };
 }
 

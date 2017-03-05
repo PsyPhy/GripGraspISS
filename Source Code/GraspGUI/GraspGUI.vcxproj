@@ -93,6 +93,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Executables\Grasp.ico" />
     <None Include="..\GraspMMI\app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
@@ -139,9 +140,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GripMMI\GripSourceCode\Grip\Grip.vcxproj">
-      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
       <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
     </ProjectReference>
@@ -159,6 +157,9 @@
     </ProjectReference>
     <ProjectReference Include="..\GraspSequences\GraspSequences.vcxproj">
       <Project>{a063702b-6be1-4939-96f1-19fb77921c29}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
+      <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
       <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>

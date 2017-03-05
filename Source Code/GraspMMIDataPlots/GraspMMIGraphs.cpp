@@ -17,10 +17,10 @@
 #include "..\Useful\fMessageBox.h"
 
 // We make use of a package of plotting routines that I have had around for decades.
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\OglDisplay.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
+#include "..\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
+#include "..\PsyPhy2dGraphicsLib\OglDisplay.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
 
 #include "GraspMMIGraphsForm.h"
 #include "GraspMMIDataPlotsStartup.h"
@@ -118,7 +118,7 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 
 	// Find the time window of the available data packets.
 	// The global array RealMarkerTime[] has been filled previously.
-	min = 0.0;
+	min = DBL_MAX;
 	for ( i = 0; i < nDataSlices; i++ ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
 			min = graspDataSlice[i].absoluteTime;
@@ -132,11 +132,11 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 		}
 	}
 	max = span;
-	for ( i = nDataSlices - 1; i > 0; i-- ) {
+	for ( i = nDataSlices - 1; i > 0 && nDataSlices > 0; i-- ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) break;
 	}
 	if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE && graspDataSlice[i].absoluteTime > max ) max = graspDataSlice[i].absoluteTime;
-	for ( i = nHousekeepingSlices - 1; i >= 0; i-- ) {
+	for ( i = nHousekeepingSlices - 1; i > 0 && nHousekeepingSlices > 0; i-- ) {
 		if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) break;
 	}
 	if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[i].absoluteTime > max ) max = graspHousekeepingSlice[i].absoluteTime;	
@@ -144,16 +144,16 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 	// Adjust the behavior of the scroll bar depending on the selected 
 	// time span of the data window. A large step moves a full window
 	// width, a small step moves 1/10th of the window.
-	scrollBar->LargeChange = span;
-	scrollBar->SmallChange = span / 10.0;
+	scrollBar->LargeChange = (int) span;
+	scrollBar->SmallChange = (int) (span / 10.0);
 	// Set the scroll bar limits to match the limits of the available data.
 	// Note that you cannot not reach the max value of the scroll bar with the user
 	// controls. Best you can do is to get within LargeChange of the maximum. 
 	// We extend the range of the scroll bar by that value so that one can
 	//  reach the end of the data.
-	int top = ceil( max ) + scrollBar->LargeChange;
-	int bottom = floor( min );
-	if ( bottom >= floor( max ) ) bottom = floor( max );
+	int top = (int) ceil( max ) + scrollBar->LargeChange;
+	int bottom = (int) floor( min );
+	if ( bottom >= floor( max ) ) bottom = (int) floor( max );
 	scrollBar->Maximum = top;
 	scrollBar->Minimum = bottom;
 
@@ -178,7 +178,7 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 			break;
 		}
 	}
-	scrollBar->Value = ceil( latest );
+	scrollBar->Value = (int) ceil( latest );
 }
 
 // Here we do the actual work of plotting the strip charts and phase plots.
@@ -636,10 +636,10 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 	for ( unsigned int index = task_tree_current_index; index < nHousekeepingSlices; index++ ) {
 
 		// Get the pertinent data from the housekeeping packet.
-		int subject = graspHousekeepingSlice[index].userID;
-		int protocol = graspHousekeepingSlice[index].protocolID;
-		int task = graspHousekeepingSlice[index].taskID;
-		int step = graspHousekeepingSlice[index].stepID;
+		int subject = (int) graspHousekeepingSlice[index].userID;
+		int protocol = (int) graspHousekeepingSlice[index].protocolID;
+		int task = (int) graspHousekeepingSlice[index].taskID;
+		int step = (int) graspHousekeepingSlice[index].stepID;
 
 		// Ignore 0000 combinations and whenever there is missing data.
 		if ( subject != 0 && protocol != 0 && task != 0 && subject != MISSING_INT && protocol != MISSING_INT && task != MISSING_INT ) {
@@ -656,7 +656,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 					if ( current_task_leaf->Text->StartsWith( "Initiated:" ) ) {
 						current_task_leaf->Text += 
 							"Finished: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) +
-							"Duration: " + CreateDurationString( graspHousekeepingSlice[index].absoluteTime - current_task_start_time ) +
+							" Duration: " + CreateDurationString( graspHousekeepingSlice[index].absoluteTime - current_task_start_time ) +
 							current_task_leaf->Tag;
 					}
 					// Set color of the task that just completed according to completion code.
@@ -730,7 +730,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 			// that the task has actually started and we update the indicator and start time accordingly.
 			else if ( current_task_leaf->Text->StartsWith( "Selected:" ) && ( step != first_step || graspHousekeepingSlice[index].scriptEngine >= STEP_EXECUTING )) {
 				// Activity has been detected, so change from "Selected" to "Initiated" and update the time.
-				current_task_leaf->Text = "Initiated: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime );
+				current_task_leaf->Text = "Initiated: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) + " GMT ";
 				current_task_start_time = graspHousekeepingSlice[index].absoluteTime;
 				// Change the color to attract the attention of the user.
 				current_task_leaf->ForeColor = System::Drawing::Color::Magenta;
@@ -739,7 +739,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 			else if ( current_task_leaf->Text->StartsWith( "Initiated:" ) && ( graspHousekeepingSlice[index].scriptEngine >= STEP_FINISHED_ABNORMAL )) {
 				// A task has exited with an error code.
 				// Prepare the tag to be added to the text of the leaf to show that there was a problem during the execution of this task.
-				current_task_leaf->Tag = gcnew String( "      !!!!" );
+				current_task_leaf->Tag = gcnew String( " !!!" );
 				// Add a leaf to the task node that provides information about the completion code.
 				if ( step != current_step ) {
 					int error_code = - ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_ABNORMAL );

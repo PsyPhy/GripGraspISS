@@ -9,6 +9,10 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Training|Win32">
+      <Configuration>Training</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{06FB1C1D-0FE6-4FB8-91B1-7DDDA4165782}</ProjectGuid>
@@ -23,6 +27,10 @@
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Training|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -32,22 +40,32 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Training|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _flight</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _flight</NMakeReBuildCommandLine>
     <NMakeOutput>
     </NMakeOutput>
-    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; _common &amp; del _common _flight _training </NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake /NOLOGO GraspScripts.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>del install</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _flight</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _flight</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; _common &amp; del _common _flight _training </NMakeCleanCommandLine>
     <NMakeOutput>
     </NMakeOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Training|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _training</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO /F GraspScripts.mak _training</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; _common &amp; del _common _flight _training </NMakeCleanCommandLine>
+    <NMakeOutput />
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
@@ -71,7 +89,8 @@
     <None Include="PrepareSeated.tsk" />
     <None Include="Short.pcl" />
     <None Include="SoftwareConfigure.pcl" />
-    <None Include="Subjects.sbj" />
+    <None Include="SubjectsFlight.sbj" />
+    <None Include="SubjectsTraining.sbj" />
     <None Include="GraspScripts.mak" />
     <None Include="V-Kfloating.pcl" />
     <None Include="V-Kinstructions.tsk" />

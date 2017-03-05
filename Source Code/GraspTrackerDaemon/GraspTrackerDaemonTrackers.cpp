@@ -68,7 +68,7 @@ namespace GraspTrackerDaemon {
 
 		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
 		// for the HMD, hand and chest. But GraspDexTrackers also requires a tracker to
-		// allow the subject to adjust the hand orientation in -V protocols. So here
+		// allow the subject to adjust the hand orientation in *-V protocols. So here
 		// we create a null pose tracker just to fill in.
 		PoseTracker *roll = new NullPoseTracker();
 		// Create a set of Pose tracker so that poses can be computed here in the daemon.
@@ -134,7 +134,8 @@ namespace GraspTrackerDaemon {
 		visibilityTextBox0->Text = line;
 		unit = 1;
 		frame_time = record.frame[unit].time;
-		timeTextBox1->Text = frame_time.ToString("F3");
+		// timeTextBox1->Text = frame_time.ToString("F3");
+		timeTextBox1->Text = record.count.ToString();
 		line = " ";
 		for ( int mrk = 0; mrk < 24; mrk++ ) {
 			if ( record.frame[unit].marker[mrk].visibility ) line += "O";

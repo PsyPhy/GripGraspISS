@@ -1,0 +1,33 @@
+# Special file for debugging.
+CMD_WAIT_SUBJ_READY,Acquisition completed.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,Alignment completed. Checking alignment validity for 20\, 10\, 5\, 3\, 2\, 1 mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Check Workspace Tablet installed for SEATED operation with Target Mast in socket N (right-hand side).,CalibrateSeatedR.bmp,300
+CMD_WAIT_SUBJ_READY,Check Workspace Tablet installed for SUPINE operation with Target Mast in socket N (right-hand side).,CalibrateSupFVrs.bmp,300
+CMD_WAIT_SUBJ_READY,Check that the 'VISIBLE' status indicator on the Workspace Tablet touchscreen is green.,Visible.bmp,300
+CMD_WAIT_SUBJ_READY,Don the headphones and connect to the GRIP hardware.,headphones.bmp,300
+CMD_WAIT_SUBJ_READY,A series of beeps is being played for 10 seconds. Adjust the audio control until you hear them clearly.,volume.bmp,300
+CMD_WAIT_SUBJ_READY,Acquiring ...,working.bmp,300
+CMD_WAIT_SUBJ_READY,Acquiring baseline ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Analysis completed.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,CLOSE your eyes and start point-to-point movements.,EyesClosed.bmp,300
+CMD_WAIT_SUBJ_READY,Checking collision forces ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking data ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking data ...,working.bmp,300
+CMD_WAIT_SUBJ_READY,Checking field of view ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking for movement ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking for number of movements ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking hardware configuration ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking number of Oscillations ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking tracker alignment ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking tracker placement ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Checking visibility ...,wait.bmp,300
+CMD_WAIT_SUBJ_READY,Completed.,PrgBarF.bmp,300
+CMD_WAIT_SUBJ_READY,Continue oscillating movements.\nMaintain the same rhythm.,working.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to oscillate in time with beeps.,OscillateST.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to oscillate in time with beeps.,baton_pitch_beep.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to oscillate in time with beeps.,baton_roll_beep.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to squeeze FIRMLY and rub up and down for 15 seconds.,coef_frict_fp.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to squeeze LIGHTLY and rub up and down for 15 seconds.,coef_frict_fp.bmp,300
+CMD_WAIT_SUBJ_READY,Continue to squeeze MODERATELY and rub up and down for 15 seconds.,coef_frict_fp.bmp,300
+CMD_WAIT_SUBJ_READY,Coda misalignment detected!\n- Are reference markers in view?\nCorrect and <Retry> or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Collision forces outside range. Press <Retry> to repeat (once or twice) or call COL-CC.,alert.bmp,300

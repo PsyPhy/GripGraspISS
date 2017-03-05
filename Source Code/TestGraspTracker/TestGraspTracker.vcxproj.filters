@@ -2,25 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="TestGraspTracker.cpp" />
-    <ClCompile Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.cpp">
-      <Filter>CAPI</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="CAPI">
-      <UniqueIdentifier>{d62362bf-2e70-4931-986c-fb35a07de7f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Library Files">
       <UniqueIdentifier>{83345f6a-3482-4ea6-9c24-2df33e771fb5}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE.h">
-      <Filter>CAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\OculusSDKv1.3\OculusSDK\LibOVRKernel\Src\GL\CAPI_GLE_GL.h">
-      <Filter>CAPI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\codaRTNetProtocol.lib">

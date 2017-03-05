@@ -3,11 +3,23 @@
 ### What we should do is write a tool to walk the tree, starting from the subject file or files
 ### to copy only the files that will actually be used.
 
-SCRIPT_DESTINATION=..\..\GraspScripts
-install: *.sbj *.sss *.pcl *.tsk
+SCRIPT_DESTINATION=..\..\Scripts
+
+_flight: _common SubjectsFlight.sbj
+	-del /F /Q _training
+	echo Installing scripts for FLIGHT.
+	copy /Y /V SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	echo %date% %time% > $@
+
+_training: _common SubjectsTraining.sbj
+	-del /F /Q _flight
+	echo Installing scripts for TRAINING.
+	copy /Y /V SubjectsTraining.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	echo %date% %time% > $@
+
+_common: *.sss *.pcl *.tsk
 	-rmdir /S /Q $(SCRIPT_DESTINATION)
 	mkdir $(SCRIPT_DESTINATION)
-	copy /Y /V *.sbj $(SCRIPT_DESTINATION)
 	copy /Y /V *.sss $(SCRIPT_DESTINATION)
 	copy /Y /V *.pcl $(SCRIPT_DESTINATION)
 	copy /Y /V *.tsk $(SCRIPT_DESTINATION)

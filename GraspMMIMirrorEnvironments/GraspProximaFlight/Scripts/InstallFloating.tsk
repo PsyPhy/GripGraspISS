@@ -1,0 +1,13 @@
+# Task definition file.
+#
+# ID; command string; ready.html; running.html; exit0.html; exit1.html; exit2.html; ...
+#
+#               *** OR ***
+#
+# ID; INSTRUCTION; page.html
+#
+01; INSTRUCTION; InstallFloating1.html
+02; INSTRUCTION; InstallFloating2.html
+03; INSTRUCTION; InstallLocker.html
+04; COMMAND; CodaInstallationCheck.exe -floating -hmd -chest -tool; CodaInstallationCheckFloating.html; StepRunning.html; StepNormalFinish.html; StepErrorFinish.html
+05; INSTRUCTION; TaskFinished.html

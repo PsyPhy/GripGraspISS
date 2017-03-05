@@ -1,0 +1,3 @@
+# Protocol Definition: Transfer of data to GRIP
+031; SCRIPT; Data Transfer; DataTransfer.tsk
+039; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html

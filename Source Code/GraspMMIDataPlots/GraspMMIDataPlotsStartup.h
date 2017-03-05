@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Displays.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Views.h"
-#include "..\..\..\GripMMI\GripSourceCode\PsyPhy2dGraphicsLib\Layouts.h"
+#include "..\PsyPhy2dGraphicsLib\Displays.h"
+#include "..\PsyPhy2dGraphicsLib\Views.h"
+#include "..\PsyPhy2dGraphicsLib\Layouts.h"
 namespace GraspMMI {
 
 	using namespace System;
@@ -117,9 +117,10 @@ namespace GraspMMI {
 			this->rtCacheFilenameText->AutoSize = true;
 			this->rtCacheFilenameText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->rtCacheFilenameText->Location = System::Drawing::Point(74, 53);
+			this->rtCacheFilenameText->Location = System::Drawing::Point(56, 43);
+			this->rtCacheFilenameText->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->rtCacheFilenameText->Name = L"rtCacheFilenameText";
-			this->rtCacheFilenameText->Size = System::Drawing::Size(64, 25);
+			this->rtCacheFilenameText->Size = System::Drawing::Size(51, 20);
 			this->rtCacheFilenameText->TabIndex = 0;
 			this->rtCacheFilenameText->Text = L"label1";
 			// 
@@ -128,9 +129,10 @@ namespace GraspMMI {
 			this->hkCacheFilenameText->AutoSize = true;
 			this->hkCacheFilenameText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->hkCacheFilenameText->Location = System::Drawing::Point(74, 84);
+			this->hkCacheFilenameText->Location = System::Drawing::Point(56, 68);
+			this->hkCacheFilenameText->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->hkCacheFilenameText->Name = L"hkCacheFilenameText";
-			this->hkCacheFilenameText->Size = System::Drawing::Size(64, 25);
+			this->hkCacheFilenameText->Size = System::Drawing::Size(51, 20);
 			this->hkCacheFilenameText->TabIndex = 1;
 			this->hkCacheFilenameText->Text = L"label2";
 			// 
@@ -139,9 +141,10 @@ namespace GraspMMI {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(6, 4);
+			this->label1->Location = System::Drawing::Point(4, 3);
+			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(390, 29);
+			this->label1->Size = System::Drawing::Size(309, 24);
 			this->label1->TabIndex = 2;
 			this->label1->Text = L"Waiting for initial data packets ...";
 			// 
@@ -150,23 +153,24 @@ namespace GraspMMI {
 			this->button1->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(222, 142);
+			this->button1->Location = System::Drawing::Point(166, 115);
+			this->button1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(150, 40);
+			this->button1->Size = System::Drawing::Size(112, 32);
 			this->button1->TabIndex = 3;
 			this->button1->Text = L"Cancel";
 			this->button1->UseVisualStyleBackColor = true;
 			// 
 			// GraspMMIDataPlotsStartup
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->button1;
-			this->ClientSize = System::Drawing::Size(595, 194);
+			this->ClientSize = System::Drawing::Size(446, 158);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->hkCacheFilenameText);
 			this->Controls->Add(this->rtCacheFilenameText);
+			this->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->Name = L"GraspMMIDataPlotsStartup";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspMMI Data Plots Startup";

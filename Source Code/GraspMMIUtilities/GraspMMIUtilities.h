@@ -5,7 +5,7 @@
 #include "../DexServices/TMdata.h"
 #include "../DexServices/DexServices.h"
 #include "../VectorsMixin/VectorsMixin.h"
-#include "../../../GripMMI/GripSourceCode/Grip/GripPackets.h"
+#include "../Grip/GripPackets.h"
 
 #define CHEST_STRUCTURE	0
 #define HAND_STRUCTURE	1

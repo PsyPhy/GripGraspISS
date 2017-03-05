@@ -106,6 +106,7 @@ namespace Grasp {
 		static double inner_visor_radius;
 		static double outer_visor_radius;
 		static Vector3 desired_wrist_location;
+		static Vector3 initial_hand_position;
 
 		static const double target_ball_radius;
 		static const double finger_ball_radius;
@@ -170,6 +171,10 @@ namespace Grasp {
 		Assembly		*headMisalignIndicator;			// Shown when the subject does not maintain the desired head tilt.
 		Texture			*head_misalign_texture;		
 		static const char *head_misalign_bitmap;
+
+		Assembly		*manualRejectIndicator;			// Shown when the subject does not maintain the desired head tilt.
+		Texture			*manual_reject_texture;		
+		static const char *manual_reject_bitmap;
 
 		Assembly		*headAlignTimeoutIndicator;
 		Assembly		*headTiltTimeoutIndicator;

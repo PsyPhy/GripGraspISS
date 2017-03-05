@@ -1,7 +1,4 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-#include <io.h>
-#include "../VectorsMixin/VectorsMixin.h"
 #include "../GraspVR/GraspTrackers.h"
 
 // We need InteropServics in order to convert a String to a char *.

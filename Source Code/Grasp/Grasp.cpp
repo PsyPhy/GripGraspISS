@@ -49,9 +49,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	bool useHMD = true;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
 
-	char sequence_filename[FILENAME_MAX];
-	char output_filename_root[FILENAME_MAX];
-	char dex_log_filename[FILENAME_MAX];
+	char sequence_filename[FILENAME_MAX] = "";
+	char output_filename_root[FILENAME_MAX] = "";
+	char dex_log_filename[FILENAME_MAX] = "";
 
 	// Parse the command line.
 	int items;
@@ -59,7 +59,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
 
 	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
+	if ( FileExists( "NoCoda.flg" ) ) useCoda = false;
 	if ( strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
+	if ( FileExists( "NoHMD.flg" ) ) useCoda = false;
 
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );

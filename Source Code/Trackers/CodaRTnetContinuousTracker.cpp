@@ -102,12 +102,16 @@ bool CodaRTnetContinuousTracker::GetAcquisitionState( void ) {
 int CodaRTnetContinuousTracker::Update( void ) {
 	
 	int mrk;
+	int tick;
 	
 	int nChecksumErrors = 0;
 	int nTimeouts = 0;
 	int nUnexpectedPackets = 0;
 	int nFailedFrames = 0;
+	int nRepeatedPackets[MAX_UNITS];
+	int previous_tick[MAX_UNITS];
 	int nSuccessfullPackets = 0;
+	static int cumulativeSuccessfullPackets = 0;
 
 	bool status = false;
 
@@ -122,6 +126,11 @@ int CodaRTnetContinuousTracker::Update( void ) {
 	}
 
 	// Retrieve any UDP packets that have been sent by the CodaRTnet server since the last call.
+	// Test to see if the same time slice comes in more than once.
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		nRepeatedPackets[unit] = 0;
+		previous_tick[unit] = -1;
+	}
 	while ( true ) {
 
 		// CodaRTnet packet-handling objects cannot be reused for more than one packet.
@@ -149,6 +158,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 		else {
 			// Count the total number of valid packets..
 			nSuccessfullPackets++;
+
 			// find number of markers included in the packet.
 			int n_markers = local_decode3D.getNumMarkers();
 
@@ -162,7 +172,12 @@ int CodaRTnetContinuousTracker::Update( void ) {
 				MessageBox( NULL, "Which unit?!?!", "Dexterous", MB_OK );
 				exit( RTNET_RETRIEVEERROR );
 			}
-			
+
+			// See if this is a repeat of the previous packet.
+			if ( ( tick = local_decode3D.getTick() ) == previous_tick[unit] ) ++nRepeatedPackets[unit];
+			previous_tick[unit] = tick;
+			fOutputDebugString( "Unit: %d  Tick: %8d\n", unit, tick );
+	
 			// Compute the time from the tick counter in the packet and the tick duration.
 			int index = nFramesPerUnit[unit] % MAX_FRAMES;
 			MarkerFrame *frame = &recordedMarkerFrames[unit][index];
@@ -196,6 +211,9 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			status = true;
 		}
 	}
+	cumulativeSuccessfullPackets += nSuccessfullPackets;
+	// fOutputDebugString( "nSuccessfulPackets: %8d Repeats: %8d %8d Cumulative: %8d\n", nSuccessfullPackets, nRepeatedPackets[0], nRepeatedPackets[1], cumulativeSuccessfullPackets );
+
 	// Our model of a tracker assumes an equal number of frames for each unit. But in this
 	// tracker it is conceivable that a packet for one unit might have already arrived, while
 	// the next one is not yet here. So we set the number of frames for all units to the lowest 
