@@ -1,22 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <None Include="HT_Ser1_Block1.seq" />
-    <None Include="HT_Ser1_Block2.seq" />
-    <None Include="HT_Ser1_Block3.seq" />
-    <None Include="HT_Ser1_Block4.seq" />
-    <None Include="HT_Ser2_Block1.seq" />
-    <None Include="HT_Ser2_Block2.seq" />
-    <None Include="HT_Ser2_Block3.seq" />
-    <None Include="HT_Ser2_Block4.seq" />
-    <None Include="HU_Ser1_Block1.seq" />
-    <None Include="HU_Ser2_Block1.seq" />
-    <None Include="null.seq" />
-    <None Include="ShortTest.seq" />
-    <None Include="TestConflict.seq" />
-    <None Include="TrainingHeadStraight.seq" />
-    <None Include="TrainingHeadTilted.seq" />
-    <None Include="WU_Ser1_Block1.seq" />
-    <None Include="GraspSequences.mak" />
+    <None Include="..\..\Sequences\TrainingHeadTilted.seq" />
+    <None Include="..\..\Sequences\TrainingHeadStraight.seq" />
+    <None Include="..\..\Sequences\TestConflict.seq" />
   </ItemGroup>
 </Project>

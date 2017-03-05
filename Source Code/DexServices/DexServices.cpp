@@ -11,22 +11,19 @@
 #include <string.h>
 #include <time.h>
 
-#include "../Trackers/CodaRTnetNullTracker.h"
 #include "../Trackers/PoseTrackers.h"
-#include "TMdata.h"
 #include "DexServices.h"
-
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/fMessageBox.h"
 
 using namespace Grasp;
-using namespace PsyPhy;
 
 void DexServices::printDateTime( FILE *fp ) {
 	SYSTEMTIME st;
 	GetSystemTime( &st );
 	fprintf( fp, "%4d-%02d-%02d %02d:%02d:%02d.%03d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds );
 }
+
 
 void DexServices::Initialize( char *filename ) {
 
@@ -140,17 +137,11 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 }
 
 void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
-
-	// We need a Pose Tracker and a Tracker just to get access to their internal copy functions.
-	// I declare them static here so that they don't explode the stack.
-	static PsyPhy::PoseTracker		pm;
-	static CodaRTnetNullTracker		tr;
-	// Fill the current slice with the new data.
-	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
+	PsyPhy::PoseTracker pm;
+	Tracker		tr;
+	rt.Slice[slice_count].fillTime = TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
-	// There is a bug in the following. The hmd pose is sent in the place of the hand, chest and mouse.
-	// This needs to be fixed, but I am leaving it like this for now to be consistent with the flight software.
 	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
 	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, hmd );
 	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hmd );
@@ -159,20 +150,13 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[0], frame[0] );
 	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[1], frame[1] );
 
-	// Dex RT Packets can only be sent two times per second. 
-	// So we pack multiple data slices into a single packet.
-	// We set a minimum time between slices and if the caller 
-	// sends a new slice before the timer runs out, we overwrite
-	// the previous slice. When the timer does run out we increment
-	// to the next slice. When there are enough slices to fill the
-	// packet, it gets sent.
 	if ( TimerTimeout( slice_timer ) ) {
 		slice_count++;
-		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
+		if ( slice_count >= RT_SLICES_PER_PACKET ) {
 			SendScienceRealtimeData();
 			slice_count = 0;
 		}
-		TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
+		TimerSet( slice_timer, RT_SLICE_INTERVAL );
 	}
 }
 
@@ -231,7 +215,7 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 				user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
 			fflush( log );
 		}
-		TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
+		TimerSet( info_timer, HK_PACKET_INTERVAL );
 		return( sent );
 
 	}
@@ -313,4 +297,3 @@ void DexServices::ParseCommandLine( char *command_line ) {
 	}
 
 }
-

@@ -1,6 +1,15 @@
 /********************************************************************************/
+#define _CRT_SECURE_NO_WARNINGS
 
-#include "OpenGLObjects.h"
+#include <windows.h>
+#include <mmsystem.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <tchar.h>
+#include <math.h>
+#include <time.h> 
+#include "../Useful/fOutputDebugString.h"
+#include "../Useful/OpenGLUseful.h"
 #include "OpenGLWindows.h"
 
 using namespace PsyPhy;

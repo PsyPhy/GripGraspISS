@@ -1,6 +1,5 @@
 #pragma once
 
-#define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 
 #include "../OculusInterface/OculusInterface.h"
@@ -46,8 +45,6 @@ namespace OculusStartupCheck {
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::Panel^  panel1;
 	private: System::Windows::Forms::Label^  label3;
-	private: System::Windows::Forms::Button^  button1;
-	private: System::Windows::Forms::Button^  button2;
 
 	private:
 		/// <summary>
@@ -68,22 +65,20 @@ namespace OculusStartupCheck {
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->button2 = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			this->panel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// closeButton
 			// 
-			this->closeButton->DialogResult = System::Windows::Forms::DialogResult::OK;
+			this->closeButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->closeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->closeButton->Location = System::Drawing::Point(821, 661);
 			this->closeButton->Name = L"closeButton";
 			this->closeButton->Size = System::Drawing::Size(136, 55);
 			this->closeButton->TabIndex = 1;
-			this->closeButton->Text = L"OK";
+			this->closeButton->Text = L"Close";
 			this->closeButton->UseVisualStyleBackColor = true;
 			this->closeButton->Click += gcnew System::EventHandler(this, &Form1::closeButton_Click);
 			// 
@@ -123,40 +118,14 @@ namespace OculusStartupCheck {
 			// 
 			this->label3->AutoSize = true;
 			this->label3->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->label3->Location = System::Drawing::Point(143, 196);
+			this->label3->Location = System::Drawing::Point(222, 183);
 			this->label3->Name = L"label3";
 			this->label3->Padding = System::Windows::Forms::Padding(5);
-			this->label3->Size = System::Drawing::Size(641, 37);
+			this->label3->Size = System::Drawing::Size(482, 62);
 			this->label3->TabIndex = 1;
-			this->label3->Text = L"If no VR images appear, check cables to VR Headset then press \'Retry\'.";
-			this->label3->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->label3->Text = L"If no VR images appear, check cables to VR Headset\r\n           then double click " 
+				L"on this message to retry.";
 			this->label3->DoubleClick += gcnew System::EventHandler(this, &Form1::label3_DoubleClick);
-			// 
-			// button1
-			// 
-			this->button1->DialogResult = System::Windows::Forms::DialogResult::Retry;
-			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(679, 661);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(136, 55);
-			this->button1->TabIndex = 4;
-			this->button1->Text = L"Retry";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
-			// 
-			// button2
-			// 
-			this->button2->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->button2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->button2->Location = System::Drawing::Point(537, 661);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(136, 55);
-			this->button2->TabIndex = 5;
-			this->button2->Text = L"Cancel";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &Form1::button2_Click);
 			// 
 			// Form1
 			// 
@@ -165,8 +134,6 @@ namespace OculusStartupCheck {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->closeButton;
 			this->ClientSize = System::Drawing::Size(985, 726);
-			this->Controls->Add(this->button2);
-			this->Controls->Add(this->button1);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->closeButton);
@@ -192,22 +159,12 @@ namespace OculusStartupCheck {
 	private: System::Void panel1_Click(System::Object^  sender, System::EventArgs^  e) {
 				 HWND parent = static_cast<HWND>( panel1->Handle.ToPointer() );
 				 char cmd[1024];
-				 fOutputDebugString( "Kill PsyPhyOculusDemo.exe\n" );
-				 system( "TaskKill /F /T /IM PsyPhyOculusDemo.exe" );
 				 sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
-				 fOutputDebugString( "Launch %s\n", cmd );
 				 system( cmd );
 			 }
 
 	private: System::Void label3_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 				 panel1_Click( sender, e );
-			 }
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-				panel1_Click( sender, e );
-			 }
-	private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-				 Environment::ExitCode = -1;
-				 Close();
 			 }
 };
 }

@@ -1,7 +1,22 @@
 // SaveBitmap.cpp - Output a bitmap to a .BMP file.
 //
 
-#include "OpenGLObjects.h"
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <windows.h>
+#include <mmsystem.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <tchar.h>
+#include <math.h>
+#include <time.h> 
+
+#include <shellapi.h>
+#include <commdlg.h>
+
+#include "../Useful/fOutputDebugString.h"
+
 
 #define BITSPERPIXEL		32
 
@@ -26,7 +41,7 @@ void	SaveBitmap( const char *szFilename, HDC hdc, HBITMAP hBitmap )
 
 		if((pBuf=malloc(bmpInfo.bmiHeader.biSizeImage))==NULL)
 		{
-			MessageBox(NULL, "Unable to Allocate Bitmap Memory", "Error",MB_OK|MB_ICONERROR);
+			MessageBox(NULL,_T("Unable to Allocate Bitmap Memory"),_T("Error"),MB_OK|MB_ICONERROR);
 			break;
 		}
 		
@@ -35,7 +50,7 @@ void	SaveBitmap( const char *szFilename, HDC hdc, HBITMAP hBitmap )
 
 		if((fp=fopen(szFilename,"wb"))==NULL)
 		{
-			MessageBox(NULL, "Unable to Create Bitmap File", "Error", MB_OK|MB_ICONERROR);
+			MessageBox(NULL,_T("Unable to Create Bitmap File"),_T("Error"),MB_OK|MB_ICONERROR);
 			break;
 		}
 

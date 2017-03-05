@@ -19,12 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
-    <None Include="..\GraspMMI\app.ico">
-      <Filter>Source Files\Resource Files</Filter>
-    </None>
-    <None Include="..\..\Executables\Grasp.ico">
-      <Filter>Source Files\Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraspGUI.cpp">
@@ -34,9 +28,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GraspScripts.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraspGUIScriptProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -49,9 +40,6 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraspScripts.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

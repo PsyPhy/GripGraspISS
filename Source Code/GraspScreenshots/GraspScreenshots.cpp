@@ -66,20 +66,11 @@ int _tmain(int argc, char *argv[])
 {
 	bool confirm = false;
 	char *filename = "GraspScreenshot.bmp";
-	int  size_x = 1024, size_y = 1024;
-	int  position_x = 10, position_y = 10;
-
-	double hand_roll = 0.0, hand_pitch = 0.0, hand_yaw = 0.0;
-
-	double projectile_distance = 100.0;
+	int  size = 1024;
 
 	// Parse command line for arguments affecting the window.
 	for ( int arg = 1; arg < argc; arg++ ) {
-		int n;
-		if ( 0 < ( n = sscanf( argv[arg], "--size=%dx%d:%d,%d", &size_x, &size_y, &position_x, &position_y ) ) ) {
-			if ( n == 1) size_y = size_x;
-			fOutputDebugString( "Window size: %d x %d\n", size_x, size_y );
-		}
+		if ( 1 == sscanf( argv[arg], "--size=%d", &size ) ) fOutputDebugString( "Window size: %d x %d\n", size, size );
 	}
 	
 	// Create and instance of a window object.
@@ -87,7 +78,7 @@ int _tmain(int argc, char *argv[])
 	window = new OpenGLWindow();
 
 	// Create sets the new window to be the active window.
-	if ( !window->Create( NULL, argv[0], position_x, position_y, size_x, size_y ) ) {
+	if ( !window->Create( NULL, argv[0], 860, 0, size, size ) ) {
 		fMessageBox( MB_OK, "TestOpenGLObjects", "Error creating window." );
 		exit( -1 );
 	}  
@@ -100,26 +91,22 @@ int _tmain(int argc, char *argv[])
 	*      that I give for the model room here are in mm.
 	*  100.0 to 10000.0  depth clipping planes - making this smaller would improve the depth resolution.
 	*/
-	viewpoint = new Viewpoint( 6.0, 70.0, 10.0, 10000.0);
+	viewpoint = new Viewpoint( 6.0, 75.0, 10.0, 10000.0);
 
 	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
 	viewpoint->SetOrientation(0.0, 0.0, 0.0 );
 
 	objects = new GraspGLObjects();
-	objects->curve_facets = 180;
-	objects->outer_visor_radius = 600.0;
-
 	objects->CreateVRObjects();
 	objects->PlaceVRObjects();
 	objects->CreateAuxiliaryObjects();
 
-	objects->hand->SetPosition( 100.0, -200.0, -500.0 );
-	objects->hand->SetOrientation( hand_roll, hand_pitch, hand_yaw );
+	objects->hand->SetPosition( 25.0, -25.0, -200.0 );
+	objects->hand->SetOrientation( 0.0, -1.0, -1.0 );
 		
 	objects->headTiltPrompt->SetOrientation(110.0, 0.0, 0.0);
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
-	objects->fuzzyLaser->SetColor( 0.0, 0.0, 1.0 );
 
 	objects->tunnel->SetColor( GRAY );
 	objects->glasses->SetColor( 0.0f, 0.85f, 0.85f, 0.5f );
@@ -158,7 +145,6 @@ int _tmain(int argc, char *argv[])
 	objects->handStructure->Disable();
 	objects->chestStructure->Disable();
 
-
 	for ( int arg = 1; arg < argc; arg++ ) {
 
 		double angle;
@@ -181,14 +167,8 @@ int _tmain(int argc, char *argv[])
 		else if ( 1 == sscanf( argv[arg], "--handError=%lf", &angle ) ) {
 			objects->SetColorByRollError( objects->kkTool, angle, 2.0 );
 		}
-		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &hand_roll ) );
-		else if ( 1 == sscanf( argv[arg], "--roll=%lf", &hand_roll ) );
-		else if ( 1 == sscanf( argv[arg], "--pitch=%lf", &hand_pitch ) );
-		else if ( 1 == sscanf( argv[arg], "--yaw=%lf", &hand_yaw ) );
-				
-		else if ( 1 == sscanf( argv[arg], "--projectiles=%lf", &projectile_distance ) ) {
-			objects->projectiles->Enable();
-			objects->multiProjectile->Enable();
+		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &angle ) ) {
+			objects->hand->SetOrientation( angle, 0.0, 0.0 );
 		}
 
 		else if ( !strcmp( argv[arg], "--shoulders" )) {
@@ -198,9 +178,6 @@ int _tmain(int argc, char *argv[])
 
 		else if ( !strcmp( argv[arg], "--vkTool" )) {
 			objects->vkTool->Enable();
-		}
-		else if ( !strcmp( argv[arg], "--laser" )) {
-			objects->EnableHandLaser( objects->vkTool );
 		}
 		else if ( !strcmp( argv[arg], "--kTool" )) {
 			objects->kTool->Enable();
@@ -275,21 +252,10 @@ int _tmain(int argc, char *argv[])
 		else if ( !strcmp( argv[arg], "--confirm" )) {
 			confirm = true;
 		}
-		else if ( !strncmp( argv[arg], "--size", strlen( "--size" ) ) ); // Ignore this parameter. It was handled earlier.
+		else if ( 1 == sscanf( argv[arg], "--size=%d", &size ) ); // Ignore this parameter. It was handled earlier.
 		else filename = argv[arg];
 
 	}
-	objects->hand->SetOrientation( hand_roll, hand_pitch, hand_yaw );	
-
-	objects->projectiles->SetOrientation( hand_roll, hand_pitch, hand_yaw );
-	Vector3 offset, direction, world;
-	objects->MultiplyVector( offset, objects->hand->offset, objects->hand->orientation );
-	objects->AddVectors( world, objects->selectedTool->position, offset );
-	objects->MultiplyVector( direction, objects->kVector, objects->hand->orientation );
-	objects->ScaleVector( direction, direction, - projectile_distance );
-	objects->AddVectors( world, world, direction );
-	objects->projectiles->SetPosition( world );
-
 	DrawToBMP( filename );
 
 	if ( confirm ) fMessageBox( MB_OK, "GraspScreenshots", "Screenshot saved to %s.", filename );

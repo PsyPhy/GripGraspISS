@@ -28,7 +28,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>NotSet</CharacterSet>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -96,11 +96,8 @@
     <None Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\GraspGUIBellsAndWhistles\OpenGLWindowsInForms.cpp" />
     <ClCompile Include="..\GraspVR\GraspGLObjects.cpp" />
-    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="AlignToRigidBodyGUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

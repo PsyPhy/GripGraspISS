@@ -34,10 +34,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GraspVR\GraspGLObjects.cpp">
+    <ClCompile Include="..\GraspGUIBellsAndWhistles\OpenGLWindowsInForms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
+    <ClCompile Include="..\GraspVR\GraspGLObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

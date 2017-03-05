@@ -1,1 +1,0 @@
-This directory contains a copy of the GRASP runtime configuration files that were loaded onto the Perspectives laptop prior to launch to the ISS. It is used by GraspMMI to show a mirror of what is happening on board based on telemetried data.

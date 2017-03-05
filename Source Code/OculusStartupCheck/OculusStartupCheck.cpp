@@ -14,5 +14,5 @@ int main(array<System::String ^> ^args)
 
 	// Create the main window and run it
 	Application::Run(gcnew Form1());
-	return( Environment::ExitCode );
+	return 0;
 }

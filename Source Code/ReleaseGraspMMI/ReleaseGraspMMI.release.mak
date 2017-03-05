@@ -1,2 +1,0 @@
-default:
-	ReleaseGraspMMI.bat Release

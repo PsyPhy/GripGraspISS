@@ -57,11 +57,9 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
-      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -73,11 +71,9 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;../Lib/codasys.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;../Lib/codaRTNetProtocol.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
-      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;libcd.lib;libcmtd.lib;msvcrtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -119,9 +115,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">
-      <Project>{5d0d4793-8f87-4a92-b6aa-1f48f18615e8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GraspVR\GraspVR.vcxproj">
       <Project>{266170c2-0878-422f-a262-d1023c084b26}</Project>
     </ProjectReference>
@@ -136,6 +129,9 @@
     </ProjectReference>
     <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
       <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\WaitForCodaDaemon\WaitForCodaDaemon.vcxproj">
+      <Project>{c8fb03d6-66af-46cd-a8fa-0d70b32a68c0}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

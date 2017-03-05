@@ -78,7 +78,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -262,7 +262,6 @@
     <Link>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalDependencies>$(OVRSDKROOT)LibOVR/Lib/Windows/$(Platform)/$(Configuration)/VS2010/LibOVR.lib;../Lib/codaRTNetProtocolCPP_VC7SD.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>libc.lib;libcmt.lib;msvcrt.lib;libcd.lib;libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

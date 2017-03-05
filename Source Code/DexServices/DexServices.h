@@ -2,21 +2,9 @@
 
 #pragma once
 
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <io.h>
-#include <fcntl.h>
-#include <share.h>
-#include <sys/stat.h>
-#include <Windows.h>
-
 #include "../Trackers/Trackers.h"
-#include "../Trackers/PoseTrackers.h"
 #include "../VectorsMixin/VectorsMixin.h"
-
-#include "TMdata.h"
+#include "TMData.h"
 
 // Connection to Dex hardware via the ET port.
 #define DEFAULT_SERVER "10.80.12.103"
@@ -83,8 +71,8 @@ namespace Grasp {
 		  static_tracker_status(TRACKERSTATUS_UNKNOWN)
 		{
 		  strncpy( log_filename, "DexServices.dxl", sizeof( log_filename ) );
-		  TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
-		  TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
+		  TimerSet( slice_timer, RT_SLICE_INTERVAL );
+		  TimerSet( info_timer, HK_PACKET_INTERVAL );
 		  TimerStart( stream_timer );
 		 }
 
@@ -107,9 +95,6 @@ namespace Grasp {
 		int SendScienceRealtimeData( void );
 
 		void ParseCommandLine( char *command_line );
-
-	
-
 
 // If the program is being compiled with /clr, then expose these methods that use String objects.
 #ifdef _MANAGED

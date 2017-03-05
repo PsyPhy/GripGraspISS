@@ -16,7 +16,3 @@
 #include <time.h>
 #include <windows.h>
 #include <mmsystem.h>
-
-// Some convenient routines for outputing debug messages.
-#include "../Useful/fMessageBox.h"
-#include "../Useful/fOutputDebugString.h"

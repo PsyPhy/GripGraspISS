@@ -177,10 +177,6 @@ double VectorsMixin::DotProduct( const Vector3 v1, const Vector3 v2 ) {
 	return( v1[X] * v2[X] + v1[Y] * v2[Y] + v1[Z] * v2[Z] );
 }
 
-double VectorsMixin::AngleBetweenVectors( const Vector3 v1, const Vector3 v2 ) {
-	return( acos( DotProduct( v1, v2 ) / VectorNorm( v1 ) / VectorNorm( v2 )) );
-}
-
 void VectorsMixin::ComputeCrossProduct( Vector3 result, const Vector3 v1, const Vector3 v2 ) {
 	result[X] = v1[Y] * v2[Z] - v1[Z] * v2[Y];
 	result[Y] = v1[Z] * v2[X] - v1[X] * v2[Z];
@@ -632,7 +628,7 @@ double VectorsMixin::QuaternionDifference( Quaternion result, const Quaternion q
 	return( angle );
 }
 
-double VectorsMixin::AngleBetweenOrientations( const Quaternion q1, const Quaternion q2 ) {
+double VectorsMixin::AngleBetween( const Quaternion q1, const Quaternion q2 ) {
 	Quaternion discard;
 	return( QuaternionDifference( discard, q1, q2 ) );
 
@@ -641,33 +637,6 @@ double VectorsMixin::AngleBetweenOrientations( const Quaternion q1, const Quater
 double VectorsMixin::RotationAngle( const Quaternion q1 ) {
 	double hypotenuse = sqrt( q1[X] * q1[X] + q1[Y] * q1[Y] +  q1[Z] * q1[Z] );
 	return( 2.0 * atan2( hypotenuse, q1[M] ) );
-}
-
-// Compute the roll component of an arbitray rotation expressed as a quaternion.
-// Here we consider roll to be around the Z axis.
-double VectorsMixin::RollAngle( const Quaternion q1 ) {
-
-	Vector3	sight_axis;
-	Vector3 pitch_yaw_axis;
-	double pitch_yaw_rotation_angle;
-	Quaternion pitch_yaw_transformation;
-	Vector3 up_vector1, up_vector2, up_cross;
-
-	RotateVector( sight_axis, q1, kVector );
-	ComputeCrossProduct( pitch_yaw_axis, kVector, sight_axis );
-	NormalizeVector( pitch_yaw_axis );
-	pitch_yaw_rotation_angle = AngleBetweenVectors( sight_axis, kVector );
-	pitch_yaw_transformation[X] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[X];
-	pitch_yaw_transformation[Y] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[Y];
-	pitch_yaw_transformation[Z] = sin( pitch_yaw_rotation_angle / 2.0 ) * pitch_yaw_axis[Z];
-	pitch_yaw_transformation[M] = cos( pitch_yaw_rotation_angle / 2.0 );
-
-	RotateVector( up_vector1, pitch_yaw_transformation, jVector );
-	RotateVector( up_vector2, q1, jVector );
-	double angle = acos( DotProduct( up_vector1, up_vector2 ) );
-	ComputeCrossProduct( up_cross, up_vector1, up_vector2 );
-	if ( DotProduct( up_cross, sight_axis ) > 0.0 ) return( angle );
-	else return( - angle );
 }
 
 void VectorsMixin::TransformPose( Pose &result, Transform &xform, Pose &source ) {

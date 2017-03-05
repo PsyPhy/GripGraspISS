@@ -12,7 +12,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "../Useful/fOutputDebugString.h"
-#include "../Useful/fMessageBox.h"
 #include "Trackers.h"
 
 // RTNet C++ includes
@@ -98,6 +97,12 @@ protected:
 	codaRTNet::DataStream		stream;
 	CODANET_HWCONFIG_DEVICEENABLE devices;
 
+public:
+	// Buffers to hold the data retrieved from the CODA units.
+	// I am making them public so that the calling program can access them directly,
+	// rather than going through RetrieveMarkerFramesUnit();
+	MarkerFrame		recordedMarkerFrames[MAX_UNITS][MAX_FRAMES];
+
 protected:
 
 public:
@@ -163,7 +168,7 @@ protected:
 	}
 
 public:
-	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual int  Update( void );
 	virtual void Quit( void );
 
@@ -179,12 +184,11 @@ public:
 	virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 	virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 
+	// Need to add the following.
 	virtual int		PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show = true );
 	virtual void	AnnulAlignment( const char *filename = nullptr );
-	virtual void	GetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
-	virtual void	SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename );
-	virtual void	SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
-	
+	virtual void	GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] );
+	virtual void	SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename = nullptr );
 	// This is a little different from the above. If we have the pose of an object in the intrinsic frame,
 	// the transformation has to be inverted before sending it to the CODA system.
 	virtual void	SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char *filename );
@@ -192,8 +196,11 @@ public:
 	virtual void	GetUnitPlacement( int unit, Vector3 &pos, Quaternion &ori ) {
 		fMessageBox( MB_OK, "CodaRTnetTracker", "GetUnitPlacement() not yet implemented." );
 	}
-	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
-	virtual void	SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation );
+	virtual void	GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) ;
+
+	virtual void	WriteMarkerFile( char *filename );
+	void WriteColumnHeadings( FILE *fp, int unit );
+	void WriteMarkerData( FILE *fp, MarkerFrame &frame );
 
 protected:
 	// These are used internally to start and stop the CODA system, e.g. when setting a new alignment.

@@ -1,14 +1,5 @@
 #pragma once
 
-#define MAX_SUBJECTS	32
-#define MAX_SESSIONS	32
-#define MAX_PROTOCOLS	32
-#define MAX_TASKS		64
-#define MAX_STEPS		128
-#define MAX_PAGES		128
-
-#define MAX_TOKENS		16
-
 namespace GraspGUI {
 
 	using namespace System;
@@ -17,6 +8,15 @@ namespace GraspGUI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+
+#define MAX_SUBJECTS	32
+#define MAX_SESSIONS	32
+#define MAX_PROTOCOLS	32
+#define MAX_TASKS		64
+#define MAX_STEPS		128
+#define MAX_PAGES		128
+
+#define MAX_TOKENS		16
 
 	public ref class Subject {
 	public:
@@ -95,8 +95,6 @@ namespace GraspGUI {
 		}
 		~Task(){}
 	};
-
-	int ParseLine( char *token[MAX_TOKENS], char *line );
 
 };
 

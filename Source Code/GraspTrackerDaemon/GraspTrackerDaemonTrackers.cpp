@@ -3,6 +3,7 @@
 #include "../GraspVR/GraspTrackers.h"
 #include "../Trackers/NullPoseTracker.h"
 #include "GraspTrackerDaemon.h"
+
 #include "GraspTrackerDaemonForm.h"
 
 using namespace PsyPhy;
@@ -46,49 +47,71 @@ namespace GraspTrackerDaemon {
 
 	}
 
+	// If we are not connected to actual codas, we simulate markers going in 
+	// and out of view for debugging purposes. This should probably be integrated
+	// into the CodaRTnetNullTracker.
+	void Form1::FakeTheCodaData( void ) {
+		static double angle = 0.0;
+		int unit, mrk, id;
+		for ( unit = 0; unit < coda->nUnits; unit++ ) {
+			coda->recordedMarkerFrames[unit][0].time = (double) record.count / 200.0;
+			for ( mrk = 0; mrk < trackers->hmdCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->hmdCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			for ( mrk = 0; mrk < trackers->handCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->handCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->handCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].position[Z] -= 300.0;
+				coda->recordedMarkerFrames[unit][0].marker[id].position[Y] -= 250.0;
+				coda->recordedMarkerFrames[unit][0].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			for ( mrk = 0; mrk < trackers->chestCodaPoseTracker[unit]->nModelMarkers; mrk++ ) {
+				id = trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].id;
+				vm->CopyVector( coda->recordedMarkerFrames[unit][0].marker[id].position, 
+					trackers->chestCodaPoseTracker[unit]->modelMarker[mrk].position );
+				coda->recordedMarkerFrames[unit][0].marker[id].visibility = true;
+			}
+			// The following code causes intermittent occlusions of the simulated markers.
+			for ( int unit = 0; unit < record.nUnits; unit++ ) {
+				int mrk;
+				for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+					if ( ( (mrk + record.count / 10 ) / 8 ) % 6 == unit ) coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = false;
+					else coda->recordedMarkerFrames[unit][0].marker[mrk].visibility = true;
+				}
+			}
+		}
+		angle += 0.05;
+	}
+
 	void Form1::InitializeCoda( void ) {
 
-		// Select which tracker to use to provide the marker data.
-		// The flags are set when the Form is instantiated. Here we
-		// do the actual work to create an instance of the appropriate tracker.
-		if ( use_coda ) {
-			coda = new CodaRTnetContinuousTracker();
-			this->Text = this->Text + " (Coda RTnet Tracker)";
-		}
-		else if ( use_legacy ) {
-			coda = new CodaLegacyPolledTracker();
-			this->Text = this->Text + " (Coda Legacy Tracker)";
-		}
-		else {
-			CodaRTnetNullTracker *null_tracker = new CodaRTnetNullTracker();
-			null_tracker->fakeMovements = true;
-			coda = null_tracker;
-			this->Text = this->Text + " (Null Tracker)";
-		}
+		if ( use_coda ) coda = new CodaRTnetContinuousTracker();
+		else coda = new CodaRTnetNullTracker();
 
-		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
-		// for the HMD, hand and chest. But GraspDexTrackers also requires a tracker to
-		// allow the subject to adjust the hand orientation in *-V protocols. So here
-		// we create a null pose tracker just to fill in.
 		PoseTracker *roll = new NullPoseTracker();
-		// Create a set of Pose tracker so that poses can be computed here in the daemon.
+
 		trackers = new GraspDexTrackers( coda, roll );
 		trackers->Initialize();
-		// Get the alignment transforms for the tracker units. These will be sent with
-		// each record of marker data. The underlying assumption is that the alignment 
-		// transformations will not change once the daemon is initialized. This may not
-		// be a good assumption!!!
-		coda->GetAlignmentTransforms( record.alignmentOffset, record.alignmentRotation );
+		for ( int unit = 0; unit < trackers->codaTracker->nUnits; unit++ ) {
+			trackers->codaTracker->GetAlignment( record.alignmentOffset, record.alignmentRotation );
+		}
+		if ( !use_coda ) FakeTheCodaData();
 	}
 
 	void Form1::ReleaseCoda( void ) {
-		trackers->Release();
+			trackers->Release();
 	}
 
 	void Form1::ProcessCodaInputs( void ) {
 
 		record.nUnits = trackers->codaTracker->nUnits;
 		record.count++;
+		if ( !use_coda ) FakeTheCodaData();
 
 		trackers->Update();
 		// Fill the record with the marker data from the CODA system.
@@ -134,8 +157,7 @@ namespace GraspTrackerDaemon {
 		visibilityTextBox0->Text = line;
 		unit = 1;
 		frame_time = record.frame[unit].time;
-		// timeTextBox1->Text = frame_time.ToString("F3");
-		timeTextBox1->Text = record.count.ToString();
+		timeTextBox1->Text = frame_time.ToString("F3");
 		line = " ";
 		for ( int mrk = 0; mrk < 24; mrk++ ) {
 			if ( record.frame[unit].marker[mrk].visibility ) line += "O";
@@ -156,45 +178,45 @@ namespace GraspTrackerDaemon {
 			sprintf( str, "%s %s", trackers->vstr( record.hand.pose.position ), trackers->qstr( record.hand.pose.orientation ) );
 			handPoseTextBox->Text = gcnew String( str );
 		}
-		else handPoseTextBox->Text = "                         (obscured)";
+		else handPoseTextBox->Text = "                        (obscured)";
 
 		if ( record.chest.visible ) {
 			char str[256];
 			sprintf( str, "%s %s", trackers->vstr( record.chest.pose.position ), trackers->qstr( record.chest.pose.orientation ) );
 			chestPoseTextBox->Text = gcnew String( str );
 		}
-		else chestPoseTextBox->Text = "                         (obscured)";
+		else chestPoseTextBox->Text = "                       (obscured)";
 
 	}
 
 	System::Void Form1::saveFileDialog1_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
-		char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( saveFileDialog1->FileName ).ToPointer();
-		trackers->codaTracker->WriteMarkerFile( fn );
-		fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", trackers->codaTracker->nFrames, fn );
-		char pose_fn[512] = "";
-		strcat( pose_fn, fn );
-		strcat( pose_fn, ".pse" );
-		FILE *fp = fopen( pose_fn, "w" );
-		for ( unsigned int i = 0; i < nPoseSamples; i++ ) {
-			fprintf( fp, "%8d", i );
-			fprintf( fp, " %0.3f %s %s", poseData[i].hmd.time, trackers->vstr( poseData[i].hmd.pose.position ), trackers->qstr( poseData[i].hmd.pose.orientation ) );
-			fprintf( fp, " %0.3f %s %s", poseData[i].hand.time, trackers->vstr( poseData[i].hand.pose.position ), trackers->qstr( poseData[i].hand.pose.orientation ) );
-			fprintf( fp, " %0.3f %s %s", poseData[i].chest.time, trackers->vstr( poseData[i].chest.pose.position ), trackers->qstr( poseData[i].chest.pose.orientation ) );
-			fprintf( fp, " %0.3f %0.3f %0.3f", 
-				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].hmd.pose.orientation,  poseData[i].hand.pose.orientation )),
-				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].hand.pose.orientation,  poseData[i].chest.pose.orientation )),
-				trackers->ToDegrees( trackers->AngleBetweenOrientations( poseData[i].chest.pose.orientation,  poseData[i].hmd.pose.orientation ))
+			char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( saveFileDialog1->FileName ).ToPointer();
+			trackers->codaTracker->WriteMarkerFile( fn );
+			fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", trackers->codaTracker->nFrames, fn );
+			char pose_fn[512] = "";
+			strcat( pose_fn, fn );
+			strcat( pose_fn, ".pse" );
+			FILE *fp = fopen( pose_fn, "w" );
+			for ( int i = 0; i < nPoseSamples; i++ ) {
+				fprintf( fp, "%8d", i );
+				fprintf( fp, " %0.3f %s %s", poseData[i].hmd.time, trackers->vstr( poseData[i].hmd.pose.position ), trackers->qstr( poseData[i].hmd.pose.orientation ) );
+				fprintf( fp, " %0.3f %s %s", poseData[i].hand.time, trackers->vstr( poseData[i].hand.pose.position ), trackers->qstr( poseData[i].hand.pose.orientation ) );
+				fprintf( fp, " %0.3f %s %s", poseData[i].chest.time, trackers->vstr( poseData[i].chest.pose.position ), trackers->qstr( poseData[i].chest.pose.orientation ) );
+				fprintf( fp, " %0.3f %0.3f %0.3f", 
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].hmd.pose.orientation,  poseData[i].hand.pose.orientation )),
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].hand.pose.orientation,  poseData[i].chest.pose.orientation )),
+					trackers->ToDegrees( trackers->AngleBetween( poseData[i].chest.pose.orientation,  poseData[i].hmd.pose.orientation ))
 				);
-			fprintf( fp, " %0.3f %0.3f %0.3f", 
-				trackers->ToDegrees( trackers->RotationAngle( poseData[i].hmd.pose.orientation )),
-				trackers->ToDegrees( trackers->RotationAngle( poseData[i].hand.pose.orientation )),
-				trackers->ToDegrees( trackers->RotationAngle( poseData[i].chest.pose.orientation ))
+				fprintf( fp, " %0.3f %0.3f %0.3f", 
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].hmd.pose.orientation )),
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].hand.pose.orientation )),
+					trackers->ToDegrees( trackers->RotationAngle( poseData[i].chest.pose.orientation ))
 				);
-			fprintf( fp, "\n" );
-		}
-		fclose( fp );
-		fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", nPoseSamples, pose_fn );
-		Marshal::FreeHGlobal( IntPtr(fn) );
-	}
+				fprintf( fp, "\n" );
+			}
+			fclose( fp );
+			fMessageBox( MB_OK, "GraspTrackerDaemon", "Wrote %d samples to %s", nPoseSamples, pose_fn );
+			Marshal::FreeHGlobal( IntPtr(fn) );
+		 }
 
 };
