@@ -23,13 +23,17 @@
 #include "../VectorsMixin/VectorsMixin.h"
 
 // Include 3D and 6D tracking capabilities.
+#include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaRTnetNullTracker.h"
+#include "../Trackers/CodaLegacyPolledTracker.h"
+#include "../Trackers/CodaLegacyContinuousTracker.h"
 
 #include "../Trackers/PoseTrackers.h"
+#include "../Trackers/NullPoseTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../Trackers/CascadePoseTracker.h"
 #include "../Trackers/PoseTrackerFilter.h"
@@ -45,6 +49,12 @@
 namespace Grasp {
 
 	using namespace PsyPhy;
+
+	// Grasp requires a set of trackers to follow the hmd, hand and chest, plus
+	// a roll-only tracker used to orient the virtual hand in a visual response mode.
+	// GraspTrackers defines the set of trackers and the functionality that is required
+	// from those trackers. Dervied classes will then define the actual combinations 
+	// of trackers to be used depending on the hardware.
 
 	class GraspTrackers : public VectorsMixin {
 
@@ -85,7 +95,9 @@ namespace Grasp {
 
 		virtual void Release( void );
 
-		virtual void WriteDataFiles( char *filename_root ){}
+		// The base class GraspTrackers takes care of writing out the pose data from each cycle.
+		// Derived classes are given the chance to add additional columns to the data file
+		// by overlaying the following two routines. By default, they do nothing.
 		virtual void WriteAdditionalColumnHeadings( FILE *fp ) {}
 		virtual void WriteAdditionalTrackerData( FILE *fp ){}
 
@@ -94,22 +106,19 @@ namespace Grasp {
 
 	};
 
-	class GraspSimTrackers : public GraspTrackers {
+	// GraspSimulatedTrackers are intended to provide simulated movements of the 
+	// individual trackers without any trackign hardware.
+	class GraspSimulatedTrackers : public GraspTrackers {
 	public:
-
-		// We will need a mouse tracker of some kind to do the V-V protocol.
-		MouseRollPoseTracker *mouseRollTracker;
-
-		PoseTracker *chestTrackerRaw;
-
 		virtual void Initialize( void );
-		GraspSimTrackers( OculusMapper *mapper ) {
-			oculusMapper = mapper;
-		}
-		~GraspSimTrackers( void ) {}
+		GraspSimulatedTrackers( void ) {}
+		~GraspSimulatedTrackers( void ) {}
 	};
 
-
+	// GraspDexTrackers is any set of trackers that relies on the DEX hardware.
+	// It can be used by itself to do marker-only tracking, but it is more
+	// likely to be part of a derived class that combines marker data with the 
+	// Oculus inertial data.
 	class GraspDexTrackers : public GraspTrackers {
 
 	public:
@@ -119,7 +128,7 @@ namespace Grasp {
 
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
-		CodaRTnetTracker *codaTracker;
+		Tracker *codaTracker;
 
 		// CodaPoseTrackers compute the pose from a frame of Coda data and a rigid body model.
 		// We use one for each Coda unit, but we could use more.
@@ -145,7 +154,7 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers ( CodaRTnetTracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
+		GraspDexTrackers ( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
 
 #ifdef BACKGROUND_GET_DATA
 			threadHandle = nullptr;
@@ -161,7 +170,7 @@ namespace Grasp {
 		virtual unsigned int GetTrackerStatus( void );
 		virtual void Update( void );
 		virtual void Release( void );
-		virtual void WriteDataFiles( char *filename_root );
+
 		void WriteAdditionalColumnHeadings( FILE *fp );
 		void WriteAdditionalTrackerData( FILE *fp );
 
@@ -254,6 +263,9 @@ namespace Grasp {
 
 	};
 
+	// GraspOculusCodaTrackers is nominally the best tracker set for Grasp.
+	// It uses a combined Oculus-Coda tracker for the HMD and marker-based Pose
+	// trackers for the chest and hand.
 	class GraspOculusCodaTrackers : public GraspDexTrackers {
 	public:
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
@@ -267,11 +279,27 @@ namespace Grasp {
 		void GraspOculusCodaTrackers::Initialize( void );
 	};
 
+	// GraspOculusOnlyTrackers provides a solution when the Coda is not available.
+	// For the moment it uses the standard Oculus tracker with its own constellation
+	// system for drift correction, and substitutes mouse and keyboard trackers for
+	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
+	class GraspOculusOnlyTrackers : public GraspTrackers {
+	public:
+
+		// We will need a mouse tracker of some kind to do the V-V protocol.
+		MouseRollPoseTracker *mouseRollTracker;
+
+		PoseTracker *chestTrackerRaw;
+
+		virtual void Initialize( void );
+		GraspOculusOnlyTrackers( OculusMapper *mapper ) {
+			oculusMapper = mapper;
+		}
+		~GraspOculusOnlyTrackers( void ) {}
+	};
+
+
 };
-
-
-
-
 
 
 

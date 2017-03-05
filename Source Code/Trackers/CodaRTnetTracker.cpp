@@ -559,61 +559,43 @@ int CodaRTnetTracker::GetNumberOfCodas( void ) {
 	return( nUnits );
 }
 
-void CodaRTnetTracker::GetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] ) {
-	// Get what are the alignment transformations before doing the alignment.
-	// This is just for debugging. Set a breakpoint to see the results.
+/*********************************************************************************/
+
+// Retrieve the alignment transformation for a specified unit.
+// cl.getDeviceInfo( coord ) sends them all, but we just take the one that we want.
+void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	DeviceInfoUnitCoordSystem coord;
+	cl.getDeviceInfo( coord );
+	CopyVector( offset, coord.dev.Rt[unit].t );
+	for ( int i = 0; i < 3; i++ ) {
+		for ( int j = 0; j < 3; j++ ) {
+			// If this seems backwards to you, it's because RTnet uses column vectors
+			// and I use row vectors. So when RTnet does M * v, I need to do v * M'.
+			rotation[i][j] = coord.dev.Rt[unit].R[j*3+i];
+		}
+	}
+}
+
+// Get all the transformations at once. The Tracker base class accomplishes this by 
+// calling GetUnitTransform() for each unit, but since RTnet sends all of them at once
+// we overlay the method to get them all with a single call to cl.getDeviceInfo().
+void CodaRTnetTracker::GetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] ) {
 	DeviceInfoUnitCoordSystem pre_xforms;
 	cl.getDeviceInfo( pre_xforms );
 	for ( int unit = 0; unit < nUnits; unit++ ) {
 		for ( int i = 0; i < 3; i++ ) {
 			for ( int j = 0; j < 3; j++ ) {
-				rotation[unit][i][j] = pre_xforms.dev.Rt[unit].R[i*3+j];
+				rotation[unit][i][j] = pre_xforms.dev.Rt[unit].R[j*3+i];
 			}
 		}
 		CopyVector( offset[unit], pre_xforms.dev.Rt[unit].t );
 	}
 }
 
-/// Perform the standard Charnwood alignment using markers to define the origin, the x direction and the y direction.
-int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
-
-	// Get what are the alignment transformations before doing the alignment.
-	// This is just for debugging. Set a breakpoint to see the results.
-	DeviceInfoUnitCoordSystem pre_xforms;
-	cl.getDeviceInfo( pre_xforms );
-
-	DeviceOptionsAlignment align( origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1);
-	cl.setDeviceOptions( align );
-
-	// Show what are the alignment transformations after doing the alignment.
-	// This is just for debugging. Set a breakpoint to see the results.
-	DeviceInfoUnitCoordSystem post_xforms;
-	cl.getDeviceInfo( post_xforms );
-
-	// retrieve information
-	DeviceInfoAlignment info;
-	cl.getDeviceInfo(info);
-
-	// print alignment diagnostics
-	DWORD marker_id_array[5] = { origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1 };
-	int response;
-
-	if ( info.dev.dwStatus != 0 ) response = print_alignment_status( marker_id_array, info, MB_ABORTRETRYIGNORE | MB_ICONEXCLAMATION );
-	else if ( force_show ) response = print_alignment_status( marker_id_array, info, MB_OK );
-	else response = IDOK; 
-	
-	return( response );
-}
-
-///
-/// Custom alignment procedures.
-///
-
-/// The RTNet SDK does not provide for setting the alignment transformations. So what we do instead
-/// is write the transforms to a file that is then sent to the CODA server and read on startup.
-
 // Send the alignment transformations specified as offset and rotation matrix to the CODA.
-void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename ) {
+// The RTNet SDK does not provide for setting the alignment transformations. So what we do instead
+// is write the transforms to a file that is then sent to the CODA server and read on startup.
+void  CodaRTnetTracker::SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS], const char *filename ) {
 
 	char command_line[10240];
 
@@ -633,7 +615,13 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 	// Open a file locally to accept the alignment information.
 	FILE *fp = fopen( local_filename, "w" );
 	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Unable to open %s for writing.", local_filename );
+	// In RTnet we can cancel the alignment by either deleting the alignment file on the RTnet server
+	// or by replacing it with a file that does not contain valid alignment data. I choose the latter 
+	// so that we have a record of what is going on. And it may be that it is impossible to delete the file
+	// via the FTP server; one can only replace the contents. This is a further reason to replace.
 	if ( offset == nullptr || rotation == nullptr ) fprintf( fp, ";;; Dummy file to cancel alignment.\n" );
+	// If we have valid transformation parameters, write them into an alignment file that can be 
+	// placed on the RTnet server.
 	else {
 
 		// This is an apparent header line.
@@ -675,8 +663,65 @@ void  CodaRTnetTracker::SetAlignment( Vector3 offset[MAX_UNITS], Matrix3x3 rotat
 
 }	
 
+// The Tracker base class wants a version that does not specify a filename, so we give it here.
+// Otherwise, the base class' default method would be called, which doesn't do anything.
+void CodaRTnetTracker::SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matrix3x3 rotation[MAX_UNITS] ) {
+	SetAlignmentTransforms( offset, rotation, nullptr );
+}
+
+// The base class allows one to change the transformation for a single unit via SetUnitTransform().
+// Usually, SetAlignmentTransforms() makes multiple calls to SetUnitTransform(). But here we need
+// to write the transforms for each unit into a single file. So we provide a specific version of
+// SetUnitTransform() that reads all the current transforms, replaces the transform for the specified
+// unit and then sets them all again. 
+void CodaRTnetTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
+	Vector3	offsets[MAX_UNITS];
+	Matrix3x3 rotations[MAX_UNITS];
+	GetAlignmentTransforms( offsets, rotations );
+	CopyVector( offsets[unit], offset );
+	CopyMatrix( rotations[unit], rotation );
+	SetAlignmentTransforms( offsets, rotations );
+}
+
+// Provide a convenient way to nullify the transform so that data comes from each unit
+// in its own intrinsic reference frame.
 void  CodaRTnetTracker::AnnulAlignment( const char *filename ) {
-	SetAlignment( nullptr, nullptr, filename );
+	SetAlignmentTransforms( nullptr, nullptr, filename );
+}
+
+///
+/// Alignment procedures.
+///
+
+/// Perform the standard Charnwood alignment using markers to define the origin, the x direction and the y direction.
+int  CodaRTnetTracker::PerformAlignment( int origin, int x_negative, int x_positive, int xy_negative, int xy_positive, bool force_show ) {
+
+	// Get what are the alignment transformations before doing the alignment.
+	// This is just for debugging. Set a breakpoint to see the results.
+	DeviceInfoUnitCoordSystem pre_xforms;
+	cl.getDeviceInfo( pre_xforms );
+
+	DeviceOptionsAlignment align( origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1);
+	cl.setDeviceOptions( align );
+
+	// Show what are the alignment transformations after doing the alignment.
+	// This is just for debugging. Set a breakpoint to see the results.
+	DeviceInfoUnitCoordSystem post_xforms;
+	cl.getDeviceInfo( post_xforms );
+
+	// retrieve information
+	DeviceInfoAlignment info;
+	cl.getDeviceInfo(info);
+
+	// print alignment diagnostics
+	DWORD marker_id_array[5] = { origin + 1, x_negative + 1, x_positive + 1, xy_negative + 1, xy_positive + 1 };
+	int response;
+
+	if ( info.dev.dwStatus != 0 ) response = print_alignment_status( marker_id_array, info, MB_ABORTRETRYIGNORE | MB_ICONEXCLAMATION );
+	else if ( force_show ) response = print_alignment_status( marker_id_array, info, MB_OK );
+	else response = IDOK; 
+	
+	return( response );
 }
 
 // Given the pose of a reference object computed in the intrinsic reference frame of each CODA unit,
@@ -697,60 +742,11 @@ void  CodaRTnetTracker::SetAlignmentFromPoses( Pose pose[MAX_UNITS], const char 
 		TransposeMatrix( transpose_matrix, rotation[unit] );
 		MultiplyVector( offset[unit], pose[unit].position, transpose_matrix );
 	}
-	SetAlignment( offset, rotation, filename );
+	SetAlignmentTransforms( offset, rotation, filename );
 
 }
 
-/*********************************************************************************/
 
-void CodaRTnetTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
-
-	DeviceInfoUnitCoordSystem coord;
-	cl.getDeviceInfo( coord );
-
-	CopyVector( offset, coord.dev.Rt[unit].t );
-	for ( int i = 0; i < 3; i++ ) {
-		for ( int j = 0; j < 3; j++ ) {
-			// If this seems backwards to you, it's because RTnet uses column vectors
-			// and I use row vectors. So when RTnet does M * v, I need to do v * M'.
-			rotation[i][j] = coord.dev.Rt[unit].R[j*3+i];
-		}
-	}
-
-}
-
-void CodaRTnetTracker::WriteColumnHeadings( FILE *fp, int unit ) {
-	fprintf( fp, "Time.%1d;", unit );
-	for ( int mrk = 0; mrk <nMarkers; mrk++ ) {
-		fprintf( fp, " M%02d.%1d.V; M%02d.%1d.X; M%02d.%1d.Y; M%02d.%1d.Z;", mrk, unit, mrk, unit, mrk, unit, mrk, unit  );
-	}
-}
-
-void CodaRTnetTracker::WriteMarkerData( FILE *fp, MarkerFrame &frame ) {
-	fprintf( fp, "%9.3f;", frame.time );
-	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
-		fprintf( fp, " %1d;",  frame.marker[mrk].visibility );
-		for ( int i = 0; i < 3; i++ ) fprintf( fp, "%9.3f;",  frame.marker[mrk].position[i] );
-	}
-}
-
-void CodaRTnetTracker::WriteMarkerFile( char *filename ) {
-	FILE *fp = fopen( filename, "w" );
-	fAbortMessageOnCondition( !fp, "Error opening %s for writing.", filename );
-	fprintf( fp, "%s\n", filename );
-	fprintf( fp, "Tracker Units: %d\n", nUnits );
-	fprintf( fp, "Markers: %d\n", nMarkers );
-	fprintf( fp, "Frames: %d\n", nFrames );
-	fprintf( fp, "Frame;" );
-	for ( int unit = 0; unit < nUnits; unit++ ) WriteColumnHeadings( fp, unit );
-	fprintf( fp, "\n" );
-	for ( unsigned int frm = 0; frm < nFrames; frm++ ) {
-		fprintf( fp, "%8u;", frm );
-		for ( int unit = 0; unit < nUnits; unit++ ) WriteMarkerData( fp, recordedMarkerFrames[unit][frm] );
-		fprintf( fp, "\n" );
-	}
-	fclose( fp );
-}
 
 
 /****************************************************************************************/

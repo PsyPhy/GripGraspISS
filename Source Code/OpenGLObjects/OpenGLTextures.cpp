@@ -1,19 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
-#include <windows.h>
-#include <mmsystem.h>
-
-#include <gl\gl.h>				// Header File For The OpenGL32 Library
-#include <gl\glu.h>				// Header File For The GLu32 Library
-#include "../Include/glaux.h"	// Header File For The Glaux Library
-
-#include "../Useful/Useful.h"
-#include "../Useful/OpenGLUseful.h"
 
 #include "OpenGLObjects.h"
 #include "OpenGLColors.h"

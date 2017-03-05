@@ -11,9 +11,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Sequences\TestConflict.seq" />
-    <None Include="..\..\Sequences\TrainingHeadStraight.seq" />
-    <None Include="..\..\Sequences\TrainingHeadTilted.seq" />
+    <None Include="GraspSequences.mak" />
+    <None Include="HT_Ser1_Block1.seq" />
+    <None Include="HT_Ser1_Block2.seq" />
+    <None Include="HT_Ser1_Block3.seq" />
+    <None Include="HT_Ser1_Block4.seq" />
+    <None Include="HT_Ser2_Block1.seq" />
+    <None Include="HT_Ser2_Block2.seq" />
+    <None Include="HT_Ser2_Block3.seq" />
+    <None Include="HT_Ser2_Block4.seq" />
+    <None Include="HU_Ser1_Block1.seq" />
+    <None Include="HU_Ser2_Block1.seq" />
+    <None Include="null.seq" />
+    <None Include="ShortTest.seq" />
+    <None Include="TestConflict.seq" />
+    <None Include="TrainingHeadStraight.seq" />
+    <None Include="TrainingHeadTilted.seq" />
+    <None Include="WU_Ser1_Block1.seq" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A063702B-6BE1-4939-96F1-19FB77921C29}</ProjectGuid>
@@ -39,12 +53,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeOutput>GraspSequences.exe</NMakeOutput>
+    <NMakeOutput>
+    </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>nmake /NOLOGO GraspSequences.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO GraspSequences.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeOutput>GraspSequences.exe</NMakeOutput>
+    <NMakeOutput>
+    </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>nmake /NOLOGO GraspSequences.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO GraspSequences.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo deleteme &gt; install &amp; del install</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

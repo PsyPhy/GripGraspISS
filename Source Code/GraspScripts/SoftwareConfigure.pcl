@@ -5,3 +5,5 @@
 953; SYSTEM=; Gaze Self-Alignment; del /F /Q CodaAlignGaze.flg ChestAlignGaze.flg; StepReady.prompt.html
 954; SYSTEM=; Use +10 Chair Tilt; del /F /Q Bdy\ChestTilted.bdy & copy /Y Bdy\TweakedChestModels\ChestPitchPlus10.bdy Bdy\ChestTilted.bdy; StepReady.prompt.html
 955; SYSTEM=; Use -10 Chair Tilt; del /F /Q Bdy\ChestTilted.bdy & copy /Y Bdy\TweakedChestModels\ChestPitchMinus10.bdy Bdy\ChestTilted.bdy; StepReady.prompt.html
+956; SYSTEM=; Enable VR Mirroring; echo "MirroringOn" > Mirroring.flg; StepReady.prompt.html
+956; SYSTEM=; Disable VR Mirroring; del /F /Q Mirroring.flg; StepReady.prompt.html

@@ -39,7 +39,9 @@ public:
 
 	int nFramesPerUnit[MAX_UNITS];
 
-	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {}
+	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {
+			daemonAddrLength = sizeof( daemonAddr );
+	}
 	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartAcquisition( float max_seconds );
 	virtual bool GetAcquisitionState( void );

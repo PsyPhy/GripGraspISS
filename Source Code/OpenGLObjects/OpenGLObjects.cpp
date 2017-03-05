@@ -1,17 +1,5 @@
 /********************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
-#include <windows.h>
-#include <mmsystem.h>
-
-#include <gl/gl.h>
-#include <gl/glu.h>
-
-#include "../Useful/Useful.h"
 #include "OpenGLObjects.h"
 
 using namespace PsyPhy;
@@ -289,8 +277,11 @@ void OpenGLObject::PrepDraw( void ) {
   if ( color[3] != USE_PARENT_COLOR ) {
 	  if ( color[3] >= 0 ) glColor4fv( color );
 	  else {
-		  ULONGLONG ticks;
-		  if ( ( ticks = GetTickCount64() % 1000 ) > 500 ) glColor4f( color[0], color[1], color[2], - color[3] );
+		  // A negative alpha channel is used to indicate that the object should blink.
+		  // Here we select the specified color, or transparent black, according to the phase 
+		  // of a tick counter that loops forever.
+		  DWORD ticks;
+		  if ( ( ticks = GetTickCount() % 1000 ) > 500 ) glColor4f( color[0], color[1], color[2], - color[3] );
 		  else glColor4f( 0.0f, 0.0f, 0.0f, 0.0f );
 	  }
   }

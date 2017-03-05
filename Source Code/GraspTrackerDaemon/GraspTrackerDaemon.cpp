@@ -13,7 +13,11 @@ int main(array<System::String ^> ^args)
 	Application::SetCompatibleTextRenderingDefault(false); 
 
 	// Create the main window and run it
-	Application::Run(gcnew Form1());
+	Form1^ form = gcnew Form1();
+	for ( int i = 0; i < args->Length; i++ ) {
+		if ( args[i]->StartsWith( "--hide" ) ) form->autohide = true;
+	}
+	Application::Run( form );
 	return 0;
 }
 	
