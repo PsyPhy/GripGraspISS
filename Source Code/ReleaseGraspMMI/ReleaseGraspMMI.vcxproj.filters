@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="ReleaseGraspMMI.bat" />
-    <None Include="GraspMMI_Installation_Instructions.txt" />
     <None Include="ReleaseGraspMMI.debug.mak" />
     <None Include="ReleaseGraspMMI.draft.mak" />
     <None Include="ReleaseGraspMMI.release.mak" />

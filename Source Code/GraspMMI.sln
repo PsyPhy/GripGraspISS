@@ -138,8 +138,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripMMIlite", "GripMMIlite\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripMMI", "GripMMI\GripMMI.vcxproj", "{F8AB8FA2-A247-457F-BA20-013A097A9BDF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripMMIDocumentation", "GripMMIDocumentation\GripMMIDocumentation.vcxproj", "{B089F18B-624D-44C1-A60A-1169AF4F40D8}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateRuntimeForGraspMMI", "UpdateRuntimeForGraspMMI\UpdateRuntimeForGraspMMI.vcxproj", "{240EE129-8610-4694-93D1-0A6FB2161E77}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripGraspVersionControl", "GripGraspVersionControl\GripGraspVersionControl.vcxproj", "{4329F637-D4ED-43C3-B510-6E7CFC14BFA3}"
@@ -665,14 +663,6 @@ Global
 		{F8AB8FA2-A247-457F-BA20-013A097A9BDF}.ReleaseDraft|Win32.Build.0 = Release|Win32
 		{F8AB8FA2-A247-457F-BA20-013A097A9BDF}.Test|Win32.ActiveCfg = Release|Win32
 		{F8AB8FA2-A247-457F-BA20-013A097A9BDF}.Test|Win32.Build.0 = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Debug|Win32.Build.0 = Debug|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Release|Win32.ActiveCfg = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Release|Win32.Build.0 = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.ReleaseDraft|Win32.Build.0 = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Test|Win32.ActiveCfg = Release|Win32
-		{B089F18B-624D-44C1-A60A-1169AF4F40D8}.Test|Win32.Build.0 = Release|Win32
 		{240EE129-8610-4694-93D1-0A6FB2161E77}.Debug|Win32.ActiveCfg = Debug|Win32
 		{240EE129-8610-4694-93D1-0A6FB2161E77}.Debug|Win32.Build.0 = Debug|Win32
 		{240EE129-8610-4694-93D1-0A6FB2161E77}.Release|Win32.ActiveCfg = Release|Win32

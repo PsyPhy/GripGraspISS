@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="ReleaseGripMMI.bat" />
-    <None Include="GripMMI_Installation_Instructions.txt" />
     <None Include="ReleaseGripMMI.debug.mak" />
     <None Include="ReleaseGripMMI.release.mak" />
     <None Include="..\..\GripMMIReleases.log" />

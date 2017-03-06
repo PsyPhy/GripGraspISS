@@ -21,15 +21,13 @@ set VERBOSE=
 REM Point to the root level directory from which the tar archive will be created.
 set ROOT=..\..
 
-REM Copy the latest installation instructions to be included with the release.
-copy /Y /V GraspMMI_Installation_Instructions.txt %ROOT%\GraspMMIDocumentation
-
 REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directory.
 pushd %ROOT%
 
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIExecutables/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIMirrorEnvironments/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% GraspMMIDocumentation/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% "GraspMMIDocumentation\GraspMMI Runtime Installation Instructions.txt"
+%TAR% --append %VERBOSE% --file=%ARCHIVE% "GraspMMIDocumentation\GraspMMI Release Notes.rtf"
 %TAR% --append %VERBOSE% --file=%ARCHIVE% RunGraspMMI.bat
 
 REM Keep a record of releases.
