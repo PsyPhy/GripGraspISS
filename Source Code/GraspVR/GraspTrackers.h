@@ -60,13 +60,14 @@ namespace Grasp {
 
 	protected:
 		static double	mouseGain;
-		static Pose		handPoseV;
-		static Pose		handPoseK;
 		static double	arrowGain;
 		static Pose		chestPoseSim;
 		OculusMapper	*oculusMapper;
 
 	public: 
+
+		static Pose		handPoseV;
+		static Pose		handPoseK;
 
 		// Buffers to hold the most recent frame of marker data.
 		MarkerFrame markerFrame[MAX_UNITS];

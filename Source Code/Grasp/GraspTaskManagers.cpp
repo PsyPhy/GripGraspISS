@@ -828,7 +828,9 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 void GraspTaskManager::EnterProvideFeedback( void ) {
 	// Record the response.
 	fprintf( response_fp, "%8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
-	fOutputDebugString( "Response: %8.3f; %s\n", TimerElapsedTime( blockTimer ), renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
+	fOutputDebugString( "Response: %8.3f; %8.3f; %s\n", TimerElapsedTime( blockTimer ), 
+		ToDegrees( atan2( renderer->selectedTool->orientation[X][Y], renderer->selectedTool->orientation[X][X] )),
+		renderer->selectedTool->mstr( renderer->selectedTool->orientation ) );
 	// Show the target.
 	if ( trialParameters[currentTrial].provideFeedback == 1 ) {
 		renderer->orientationTarget->Enable();
