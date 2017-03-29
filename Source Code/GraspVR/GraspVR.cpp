@@ -99,15 +99,13 @@ void GraspVR::UpdateTrackers( void ) {
 	}
 
 	// The vTool is a special case because it does not move with the hand. Instead,
-	// it is attached to the HMD and moves with the gaze. It's roll attitude is set by
-	// the roll tracker. We use the attitude property, rather than the orientation property,
-	// because the position and orientation properties are used to position and orient the
-	// visual object in 3D space.
+	// it is attached to the HMD and moves with the gaze. Its orientation is set by
+	// the rollTracker, which presumably changes only the roll angle.
 	if ( !trackers->rollTracker->GetCurrentPose( rollPose ) ) {
 		static int pose_error_counter = 0;
 		fOutputDebugString( "Error reading roll tracker (%03d).\n", ++pose_error_counter );
 	}
-	else renderer->vTool->SetAttitude( rollPose.pose.orientation );
+	else renderer->vTool->SetOrientation( rollPose.pose.orientation );
 
 
 }
