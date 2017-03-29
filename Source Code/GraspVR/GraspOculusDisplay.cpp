@@ -21,7 +21,9 @@ void GraspOculusDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *displ
 
 	// Decide if we are in full screen mode or not.
 	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
-	static const bool fullscreen = true;
+	bool fullscreen = true;
+	if ( FileExists( "Windowed.flg" ) ) fullscreen = false;
+
 
 	// Mirroring to the console is determined by the presence or absence of a cookie file.
 	if ( FileExists( "Mirroring.flg" ) ) mirror = true;
