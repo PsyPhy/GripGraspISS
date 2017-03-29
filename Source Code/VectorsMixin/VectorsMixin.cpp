@@ -361,6 +361,12 @@ void VectorsMixin::NormalizeQuaternion( Quaternion q ) {
 
 void VectorsMixin::MultiplyQuaternions( Quaternion result, const Quaternion q1, const Quaternion q2 ) {
 
+	// This routine gives incorrect results if the destination of the result is the same as either
+	// of the multiplicands. To keep things efficient, we impose that q1 and q2 must
+	// be different from result. That way we do not do unecessary copies when not needed.
+	// The caller will have to copy to an intermediate variable if need be.
+	assert( q1 != result && q2 != result ) ;
+
 	result[M] = q1[M] * q2[M] - q1[X] * q2[X] - q1[Y] * q2[Y] - q1[Z] * q2[Z];
 	result[X] = q1[M] * q2[X] + q1[X] * q2[M] + q1[Y] * q2[Z] - q1[Z] * q2[Y];
 	result[Y] = q1[M] * q2[Y] - q1[X] * q2[Z] + q1[Y] * q2[M] + q1[Z] * q2[X];
