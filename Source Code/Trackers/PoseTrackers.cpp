@@ -22,16 +22,16 @@ TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, 
 
 // Transform such that the null pose in intrinsic coordinates gives the specified pose.
 void PoseTracker::OffsetTo( const Pose &pose ) {
-	CopyPose( nullPose, pose );
+	CopyPose( poseOffset, pose );
 }
 
 // Boresight so that the specified pose in intrinsic coordinates becomes the null pose.
 void PoseTracker::BoresightAt( const Pose &pose ) {
-	CopyPose( nullPose, pose );
-	nullPose.orientation[X] *= -1.0;
-	nullPose.orientation[Y] *= -1.0;
-	nullPose.orientation[Z] *= -1.0;
-	ScaleVector( nullPose.position, nullPose.position, -1.0 );
+	CopyPose( poseOffset, pose );
+	poseOffset.orientation[X] *= -1.0;
+	poseOffset.orientation[Y] *= -1.0;
+	poseOffset.orientation[Z] *= -1.0;
+	ScaleVector( poseOffset.position, poseOffset.position, -1.0 );
 }
 
 // Boresight so that the current position and orientation is the null position and orientation.
@@ -58,16 +58,22 @@ bool PoseTracker::Boresight( int retry_count ) {
 bool PoseTracker::BoresightTo( const Pose &pose ) {
 	bool success;
 	if ( success = Boresight() ) {
-		MultiplyQuaternions( nullPose.orientation, nullPose.orientation, pose.orientation );
-		AddVectors( nullPose.position, nullPose.position, pose.position );
+		// Combine the current offset that brings us to zero position
+		// and orientation with the specified position and orientation
+		// such that new readings at this position will correspond to 
+		// the specified pose.
+		Pose new_offset;
+		MultiplyQuaternions( new_offset.orientation, poseOffset.orientation, pose.orientation );
+		AddVectors( new_offset.position, poseOffset.position, pose.position );
+		CopyPose( poseOffset, new_offset );
 	}
 	return success;
 }
 
 // Remove boresight correction and return to intinsic reference frame.
 void PoseTracker::Unboresight( void ) {
-	CopyVector( nullPose.position, zeroVector );
-	CopyQuaternion( nullPose.orientation, nullQuaternion );
+	CopyVector( poseOffset.position, zeroVector );
+	CopyQuaternion( poseOffset.orientation, nullQuaternion );
 }
 
 bool PoseTracker::GetCurrentPosition( Vector3 position ) {
@@ -85,8 +91,8 @@ bool PoseTracker::GetCurrentOrientation( Quaternion orientation ) {
 bool PoseTracker::GetCurrentPose( TrackerPose &pose ) {
 	TrackerPose intrinsic_pose;
 	GetCurrentPoseIntrinsic( intrinsic_pose );
-	MultiplyQuaternions( pose.pose.orientation,  nullPose.orientation, intrinsic_pose.pose.orientation );
-	AddVectors( pose.pose.position, intrinsic_pose.pose.position, nullPose.position );
+	MultiplyQuaternions( pose.pose.orientation,  poseOffset.orientation, intrinsic_pose.pose.orientation );
+	AddVectors( pose.pose.position, intrinsic_pose.pose.position, poseOffset.position );
 	pose.visible = intrinsic_pose.visible;
 	pose.time = intrinsic_pose.time;
 	return( pose.visible );

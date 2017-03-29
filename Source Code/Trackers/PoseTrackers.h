@@ -29,14 +29,14 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 
 	protected:
 
-		Pose		nullPose;
+		Pose		poseOffset;
 		bool		initialized;
 
 	public:
 
 		PoseTracker() : initialized(false) {
-			CopyQuaternion( nullPose.orientation, nullQuaternion );
-			CopyVector( nullPose.position, zeroVector );
+			CopyQuaternion( poseOffset.orientation, nullQuaternion );
+			CopyVector( poseOffset.position, zeroVector );
 		}
 		~PoseTracker (){};
 
