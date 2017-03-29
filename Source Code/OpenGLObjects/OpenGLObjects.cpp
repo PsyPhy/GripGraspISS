@@ -214,7 +214,7 @@ void OpenGLObject::SetAttitude( double roll, double pitch, double yaw ) {
 void OpenGLObject::SetAttitude( const Quaternion q ) {
 	Matrix3x3 m;
 	QuaternionToMatrix( m, q );
-	SetOrientation( m );
+	SetAttitude( m );
 }
 
 void OpenGLObject::GetAttitude( Matrix3x3 m ) {
