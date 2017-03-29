@@ -391,7 +391,7 @@ void VectorsMixin::RotateVector( Vector3 result, const Quaternion q, const Vecto
 void VectorsMixin::SetQuaternion( Quaternion result, double radians, const Vector3 axis ) {
 
 	// Compute the quaternion, making sure that the specified axis is a unit vector.
-	result[M] = (float) cos( 0.5 * radians );
+	result[M] = cos( 0.5 * radians );
 	ScaleVector( result, axis, sin( 0.5 * radians ) / VectorNorm( axis ) );
 
 }
