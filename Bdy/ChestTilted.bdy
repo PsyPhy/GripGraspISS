@@ -1,12 +1,13 @@
-0	  97.271	   5.338	 -73.150
-1	   0.492	 -24.219	 -25.505
-2	 -52.668	 -17.171	   6.227
-3	 101.675	  35.960	  56.999
-4	 -99.167	  24.441	  64.835
-5	  53.908	 -11.509	   2.255
-6	   1.083	  -6.689	  32.925
-7	-102.593	  -6.151	 -64.586
+0	 103.130	  69.329	   8.795
+1	 -55.175	   0.457	 -12.341
+2	   0.476	  34.400	 -13.788
+3	 -98.695	  71.355	  28.133
+4	-101.623	 -70.114	  23.164
+5	  52.396	   0.345	 -22.772
+6	  -0.945	 -33.227	 -15.579
+7	 100.436	 -72.545	   4.390
 
 ;;; Rigid Body Model File
-;;; Created 2016/10/28 14h57m28s GMT
-;;; Yellow Bis - Jury rigged YELLOW and HMD 
+;;; Created 2016/10/26 16h58m36s GMT
+;;; RedRebuild - After refurbishing red structures for training. 
+;;; This is supposed to be a tilted version, but we haven't computed it yet.
