@@ -1,16 +1,15 @@
 # Protocol Definition: Visual Target to Visual Response 
-401; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
-411; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --VtoV --sequence=Sequences\WU_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-421; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-422; COMMAND; Experiment Trials Block 3; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser2_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-431; COMMAND; Experiment Trials Block 4; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-432; COMMAND; Experiment Trials Block 5; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block2.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-433; COMMAND; Experiment Trials Block 6; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block3.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-434; COMMAND; Experiment Trials Block 7; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block4.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-435; COMMAND; Experiment Trials Block 8; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-436; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block2.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-437; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block3.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-438; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block4.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-439; COMMAND@; End of Trials; Executables\Grasp.bat --doff; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-449; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
-499; COMMAND@; Resume Interrupted Block (per Col-CC); Executables\Grasp.bat --VtoV --sequence=GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+501; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
+511; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --VtoV --sequence=Sequences\WU_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+521; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+522; COMMAND; Experiment Trials Block 3; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser2_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+531; COMMAND; Experiment Trials Block 4; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+532; COMMAND; Experiment Trials Block 5; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block2.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+533; COMMAND; Experiment Trials Block 6; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block3.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+534; COMMAND; Experiment Trials Block 7; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block4.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+535; COMMAND; Experiment Trials Block 8; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block1.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+536; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block2.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+537; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block3.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+538; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block4.seq; StepReadyFloating.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+539; COMMAND@; End of Trials; Executables\Grasp.bat --doff; StepReadySeated.prompt.html; StepRunning.instruction.html; ProtocolFinished.instruction.html; StepErrorFinish.status.html
+549; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --VtoV --sequence=GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
