@@ -7,3 +7,5 @@
 955; SYSTEM=; Use -10 Chair Tilt; del /F /Q Bdy\ChestTilted.bdy & copy /Y Bdy\TweakedChestModels\ChestPitchMinus10.bdy Bdy\ChestTilted.bdy; StepReady.prompt.html
 956; SYSTEM=; Enable VR Mirroring; echo "MirroringOn" > Mirroring.flg; StepReady.prompt.html
 956; SYSTEM=; Disable VR Mirroring; del /F /Q Mirroring.flg; StepReady.prompt.html
+957; SYSTEM=; Enable Training Mode; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+958; SYSTEM=; Disabe Training Mode; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; StepReady.prompt.html
