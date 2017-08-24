@@ -8,13 +8,13 @@ SCRIPT_DESTINATION=..\..\Scripts
 _flight: _common SubjectsFlight.sbj
 	-del /F /Q _training
 	echo Installing scripts for FLIGHT.
-	copy /Y /V SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
 	echo %date% %time% > $@
 
 _training: _common SubjectsTraining.sbj
 	-del /F /Q _flight
 	echo Installing scripts for TRAINING.
-	copy /Y /V SubjectsTraining.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsTraining.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
 	echo %date% %time% > $@
 
 _common: *.sss *.pcl *.tsk
@@ -23,4 +23,5 @@ _common: *.sss *.pcl *.tsk
 	copy /Y /V *.sss $(SCRIPT_DESTINATION)
 	copy /Y /V *.pcl $(SCRIPT_DESTINATION)
 	copy /Y /V *.tsk $(SCRIPT_DESTINATION)
+	copy /Y /V *.sbj $(SCRIPT_DESTINATION)
 	echo %date% %time% > $@
