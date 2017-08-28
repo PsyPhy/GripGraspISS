@@ -21,7 +21,7 @@ ALL_HTML=GraspWelcome.html \
 	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
-	TaskFinished.instruction.html ProtocolFinished.instruction.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
+	TaskFinished.instruction.html ProtocolFinished.instruction.html ProtocolFinished.prompt.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
 	MaintenanceWelcome.instruction.html FileTransferReady.prompt.html
 
 # This is a list of images that are created here in the makefile.
