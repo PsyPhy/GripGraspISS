@@ -390,11 +390,12 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 		renderer->straightAheadTarget->SetColor( GREEN );
 		centered = true;
 	}
-	// Now place the target at the end of the (not visible) tunnel.
+	// Now place the target far away along the straight ahead axis, at the level of the eyes.
 	// Note the negative sign when scaling the straight_behind vector, 
 	// so as to put it in front of the subject (GL coordinates).
 	Vector3 look_at_location;
 	ScaleVector( look_at_location, straight_behind, - renderer->room_length / 2.0 );
+	AddVectors( look_at_location, look_at_location, headPose.pose.position );
 	renderer->straightAheadTarget->SetPosition( look_at_location );
 
 	// Now we need to compute the roll angle of the head/hmd.
