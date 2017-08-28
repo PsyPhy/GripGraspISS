@@ -11,5 +11,5 @@
 336; COMMAND; Experiment Trials Block 9; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 337; COMMAND; Experiment Trials Block 10; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 338; COMMAND; Experiment Trials Block 11; Executables\Grasp.bat --KtoK --sequence=Sequences\HT_Ser2_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-339; COMMAND@; End of Trials; Executables\Grasp.bat --doff; StepReadySeated.prompt.html; StepRunning.instruction.html; ProtocolFinished.instruction.html; StepErrorFinish.status.html
+339; COMMAND@; End of Trials; Executables\Grasp.exe --doff; ProtocolFinished.prompt.html; StepRunning.instruction.html; ProtocolFinished.prompt.html; StepErrorFinish.status.html
 399; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --KtoK --sequence=GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
