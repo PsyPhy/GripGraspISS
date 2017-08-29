@@ -309,7 +309,7 @@ namespace GraspGUI {
 			this->packetTimeTextBox->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->packetTimeTextBox->Location = System::Drawing::Point(476, 13);
 			this->packetTimeTextBox->Name = L"packetTimeTextBox";
-			this->packetTimeTextBox->Size = System::Drawing::Size(132, 16);
+			this->packetTimeTextBox->Size = System::Drawing::Size(132, 19);
 			this->packetTimeTextBox->TabIndex = 21;
 			this->packetTimeTextBox->Text = L"00:00:00";
 			this->packetTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
@@ -344,7 +344,7 @@ namespace GraspGUI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->scriptEngineTextBox->Location = System::Drawing::Point(178, 26);
 			this->scriptEngineTextBox->Name = L"scriptEngineTextBox";
-			this->scriptEngineTextBox->Size = System::Drawing::Size(40, 26);
+			this->scriptEngineTextBox->Size = System::Drawing::Size(40, 30);
 			this->scriptEngineTextBox->TabIndex = 25;
 			this->scriptEngineTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -422,7 +422,7 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->snapshotsTextBox->Location = System::Drawing::Point(64, 26);
 			this->snapshotsTextBox->Name = L"snapshotsTextBox";
-			this->snapshotsTextBox->Size = System::Drawing::Size(40, 26);
+			this->snapshotsTextBox->Size = System::Drawing::Size(40, 30);
 			this->snapshotsTextBox->TabIndex = 16;
 			this->snapshotsTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -482,11 +482,11 @@ namespace GraspGUI {
 			this->taskListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskListBox->FormattingEnabled = true;
-			this->taskListBox->ItemHeight = 29;
+			this->taskListBox->ItemHeight = 37;
 			this->taskListBox->Location = System::Drawing::Point(11, 34);
 			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
 			this->taskListBox->Name = L"taskListBox";
-			this->taskListBox->Size = System::Drawing::Size(580, 526);
+			this->taskListBox->Size = System::Drawing::Size(580, 522);
 			this->taskListBox->TabIndex = 5;
 			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
@@ -513,7 +513,7 @@ namespace GraspGUI {
 			this->protocolListBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) {L"Please select a User ID ..."});
 			this->protocolListBox->Location = System::Drawing::Point(11, 34);
 			this->protocolListBox->Name = L"protocolListBox";
-			this->protocolListBox->Size = System::Drawing::Size(579, 37);
+			this->protocolListBox->Size = System::Drawing::Size(579, 45);
 			this->protocolListBox->TabIndex = 6;
 			this->protocolListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::protocolListBox_SelectedIndexChanged);
 			// 
@@ -537,12 +537,14 @@ namespace GraspGUI {
 			this->subjectListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->subjectListBox->FormattingEnabled = true;
-			this->subjectListBox->ItemHeight = 29;
+			this->subjectListBox->ItemHeight = 37;
+			this->subjectListBox->Items->AddRange(gcnew cli::array< System::Object^  >(11) {L"Subject 1", L"Subject 2", L"Subject 3", 
+				L"Subject 4", L"Subject 5", L"Subject 6", L"Subject 7", L"Subject 8", L"Subject 9", L"Subject 10", L"Maintenance"});
 			this->subjectListBox->Location = System::Drawing::Point(11, 34);
 			this->subjectListBox->Margin = System::Windows::Forms::Padding(4);
 			this->subjectListBox->MultiColumn = true;
 			this->subjectListBox->Name = L"subjectListBox";
-			this->subjectListBox->Size = System::Drawing::Size(580, 149);
+			this->subjectListBox->Size = System::Drawing::Size(580, 152);
 			this->subjectListBox->TabIndex = 5;
 			this->subjectListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::subjectListBox_SelectedIndexChanged);
 			// 
@@ -585,7 +587,7 @@ namespace GraspGUI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->programStateEnumTextBox->Location = System::Drawing::Point(122, 26);
 			this->programStateEnumTextBox->Name = L"programStateEnumTextBox";
-			this->programStateEnumTextBox->Size = System::Drawing::Size(289, 26);
+			this->programStateEnumTextBox->Size = System::Drawing::Size(289, 30);
 			this->programStateEnumTextBox->TabIndex = 19;
 			// 
 			// label1
@@ -603,7 +605,7 @@ namespace GraspGUI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->programStateTextBox->Location = System::Drawing::Point(70, 26);
 			this->programStateTextBox->Name = L"programStateTextBox";
-			this->programStateTextBox->Size = System::Drawing::Size(46, 26);
+			this->programStateTextBox->Size = System::Drawing::Size(46, 30);
 			this->programStateTextBox->TabIndex = 17;
 			this->programStateTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -613,7 +615,7 @@ namespace GraspGUI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->trialsRemainingTextBox->Location = System::Drawing::Point(538, 22);
 			this->trialsRemainingTextBox->Name = L"trialsRemainingTextBox";
-			this->trialsRemainingTextBox->Size = System::Drawing::Size(34, 26);
+			this->trialsRemainingTextBox->Size = System::Drawing::Size(34, 30);
 			this->trialsRemainingTextBox->TabIndex = 16;
 			this->trialsRemainingTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -649,7 +651,7 @@ namespace GraspGUI {
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->errorCodeTextBox->Location = System::Drawing::Point(124, 21);
 			this->errorCodeTextBox->Name = L"errorCodeTextBox";
-			this->errorCodeTextBox->Size = System::Drawing::Size(100, 32);
+			this->errorCodeTextBox->Size = System::Drawing::Size(100, 38);
 			this->errorCodeTextBox->TabIndex = 16;
 			this->errorCodeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -658,7 +660,7 @@ namespace GraspGUI {
 			this->errorCodeLabel->AutoSize = true;
 			this->errorCodeLabel->Location = System::Drawing::Point(17, 30);
 			this->errorCodeLabel->Name = L"errorCodeLabel";
-			this->errorCodeLabel->Size = System::Drawing::Size(77, 17);
+			this->errorCodeLabel->Size = System::Drawing::Size(91, 20);
 			this->errorCodeLabel->TabIndex = 15;
 			this->errorCodeLabel->Text = L"Error Code";
 			// 
@@ -718,7 +720,7 @@ namespace GraspGUI {
 			this->unitTestingMode->AutoSize = true;
 			this->unitTestingMode->Location = System::Drawing::Point(311, 31);
 			this->unitTestingMode->Name = L"unitTestingMode";
-			this->unitTestingMode->Size = System::Drawing::Size(96, 21);
+			this->unitTestingMode->Size = System::Drawing::Size(113, 24);
 			this->unitTestingMode->TabIndex = 15;
 			this->unitTestingMode->Text = L"unit testing";
 			this->unitTestingMode->UseVisualStyleBackColor = true;
@@ -832,7 +834,7 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->stepCounterTextBox->Location = System::Drawing::Point(481, 20);
 			this->stepCounterTextBox->Name = L"stepCounterTextBox";
-			this->stepCounterTextBox->Size = System::Drawing::Size(98, 28);
+			this->stepCounterTextBox->Size = System::Drawing::Size(98, 34);
 			this->stepCounterTextBox->TabIndex = 1;
 			this->stepCounterTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -843,7 +845,7 @@ namespace GraspGUI {
 				static_cast<System::Byte>(0)));
 			this->stepHeaderTextBox->Location = System::Drawing::Point(10, 20);
 			this->stepHeaderTextBox->Name = L"stepHeaderTextBox";
-			this->stepHeaderTextBox->Size = System::Drawing::Size(454, 28);
+			this->stepHeaderTextBox->Size = System::Drawing::Size(454, 34);
 			this->stepHeaderTextBox->TabIndex = 0;
 			// 
 			// htmlGroupBox
