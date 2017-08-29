@@ -91,7 +91,10 @@
     <None Include="FileTransferReady.prompt.md">
       <Filter>Install</Filter>
     </None>
-    <None Include="00StraightenHead.instruction.md">
+    <None Include="00StraightenHeadChest.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="00StraightenHeadHonor.instruction.md">
       <Filter>Science</Filter>
     </None>
   </ItemGroup>
