@@ -59,7 +59,7 @@ namespace AlignToRigidBodyGUI {
 
 		PsyPhy::OpenGLWindow					*visibilityWindow1, *visibilityWindow2;
 		PsyPhy::OpenGLWindow					*fovWindow1, *fovWindow2;
-		PsyPhy::Viewpoint						*codaViewpoint, *objectViewpoint;
+		PsyPhy::Viewpoint						*codaViewpoint1, *codaViewpoint2, *objectViewpoint;
 		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 		PsyPhy::Assembly						*fovSweetSpot;
@@ -129,14 +129,14 @@ namespace AlignToRigidBodyGUI {
 
 			fovWindow2->Activate();
 			fovWindow2->Clear( 0.0, 0.0, 0.0 );
-			codaViewpoint->Apply( fovWindow2, CYCLOPS );
+			codaViewpoint2->Apply( fovWindow2, CYCLOPS );
 			alignmentObject2->Draw();
 			fovSweetSpot->Draw();
 			fovWindow2->Swap();
 
 			fovWindow1->Activate();
 			fovWindow1->Clear( 0.0, 0.0, 0.0 );
-			codaViewpoint->Apply( fovWindow1, CYCLOPS );
+			codaViewpoint1->Apply( fovWindow1, CYCLOPS );
 			alignmentObject1->Draw();
 			fovSweetSpot->Draw();
 			fovWindow1->Swap();
@@ -451,16 +451,22 @@ namespace AlignToRigidBodyGUI {
 
 				 // Create windows and viewpoints to show what the CODA units are seeing.
 				 fovWindow1 = PsyPhy::CreateOpenGLWindowInForm( fovPanel1 );
-				 fovWindow2 = PsyPhy::CreateOpenGLWindowInForm( fovPanel2, fovWindow1->hRC );
-				 fovSweetSpot = new Assembly();
+				 codaViewpoint1 = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
+				 codaViewpoint1->SetOrientation( 90.0, - 90.0, 0.0 );
 
+				 fovWindow2 = PsyPhy::CreateOpenGLWindowInForm( fovPanel2, fovWindow1->hRC );
+				 codaViewpoint2 = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
+				 codaViewpoint2->SetOrientation( 0.0, - 90.0, 0.0 );
+
+				 // Create a tareting scope.
+				 fovSweetSpot = new Assembly();
 				 Hole *hole = new Hole( 500.0,  2000.0, 2000.0 );
-				 hole->SetColor( 0.15, 0.0, 0.0, 0.75 );	
+				 hole->SetColor( 0.15, 0.0, 0.0, 0.5 );	
 				 hole->SetPosition( 0.0, 0.0, -100.0 );
 				 fovSweetSpot->AddComponent( hole );
 
 				 hole = new Hole( 100.0,  2000.0, 2000.0 );
-				 hole->SetColor( 0.0, 0.0, 0.5, 0.5 );	
+				 hole->SetColor( 0.0, 0.0, 0.5, 0.25 );	
 				 fovSweetSpot->AddComponent( hole );
 
 				 Bar *bar = new Bar( 2000.0, 5.0, 5.0 );
@@ -482,12 +488,6 @@ namespace AlignToRigidBodyGUI {
 				 sphere->SetOffset( 0.0, 300.0, 0.0 );
 				 alignmentObject1->AddComponent( sphere );
 				 alignmentObject2->AddComponent( sphere );
-
-	
-				 // Create a viewpoint that looks at the origin from the negative Y axis.
-				 // This is where the CODAs are with respect to the workspace.
-				 codaViewpoint = new Viewpoint( 6.0, 60.0, 10.0, 10000.0);
-				 codaViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
 
 				 // Initialize the state of the GL graphics engine.
 				 // Some of this will be overridden by the object renderer.
