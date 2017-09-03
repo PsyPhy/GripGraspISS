@@ -173,9 +173,9 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->label2->Location = System::Drawing::Point(30, 72);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(144, 20);
+			this->label2->Size = System::Drawing::Size(68, 20);
 			this->label2->TabIndex = 6;
-			this->label2->Text = L"Tracker Camera 2";
+			this->label2->Text = L"Counter";
 			// 
 			// label1
 			// 
@@ -184,20 +184,20 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->label1->Location = System::Drawing::Point(30, 36);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(144, 20);
+			this->label1->Size = System::Drawing::Size(99, 20);
 			this->label1->TabIndex = 5;
-			this->label1->Text = L"Tracker Camera 1";
+			this->label1->Text = L"Time Stamp";
 			// 
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->timeTextBox1);
 			this->groupBox2->Controls->Add(this->timeTextBox0);
-			this->groupBox2->Location = System::Drawing::Point(203, 12);
+			this->groupBox2->Location = System::Drawing::Point(135, 12);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(148, 94);
+			this->groupBox2->Size = System::Drawing::Size(216, 94);
 			this->groupBox2->TabIndex = 5;
 			this->groupBox2->TabStop = false;
-			this->groupBox2->Text = L"Sample Time";
+			this->groupBox2->Text = L"Frame";
 			// 
 			// timeTextBox1
 			// 
@@ -205,7 +205,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->timeTextBox1->Location = System::Drawing::Point(6, 54);
 			this->timeTextBox1->Name = L"timeTextBox1";
-			this->timeTextBox1->Size = System::Drawing::Size(133, 30);
+			this->timeTextBox1->Size = System::Drawing::Size(204, 30);
 			this->timeTextBox1->TabIndex = 7;
 			this->timeTextBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -215,7 +215,7 @@ namespace GraspTrackerDaemon {
 				static_cast<System::Byte>(0)));
 			this->timeTextBox0->Location = System::Drawing::Point(6, 18);
 			this->timeTextBox0->Name = L"timeTextBox0";
-			this->timeTextBox0->Size = System::Drawing::Size(133, 30);
+			this->timeTextBox0->Size = System::Drawing::Size(204, 30);
 			this->timeTextBox0->TabIndex = 1;
 			this->timeTextBox0->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
