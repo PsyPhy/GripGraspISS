@@ -38,6 +38,9 @@ private:
 public:
 
 	int nFramesPerUnit[MAX_UNITS];
+	// Tracker alignment transformations.
+	Vector3 alignmentOffset[MAX_UNITS];
+	Matrix3x3 alignmentRotation[MAX_UNITS];
 
 	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {
 			daemonAddrLength = sizeof( daemonAddr );
@@ -46,6 +49,9 @@ public:
 	virtual void StartAcquisition( float max_seconds );
 	virtual bool GetAcquisitionState( void );
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );
+	virtual void GetUnitTransform(  int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation  );
+	virtual void CodaRTnetDaemonTracker::GetAlignmentTransforms(  PsyPhy::Vector3 offsets[MAX_UNITS], PsyPhy::Matrix3x3 rotations[MAX_UNITS]  );
+
 	virtual void StopAcquisition( void );
 	virtual void AbortAcquisition( void );
 	virtual int  Update( void );

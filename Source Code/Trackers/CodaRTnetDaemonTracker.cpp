@@ -70,7 +70,7 @@ int CodaRTnetDaemonTracker::Update( void ) {
 
 	GraspTrackerRecord record;
 
-    // Clear any pending inputs and only take the last one.
+    // Process any pending packets.
 	static int cycle_counter = 0;
 	int packet_count;
 	int recv_len, nError;
@@ -89,6 +89,12 @@ int CodaRTnetDaemonTracker::Update( void ) {
 		// Set the number of units to the number of units send by the daemon. This should not change in real time,
 		// but this sets the number of units correcty when the first packet is read and processed here.
 		nUnits = record.nUnits;
+		// Copy the transforms for each unit. Again, these should not change in real time.
+		for ( int unit = 0; unit < nUnits; unit++ ) {
+			CopyVector( alignmentOffset[unit], record.alignmentOffset[unit] );
+			CopyMatrix( alignmentRotation[unit], record.alignmentRotation[unit] );
+		}
+
 		for ( int unit = 0; unit < nUnits; unit++ ) CopyMarkerFrame( recordedMarkerFrames[unit][nFrames % MAX_FRAMES], record.frame[unit] );
 		// If the time limit has expired, we stop acquiring a time series of frames.
 		if ( TimerTimeout( timer ) ) acquiring = false;
@@ -110,6 +116,21 @@ bool CodaRTnetDaemonTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int 
 	return true;
 }
 
+void CodaRTnetDaemonTracker::GetUnitTransform(  int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation  ) {
+	// Make sure that any packets that were sent have been read.
+	Update();
+	CopyVector( offset, alignmentOffset[unit] );
+	CopyMatrix( rotation, alignmentRotation[unit] );
+}
+
+void CodaRTnetDaemonTracker::GetAlignmentTransforms(  PsyPhy::Vector3 offsets[MAX_UNITS], PsyPhy::Matrix3x3 rotations[MAX_UNITS]  ) {
+	// The base Tracker class includes a method to get all of the transformations from each unit as a group
+	// by making repeated calls to GetUnitTransform.  But the CodaTracker class overlays that method with one
+	// that gets them all at the same time using a built-in function from the RTnet server. 
+	// Since CodaRTnetDaemonTracker is derived from CodaRTnetTracker but does not have this capability built in, 
+	// I overlay the function here and then force it to call the method from the Tracker base class.
+	Tracker::GetAlignmentTransforms( offsets, rotations );
+}
 void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	
 	// If there is an .ini file, parse it for serial numbers, server address, etc.

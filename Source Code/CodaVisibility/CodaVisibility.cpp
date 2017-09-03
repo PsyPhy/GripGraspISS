@@ -27,6 +27,9 @@ int nUnits = 0;
 
 int main(int argc, char *argv[])
 {
+
+	Vector3	offsets[MAX_UNITS];
+	Matrix3x3 rotations[MAX_UNITS];
 	
 	bool use_daemon = false;
 	bool use_legacy = false;
@@ -38,7 +41,7 @@ int main(int argc, char *argv[])
 	// A device that records 3D marker positions.
 	PsyPhy::Tracker *codaTracker;
 	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
-	if ( use_legacy ) codaTracker = new PsyPhy::CodaLegacyPolledTracker();
+	else if ( use_legacy ) codaTracker = new PsyPhy::CodaLegacyPolledTracker();
 	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
 
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
@@ -52,6 +55,10 @@ int main(int argc, char *argv[])
 	fprintf( stderr, "OK.\n" );
 
 	nUnits = codaTracker->nUnits;
+
+	fprintf( stderr, "Transformations:\n" );
+	codaTracker->GetAlignmentTransforms( offsets, rotations );
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) fprintf( stderr, " Unit: %d  Offset: %s  Rotation: %s\n" , unit, codaTracker->vstr( offsets[unit] ), codaTracker->mstr( rotations[unit] ));
 
 	while ( _kbhit() == 0 ) {
 		for ( int unit = 0; unit < nUnits; unit++ ) {
