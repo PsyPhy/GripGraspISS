@@ -112,6 +112,9 @@ namespace Grasp {
 		static const double finger_ball_radius;
 		static const double target_ball_spacing;
 		static const int target_balls;
+		static const int target_bars; //Tagliabue
+		static const double target_bar_radius;//Tagliabue
+		static const double target_bar_spacing;//Tagliabue
 		static const double finger_length;
 
 		static const double hmdTransparency;

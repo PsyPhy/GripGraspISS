@@ -837,7 +837,8 @@ void GraspTaskManager::EnterProvideFeedback( void ) {
 		renderer->multiProjectile->Enable();
 	}
 	else {
-		renderer->positionOnlyTarget->Enable();
+		//renderer->positionOnlyTarget->Enable();
+		renderer->positionOnlyTarget->Disable();//Tagliabue (to allow a better vision of the projectile going toward the end of the tunnel)
 		renderer->monoProjectile->Enable();
 	}
 // Launch the projectiles from the current hand orientation (the response );
