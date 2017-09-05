@@ -202,7 +202,7 @@ Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
 		Cylinder *cylinder = new Cylinder( target_bar_radius, target_bar_radius,2.0 * room_radius );
 		cylinder->SetPosition( 0.0 + target_bar_spacing * trg, 0.0, 150.0 );
 		cylinder->SetOrientation(0.0, 90.0, 0.0);
-		cylinder->SetColor(0.5, 0.0, 0.0);
+		cylinder->SetColor( Translucid( BLUE ) );
 		target->AddComponent( cylinder );
 	}
 	return target;
@@ -227,10 +227,10 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 	//Sphere *sphere = new Sphere( target_ball_radius );
 	//target->AddComponent( sphere );
 	//target->SetColor( ORANGE );
-	Disk *disk = new Disk(room_radius,0.0);//Tagliabue (disk instead of sphere otherwise it hides 
+	Disk *disk = new Disk( room_radius - 80.0, 0.0 );//Tagliabue (disk instead of sphere otherwise it hides 
 	disk->SetPosition(0.0 , 0.0 , 5.0);//Tagliabue (moved slightly in front of the sky otherwhise interferences)
 	target->AddComponent( disk );//Tagliabue
-	target->SetColor( Translucid(ORANGE) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
+	target->SetColor( Translucid( ORANGE ) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
 	return target;
 }
 
