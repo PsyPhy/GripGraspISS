@@ -406,6 +406,8 @@ void GraspTaskManager::EnterStartBlock( void ) {
 	// The desired orientation of the head is upright (0°). 
 	// This is not essential, but it allows us to show the colors already.
 	SetDesiredHeadRoll( trialParameters[0].targetHeadTilt, targetHeadTiltTolerance );
+	// But in fact we are going to disable the halo because it is a distraction.
+	renderer->glasses->Disable();
 	// Show the "Press to continue." indicator.
 	renderer->readyToStartIndicator->Enable();
 	renderer->room->Disable();
@@ -424,6 +426,7 @@ GraspTrialState GraspTaskManager::UpdateStartBlock( void ) {
 void  GraspTaskManager::ExitStartBlock( void ) {
 	renderer->readyToStartIndicator->Disable();
 	renderer->vkTool->Disable();
+	renderer->glasses->Enable();
 }
 
 //
