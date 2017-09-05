@@ -101,9 +101,9 @@ bool OculusCodaPoseTracker::Update( void ) {
 			CopyVector( currentState.pose.position, absolutePose.pose.position );
 			//CopyVector( currentState.pose.position, zeroVector );
 		}
-		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
+//		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
 	}
-	else fOutputDebugString( "Cycle %4d: No absolute tracker.\n", cycle_counter );
+	//else fOutputDebugString( "Cycle %4d: No absolute tracker.\n", cycle_counter );
 	cycle_counter++;
 
 	// After the above, we have a weighted *SUM* of inertial and CODA data. This normalization effectively turns the

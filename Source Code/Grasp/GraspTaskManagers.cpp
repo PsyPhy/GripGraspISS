@@ -484,7 +484,10 @@ void GraspTaskManager::ExitStartTrial( void ) {
 // Set the new trial parameters. This is where conflict should get turned off or on.
 void GraspTaskManager::EnterStraightenHead( void ) { 
 
-	// Turn the starry sky back on, even if it won't be visible right away because the room will be off.
+	// Turn the starry sky back on at a random roll orientation, even if it won't be visible right away because the room will be off.
+	int degrees = ((int) (TimerElapsedTime( blockTimer ) * 1000.0) ) % 360; 
+	fOutputDebugString( "Sky: %d\n", degrees );
+	renderer->starrySky->SetOrientation( (double) degrees, 0.0, 0.0 );
 	renderer->starrySky->Enable();
 	renderer->darkSky->Disable();
 	// Turn off lots of visual cues in preparation for starting up the conflict.
@@ -552,6 +555,7 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		if ( aligned == HandleHeadOnShoulders( false ) ) {
 			if ( Validate() ) return( AlignHead ); 
 		}
+		break;
 
 	case MANUAL_STRAIGHTEN:
 	default:
