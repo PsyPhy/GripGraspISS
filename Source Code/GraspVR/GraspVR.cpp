@@ -83,7 +83,7 @@ void GraspVR::UpdateTrackers( void ) {
 	// Track movements of the hand marker array.
 	if ( !trackers->GetCurrentHandPose( handPose ) ) {
 		static int pose_error_counter = 0;
-		fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
+		//fOutputDebugString( "Error reading hand pose tracker (%03d).\n", ++pose_error_counter );
 	}
 	else {
 		TransformPose( handPose.pose, localAlignment, handPose.pose );
