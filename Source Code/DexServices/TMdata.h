@@ -8,8 +8,8 @@
 #include "../VectorsMixin/VectorsMixin.h"
 
 
-#define GRASP_RT_SLICES_PER_PACKET 5
-#define GRASP_RT_SLICE_INTERVAL 0.100
+#define GRASP_RT_SLICES_PER_PACKET 2
+#define GRASP_RT_SLICE_INTERVAL 0.250
 #define GRASP_HK_PACKET_INTERVAL 1.0
 
 typedef unsigned short u16;

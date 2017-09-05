@@ -139,7 +139,7 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
-void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
+void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[MAX_UNITS] ) {
 
 	// We need a Pose Tracker and a Tracker just to get access to their internal copy functions.
 	// I declare them static here so that they don't explode the stack.
@@ -149,15 +149,14 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
-	// There is a bug in the following. The hmd pose is sent in the place of the hand, chest and mouse.
-	// This needs to be fixed, but I am leaving it like this for now to be consistent with the flight software.
+	// Copy the current poses to the slice.
 	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, hmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].chest, hmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].mouse, hmd );
-	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[0], frame[0] );
-	tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[1], frame[1] );
+	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, codaHmd );
+	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hand );
+	pm.CopyTrackerPose( rt.Slice[slice_count].chest, chest );
+	pm.CopyTrackerPose( rt.Slice[slice_count].mouse, mouse );
+	// And the marker information (3D position and visibility).
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
 
 	// Dex RT Packets can only be sent two times per second. 
 	// So we pack multiple data slices into a single packet.
@@ -179,7 +178,7 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 int DexServices::SendScienceRealtimeData( void ) {
 
 	// A buffer to hold the string of bytes that form the packet.
-	u8 packet[1024];
+	u8 packet[10240];
 
 	// Turn the data structure into a string of bytes with header etc.
 	u32 size = rt.serialize( packet );
@@ -196,7 +195,7 @@ int DexServices::SendScienceRealtimeData( void ) {
 
 }
 
-int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep, unsigned short tracker_status ) {
+int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsigned short substep, unsigned short tracker_status, bool force ) {
 
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[1024];

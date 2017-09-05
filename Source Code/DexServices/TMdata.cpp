@@ -80,7 +80,7 @@ static u32 addTM( MarkerState m, u8 *buffer, u32 pos ) {
 static u32 addTM( MarkerFrame frame, u8 *buffer, u32 pos ) {
 	// Position information in 1Oths of mm.
 	u32 visibility_bits = 0;
-	for ( int mrk = MAX_MARKERS - 1; mrk >= 0; mrk++ ) {
+	for ( int mrk = MAX_MARKERS - 1; mrk >= 0; mrk-- ) {
 		for ( int i = 0; i < 3; i++ ) pos = addTM( (s16) ( frame.marker[mrk].position[i] * 10.0), buffer, pos );
 		if ( frame.marker[mrk].visibility ) visibility_bits = (visibility_bits << 1) | 0x01;
 		else  visibility_bits = (visibility_bits << 1);
@@ -131,13 +131,13 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 		p = addTM( Slice[i].hand, buffer, p );
 		p = addTM( Slice[i].chest, buffer, p );
 		p = addTM( Slice[i].mouse, buffer, p );
-		// There is a bug in the following line. Each slice has two
-		// marker frames, so one should specify Slice[i].markerFrame[j].
-		// But the [j] is missing. This caused addTM to interpret the first
-		// parameter as a bool and placed only one byte into the stream, instead
-		// of copying the entire markerFrame. I need to fix this, but I leave it
-		// like this for now to stay consistent with the flight model.
-		for ( int j = 0; j < 2; j++ ) p = addTM( Slice[i].markerFrame, buffer, p );
+		// If we put all the marker position and visibility data from both codas into each slice we
+		// can only fit 1 slice per packet, but it wastes a lot of space.
+		// Here I put the position and visibility of markers in one of the codas into a given slice,
+		// and we cycle through the different codas on each slice.
+		unsigned char unit = i % MAX_UNITS;
+		p = addTM( unit, buffer, p );
+		p = addTM( Slice[i].markerFrame[unit], buffer, p );
 	}
 	// Fill the rest of the buffer with a constant value.
 	while ( p < (6+758) ) p = addTM( (u8) 0xfa, buffer, p );
