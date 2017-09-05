@@ -23,7 +23,7 @@ extern "C" {
 // The data output by GraspTrackerDaemon.
 typedef struct {
 	unsigned long count;
-	PsyPhy::TrackerPose	hmd;
+	PsyPhy::TrackerPose	codaHmd;
 	PsyPhy::TrackerPose hand;
 	PsyPhy::TrackerPose chest;
 	int	nUnits;

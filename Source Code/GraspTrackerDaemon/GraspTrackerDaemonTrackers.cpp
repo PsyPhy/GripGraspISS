@@ -20,6 +20,12 @@ int record_length;
 SOCKET sock;
 struct sockaddr_in Sender_addr;
 
+// Place to hold data from VR program.
+TrackerPose	oculusHmdPose;
+TrackerPose	mousePose;
+unsigned int objectStateBits;
+
+
 // A buffer to hold pose data.
 struct {
 	TrackerPose hmd;
@@ -46,7 +52,7 @@ namespace GraspTrackerDaemon {
 
 	}
 
-	void Form1::InitializeCoda( void ) {
+	void Form1::Initialize( void ) {
 
 		// Select which tracker to use to provide the marker data.
 		// The flags are set when the Form is instantiated. Here we
@@ -79,6 +85,13 @@ namespace GraspTrackerDaemon {
 		// transformations will not change once the daemon is initialized. This may not
 		// be a good assumption!!!
 		coda->GetAlignmentTransforms( record.alignmentOffset, record.alignmentRotation );
+
+		roll->CopyTrackerPose( oculusHmdPose, NullTrackerPose );
+		oculusHmdPose.visible = false;
+		roll->CopyTrackerPose( mousePose, NullTrackerPose );
+		mousePose.visible = false;
+		objectStateBits = 0x00000000;
+
 	}
 
 	void Form1::ReleaseCoda( void ) {
@@ -95,12 +108,14 @@ namespace GraspTrackerDaemon {
 		for ( int unit = 0; unit < record.nUnits; unit++ ) {
 			trackers->codaTracker->CopyMarkerFrame(  record.frame[unit], trackers->markerFrame[unit] );
 		}
-		// Get the poses.
-		trackers->hmdTracker->GetCurrentPose( record.hmd );
+		// Send the tracker info to DEX.
+
+		// Get the poses from the CODA tracker.
+		trackers->hmdTracker->GetCurrentPose( record.codaHmd );
 		trackers->handTracker->GetCurrentPose( record.hand );
 		trackers->chestTracker->GetCurrentPose( record.chest );
 
-		trackers->hmdTracker->CopyTrackerPose( poseData[nPoseSamples].hmd, record.hmd );
+		trackers->hmdTracker->CopyTrackerPose( poseData[nPoseSamples].hmd, record.codaHmd );
 		trackers->handTracker->CopyTrackerPose( poseData[nPoseSamples].hand, record.hand );
 		trackers->chestTracker->CopyTrackerPose( poseData[nPoseSamples].chest, record.chest );
 
@@ -119,6 +134,9 @@ namespace GraspTrackerDaemon {
 				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );	
 			}
 		}
+
+		// Send status to DEX.
+		dex->AddDataSlice( objectStateBits, oculusHmdPose, record.codaHmd, record.hand, record.chest, mousePose, trackers->markerFrame );
 
 		// Update the screen display.
 		String ^line;
@@ -144,9 +162,16 @@ namespace GraspTrackerDaemon {
 		}
 		visibilityTextBox1->Text = line;
 
-		if ( record.hmd.visible ) {
+		if ( oculusHmdPose.visible ) {
 			char str[256];
-			sprintf( str, "%s %s", trackers->vstr( record.hmd.pose.position ), trackers->qstr( record.hmd.pose.orientation ) );
+			sprintf( str, "%s %s", trackers->vstr(  oculusHmdPose.pose.position ), trackers->qstr(  oculusHmdPose.pose.orientation ) );
+			oculusPoseTextBox->Text = gcnew String( str );
+		}
+		else oculusPoseTextBox->Text = "                       (unavailable)";
+
+		if ( record.codaHmd.visible ) {
+			char str[256];
+			sprintf( str, "%s %s", trackers->vstr( record.codaHmd.pose.position ), trackers->qstr( record.codaHmd.pose.orientation ) );
 			hmdPoseTextBox->Text = gcnew String( str );
 		}
 		else hmdPoseTextBox->Text = "                         (obscured)";

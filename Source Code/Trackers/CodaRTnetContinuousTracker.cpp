@@ -176,7 +176,7 @@ int CodaRTnetContinuousTracker::Update( void ) {
 			// See if this is a repeat of the previous packet.
 			if ( ( tick = local_decode3D.getTick() ) == previous_tick[unit] ) ++nRepeatedPackets[unit];
 			previous_tick[unit] = tick;
-			fOutputDebugString( "Unit: %d  Tick: %8d\n", unit, tick );
+			// fOutputDebugString( "Unit: %d  Tick: %8d\n", unit, tick );
 	
 			// Compute the time from the tick counter in the packet and the tick duration.
 			int index = nFramesPerUnit[unit] % MAX_FRAMES;

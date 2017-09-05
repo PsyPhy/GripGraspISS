@@ -88,25 +88,25 @@ namespace Grasp {
 		  TimerStart( stream_timer );
 		 }
 
-		void Initialize( char *filename = nullptr );
-		int Connect( void );
-		int Send( const unsigned char *packet, int size ) ;
-		void Disconnect( void );
-		void Release( void );
+		virtual void Initialize( char *filename = nullptr );
+		virtual int Connect( void );
+		virtual int Send( const unsigned char *packet, int size ) ;
+		virtual void Disconnect( void );
+		virtual void Release( void );
 
-		void AddDataSlice(  unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
+		virtual void AddDataSlice(  unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
 
-		int SendTaskInfo( int user, int protocol, int task, int step, 
-			unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN );
-		int ResetTaskInfo( void ) { return( SendTaskInfo( 0, 0, 0, 0, 0, 0 ) ); }
-		int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); }
-		int SendTrackerStatus( unsigned int status );
+		virtual int SendTaskInfo( int user, int protocol, int task, int step, 
+			unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN, bool force = false );
+		virtual int ResetTaskInfo( void ) { return( SendTaskInfo( 0, 0, 0, 0, 0, 0, true ) ); }
+		virtual int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); }
+		virtual int SendTrackerStatus( unsigned int status );
 
-		int SnapPicture( const char *tag );
+		virtual int SnapPicture( const char *tag );
 
-		int SendScienceRealtimeData( void );
+		virtual int SendScienceRealtimeData( void );
 
-		void ParseCommandLine( char *command_line );
+		virtual void ParseCommandLine( char *command_line );
 
 	
 
