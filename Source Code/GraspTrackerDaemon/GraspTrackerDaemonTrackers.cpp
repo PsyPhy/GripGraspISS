@@ -136,7 +136,7 @@ namespace GraspTrackerDaemon {
 		}
 
 		// Send status to DEX.
-		dex->AddDataSlice( objectStateBits, oculusHmdPose, record.codaHmd, record.hand, record.chest, mousePose, trackers->markerFrame );
+		// dex->AddDataSlice( objectStateBits, oculusHmdPose, record.codaHmd, record.hand, record.chest, mousePose, trackers->markerFrame );
 
 		// Update the screen display.
 		String ^line;
