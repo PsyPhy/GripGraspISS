@@ -15,6 +15,6 @@ REM Clear the console window to hide any message about processes that are not pr
 cls
 
 REM Start up the CODA system and wait for it to be active.
-Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe 
-Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
+Start "GRASP Tracker" GraspExecutables\GraspTrackerDaemon.exe 
+Start "Wait For Tracker" /MIN /WAIT GraspExecutables\WaitForCodaDaemon.exe  
 
