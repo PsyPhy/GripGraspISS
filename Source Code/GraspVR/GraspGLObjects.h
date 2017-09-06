@@ -108,6 +108,7 @@ namespace Grasp {
 		static Vector3 desired_wrist_location;
 		static Vector3 initial_hand_position;
 
+		static bool useBars;
 		static const double target_ball_radius;
 		static const double finger_ball_radius;
 		static const double target_ball_spacing;
