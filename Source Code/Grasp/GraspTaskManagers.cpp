@@ -980,6 +980,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	case MANUAL_REJECT_TRIAL: interrupt_indicator = renderer->manualRejectIndicator; break;
 	}
 	interrupt_indicator->Enable();
+	renderer->glasses->Disable();
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 	char tag[32];
 	sprintf( tag, "Itpt%1d.%03d", interruptCondition, currentTrial );
@@ -1002,6 +1003,7 @@ GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) {
 	return( currentState );
 }
 void  GraspTaskManager::ExitTrialInterrupted( void ) {
+	renderer->glasses->Enable();
 	interrupt_indicator->Disable();
 }
 

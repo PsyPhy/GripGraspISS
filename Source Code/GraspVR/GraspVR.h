@@ -118,7 +118,7 @@ namespace Grasp {
 	//	State information and routines to handle behaviors from inside a rendering loop.
 	//
 
-	protected:
+	public:
 
 		// A common routine to compute the roll angle of an object.
 		double ObjectRollAngle( OpenGLObject * object );
@@ -137,9 +137,9 @@ namespace Grasp {
 		double			desiredHeadRoll;
 		static double	desiredHeadRollSweetZone;
 		static double	desiredHeadRollTolerance;		
-		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 		static double	straightAheadThreshold;
-		AlignmentStatus HandleHeadOnShoulders( bool use_arrow, bool roll_only = false );
+		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
+		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
 		AlignmentStatus HandleGazeDirection( void );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.

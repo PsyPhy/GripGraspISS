@@ -231,12 +231,12 @@ Assembly *GraspGLObjects::CreateResponse( void ) {
 
 Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 	Assembly *target = new Assembly();
-	//Sphere *sphere = new Sphere( target_ball_radius );
-	//target->AddComponent( sphere );
-	//target->SetColor( ORANGE );
-	Disk *disk = new Disk( room_radius - 80.0, 0.0 );//Tagliabue (disk instead of sphere otherwise it hides 
-	disk->SetPosition(0.0 , 0.0 , 5.0);//Tagliabue (moved slightly in front of the sky otherwhise interferences)
-	target->AddComponent( disk );//Tagliabue
+	Sphere *sphere = new Sphere( room_radius - 100.0 );
+	target->AddComponent( sphere );
+	target->SetColor( Translucid( ORANGE ) );
+	//Disk *disk = new Disk( room_radius - 80.0, 0.0 );//Tagliabue (disk instead of sphere otherwise it hides 
+	//disk->SetPosition(0.0 , 0.0 , 5.0);//Tagliabue (moved slightly in front of the sky otherwhise interferences)
+	//target->AddComponent( disk );//Tagliabue
 	target->SetColor( Translucid( ORANGE ) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
 	return target;
 }
@@ -336,7 +336,7 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 	Assembly *laserPointer = new Assembly();
 	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
-	sphere->SetPosition( 0.0, 0.0, -(room_length/2.0-1000.0) );
+	sphere->SetPosition( 0.0, 0.0, -( room_length / 2.0 - 1000.0 ) );
 	laserPointer->AddComponent( sphere );
 	// Laser is off by default.
 	laserPointer->Disable();
@@ -345,7 +345,7 @@ Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 
 FuzzyPointer *GraspGLObjects::CreateFuzzyLaserPointer( void ) {
 	FuzzyPointer *laserPointer = new FuzzyPointer();
-	laserPointer->SetOffset( 0.0, 0.0, -( room_length / 2.0 - 1000.0 ) );
+	laserPointer->SetOffset( 0.0, 0.0, - ( room_length / 2.0 - 2.0 * room_radius ) );
 	laserPointer->SetColor( 0.0, 0.0, 1.0, 1.0 );
 	// Laser is off by default.
 	laserPointer->Disable();
