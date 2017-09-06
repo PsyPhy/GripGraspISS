@@ -1,13 +1,12 @@
-0	 102.650	 -65.578	  25.731
-1	  53.247	  -3.912	 -20.599
-2	   0.632	 -42.876	 -15.454
-3	 -97.698	 -69.223	  29.748
-4	-102.699	  75.615	  15.074
-5	 -55.148	  -5.551	 -19.413
-6	  -0.555	  32.652	 -27.031
-7	  99.571	  78.874	  11.944
+0	 100.653	  74.229	  14.077
+1	 102.594	 -73.082	  15.880
+2	  54.426	   2.047	 -15.312
+3	  -0.516	  35.729	 -15.938
+4	  -0.140	 -35.523	 -15.150
+5	 -54.212	  -0.350	 -14.910
+6	-102.340	  70.991	  16.846
+7	-100.466	 -74.040	  14.507
 
-;;; Rigid Body Model File
-;;; Created 2017/08/21 17h00m03s GMT
-;;; TrMv2.0 - Rebuilt training model with colorfull cabling. 
-;;; This is supposed to be a tilted version, but not yet.
+;;; Rigid Body Model File - FM2 Chest
+;;; Created 2016/08/25 10h34m50s GMT
+;;; This is supposed to be a tilted version but not yet.
