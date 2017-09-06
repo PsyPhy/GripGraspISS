@@ -9,6 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> --VtoV  --nocoda --sequence=Sequences\null.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> --VtoK --anyPitchYaw --nocoda --sequence=Sequences\null.seq --output=Results\DebugResultsOutput</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

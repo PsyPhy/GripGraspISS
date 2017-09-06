@@ -138,6 +138,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// instructor can trigger the next phase (response phase) with a key press.
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
 	if ( strstr( lpCmdLine, "--bars" ) ) grasp->renderer->useBars = true;
+	if ( strstr( lpCmdLine, "--anyPitchYaw" ) ) grasp->straightAheadThreshold = 0.0;
 
 	// Select the method for guiding the subject to the initial head position.
 	// By default, the subject is simply asked to straighten the head on the shoulders and then press a button.
@@ -156,7 +157,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	// Ask DEX to take a final snapshot and then disconnect.
 	dex->SnapPicture( "RELEASE" );
-	dex->ResetTaskInfo(); // It might be better to remove this and leave it up to the caller.
 	dex->Disconnect();
 	dex->Release();
 
