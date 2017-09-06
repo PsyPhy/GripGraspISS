@@ -68,9 +68,11 @@ Vector3 GraspGLObjects::initial_hand_position = { 0.0, -500.0, 0.0 };
 const double GraspGLObjects::target_ball_radius = 100.0;
 const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
 const int GraspGLObjects::target_balls = 3;
+// Or it may be a set of parallel lines.
 const int GraspGLObjects::target_bars = 10;									//Tagliabue
 const double GraspGLObjects::target_bar_radius = 20.0;						//Tagliabue
 const double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
+bool GraspGLObjects::useBars = false;
 
 const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
 const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
@@ -191,20 +193,25 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
 
 	Assembly *target = new Assembly();
-	/*for (int trg = - target_balls ; trg <= target_balls ; trg++ ){
-		Sphere *sphere = new Sphere( target_ball_radius );
-		sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
-		sphere->SetColor(( 255.0 - abs(trg) * 50.0 ) / 255.0, 0.0, 0.0);
-		target->AddComponent( sphere );
-	}*/
 
-	for (int trg = - target_bars ; trg <= target_bars ; trg++ ){
-		Cylinder *cylinder = new Cylinder( target_bar_radius, target_bar_radius,2.0 * room_radius );
-		cylinder->SetPosition( 0.0 + target_bar_spacing * trg, 0.0, 150.0 );
-		cylinder->SetOrientation(0.0, 90.0, 0.0);
-		cylinder->SetColor( Translucid( BLUE ) );
-		target->AddComponent( cylinder );
+	if ( useBars ) {
+		for (int trg = - target_bars ; trg <= target_bars ; trg++ ){
+			Cylinder *cylinder = new Cylinder( target_bar_radius, target_bar_radius,2.0 * room_radius );
+			cylinder->SetPosition( 0.0 + target_bar_spacing * trg, 0.0, 150.0 );
+			cylinder->SetOrientation(0.0, 90.0, 0.0);
+			cylinder->SetColor( Translucid( BLUE ) );
+			target->AddComponent( cylinder );
+		}
 	}
+	else {
+		for (int trg = - target_balls ; trg <= target_balls ; trg++ ){
+			Sphere *sphere = new Sphere( target_ball_radius );
+			sphere->SetPosition( 0.0, 0.0 + target_ball_spacing * trg, 0.0 );
+			sphere->SetColor(( 255.0 - abs(trg) * 50.0 ) / 255.0, 0.0, 0.0);
+			target->AddComponent( sphere );
+		}
+	}
+
 	return target;
 }
 

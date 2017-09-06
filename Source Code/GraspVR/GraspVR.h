@@ -139,7 +139,7 @@ namespace Grasp {
 		static double	desiredHeadRollTolerance;		
 		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 		static double	straightAheadThreshold;
-		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
+		AlignmentStatus HandleHeadOnShoulders( bool use_arrow, bool roll_only = false );
 		AlignmentStatus HandleGazeDirection( void );
 
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
