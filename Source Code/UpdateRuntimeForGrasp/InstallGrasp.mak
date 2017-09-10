@@ -16,6 +16,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe \
 	..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe  \
 	..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe \
+	..\$(BUILDCONFIGURATION)\TweakRigidBodyModel.exe \
 	..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe \
 	..\$(BUILDCONFIGURATION)\StartOculus.exe \
 	..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe \
@@ -41,6 +42,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\TweakRigidBodyModel.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe $(DESTINATION)
 	copy ..\GraspTrackerDaemon\StartGraspTrackerDaemon.bat $(DESTINATION)

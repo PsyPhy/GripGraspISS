@@ -159,3 +159,8 @@ void CodaPoseTracker::ReadModelMarkerPositions( const char *filename ) {
 	fclose( fp );
 }
 
+void CodaPoseTracker::WriteModelMarkerPositions( const char *filename ) {
+	FILE *fp = fopen( filename, "w" );
+	fAbortMessageOnCondition( ( NULL == fp ), "WriteModelMarkerPositions()", "Error opening %s for write.", filename );
+	fclose( fp );
+}

@@ -65,6 +65,7 @@ class CodaPoseTracker : public PoseTracker {
 		void	ReadModelMarkerPositions( FILE *fp );
 		void	WriteModelMarkerPositions( FILE *fp );
 		void	ReadModelMarkerPositions( const char *filename );
+		void	WriteModelMarkerPositions( const char *filename );
 		void	SetPositionScaleFactor( double factor ) { positionScaleFactor = factor; }
 
 };
