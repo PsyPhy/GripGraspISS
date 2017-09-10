@@ -70,7 +70,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 
 	HWND parentWindow = nullptr;
-	if ( ptr = strstr( lpCmdLine, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parentWindow );
+	if ( ptr = strstr( lpCmdLine, "--parent" ) ) items = sscanf( ptr, "--parent=%d", &parentWindow );
+	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
 
 	//
 	// Connect to dex for telemetry and snapshots.
@@ -137,8 +138,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// During training, timeout for tilting the head is set very long, but the 
 	// instructor can trigger the next phase (response phase) with a key press.
 	if ( strstr( lpCmdLine, "--training" ) ) grasp->tiltHeadTimeout = 30.0;
-	if ( strstr( lpCmdLine, "--bars" ) ) grasp->renderer->useBars = true;
 	if ( strstr( lpCmdLine, "--anyPitchYaw" ) ) grasp->straightAheadThreshold = 0.0;
+
+	// Set which kind of visual stimuli to use (balls or bars).
+	// The default selection is set with cookie files.
+	// The cookies can be overridden with command line arguments.
+	if ( FileExists( "Balls.flg" ) ) grasp->renderer->useBars = false; 
+	if ( FileExists( "Bars.flg" ) ) grasp->renderer->useBars = false;
+	if ( strstr( lpCmdLine, "--bars" ) ) grasp->renderer->useBars = true;
+	if ( strstr( lpCmdLine, "--balls" ) ) grasp->renderer->useBars = false;
 
 	// Select the method for guiding the subject to the initial head position.
 	// By default, the subject is simply asked to straighten the head on the shoulders and then press a button.

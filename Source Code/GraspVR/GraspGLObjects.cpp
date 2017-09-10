@@ -72,7 +72,7 @@ const int GraspGLObjects::target_balls = 3;
 const int GraspGLObjects::target_bars = 10;									//Tagliabue
 const double GraspGLObjects::target_bar_radius = 20.0;						//Tagliabue
 const double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
-bool GraspGLObjects::useBars = false;
+bool GraspGLObjects::useBars = true;
 
 const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
 const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
