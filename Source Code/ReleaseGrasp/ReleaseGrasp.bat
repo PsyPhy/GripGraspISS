@@ -55,12 +55,19 @@ REM Create an empty Results directory to put in the release archive.
 REM We hide the current Results directory so as not to lose what we have there.
 REM Then we create a new empty directory, with just a readme to put in the tar archive.
 REM Finally, we restore the original Results file.
-rename Results HIDEResults
+REM
+REM Compute the subdirectory name based on today's date.
+set yy=%date:~10,4%
+set mm=%date:~4,2%
+set dd=%date:~7,2%
+set HH=%time:~0,2%
+set MMM=%time:~3,2%
+set SS=%time:~6,2%
+set DIRECTORY="Results (%yy%.%mm%.%dd% %HH%.%MMM%.%SS%)"
+rename Results %DIRECTORY%
 mkdir Results
 echo Results files from GRASP go here. > Results\readme.txt
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Results/*
-rmdir /S /Q Results
-rename HIDEResults Results
 
 REM Keep a record of releases.
 echo %ARCHIVE% >> GripGraspReleases.log
