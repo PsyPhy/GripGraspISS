@@ -8,10 +8,10 @@
 7	-101.275	 -74.345	   1.403
 
 ;;; Rigid Body Model File
-;;; Created 2017/09/10 07h07m43s GMT
-;;;  from measuredChest.bdy, then tilted in pitch by 10°
+;;; Created 2017/09/10 06h50m45s GMT
+;;;  from Chest.bdy, then tilted in pitch by 10°
 
-;;; Source file (measuredChest.bdy): 
+;;; Source file (Chest.bdy): 
 
 ;;;  0	 100.653	  74.229	  14.077
 ;;;  1	 102.594	 -73.082	  15.880
