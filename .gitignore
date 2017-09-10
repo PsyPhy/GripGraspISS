@@ -292,6 +292,8 @@ Utils/WinSCP.ini
 # Results is where the results will go in the runtime environment. No need to track them.
 Results
 Results/*
+Results *
+Results */*
 # The following are different types of result files that if they occur outside the Results
 # tree they can still be ignored.
 *.mrk
