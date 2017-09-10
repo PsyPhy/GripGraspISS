@@ -1,0 +1,13 @@
+# Set of subject IDs and associated protocols (task lists)
+01; A2;A2;GraspNominalSessionsBedrest.sss
+02; B2;B2;GraspNominalSessionsBedrest.sss
+03; C2;C2;GraspNominalSessionsBedrest.sss
+04; D2;D2;GraspNominalSessionsBedrest.sss
+05; E2;E2;GraspNominalSessionsBedrest.sss
+06; F2;F2;GraspNominalSessionsBedrest.sss
+07; G2;G2;GraspNominalSessionsBedrest.sss
+08; H2;H2;GraspNominalSessionsBedrest.sss
+09; I2;I2;GraspNominalSessionsBedrest.sss
+10; J2;J2;GraspNominalSessionsBedrest.sss
+97; TR;	Training;GraspTrainingSessionsBedrest.sss
+99; SM; Maintenance; GraspMaintenanceSessions.sss

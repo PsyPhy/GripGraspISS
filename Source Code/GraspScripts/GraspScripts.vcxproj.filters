@@ -116,5 +116,14 @@
     <None Include="SubjectsFlight.sbj">
       <Filter>Generic</Filter>
     </None>
+    <None Include="SubjectsBedrest.sbj">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="GraspTrainingSessionsBedrest.sss">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="GraspNominalSessionsBedrest.sss">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>
