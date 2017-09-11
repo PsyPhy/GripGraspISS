@@ -75,7 +75,7 @@ void CreatePsyPhyObjects ( void ) {
 	cylinder->SetOrientation( -90.0, cylinder->jVector );
 	tool->AddComponent( cylinder );
 
-	tool->SetPosition( 0.0, 0.0, 4.0 );
+	tool->SetPosition( 0.0, 0.0, - 4.0 );
 
 }
 

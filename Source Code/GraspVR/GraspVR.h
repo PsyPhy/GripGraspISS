@@ -50,14 +50,11 @@ namespace Grasp {
 
 		Transform	localAlignment; 
 
-		static double handFilterConstant;
-		static double interpupillary_distance;
 		static double near_clipping;
 		static double far_clipping;
 
 		static double projectile_speed;
 		static double prompt_spin_speed;
-
 
 	public:
 
@@ -67,10 +64,11 @@ namespace Grasp {
 		GraspTrackers	*trackers;
 
 		double conflictGain;
-
+		static double handFilterConstant;
+		static double chestOffset;
+		static double interpupillary_distance;
 
 		GraspVR( void )  : 
-
 
 			display( nullptr ),
 			trackers( nullptr ),

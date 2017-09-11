@@ -155,7 +155,8 @@ void GraspVR::InitializeVR( void ) {
 	// Auto lighting is used to avoid giving a reference from directional lighting.
 	// I don't fully understand the lighting thing, because when I set the intensity to 0
 	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
-	glUsefulAutoLighting( 0.0 );
+	//glUsefulAutoLighting( 0.7 );
+	glUsefulDefaultSpecularLighting( 0.7 );
 	glUsefulShinyMaterial();
 
 	// Create a viewpoint into the scene, using default IPD, FOV and near/far culling.
@@ -169,6 +170,7 @@ void GraspVR::InitializeVR( void ) {
 
 	// Create all the necessary VR rendering objects.
 	renderer = new GraspGLObjects();
+	renderer->SetLighting();
 	renderer->CreateVRObjects();
 	renderer->PlaceVRObjects();
 
@@ -577,11 +579,6 @@ void GraspVR::Render( void ) {
 
 	HandleSpinningPrompts();
 
-	// Prepare the GL graphics state for drawing in a way that is compatible 
-	//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
-	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
-	//  do this just once at the beginning, e.g. in CreateObjects.
-	glUsefulPrepareRendering();
 	for (int eye = 0; eye < 2; ++eye) {
 
 		// Get ready to draw into one of the eyes.
@@ -589,6 +586,12 @@ void GraspVR::Render( void ) {
 
 		// Set up the viewing transformations.
 		display->ApplyViewpoint( viewpoint, (Eye) eye );
+
+		// Prepare the GL graphics state for drawing in a way that is compatible 
+		//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
+		//  case other GL stuff is going on elsewhere. Otherwise, we could probably
+		//  do this just once at the beginning, e.g. in CreateObjects.
+		glUsefulPrepareRendering();
 
 		// Draw the objects in the world.
 		renderer->DrawVR();
