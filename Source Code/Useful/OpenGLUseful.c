@@ -46,6 +46,7 @@ void glUsefulDefaultSpecularLighting( double intensity ) {
 
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); 
 	glEnable( GL_BLEND );
+	glFrontFace( GL_CCW );
 
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glClearColor( 0.0F, 0.0F, 0.0F, 0.0F );

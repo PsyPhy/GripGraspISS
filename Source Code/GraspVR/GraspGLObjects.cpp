@@ -38,7 +38,7 @@ const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
 const char *GraspGLObjects::manual_reject_bitmap = "Bmp\\RejectTrial.bmp";
 const char *GraspGLObjects::vr_completed_bitmap = "Bmp\\VRCompleted.bmp";
 const char *GraspGLObjects::demo_bitmap = "Bmp\\DemoWorking.bmp";
-			
+
 // Dimensions of the room.
 const double GraspGLObjects::room_radius = 1000.0;
 const double GraspGLObjects::room_length = 6000.0;
@@ -74,7 +74,7 @@ const double GraspGLObjects::target_bar_radius = 20.0;						//Tagliabue
 const double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
 bool GraspGLObjects::useBars = true;
 
-const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, -room_length / 2.0 };
+const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - room_length / 2.0 };
 const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 
 const double GraspGLObjects::finger_ball_radius = 10.0;
@@ -95,7 +95,7 @@ const double GraspGLObjects::errorColorMapFadeDistance = 7.5;
 
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
-	
+
 	GLfloat fintensity = 0.75;
 	GLfloat ambient = fintensity;
 	GLfloat diffuse = fintensity;
@@ -365,7 +365,7 @@ Assembly *GraspGLObjects::CreateZone( void ) {
 Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 
 	Assembly *prompt = new Assembly();
-	
+
 	// Angular extent of the circular arrow, where 1.0 = 360°.
 	static double size = 0.85;
 	double guage =  prompt_radius / 10.0;
@@ -400,7 +400,7 @@ Assembly *GraspGLObjects::CreateIndicator( Texture *texture, double hole_radius 
 
 	Assembly	*assembly = new Assembly();
 	Disk		*surface;
-	
+
 	surface = new Disk( 120.0, hole_radius, 128 );
 	surface->SetTexture( texture );
 	assembly->AddComponent( surface );
@@ -430,7 +430,7 @@ Yoke *GraspGLObjects::CreateHand( void ) {
 Yoke *GraspGLObjects::CreateHUD( void ) {
 
 	Yoke *yoke = new Yoke();
-		
+
 	// The glasses will be positioned at the same place as the head based on the tracker.
 	// By setting the offset in depth, the glasses will be positioned a bit in front of the subject.
 	glasses->SetOffset( 0.0, 0.0, -400.0 );
@@ -509,7 +509,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	hand_rotate_timeout_texture = new Texture( hand_rotate_timeout_bitmap );
 	handRotateTimeoutIndicator = CreateIndicator( hand_rotate_timeout_texture );
 	spinners->AddComponent( handRotateTimeoutIndicator );
-	
+
 	hand_should_not_texture = new Texture( hand_should_not_bitmap );
 	handShouldNotBeRaisedIndicator = CreateIndicator( hand_should_not_texture );
 	spinners->AddComponent( handShouldNotBeRaisedIndicator );
@@ -556,8 +556,8 @@ Assembly *GraspGLObjects::CreateProjectiles( int fingers ) {
 
 void GraspGLObjects::CreateVRObjects( void ) {
 
-	glUsefulInitializeDefault();
-	SetLighting();
+	//glUsefulInitializeDefault();
+	//SetLighting();
 	CreateTextures();
 
 	fuzzyLaser = CreateFuzzyLaserPointer();
@@ -587,7 +587,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	room->AddComponent( positionOnlyTarget );
 	room->AddComponent( response );
 	room->AddComponent( successIndicator );
-	
+
 	headTiltPrompt = CreateTiltPrompt();
 	headTiltPrompt->SetColor( 0.5, 0.0, 0.4 );
 
@@ -677,6 +677,8 @@ void GraspGLObjects::DrawVR( void ) {
 	// Draw the room with non-shiny material.
 	glUsefulMatteMaterial();
 
+	fOutputDebugString( "Draw room, glasses, gazeLaser\n" );
+
 	// Because the skies are attached to the room, one need not draw them explicitly.
 	// I leave these lines here in comments, though, to remind us that they will be drawn.
 	// If we ever decide not to attach them to the room, these lines should be uncommented.
@@ -690,6 +692,9 @@ void GraspGLObjects::DrawVR( void ) {
 	// I am still trying to get specular reflections to work.
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
+
+	fOutputDebugString( "Draw everything else.\n" );
+
 
 	// Lasers in the hand should become diffuse if they do not point down the tunnel.
 	Vector3 tunnel_axis, hand_axis;
@@ -711,15 +716,15 @@ void GraspGLObjects::DrawVR( void ) {
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
 	straightAheadTarget->Draw();
+	positionOnlyTarget->Draw();
 
 	fuzzyLaser->Draw();
 
 	// The following are now attached to the room, so they get drawn with the room, if activated.
-	//orientationTarget->Draw();
-	//positionOnlyTarget->Draw();
+	// orientationTarget->Draw();
 	//response->Draw();
 	//successIndicator->Draw();
-	// raiseHandIndicator->Draw();
+	//raiseHandIndicator->Draw();
 
 }
 
@@ -897,7 +902,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_
 
 
 	structure->SetColor( Translucid( Translucid( GRAY ) ) );
-//	structure->SetOrientation( 0.0, 0.0, 90.0 );
+	//	structure->SetOrientation( 0.0, 0.0, 90.0 );
 	return( structure );
 }
 
@@ -1015,14 +1020,14 @@ void Glasses::SetColor( float r, float g, float b, float a = 1.0 ) {
 
 
 Vector3 FuzzyPointer::beamOffset[LASER_BEAMS] = {
-		{  0.2,  0.5, 1.0 },
-		{ -0.4,  0.9, 2.0 },
-		{ -0.8, -0.3, 3.0 },
-		{  0.3, -0.9, 4.0 },
-		{  0.6,  0.1, 5.0 },
-		{ -0.3,  0.2, 6.0 },
-		{ -0.2, -0.5, 7.0 }
-	};
+	{  0.2,  0.5, 1.0 },
+	{ -0.4,  0.9, 2.0 },
+	{ -0.8, -0.3, 3.0 },
+	{  0.3, -0.9, 4.0 },
+	{  0.6,  0.1, 5.0 },
+	{ -0.3,  0.2, 6.0 },
+	{ -0.2, -0.5, 7.0 }
+};
 
 FuzzyPointer::FuzzyPointer() {
 
