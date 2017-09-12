@@ -33,7 +33,7 @@ namespace Grasp {
 	using namespace PsyPhy;
 
 #define LASER_BEAMS 7
-#define LASER_FOCUSED_SIZE 20.0
+#define LASER_FOCUSED_SIZE 10.0
 #define LASER_DIFFUSION_CONSTANT 1.0
 #define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.99
 
