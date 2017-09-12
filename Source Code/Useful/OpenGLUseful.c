@@ -35,7 +35,7 @@ void glUsefulDefaultSpecularLighting( double intensity ) {
 	GLfloat LightDiffuse[]  = { diffuse, diffuse, diffuse, 1.0};
 	GLfloat LightSpecular[] = { fintensity, fintensity, fintensity, 1.0};
 
-	fOutputDebugString( "glUsefulDefaultSpecularLighting( %f )\n", intensity );
+	//fOutputDebugString( "glUsefulDefaultSpecularLighting( %f )\n", intensity );
 
 	glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
 	glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
@@ -63,7 +63,7 @@ void glUsefulCodaLighting( void ) {
   GLfloat LightDiffuse[]  = { 0.50, 0.50, 0.50, 1.0};
   GLfloat LightSpecular[] = { 0.50, 0.50, 0.50, 1.0};
   
-  fOutputDebugString( "glUsefulCodaLighting()\n" );
+  //fOutputDebugString( "glUsefulCodaLighting()\n" );
 
   glLightfv( GL_LIGHT0, GL_POSITION, LightPosition );
   glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
@@ -91,7 +91,7 @@ void glUsefulAutoLighting( double intensity ) {
   GLfloat LightDiffuse[]  = { intensityf, intensityf, intensityf, 1.0};
   GLfloat LightSpecular[] = { 0.00, 0.00, 0.00, 1.0};
 
-	fOutputDebugString( "glUsefulAutoLighting( %f )\n", intensity );
+	//fOutputDebugString( "glUsefulAutoLighting( %f )\n", intensity );
 
   glLightfv( GL_LIGHT0, GL_AMBIENT, LightAmbient );
   glLightfv( GL_LIGHT0, GL_DIFFUSE, LightDiffuse );
@@ -122,7 +122,7 @@ void glUsefulShinyMaterial( void ) {
 	GLfloat MaterialSpecular[]  = { 0.90f, 0.90f, 0.90f, 1.0f};
 	GLfloat MaterialShininess[] = { 50.0 };
 
-	fOutputDebugString( "glUsefulShinyMaterial()\n" );
+	//fOutputDebugString( "glUsefulShinyMaterial()\n" );
 
 	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
@@ -142,7 +142,7 @@ void glUsefulMatteMaterial( void ) {
 	GLfloat MaterialSpecular[]  = { 0.0f, 0.0f, 0.0f, 1.0f};
 	GLfloat MaterialShininess[] = { 0.0f };
 
-	fOutputDebugString( "glUsefulMatteMaterial()\n" );
+	//fOutputDebugString( "glUsefulMatteMaterial()\n" );
 
 	glMaterialfv( GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient );
 	glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse );
@@ -160,7 +160,7 @@ void glUsefulMatteMaterial( void ) {
 //  and prior to the rendering of each scene. 
 void glUsefulInitializeDefault ( void ) {
 
-	fOutputDebugString( "glUsefulInitializeDefault()\n" );
+	//fOutputDebugString( "glUsefulInitializeDefault()\n" );
 
 	glUsefulAutoLighting( 0.7 );
 	glUsefulDefaultMaterial();
@@ -180,8 +180,8 @@ void glUsefulInitializeDefault ( void ) {
 // Get ready to do 3D rendering with GL.
 void glUsefulPrepareRendering ( void ) {
 
-	fOutputDebugString( "\n" );
-	fOutputDebugString( "glUsefulPrepareRendering()\n" );
+	//fOutputDebugString( "\n" );
+	//fOutputDebugString( "glUsefulPrepareRendering()\n" );
 
 	// This should be intergrated more cleanly into the OpenGLObjects system.
 	// Perhaps it should be a method of OpenGLWindow.

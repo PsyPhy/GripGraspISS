@@ -12,7 +12,7 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::secondsToBeGood = 2.0;
+const int GraspVR::secondsToBeGood = 0.75;
 const int GraspVR::handSecondsToBeGood = 3.0;
 const int GraspVR::secondsToBeBad = 2.0;
 
@@ -30,6 +30,11 @@ double	GraspVR::straightAheadThreshold = 0.995;	// approx. 2.5° Corresponds roug
 double GraspVR::handFilterConstant = 2.0;
 
 double GraspVR::interpupillary_distance = 6.0;
+// Define how much the chest markers are ahead of or behind the HMD markers
+//  in depth when the subject is looking level. Value is in mm. Positive if the
+//  chest markers are in front of the HMD, negative if behind.
+double GraspVR::chestOffset = 0.0;
+
 double GraspVR::near_clipping = 1.0;
 double GraspVR::far_clipping = 5000.0;
 
@@ -276,7 +281,7 @@ ProjectileState GraspVR::HandleProjectiles( void ) {
 double GraspVR::SetDesiredHeadRoll( double desired_roll_angle, double tolerance ) {
 	desiredHeadRoll = desired_roll_angle;
 	desiredHeadRollTolerance = tolerance;
-	TimerSet( headGoodTimer, secondsToBeGood);
+	TimerSet( headGoodTimer, 0.5 );
 	TimerSet( headBadTimer, 0.0 );
 	return( desiredHeadRoll );
 }
@@ -361,7 +366,11 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	// The centroid of the chest marker plate should be more reproducible than its orientation.
 	// So we take the line from the centroid of the chest marker plate to the centroid of the HMD markers.
 	Vector3 chest_to_eyes;
-	SubtractVectors( chest_to_eyes, headPose.pose.position, chestPose.pose.position );
+	Vector3 chest;
+	CopyVector( chest, chestPose.pose.position );
+	chest[Z] += chestOffset;
+
+	SubtractVectors( chest_to_eyes, headPose.pose.position, chest );
 	NormalizeVector( chest_to_eyes );
 	// The x-axis in the chest marker plate local reference will be in the plane of the plate and should 
 	// be more-or-less perpendicular to the chest-to-eyes vector, which is all we need, then, to define 
@@ -383,9 +392,9 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	bool centered;
 	RotateVector( gaze, headPose.pose.orientation, kVector );
 	if ( (product = DotProduct( gaze, straight_behind )) < straightAheadThreshold ) {
-		centered = false;
 		renderer->gazeLaser->SetColor( GRAY );
 		renderer->straightAheadTarget->SetColor( ORANGE );
+		centered = false;
 	}
 	else {
 		renderer->gazeLaser->SetColor( MAGENTA );
@@ -410,7 +419,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	// So rather than comparing jVector to jVector between the HMD and the chest plate, we 
 	// take the cross product of the vector from chest centroid to HMD centroid and the 
 	// vector from ear to ear. I call this vector 'nose', for no particularly good reason.
-	// If the roll angle of the head is zero, the artan of the length of nose should be 90°.
+	// If the roll angle of the head is zero, the arctan of the length of nose should be 90°.
 	Vector3 nose;
 	ComputeCrossProduct( nose, chest_to_eyes, ear_to_ear );
 	product = VectorNorm( nose );
@@ -434,7 +443,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	else renderer->lowerHandPrompt->Disable();
 	// Must have the gaze centered to be aligned.
 	if ( !centered ) {
-		TimerSet( headGoodTimer, secondsToBeGood );
+		// TimerSet( headGoodTimer, secondsToBeGood );
 		return( misaligned );
 	}
 	// Now check for the actual head roll alignment, adding in some hysteresis.
@@ -579,6 +588,12 @@ void GraspVR::Render( void ) {
 
 	HandleSpinningPrompts();
 
+	// Prepare the GL graphics state for drawing in a way that is compatible 
+	//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
+	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
+	//  do this just once at the beginning, e.g. in CreateObjects.
+	glUsefulPrepareRendering();
+
 	for (int eye = 0; eye < 2; ++eye) {
 
 		// Get ready to draw into one of the eyes.
@@ -586,12 +601,6 @@ void GraspVR::Render( void ) {
 
 		// Set up the viewing transformations.
 		display->ApplyViewpoint( viewpoint, (Eye) eye );
-
-		// Prepare the GL graphics state for drawing in a way that is compatible 
-		//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
-		//  case other GL stuff is going on elsewhere. Otherwise, we could probably
-		//  do this just once at the beginning, e.g. in CreateObjects.
-		glUsefulPrepareRendering();
 
 		// Draw the objects in the world.
 		renderer->DrawVR();

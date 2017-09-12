@@ -233,11 +233,15 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 	Assembly *target = new Assembly();
 	Sphere *sphere = new Sphere( room_radius - 100.0 );
 	target->AddComponent( sphere );
-	target->SetColor( Translucid( ORANGE ) );
+	target->SetColor( Translucid( CYAN ) );
+
+	// I put back the sphere so that we don't get a flattened disk in an oblique view.
+	// I changed the color to CYAN to provide a better background to the yellow-red hand.
+
 	//Disk *disk = new Disk( room_radius - 80.0, 0.0 );//Tagliabue (disk instead of sphere otherwise it hides 
 	//disk->SetPosition(0.0 , 0.0 , 5.0);//Tagliabue (moved slightly in front of the sky otherwhise interferences)
 	//target->AddComponent( disk );//Tagliabue
-	target->SetColor( Translucid( ORANGE ) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
+	//target->SetColor( Translucid( ORANGE ) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
 	return target;
 }
 
@@ -302,7 +306,7 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 	// Add a laser pointer to the end.
 	Assembly *laser = CreateFuzzyLaserPointer();
 	// This laser is always the same color.
-	laser->SetColor( BLUE );
+	laser->SetColor( MAGENTA );
 	tool->AddComponent( laser );
 
 	SetHandColor( tool, true );
@@ -346,7 +350,7 @@ Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 FuzzyPointer *GraspGLObjects::CreateFuzzyLaserPointer( void ) {
 	FuzzyPointer *laserPointer = new FuzzyPointer();
 	laserPointer->SetOffset( 0.0, 0.0, - ( room_length / 2.0 - 2.0 * room_radius ) );
-	laserPointer->SetColor( 0.0, 0.0, 1.0, 1.0 );
+	laserPointer->SetColor( 1.0, 0.0, 1.0, 1.0 );
 	// Laser is off by default.
 	laserPointer->Disable();
 	return laserPointer;
@@ -561,7 +565,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	CreateTextures();
 
 	fuzzyLaser = CreateFuzzyLaserPointer();
-	fuzzyLaser->SetColor( 0.0, 0.0, 1.0 );
+	fuzzyLaser->SetColor( 1.0, 0.0, 1.0 );
 
 	room = CreateRoom();
 	glasses = CreateGlasses();
@@ -672,12 +676,12 @@ void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_erro
 // Note that only those objects that are currently active are actually drawn.
 void GraspGLObjects::DrawVR( void ) {
 
-	SetLighting();
+	// SetLighting();
 
 	// Draw the room with non-shiny material.
 	glUsefulMatteMaterial();
 
-	fOutputDebugString( "Draw room, glasses, gazeLaser\n" );
+	// fOutputDebugString( "Draw room, glasses, gazeLaser\n" );
 
 	// Because the skies are attached to the room, one need not draw them explicitly.
 	// I leave these lines here in comments, though, to remind us that they will be drawn.
@@ -693,7 +697,7 @@ void GraspGLObjects::DrawVR( void ) {
 	// Someday, the material should be made part of the object.
 	glUsefulShinyMaterial();
 
-	fOutputDebugString( "Draw everything else.\n" );
+	// fOutputDebugString( "Draw everything else.\n" );
 
 
 	// Lasers in the hand should become diffuse if they do not point down the tunnel.

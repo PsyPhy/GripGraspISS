@@ -15,6 +15,8 @@
 // Make it easier to construct messages to output in the debug window.
 int fOutputDebugString( const char *format, ... ) {
 
+#ifdef _DEBUG
+
 	int items;
 
 	va_list args;
@@ -31,5 +33,9 @@ int fOutputDebugString( const char *format, ... ) {
 	OutputDebugString( message );
 
 	return( items );
+
+#else
+	return( 0 );
+#endif
 
 }
