@@ -560,8 +560,6 @@ Assembly *GraspGLObjects::CreateProjectiles( int fingers ) {
 
 void GraspGLObjects::CreateVRObjects( void ) {
 
-	//glUsefulInitializeDefault();
-	//SetLighting();
 	CreateTextures();
 
 	fuzzyLaser = CreateFuzzyLaserPointer();
@@ -676,29 +674,20 @@ void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_erro
 // Note that only those objects that are currently active are actually drawn.
 void GraspGLObjects::DrawVR( void ) {
 
-	// SetLighting();
-
 	// Draw the room with non-shiny material.
 	glUsefulMatteMaterial();
-
-	// fOutputDebugString( "Draw room, glasses, gazeLaser\n" );
 
 	// Because the skies are attached to the room, one need not draw them explicitly.
 	// I leave these lines here in comments, though, to remind us that they will be drawn.
 	// If we ever decide not to attach them to the room, these lines should be uncommented.
 	// DrawLightSky();
 	// DrawDarkSky();
+
+	// Things to be drawn in matte finish (no specular).
 	room->Draw();
 	glasses->Draw();
 	gazeLaser->Draw();
-
-	// Draw the other objects with the hopes of seeing specular reflections. 
-	// I am still trying to get specular reflections to work.
-	// Someday, the material should be made part of the object.
-	glUsefulShinyMaterial();
-
-	// fOutputDebugString( "Draw everything else.\n" );
-
+	straightAheadTarget->Draw();
 
 	// Lasers in the hand should become diffuse if they do not point down the tunnel.
 	Vector3 tunnel_axis, hand_axis;
@@ -709,18 +698,23 @@ void GraspGLObjects::DrawVR( void ) {
 	SetHandLaserEccentricity( kTool, projection );
 	SetHandLaserEccentricity( kkTool, projection );
 
-	headTiltPrompt->Draw();
-	handRollPrompt->Draw();
+	// Draw the other objects with the hopes of seeing specular reflections. 
+	glUsefulShinyMaterial();
+
 	vTool->Draw();
 	vkTool->Draw();
 	kTool->Draw();
 	kkTool->Draw();
 	projectiles->Draw();
+
+	// Draw some other objects in matte.
+	glUsefulMatteMaterial();
+
+	headTiltPrompt->Draw();
+	handRollPrompt->Draw();
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
-	straightAheadTarget->Draw();
-	positionOnlyTarget->Draw();
 
 	fuzzyLaser->Draw();
 
@@ -729,6 +723,7 @@ void GraspGLObjects::DrawVR( void ) {
 	//response->Draw();
 	//successIndicator->Draw();
 	//raiseHandIndicator->Draw();
+	//positionOnlyTarget->Draw();
 
 }
 

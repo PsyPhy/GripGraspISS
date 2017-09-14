@@ -155,12 +155,6 @@ void GraspVR::InitializeVR( void ) {
 
 	// Set up a default GL rendering context.
 	glUsefulInitializeDefault();
-
-	// Tone down the intensity a little bit from the default lighting.
-	// Auto lighting is used to avoid giving a reference from directional lighting.
-	// I don't fully understand the lighting thing, because when I set the intensity to 0
-	//  one can still see the objects. But nevertheless this works to reduce the intensity somewhat.
-	//glUsefulAutoLighting( 0.7 );
 	glUsefulDefaultSpecularLighting( 0.7 );
 	glUsefulShinyMaterial();
 

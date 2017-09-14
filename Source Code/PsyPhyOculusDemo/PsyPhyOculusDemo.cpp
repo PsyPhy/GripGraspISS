@@ -227,7 +227,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 		// Yaw is the nominal orientation (straight ahead) for the player in the horizontal plane.
 		// Yaw is expressed here in radians.
-		static float Yaw( (float) Pi );  
+		static float Yaw( (float) 0.0 );  
 
 		// Boresight the Oculus tracker on 'B'.
 		// This will only affect the PsyPhy rendering.
