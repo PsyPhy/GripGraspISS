@@ -51,7 +51,7 @@ void CreatePsyPhyObjects ( void ) {
 
 	// A disk on the front wall, something to look at.
 	disk = new Disk( 4.0 );
-	disk->SetPosition( 0.0, 0.0, -9.0 );
+	disk->SetPosition( 0.0, 0.0, - 9.0 );
 	disk->SetColor( 0.0, 0.1, 0.0 );
 	room->AddComponent( disk );
 
