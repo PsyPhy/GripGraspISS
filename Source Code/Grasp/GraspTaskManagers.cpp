@@ -541,6 +541,12 @@ GraspTrialState GraspTaskManager::UpdateStraightenHead( void ) {
 		return( TrialInterrupted );
 	}
 
+	// The subject or an operator can invalidate the previous trial by pressing Return either on the keyboard or on the remote.
+	if ( display->KeyDownEvents('\r') && currentTrial > 0 ) {
+		interruptCondition = INVALIDATE_TRIAL;
+		return( TrialInterrupted ); 
+	}
+
 	switch ( straightenHeadMethod ) {
 
 	case CODA_STRAIGHTEN:
@@ -856,6 +862,12 @@ GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) {
 	// terminate the current trial and move on to the next. For the moment we do 
 	// not differentiate between hits and misses, but we could do some visual effects.
 	ProjectileState pstate = HandleProjectiles();
+	// The subject or an operator can abort a trial by pressing Return either on the keyboard or on the remote.
+	// Here, the trial has already been recorded, but aborting will have the same effect as invalidating.
+	if ( display->KeyDownEvents('\r') ) {
+		interruptCondition = MANUAL_REJECT_TRIAL;
+		return( TrialInterrupted ); 
+	}
 	if ( pstate == hit || pstate == miss ) return( TrialCompleted );
 	// Otherwise, continue in this state.
 	return( currentState );
@@ -963,7 +975,7 @@ void  GraspTaskManager::ExitDemo( void ) {
 //  show to the subect the condition that provoked the error.
 // Show a message, then move on to next trial, or exit the sequence.
 void GraspTaskManager::EnterTrialInterrupted( void ) {
-	fprintf( response_fp, " %f; interrupted\n", 0.0 );
+
 	// Tell the ground what caused the interruption.
 	ShowProgress( TrialInterrupted, interruptCondition );
 	// Show the cause of the interruption.
@@ -978,6 +990,7 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 	case HEAD_TILT_TIMEOUT: interrupt_indicator = renderer->headTiltTimeoutIndicator; break;
 	case HEAD_MISALIGNMENT: interrupt_indicator = renderer->headMisalignIndicator; break;
 	case MANUAL_REJECT_TRIAL: interrupt_indicator = renderer->manualRejectIndicator; break;
+	case INVALIDATE_TRIAL: interrupt_indicator = renderer->invalidateTrialIndicator; break;
 	}
 	interrupt_indicator->Enable();
 	renderer->glasses->Disable();
@@ -989,14 +1002,29 @@ void GraspTaskManager::EnterTrialInterrupted( void ) {
 GraspTrialState GraspTaskManager::UpdateTrialInterrupted( void ) { 
 	// Show the message until the subject presses a button.
 	if ( Validate() ) {		
-		// If retry count has not been exceeded and if there is room
-		//  copy the current trial paramters to the end of the list
-		//  of trials to be performed.
-		RepeatTrial( currentTrial ); 
-		// Move on to the next trial.
-		currentTrial++;
-		if ( currentTrial < nTrials ) return( StartTrial ); 
-		else return( BlockCompleted );
+		if ( interruptCondition == INVALIDATE_TRIAL ) {
+
+			fprintf( response_fp, " %f; preceding trial invalid\n", 0.0 );
+			fOutputDebugString( "Trial %d has been marked as invalid and will be repeated.\n", currentTrial - 1 );
+
+			// If retry count has not been exceeded and if there is room
+			//  copy the previous trial paramters to the end of the list
+			//  of trials to be performed.
+			RepeatTrial( currentTrial - 1 ); 
+			// Go back to restart the current trial.
+			return( StartTrial ); 
+		}
+		else {
+			fprintf( response_fp, " %f; current trial interrupted\n", 0.0 );
+			// If retry count has not been exceeded and if there is room
+			//  copy the current trial paramters to the end of the list
+			//  of trials to be performed.
+			RepeatTrial( currentTrial ); 
+			// Move on to the next trial.
+			currentTrial++;
+			if ( currentTrial < nTrials ) return( StartTrial ); 
+			else return( BlockCompleted );
+		}
 	}
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );

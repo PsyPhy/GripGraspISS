@@ -36,6 +36,7 @@ const char *GraspGLObjects::hand_should_not_bitmap = "Bmp\\HandShouldNot.bmp";
 const char *GraspGLObjects::hand_rotate_timeout_bitmap = "Bmp\\HandRotateTimeout.bmp";
 const char *GraspGLObjects::straighten_head_bitmap = "Bmp\\StraightenHead.bmp";
 const char *GraspGLObjects::manual_reject_bitmap = "Bmp\\RejectTrial.bmp";
+const char *GraspGLObjects::invalidate_trial_bitmap = "Bmp\\InvalidateTrial.bmp";
 const char *GraspGLObjects::vr_completed_bitmap = "Bmp\\VRCompleted.bmp";
 const char *GraspGLObjects::demo_bitmap = "Bmp\\DemoWorking.bmp";
 
@@ -463,6 +464,10 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	manual_reject_texture = new Texture( manual_reject_bitmap );
 	manualRejectIndicator = CreateIndicator( manual_reject_texture );
 	spinners->AddComponent( manualRejectIndicator );
+
+	invalidate_trial_texture = new Texture( invalidate_trial_bitmap );
+	invalidateTrialIndicator = CreateIndicator( invalidate_trial_texture );
+	spinners->AddComponent( invalidateTrialIndicator );
 
 	head_align_timeout_texture = new Texture( head_align_timeout_bitmap );
 	headAlignTimeoutIndicator = CreateIndicator( head_align_timeout_texture );
