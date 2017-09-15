@@ -694,15 +694,6 @@ void GraspGLObjects::DrawVR( void ) {
 	gazeLaser->Draw();
 	straightAheadTarget->Draw();
 
-	// Lasers in the hand should become diffuse if they do not point down the tunnel.
-	Vector3 tunnel_axis, hand_axis;
-	MultiplyVector( tunnel_axis, kVector, room->orientation );
-	MultiplyVector( hand_axis, kVector, hand->orientation );
-	double projection = DotProduct( hand_axis, tunnel_axis );
-	SetHandLaserEccentricity( vkTool, projection );
-	SetHandLaserEccentricity( kTool, projection );
-	SetHandLaserEccentricity( kkTool, projection );
-
 	// Draw the other objects with the hopes of seeing specular reflections. 
 	glUsefulShinyMaterial();
 
