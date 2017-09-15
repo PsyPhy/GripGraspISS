@@ -47,7 +47,7 @@ echo %yy% %mm% %dd% Year: %year% Day: %day%
 
 set gROOT=g%year%%day%
 set TARFILE=%gROOT%.tar
-set ZIPFILE=%gROOT%.gzp
+// set ZIPFILE=%gROOT%.gzp
 set TARMD5=%gROOT%.md5
 set FILESMD5=%gROOT%Files.md5
 echo Tar filename is "%TARFILE%"
@@ -68,10 +68,11 @@ move /Y %TARFILE% "%here%\Results"
 popd
 
 pushd Results
-echo Zipping the tar file.
-"%here%"\%UTILS%\gzip.exe --stdout %TARFILE% > %ZIPFILE%
+// echo Zipping the tar file.
+// "%here%"\%UTILS%\gzip.exe --stdout %TARFILE% > %ZIPFILE%
 echo Split into manageable chunks.
-"%here%"\%UTILS%\split.exe --bytes=40m %ZIPFILE% %gROOT%.
+// "%here%"\%UTILS%\split.exe --bytes=40m %ZIPFILE% %gROOT%.
+"%here%"\%UTILS%\split.exe --bytes=40m %TARFILE% %gROOT%.
 echo Create MD5 checksums for archive and chunks.
 "%here%"\%UTILS%\md5.exe %gRoot%.* > "%here%"\%TARMD5%
 move "%here%"\%TARMD5% .
@@ -99,7 +100,8 @@ if ERRORLEVEL == 1 GOTO :ERREXIT
 
 REM Normal Exit
 REM Clean up.
-del /Q %gROOT%.?? %ZIPFILE% %TARMD5% %TARFILE%
+// del /Q %gROOT%.?? %ZIPFILE% %TARMD5% %TARFILE%
+del /Q %gROOT%.?? %TARMD5% %TARFILE%
 popd
 exit 0
 
