@@ -25,7 +25,6 @@ void VtoVK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand that is driven 
 	//  by the mouse or buttons.
 	renderer->vkTool->Enable();
-	renderer->EnableHandLaser( renderer->vkTool );
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }
