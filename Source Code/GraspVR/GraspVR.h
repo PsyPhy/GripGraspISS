@@ -143,6 +143,9 @@ namespace Grasp {
 		// We want prompts to spin to avoid providing an implicit reference frame by text prompts.
 		void			HandleSpinningPrompts( void );
 
+		// Hand the visibility and diffusion of the laser pointers.
+		void			HandleLasers( void );
+
 		// Drives movements of the projectiles.
 		Vector3			projectileDirection;
 		ProjectileState	currentProjectileState;
