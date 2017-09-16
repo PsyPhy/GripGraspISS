@@ -7,5 +7,6 @@
     <None Include="LoadCodaCals.bat" />
     <None Include="RunGRASP.bat" />
     <None Include="MakeRigidBodies.bat" />
+    <None Include="RunDaemon.bat" />
   </ItemGroup>
 </Project>

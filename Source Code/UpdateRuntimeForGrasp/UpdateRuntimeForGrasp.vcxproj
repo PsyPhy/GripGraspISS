@@ -75,6 +75,7 @@
     <None Include="InstallGrasp.release.mak" />
     <None Include="LoadCodaCals.bat" />
     <None Include="MakeRigidBodies.bat" />
+    <None Include="RunDaemon.bat" />
     <None Include="RunGRASP.bat" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
