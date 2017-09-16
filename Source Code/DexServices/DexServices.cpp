@@ -1,9 +1,10 @@
-	// Module: DexServices
+// Module: DexServices
 // This is the main DLL file.
 
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -42,9 +43,6 @@ int DexServices::Connect ( void ) {
 	printDateTime( log );
 	fprintf( log, " Attempting connection to DEX.\n" );
 
-	// default to localhost
-	const char *server_name= DEFAULT_SERVER;
-	unsigned short port = DEFAULT_PORT;
 	int retval;
 	unsigned long addr;
 	int socket_type = SOCK_STREAM;
@@ -62,12 +60,12 @@ int DexServices::Connect ( void ) {
 		fOutputDebugString( "DexServices: WSAStartup() OK.\n");
 	}
 
-	{ // Convert nnn.nnn address to a usable one
-		addr = inet_addr(server_name);
-
+	{ 
+		// Convert nnn.nnn address to a usable one
+		addr = inet_addr( server_name );
 		if(addr==INADDR_NONE)
 		{
-			fOutputDebugString( "DexServices: problem interpreting IP address.\n");
+			fOutputDebugString( "DexServices: problem interpreting IP address: %s.\n", server_name );
 			WSACleanup();
 			return( -2 );
 		}
@@ -75,12 +73,12 @@ int DexServices::Connect ( void ) {
 
 	// Copy the resolved information into the sockaddr_in structure
 
-	memset(&server, 0, sizeof(server));
-	memcpy(&(server.sin_addr), &addr, 4);
+	memset( &server, 0, sizeof(server) );
+	memcpy( &(server.sin_addr), &addr, 4 );
 	server.sin_family = AF_INET;
-	server.sin_port = htons(port);
+	server.sin_port = htons( server_port );
 
-	dexSocket = socket(AF_INET, socket_type, 0); /* Open a socket */
+	dexSocket = socket( AF_INET, socket_type, 0 ); /* Open a socket */
 
 	if ( dexSocket < 0 )
 	{
@@ -112,17 +110,20 @@ int DexServices::Connect ( void ) {
 };
 
 void DexServices::Disconnect( void ) {
+	fOutputDebugString( "DexServices: Client disconnecting.\n" );
 	// If the connection failed, this should fail, too, but I don't really care.
 	closesocket( dexSocket );
 	WSACleanup();
 	printDateTime( log );
 	fprintf( log, " Connection closed.\n" );
+	fOutputDebugString( "DexServices: Client disconnected.\n" );
 }
 
 void DexServices::Release( void ) {
 	printDateTime( log );
 	fprintf( log, " Closing log file.\n" );
 	fclose( log );
+	fOutputDebugString( "DexServices: released.\n" );
 }
 
 int DexServices::Send( const unsigned char *packet, int size ) {
@@ -141,22 +142,20 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 
 void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[MAX_UNITS] ) {
 
-	// We need a Pose Tracker and a Tracker just to get access to their internal copy functions.
-	// I declare them static here so that they don't explode the stack.
-	static PsyPhy::PoseTracker		pm;
-	static CodaRTnetNullTracker		tr;
+	// fOutputDebugString( "DexServices: AddDataSlice()\n" );
+
 	// Fill the current slice with the new data.
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
 	rt.Slice[slice_count].objectStateBits = objectStateBits;
 	// Copy the current poses to the slice.
-	pm.CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].codaHmd, codaHmd );
-	pm.CopyTrackerPose( rt.Slice[slice_count].hand, hand );
-	pm.CopyTrackerPose( rt.Slice[slice_count].chest, chest );
-	pm.CopyTrackerPose( rt.Slice[slice_count].mouse, mouse );
+	CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
+	CopyTrackerPose( rt.Slice[slice_count].codaHmd, codaHmd );
+	CopyTrackerPose( rt.Slice[slice_count].hand, hand );
+	CopyTrackerPose( rt.Slice[slice_count].chest, chest );
+	CopyTrackerPose( rt.Slice[slice_count].mouse, mouse );
 	// And the marker information (3D position and visibility).
-	for ( int unit = 0; unit < MAX_UNITS; unit++ ) tr.CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
 
 	// Dex RT Packets can only be sent two times per second. 
 	// So we pack multiple data slices into a single packet.
@@ -176,6 +175,8 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 }
 
 int DexServices::SendScienceRealtimeData( void ) {
+
+	// fOutputDebugString( "DexServices: SendScienceRealtimeData()\n" );
 
 	// A buffer to hold the string of bytes that form the packet.
 	u8 packet[10240];
@@ -209,7 +210,7 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 	static_step = step;
 	static_substep = substep;
 	static_tracker_status = tracker_status;
-	
+
 	if ( TimerTimeout( info_timer ) ) {
 		// Fill the packet with info.
 		hk.current_protocol = protocol;
@@ -312,4 +313,149 @@ void DexServices::ParseCommandLine( char *command_line ) {
 	}
 
 }
+
+void DexServices::InitializeProxySocket( void ) {
+
+	WSADATA wsaData;
+	int iResult;
+
+	struct addrinfo *result = NULL;
+	struct addrinfo hints;
+
+	// Initialize Winsock
+	iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+	if ( iResult != 0 ) {
+		fOutputDebugString( "WSAStartup failed with error: %d\n", iResult );
+		return;
+	}
+
+	ZeroMemory( &hints, sizeof(hints) );
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+	hints.ai_flags = AI_PASSIVE;
+
+	// Resolve the server address and port
+	iResult = getaddrinfo( NULL, PROXY_DEX_PORT_STRING, &hints, &result );
+	if ( iResult != 0 ) {
+		fOutputDebugString("getaddrinfo() failed with error: %d\n", iResult);
+		WSACleanup();
+		return;
+	}
+
+	// Create a SOCKET for connecting to client
+	proxySocket = socket( result->ai_family, result->ai_socktype, result->ai_protocol );
+	if ( proxySocket == INVALID_SOCKET ) {
+		fOutputDebugString( "socket() failed with error: %ld\n", WSAGetLastError() );
+		freeaddrinfo( result );
+		WSACleanup();
+		return;
+	}
+
+	// Setup the TCP listening socket
+	iResult = bind( proxySocket, result->ai_addr, (int)result->ai_addrlen );
+	if (iResult == SOCKET_ERROR) {
+		fOutputDebugString("bind() failed with error: %d\n", WSAGetLastError());
+		freeaddrinfo( result );
+		closesocket( proxySocket );
+		WSACleanup();
+		return;
+	}
+
+	unsigned long nonblocking = 1;
+	ioctlsocket( proxySocket, FIONBIO, &nonblocking );
+	// Listen until we get a connection.
+	fOutputDebugString( "Listening for a client connection on port %s.\n", PROXY_DEX_PORT_STRING  );
+	iResult = listen( proxySocket, SOMAXCONN );
+	if (iResult == SOCKET_ERROR) {
+		fOutputDebugString("listen() failed with error: %d\n", WSAGetLastError());
+		closesocket( proxySocket );
+		WSACleanup();
+		return;
+	}
+
+	// We don't need the address info anymore, so free it.
+	freeaddrinfo(result);
+
+}
+
+bool DexServices::HandleProxyConnection( void ) {
+
+	// If there is no connected client, the socket will be marked as INVALID. 
+	if ( clientSocket == INVALID_SOCKET ) {
+		// If not already connected, attempt to accept a new connect, but don't block.
+		clientSocket = accept( proxySocket, NULL, NULL );
+		int error_code;
+		if ( clientSocket == INVALID_SOCKET ) {
+			if ( WSAEWOULDBLOCK != ( error_code = WSAGetLastError() ) ) {
+				// If we are here, there was an error other than that there is no pending connection.
+				fOutputDebugString( "accept() failed with error: %d\n", error_code );
+				closesocket( proxySocket );
+				WSACleanup();
+			}
+			// Whether there was an error or just that there is no pending connection,
+			// return false to indicate that we are not connected.
+			return( false );
+		}
+		TimerSet( client_connection_timer, CLIENT_CONNECTION_TIMEOUT );
+	}
+
+	// We are connected so attempt to read a packet.
+	char buffer[1024];
+	int iResult = recv( clientSocket, buffer, sizeof( buffer ), 0);
+	if ( iResult > 0 ) {
+		// Process the packet.
+		if ( iResult == sizeof( DexServicesPacket ) ) {
+			DexServicesPacket *pk = (DexServicesPacket *) buffer;
+			switch ( pk->command ) {
+
+			case TASK:
+				SendTaskInfo( pk->user, pk->protocol, pk->task, pk->step, pk->substep, pk->tracker );
+				break;
+
+			case SUBSTEP:
+				SendSubstep( pk->substep );
+				break;
+
+			case TRACKER_STATUS:
+				SendTrackerStatus( pk->tracker );
+				break;
+
+			case PICTURE:
+				SnapPicture( pk->tag );
+				break;
+
+			}
+		}
+
+		// Reset the timeout timer because we received a packet.
+		TimerSet( client_connection_timer, CLIENT_CONNECTION_TIMEOUT );
+		// Let the caller know that we are connected.
+		return( true );
+	}
+
+	if ( TimerTimeout( client_connection_timer ) ) {
+		// We didn't get anything from the client for some time
+		// check to see if the connection still alive by sending something.
+		// What is sent is not actually read on the other side.
+		char discard[8] = "DISCARD";
+		iResult = send( clientSocket, discard, sizeof( discard ), 0 );
+		if ( iResult < 0 ) {
+			closesocket( clientSocket );
+			clientSocket = INVALID_SOCKET;
+			return( false );
+		}
+		else TimerSet( client_connection_timer, CLIENT_CONNECTION_TIMEOUT );
+	}
+
+	return( true );
+
+}
+
+void DexServices::ReleaseProxySocket( void ) {
+	closesocket( proxySocket );
+	closesocket( clientSocket );
+	WSACleanup();
+}
+
 

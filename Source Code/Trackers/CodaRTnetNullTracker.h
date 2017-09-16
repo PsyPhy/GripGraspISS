@@ -46,6 +46,8 @@ public:
 	virtual void Quit( void );
 	virtual int  Update( void );
 
+	virtual void RestartContinuousAcquisition( void );
+
 };
 
 };

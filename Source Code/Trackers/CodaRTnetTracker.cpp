@@ -24,7 +24,6 @@
 
 using namespace PsyPhy;
 
-
 // Starting up the CODA takes time. It would be nice if we could leave it
 // in a running state after the first startup, to go faster on subsequent trials.
 // Set this flag to force a shutdown before each start up for testing purposes.

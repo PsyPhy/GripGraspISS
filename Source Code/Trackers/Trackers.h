@@ -57,7 +57,10 @@ typedef struct {
 	int		unitFrames;
 } MarkerFrameSet;
 
+
 namespace PsyPhy {
+
+extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 
 class Tracker : public PsyPhy::VectorsMixin {
 
@@ -90,6 +93,14 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual int  Update( void ) = 0;
 		virtual void Quit( void ) = 0;
 
+		// This comes from the need of the CODA RTnet trackers to start and stop continuous
+		//  acquisitions so as to not overrun the memory on the server.
+		// Most trackers will not need these.
+		virtual void StartContinuousAcquisition( void ){}
+		virtual void RestartContinuousAcquisition( void ){}
+		virtual void StopContinuousAcquisition( void ){}
+
+
 		// This is a useful function that depends on GetAcquisitionState().
 		virtual void	WaitAcquisitionCompleted( void );
 
@@ -115,7 +126,6 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual void	GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 		virtual void	SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 
-		void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
 		void	WriteColumnHeadings( FILE *fp, int unit ) ;
 		void	WriteMarkerData( FILE *fp, MarkerFrame &frame ) ;

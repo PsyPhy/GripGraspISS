@@ -20,12 +20,6 @@ int record_length;
 SOCKET sock;
 struct sockaddr_in Sender_addr;
 
-// Place to hold data from VR program.
-TrackerPose	oculusHmdPose;
-TrackerPose	mousePose;
-unsigned int objectStateBits;
-
-
 // A buffer to hold pose data.
 struct {
 	TrackerPose hmd;
@@ -35,7 +29,7 @@ struct {
 
 namespace GraspTrackerDaemon {
 
-	void Form1::InitializeSocket( void ) {
+	void Form1::InitializeBroadcastSocket( void ) {
 		// Initialize a socket to which we will broadcast the data.
 		WSADATA wsaData;
 		WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -86,12 +80,6 @@ namespace GraspTrackerDaemon {
 		// be a good assumption!!!
 		coda->GetAlignmentTransforms( record.alignmentOffset, record.alignmentRotation );
 
-		roll->CopyTrackerPose( oculusHmdPose, NullTrackerPose );
-		oculusHmdPose.visible = false;
-		roll->CopyTrackerPose( mousePose, NullTrackerPose );
-		mousePose.visible = false;
-		objectStateBits = 0x00000000;
-
 	}
 
 	void Form1::ReleaseCoda( void ) {
@@ -106,28 +94,28 @@ namespace GraspTrackerDaemon {
 		trackers->Update();
 		// Fill the record with the marker data from the CODA system.
 		for ( int unit = 0; unit < record.nUnits; unit++ ) {
-			trackers->codaTracker->CopyMarkerFrame(  record.frame[unit], trackers->markerFrame[unit] );
+			CopyMarkerFrame(  record.frame[unit], trackers->markerFrame[unit] );
 		}
-		// Send the tracker info to DEX.
 
 		// Get the poses from the CODA tracker.
 		trackers->hmdTracker->GetCurrentPose( record.codaHmd );
 		trackers->handTracker->GetCurrentPose( record.hand );
 		trackers->chestTracker->GetCurrentPose( record.chest );
 
-		trackers->hmdTracker->CopyTrackerPose( poseData[nPoseSamples].hmd, record.codaHmd );
-		trackers->handTracker->CopyTrackerPose( poseData[nPoseSamples].hand, record.hand );
-		trackers->chestTracker->CopyTrackerPose( poseData[nPoseSamples].chest, record.chest );
+		CopyTrackerPose( poseData[nPoseSamples].hmd, record.codaHmd );
+		CopyTrackerPose( poseData[nPoseSamples].hand, record.hand );
+		CopyTrackerPose( poseData[nPoseSamples].chest, record.chest );
 
 		if (recording) nPoseSamples = ( ++nPoseSamples ) % MAX_FRAMES;
 
 		// Broadcast the record.
 		for ( int prt = 0; prt < TRACKER_DAEMON_PORTS; prt++ ) { 
+			int bytes;
 			Sender_addr.sin_family = AF_INET;
 			Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT + prt );
 			Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 
-			if ( sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr)) < 0)
+			if ( ( bytes = sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr))) < 0)
 			{
 				int error_value = WSAGetLastError();
 				closesocket( sock );
@@ -136,7 +124,7 @@ namespace GraspTrackerDaemon {
 		}
 
 		// Send status to DEX.
-		// dex->AddDataSlice( objectStateBits, oculusHmdPose, record.codaHmd, record.hand, record.chest, mousePose, trackers->markerFrame );
+		dex->AddDataSlice( 0x00, NullTrackerPose, record.codaHmd, record.hand, record.chest, NullTrackerPose, trackers->markerFrame );
 
 		// Update the screen display.
 		String ^line;
@@ -161,13 +149,6 @@ namespace GraspTrackerDaemon {
 			if ( ((mrk+1) % 8) == 0 ) line += "  ";
 		}
 		visibilityTextBox1->Text = line;
-
-		if ( oculusHmdPose.visible ) {
-			char str[256];
-			sprintf( str, "%s %s", trackers->vstr(  oculusHmdPose.pose.position ), trackers->qstr(  oculusHmdPose.pose.orientation ) );
-			oculusPoseTextBox->Text = gcnew String( str );
-		}
-		else oculusPoseTextBox->Text = "                       (unavailable)";
 
 		if ( record.codaHmd.visible ) {
 			char str[256];

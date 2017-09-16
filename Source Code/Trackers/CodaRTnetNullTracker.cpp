@@ -45,6 +45,10 @@ void CodaRTnetNullTracker::Initialize( const char *ini_filename ) {
 }
 
 void CodaRTnetNullTracker::StartContinuousAcquisition( void ) {}
+void CodaRTnetNullTracker::RestartContinuousAcquisition( void ) {
+	nFrames = 0;
+	TimerStart( acquisitionTimer );
+}
 
 void CodaRTnetNullTracker::StartAcquisition( double duration ) {
 	TimerSet( acquisitionTimer, duration );
