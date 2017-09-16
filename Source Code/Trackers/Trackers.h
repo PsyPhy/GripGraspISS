@@ -57,6 +57,7 @@ typedef struct {
 	int		unitFrames;
 } MarkerFrameSet;
 
+
 namespace PsyPhy {
 
 extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
@@ -91,6 +92,14 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual bool CheckAcquisitionOverrun( void ) = 0;
 		virtual int  Update( void ) = 0;
 		virtual void Quit( void ) = 0;
+
+		// This comes from the need of the CODA RTnet trackers to start and stop continuous
+		//  acquisitions so as to not overrun the memory on the server.
+		// Most trackers will not need these.
+		virtual void StartContinuousAcquisition( void ){}
+		virtual void RestartContinuousAcquisition( void ){}
+		virtual void StopContinuousAcquisition( void ){}
+
 
 		// This is a useful function that depends on GetAcquisitionState().
 		virtual void	WaitAcquisitionCompleted( void );

@@ -16,6 +16,11 @@
 #include "../Useful/Timers.h"
 #include "CodaRTnetTracker.h"
 
+// The CODA RTnet server has a bug such that it eats up memory in continuous mode.
+// Here we set a maximum duration for continuous acquisitions. If the acquisition
+// goes on longer, the continuous acquisition is stopped and restarted. 
+#define MAX_CONTINUOUS_DURATION 600.0
+
 namespace PsyPhy {
 
 
@@ -32,10 +37,12 @@ protected:
 
 	Timer	acquisitionTimer;
 	bool	acquiring;
+	Timer	runningTimer;
+	double	maxContinuous;
 
 public:
 
-	CodaRTnetContinuousTracker( void ) : acquiring(false) {}
+	CodaRTnetContinuousTracker( void ) : acquiring(false), maxContinuous( MAX_CONTINUOUS_DURATION ) {}
 	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
 	virtual void StartAcquisition( float duration );
 	virtual bool GetAcquisitionState();
@@ -45,6 +52,7 @@ public:
 	virtual void  Quit( void );
 
 	virtual void StartContinuousAcquisition( void );
+	virtual void RestartContinuousAcquisition( void );
 	virtual void StopContinuousAcquisition( void );
 
 };

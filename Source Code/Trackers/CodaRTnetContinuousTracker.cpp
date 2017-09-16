@@ -50,7 +50,24 @@ void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
 	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
 	OutputDebugString( "cl.startAcqContinuous()\n" );
 	cl.startAcqContinuous();
+	TimerSet( runningTimer, maxContinuous );
 }
+
+// Attempt to halt an ongoing aquisition. 
+// Does not care if it was actually acquiring or not.
+// Does not retrieve the data.
+void CodaRTnetContinuousTracker::RestartContinuousAcquisition( void ) {
+	Timer timer;
+	TimerStart( timer );
+	cl.stopAcq();
+	cl.prepareForAcq();
+	cl.startAcqContinuous();
+	double elapsed = TimerElapsedTime( timer );
+	fOutputDebugString( "CodaRTnetContinuousTracker:Restarting acquisition took %f s.\n", elapsed );
+	TimerSet( runningTimer, maxContinuous );
+}
+
+
 
 // Attempt to halt an ongoing aquisition. 
 // Does not care if it was actually acquiring or not.
@@ -222,6 +239,10 @@ int CodaRTnetContinuousTracker::Update( void ) {
 	for ( int unit = 1; unit < nUnits; unit++ ) {
 		if ( nFramesPerUnit[unit] < nFrames ) nFrames =  nFramesPerUnit[unit];
 	}
+
+	// If we are not in the middle of an acquisition, check if the continuous acquisition
+	// has been running for a long time and if so, stop and restart.
+	if ( TimerTimeout( runningTimer ) ) RestartContinuousAcquisition();
 
 	return( status );
 	
