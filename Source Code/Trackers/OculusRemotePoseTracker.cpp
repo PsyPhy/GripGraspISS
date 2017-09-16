@@ -26,22 +26,28 @@
 
 using namespace PsyPhy;
 
-OculusRemotePoseTracker::OculusRemotePoseTracker( double gain ) {
+OculusRemotePoseTracker::OculusRemotePoseTracker( double gain, ovrSession session ) {
+	this->session = session;
 	this->gain = gain;
 	PoseTracker::PoseTracker();
 }
 
 bool OculusRemotePoseTracker::Initialize( void ) { 
+
 	// Only initialize once.
 	if ( initialized ) return true;
 	initialized = true;
 
-	ovrResult result;
-	result = ovr_Initialize( nullptr );
-	fAbortMessageOnCondition( OVR_FAILURE( result ), "OculusRemotePoseTracker", "Failed to initialize libOVR." );
-	result = ovr_Create( &session, &luid );
-	fAbortMessageOnCondition( !OVR_SUCCESS( result), "OculusRemotePoseTracker", "Failed to create OVR session." );
-	fprintf( stderr, "Oculus OVR intialized.\n" );
+	ovrResult			result;
+	ovrGraphicsLuid		luid;
+
+	if ( session == nullptr ) {
+		result = ovr_Initialize( nullptr );
+		fAbortMessageOnCondition( OVR_FAILURE( result ), "OculusRemotePoseTracker", "Failed to initialize libOVR." );
+		result = ovr_Create( &session, &luid );
+		fAbortMessageOnCondition( !OVR_SUCCESS( result), "OculusRemotePoseTracker", "Failed to create OVR session." );
+		fprintf( stderr, "Oculus OVR intialized.\n" );
+	}
 
 	TimerStart( timer );
 	CopyVector( eulerAngles, zeroVector );

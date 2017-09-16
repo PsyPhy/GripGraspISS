@@ -18,14 +18,13 @@ class OculusRemotePoseTracker : public PoseTracker {
 		Vector3		eulerAngles;
 
 		ovrSession			session;
-		ovrGraphicsLuid		luid;
 
 		Timer timer;
 		double gain;
 
 	public:
 
-		OculusRemotePoseTracker( double gain = 1.0 );
+		OculusRemotePoseTracker( double gain = 1.0, ovrSession = nullptr );
 		~OculusRemotePoseTracker();
 
 		bool Initialize( void );
