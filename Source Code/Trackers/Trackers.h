@@ -59,6 +59,8 @@ typedef struct {
 
 namespace PsyPhy {
 
+extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
+
 class Tracker : public PsyPhy::VectorsMixin {
 
 	private:
@@ -115,7 +117,6 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual void	GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 		virtual void	SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 
-		void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
 		void	WriteColumnHeadings( FILE *fp, int unit ) ;
 		void	WriteMarkerData( FILE *fp, MarkerFrame &frame ) ;

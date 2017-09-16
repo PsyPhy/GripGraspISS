@@ -20,6 +20,16 @@ using namespace PsyPhy;
 
 TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, true, 0.0};
 
+// A global function to facilitate copying tracker poses even if you are not a tracker.
+
+void PsyPhy::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
+	static VectorsMixin vm;
+	destination.time = source.time;
+	destination.visible = source.visible;
+	vm.CopyVector( destination.pose.position, source.pose.position );
+	vm.CopyQuaternion( destination.pose.orientation, source.pose.orientation );
+};
+
 // Transform such that the null pose in intrinsic coordinates gives the specified pose.
 void PoseTracker::OffsetTo( const Pose &pose ) {
 	CopyPose( poseOffset, pose );
@@ -97,13 +107,6 @@ bool PoseTracker::GetCurrentPose( TrackerPose &pose ) {
 	pose.time = intrinsic_pose.time;
 	return( pose.visible );
 }
-
-void PoseTracker::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
-	destination.time = source.time;
-	destination.visible = source.visible;
-	CopyVector( destination.pose.position, source.pose.position );
-	CopyQuaternion( destination.pose.orientation, source.pose.orientation );
-};
 
 // If GetCurrentPoseIntrinsic() does not get redefined by an inheriting class, just return a nonvisible pose.
 bool PoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {

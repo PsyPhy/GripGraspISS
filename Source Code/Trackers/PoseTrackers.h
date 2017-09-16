@@ -22,6 +22,7 @@ typedef struct {
 } TrackerPose;
 
 extern TrackerPose NullTrackerPose;
+void CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) ;
 
 class PoseTracker : public PsyPhy::VectorsMixin {
 
@@ -64,7 +65,6 @@ class PoseTracker : public PsyPhy::VectorsMixin {
 		virtual bool GetCurrentOrientation( PsyPhy::Quaternion orientation );
 		virtual bool GetCurrentPose( TrackerPose &pose );
 		virtual bool GetCurrentPoseIntrinsic( TrackerPose &pose );
-		void CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) ;
 
 };
 

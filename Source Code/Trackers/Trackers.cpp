@@ -11,6 +11,20 @@
 
 using namespace PsyPhy;
 
+/**************************************************************************************/
+
+// Provide some generic methods for copying marker frames.
+
+void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
+	static VectorsMixin vm;
+	int mrk;
+	destination.time = source.time;
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		destination.marker[mrk].visibility = source.marker[mrk].visibility;
+		vm.CopyVector( destination.marker[mrk].position, source.marker[mrk].position );
+	}
+}
+
 /***************************************************************************/
 
 // Accesssor methods for some key parameters.
@@ -67,19 +81,6 @@ int  Tracker::RetrieveMarkerFrames( MarkerFrame frames[], int max_frames ) {
 int  Tracker::RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit ) { 
 	// If the tracker has no concept of separate units, just get the data from the default unit.
 	return( RetrieveMarkerFrames( frames, max_frames ) );
-}
-
-/**************************************************************************************/
-
-// Provide some generic methods for copying marker frames.
-
-void Tracker::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
-	int mrk;
-	destination.time = source.time;
-	for ( mrk = 0; mrk < nMarkers; mrk++ ) {
-		destination.marker[mrk].visibility = source.marker[mrk].visibility;
-		CopyVector( destination.marker[mrk].position, source.marker[mrk].position );
-	}
 }
 
 void	Tracker::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames ) {
