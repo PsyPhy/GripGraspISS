@@ -76,7 +76,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//
 	// Connect to dex for telemetry and snapshots.
 	//
-	DexServices *dex = new DexServices();
+	DexServices *dex = new DexServicesByProxy();
 	dex->ParseCommandLine( lpCmdLine );
 	strcpy( dex_log_filename, output_filename_root );
 	strcat( dex_log_filename, ".dxl" );
