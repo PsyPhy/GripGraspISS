@@ -3,9 +3,9 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <WinSock2.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <WinSock2.h>
 #include <conio.h>
 
 #include "../Trackers/PoseTrackers.h"
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		fprintf( stderr, "DexServices: Send dummy RT packets ... " );
 		static MarkerFrame frames[2];
 		for ( int i = 0; i < 10; i++ ) {
-			dex->AddDataSlice( 0x12345678, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
+			dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
 			Sleep( 1 );
 		}
 		fprintf( stderr, "OK.\n" );

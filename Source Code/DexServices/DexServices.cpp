@@ -11,6 +11,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
+
 
 #include "../Trackers/CodaRTnetNullTracker.h"
 #include "../Trackers/PoseTrackers.h"
@@ -140,14 +142,13 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
-void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[MAX_UNITS] ) {
+void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[MAX_UNITS] ) {
 
 	// fOutputDebugString( "DexServices: AddDataSlice()\n" );
 
 	// Fill the current slice with the new data.
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
-	rt.Slice[slice_count].objectStateBits = objectStateBits;
 	// Copy the current poses to the slice.
 	CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
 	CopyTrackerPose( rt.Slice[slice_count].codaHmd, codaHmd );
@@ -156,6 +157,23 @@ void DexServices::AddDataSlice( unsigned int objectStateBits, PsyPhy::TrackerPos
 	CopyTrackerPose( rt.Slice[slice_count].mouse, mouse );
 	// And the marker information (3D position and visibility).
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
+	
+	SendIfReady();
+
+}
+
+void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
+
+	int max_bytes = sizeof( rt.Slice[slice_count].clientData );
+	assert( bytes > max_bytes );
+	rt.Slice[slice_count].clientTime = (float) TimerElapsedTime( stream_timer );
+	memcpy( rt.Slice[slice_count].clientData, data, bytes );
+	for ( int i = bytes; i < max_bytes; i++  ) rt.Slice[slice_count].clientData[i] = 0;
+	SendIfReady();
+
+}
+
+void DexServices::SendIfReady( void ) {
 
 	// Dex RT Packets can only be sent two times per second. 
 	// So we pack multiple data slices into a single packet.
@@ -401,9 +419,10 @@ bool DexServices::HandleProxyConnection( void ) {
 	}
 
 	// We are connected so attempt to read a packet.
-	char buffer[1024];
-	int iResult = recv( clientSocket, buffer, sizeof( buffer ), 0);
-	if ( iResult > 0 ) {
+	char buffer[2048];
+	int iResult;
+	while ( ( iResult = recv( clientSocket, buffer, sizeof( buffer ), 0) ) > 0 ) {
+
 		// Process the packet.
 		if ( iResult == sizeof( DexServicesPacket ) ) {
 			DexServicesPacket *pk = (DexServicesPacket *) buffer;
@@ -423,6 +442,14 @@ bool DexServices::HandleProxyConnection( void ) {
 
 			case PICTURE:
 				SnapPicture( pk->tag );
+				break;
+
+			case TRACKER_DATA:
+				AddTrackerSlice( pk->hmd, pk->coda_hmd, pk->chest, pk->hand, pk->mouse, pk->markers );
+				break;
+
+			case CLIENT_DATA:
+				AddClientSlice( pk->client, sizeof( pk->client ) );
 				break;
 
 			}

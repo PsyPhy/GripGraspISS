@@ -4,9 +4,10 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <winsock2.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <winsock2.h>
+#include <assert.h>
 #include <io.h>
 #include <fcntl.h>
 #include <share.h>
@@ -42,7 +43,7 @@
 #define TRACKER_ANOMALY			44444
 #define TRACKERSTATUS_UNKNOWN	55555
 
-typedef enum { TASK, SUBSTEP, TRACKER_STATUS, SCIENCE, PICTURE } DexServicesPacketType;
+typedef enum { TASK, SUBSTEP, TRACKER_STATUS, TRACKER_DATA, CLIENT_DATA, PICTURE } DexServicesPacketType;
 
 typedef struct {
 	DexServicesPacketType command;
@@ -54,7 +55,16 @@ typedef struct {
 	int script;
 	int tracker;
 	char tag[32];
-	unsigned char science[128];
+	
+	PsyPhy::TrackerPose	hmd;
+	PsyPhy::TrackerPose	coda_hmd;
+	PsyPhy::TrackerPose	hand;
+	PsyPhy::TrackerPose	chest;
+	PsyPhy::TrackerPose	mouse;
+	MarkerFrame markers[2];
+
+	unsigned char client[GRASP_RT_CLIENT_BYTES];
+
 } DexServicesPacket;
 namespace Grasp {
 
@@ -143,8 +153,9 @@ class DexServices : public PsyPhy::VectorsMixin
 
 		  virtual int SnapPicture( const char *tag );
 
-		  virtual void AddDataSlice(  unsigned int objectStateBits, PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
-		  virtual int SendScienceRealtimeData( void );
+		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
+		  virtual void AddClientSlice( unsigned char *data, int bytes );
+		  virtual void SendIfReady( void );
 
 		  virtual void ParseCommandLine( char *command_line );
 
@@ -152,7 +163,7 @@ class DexServices : public PsyPhy::VectorsMixin
 		  virtual void	InitializeProxySocket( void );
 		  virtual bool	HandleProxyConnection( void );
 		  void			ReleaseProxySocket( void );
-
+	
 		  // If the program is being compiled with /clr, then expose these methods that use String objects.
 #ifdef _MANAGED
 		  bool ParseForInt( System::String ^argument, const char *flag, int &value ) {
@@ -176,6 +187,7 @@ class DexServices : public PsyPhy::VectorsMixin
 			  }
 		  }
 #endif
+		private: int SendScienceRealtimeData( void );
 
 	};
 
@@ -211,6 +223,25 @@ class DexServices : public PsyPhy::VectorsMixin
 			strncpy( packet.tag, tag, sizeof( packet.tag ) );
 			packet.command = PICTURE;
 			return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
+		}
+
+		void AddTrackerSlice(  PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
+			CopyTrackerPose( packet.hmd, hmd );
+			CopyTrackerPose( packet.coda_hmd, codaHmd );
+			CopyTrackerPose( packet.hand, hand );
+			CopyTrackerPose( packet.chest, chest );
+			CopyTrackerPose( packet.mouse, mouse );
+			PsyPhy::CopyMarkerFrame( packet.markers[0], frame[0] );
+			PsyPhy::CopyMarkerFrame( packet.markers[1], frame[1] );
+			packet.command = TRACKER_DATA;
+			Send( (unsigned char *) &packet, sizeof( packet ) );
+		}
+
+		void AddClientSlice( unsigned char *data, int bytes ) {
+			assert( bytes > sizeof( packet.client ) );
+			memcpy( packet.client, data, bytes );
+			packet.command = CLIENT_DATA;
+			Send( (unsigned char *) &packet, sizeof( packet ) );
 		}
 
 		DexServicesByProxy( char *server = PROXY_DEX_SERVER, unsigned short port = PROXY_DEX_PORT ) {

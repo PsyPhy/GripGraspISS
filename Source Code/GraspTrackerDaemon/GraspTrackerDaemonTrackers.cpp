@@ -124,7 +124,9 @@ namespace GraspTrackerDaemon {
 		}
 
 		// Send status to DEX.
-		dex->AddDataSlice( 0x00, NullTrackerPose, record.codaHmd, record.hand, record.chest, NullTrackerPose, trackers->markerFrame );
+		unsigned int tracker_status = trackers->GetTrackerStatus();
+		dex->SendTrackerStatus( tracker_status );
+		dex->AddTrackerSlice( NullTrackerPose, record.codaHmd, record.hand, record.chest, NullTrackerPose, trackers->markerFrame );
 
 		// Update the screen display.
 		String ^line;
@@ -149,6 +151,7 @@ namespace GraspTrackerDaemon {
 			if ( ((mrk+1) % 8) == 0 ) line += "  ";
 		}
 		visibilityTextBox1->Text = line;
+		trackerStatusTextBox->Text = tracker_status.ToString();
 
 		if ( record.codaHmd.visible ) {
 			char str[256];

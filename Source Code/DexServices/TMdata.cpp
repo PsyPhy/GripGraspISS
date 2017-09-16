@@ -57,6 +57,13 @@ static u32 addTM(bool tm, u8*buffer, u32 pos)
     return pos;
 }
 
+static u32 addTM(u8 *tm, int bytes, u8*buffer, u32 pos)
+{
+    memcpy( &buffer[pos], tm, bytes );
+	pos += bytes;
+    return pos;
+}
+
 static u32 addTM( PsyPhy::TrackerPose pose, u8 *buffer, u32 pos ) {
 	// Position information in 1Oths of mm.
 	for ( int i = 0; i < 3; i++ ) pos = addTM( (s16) (pose.pose.position[i] * 10.0), buffer, pos );
@@ -125,7 +132,6 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
 		p = addTM( Slice[i].fillTime, buffer, p );
 		p = addTM( (u32) Slice[i].globalCount, buffer, p );
-		p = addTM( (u32) Slice[i].objectStateBits, buffer, p );
 		p = addTM( Slice[i].hmd, buffer, p );
 		p = addTM( Slice[i].codaHmd, buffer, p );
 		p = addTM( Slice[i].hand, buffer, p );
@@ -138,6 +144,10 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 		unsigned char unit = i % MAX_UNITS;
 		p = addTM( unit, buffer, p );
 		p = addTM( Slice[i].markerFrame[unit], buffer, p );
+		// The client program can send some additional data.
+		// We are agnostic as to the format.
+		p = addTM( Slice[i].clientTime, buffer, p );
+		p = addTM( (u8 *) Slice[i].clientData, sizeof( Slice[i].clientData ), buffer, p );
 	}
 	// Fill the rest of the buffer with a constant value.
 	while ( p < (6+758) ) p = addTM( (u8) 0xfa, buffer, p );
