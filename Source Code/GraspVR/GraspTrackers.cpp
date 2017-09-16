@@ -174,7 +174,7 @@ unsigned int GraspDexTrackers::GetTrackerStatus( void ) {
 			}
 			if ( visibility ) group_count++;
 		}
-		status = status + (int) pow(10.0,group) * group_count;
+		status = status + (int) pow(10.0, ( 2 - group )) * group_count;
 	}
 	return( status );
 }
