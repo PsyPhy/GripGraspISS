@@ -334,9 +334,9 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 			// Store the poses for output to a file.
 			hmdTracker->GetCurrentPose( headPose );
-			hmdTracker->CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
+			CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
 			handTracker->GetCurrentPose( codaPose );
-			handTracker->CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
+			CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
 
 			derivatives[nRecordedFrames][X] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.x;
 			gyros[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Gyro.x;
