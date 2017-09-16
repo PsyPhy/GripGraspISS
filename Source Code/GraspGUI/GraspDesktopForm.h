@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../Grip/GripPackets.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../DexServices/DexServices.h"
-#include "../Grip/GripPackets.h"
 #include "../GripGraspVersionControl/GripGraspVersionControl.h"
 #include "GraspScripts.h"
 
@@ -24,7 +24,7 @@ namespace GraspGUI {
 
 	protected:
 
-		Grasp::DexServices	*dex;
+		Grasp::DexServicesByProxy	*dex;
 
 		String^	rootDirectory;
 		String^ execDirectory;
@@ -960,7 +960,7 @@ namespace GraspGUI {
 		void ConnectToDEX ( void ) {
 			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
 			fOutputDebugString( "Connecting to DEX ... " );
-			dex = new Grasp::DexServices();
+			dex = new Grasp::DexServicesByProxy();
 			dex->Initialize( "GraspGUI.dxl" );
 			dex->Connect();
 			fOutputDebugString( "OK.\n" );
