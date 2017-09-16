@@ -809,11 +809,10 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 
 #define STRUCTURE_BALL_RADIUS 15.0
 #define STRUCTURE_BAR_RADIUS 15.0
-#define LEDON 0.0, 0.7, 0.4
 
-void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame ) {
+void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame, int led_on_color ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
-		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( LEDON );
+		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( led_on_color );
 		else component[mrk]->SetColor( BLACK );
 	}
 }

@@ -79,7 +79,7 @@ namespace Grasp {
 		~MarkerStructureGLObject( void ){}
 
 		void AddBar( int marker1, int marker2 );
-		void ShowVisibility( MarkerFrame &marker_frame );
+		void ShowVisibility( MarkerFrame &marker_frame, int led_on_color = CYAN );
 	};
 
 	class GraspGLObjects : public VectorsMixin {

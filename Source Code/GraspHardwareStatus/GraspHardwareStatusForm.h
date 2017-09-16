@@ -67,6 +67,8 @@ namespace GraspHardwareStatus {
 		CodaPoseTracker *handTracker;
 		CodaPoseTracker *chestTracker;
 
+		MarkerFrame *markerFrame;
+
 		// A class that provides methods for making a lot of the 
 		// OpenGLObjects that we need for displaying the status.
 		GraspGLObjects *objects;
@@ -483,14 +485,30 @@ namespace GraspHardwareStatus {
 
 		void Render( void ) {
 		
+			MarkerFrame unitMarkerFrame[2];	
 			MarkerFrame markerFrame;
+			TrackerPose pose;
+
+			hmdTracker->SetMarkerFrameBuffer( &markerFrame );
+			handTracker->SetMarkerFrameBuffer( &markerFrame );
+			chestTracker->SetMarkerFrameBuffer( &markerFrame );
 
 			// Show the visibility of each marker superimposed on it's marker 
 			// structure, each structure in a separate window for each CODA unit.
-			coda->GetCurrentMarkerFrameUnit( markerFrame, 0 );
-			hmdStationary0->ShowVisibility( markerFrame );
-			handStationary0->ShowVisibility( markerFrame );
-			chestStationary0->ShowVisibility( markerFrame );
+			coda->GetCurrentMarkerFrameUnit( unitMarkerFrame[0], 0 );
+			coda->GetCurrentMarkerFrameUnit( unitMarkerFrame[1], 1 );
+			coda->ComputeAverageMarkerFrame( markerFrame, unitMarkerFrame, 2 );
+
+			hmdTracker->GetCurrentPose( pose );
+			hmdMobile->SetPose( pose.pose );
+			handTracker->GetCurrentPose( pose );
+			handMobile->SetPose( pose.pose );
+			chestTracker->GetCurrentPose( pose );
+			chestMobile->SetPose( pose.pose );
+
+			hmdStationary0->ShowVisibility( unitMarkerFrame[0], CYAN );
+			handStationary0->ShowVisibility( unitMarkerFrame[0], MAGENTA );
+			chestStationary0->ShowVisibility( unitMarkerFrame[0], YELLOW );
 
 			RenderWindow( hmdWindow0, objectViewpoint, hmdStationary0 );
 			RenderWindow( handWindow0, objectViewpoint, handStationary0 );
@@ -498,17 +516,16 @@ namespace GraspHardwareStatus {
 
 			// Show the position and orientation of each marker structure
 			// from the perspective of each CODA unit.
-			hmdMobile->ShowVisibility( markerFrame );
-			handMobile->ShowVisibility( markerFrame );
-			chestMobile->ShowVisibility( markerFrame );
+			hmdMobile->ShowVisibility( unitMarkerFrame[0], CYAN );
+			handMobile->ShowVisibility( unitMarkerFrame[0], MAGENTA );
+			chestMobile->ShowVisibility( unitMarkerFrame[0], YELLOW );
 			RenderWindow( vrWindow0, codaViewpoint0, mobiles );
 
 			// Show the visibility of each marker superimposed on it's marker 
 			// structure, each structure in a separate window for each CODA unit.
-			coda->GetCurrentMarkerFrameUnit( markerFrame, 1 );
-			hmdStationary1->ShowVisibility( markerFrame );
-			handStationary1->ShowVisibility( markerFrame );
-			chestStationary1->ShowVisibility( markerFrame );
+			hmdStationary1->ShowVisibility( unitMarkerFrame[1], CYAN );
+			handStationary1->ShowVisibility( unitMarkerFrame[1], MAGENTA );
+			chestStationary1->ShowVisibility( unitMarkerFrame[1], YELLOW );
 
 			RenderWindow( hmdWindow1, objectViewpoint, hmdStationary1 );
 			RenderWindow( handWindow1, objectViewpoint, handStationary1 );
@@ -516,9 +533,9 @@ namespace GraspHardwareStatus {
 
 			// Show the position and orientation of each marker structure
 			// from the perspective of each CODA unit.
-			hmdMobile->ShowVisibility( markerFrame );
-			handMobile->ShowVisibility( markerFrame );
-			chestMobile->ShowVisibility( markerFrame );
+			hmdMobile->ShowVisibility( unitMarkerFrame[1], CYAN );
+			handMobile->ShowVisibility( unitMarkerFrame[1], MAGENTA );
+			chestMobile->ShowVisibility( unitMarkerFrame[1], YELLOW );
 			RenderWindow( vrWindow1, codaViewpoint1, mobiles );
 		
 		}
@@ -545,6 +562,12 @@ namespace GraspHardwareStatus {
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
+			Vector3	unitOffset[MAX_UNITS];
+			Matrix3x3 unitRotation[MAX_UNITS];
+			Matrix3x3 back, ortho;
+
+			coda->GetAlignmentTransforms( unitOffset, unitRotation );
+
 			// Create the required OpenGLWindows each linked to a pane in the Form.
 			hmdWindow0 = CreateOpenGLWindowInForm( hmdPanel0 );
 			hmdWindow1 = CreateOpenGLWindowInForm( hmdPanel1, hmdWindow0->hRC );
@@ -561,18 +584,22 @@ namespace GraspHardwareStatus {
 			objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 			objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
-			// Create a viewpoint that looks at the origin from the negative Z axis,
-			// offset to the left in right in X.
-			// This is nominally where the CODAs are with respect to the workspace.
-			// These should be updated with the computed position and orientation of
-			// the CODA units.
-			codaViewpoint0 = new Viewpoint( 6.0, 50.0, 10.0, 10000.0);
-			codaViewpoint0->SetPosition( 400.0, 0.0, -2000.0 );
-			codaViewpoint0->SetOrientation( 0.0, 0.0, -170.0 );
+			// Create viewpoints that looks at the origin from the position of each CODA.
+			codaViewpoint0 = new Viewpoint( 6.0, 25.0, 10.0, 10000.0);
+			codaViewpoint0->SetPosition( unitOffset[0] );
+			coda->CopyVector( back[Z], unitOffset[0] );
+			coda->NormalizeVector( back[Z] );
+			coda->ComputeCrossProduct( back[X], coda->jVector, back[Z] );
+			coda->ComputeCrossProduct( back[Y], back[Z], back[X] );
+			codaViewpoint0->SetOrientation( back );
 
-			codaViewpoint1 = new Viewpoint( 6.0, 50.0, 10.0, 10000.0);
-			codaViewpoint1->SetPosition( -400.0, 0.0, -2000.0 );
-			codaViewpoint1->SetOrientation( 0.0, 0.0, 170.0 );
+			codaViewpoint1 = new Viewpoint( 6.0, 25.0, 10.0, 10000.0);
+			codaViewpoint1->SetPosition( unitOffset[1] );
+			coda->CopyVector( back[Z], unitOffset[1] );
+			coda->NormalizeVector( back[Z] );
+			coda->ComputeCrossProduct( back[X], coda->jVector, back[Z] );
+			coda->ComputeCrossProduct( back[Y], back[Z], back[X] );
+			codaViewpoint1->SetOrientation( back );
 
 			// Create the OpenGLObjects that depict the marker array structure.
 			objects = new Grasp::GraspGLObjects();
