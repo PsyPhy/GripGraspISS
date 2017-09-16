@@ -1,13 +1,13 @@
 // CodaVisibility.cpp : Defines the entry point for the console application.
 //
 #define _CRT_SECURE_NO_WARNINGS
+#include <WinSock2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
 #include <math.h>
 #include <time.h>
 #include <conio.h>
-#include <WinSock2.h>
 
 #include <windows.h>
 #include <mmsystem.h>
