@@ -422,7 +422,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 			// Indicate in the script engine status that the command exited with an exit
 			//  code corresponding to an anomolous situation and specify the specific return code.
 			// Because stepExecutionState must be an unsigned short, we take the absolute value of the return code.
-			stepExecutionState = STEP_FINISHED_ABNORMAL + exit_choice;
+			stepExecutionState = STEP_FINISHED_ABNORMAL + abs( return_code );
 		}
 		else {
 			normalNavigationGroupBox->Visible = true;
