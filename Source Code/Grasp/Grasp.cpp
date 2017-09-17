@@ -78,6 +78,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//
 	DexServices *dex = new DexServicesByProxy();
 	dex->ParseCommandLine( lpCmdLine );
+
 	strcpy( dex_log_filename, output_filename_root );
 	strcat( dex_log_filename, ".dxl" );
 	dex->Initialize( dex_log_filename );
