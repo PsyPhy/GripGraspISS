@@ -622,7 +622,7 @@ namespace GraspTrackerDaemon {
 			Refresh();
 			Application::DoEvents();
 
-			InitializeBroadcastSocket();
+			InitializeSockets();
 			Initialize();
 
 			visibilityTextBox1->Text = "";
@@ -737,6 +737,10 @@ namespace GraspTrackerDaemon {
 		void ProcessCodaInputs( void );
 		void ReleaseCoda( void );
 		void InitializeBroadcastSocket( void );
+		void InitializeSockets( void );
+#ifdef RECEIVE_COMMANDS
+		void InitializeReceiverSocket( void );
+#endif
 
 };
 }

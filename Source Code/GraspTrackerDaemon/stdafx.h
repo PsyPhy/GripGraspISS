@@ -5,4 +5,6 @@
 
 // TODO: reference additional headers your program requires here
 #define _CRT_SECURE_NO_WARNINGS
+#include <WinSock2.h>
+#include <ws2tcpip.h>
 #include <io.h>

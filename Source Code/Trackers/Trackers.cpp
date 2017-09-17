@@ -171,10 +171,7 @@ void Tracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rota
 // Now provide the means to retrieve the frames and express the data in the intinsic frame.
 // Note that there is not a "combined" version of this because it makes no sense
 //  to combine the marker data in the intrinsic reference frames.
-bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
-
-	MarkerFrame	frame;
-	int			status;
+void Tracker::ComputeIntrinsicMarkerFrame( MarkerFrame &iframe, int unit, MarkerFrame &frame ) {
 
 	Vector3		offset;
 	Matrix3x3	rotation;
@@ -187,10 +184,6 @@ bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
 	// Inverse of a rotation matrix is just its transpose.
 	TransposeMatrix( inverse, rotation );
 
-	// Get the current frame in aligned coordinates.
-	status = GetCurrentMarkerFrameUnit( frame, unit );
-	// I'm not sure what could go wrong, but signal if it does.
-	if ( !status ) return( false );
 	// Compute the position of each maker in intrinsic coordinates.
 	for ( int mrk = 0; mrk < nMarkers; mrk++ ) {
 		iframe.marker[mrk].visibility = frame.marker[mrk].visibility;
@@ -200,5 +193,14 @@ bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
 		}
 	}
 
-	return( true );
+}
+
+bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
+	MarkerFrame	frame;
+	int			status;
+	// Get the current frame in aligned coordinates.
+	status = GetCurrentMarkerFrameUnit( frame, unit );
+	// I'm not sure what could go wrong, but signal if it does.
+	if ( !status ) return( false );
+	ComputeIntrinsicMarkerFrame( iframe, unit, frame );
 }

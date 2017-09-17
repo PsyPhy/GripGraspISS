@@ -110,15 +110,19 @@ bool CodaRTnetNullTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int se
 
 // Create fake unit transforms. 
 void CodaRTnetNullTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
-	Tracker::GetUnitTransform( unit, offset, rotation );
-}
-void CodaRTnetNullTracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
-	Tracker::SetAlignmentTransforms( offsets, rotations );
-}
 	offset[X] = 0.0;
 	offset[Y] = 0.0;
 	offset[Z] = -2000.0;
 	SetRotationMatrix( rotation, 45.0 * (double)( unit + 1), 0.0, 30.0 );
+}
+void CodaRTnetNullTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {}
+
+// Because CodaRTnetNullTracker is build on CodaRTnetTracker, we have to undo what CodaRTnetTracker does to these routines.
+void CodaRTnetNullTracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
+	Tracker::SetAlignmentTransforms( offsets, rotations );
+}
+void CodaRTnetNullTracker::GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
+	Tracker::GetAlignmentTransforms( offsets, rotations );
 }
 
 void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {

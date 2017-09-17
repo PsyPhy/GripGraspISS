@@ -117,6 +117,7 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual bool	GetCurrentMarkerFrame( MarkerFrame &frame );
 		virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
 		virtual bool	GetCurrentMarkerFrameIntrinsic( MarkerFrame &frame, int unit );
+		virtual void	ComputeIntrinsicMarkerFrame( MarkerFrame &iframe, int unit, MarkerFrame &frame );
 
 		virtual double	GetSamplePeriod( void );
 		virtual int		GetNumberOfUnits( void );

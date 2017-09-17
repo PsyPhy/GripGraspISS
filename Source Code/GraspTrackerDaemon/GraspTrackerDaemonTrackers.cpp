@@ -17,8 +17,10 @@ GraspTrackerRecord record;
 // Read the echo of the packet into this buffer.
 GraspTrackerRecord echo;
 int record_length;
-SOCKET sock;
+SOCKET broadcast_socket;
 struct sockaddr_in Sender_addr;
+
+SOCKET receiver_socket;
 
 // A buffer to hold pose data.
 struct {
@@ -31,19 +33,86 @@ namespace GraspTrackerDaemon {
 
 	void Form1::InitializeBroadcastSocket( void ) {
 		// Initialize a socket to which we will broadcast the data.
-		WSADATA wsaData;
-		WSAStartup(MAKEWORD(2, 2), &wsaData);
-
-		sock = socket(AF_INET, SOCK_DGRAM, 0);
-		if (sock == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
+		broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
+		if (broadcast_socket == INVALID_SOCKET) fAbortMessage( "GraspTrackerDaemon", "Error creating socket." );
 
 		BOOL enabled = TRUE;
-		if ( setsockopt( sock, SOL_SOCKET, SO_BROADCAST, (char*)&enabled, sizeof(BOOL)) < 0 ) 
+		if ( setsockopt( broadcast_socket, SOL_SOCKET, SO_BROADCAST, (char*)&enabled, sizeof(BOOL)) < 0 ) 
 		{
-			closesocket(sock);
+			closesocket( broadcast_socket );
 			fAbortMessage( "GraspTrackerDaemon", "Error setting broadcast options." );		
 		}
 
+	}
+
+#ifdef RECEIVE_COMMANDS
+	// This is not yet implemented fully so I comment it out.
+	void Form1::InitializeReceiverSocket( void ) {
+		// Initialize a socket that can receive commands from a client.
+
+		struct addrinfo *result = NULL;
+		struct addrinfo hints;
+		int	iResult;
+
+		ZeroMemory( &hints, sizeof(hints) );
+		hints.ai_family = AF_INET;
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_protocol = IPPROTO_TCP;
+		hints.ai_flags = AI_PASSIVE;
+
+		// Resolve the server address and port
+		iResult = getaddrinfo( NULL, TRACKER_DAEMON_COMMAND_PORT, &hints, &result );
+		if ( iResult != 0 ) {
+			fOutputDebugString("getaddrinfo() failed with error: %d\n", iResult);
+			WSACleanup();
+			return;
+		}
+
+		// Create a SOCKET for connecting to client
+		receiver_socket = socket( result->ai_family, result->ai_socktype, result->ai_protocol );
+		if ( receiver_socket == INVALID_SOCKET ) {
+			fOutputDebugString( "socket() failed with error: %ld\n", WSAGetLastError() );
+			freeaddrinfo( result );
+			WSACleanup();
+			return;
+		}
+
+		// Setup the TCP listening socket
+		iResult = bind( receiver_socket, result->ai_addr, (int)result->ai_addrlen );
+		if (iResult == SOCKET_ERROR) {
+			fOutputDebugString("bind() failed with error: %d\n", WSAGetLastError());
+			freeaddrinfo( result );
+			closesocket( receiver_socket );
+			WSACleanup();
+			return;
+		}
+
+		unsigned long nonblocking = 1;
+		ioctlsocket( receiver_socket, FIONBIO, &nonblocking );
+		// Listen until we get a connection.
+		fOutputDebugString( "Listening for a client connection on port %s.\n", PROXY_DEX_PORT_STRING  );
+		iResult = listen( receiver_socket, SOMAXCONN );
+		if (iResult == SOCKET_ERROR) {
+			fOutputDebugString("listen() failed with error: %d\n", WSAGetLastError());
+			closesocket( receiver_socket );
+			WSACleanup();
+			return;
+		}
+
+	}
+#endif
+
+	void Form1::InitializeSockets( void ) {
+		WSADATA wsaData;
+		int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+		if ( iResult != 0 ) {
+			fOutputDebugString( "WSAStartup failed with error: %d\n", iResult );
+			return;
+		}
+		InitializeBroadcastSocket();
+#ifdef RECEIVE_COMMANDS
+		InitializeReceiverSocket();
+#endif
 	}
 
 	void Form1::Initialize( void ) {
@@ -115,10 +184,10 @@ namespace GraspTrackerDaemon {
 			Sender_addr.sin_port = htons( TRACKER_DAEMON_PORT + prt );
 			Sender_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 
-			if ( ( bytes = sendto( sock, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr))) < 0)
+			if ( ( bytes = sendto( broadcast_socket, (char *) &record, sizeof( record ), 0, (sockaddr *)&Sender_addr, sizeof(Sender_addr))) < 0)
 			{
 				int error_value = WSAGetLastError();
-				closesocket( sock );
+				closesocket( broadcast_socket );
 				fAbortMessage( "GraspTrackerDaemon", "Error on sendto (%d).", error_value );	
 			}
 		}

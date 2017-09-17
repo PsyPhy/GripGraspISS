@@ -9,6 +9,8 @@
 // GraspTrackerDaemon will output data on this port.
 #define TRACKER_DAEMON_PORT		1706
 #define TRACKER_DAEMON_PORTS	4
+#define TRACKER_DAEMON_COMMAND_PORT	"2106"
+
 // Currently I broadcast only to the local host because everything is running
 // on the same machine. Note that when I had 'localhost" instead of "127.0.0.1", things 
 // ran slower when my wifi was connected. I don't know what would happen when the ethernet

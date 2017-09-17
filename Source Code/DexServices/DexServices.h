@@ -185,6 +185,7 @@ class DexServices : public PsyPhy::VectorsMixin
 				  ParseForInt( args[arg], "--task", static_task );
 				  ParseForInt( args[arg], "--step", static_step );
 			  }
+			  SendTaskInfo( static_user, static_protocol, static_task, static_step );
 		  }
 #endif
 		private: int SendScienceRealtimeData( void );
@@ -209,16 +210,16 @@ class DexServices : public PsyPhy::VectorsMixin
 				  packet.command = TASK;
 				  return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
 		}
-		int SendSubstep( int substep ) {
-			packet.substep = substep;
-			packet.command = SUBSTEP;
-			return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
-		}
-		int SendTrackerStatus( unsigned int status ) {
-			packet.tracker = status;
-			packet.command = TRACKER_STATUS;
-			return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
-		}
+		//int SendSubstep( int substep ) {
+		//	packet.substep = substep;
+		//	packet.command = SUBSTEP;
+		//	return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
+		//}
+		//int SendTrackerStatus( unsigned int status ) {
+		//	packet.tracker = status;
+		//	packet.command = TRACKER_STATUS;
+		//	return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
+		//}
 		int SnapPicture( const char *tag ) {
 			strncpy( packet.tag, tag, sizeof( packet.tag ) );
 			packet.command = PICTURE;
