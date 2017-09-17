@@ -108,19 +108,17 @@ bool CodaRTnetNullTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int se
 	return true;
 }
 
-// The null tracker does not handle transformations of the (fake) incoming data,
-// so just ignore any attempts to set the transformation. 
-void CodaRTnetNullTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
-	Tracker::SetUnitTransform( unit, offset, rotation );
-}
+// Create fake unit transforms. 
 void CodaRTnetNullTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
 	Tracker::GetUnitTransform( unit, offset, rotation );
 }
 void CodaRTnetNullTracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
 	Tracker::SetAlignmentTransforms( offsets, rotations );
 }
-void CodaRTnetNullTracker::GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
-	Tracker::GetAlignmentTransforms( offsets, rotations );
+	offset[X] = 0.0;
+	offset[Y] = 0.0;
+	offset[Z] = -2000.0;
+	SetRotationMatrix( rotation, 45.0 * (double)( unit + 1), 0.0, 30.0 );
 }
 
 void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {
