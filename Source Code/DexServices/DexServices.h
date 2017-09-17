@@ -57,10 +57,8 @@ typedef struct {
 	char tag[32];
 	
 	PsyPhy::TrackerPose	hmd;
-	PsyPhy::TrackerPose	coda_hmd;
 	PsyPhy::TrackerPose	hand;
 	PsyPhy::TrackerPose	chest;
-	PsyPhy::TrackerPose	mouse;
 	MarkerFrame markers[2];
 
 	unsigned char client[GRASP_RT_CLIENT_BYTES];
@@ -153,7 +151,7 @@ class DexServices : public PsyPhy::VectorsMixin
 
 		  virtual int SnapPicture( const char *tag );
 
-		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] );
+		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] );
 		  virtual void AddClientSlice( unsigned char *data, int bytes );
 		  virtual void SendIfReady( void );
 
@@ -226,12 +224,10 @@ class DexServices : public PsyPhy::VectorsMixin
 			return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
 		}
 
-		void AddTrackerSlice(  PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[2] ) {
+		void AddTrackerSlice(  PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] ) {
 			CopyTrackerPose( packet.hmd, hmd );
-			CopyTrackerPose( packet.coda_hmd, codaHmd );
 			CopyTrackerPose( packet.hand, hand );
 			CopyTrackerPose( packet.chest, chest );
-			CopyTrackerPose( packet.mouse, mouse );
 			PsyPhy::CopyMarkerFrame( packet.markers[0], frame[0] );
 			PsyPhy::CopyMarkerFrame( packet.markers[1], frame[1] );
 			packet.command = TRACKER_DATA;

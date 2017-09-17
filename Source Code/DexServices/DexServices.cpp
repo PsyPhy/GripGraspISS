@@ -142,7 +142,7 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
-void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &codaHmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, PsyPhy::TrackerPose &mouse, MarkerFrame frame[MAX_UNITS] ) {
+void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[MAX_UNITS] ) {
 
 	// fOutputDebugString( "DexServices: AddDataSlice()\n" );
 
@@ -151,10 +151,8 @@ void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose
 	rt.Slice[slice_count].globalCount = stream_count++;
 	// Copy the current poses to the slice.
 	CopyTrackerPose( rt.Slice[slice_count].hmd, hmd );
-	CopyTrackerPose( rt.Slice[slice_count].codaHmd, codaHmd );
 	CopyTrackerPose( rt.Slice[slice_count].hand, hand );
 	CopyTrackerPose( rt.Slice[slice_count].chest, chest );
-	CopyTrackerPose( rt.Slice[slice_count].mouse, mouse );
 	// And the marker information (3D position and visibility).
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
 	
@@ -165,7 +163,7 @@ void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose
 void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
 
 	int max_bytes = sizeof( rt.Slice[slice_count].clientData );
-	assert( bytes > max_bytes );
+	assert( bytes <= max_bytes );
 	rt.Slice[slice_count].clientTime = (float) TimerElapsedTime( stream_timer );
 	memcpy( rt.Slice[slice_count].clientData, data, bytes );
 	for ( int i = bytes; i < max_bytes; i++  ) rt.Slice[slice_count].clientData[i] = 0;
@@ -445,7 +443,7 @@ bool DexServices::HandleProxyConnection( void ) {
 				break;
 
 			case TRACKER_DATA:
-				AddTrackerSlice( pk->hmd, pk->coda_hmd, pk->chest, pk->hand, pk->mouse, pk->markers );
+				AddTrackerSlice( pk->hmd, pk->chest, pk->hand, pk->markers );
 				break;
 
 			case CLIENT_DATA:

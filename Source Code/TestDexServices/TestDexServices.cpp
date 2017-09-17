@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
 	DexServices *dex;
 
 	fprintf( stderr, "DexServices: Instantiating ... " );
-	dex = new DexServicesByProxy( PROXY_DEX_SERVER, PROXY_DEX_PORT );
+//	dex = new DexServicesByProxy( PROXY_DEX_SERVER, PROXY_DEX_PORT );
+	dex = new DexServices();
 	fprintf( stderr, "OK.\n" );
 
 	int user = 10;
@@ -51,8 +52,10 @@ int main(int argc, char *argv[])
 
 		fprintf( stderr, "DexServices: Send dummy RT packets ... " );
 		static MarkerFrame frames[2];
-		for ( int i = 0; i < 10; i++ ) {
-			dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
+		for ( int i = 0; i < 100; i++ ) {
+			dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
+			unsigned char buffer[100];
+			dex->AddClientSlice( buffer, sizeof( buffer ) );
 			Sleep( 1 );
 		}
 		fprintf( stderr, "OK.\n" );

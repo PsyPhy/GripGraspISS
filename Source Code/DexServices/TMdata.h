@@ -10,7 +10,7 @@
 
 #define GRASP_RT_SLICES_PER_PACKET 2
 #define GRASP_RT_SLICE_INTERVAL 0.250
-#define GRASP_RT_CLIENT_BYTES 72
+#define GRASP_RT_CLIENT_BYTES 128
 
 #define GRASP_HK_PACKET_INTERVAL 1.0
 
@@ -59,10 +59,8 @@ class RT_packet : public GraspPacket
 			float	fillTime;
 			u32		globalCount;
 			PsyPhy::TrackerPose	hmd;
-			PsyPhy::TrackerPose	codaHmd;
 			PsyPhy::TrackerPose	hand;
 			PsyPhy::TrackerPose	chest;
-			PsyPhy::TrackerPose mouse;
 			MarkerFrame markerFrame[2];
 			float	clientTime;
 			unsigned char clientData[GRASP_RT_CLIENT_BYTES];

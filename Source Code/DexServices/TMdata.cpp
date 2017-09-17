@@ -133,10 +133,8 @@ u32 RT_packet::serialize(u8 *buffer ) const {
 		p = addTM( Slice[i].fillTime, buffer, p );
 		p = addTM( (u32) Slice[i].globalCount, buffer, p );
 		p = addTM( Slice[i].hmd, buffer, p );
-		p = addTM( Slice[i].codaHmd, buffer, p );
 		p = addTM( Slice[i].hand, buffer, p );
 		p = addTM( Slice[i].chest, buffer, p );
-		p = addTM( Slice[i].mouse, buffer, p );
 		// If we put all the marker position and visibility data from both codas into each slice we
 		// can only fit 1 slice per packet, but it wastes a lot of space.
 		// Here I put the position and visibility of markers in one of the codas into a given slice,
