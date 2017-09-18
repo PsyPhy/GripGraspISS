@@ -38,6 +38,11 @@ void DexServices::Initialize( char *filename ) {
 	fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", log_filename );
 	printDateTime( log );
 	fprintf( log, " File %s open for logging services.\n", log_filename );
+
+	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
+		strncpy(  (char *) rt.Slice[i].clientData, "NULL", sizeof( rt.Slice[i].clientData ) );
+	}
+
 }
 
 int DexServices::Connect ( void ) {
@@ -414,6 +419,10 @@ bool DexServices::HandleProxyConnection( void ) {
 			return( false );
 		}
 		TimerSet( client_connection_timer, CLIENT_CONNECTION_TIMEOUT );
+		// New connection, so initialize the client data ID.
+		for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
+			strncpy(  (char *) rt.Slice[i].clientData, "NULL", sizeof( rt.Slice[i].clientData ) );
+		}
 	}
 
 	// We are connected so attempt to read a packet.
