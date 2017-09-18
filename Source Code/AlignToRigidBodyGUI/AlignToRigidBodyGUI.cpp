@@ -50,4 +50,6 @@ int main(array<System::String ^> ^args)
 	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex, noCoda ));
 	return( Environment::ExitCode );
 
+	dex->Disconnect();
+
 }
