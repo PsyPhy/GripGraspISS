@@ -337,7 +337,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
-		dexServices->AddTrackerSlice( headPose, headPose, handPose, chestPose, rollPose, trackers->markerFrame );
+		// dexServices->AddTrackerSlice( headPose, headPose, handPose, chestPose, rollPose, trackers->markerFrame );
+
+		// Send information about the state of the simulation to DEX.
+		GraspClientData client_data;
+		int bytes = sizeof( client_data );
+		FillClientData( client_data );
+		dexServices->AddClientSlice( (unsigned char *) &client_data, bytes );
 
 		// Output the poses to a file.
 		if ( pose_fp ) {

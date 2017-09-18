@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
 		fprintf( stderr, "DexServices: Waiting for keypress to start ... " );
 		if ( 'x' == _getch() ) break;
+		fprintf( stderr, "OK.\n" );
 
 
 		fprintf( stderr, "DexServices: Initializing ... " );
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
 		static MarkerFrame frames[2];
 		for ( int i = 0; i < 100; i++ ) {
 			dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
-			unsigned char buffer[100];
+			unsigned char buffer[128	];
 			dex->AddClientSlice( buffer, sizeof( buffer ) );
 			Sleep( 1 );
 		}

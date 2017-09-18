@@ -235,7 +235,7 @@ class DexServices : public PsyPhy::VectorsMixin
 		}
 
 		void AddClientSlice( unsigned char *data, int bytes ) {
-			assert( bytes > sizeof( packet.client ) );
+			assert( bytes <= sizeof( packet.client ) );
 			memcpy( packet.client, data, bytes );
 			packet.command = CLIENT_DATA;
 			Send( (unsigned char *) &packet, sizeof( packet ) );

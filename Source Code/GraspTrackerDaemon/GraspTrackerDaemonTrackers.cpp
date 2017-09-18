@@ -195,7 +195,7 @@ namespace GraspTrackerDaemon {
 		// Send status to DEX.
 		unsigned int tracker_status = trackers->GetTrackerStatus();
 		dex->SendTrackerStatus( tracker_status );
-		dex->AddTrackerSlice( NullTrackerPose, record.codaHmd, record.hand, record.chest, NullTrackerPose, trackers->markerFrame );
+		dex->AddTrackerSlice( record.codaHmd, record.hand, record.chest, trackers->markerFrame );
 
 		// Update the screen display.
 		String ^line;

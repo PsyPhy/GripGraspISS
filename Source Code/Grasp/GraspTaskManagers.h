@@ -16,6 +16,31 @@ namespace Grasp {
 					TrialInterrupted = 40, VRCompleted = 50, Demo = 98, ExitStateMachine = 99 } GraspTrialState;
 	typedef enum { RAISE_HAND_TIMEOUT = 1, LOWER_HAND_TIMEOUT, RAISED_HAND_VIOLATION, HAND_TOO_SOON, ALIGN_HAND_TIMEOUT, HEAD_ALIGNMENT_TIMEOUT, HEAD_TILT_TIMEOUT, HEAD_MISALIGNMENT, RESPONSE_TIMEOUT, MANUAL_REJECT_TRIAL, INVALIDATE_TRIAL } Anomaly;
 	typedef enum { MANUAL_STRAIGHTEN, CODA_STRAIGHTEN, CHEST_STRAIGHTEN } StraightenHeadMethod;
+
+	typedef struct {
+
+		char ID[8];
+
+		unsigned long enableBits;
+		unsigned long spinnerBits;
+
+		CompactPose	headPose;
+		CompactPose	handPose;
+		CompactPose	chestPose;
+		float rollQuaternion[4];
+
+		short	targetHeadTiltD;
+		short	targetOrientationD;
+		short	responseHeadTiltD;
+		short	currentTrial;
+		float	conflictGain;
+
+		Paradigm		paradigm;
+		GraspTrialState	currentState;
+		bool	provideFeedback;
+
+	} GraspClientData;
+
 	class GraspTaskManager : public GraspVR {
 
 	public:
@@ -195,6 +220,71 @@ namespace Grasp {
 
 		bool Validate( void ) {
 			return display->Validate();
+		}
+		void FillClientData( GraspClientData &data ) {
+
+			strncpy( data.ID, "GRASP", sizeof( data.ID ));
+			data.enableBits = 0;
+			unsigned long bit = 0x01;
+
+			if ( renderer->orientationTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->positionOnlyTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->straightAheadTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->response->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->projectiles->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->multiProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->monoProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->glasses->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->headTiltPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->gazeLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->fuzzyLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->successIndicator->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->vTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->kTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->vkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->kkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->handRollPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->lowerHandPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->wristZone->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->room->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->tunnel->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->starrySky->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->darkSky->enabled ) data.enableBits |= bit; bit = bit << 1;
+
+			data.spinnerBits = 0;
+			bit = 0x01;
+			if ( renderer->readyToStartIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->blockCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->lowerHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->raiseHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->raiseArmTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->headMisalignIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->manualRejectIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->invalidateTrialIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->headAlignTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->timeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->responseTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->handRotateTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->handTooSoonIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->handShouldNotBeRaisedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->straightenHeadIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->vrCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			if ( renderer->demoIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+
+			data.currentState = currentState;
+			data.currentTrial = currentTrial;
+			data.paradigm = GetParadigm();
+
+			CopyPose( data.headPose, headPose.pose );
+			CopyPose( data.handPose, handPose.pose );
+			CopyPose( data.chestPose, chestPose.pose );
+			CopyQuaternion( data.rollQuaternion, rollPose.pose.orientation );
+
+			data.targetHeadTiltD = trialParameters[currentTrial].targetHeadTilt * 100.0;
+			data.targetOrientationD = trialParameters[currentTrial].targetOrientation * 100.0;
+			data.responseHeadTiltD = trialParameters[currentTrial].responseHeadTilt * 100.0,
+			data.conflictGain = (float) trialParameters[currentTrial].conflictGain;
+			data.provideFeedback = trialParameters[currentTrial].provideFeedback;
 		}
 
 
