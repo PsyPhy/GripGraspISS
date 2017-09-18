@@ -72,9 +72,28 @@ void VectorsMixin::CopyQuaternion( Quaternion destination, const Quaternion sour
 	destination[M] = source[M];
 }
 
+void VectorsMixin::CopyQuaternion( Quaternionf destination, const Quaternion source ){
+	destination[X] = (float) source[X];
+	destination[Y] = (float) source[Y];
+	destination[Z] = (float) source[Z];
+	destination[M] = (float) source[M];
+}
 void VectorsMixin::CopyPose( Pose &destination, const Pose &source ) {
 	CopyVector( destination.position, source.position );
 	CopyQuaternion( destination.orientation, source.orientation );
+}
+
+void VectorsMixin::CopyPose( CompactPose &destination, const Pose &source ) {
+
+	destination.position[X] = (short) (source.position[X] * 10.0);
+	destination.position[Y] = (short) (source.position[Y] * 10.0);
+	destination.position[Z] = (short) (source.position[Z] * 10.0);
+
+	destination.orientation[X] = (float) source.orientation[X];
+	destination.orientation[Y] = (float) source.orientation[Y];
+	destination.orientation[Z] = (float) source.orientation[Z];
+	destination.orientation[M] = (float) source.orientation[M];
+
 }
 
 void VectorsMixin::AddVectors( Vector3 result, const Vector3f a, const Vector3f b ) {
