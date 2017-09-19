@@ -27,7 +27,7 @@ namespace GraspTrackerDaemon {
 		bool use_legacy;
 		bool autohide;
 
-		PsyPhy::Tracker	*coda;
+		PsyPhy::Tracker				*coda;
 		Grasp::GraspDexTrackers		*trackers;
 		Grasp::DexServices			*dex;
 
@@ -51,8 +51,8 @@ namespace GraspTrackerDaemon {
 			InitializeComponent();
 			// By default, the daemon uses a CodaRTnet tracker to interface to the tracking hardware.
 			// One can change for other trackers by creating different cookie files.
-			if ( 0 == _access_s( "FakeCoda.flg", 0x00 ) ) use_coda = false;
-			if ( 0 == _access_s( "LegacyCoda.flg", 0x00 ) ) { use_coda = false; use_legacy = true; }
+			if ( FileExists( "FakeCoda.flg" ) ) use_coda = false;
+			if ( FileExists( "LegacyCoda.flg") ) { use_coda = false; use_legacy = true; }
 			// Create an object that provides us with vector and matrix capabilities.
 			vm = new VectorsMixin();
 		}
@@ -633,7 +633,8 @@ namespace GraspTrackerDaemon {
 
 			// Connect to dex for telemetry and snapshots.
 			dex = new Grasp::DexServices();
-			dex->Initialize( "GraspTrackerDaemon.dxl" );
+			// Initialize without a log file.
+			dex->Initialize( nullptr );
 			dex->Connect();
 			dex->InitializeProxySocket();
 
