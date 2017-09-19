@@ -341,7 +341,8 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		// Add command line arguments to COMMAND or COMMAND@.
 		if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
 			cmdline =  stepList[currentStep]->command 
-				+ " --output=" + resultsDirectory 
+				+ " --output=" 
+				+ resultsDirectory 
 				+ subjectList[currentSubject]->ID + "_" 
 				+ protocolID + "_" 
 				+ taskID + "_" 
@@ -351,7 +352,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				+ " --task=" + taskID
 				+ " --step=" + stepID;
 			// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
-			if ( 0 == _access_s( "NoCoda.flg", 0x00 ) ) cmdline = cmdline + " --nocoda";
+			if ( FileExists( "NoCoda.flg" ) ) cmdline = cmdline + " --nocoda";
 		}
 		// SYSTEM or SYSTEM@ do not add command line arguments.
 		else  cmdline = stepList[currentStep]->command;

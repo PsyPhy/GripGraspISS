@@ -29,6 +29,7 @@ namespace GraspGUI {
 		String^	rootDirectory;
 		String^ execDirectory;
 		String^ scriptDirectory;
+		String^ resultsPath;
 		String^ resultsDirectory;
 		String^ instructionsDirectory;
 
@@ -76,8 +77,11 @@ namespace GraspGUI {
 		}		
 
 	public:
-		GraspDesktop( void )
+		GraspDesktop( String^ results_path )
 		{
+
+			// Caller can specify a path to the results directory.
+			resultsPath = gcnew String( results_path );
 
 			// The lists of subjects, protocols, tasks and steps are dynamically
 			//  read from text files. Here we initialize the lists.
@@ -118,7 +122,7 @@ namespace GraspGUI {
 			char datestr[MAX_PATH];
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			String ^dateString = gcnew String( datestr );
-			resultsDirectory = "Results\\" +  dateString + "\\";
+			resultsDirectory = resultsPath + "\\" +  dateString + "\\";
 
 			// Standard Windows Forms initialization.
 			InitializeComponent();
@@ -287,7 +291,6 @@ namespace GraspGUI {
 			// 
 			this->navigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
 			this->navigatorGroupBox->Controls->Add(this->packetTimeTextBox);
-			this->navigatorGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->navigatorGroupBox->Controls->Add(this->statusButton);
 			this->navigatorGroupBox->Controls->Add(this->quitButton);
 			this->navigatorGroupBox->Controls->Add(this->taskGroupBox);
@@ -331,7 +334,7 @@ namespace GraspGUI {
 			this->dexStatusGroupBox->Controls->Add(this->snapshotsLabel);
 			this->dexStatusGroupBox->Enabled = false;
 			this->dexStatusGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->dexStatusGroupBox->Location = System::Drawing::Point(6, 911);
+			this->dexStatusGroupBox->Location = System::Drawing::Point(23, 532);
 			this->dexStatusGroupBox->Name = L"dexStatusGroupBox";
 			this->dexStatusGroupBox->Size = System::Drawing::Size(599, 68);
 			this->dexStatusGroupBox->TabIndex = 20;
@@ -466,6 +469,7 @@ namespace GraspGUI {
 			// taskGroupBox
 			// 
 			this->taskGroupBox->Controls->Add(this->taskListBox);
+			this->taskGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->taskGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskGroupBox->Location = System::Drawing::Point(6, 337);
@@ -961,7 +965,13 @@ namespace GraspGUI {
 			// Connect to DEX so that we can send info about the current subject, protocol, etc. to ground.
 			fOutputDebugString( "Connecting to DEX ... " );
 			dex = new Grasp::DexServicesByProxy();
-			dex->Initialize( "GraspGUI.dxl" );
+			char *results_path = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( resultsDirectory ).ToPointer();
+			char dxl_file[MAX_PATHLENGTH];
+			strcpy( dxl_file, results_path );
+			strcat( dxl_file, "GraspGUI.dxl" );
+			System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( results_path ) );
+
+			dex->Initialize( dxl_file );
 			dex->Connect();
 			fOutputDebugString( "OK.\n" );
 		}
@@ -974,8 +984,7 @@ namespace GraspGUI {
 			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
 		}
 		void DisconnectFromDEX ( void ) {
-			dex->SendTaskInfo(  0, 0, 0, 0 );
-			fOutputDebugString( "dex->SendTaskInfo( 0, 0, 0, 0 );\n" );
+			dex->ResetTaskInfo();
 			dex->Disconnect();
 			dex->Release();
 		}
