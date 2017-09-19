@@ -33,13 +33,22 @@ void DexServices::printDateTime( FILE *fp ) {
 
 void DexServices::Initialize( char *filename ) {
 
-	if ( filename ) strncpy( log_filename, filename, sizeof( log_filename ));
-	log = fopen( log_filename, "a+" );
-	fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", log_filename );
-	printDateTime( log );
-	fprintf( log, " File %s open for logging services.\n", log_filename );
+	if ( filename ) {
+		log = fopen( filename, "a+" );
+		fAbortMessageOnCondition( !log, "DexServices", "Error opening %s for write.", filename );
+		printDateTime( log );
+		fprintf( log, " File %s open for logging services.\n", filename );
+	}
+	else log = NULL;
 
+	// Clear the realtime science data buffer.
 	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
+		rt.Slice[i].fillTime = 0.0;
+		rt.Slice[i].globalCount = 0;
+		CopyTrackerPose( rt.Slice[i].hmd, NullTrackerPose );
+		CopyTrackerPose( rt.Slice[i].hand, NullTrackerPose );
+		CopyTrackerPose( rt.Slice[i].chest, NullTrackerPose );
+		rt.Slice[i].clientTime = 0.0;
 		strncpy(  (char *) rt.Slice[i].clientData, "NULL", sizeof( rt.Slice[i].clientData ) );
 	}
 
@@ -47,8 +56,10 @@ void DexServices::Initialize( char *filename ) {
 
 int DexServices::Connect ( void ) {
 
-	printDateTime( log );
-	fprintf( log, " Attempting connection to DEX.\n" );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Attempting connection to DEX.\n" );
+	}
 
 	int retval;
 	unsigned long addr;
@@ -109,27 +120,37 @@ int DexServices::Connect ( void ) {
 	unsigned long nonblocking = 1;
 	ioctlsocket( dexSocket, FIONBIO, &nonblocking );
 	connect( dexSocket, (struct sockaddr*)&server, sizeof(server) );
-	printDateTime( log );
-	fprintf( log, " Connection to DEX pending.\n" );
-	Sleep( 1000 );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Connection to DEX pending.\n" );
+	}
+
+	TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
+	TimerSet( housekeeping_timer, GRASP_HK_PACKET_INTERVAL );
+	TimerStart( stream_timer );
+
 	return 0;
 
 };
 
 void DexServices::Disconnect( void ) {
-	fOutputDebugString( "DexServices: Client disconnecting.\n" );
+	fOutputDebugString( "DexServices: Disconnecting from server.\n" );
 	// If the connection failed, this should fail, too, but I don't really care.
 	closesocket( dexSocket );
-	WSACleanup();
-	printDateTime( log );
-	fprintf( log, " Connection closed.\n" );
-	fOutputDebugString( "DexServices: Client disconnected.\n" );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Connection closed.\n" );
+	}
+	fOutputDebugString( "DexServices: Connection to server disconnected.\n" );
 }
 
 void DexServices::Release( void ) {
-	printDateTime( log );
-	fprintf( log, " Closing log file.\n" );
-	fclose( log );
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Closing log file.\n" );
+		fclose( log );
+	}
+	WSACleanup();
 	fOutputDebugString( "DexServices: released.\n" );
 }
 
@@ -149,8 +170,6 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 
 void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[MAX_UNITS] ) {
 
-	// fOutputDebugString( "DexServices: AddDataSlice()\n" );
-
 	// Fill the current slice with the new data.
 	rt.Slice[slice_count].fillTime = (float) TimerElapsedTime( stream_timer );
 	rt.Slice[slice_count].globalCount = stream_count++;
@@ -160,8 +179,8 @@ void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose
 	CopyTrackerPose( rt.Slice[slice_count].chest, chest );
 	// And the marker information (3D position and visibility).
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( rt.Slice[slice_count].markerFrame[unit], frame[unit] );
-	
-	SendIfReady();
+
+	AdvanceIfReady();
 
 }
 
@@ -172,11 +191,12 @@ void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
 	rt.Slice[slice_count].clientTime = (float) TimerElapsedTime( stream_timer );
 	memcpy( rt.Slice[slice_count].clientData, data, bytes );
 	for ( int i = bytes; i < max_bytes; i++  ) rt.Slice[slice_count].clientData[i] = 0;
-	SendIfReady();
+
+	AdvanceIfReady();
 
 }
 
-void DexServices::SendIfReady( void ) {
+void DexServices::AdvanceIfReady( void ) {
 
 	// Dex RT Packets can only be sent two times per second. 
 	// So we pack multiple data slices into a single packet.
@@ -184,7 +204,8 @@ void DexServices::SendIfReady( void ) {
 	// sends a new slice before the timer runs out, we overwrite
 	// the previous slice. When the timer does run out we increment
 	// to the next slice. When there are enough slices to fill the
-	// packet, it gets sent.
+	// packet, it gets sent, and we rest back to the begining of the
+	// slice buffer.
 	if ( TimerTimeout( slice_timer ) ) {
 		slice_count++;
 		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
@@ -212,7 +233,6 @@ int DexServices::SendScienceRealtimeData( void ) {
 		fprintf( log, " Sent science realtime info (%s).\n", ( sent > 0 ? "OK" : "not sent") );
 		fflush( log );
 	}
-
 	return( sent );
 
 }
@@ -232,7 +252,8 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 	static_substep = substep;
 	static_tracker_status = tracker_status;
 
-	if ( TimerTimeout( info_timer ) ) {
+	if ( TimerTimeout( housekeeping_timer ) ) {
+
 		// Fill the packet with info.
 		hk.current_protocol = protocol;
 		hk.current_user = user;
@@ -252,7 +273,7 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 				user, protocol, task, step, substep, tracker_status, ( sent > 0 ? "OK" : "not sent") );
 			fflush( log );
 		}
-		TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
+		TimerSet( housekeeping_timer, GRASP_HK_PACKET_INTERVAL );
 		return( sent );
 
 	}
@@ -260,42 +281,17 @@ int DexServices::SendTaskInfo( int user, int protocol, int task, int step, unsig
 
 }
 
+int DexServices::ResendTaskInfo( void ) { 
+	return( SendTaskInfo( static_user, static_protocol, static_task, static_step, static_substep, static_tracker_status, true ) ); 
+}
+
+int DexServices::SendSubstep( int substep ) { 
+	return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); 
+}
+
 // Send a number to indicate the tracker status.
 int DexServices::SendTrackerStatus( unsigned int status ) {
 	return( SendTaskInfo( static_user, static_protocol, static_task, static_step, static_substep, status ) ); 
-}
-
-
-int DexServices::SnapPicture( const char *tag ) {
-
-	// A buffer to hold the string of bytes that form the packet.
-	u8 packet[1024];
-	// An object that serializes the data destined for DEX housekeeping telemetry packets.
-	CameraTrigger_packet cam;
-
-	// Truncate tags that are too long.
-	if ( strlen( tag ) < sizeof( cam.tag ) ) strcpy( cam.tag, tag );
-	else {
-		// Take only the part that fits.
-		memcpy( cam.tag, tag, sizeof( cam.tag ) );
-		// Make sure that it is null terminated.
-		cam.tag[ sizeof(cam.tag) - 1 ] = '\0';
-		// Emit a warning.
-		fOutputDebugString( "DexServices: Warning - Truncating tag %s to %s\n", tag, cam.tag );
-	}
-
-	// Turn the data structure into a string of bytes with header etc.
-	u32 size = cam.serialize( packet );
-
-	// Send it to DEX.
-	int sent = Send( packet, size );
-
-	if ( log ) {
-		printDateTime( log );
-		fprintf( log, " Snapped picture: %s (%s)\n", cam.tag, ( sent > 0 ? "OK" : "not sent") );
-		fflush( log );
-	}
-	return( sent );
 }
 
 void DexServices::ParseCommandLine( char *command_line ) {
@@ -335,6 +331,40 @@ void DexServices::ParseCommandLine( char *command_line ) {
 
 }
 
+int DexServices::SnapPicture( const char *tag ) {
+
+	// A buffer to hold the string of bytes that form the packet.
+	u8 packet[1024];
+	// An object that serializes the data destined for DEX housekeeping telemetry packets.
+	CameraTrigger_packet cam;
+
+	// Truncate tags that are too long.
+	if ( strlen( tag ) < sizeof( cam.tag ) ) strcpy( cam.tag, tag );
+	else {
+		// Take only the part that fits.
+		memcpy( cam.tag, tag, sizeof( cam.tag ) );
+		// Make sure that it is null terminated.
+		cam.tag[ sizeof(cam.tag) - 1 ] = '\0';
+		// Emit a warning.
+		fOutputDebugString( "DexServices: Warning - Truncating tag %s to %s\n", tag, cam.tag );
+	}
+
+	// Turn the data structure into a string of bytes with header etc.
+	u32 size = cam.serialize( packet );
+
+	// Send it to DEX.
+	int sent = Send( packet, size );
+	fOutputDebugString( " Snapped picture: %s (%s)\n", cam.tag, ( sent > 0 ? "OK" : "not sent") );
+
+	if ( log ) {
+		printDateTime( log );
+		fprintf( log, " Snapped picture: %s (%s)\n", cam.tag, ( sent > 0 ? "OK" : "not sent") );
+		fflush( log );
+	}
+	return( sent );
+}
+
+
 void DexServices::InitializeProxySocket( void ) {
 
 	WSADATA wsaData;
@@ -372,6 +402,12 @@ void DexServices::InitializeProxySocket( void ) {
 		WSACleanup();
 		return;
 	}
+	
+	// Make the receiver buffer bigger so that we don't miss any packets.
+	int bufferSize = 100 * sizeof( DexServicesPacket );
+	int bufferSizeLen = sizeof( bufferSize);
+	setsockopt( proxySocket, SOL_SOCKET, SO_RCVBUF, (char *) &bufferSize, bufferSizeLen);
+
 
 	// Setup the TCP listening socket
 	iResult = bind( proxySocket, result->ai_addr, (int)result->ai_addrlen );
@@ -385,7 +421,7 @@ void DexServices::InitializeProxySocket( void ) {
 
 	unsigned long nonblocking = 1;
 	ioctlsocket( proxySocket, FIONBIO, &nonblocking );
-	// Listen until we get a connection.
+	// Set to listen.
 	fOutputDebugString( "Listening for a client connection on port %s.\n", PROXY_DEX_PORT_STRING  );
 	iResult = listen( proxySocket, SOMAXCONN );
 	if (iResult == SOCKET_ERROR) {
@@ -426,40 +462,53 @@ bool DexServices::HandleProxyConnection( void ) {
 	}
 
 	// We are connected so attempt to read a packet.
-	char buffer[2048];
+	DexServicesPacket pk;
 	int iResult;
-	while ( ( iResult = recv( clientSocket, buffer, sizeof( buffer ), 0) ) > 0 ) {
+	while ( ( iResult = recv( clientSocket, (char *) &pk, sizeof( DexServicesPacket ), 0) ) > 0 ) {
 
 		// Process the packet.
 		if ( iResult == sizeof( DexServicesPacket ) ) {
-			DexServicesPacket *pk = (DexServicesPacket *) buffer;
-			switch ( pk->command ) {
+			fOutputDebugString( "DexServices::HandleProxyConnection() - Received Command: %d  Count: %d\n", pk.command, pk.sequence_number );
+			switch ( pk.command ) {
 
-			case TASK:
-				SendTaskInfo( pk->user, pk->protocol, pk->task, pk->step, pk->substep, pk->tracker );
+			case HOUSEKEEPING:
+				SendTaskInfo( pk.user, pk.protocol, pk.task, pk.step, pk.substep, pk.tracker );
 				break;
 
 			case SUBSTEP:
-				SendSubstep( pk->substep );
+				SendSubstep( pk.substep );
 				break;
 
 			case TRACKER_STATUS:
-				SendTrackerStatus( pk->tracker );
+				SendTrackerStatus( pk.tracker );
 				break;
 
 			case PICTURE:
-				SnapPicture( pk->tag );
+				SnapPicture( pk.tag );
 				break;
 
 			case TRACKER_DATA:
-				AddTrackerSlice( pk->hmd, pk->chest, pk->hand, pk->markers );
+				AddTrackerSlice( pk.hmd, pk.chest, pk.hand, pk.markers );
 				break;
 
 			case CLIENT_DATA:
-				AddClientSlice( pk->client, sizeof( pk->client ) );
+				AddClientSlice( pk.client, sizeof( pk.client ) );
 				break;
 
+			case DISCONNECT:
+				closesocket( clientSocket );
+				clientSocket = INVALID_SOCKET;
+				return( false );
+				break;
+
+			default:
+				fOutputDebugString( "DexServices::HandleProxyConnection() - Unexpected command: %d\n", pk.command );
+
 			}
+		 
+		}
+		else {
+			fOutputDebugString( "DexServices::HandleProxyConnection() - Unexpected packet size: %d\n", iResult );
 		}
 
 		// Reset the timeout timer because we received a packet.

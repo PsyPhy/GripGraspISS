@@ -13,6 +13,7 @@
 #include <share.h>
 #include <sys/stat.h>
 #include <Windows.h>
+#include "../Useful/fOutputDebugString.h"
 
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
@@ -43,10 +44,12 @@
 #define TRACKER_ANOMALY			44444
 #define TRACKERSTATUS_UNKNOWN	55555
 
-typedef enum { TASK, SUBSTEP, TRACKER_STATUS, TRACKER_DATA, CLIENT_DATA, PICTURE } DexServicesPacketType;
+typedef enum { HOUSEKEEPING, SUBSTEP, TRACKER_STATUS, TRACKER_DATA, CLIENT_DATA, PICTURE, DISCONNECT } DexServicesPacketType;
 
 typedef struct {
-	DexServicesPacketType command;
+
+	DexServicesPacketType	command;
+	int						sequence_number;
 	int user;
 	int protocol;
 	int task;
@@ -55,7 +58,7 @@ typedef struct {
 	int script;
 	int tracker;
 	char tag[32];
-	
+
 	PsyPhy::TrackerPose	hmd;
 	PsyPhy::TrackerPose	hand;
 	PsyPhy::TrackerPose	chest;
@@ -69,7 +72,7 @@ namespace Grasp {
 
 
 
-class DexServices : public PsyPhy::VectorsMixin
+	class DexServices : public PsyPhy::VectorsMixin
 	{
 
 	public:
@@ -88,7 +91,7 @@ class DexServices : public PsyPhy::VectorsMixin
 		int static_substep;
 		int static_tracker_status;
 
-	private:
+	public:
 
 		char	log_filename[FILENAME_MAX];
 		FILE	*log;
@@ -104,7 +107,7 @@ class DexServices : public PsyPhy::VectorsMixin
 		int		slice_count;
 		Timer	stream_timer;
 		int		stream_count;
-		Timer	info_timer;
+		Timer	housekeeping_timer;
 		Timer	client_connection_timer;
 
 		// An object that serializes the data destined for DEX housekeeping telemetry packets.
@@ -129,11 +132,6 @@ class DexServices : public PsyPhy::VectorsMixin
 		  {
 			  server_name = server;
 			  server_port = port;
-
-			  strncpy( log_filename, "DexServices.dxl", sizeof( log_filename ) );
-			  TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
-			  TimerSet( info_timer, GRASP_HK_PACKET_INTERVAL );
-			  TimerStart( stream_timer );
 		  }
 
 		  virtual void Initialize( char *filename = nullptr );
@@ -142,26 +140,28 @@ class DexServices : public PsyPhy::VectorsMixin
 		  virtual void Disconnect( void );
 		  virtual void Release( void );
 
-
+		  // Housekeeping
 		  virtual int SendTaskInfo( int user, int protocol, int task, int step, 
 			  unsigned short substep = STEP_EXECUTING, unsigned short tracker_status = TRACKERSTATUS_UNKNOWN, bool force = false );
 		  virtual int ResetTaskInfo( void ) { return( SendTaskInfo( 0, 0, 0, 0, 0, 0, true ) ); }
-		  virtual int SendSubstep( int substep ) { return( SendTaskInfo( static_user, static_protocol, static_task, static_step, STEP_EXECUTING + ( substep % 10000 ), static_tracker_status ) ); }
+		  virtual int ResendTaskInfo( void ); 
+		  virtual int SendSubstep( int substep );
 		  virtual int SendTrackerStatus( unsigned int status );
-
-		  virtual int SnapPicture( const char *tag );
-
-		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] );
-		  virtual void AddClientSlice( unsigned char *data, int bytes );
-		  virtual void SendIfReady( void );
-
 		  virtual void ParseCommandLine( char *command_line );
 
+		  // Snapshots
+		  virtual int SnapPicture( const char *tag );
+
+		  // Realtime Science Data
+		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] );
+		  virtual void AddClientSlice( unsigned char *data, int bytes );
+
+		  // Proxy Server - Used to create a relay between local processes and DEX.
 		  SOCKET		ProxySocket;
 		  virtual void	InitializeProxySocket( void );
 		  virtual bool	HandleProxyConnection( void );
 		  void			ReleaseProxySocket( void );
-	
+
 		  // If the program is being compiled with /clr, then expose these methods that use String objects.
 #ifdef _MANAGED
 		  bool ParseForInt( System::String ^argument, const char *flag, int &value ) {
@@ -186,66 +186,121 @@ class DexServices : public PsyPhy::VectorsMixin
 			  SendTaskInfo( static_user, static_protocol, static_task, static_step );
 		  }
 #endif
-		private: int SendScienceRealtimeData( void );
-
+	private: 
+		int SendScienceRealtimeData( void );
+		virtual void AdvanceIfReady( void );
 	};
 
 	class DexServicesByProxy : public DexServices {
 
+	private:
+		Timer	tracker_slice_timer;
+		Timer	client_slice_timer;
+
 	public:
 
 		DexServicesPacket	packet;
+
 		int SendTaskInfo( int user, int protocol, int task, int step, 
-			  unsigned short substep = STEP_EXECUTING, 
-			  unsigned short tracker_status = TRACKERSTATUS_UNKNOWN, 
-			  bool force = false ) {
-				  packet.user = user;
-				  packet.protocol = protocol;
-				  packet.task = task;
-				  packet.step = step;
-				  packet.substep = substep;
-				  packet.tracker = tracker_status;
-				  packet.command = TASK;
-				  return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
+			unsigned short substep = STEP_EXECUTING, 
+			unsigned short tracker_status = TRACKERSTATUS_UNKNOWN, 
+			bool force = false ) {
+				packet.user = user;
+				packet.protocol = protocol;
+				packet.task = task;
+				packet.step = step;
+				packet.substep = substep;
+				packet.tracker = tracker_status;
+				packet.command = HOUSEKEEPING;
+				if ( log ) {
+					printDateTime( log );
+					fprintf( log, " SendTaskInfo: %d %d %d %d %d .\n",
+						packet.user, packet.protocol, packet.task, packet.step, packet.substep );
+				}
+				return ( SendToProxy( packet ) );
 		}
-		//int SendSubstep( int substep ) {
-		//	packet.substep = substep;
-		//	packet.command = SUBSTEP;
-		//	return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
-		//}
-		//int SendTrackerStatus( unsigned int status ) {
-		//	packet.tracker = status;
-		//	packet.command = TRACKER_STATUS;
-		//	return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
-		//}
+		int SendSubstep( int substep ) {
+			packet.substep = substep;
+			packet.command = SUBSTEP;
+			return ( SendToProxy( packet ) );
+		}
+		int SendTrackerStatus( unsigned int status ) {
+			packet.tracker = status;
+			packet.command = TRACKER_STATUS;
+			return ( SendToProxy( packet ) );
+		}
 		int SnapPicture( const char *tag ) {
 			strncpy( packet.tag, tag, sizeof( packet.tag ) );
 			packet.command = PICTURE;
-			return ( Send( (unsigned char *) &packet, sizeof( packet ) ) );
+			if ( log ) {
+				printDateTime( log );
+				fprintf( log, " SnapPicture: %s.\n", packet.tag );
+				fflush( log );
+			}
+			return ( SendToProxy( packet ) );
 		}
 
 		void AddTrackerSlice(  PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] ) {
+			if ( log ) {
+				printDateTime( log );
+				fprintf( log, " AddTrackerSlice.\n" );
+			}
 			CopyTrackerPose( packet.hmd, hmd );
 			CopyTrackerPose( packet.hand, hand );
 			CopyTrackerPose( packet.chest, chest );
 			PsyPhy::CopyMarkerFrame( packet.markers[0], frame[0] );
 			PsyPhy::CopyMarkerFrame( packet.markers[1], frame[1] );
-			packet.command = TRACKER_DATA;
-			Send( (unsigned char *) &packet, sizeof( packet ) );
+			if ( TimerTimeout( tracker_slice_timer ) ) {
+				packet.command = TRACKER_DATA;
+				SendToProxy( packet );
+				TimerSet( tracker_slice_timer, GRASP_RT_SLICE_INTERVAL );
+			}
 		}
 
 		void AddClientSlice( unsigned char *data, int bytes ) {
 			assert( bytes <= sizeof( packet.client ) );
+			if ( log ) {
+				printDateTime( log );
+				fprintf( log, " AddClientSlice.\n" );
+			}
 			memcpy( packet.client, data, bytes );
-			packet.command = CLIENT_DATA;
-			Send( (unsigned char *) &packet, sizeof( packet ) );
+			if ( TimerTimeout( client_slice_timer ) ) {
+				packet.command = CLIENT_DATA;
+				SendToProxy( packet );
+				TimerSet( client_slice_timer, GRASP_RT_SLICE_INTERVAL );
+			}
+		}
+
+		int SendToProxy( DexServicesPacket &packet ) {
+			packet.sequence_number++;
+			fOutputDebugString( "DexServicesByProxy::SendToProxy() - Send Command: %d  Count: %d\n", 
+				packet.command, packet.sequence_number );
+			// Attempt to send a packet. If the connection has not been established, this will fail, but we carry on.
+			// The caller may wish to signal the error or not, depending on the return code.
+			int retval = send( dexSocket, (const char *) &packet, sizeof( packet ), 0);
+			// If we were fancier, we could check if the connection has been achieved before doing the send and depending
+			// on the error we could try to reconnnect. But instead I just assume that if the connection was not established
+			// by the first try, we just carry on without a connection.
+			if ( retval == SOCKET_ERROR ) {
+				fOutputDebugString( "DexServices: send() failed: error %d (may just be waiting for connection.)\n", WSAGetLastError());
+			}
+			return retval;
+		}	
+
+		void Disconnect( void ) {
+			packet.command = DISCONNECT;
+			SendToProxy( packet );
+			Sleep( 50 );
+			DexServices::Disconnect();
 		}
 
 		DexServicesByProxy( char *server = PROXY_DEX_SERVER, unsigned short port = PROXY_DEX_PORT ) {
 			server_name = server;
 			server_port = port;
+			packet.sequence_number = 0;
+			TimerSet( client_slice_timer, GRASP_RT_SLICE_INTERVAL );
+			TimerSet( tracker_slice_timer, GRASP_RT_SLICE_INTERVAL );
 		}
-
 
 	};
 

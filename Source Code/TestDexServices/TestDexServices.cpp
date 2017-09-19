@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
 	DexServices *dex;
 
 	fprintf( stderr, "DexServices: Instantiating ... " );
-//	dex = new DexServicesByProxy( PROXY_DEX_SERVER, PROXY_DEX_PORT );
-	dex = new DexServices();
+	dex = new DexServicesByProxy( PROXY_DEX_SERVER, PROXY_DEX_PORT );
+//	dex = new DexServices();
 	fprintf( stderr, "OK.\n" );
 
 	int user = 10;
@@ -32,9 +32,9 @@ int main(int argc, char *argv[])
 	while ( true ) {
 
 		fprintf( stderr, "DexServices: Waiting for keypress to start ... " );
-		if ( 'x' == _getch() ) break;
+		char c = _getch();
+		if ( 'x' == c || 27 == c ) break;
 		fprintf( stderr, "OK.\n" );
-
 
 		fprintf( stderr, "DexServices: Initializing ... " );
 		dex->Initialize( "TestDexServices.dxl" );
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		dex->Connect();
 		fprintf( stderr, "OK.\n" );
 
-		fprintf( stderr, "DexServices: Send dummy HK packet ... " );
+		fprintf( stderr, "DexServices: Send dummy HK packet ... %d %d %d %d ... ", user, protocol, task, step );
 		for ( int i = 0; i < 10; i++ ) {
 			if ( 0 < dex->SendTaskInfo( user, protocol, task, step, substep ) ) fprintf( stderr, "OK.\n" );
 			else fprintf( stderr, "not sent.\n" );
@@ -54,18 +54,16 @@ int main(int argc, char *argv[])
 		fprintf( stderr, "DexServices: Send dummy RT packets ... " );
 		static MarkerFrame frames[2];
 		for ( int i = 0; i < 100; i++ ) {
-			dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
-			unsigned char buffer[128	];
+			//dex->AddTrackerSlice( PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, PsyPhy::NullTrackerPose, frames );
+			unsigned char buffer[128];
 			dex->AddClientSlice( buffer, sizeof( buffer ) );
-			Sleep( 1 );
+			Sleep( 10 );
 		}
 		fprintf( stderr, "OK.\n" );
 
 		fprintf( stderr, "DexServices: Snap a picture ... " );
 		if ( 0 < dex->SnapPicture( "JOE" ) ) fprintf( stderr, "OK.\n" );
 		else fprintf( stderr, "not sent.\n" );
-
-		Sleep( 600 );
 
 		fprintf( stderr, "DexServices: Snap a picture ... " );
 		if ( 0 < dex->SnapPicture( "JOSEPHMCINTYRE" ) ) fprintf( stderr, "OK.\n" );
@@ -83,6 +81,7 @@ int main(int argc, char *argv[])
 
 	}
 
+	fprintf( stderr, "exiting.\n" );
 	return 0;
 }
 
