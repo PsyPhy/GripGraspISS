@@ -29,7 +29,6 @@ int main(array<System::String ^> ^args)
 	for ( int i = 0; i < args->Length; i++ ) {
 		if ( args[i]->StartsWith( "--body" ) ) model_file = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
 		if ( args[i]->StartsWith( "--output" ) ) filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
-		if ( args[i]->StartsWith( "--nocoda" ) ) noCoda = true;
 	}
 	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s  CODA: %s\n", model_file, filename_root, ( noCoda ? "NO" : "YES" ));
 
@@ -45,11 +44,18 @@ int main(array<System::String ^> ^args)
 	// Initialize the sub-step to zero and send it to the ground via DEX. 
 	// We will change this as the work progresses to indicate progress on this step.
 	dex->SendSubstep( 0 );
+	dex->SnapPicture( "PREALIGN" );
 
 	// Create the main window and run it
-	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex, noCoda ));
+	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex ));
+
+	// Ask DEX to take a final snapshot and then disconnect.
+	dex->SnapPicture( "POSTALGN" );
+	dex->Disconnect();
+	dex->Release();
+
 	return( Environment::ExitCode );
 
-	dex->Disconnect();
+
 
 }

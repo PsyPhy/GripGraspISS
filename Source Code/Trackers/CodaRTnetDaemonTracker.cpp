@@ -41,7 +41,7 @@ void CodaRTnetDaemonTracker::StopAcquisition( void ) {
 	// Attempt to halt an ongoing aquisition. 
 	// Does not care if it was actually acquiring or not.
 	// Does not retrieve the data.
-	OutputDebugString( "Stopping acquisition ..." );
+	fOutputDebugString( "Stopping acquisition ..." );
 	acquiring = false;
 	OutputDebugString( "OK.\n" );
 }
@@ -205,7 +205,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 void CodaRTnetDaemonTracker::Quit(void ) {
 	closesocket( daemonSocket );
 	daemonSocket = NULL;
-	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ..." );
+	fOutputDebugString( "Quitting CodaRTnetTracker but leaving GraspTrackerDaemon runnning ... \n" );
 }
 
 void CodaRTnetDaemonTracker::Shutdown( void ) {

@@ -51,7 +51,6 @@ namespace AlignToRigidBodyGUI {
 
 	protected:
 
-		bool									noCoda;
 		bool									forceShow;
 
 		PsyPhy::OpenGLWindow					*visibilityWindow1, *visibilityWindow2;
@@ -71,20 +70,13 @@ namespace AlignToRigidBodyGUI {
 
 	protected: 
 
-	private: System::Windows::Forms::TextBox^  instructionsTextBox2;
-	private: System::Windows::Forms::GroupBox^  groupBox1;
-	private: System::Windows::Forms::Panel^  fovPanel2;
-	private: System::Windows::Forms::GroupBox^  groupBox2;
-	private: System::Windows::Forms::Panel^  fovPanel1;
-	private: System::Windows::Forms::Label^  busy;
-	private: System::Windows::Forms::TextBox^  instructionsTextBox3;
 
 
 	protected: 
 		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, bool noCoda ) :
+		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex ) :
 		  maxPositionError( 10.0 ),
 			  maxOrientationError( 2.0 ),
 			  forceShow( false )
@@ -93,7 +85,6 @@ namespace AlignToRigidBodyGUI {
 			  modelFile = model_file;
 			  filenameRoot = filename_root;
 			  this->dex = dex;
-			  this->noCoda = noCoda;
 		  }
 
 	protected:
@@ -117,6 +108,13 @@ namespace AlignToRigidBodyGUI {
 		System::Windows::Forms::Panel^  visibilityPanel1;
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
+		System::Windows::Forms::TextBox^  instructionsTextBox2;
+		System::Windows::Forms::GroupBox^  groupBox1;
+		System::Windows::Forms::Panel^  fovPanel2;
+		System::Windows::Forms::GroupBox^  groupBox2;
+		System::Windows::Forms::Panel^  fovPanel1;
+		System::Windows::Forms::Label^  busy;
+		System::Windows::Forms::TextBox^  instructionsTextBox3;
 
 	private:
 		/// <summary>
@@ -419,7 +417,6 @@ namespace AlignToRigidBodyGUI {
 				 dex->SendSubstep( STARTUP_VISIBILITY );
 
 				 // Show a message while the tracker is initializing.
-				 if ( noCoda ) instructionsTextBox->Text = instructionsTextBox->Text + " (noCoda debug mode)";
 				 busy->Text = L"Tracker Initializing\r\nPlease wait ...";
 				 busy->Visible = true;
 				 // Make sure that the windows have refreshed  before starting up the CODA, 
@@ -428,11 +425,11 @@ namespace AlignToRigidBodyGUI {
 				 Application::DoEvents();
 				 // Wait to make sure that the tracker is up and running so that we can kill it.
 				 Sleep( 5000 );
-				
-				// Create the CODA tracker.
-				coda = new CodaRTnetDaemonTracker();
-				coda->Initialize();
-				 
+
+				 // Create the CODA tracker.
+				 coda = new CodaRTnetDaemonTracker();
+				 coda->Initialize();
+
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
 				 // Hide the tracker message.
@@ -444,13 +441,9 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox2->Text = "Adjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.";
 				 instructionsTextBox3->Text = "When all conditions are met, press 'OK'.";
 
-				 if ( !noCoda ) {
-					 // Start a refresh time that will update the visibility of the LEDs in the GUI display.
-					 CreateRefreshTimer( 300 );
-					 StartRefreshTimer();
-				 }
-				 else Render();
-
+				// Start a refresh time that will update the visibility of the LEDs in the GUI display.
+				CreateRefreshTimer( 300 );
+				StartRefreshTimer();
 
 			 }
 
@@ -459,6 +452,7 @@ namespace AlignToRigidBodyGUI {
 					 dex->SendSubstep( ALIGNMENT_ERROR );
 					 dex->SendTrackerStatus( TRACKER_ANOMALY ); 
 				 }
+				 coda->Quit();
 			 }
 
 	private: System::Void cancelButton_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -467,10 +461,6 @@ namespace AlignToRigidBodyGUI {
 				 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
-					 if ( !noCoda ) {
-						 coda->AbortAcquisition();
-						 coda->Quit();
-					 }
 					 Environment::ExitCode = -1;
 					 Close();
 				 }
@@ -504,13 +494,6 @@ namespace AlignToRigidBodyGUI {
 				 Refresh();
 				 Application::DoEvents();
 
-				 if ( noCoda ) {
-					 Sleep( 2000 );
-					 Environment::ExitCode = 0;
-					 Close();
-					 return;
-				 }
-
 				 // Acquire a short burst of marker data to be used to perform the alignment.
 				 // Send a message to ground to show our progress.
 				 instructionsTextBox->Text = "[ Acquiring alignment data ... ]";
@@ -520,13 +503,6 @@ namespace AlignToRigidBodyGUI {
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_PREALIGN );
-
-				 //// Get the pre-alignment transformation and make sure that it is null.
-				 //Vector3 current_offset[MAX_UNITS];
-				 //Matrix3x3 current_rotation[MAX_UNITS];
-				 //coda->GetAlignment( current_offset, current_rotation );
-				 //// If the offset is not zero, there was probably a problem trashing the alignment file on the CODA server.
-				 //fAbortMessageOnCondition( 0.0 != coda->VectorNorm( current_offset[0] ) || 0.0 != coda->VectorNorm( current_offset[1] ), "AlignToRigidBody", "Alignment does not appear to have been nulled." );
 
 				 fprintf( stderr, "Starting INTRINSIC acquisition ... " );
 				 coda->StartAcquisition( 2.0 );
@@ -542,7 +518,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // Log the data acquired in intrinsic coordinates.
 				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
-				 String ^rawFilename = filenameRoot + ".prealignment.mrk";
+				 String ^rawFilename = filenameRoot + ".prealign.mrk";
 				 char *raw_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( rawFilename ).ToPointer();
 				 fprintf( stderr, "Writing marker positions acquired prior to alignment ... " );
 				 coda->WriteMarkerFile( raw_file );
@@ -587,6 +563,7 @@ namespace AlignToRigidBodyGUI {
 				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
 				 String ^alignmentFilename = filenameRoot + ".alignment.dat";
 				 char *alignment_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( alignmentFilename ).ToPointer();
+
 				 // This does the real work.
 				 coda->SetAlignmentFromPoses( poses, alignment_file );
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( alignment_file ) );
@@ -595,6 +572,7 @@ namespace AlignToRigidBodyGUI {
 				 // for CodaRTnetDaemonTracker causes GraspTrackerDaemon to restart, we need to re-establish the 
 				 // connection to the DexServices proxy.
 				 dex->Connect();
+				 dex->ResendTaskInfo();
 
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
 				 // Send a message to ground to show our progress.
@@ -617,7 +595,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // Log the data acquired in aligned coordinates.
 				 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
-				 String ^alignedFilename = filenameRoot + ".postalignment.mrk";
+				 String ^alignedFilename = filenameRoot + ".postalign.mrk";
 				 char *aligned_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( alignedFilename ).ToPointer();
 				 fprintf( stderr, "Writing marker positions acquired in newly aligned coordinates ... " );
 				 coda->WriteMarkerFile( aligned_file );
@@ -637,16 +615,26 @@ namespace AlignToRigidBodyGUI {
 					 codaPoseTracker->SetMarkerFrameBuffer( &avgFrame );
 					 codaPoseTracker->GetCurrentPose( tracker_pose );
 					 // Show the computed pose.
-					 fOutputDebugString( "New Pose: %s %s\n", codaPoseTracker->vstr( tracker_pose.pose.position ), codaPoseTracker->qstr( tracker_pose.pose.orientation ) );
-					 // Build a string with the poses, in case we need to display after an error.
-					 double position_error = codaPoseTracker->VectorNorm( tracker_pose.pose.position );
-					 bool position_ok = position_error < maxPositionError;
-					 sprintf( line, "%d %s %6.3f %s\n", unit, codaPoseTracker->vstr( tracker_pose.pose.position ), position_error, ( position_ok ? "OK" : "!!" ));
-					 strcat( msg, line );
-					 double orientation_error = codaPoseTracker->AngleBetweenOrientations( tracker_pose.pose.orientation, codaPoseTracker->nullQuaternion );
-					 bool orientation_ok = orientation_error < maxOrientationError;
-					 sprintf( line, "%d %s %6.3f %s\n", unit,  codaPoseTracker->qstr( tracker_pose.pose.orientation ), orientation_error, ( orientation_ok ? "OK" : "!!" ));
-					 strcat( msg, line );
+					 bool position_ok, orientation_ok;
+					 if ( tracker_pose.visible ) {
+						 fOutputDebugString( "New Pose: %d %s %s\n", unit, codaPoseTracker->vstr( tracker_pose.pose.position ), codaPoseTracker->qstr( tracker_pose.pose.orientation ) );
+						 // Build a string with the poses, in case we need to display after an error.
+						 double position_error = codaPoseTracker->VectorNorm( tracker_pose.pose.position );
+						 position_ok = position_error < maxPositionError;
+						 sprintf( line, "%d %s %6.3f %s\n", unit, codaPoseTracker->vstr( tracker_pose.pose.position ), position_error, ( position_ok ? "OK" : "!!" ));
+						 strcat( msg, line );
+						 double orientation_error = codaPoseTracker->AngleBetweenOrientations( tracker_pose.pose.orientation, codaPoseTracker->nullQuaternion );
+						 orientation_ok = orientation_error < maxOrientationError;
+						 sprintf( line, "%d %s %6.3f %s\n", unit,  codaPoseTracker->qstr( tracker_pose.pose.orientation ), orientation_error, ( orientation_ok ? "OK" : "!!" ));
+						 strcat( msg, line );
+					 }
+					 else {
+						 position_ok = false;
+						 orientation_ok = false;
+						 fOutputDebugString( "Tracker Camera %d Computed pose INVALID !!\n", unit  );
+						 sprintf( line, "Tracker Camera #%d Computed pose INVALID !!\n", unit  );
+						 strcat( msg, line );
+					 }
 					 // Check that the alignment has been successful.
 					 well_aligned &= ( position_ok & orientation_ok );
 				 }
@@ -654,92 +642,90 @@ namespace AlignToRigidBodyGUI {
 				 if ( !well_aligned || forceShow ) fMessageBox( MB_OK | MB_ICONEXCLAMATION , "AlignToRigidBodyGUI", msg );
 				 if ( !well_aligned ) Environment::ExitCode = -2;
 				 else Environment::ExitCode = 0;
-				 // Here we quit, but we leave the daemon running.
-				 coda->Quit();
 				 // Close the form. 
 				 Close();
 
 			 }
-			 		void Render ( void ) {
+			 void Render ( void ) {
 
-			// Update the 3D view of the alignment object.
+				 // Update the 3D view of the alignment object.
 
-			visibilityWindow2->Activate();
-			visibilityWindow2->Clear( 0.10, 0.10, 0.30 );
-			objectViewpoint->Apply( visibilityWindow2, CYCLOPS );
-			visibilityObject2->Draw();
-			visibilityWindow2->Swap();
+				 visibilityWindow2->Activate();
+				 visibilityWindow2->Clear( 0.10, 0.10, 0.30 );
+				 objectViewpoint->Apply( visibilityWindow2, CYCLOPS );
+				 visibilityObject2->Draw();
+				 visibilityWindow2->Swap();
 
-			visibilityWindow1->Activate();
-			visibilityWindow1->Clear( 0.10, 0.10, 0.30 );
-			objectViewpoint->Apply( visibilityWindow1, CYCLOPS );
-			visibilityObject1->Draw();
-			visibilityWindow1->Swap();
+				 visibilityWindow1->Activate();
+				 visibilityWindow1->Clear( 0.10, 0.10, 0.30 );
+				 objectViewpoint->Apply( visibilityWindow1, CYCLOPS );
+				 visibilityObject1->Draw();
+				 visibilityWindow1->Swap();
 
-			fovWindow2->Activate();
-			fovWindow2->Clear( 0.0, 0.0, 0.0 );
-			codaViewpoint2->Apply( fovWindow2, CYCLOPS );
-			alignmentObject2->Draw();
-			fovSweetSpot->Draw();
-			fovWindow2->Swap();
+				 fovWindow2->Activate();
+				 fovWindow2->Clear( 0.0, 0.0, 0.0 );
+				 codaViewpoint2->Apply( fovWindow2, CYCLOPS );
+				 alignmentObject2->Draw();
+				 fovSweetSpot->Draw();
+				 fovWindow2->Swap();
 
-			fovWindow1->Activate();
-			fovWindow1->Clear( 0.0, 0.0, 0.0 );
-			codaViewpoint1->Apply( fovWindow1, CYCLOPS );
-			alignmentObject1->Draw();
-			fovSweetSpot->Draw();
-			fovWindow1->Swap();
+				 fovWindow1->Activate();
+				 fovWindow1->Clear( 0.0, 0.0, 0.0 );
+				 codaViewpoint1->Apply( fovWindow1, CYCLOPS );
+				 alignmentObject1->Draw();
+				 fovSweetSpot->Draw();
+				 fovWindow1->Swap();
 
-		}
+			 }
 
-		// A timer to handle animations and screen refresh, and associated actions.
-		static System::Windows::Forms::Timer^ refreshTimer;
-		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			 // A timer to handle animations and screen refresh, and associated actions.
+			 static System::Windows::Forms::Timer^ refreshTimer;
+			 void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
 
-			// Because the Windows Forms does not allow "mixed" types as instance variables and MarkerFrame 
-			// is a mixed type, we have to create the Pose tracker here each time in order to use a local frame.
-			TrackerPose pose;
-			MarkerFrame codaFrame;
-			CodaPoseTracker *poseTracker = new CodaPoseTracker( &codaFrame );
+				 // Because the Windows Forms does not allow "mixed" types as instance variables and MarkerFrame 
+				 // is a mixed type, we have to create the Pose tracker here each time in order to use a local frame.
+				 TrackerPose pose;
+				 MarkerFrame codaFrame;
+				 CodaPoseTracker *poseTracker = new CodaPoseTracker( &codaFrame );
 
-			// The name of the model file is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
-			char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
-			poseTracker->ReadModelMarkerPositions( model_file );
-			System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
+				 // The name of the model file is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
+				 poseTracker->ReadModelMarkerPositions( model_file );
+				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( model_file ) );
 
-			coda->GetCurrentMarkerFrameIntrinsic( codaFrame, 0 );
-			visibilityObject1->ShowVisibility( codaFrame );
-			alignmentObject1->ShowVisibility( codaFrame );
-			poseTracker->GetCurrentPose( pose );
-			if ( pose.visible ) {
-				alignmentObject1->SetPose( pose.pose );
-				alignmentObject1->Enable();
-			}
-			else alignmentObject1->Disable();
-			coda->GetCurrentMarkerFrameIntrinsic( codaFrame, 1 );
-			visibilityObject2->ShowVisibility( codaFrame );
-			alignmentObject2->ShowVisibility( codaFrame );
-			poseTracker->GetCurrentPose( pose );
-			if ( pose.visible ) {
-				alignmentObject2->SetPose( pose.pose );
-				alignmentObject2->Enable();
-			}
-			else alignmentObject2->Disable();
+				 coda->GetCurrentMarkerFrameIntrinsic( codaFrame, 0 );
+				 visibilityObject1->ShowVisibility( codaFrame );
+				 alignmentObject1->ShowVisibility( codaFrame );
+				 poseTracker->GetCurrentPose( pose );
+				 if ( pose.visible ) {
+					 alignmentObject1->SetPose( pose.pose );
+					 alignmentObject1->Enable();
+				 }
+				 else alignmentObject1->Disable();
+				 coda->GetCurrentMarkerFrameIntrinsic( codaFrame, 1 );
+				 visibilityObject2->ShowVisibility( codaFrame );
+				 alignmentObject2->ShowVisibility( codaFrame );
+				 poseTracker->GetCurrentPose( pose );
+				 if ( pose.visible ) {
+					 alignmentObject2->SetPose( pose.pose );
+					 alignmentObject2->Enable();
+				 }
+				 else alignmentObject2->Disable();
 
-			Render();
+				 Render();
 
-		}
-		void CreateRefreshTimer( int interval ) {
-			refreshTimer = gcnew( System::Windows::Forms::Timer );
-			refreshTimer->Interval = interval;
-			refreshTimer->Tick += gcnew EventHandler( this, &SingleObjectForm::OnTimerElapsed );
-		}
-		void StartRefreshTimer( void ) {
-			refreshTimer->Start();
-		}
-		void StopRefreshTimer( void ) {
-			refreshTimer->Stop();
-		}		
+			 }
+			 void CreateRefreshTimer( int interval ) {
+				 refreshTimer = gcnew( System::Windows::Forms::Timer );
+				 refreshTimer->Interval = interval;
+				 refreshTimer->Tick += gcnew EventHandler( this, &SingleObjectForm::OnTimerElapsed );
+			 }
+			 void StartRefreshTimer( void ) {
+				 refreshTimer->Start();
+			 }
+			 void StopRefreshTimer( void ) {
+				 refreshTimer->Stop();
+			 }		
 
 	};
 }
