@@ -27,7 +27,7 @@ typedef struct {
 // A pose that takes less memory, at the cost of precision.
 typedef struct {
 	short		position[4];
-	Quaternionf	orientation;
+	fQuaternion	orientation;
 } CompactPose;
 
 typedef struct {
@@ -67,7 +67,7 @@ public:
 	void CopyVector( Vector3f  destination, const Vector3f  source );
 
 	void CopyQuaternion( Quaternion destination, const Quaternion source );
-	void CopyQuaternion( Quaternionf, const Quaternion source );
+	void CopyQuaternion( fQuaternion, const Quaternion source );
 	void CopyPose( Pose &destination, const Pose &source );
 	void CopyPose( CompactPose &destination, const Pose &source );
 

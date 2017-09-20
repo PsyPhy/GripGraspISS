@@ -72,7 +72,7 @@ void VectorsMixin::CopyQuaternion( Quaternion destination, const Quaternion sour
 	destination[M] = source[M];
 }
 
-void VectorsMixin::CopyQuaternion( Quaternionf destination, const Quaternion source ){
+void VectorsMixin::CopyQuaternion( fQuaternion destination, const Quaternion source ){
 	destination[X] = (float) source[X];
 	destination[Y] = (float) source[Y];
 	destination[Z] = (float) source[Z];
