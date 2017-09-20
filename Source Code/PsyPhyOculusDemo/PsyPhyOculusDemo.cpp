@@ -12,6 +12,7 @@ Joe McIntyre
 bool useOVR = false;		// OVR style rendering.
 bool usePsyPhy = true;		// PsyPhy style rendering.
 bool useCoda = true;		// Do we have a Coda?
+bool saveCoda = true;		// Do we have a Coda?
 bool fullscreen = false;	// Size of mirror window on console screen.
 bool mirror = true;			// Do we mirror to the console or not?
 
@@ -414,7 +415,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 		codaTracker = daemonTracker;
 		useCoda = true;
 	}
-	else useCoda = false;
+	else {
+		useCoda = false;
+		saveCoda = false;
+	}
+	if ( strstr( command_line, "--save" ) ) saveCoda = true;
 
 	// NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES
 	defaultMode = GROUNDED;
@@ -468,35 +473,39 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 		// Halt the continuous Coda acquisition.
 		codaTracker->StopAcquisition();
 
-		// Output the CODA data to a file.
-		char *marker_filename = "PsyPhyOculusDemo.mrk";
-		fOutputDebugString( "Writing CODA data to %s.\n", marker_filename );
-		codaTracker->WriteMarkerFile( marker_filename );
-		fOutputDebugString( "File %s closed.\n", marker_filename );
+		if ( saveCoda ) {
+			// Output the CODA data to a file.
+			char *marker_filename = "PsyPhyOculusDemo.mrk";
+			fOutputDebugString( "Writing CODA data to %s.\n", marker_filename );
+			codaTracker->WriteMarkerFile( marker_filename );
+			fOutputDebugString( "File %s closed.\n", marker_filename );
+		}
 
 		codaTracker->Quit();
 
 	}
 
 	// Output the Pose data to a file.
-	char *pose_filename = "PsyPhyOculusDemo.pse";
-	fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
-	FILE *fp = fopen( pose_filename, "w" );
-	fprintf( fp, "%s\n", command_line );
-	fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation\n" );
-	for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
-		fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s; %s; %s; %s\n",
-		frame, 
-		hmdPoses[frame].time, hmdPoses[frame].visible,
-		codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
-		codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
-		codaPoses[frame].time, codaPoses[frame].visible,
-		codaTracker->vstr( codaPoses[frame].visible ? codaPoses[frame].pose.position : codaTracker->zeroVector ),
-		codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
-		codaTracker->vstr( gyros[frame] ), codaTracker->vstr( derivatives[frame] ), codaTracker->vstr( accelerations[frame] )
-		);
+	if ( saveCoda ) {
+		char *pose_filename = "PsyPhyOculusDemo.pse";
+		fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
+		FILE *fp = fopen( pose_filename, "w" );
+		fprintf( fp, "%s\n", command_line );
+		fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation\n" );
+		for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
+			fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s; %s; %s; %s\n",
+			frame, 
+			hmdPoses[frame].time, hmdPoses[frame].visible,
+			codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
+			codaTracker->qstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
+			codaPoses[frame].time, codaPoses[frame].visible,
+			codaTracker->vstr( codaPoses[frame].visible ? codaPoses[frame].pose.position : codaTracker->zeroVector ),
+			codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
+			codaTracker->vstr( gyros[frame] ), codaTracker->vstr( derivatives[frame] ), codaTracker->vstr( accelerations[frame] )
+			);
+		}
+		fOutputDebugString( "File %s closed.\n", pose_filename );
 	}
-	fOutputDebugString( "File %s closed.\n", pose_filename );
 
 	return(0);
 }
