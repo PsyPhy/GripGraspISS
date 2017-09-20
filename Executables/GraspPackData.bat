@@ -20,64 +20,88 @@ if "%1"=="" goto NOTFOUND
 if "%1"=="--output" goto FOUND
 shift
 goto FIND
-
 :NOTFOUND 
 echo Could not find filename root.
 exit -5
-
 :FOUND
+
+REM
+REM Strip off the filename root, leading only the path to the local results trajectory.
+REM
 set local_directory=%2
 :shrink
 if "%local_directory:~-1%" == "\" goto :next
 set local_directory=%local_directory:~0,-1%
 goto :shrink
-
 :next
 echo Local directory is "%local_directory%"
 
 REM
 REM Compute the archive name from the specified local directory.
-REM Per CADMOS request, it should be YYDOY.tar, but for now we us gYYMMDD.tar.
+REM Per CADMOS request, it should be YYDOY.tar.
+REM
 set yy=%local_directory:~-7,2%
 set mm=%local_directory:~-5,2%
 set dd=%local_directory:~-3,2%
-
 call :DateToOrdinal %yy% %mm% %dd% year day
 echo %yy% %mm% %dd% Year: %year% Day: %day%
 
+REM 
+REM Create the set of filenames that we need.
+REM
 set gROOT=g%year%%day%
 set TARFILE=%gROOT%.tar
 set TARMD5=%gROOT%.md5
 set FILESMD5=%gROOT%Files.md5
-echo Tar filename is "%TARFILE%"
+echo Packing data into tar file: %TARFILE%
 
+REM
 REM Here we are supposed to insert all the pertinent files into the tar.
 REM tar uses '/' instead of '\' and so does not expand 'xxx\*' correctly, so we
 REM move to the directory and insert all the files using '*'. Then we move the 
 REM .tar to where we really want it to be.
-echo Packing data into tar file: %TARFILE%
+REM
+REM We are going to move to the directory where the files are, so we keep
+REM  a record of where we are now so as to be able to access the executables
+REM  and utilities relative to where we are executing now.
 set here=%CD%
 pushd "%local_directory%"
-REM First create an MD5 checksum for each data file.
-"%here%"\%UTILS%\md5.exe * > %FILESMD5%
-REM Now put all the files in a tar archive, including the MD5s.
-"%here%"\%UTILS%\tar.exe --verbose --create --file=%TARFILE% * 
-REM Move it up to the Results root.
-move /Y %TARFILE% "%here%\Results"
-popd
 
-pushd Results
+REM
+REM First create an MD5 checksum for each data file.
+REM
+"%here%"\%UTILS%\md5.exe * > %FILESMD5%
+
+REM
+REM Now put all the files in a tar archive, including the MD5s.
+REM
+"%here%"\%UTILS%\tar.exe --verbose --create --file=%TARFILE% * 
+
+REM
+REM Move it up one level to be parallel with the local directory.
+REM This is done to ensure that we do not at a later time inadvertently
+REM put one .tar into another.
+move /Y %TARFILE% ..
+cd ..
+
+REM
+REM Split it to files that can be handled by telemetry.
+REM
 echo Split into manageable chunks.
 "%here%"\%UTILS%\split.exe --bytes=40m %TARFILE% %gROOT%.
-echo Create MD5 checksums for archive and chunks.
-"%here%"\%UTILS%\md5.exe %gRoot%.* > "%here%"\%TARMD5%
-move "%here%"\%TARMD5% .
 
+REM
+REM To be sure that we get everything correctly, compute MD5
+REM checksums for each chunk and the overall .tar.
+REM
+echo Create MD5 checksums for archive and chunks.
+"%here%"\%UTILS%\md5.exe %gRoot%.* > %TARMD5%
+
+REM
+REM Now send it to DEX using FTP.
+REM
 echo Transfer by FTP to GRIP.
 
-REM
-REM Copy the data files to DEX.
-REM
 set LOGONID=speedy
 set PASSWORD=dex
 set HOST=10.80.12.103
@@ -102,6 +126,7 @@ exit 0
 
 :ERREXIT
 echo Error during file transfer to GRIP.
+pause
 exit -10
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

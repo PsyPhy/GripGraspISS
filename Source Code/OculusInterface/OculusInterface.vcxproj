@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClInclude Include="CodaSimTracker.h" />
     <ClInclude Include="MousePoseTrackers.h" />
+    <ClInclude Include="OculusCodaPoseTracker.h" />
     <ClInclude Include="OculusInterface.h" />
     <ClInclude Include="OculusMapper.v0.8.h" />
     <ClInclude Include="OculusMapper.h" />
