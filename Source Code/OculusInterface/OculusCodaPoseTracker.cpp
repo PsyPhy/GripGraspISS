@@ -50,14 +50,6 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 	// This pose tracker is always visible.
 	currentState.visible = true;
 
-	// Open a file to output some debugging info.
-	char *filename = "Log\\OculusCodaPoseTracker.pse";
-	fp = fopen( filename, "w" );
-	if ( !fp ) {
-		fOutputDebugString( "Error opening %s for writing.\n", filename );
-		exit( -1 );
-	}
-
 	return true; 
 }
 bool OculusCodaPoseTracker::Update( void ) { 
@@ -118,18 +110,11 @@ bool OculusCodaPoseTracker::Update( void ) {
 	// This tracker is presumed to always be visible.
 	currentState.visible = true;
 
-	// Output to a file for debugging.
-	fprintf( fp, "%s %s | %3d %7.3lf %s | %7.3lf %s\n", 
-		qstr( dQ ), qstr( newQ ), 
-		(int) absolutePose.visible, absolutePose.time, qstr( absolutePose.pose.orientation ), 
-		currentState.time, qstr( currentState.pose.orientation ) 
-		);
 	return true; 
 
 }
 bool OculusCodaPoseTracker::Release( void ) { 
 	if ( absoluteTracker ) absoluteTracker->Release();
-	fclose( fp );
 	initialized = false;
 	return true; 
 }

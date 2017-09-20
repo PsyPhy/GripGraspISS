@@ -23,8 +23,6 @@ class OculusCodaPoseTracker : public PoseTracker {
 		TrackerPose		currentState;
 		TrackerPose		predictedState;
 
-		FILE *fp;
-
 	protected:
 
 	public:
