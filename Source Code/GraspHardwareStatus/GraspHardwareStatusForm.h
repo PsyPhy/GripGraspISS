@@ -564,7 +564,7 @@ namespace GraspHardwareStatus {
 
 			Vector3	unitOffset[MAX_UNITS];
 			Matrix3x3 unitRotation[MAX_UNITS];
-			Matrix3x3 back, ortho;
+			Matrix3x3 back;
 
 			coda->GetAlignmentTransforms( unitOffset, unitRotation );
 

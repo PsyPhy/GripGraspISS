@@ -33,7 +33,7 @@ int main(array<System::String ^> ^args)
 	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s  CODA: %s\n", model_file, filename_root, ( noCoda ? "NO" : "YES" ));
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
-	DexServices *dex = new DexServicesByProxy();
+	DexServicesByProxy *dex = new DexServicesByProxy();
 	// Create a name for the log file using the filename root defined above.
 	char *log_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( filename_root + ".dxl" ).ToPointer();
 	dex->Initialize( log_file );

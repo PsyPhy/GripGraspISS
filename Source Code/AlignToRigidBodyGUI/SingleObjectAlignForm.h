@@ -27,6 +27,21 @@
 #define SHOW_RESULTS		50
 #define ALIGNMENT_ERROR		9999
 #define ABORT_REQUESTED		8888
+	
+// Tag in the telemetry client packet to say whether the
+//  alignment transforms are pre-alignment or post-alignment
+#define PRE 0
+#define POST 1
+
+struct {
+
+	char ID[8];
+
+	int	prePost;
+	PsyPhy::fVector3		offsets[MAX_UNITS];
+	PsyPhy::fMatrix3x3		rotations[MAX_UNITS];
+
+} ClientDataBuffer;
 
 namespace AlignToRigidBodyGUI {
 
@@ -47,7 +62,7 @@ namespace AlignToRigidBodyGUI {
 
 	private:
 
-		DexServices	*dex;
+		DexServicesByProxy	*dex;
 
 	protected:
 
@@ -76,7 +91,7 @@ namespace AlignToRigidBodyGUI {
 		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex ) :
+		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServicesByProxy *dex ) :
 		  maxPositionError( 10.0 ),
 			  maxOrientationError( 2.0 ),
 			  forceShow( false )
@@ -432,6 +447,17 @@ namespace AlignToRigidBodyGUI {
 
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( VISIBILITY );
+				 Vector3	offsets[MAX_UNITS];
+				 Matrix3x3	rotations[MAX_UNITS];
+				 strncpy( ClientDataBuffer.ID, "ALIGN", sizeof( ClientDataBuffer.ID ) );
+				 ClientDataBuffer.prePost = PRE;
+				 coda->GetAlignmentTransforms( offsets, rotations );
+				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					 coda->CopyVector( ClientDataBuffer.offsets[unit], offsets[unit] );
+					 coda->CopyMatrix( ClientDataBuffer.rotations[unit], rotations[unit] );
+				 }
+				 dex->AddClientSlice( (unsigned char *) &ClientDataBuffer, sizeof( ClientDataBuffer ) );
+
 				 // Hide the tracker message.
 				 busy->Visible = false;
 				 // Re-enable the Form as being inactive.
@@ -580,6 +606,17 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Acquiring to confirm ... ]";
 				 Refresh();
 				 Application::DoEvents();
+
+				 Vector3	offsets[MAX_UNITS];
+				 Matrix3x3	rotations[MAX_UNITS];
+				 strncpy( ClientDataBuffer.ID, "ALIGN", sizeof( ClientDataBuffer.ID ) );
+				 ClientDataBuffer.prePost = POST;
+				 coda->GetAlignmentTransforms( offsets, rotations );
+				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					 coda->CopyVector( ClientDataBuffer.offsets[unit], offsets[unit] );
+					 coda->CopyMatrix( ClientDataBuffer.rotations[unit], rotations[unit] );
+				 }
+				 dex->AddClientSlice( (unsigned char *) &ClientDataBuffer, sizeof( ClientDataBuffer ) );
 
 				 fprintf( stderr, "[ Acquiring to confirm ... ]" );
 				 coda->StartAcquisition( 5.0 );
