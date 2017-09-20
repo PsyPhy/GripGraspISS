@@ -241,10 +241,6 @@ namespace Grasp {
 		}
 
 		void AddTrackerSlice(  PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] ) {
-			if ( log ) {
-				printDateTime( log );
-				fprintf( log, " AddTrackerSlice.\n" );
-			}
 			CopyTrackerPose( packet.hmd, hmd );
 			CopyTrackerPose( packet.hand, hand );
 			CopyTrackerPose( packet.chest, chest );
@@ -259,10 +255,6 @@ namespace Grasp {
 
 		void AddClientSlice( unsigned char *data, int bytes ) {
 			assert( bytes <= sizeof( packet.client ) );
-			if ( log ) {
-				printDateTime( log );
-				fprintf( log, " AddClientSlice.\n" );
-			}
 			memcpy( packet.client, data, bytes );
 			if ( TimerTimeout( client_slice_timer ) ) {
 				packet.command = CLIENT_DATA;
