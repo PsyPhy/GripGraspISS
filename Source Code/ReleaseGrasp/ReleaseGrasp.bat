@@ -40,35 +40,6 @@ echo "Mirroring on." > Mirroring.flg
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Mirroring.flg
 :NOMIRRORING
 
-REM Create an empty log directory to put in the release archive.
-REM We hide the current LOG directory so as not to loose what we have there.
-REM Then we create a new empty directory, with just a readme to put in the tar archive.
-REM Finally, we restore the original LOG file.
-rename LOG HIDELOG
-mkdir LOG
-echo Log files from GRIP and GRASP go here. > LOG\readme.txt
-%TAR% --append %VERBOSE% --file=%ARCHIVE% LOG/*
-rmdir /S /Q LOG
-rename HIDELOG LOG
-
-REM Create an empty Results directory to put in the release archive.
-REM We hide the current Results directory so as not to lose what we have there.
-REM Then we create a new empty directory, with just a readme to put in the tar archive.
-REM Finally, we restore the original Results file.
-REM
-REM Compute the subdirectory name based on today's date.
-set yy=%date:~10,4%
-set mm=%date:~4,2%
-set dd=%date:~7,2%
-set HH=%time:~0,2%
-set MMM=%time:~3,2%
-set SS=%time:~6,2%
-set DIRECTORY="Results (%yy%.%mm%.%dd% %HH%.%MMM%.%SS%)"
-rename Results %DIRECTORY%
-mkdir Results
-echo Results files from GRASP go here. > Results\readme.txt
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Results/*
-
 REM Keep a record of releases.
 echo %ARCHIVE% >> GripGraspReleases.log
 echo %ARCHIVE% >> GraspReleases.log
