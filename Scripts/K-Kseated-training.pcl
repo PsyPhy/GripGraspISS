@@ -1,8 +1,8 @@
 # Protocol Definition: Kinesthetic Stimulus to Kinesthetic Response 
 351; SCRIPT; Task Instruction Review; K-Kinstructions.tsk
-352; COMMAND; Training Head Straight; Executables\Grasp.bat --KtoK --balls --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-353; COMMAND; Training Head Tilted; Executables\Grasp.bat --training --KtoK --balls --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-354; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --KtoK --balls --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+352; COMMAND; Training Head Straight; Executables\Grasp.bat --KtoK  --sequence=Sequences\TrainingHeadStraight.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+353; COMMAND; Training Head Tilted; Executables\Grasp.bat --training --KtoK  --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+354; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --KtoK  --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 355; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --KtoK --sequence=Sequences\TrainingHeadTilted.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 356; COMMAND@; End of Trials; Executables\Grasp.exe --doff; ProtocolFinished.prompt.html; StepRunning.instruction.html; ProtocolFinished.prompt.html; StepErrorFinish.status.html
-399; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --KtoK --sequence=GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+399; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --KtoK --sequence=%TEMP%\GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
