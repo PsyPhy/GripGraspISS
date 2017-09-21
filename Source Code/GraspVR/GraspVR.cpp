@@ -482,7 +482,7 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 	}
 	else {
 		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );	// kTool is always blue regardless of the orientation.
-		renderer->kkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandleHandOrientation.
+//		renderer->kkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandleHandOrientation.
 		renderer->SetHandColor( renderer->vkTool, true );
 		return( raised );
 	}
@@ -564,7 +564,11 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 void GraspVR::HandleLasers( void ) {
 
-	if ( lowered == HandleHandElevation() ) {
+	// Check if the hand is raised in front of the eyes. 
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition,  renderer->hmd->position, renderer->hand->position );
+	NormalizeVector( relativeHandPosition );
+	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
 
 		// Lasers should be visible only if the hand is in the field of view.
 		renderer->DisableHandLaser( renderer->vkTool );
