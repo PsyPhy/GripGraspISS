@@ -65,6 +65,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( strstr( sequence_filename, "%TEMP%" ) ) {
+		char buffer[FILENAME_MAX];
+		strcpy( buffer, getenv( "TEMP" ) );
+		strcat( buffer, sequence_filename + strlen( "%TEMP%" ) );
+		strcpy( sequence_filename, buffer );
+	}
 
 	if ( ptr = strstr( lpCmdLine, "--output" ) ) items = sscanf( ptr, "--output=%s", output_filename_root );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );

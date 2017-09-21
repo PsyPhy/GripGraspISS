@@ -441,7 +441,12 @@ void GraspTaskManager::EnterStartTrial( void ) {
 
 	// Ouput the list of all remaining trials to a temporary file with a fixed file name.
 	// This file can then be used to restart a block of trials that has been interrupted.
-	WriteRemainingTrialParameters( "GraspRemainingTrials.seq" );
+	char path[FILENAME_MAX];
+	char *temp = getenv( "TEMP" );
+	fAbortMessageOnCondition( (!temp), "Grasp", "TEMP directory not defined." );
+	strcpy( path, temp );
+	strcat( path, "\\GraspRemainingTrials.seq" );
+	WriteRemainingTrialParameters( path );
 
 	// Output the parameters of this trial to the response file.
 	fprintf( response_fp, "%d;  %s; %5.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f;   %6.2f; %5.2f; %5.2f; %5.2f;   %4.2f; %d;",
