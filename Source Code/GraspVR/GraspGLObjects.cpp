@@ -647,7 +647,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 }
 
 // Modulate the color of an object according to it's roll angle wrt a specified desired roll angle.
-void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone ) {
+void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone, double opacity ) {
 
 	double magnitude = fabs( roll_error );
 
@@ -657,21 +657,21 @@ void GraspGLObjects::SetColorByRollError( OpenGLObject *object, double roll_erro
 		// But one need not be in the sweet zone for the orientation to be considered good.
 		// If the orientation is within tolerance, it is good as well. This means that the color
 		// starts to change before leaving the tolerance zone (assuming that tolerance > sweet ).
-		object->SetColor( 0.0, 1.0,  0.0, errorColorMapTransparency );
+		object->SetColor( 0.0, 1.0,  0.0, opacity );
 	} else {
 		// Colors will change as one moves farther from the center.
 		if ( ( magnitude - sweet_zone ) < errorColorMapFadeDistance ) {
 			// Go from cyan at the edge of the sweet zone to yellow at the limit of the tolerance zone.
 			double fade = ( magnitude - sweet_zone ) / errorColorMapFadeDistance;
-			object->SetColor( fade, 1.0, 1.0 - fade, errorColorMapTransparency );
+			object->SetColor( fade, 1.0, 1.0 - fade, opacity );
 		}
 		else if ( ( magnitude - sweet_zone ) < 2.0 * errorColorMapFadeDistance ) {
 			// As we get even farther away, fade from yellow to red.
 			double fade = ( magnitude - sweet_zone - errorColorMapFadeDistance ) / errorColorMapFadeDistance;
-			object->SetColor( 1.0, 1.0 - fade, 0.0, errorColorMapTransparency );
+			object->SetColor( 1.0, 1.0 - fade, 0.0, opacity );
 		}
 		// If more than 2 epsilons, the color is red.
-		else object->SetColor( 1.0, 0.0, 0.0, errorColorMapTransparency );
+		else object->SetColor( 1.0, 0.0, 0.0, opacity );
 	}
 }
 

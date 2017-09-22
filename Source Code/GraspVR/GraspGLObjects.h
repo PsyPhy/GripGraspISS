@@ -277,7 +277,7 @@ namespace Grasp {
 		void SetLighting( void );
 
 		// Use color to guide the subject to a specified roll angle.
-		void SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone );
+		void SetColorByRollError( OpenGLObject *object, double roll_error, double sweet_zone, double opacity );
 
 		// Need to be able to change the color of the fingers according to the position of the hand.
 		// OpenGLObjects does not provide an easy way to override the color, so this hack lets us do it.

@@ -173,7 +173,7 @@ int _tmain(int argc, char *argv[])
 			viewpoint->SetOrientation( angle, 0.0, 0.0 );
 		}
 		else if ( 1 == sscanf( argv[arg], "--headError=%lf", &angle ) ) {
-			objects->SetColorByRollError( objects->glasses, angle, 2.0 );
+			objects->SetColorByRollError( objects->glasses, angle, 2.0, objects->errorColorMapTransparency );
 		}
 
 		else if ( 1 == sscanf( argv[arg], "--target=%lf", &angle ) ) {
@@ -185,7 +185,7 @@ int _tmain(int argc, char *argv[])
 		}
 
 		else if ( 1 == sscanf( argv[arg], "--handError=%lf", &angle ) ) {
-			objects->SetColorByRollError( objects->kkTool, angle, 2.0 );
+			objects->SetColorByRollError( objects->kkTool, angle, 2.0, 1.0 );
 		}
 		else if ( 1 == sscanf( argv[arg], "--hand=%lf", &hand_roll ) );
 		else if ( 1 == sscanf( argv[arg], "--roll=%lf", &hand_roll ) );

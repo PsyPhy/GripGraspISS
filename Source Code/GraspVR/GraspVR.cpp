@@ -304,7 +304,7 @@ AlignmentStatus GraspVR::HandleHeadAlignment( bool use_arrow ) {
 	// Compute the error with respect to the desired roll angle.
 	double angular_error =  desiredHeadRoll - object_roll_angle;
 	// Set the color of the halo according to the angular error.
-	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
+	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone, renderer->errorColorMapTransparency  );
 	// Set the direction of the arrow according to the direction of the error.
 	// This does not mean that the arrow is visible. That is determined below.
 	if ( angular_error < 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
@@ -420,7 +420,7 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 	double angular_error = ( product > 1.0 ? 90.0 : ToDegrees( asin( product ) ) ) - 90.0;
 
 	// Set the color of the halo according to the angular error.
-	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone  );
+	renderer->SetColorByRollError( renderer->glasses, angular_error, desiredHeadRollSweetZone, renderer->errorColorMapTransparency  );
 	// Set the direction of the arrow according to the direction of the error.
 	// This does not mean that the arrow is visible. That is determined below.
 	if ( angular_error < 0.0 ) renderer->headTiltPrompt->SetAttitude( 0.0, 0.0, 0.0 );
@@ -521,7 +521,8 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		// Compute the error with respect to the desired roll angle.
 		double angular_error =  desiredHandRoll - object_roll_angle;
 		// Set the color of the tool according to the angular error.
-		renderer->SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone );
+		// Here we set the transparency to 1.0 (opaque) so that there are no surface cues.
+		renderer->SetColorByRollError( renderer->kkTool, angular_error, desiredHandRollSweetZone, 1.0 );
 		// Set the direction of the arrow according to the direction of the error.
 		// This does not mean that the arrow is visible. That is determined below.
 		if ( angular_error < 0.0 ) renderer->handRollPrompt->SetAttitude( 0.0, 0.0, 0.0 );
