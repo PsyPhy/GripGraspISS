@@ -273,12 +273,6 @@ void GraspGLObjects::EnableHandLaser( Assembly *hand ) {
 void GraspGLObjects::DisableHandLaser( Assembly *hand ) {
 	hand->component[ hand->components - 1 ]->Disable();
 }
-void GraspGLObjects::ActivateHandLaser( Assembly *hand ) {
-	hand->component[ hand->components - 1 ]->EnableBeams();
-}
-void GraspGLObjects::InhibitHandLaser( Assembly *hand ) {
-	hand->component[ hand->components - 1 ]->InhibitBeams();
-}
 void GraspGLObjects::SetHandLaserEccentricity( Assembly *hand, double projection ) {
 	((FuzzyPointer *)(hand->component[ hand->components - 1 ]))->SetEccentricity( projection );
 }
