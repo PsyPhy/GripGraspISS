@@ -126,8 +126,7 @@ exit 0
 
 :ERREXIT
 echo Error during file transfer to GRIP.
-pause
-exit -10
+exit -1
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :DateToOrdinal %yy% %mm% %dd% year day

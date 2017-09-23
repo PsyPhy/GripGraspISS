@@ -27,7 +27,7 @@ goto FIND
 
 :NOTFOUND 
 echo Could not find filename root.
-exit -1
+exit -10
 
 :FOUND
 set root=%2
