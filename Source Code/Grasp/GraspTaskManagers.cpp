@@ -23,7 +23,7 @@ double	GraspTaskManager::targetPresentationDuration = 3.0;
 double GraspTaskManager::indicatorDisplayDuration = 1.0;	
 
 // Time limits to accomplish different actions.
-double GraspTaskManager::alignHeadTimeout = 300.0;
+double GraspTaskManager::alignHeadTimeout = 30.0;
 double GraspTaskManager::tiltHeadTimeout = 5.0;
 double GraspTaskManager::responseTimeout = 10.0;
 double GraspTaskManager::alignHandTimeout = 30.0;
