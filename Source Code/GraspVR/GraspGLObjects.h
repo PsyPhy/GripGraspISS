@@ -39,7 +39,8 @@ namespace Grasp {
 
 	class FuzzyPointer : public PsyPhy::Assembly {
 	public:
-		Disk *sphere[LASER_BEAMS];
+		Assembly	*beams;
+		Disk *beam[LASER_BEAMS];
 		static Vector3 beamOffset[LASER_BEAMS];
 		void SetColor( float r, float g, float b, float a = 1.0f );
 		void SetEccentricity( double projection );
@@ -309,7 +310,7 @@ namespace Grasp {
 		Assembly *CreateResponse( void );
 		Assembly *CreateTiltPrompt( void );
 		Assembly *CreateSuccessIndicator( void );
-		Assembly *CreateIndicator( Texture *texture, double hole_radius = 35.0 );
+		Assembly *CreateIndicator( Texture *texture, double hole_radius = 0.0 );
 		Assembly *CreateRoom( void );
 		Assembly *CreateStarrySky( void );
 		Assembly *CreateDarkSky( void );

@@ -82,7 +82,7 @@ const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
-const double GraspGLObjects::hmdTransparency = 0.25;
+const double GraspGLObjects::hmdTransparency = 0.5;
 
 // A generic parameter that sets the number of facets in rounded objects.
 // More facets means smoother surfaces, but slower drawing times;
@@ -272,6 +272,12 @@ void GraspGLObjects::EnableHandLaser( Assembly *hand ) {
 }
 void GraspGLObjects::DisableHandLaser( Assembly *hand ) {
 	hand->component[ hand->components - 1 ]->Disable();
+}
+void GraspGLObjects::ActivateHandLaser( Assembly *hand ) {
+	hand->component[ hand->components - 1 ]->EnableBeams();
+}
+void GraspGLObjects::InhibitHandLaser( Assembly *hand ) {
+	hand->component[ hand->components - 1 ]->InhibitBeams();
 }
 void GraspGLObjects::SetHandLaserEccentricity( Assembly *hand, double projection ) {
 	((FuzzyPointer *)(hand->component[ hand->components - 1 ]))->SetEccentricity( projection );
@@ -534,7 +540,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	raise_arm_texture = new Texture( raise_arm_bitmap );
 	raiseHandIndicator = CreateIndicator( raise_arm_texture, 1.0 );
 	// Set this indicator to be green and very transparent.
-	raiseHandIndicator->SetColor( 0.0, 1.0, 0.0, 0.05 );
+	// raiseHandIndicator->SetColor( 0.0, 1.0, 0.0, 0.05 );
 	spinners->AddComponent( raiseHandIndicator );
 
 	spinners->SetOffset( prompt_location );
