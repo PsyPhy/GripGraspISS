@@ -29,6 +29,7 @@ public:
 	ovrEyeRenderDesc	EyeRenderDesc[2];
     ovrPosef            EyeRenderPose[2];
 	ovrVector3f         ViewOffset[2];
+	unsigned int		handStatusFlags[2];
 
 	double				sensorSampleTime;
 	long long			frameIndex;
@@ -113,6 +114,19 @@ public:
 		if ( session ) ovr_Destroy( session );
 	}
 
+	ovrPosef ReadHandPose ( ovrHandType hand ) {
+
+		ovrPosef handPose;
+        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
+         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
+        //sensorSampleTime = ovr_GetTimeInSeconds();
+		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
+		handPose = hmdState.HandPoses[hand].ThePose;
+		handStatusFlags[0] = hmdState.HandStatusFlags[0];
+		handStatusFlags[1] = hmdState.HandStatusFlags[1];
+
+		return handPose;
+	}
 	// Read the tracker and compute the poses for each of the eyes.
 	ovrPosef ReadHeadPose ( void ) {
 
