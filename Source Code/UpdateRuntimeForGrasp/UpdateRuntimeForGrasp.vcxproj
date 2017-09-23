@@ -47,6 +47,9 @@
     <ProjectReference Include="..\GripMMIShowVersionInfo\GripMMIShowVersionInfo.vcxproj">
       <Project>{6da9ed6e-c775-49c7-9526-38ebd30cd8cc}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\MinimizeAll\MinimizeAll.vcxproj">
+      <Project>{3c6d5d47-4ea1-4386-a5e6-d4636a09b94e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OculusMouse\OculusMouse.vcxproj">
       <Project>{9e5d3f95-06ba-42a2-8956-f82f126cf7a6}</Project>
     </ProjectReference>

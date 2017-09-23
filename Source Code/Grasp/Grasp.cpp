@@ -59,11 +59,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	char *ptr;
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
 
-	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
 	if ( FileExists( "NoCoda.flg" ) ) useCoda = false;
+	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
+	if ( FileExists( "Touch.flg" ) ) useTouch = true;
 	if ( strstr( lpCmdLine, "--touch" ) ) useTouch = true;
+	if ( FileExists( "NoHMD.flg" ) ) useHMD = false;
 	if ( strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
-	if ( FileExists( "NoHMD.flg" ) ) useCoda = false;
 
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );

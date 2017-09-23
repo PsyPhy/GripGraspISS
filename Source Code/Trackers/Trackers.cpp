@@ -203,4 +203,5 @@ bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
 	// I'm not sure what could go wrong, but signal if it does.
 	if ( !status ) return( false );
 	ComputeIntrinsicMarkerFrame( iframe, unit, frame );
+	return( true );
 }
