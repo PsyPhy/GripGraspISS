@@ -273,8 +273,9 @@ namespace Grasp {
 			// If we were fancier, we could check if the connection has been achieved before doing the send and depending
 			// on the error we could try to reconnnect. But instead I just assume that if the connection was not established
 			// by the first try, we just carry on without a connection.
-			if ( retval == SOCKET_ERROR ) {
+			if ( retval == SOCKET_ERROR && not_sent_countdown > 0  ) {
 				fOutputDebugString( "DexServices: send() failed: error %d (may just be waiting for connection.)\n", WSAGetLastError());
+				not_sent_countdown--;
 			}
 			return retval;
 		}	

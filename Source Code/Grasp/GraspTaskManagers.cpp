@@ -23,7 +23,7 @@ double	GraspTaskManager::targetPresentationDuration = 3.0;
 double GraspTaskManager::indicatorDisplayDuration = 1.0;	
 
 // Time limits to accomplish different actions.
-double GraspTaskManager::alignHeadTimeout = 30.0;
+double GraspTaskManager::alignHeadTimeout = 300.0;
 double GraspTaskManager::tiltHeadTimeout = 5.0;
 double GraspTaskManager::responseTimeout = 10.0;
 double GraspTaskManager::alignHandTimeout = 30.0;
@@ -84,28 +84,28 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		nextState = UpdateStartBlock();
 		if ( nextState != currentState ) ExitStartBlock();
 		break;
-	
+
 	case StartTrial:
 
 		if ( currentState != previousState ) EnterStartTrial();
 		nextState = UpdateStartTrial();
 		if ( nextState != currentState ) ExitStartTrial();
 		break;
-	
+
 	case StraightenHead:
 
 		if ( currentState != previousState ) EnterStraightenHead();
 		nextState = UpdateStraightenHead();
 		if ( nextState != currentState ) ExitStraightenHead();
 		break;
-	
+
 	case AlignHead:
 
 		if ( currentState != previousState ) EnterAlignHead();
 		nextState = UpdateAlignHead();
 		if ( nextState != currentState ) ExitAlignHead();
 		break;
-	
+
 	case PresentTarget:
 
 		if ( currentState != previousState ) EnterPresentTarget();
@@ -170,7 +170,7 @@ bool GraspTaskManager::UpdateStateMachine( void ) {
 		break;
 
 	}
-	
+
 	// Quit the state machine if that is what the current state said to do.
 	if ( nextState == ExitStateMachine ) return( true );
 	// Otherwise, move on to the next state.
@@ -245,7 +245,7 @@ int GraspTaskManager::WriteRemainingTrialParameters( char *filename ) {
 	fprintf( fp, "# Nominal number of trials: %d  Repeats: %d  Remaining: %d\n", 
 		nTrials - (maxRetries - retriesRemaining), maxRetries - retriesRemaining, nTrials - currentTrial );
 	for ( int i = currentTrial; i < nTrials; i++ ) {
-		
+
 		fprintf( fp, "%lf; %lf; %lf; %lf; %d\n",
 			trialParameters[i].targetHeadTilt,
 			trialParameters[i].targetOrientation,
@@ -321,6 +321,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	trackers->WriteAdditionalColumnHeadings( pose_fp );
 	fprintf( pose_fp, "\n" );
 
+	// We have seen some strange behaviours where head rotations are amplified, etc.
+	// So I've started to save the alignment transformations as well.
+	sprintf( frameFilename, "%s.frm", output_filename_root );
+	frame_fp = fopen( frameFilename, "w" );
+	fAbortMessageOnCondition( !frame_fp, "GraspTaskManager", "Error opening file %s for writing.", frameFilename );
+	fprintf( frame_fp, "trial; time; offset; rotation\n" );
+
 	// Tell the ground what we are about to start doing.
 	ShowProgress( StartBlock, GetParadigm() );
 
@@ -362,9 +369,22 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Boresight the HMD tracker on 'B' or align to the HMD on 'A'.
 		// This is here for debugging and should probably be removed.
-		if ( display->KeyDownEvents( 'A' ) ) AlignToHMD();
-		if ( display->KeyDownEvents( 'B' ) ) trackers->hmdTracker->Boresight();
-		if ( display->KeyDownEvents( 'U' ) ) trackers->hmdTracker->Unboresight();
+		if ( display->KeyDownEvents( 'A' ) ) {
+			AlignToHMD();
+			fprintf( frame_fp, "Trial: %d  Time: %7.3f  *AlignToHMD: %s %s\n", 
+				currentTrial, TimerElapsedTime( blockTimer ),
+				vstr( localAlignment.displacement ), qstr( localAlignment.rotation ) );
+			fflush( frame_fp );
+		}
+
+		if ( display->KeyDownEvents( 'B' ) ) {
+			trackers->hmdTracker->Boresight();
+			fprintf( frame_fp, "Trial: %d  Time: %7.3f  ***Boresight***\n", currentTrial, TimerElapsedTime( blockTimer ) );
+		}
+		if ( display->KeyDownEvents( 'U' ) ) {
+			trackers->hmdTracker->Unboresight();
+			fprintf( frame_fp, "Trial: %d  Time: %7.3f  **Unboresight**\n", currentTrial, TimerElapsedTime( blockTimer ) );
+		}
 
 		// Update the state machine. If it returns true it means that we have 
 		//  finished the current block of trials.
@@ -382,7 +402,10 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	response_fp = NULL;
 	if ( pose_fp ) fclose( pose_fp );
 	pose_fp = NULL;
-	
+	if ( frame_fp ) fclose( frame_fp );
+	frame_fp = NULL;
+
+
 	// If currentTrial is less than nTrials, then the execution of the 
 	// block of trials was interrupted, presumably by a press of the ESC key.
 	if ( currentTrial < nTrials ) return( MANUAL_BLOCK_INTERRUPTION );
@@ -508,6 +531,10 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 	conflictGain = 1.0;
 	// Cancel the current local transformation that was aligned with the head.
 	AlignToCODA();
+	fprintf( frame_fp, "Trial: %d  Time: %7.3f  AlignToCODA: %s %s\n", 
+		currentTrial, TimerElapsedTime( blockTimer ),
+		vstr( localAlignment.displacement ), qstr( localAlignment.rotation ) );
+	fflush( frame_fp );
 	// Prompt the subject to straighten the head on the shoulders. We have two possible methods.
 	switch ( straightenHeadMethod ) {
 
@@ -519,7 +546,7 @@ void GraspTaskManager::EnterStraightenHead( void ) {
 		// Halo is blue because we cannot set an stable reference for the desired roll angle.
 		renderer->glasses->SetColor( 0.0f, 0.1f, 1.0f, 0.35f );
 		break;
-	
+
 	case CHEST_STRAIGHTEN:
 		// The desired orientation of the head to zero in preparation for applying conflict (if any).
 		SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
@@ -591,6 +618,11 @@ void GraspTaskManager::ExitStraightenHead( void ) {
 	conflictGain = trialParameters[currentTrial].conflictGain;
 	// Align to the current position of the HMD. 
 	AlignToHMD();
+	fprintf( frame_fp, "Trial: %d  Time: %7.3f   AlignToHMD: %s %s\n", 
+		currentTrial, TimerElapsedTime( blockTimer ),
+		vstr( localAlignment.displacement ), qstr( localAlignment.rotation ) );
+	fflush( frame_fp );
+
 	renderer->straightAheadTarget->Disable();
 	renderer->gazeLaser->Disable();
 	// Remove the prompts about lowering the hand, if any.
@@ -861,7 +893,7 @@ void GraspTaskManager::EnterProvideFeedback( void ) {
 		renderer->positionOnlyTarget->Disable();//Tagliabue (to allow a better vision of the projectile going toward the end of the tunnel)
 		renderer->monoProjectile->Enable();
 	}
-// Launch the projectiles from the current hand orientation (the response );
+	// Launch the projectiles from the current hand orientation (the response );
 	TriggerProjectiles();
 }
 GraspTrialState GraspTaskManager::UpdateProvideFeedback( void ) { 

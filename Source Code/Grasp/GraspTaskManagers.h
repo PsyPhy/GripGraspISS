@@ -92,6 +92,8 @@ namespace Grasp {
 		char responseFilename[FILENAME_MAX];
 		FILE *pose_fp;
 		char poseFilename[FILENAME_MAX];
+		FILE *frame_fp;
+		char frameFilename[FILENAME_MAX];
 
 		// State Machine
 		GraspTrialState previousState, currentState, nextState;
@@ -207,7 +209,7 @@ namespace Grasp {
 
 	public:
 		// Constructor, with initialization of some elements.
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), tag("??to??" ) {}
+		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), frame_fp(NULL), tag("??to??" ) {}
 		~GraspTaskManager(){}
 		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs, DexServices *dex ) {
 			dexServices = dex;

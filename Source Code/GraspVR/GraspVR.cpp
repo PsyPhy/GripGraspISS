@@ -124,7 +124,8 @@ void GraspVR::AlignToHMD( void ) {
 	TrackerPose hmdPose;
 
 	if ( !trackers->hmdTracker->GetCurrentPose( hmdPose ) ) {
-		fOutputDebugString( "Error reading head pose tracker for alignment.\n" );
+		fMessageBox( MB_OK | MB_ICONEXCLAMATION, "GraspVR::AlignToHMD", "Error reading head pose tracker for alignment." );
+		exit( -100 );
 	}
 	else {
 		// Local alignment is the conjugate of the head pose orientation.
