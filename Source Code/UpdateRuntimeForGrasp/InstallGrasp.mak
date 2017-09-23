@@ -11,6 +11,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe \
 	..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe \
 	..\$(BUILDCONFIGURATION)\OculusMouse.exe \
+	..\$(BUILDCONFIGURATION)\MinimizeAll.exe \
 	..\$(BUILDCONFIGURATION)\GraspScreenshots.exe \
 	..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe \
 	..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe \
@@ -23,8 +24,8 @@ EXECUTABLES = \
 	GraspPacketsForSimulator.gpk \
 	LoadCodaCals.bat \
 	MakeRigidBodies.bat \
-	RunDaemon.bat \
-	RunGRASP.bat 
+	RunDaemon.bat.src \
+	RunGRASP.bat.src 
 
 ROOT=..\..
 DESTINATION = $(ROOT)\Executables
@@ -50,13 +51,14 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\StartOculus.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\MinimizeAll.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe $(DESTINATION)
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
 	copy LoadCodaCals.bat $(DESTINATION)
 	-copy ..\DLLs\*.dll $(DESTINATION)
 	copy MakeRigidBodies.bat $(ROOT)\Bdy
-	copy RunGRASP.bat $(ROOT)
-	copy RunDaemon.bat $(ROOT)
+	copy RunGRASP.bat.src $(ROOT)\RunGRASP.bat
+	copy RunDaemon.bat.src $(ROOT)\RunDaemon.bat
 	-mkdir $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\EM $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\FM2 $(DESTINATION)\CodaCalFiles
