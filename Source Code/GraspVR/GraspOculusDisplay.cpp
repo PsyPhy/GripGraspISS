@@ -101,10 +101,18 @@ void GraspOculusDisplay::Present( void ) {
 // Wait for a reaction from the user/subject to validate the current condition.
 // Typically, this is a press of a key or button, but that depends on the hardware.
 bool GraspOculusDisplay::Validate( void ) {
-	ovrInputState state;
-	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &state );
+	ovrInputState remote_state, left_state, right_state;
+	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_Remote, &remote_state );
+	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_LTouch, &left_state );
+	ovr_GetInputState(	oculusMapper->session,  ovrControllerType_RTouch, &right_state );
 	bool current_state = 
-		( oculusDisplay->Button[MOUSE_LEFT] || oculusDisplay->Button[MOUSE_MIDDLE] || oculusDisplay->Button[MOUSE_RIGHT] || (state.Buttons & ovrButton_Enter));
+		( oculusDisplay->Button[MOUSE_LEFT] 
+			|| oculusDisplay->Button[MOUSE_MIDDLE] 
+			|| oculusDisplay->Button[MOUSE_RIGHT] 
+			|| ( remote_state.Buttons & ovrButton_Enter )
+			|| ( left_state.Buttons & ovrButton_X )
+			|| ( right_state.Buttons & ovrButton_A )
+		);
 	if ( waitForUp && current_state ) return( false );
 	if ( !current_state ) {
 		waitForUp = false;

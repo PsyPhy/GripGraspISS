@@ -46,6 +46,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER( hPrevInstance );
 	
 	bool useCoda = true;
+	bool useTouch = false;
 	bool useHMD = true;
 	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
 
@@ -60,6 +61,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
 	if ( FileExists( "NoCoda.flg" ) ) useCoda = false;
+	if ( strstr( lpCmdLine, "--touch" ) ) useTouch = true;
 	if ( strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
 	if ( FileExists( "NoHMD.flg" ) ) useCoda = false;
 
@@ -116,8 +118,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	    codaTracker = new CodaRTnetDaemonTracker();
 		trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
 	}
+	else if ( useTouch ) {
+		trackers = new GraspOculusTrackers( &_oculusMapper );
+	}
 	else if ( useHMD ) {
-		trackers = new GraspOculusOnlyTrackers( &_oculusMapper );
+		trackers = new GraspOculusLiteTrackers( &_oculusMapper );
 	}
 	else {
 		trackers = new GraspSimulatedTrackers();

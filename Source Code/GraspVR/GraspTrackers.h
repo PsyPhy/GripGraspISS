@@ -277,26 +277,35 @@ namespace Grasp {
 			codaTracker = tracker;
 			GraspOculusCodaTrackers();
 		}
-		void GraspOculusCodaTrackers::Initialize( void );
+		void Initialize( void );
 	};
 
-	// GraspOculusOnlyTrackers provides a solution when the Coda is not available.
-	// For the moment it uses the standard Oculus tracker with its own constellation
-	// system for drift correction, and substitutes mouse and keyboard trackers for
-	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
-	class GraspOculusOnlyTrackers : public GraspTrackers {
+	// We use this one when we want to pretend that we have CODAs.
+	class GraspOculusTrackers : public GraspTrackers {
 	public:
-
-		// We will need a mouse tracker of some kind to do the V-V protocol.
-		MouseRollPoseTracker *mouseRollTracker;
-
 		PoseTracker *chestTrackerRaw;
+		GraspOculusTrackers( void ) {}
+		GraspOculusTrackers( OculusMapper *mapper ) {
+			oculusMapper = mapper;
+			GraspOculusTrackers();
+		}
+		void Initialize( void );
+	};
 
-		virtual void Initialize( void );
-		GraspOculusOnlyTrackers( OculusMapper *mapper ) {
+
+	// GraspOculusLiteTrackers provides a solution when the Coda is not available
+	// and when we don't have the Oculus touch sensors.
+	// It uses the standard Oculus tracker with its own constellation system
+	//  for drift correction, and substitutes mouse and keyboard trackers for
+	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
+	class GraspOculusLiteTrackers : public GraspTrackers {
+	public:
+		PoseTracker *chestTrackerRaw;
+		void Initialize( void );
+		GraspOculusLiteTrackers( OculusMapper *mapper ) {
 			oculusMapper = mapper;
 		}
-		~GraspOculusOnlyTrackers( void ) {}
+		~GraspOculusLiteTrackers( void ) {}
 	};
 
 
