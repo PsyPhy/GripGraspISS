@@ -366,3 +366,5 @@ RunGRASP.bat
 RunGRIPMMI.bat
 RunGRASPMMI.bat
 
+Source Code/GraspScripts/_flight
+Source Code/GraspScripts/_common
