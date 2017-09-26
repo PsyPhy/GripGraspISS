@@ -15,6 +15,8 @@ namespace GraspGUI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	// We need InteropServics in order to convert a String to a char *.
+	using namespace System::Runtime::InteropServices;
 
 	/// <summary>
 	/// The main form for the Grasp GUI.
@@ -130,6 +132,7 @@ namespace GraspGUI {
 			// Initialize what buttons are visible.
 			ShowLogon();
 		}
+		String^ DateTimeString( void );
 
 	protected:
 		/// <summary>
@@ -1133,7 +1136,32 @@ namespace GraspGUI {
 		}
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			WinExec( "Executables\\GraspHardwareStatus.exe", SW_SHOW );
+
+			// Disconnect from DEX telemetry services so that the task program can connect.
+			dex->Disconnect();
+
+			// Construct the command line, adding results filename root and task info.
+			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
+			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
+			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
+			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+			String^ cmdline = "Executables\\GraspHardwareStatus.exe --output=" 
+				+ resultsDirectory 
+				+ "STATUS_" 
+				+ DateTimeString()
+				+ " --user=" + subjectID
+				+ " --protocol=" + protocolID
+				+ " --task=" + taskID
+				+ " --step=" + stepID;
+			// If the cookie file NoCoda.flg is present, then add a commandline argument to inhibit CODA use.
+			if ( FileExists( "NoCoda.flg" ) ) cmdline = cmdline + " --nocoda";
+
+			char *cmd = (char*)(void*)Marshal::StringToHGlobalAnsi( cmdline ).ToPointer() ; 
+			WinExec( cmd, SW_SHOW );
+			Marshal::FreeHGlobal( IntPtr( cmd ) );
+
+			// Reconnect to DEX for telemetry.
+			dex->Connect();
 		}
 
 	protected:

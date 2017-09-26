@@ -62,13 +62,6 @@ namespace GraspHardwareStatus {
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
 
-		CodaRTnetDaemonTracker *coda;
-		CodaPoseTracker *hmdTracker;
-		CodaPoseTracker *handTracker;
-		CodaPoseTracker *chestTracker;
-
-		MarkerFrame *markerFrame;
-
 		// A class that provides methods for making a lot of the 
 		// OpenGLObjects that we need for displaying the status.
 		GraspGLObjects *objects;
@@ -84,24 +77,24 @@ namespace GraspHardwareStatus {
 		MarkerStructureGLObject *hmdMobile;
 		MarkerStructureGLObject *handMobile;
 		MarkerStructureGLObject *chestMobile;
-	private: System::Windows::Forms::Button^  closeButton;
 
 			 // Just a way to refer to all the mobile objects together.
 		// It makes it easier to draw all of them. 
 		Yoke *mobiles;
 
 	public:
-		Form1( CodaRTnetDaemonTracker *tracker, CodaPoseTracker *hmd, CodaPoseTracker *hand, CodaPoseTracker *chest )
-		{
-			coda = tracker;
-			hmdTracker = hmd;
-			handTracker = hand;
-			chestTracker = chest;
 
+		CodaRTnetDaemonTracker *coda;
+		CodaPoseTracker *hmdTracker;
+		CodaPoseTracker *handTracker;
+		CodaPoseTracker *chestTracker;
+		MarkerFrame *markerFrame;
+
+		String^	filenameRoot;
+
+		Form1( void )
+		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
 	protected:
@@ -144,6 +137,7 @@ namespace GraspHardwareStatus {
 		System::Windows::Forms::Panel^  vrPanel0;
 		System::Windows::Forms::GroupBox^  groupBox1;
 		System::Windows::Forms::Panel^  oculusPanel;
+		System::Windows::Forms::Button^  closeButton;
 
 	private:
 		/// Required designer variable.
@@ -630,22 +624,15 @@ namespace GraspHardwareStatus {
 		}
 
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
 			char cmd[1024];
-			//sprintf( cmd, "Start /min \"VR Test\" Executables\\PsyPhyOculusDemo.exe --parent=%d", parent );
-			// Create an output filename.
-			SYSTEMTIME st;
-			GetSystemTime( &st );
-			char datetimestr[MAX_PATH];
-			char datestr[MAX_PATH];
-			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
-			sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-
-			sprintf( cmd, "Start /min \"VR Test\" Executables\\Grasp.exe --parent=%d --demo --output=Results\\%s\\STATUS_%s", parent, datestr, datetimestr );
+			HWND parent = static_cast<HWND>( oculusPanel->Handle.ToPointer() );
+			char *root = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( filenameRoot ).ToPointer();
+			sprintf( cmd, "Start /min \"VR Test\" Executables\\Grasp.exe --parent=%d --demo --output=%s", parent, root );
+			System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( root ) );
 			system( cmd );
 		}
 
-private: System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
+		System::Void button1_Click_1(System::Object^  sender, System::EventArgs^  e) {
 			 Close();
 		 }
 };

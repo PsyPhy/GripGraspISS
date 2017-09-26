@@ -295,6 +295,16 @@ void GraspDesktop::startButton_Click(System::Object^  sender, System::EventArgs^
 	cueStepCommand = true;
 }
 
+String^ GraspDesktop::DateTimeString( void ) {
+
+		SYSTEMTIME st;
+		GetSystemTime( &st );
+		char datetimestr[MAX_PATH];
+		sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		return( gcnew String( datetimestr ) );
+
+}
+
 // Trigger commands as needed after allowing the html viewer to fully load files.
 void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, System::Windows::Forms::WebBrowserDocumentCompletedEventArgs^  e) {
 	// Make sure that the windows have refreshed  before executing the command.
@@ -308,13 +318,6 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 
 		// Don't trigger again on the next DocumentCompleted event.
 		cueStepCommand = false;
-
-		// Create an output filename.
-		SYSTEMTIME st;
-		GetSystemTime( &st );
-		char datetimestr[MAX_PATH];
-		sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-		String ^dateTimeString = gcnew String( datetimestr );
 
 		// Show the current form as being disabled.
 		// Enabled = false;
@@ -333,11 +336,15 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		// To the entry from the script we add a specification of the output filename root, including path
 		// and specification of the user, protocol, task an subject ID. The client process will incorporate these
 		// values into the HK packets that get sent to DEX for transmission to the ground.
+
+
 		int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
 		int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
 		int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 		int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+
 		String ^cmdline;
+
 		// Add command line arguments to COMMAND or COMMAND@.
 		if ( stepList[currentStep]->type->StartsWith( "COMMAND" ) ) {
 			cmdline =  stepList[currentStep]->command 
@@ -346,7 +353,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				+ subjectList[currentSubject]->ID + "_" 
 				+ protocolID + "_" 
 				+ taskID + "_" 
-				+ dateTimeString
+				+ DateTimeString()
 				+ " --user=" + subjectID
 				+ " --protocol=" + protocolID
 				+ " --task=" + taskID

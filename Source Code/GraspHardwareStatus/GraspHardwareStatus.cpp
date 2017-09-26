@@ -18,30 +18,36 @@ int main(array<System::String ^> ^args)
 
 	Sleep( 100 );
 
-	CodaRTnetDaemonTracker *tracker = new CodaRTnetDaemonTracker();
-	tracker->Initialize();
+	Form1^	form = gcnew Form1();
+
+	form->coda = new CodaRTnetDaemonTracker();
+	form->coda->Initialize();
 
 	MarkerFrame codaFrame;
+	form->markerFrame = &codaFrame;
 
-	CodaPoseTracker *hmdTracker = new CodaPoseTracker( &codaFrame );
-	hmdTracker->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
+	form->hmdTracker = new CodaPoseTracker( &codaFrame );
+	form->hmdTracker->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
 
-	CodaPoseTracker *handTracker = new CodaPoseTracker( &codaFrame );
-	handTracker->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
+	form->handTracker = new CodaPoseTracker( &codaFrame );
+	form->handTracker->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
 
-	CodaPoseTracker *chestTracker = new CodaPoseTracker( &codaFrame );
-	chestTracker->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
+	form->chestTracker = new CodaPoseTracker( &codaFrame );
+	form->chestTracker->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
 
-	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
-	DexServices *dex = new DexServices();
-	// See if the caller has specified the user, protocol, task and step numbers. We don't change those here.
-	dex->ParseCommandLineArguments( args );
-	dex->Initialize();
+	// Create a default output filename.
+	String^ root = gcnew String( "GraspHardwareStatus" );
+
+	// Parse for command line arguments.
+	for ( int i = 0; i < args->Length; i++ ) {
+		if ( args[i]->StartsWith( "--output" ) ) root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+	}
 
 	// Create the main window and run it
-	Application::Run(gcnew Form1( tracker, hmdTracker, handTracker, chestTracker ));
+	form->filenameRoot = root;
+	Application::Run( form );
 
-	tracker->Quit();
+	form->coda->Quit();
 
 	return 0;
 }

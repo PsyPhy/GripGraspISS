@@ -128,7 +128,8 @@ namespace Grasp {
 			  static_tracker_status(TRACKERSTATUS_UNKNOWN),
 			  dexSocket( INVALID_SOCKET ),
 			  proxySocket( INVALID_SOCKET ),
-			  clientSocket( INVALID_SOCKET )
+			  clientSocket( INVALID_SOCKET ),
+			  log( nullptr )
 		  {
 			  server_name = server;
 			  server_port = port;

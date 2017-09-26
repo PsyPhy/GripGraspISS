@@ -30,7 +30,6 @@ int main(array<System::String ^> ^args)
 		if ( args[i]->StartsWith( "--body" ) ) model_file = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
 		if ( args[i]->StartsWith( "--output" ) ) filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
 	}
-	fOutputDebugString( "AlignToRigidBodyGUI - Model file: %s   Results Filename Root: %s  CODA: %s\n", model_file, filename_root, ( noCoda ? "NO" : "YES" ));
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
 	DexServicesByProxy *dex = new DexServicesByProxy();
