@@ -5,6 +5,8 @@
 953; SYSTEM=; Gaze Self-Alignment; del /F /Q CodaAlignGaze.flg ChestAlignGaze.flg; StepReady.prompt.html
 954; SYSTEM=; Enable VR Mirroring; echo "MirroringOn" > Mirroring.flg; StepReady.prompt.html
 955; SYSTEM=; Disable VR Mirroring; del /F /Q Mirroring.flg; StepReady.prompt.html
-956; SYSTEM=; Enable Training Subjects; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
-956; SYSTEM=; Enable Bedrest Subjects; copy /Y /V Scripts\SubjectsBedrest.sbj Scripts\Subjects.sbj; StepReady.prompt.html
-957; SYSTEM=; Enable Flight Subjects; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+956; SYSTEM=; Enable FTP Safety Copy; del /F /Q NoFTP.flg; StepReady.prompt.html
+956; SYSTEM=; Disable FTP Safety Copy; echo "FTP" > NoFTP.flg; StepReady.prompt.html
+960; SYSTEM=; Enable Training Subjects; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+961; SYSTEM=; Enable Bedrest Subjects; copy /Y /V Scripts\SubjectsBedrest.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+962; SYSTEM=; Enable Flight Subjects; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; StepReady.prompt.html
