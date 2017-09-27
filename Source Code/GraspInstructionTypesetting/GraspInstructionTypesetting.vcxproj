@@ -64,10 +64,13 @@
     <None Include="CodaAlignSeated.prompt.md" />
     <None Include="00IntroK-K.instruction.md" />
     <None Include="FileTransferReady.prompt.md" />
+    <None Include="FileTransferErrorFinish.status.md" />
     <None Include="GraspInstructions.debug.mak" />
     <None Include="GraspInstructions.release.mak" />
     <None Include="HMDStructureAssembly.instruction.md" />
+    <None Include="IncompleteErrorFinish.status.md" />
     <None Include="MaintenanceWelcome.instruction.md" />
+    <None Include="MaxRetriesErrorFinish.status.md" />
     <None Include="NotYetImplemented.md" />
     <None Include="ObjectPositioningFloating.instruction.md" />
     <None Include="ObjectPositioningSeated.instruction.md" />

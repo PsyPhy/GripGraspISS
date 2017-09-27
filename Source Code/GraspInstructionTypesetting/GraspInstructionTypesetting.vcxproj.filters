@@ -97,6 +97,15 @@
     <None Include="00StraightenHeadHonor.instruction.md">
       <Filter>Science</Filter>
     </None>
+    <None Include="MaxRetriesErrorFinish.status.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="FileTransferErrorFinish.status.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="IncompleteErrorFinish.status.md">
+      <Filter>Science</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

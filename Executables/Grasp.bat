@@ -14,6 +14,9 @@ Executables\Grasp.exe %*
 set GRASPERRORLEVEL=%ERRORLEVEL%
 
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.
+REM Do not attempt to send if the NoFTP.flg cookie is present.
+if exist NoFTP.flg goto NOFTP
+
 REM Find the filename root amongst the parameters.
 REM The GraspGUI shell puts the results file root in the form --output=FNROOT.
 REM Note that the '=' is treated as a blank by the command processor.
@@ -56,6 +59,8 @@ if ERRORLEVEL == 1 GOTO IGNORE
 :IGNORE
 Utils\WinSCP.com /command "open ftp://%LOGONID%:%PASSWORD%@%HOST%" "cd %GRASPROOT%" "cd %DIRECTORY%" "mput %2.*"  "exit" 
 set FTPERRORLEVEL=%ERRORLEVEL%
+if %FTPERRORLEVEL% LSS 0 set /a FTPERRORLEVEL=%FTPERRORLEVEL% + 1 
 
-if %GRASPERRORLEVEL% == "0" exit %FTPERRORLEVEL%
+:NOFTP
+if "%GRASPERRORLEVEL%"=="0" exit -%FTPERRORLEVEL%
 exit %GRASPERRORLEVEL%
