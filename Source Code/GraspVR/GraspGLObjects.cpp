@@ -257,26 +257,12 @@ Glasses *GraspGLObjects::CreateGlasses( void ) {
 // But otherwise the fingers each have a different color. So we need to do some work
 // to switch back and forth between grey and the defined colors of each finger.
 void GraspGLObjects::SetHandColor( Assembly *hand, bool state ) {
-	// We know that the last element of the hand is the laser pointer and that
-	//  all the other ones are fingers. Hence the - 1 in the following.
-	for ( int i = 0; i < hand->components - 1; i++ ) {
+	for ( int i = 0; i < hand->components; i++ ) {
 		// Create a color that varies as a function of the finger's position and apply it to the entire finger.
 		if ( state ) hand->component[i]->SetColor( 0.75f, 0.15f * (float) i, 0.0f, 1.0f  );
 		else hand->component[i]->SetColor( 0.0, 0.0, 0.0, 0.85  );
 	}
 }
-// In a similar vein we need to be able to turn on and off a laser attached to a hand.
-// Again, we exploit the fact that the laser is the last element.
-void GraspGLObjects::EnableHandLaser( Assembly *hand ) {
-	hand->component[ hand->components - 1 ]->Enable();
-}
-void GraspGLObjects::DisableHandLaser( Assembly *hand ) {
-	hand->component[ hand->components - 1 ]->Disable();
-}
-void GraspGLObjects::SetHandLaserEccentricity( Assembly *hand, double projection ) {
-	((FuzzyPointer *)(hand->component[ hand->components - 1 ]))->SetEccentricity( projection );
-}
-
 
 Assembly *GraspGLObjects::CreateVisualTool( void ) {
 
@@ -304,12 +290,6 @@ Assembly *GraspGLObjects::CreateVisualTool( void ) {
 		finger->SetPosition( 0.0, finger_spacing * trg, 0.0 );
 		tool->AddComponent( finger );
 	}
-	// Add a laser pointer to the end.
-	Assembly *laser = CreateFuzzyLaserPointer();
-	// This laser is always the same color.
-	laser->SetColor( MAGENTA );
-	tool->AddComponent( laser );
-
 	SetHandColor( tool, true );
 
 	return tool;
@@ -328,9 +308,6 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 	sphere = new Sphere( hand_radius );
 	sphere->SetPosition( 0.0, 0.0, - finger_length );
 	finger->AddComponent( sphere );
-	// Add a laser pointer to the end.
-	Assembly *laser = CreateFuzzyLaserPointer();
-	finger->AddComponent( laser );
 	// Set a default color. I like blue.
 	// In K-K color will be varied according to the orientation error.
 	finger->SetColor( 0.0, 0.0, 1.0, 1.0 );
@@ -424,6 +401,7 @@ Yoke *GraspGLObjects::CreateHand( void ) {
 	hand->AddComponent( vkTool );
 	hand->AddComponent( kTool );
 	hand->AddComponent( kkTool );
+	hand->AddComponent( handLaser );
 	lowerHandPrompt = new Sphere( finger_length );
 	// Set the color to a transparent blinking red.
 	lowerHandPrompt->SetColor( 1.0, 0.0, 0.0, -0.02 );
@@ -567,9 +545,6 @@ void GraspGLObjects::CreateVRObjects( void ) {
 
 	CreateTextures();
 
-	fuzzyLaser = CreateFuzzyLaserPointer();
-	fuzzyLaser->SetColor( 1.0, 0.0, 1.0 );
-
 	room = CreateRoom();
 	glasses = CreateGlasses();
 	glasses->SetColor( 0.5, 0.5, 0.5, 0.5 );
@@ -621,6 +596,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	kTool = CreateKinestheticTool();
 	// Same as the above, but this one we use when presenting a kinesthetic target in K-K.
 	kkTool = CreateKinestheticTool();
+	// A laser attached to the hand.
+	handLaser = CreateFuzzyLaserPointer();
+	handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
 	// And to the gaze.
@@ -706,13 +684,12 @@ void GraspGLObjects::DrawVR( void ) {
 	// Draw some other objects in matte.
 	glUsefulMatteMaterial();
 
+	handLaser->Draw();
 	headTiltPrompt->Draw();
 	handRollPrompt->Draw();
 	spinners->Draw();
 	wristZone->Draw();
 	lowerHandPrompt->Draw();
-
-	fuzzyLaser->Draw();
 
 	// The following are now attached to the room, so they get drawn with the room, if activated.
 	// orientationTarget->Draw();

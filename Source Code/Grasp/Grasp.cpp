@@ -61,8 +61,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	if ( FileExists( "NoCoda.flg" ) ) useCoda = false;
 	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
-	if ( FileExists( "Touch.flg" ) ) useTouch = true;
-	if ( strstr( lpCmdLine, "--touch" ) ) useTouch = true;
+	if ( FileExists( "Touch.flg" ) ) {
+		useTouch = true;
+		useCoda = false;
+	}
+	if ( strstr( lpCmdLine, "--touch" ) ) {
+		useTouch = true;
+		useCoda = false;
+	}
 	if ( FileExists( "NoHMD.flg" ) ) useHMD = false;
 	if ( strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
 

@@ -743,6 +743,7 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
 	renderer->raiseHandIndicator->Disable();
+	renderer->handLaser->Disable();
 	// Change the sky background to remove the visual reference that it provides.
 	renderer->starrySky->Disable();
 	renderer->darkSky->Enable();
@@ -868,6 +869,7 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	renderer->vkTool->Disable();
 	renderer->vTool->Disable();
 	renderer->wristZone->Disable();
+	renderer->handLaser->Disable();
 	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];

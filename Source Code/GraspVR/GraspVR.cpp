@@ -573,9 +573,7 @@ void GraspVR::HandleLasers( void ) {
 	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
 
 		// Lasers should be visible only if the hand is in the field of view.
-		renderer->DisableHandLaser( renderer->vkTool );
-		renderer->DisableHandLaser( renderer->kkTool );
-		renderer->DisableHandLaser( renderer->kTool );
+		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
 
 	}
 	else {
@@ -583,18 +581,14 @@ void GraspVR::HandleLasers( void ) {
 		// Allow the lasers to be drawn if the hand is raised to be in view.
 		// This does not mean that they will be drawn. They are only drawn 
 		//  if the corresponding hand is enabled.
-		renderer->EnableHandLaser( renderer->vkTool );
-		renderer->EnableHandLaser( renderer->kkTool );
-		renderer->EnableHandLaser( renderer->kTool );
+		renderer->handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
 
 		// Lasers in the hand should become diffuse if they do not point down the tunnel.
 		Vector3 tunnel_axis, hand_axis;
 		MultiplyVector( tunnel_axis, renderer->kVector, renderer->room->orientation );
 		MultiplyVector( hand_axis, renderer->kVector, renderer->hand->orientation );
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
-		renderer->SetHandLaserEccentricity( renderer->vkTool, projection );
-		renderer->SetHandLaserEccentricity( renderer->kTool, projection );
-		renderer->SetHandLaserEccentricity( renderer->kkTool, projection );
+		renderer->handLaser->SetEccentricity( projection );
 
 	}
 

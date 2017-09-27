@@ -238,7 +238,7 @@ namespace Grasp {
 			if ( renderer->glasses->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->headTiltPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->gazeLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->fuzzyLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->handLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->successIndicator->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->vTool->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->kTool->enabled ) data.enableBits |= bit; bit = bit << 1;

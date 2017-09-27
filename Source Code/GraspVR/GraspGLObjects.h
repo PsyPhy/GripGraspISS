@@ -33,7 +33,7 @@ namespace Grasp {
 	using namespace PsyPhy;
 
 #define LASER_BEAMS 7
-#define LASER_FOCUSED_SIZE 10.0
+#define LASER_FOCUSED_SIZE 7.0
 #define LASER_DIFFUSION_CONSTANT 1.0
 #define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.99
 
@@ -236,7 +236,6 @@ namespace Grasp {
 		Glasses			*glasses;				// A frame around the viewport into the virtual scene that moves with the head.
 		Assembly		*headTiltPrompt;		// Shows the subject which direction to turn the head when the error is large.
 		Assembly		*gazeLaser;				// A virtual laser pointer that moves with the line of gaze, making it easier to center the gaze at the start of a trial.
-		FuzzyPointer	*fuzzyLaser;
 
 		Assembly		*successIndicator;		// Shown briefly to indicate successful completion of a trial (currently not used).
 
@@ -247,6 +246,7 @@ namespace Grasp {
 		Assembly		*kTool;					// A tool that allows pointing the hand in pitch and yaw, but without indication about roll.
 		Assembly		*vkTool;				// A tool that shows the hand's orientation. Used in V-VK and K-VK or in training for K-K.
 		Assembly		*kkTool;				// A tool that is used to drive the hand to the target orientation in K-K.
+		FuzzyPointer	*handLaser;
 
 		Assembly		*handRollPrompt;		// An arrow around the tool saying which way to turn.
 		Sphere			*lowerHandPrompt;		// A cloud around the tool that is activated to remind the subject to lower the hand.
