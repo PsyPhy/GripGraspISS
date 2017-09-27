@@ -216,7 +216,6 @@ namespace Grasp {
 			GraspVR::Initialize( dsply, trkrs );
 		}
 		void Release( void ) {
-			display->Release();
 			GraspVR::Release();
 		}
 

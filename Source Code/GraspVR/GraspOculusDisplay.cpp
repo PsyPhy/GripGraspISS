@@ -58,6 +58,15 @@ void GraspOculusDisplay::Initialize( HINSTANCE instance, OculusDisplayOGL *displ
 
 void GraspOculusDisplay::Release( void ) {
 
+	// Clear the VR display
+	for (int eye = 0; eye < 2; ++eye) {
+		SelectEye( eye );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		DeselectEye( eye );
+	}
+	Present();
+	Sleep( 100 );
+
 	// Shutdown the Rift.
 	ovr_Shutdown();
 	oculusDisplay->CloseWindow();

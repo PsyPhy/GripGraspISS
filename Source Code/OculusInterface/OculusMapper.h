@@ -103,6 +103,7 @@ public:
 
 	void Release () {
 
+		// Release the buffers.
 		if ( mirrorFBO ) glDeleteFramebuffers(1, &mirrorFBO);
 		if ( mirrorTexture ) ovr_DestroyMirrorTexture( session, mirrorTexture );
 		for (int eye = 0; eye < 2; ++eye)

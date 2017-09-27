@@ -398,13 +398,13 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 		// Clear any accumulated keydown events in preparation for the next cycle.
 		display->ClearKeyDownEvents();
 	}
+
 	if ( response_fp ) fclose( response_fp );
 	response_fp = NULL;
 	if ( pose_fp ) fclose( pose_fp );
 	pose_fp = NULL;
 	if ( frame_fp ) fclose( frame_fp );
 	frame_fp = NULL;
-
 
 	// If currentTrial is less than nTrials, then the execution of the 
 	// block of trials was interrupted, presumably by a press of the ESC key.
