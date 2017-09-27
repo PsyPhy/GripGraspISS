@@ -1,1 +1,75 @@
-﻿
+﻿  	echo Preparing to install scripts.
+  Preparing to install scripts.
+  	rmdir /S /Q ..\..\Scripts
+  	mkdir ..\..\Scripts
+  	copy /Y /V *.sss ..\..\Scripts
+  GraspCommissioningSessions.sss
+  GraspMaintenanceSessions.sss
+  GraspNominalSessions.sss
+  GraspNominalSessionsBedrest.sss
+  GraspTrainingSessions.sss
+  GraspTrainingSessionsBedrest.sss
+          6 file(s) copied.
+  	copy /Y /V *.pcl ..\..\Scripts
+  DataTransfer.pcl
+  Invalid.pcl
+  K-KfloatingBedrest.pcl
+  K-KfloatingFlight.pcl
+  K-Kseated-training.pcl
+  K-KseatedBedrest.pcl
+  K-KseatedFlight.pcl
+  Maintenance.pcl
+  PrepareFloating.pcl
+  PrepareSeated.pcl
+  Short.pcl
+  SoftwareConfigure.pcl
+  V-KfloatingBedrest.pcl
+  V-KfloatingFlight.pcl
+  V-Kseated-training.pcl
+  V-KseatedBedrest.pcl
+  V-KseatedFlight.pcl
+  V-VfloatingBedrest.pcl
+  V-VfloatingFlight.pcl
+  V-Vseated-training.pcl
+  V-VseatedBedrest.pcl
+  V-VseatedFlight.pcl
+         22 file(s) copied.
+  	copy /Y /V *.tsk ..\..\Scripts
+  DataTransfer.tsk
+  K-Kinstructions.tsk
+  K-KprepareFloating.tsk
+  K-KprepareSeated.tsk
+  PrepareFloating.tsk
+  PrepareSeated.tsk
+  V-Kinstructions.tsk
+  V-KprepareFloating.tsk
+  V-KprepareSeated.tsk
+  V-Vinstructions.tsk
+  V-VprepareFloating.tsk
+  V-VprepareSeated.tsk
+         12 file(s) copied.
+  	copy /Y /V *.sbj ..\..\Scripts
+  SubjectsBedrest.sbj
+  SubjectsFlight.sbj
+  SubjectsTraining.sbj
+          3 file(s) copied.
+  	echo %date% %time% > _common
+  	del /F /Q _flight _training
+  Could Not Find C:\Users\Joe\Desktop\GripGrasp Development\GripGrasp\Source Code\GraspScripts\_flight
+  	echo Installing scripts for BEDREST.
+  Installing scripts for BEDREST.
+  	copy /Y /V ..\..\Scripts\SubjectsBedrest.sbj ..\..\Scripts\Subjects.sbj
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\V-KseatedBedrest.pcl ..\..\Scripts\V-Kseated.pcl
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\V-VseatedBedrest.pcl ..\..\Scripts\V-Vseated.pcl
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\K-KseatedBedrest.pcl ..\..\Scripts\K-Kseated.pcl
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\V-KfloatingBedrest.pcl ..\..\Scripts\V-Kfloating.pcl
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\V-VfloatingBedrest.pcl ..\..\Scripts\V-Vfloating.pcl
+          1 file(s) copied.
+  	copy /Y /V ..\..\Scripts\K-KfloatingBedrest.pcl ..\..\Scripts\K-Kfloating.pcl
+          1 file(s) copied.
+  	echo %date% %time% > _bedrest

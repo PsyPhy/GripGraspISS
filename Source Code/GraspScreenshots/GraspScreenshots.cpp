@@ -125,7 +125,7 @@ int _tmain(int argc, char *argv[])
 	objects->headTiltPrompt->SetOrientation(110.0, 0.0, 0.0);
 	objects->response->SetOrientation( 33.0, 0.0, 0.0 );
 	objects->orientationTarget->SetOrientation( 30.0, 0.0, 0.0 );
-	objects->fuzzyLaser->SetColor( 0.0, 0.0, 1.0 );
+	objects->handLaser->SetColor( 1.0, 0.0, 1.0 );
 
 	objects->tunnel->SetColor( GRAY );
 	objects->glasses->SetColor( 0.0f, 0.85f, 0.85f, 0.5f );
@@ -206,7 +206,7 @@ int _tmain(int argc, char *argv[])
 			objects->vkTool->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--laser" )) {
-			objects->EnableHandLaser( objects->vkTool );
+			objects->handLaser->Enable();
 		}
 		else if ( !strcmp( argv[arg], "--kTool" )) {
 			objects->kTool->Enable();

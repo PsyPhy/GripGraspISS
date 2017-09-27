@@ -1,0 +1,15 @@
+# Protocol Definition: Visual Target to Visual Response 
+201; SCRIPT; Task Instruction Review; V-Vinstructions.tsk
+211; COMMAND; Head-Straight Block 1; Executables\Grasp.bat --VtoV --sequence=Sequences\WU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+221; COMMAND; Head-Straight Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+222; COMMAND; Head-Straight Block 3; Executables\Grasp.bat --VtoV --sequence=Sequences\HU_Ser2_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+231; COMMAND; Head-Tilted Block 1; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+232; COMMAND; Head-Tilted Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+233; COMMAND; Head-Tilted Block 3; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+234; COMMAND; Head-Tilted Block 4; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser1_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+235; COMMAND; Head-Tilted Block 5; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block1.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+236; COMMAND; Head-Tilted Block 6; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block2.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+237; COMMAND; Head-Tilted Block 7; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block3.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+238; COMMAND; Head-Tilted Block 8; Executables\Grasp.bat --VtoV --sequence=Sequences\HT_Ser2_Block4.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
+239; COMMAND@; End of Trials; Executables\Grasp.exe --doff; ProtocolFinished.prompt.html; StepRunning.instruction.html; ProtocolFinished.prompt.html; StepErrorFinish.status.html
+299; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --VtoV --sequence=%TEMP%\GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html

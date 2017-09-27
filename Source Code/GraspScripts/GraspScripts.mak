@@ -9,6 +9,13 @@ _flight: _common SubjectsFlight.sbj
 	-del /F /Q _training _bedrest
 	echo Installing scripts for FLIGHT.
 	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	copy /Y /V $(SCRIPT_DESTINATION)\V-KseatedFlight.pcl $(SCRIPT_DESTINATION)\V-Kseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-VseatedFlight.pcl $(SCRIPT_DESTINATION)\V-Vseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\K-KseatedFlight.pcl $(SCRIPT_DESTINATION)\K-Kseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-KfloatingFlight.pcl $(SCRIPT_DESTINATION)\V-Kfloating.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-VfloatingFlight.pcl $(SCRIPT_DESTINATION)\V-Vfloating.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\K-KfloatingFlight.pcl $(SCRIPT_DESTINATION)\K-Kfloating.pcl
 	echo %date% %time% > $@
 
 _training: _common SubjectsTraining.sbj
@@ -21,6 +28,12 @@ _bedrest: _common SubjectsBedrest.sbj
 	-del /F /Q _flight _training
 	echo Installing scripts for BEDREST.
 	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsBedrest.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
+	copy /Y /V $(SCRIPT_DESTINATION)\V-KseatedBedrest.pcl $(SCRIPT_DESTINATION)\V-Kseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-VseatedBedrest.pcl $(SCRIPT_DESTINATION)\V-Vseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\K-KseatedBedrest.pcl $(SCRIPT_DESTINATION)\K-Kseated.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-KfloatingBedrest.pcl $(SCRIPT_DESTINATION)\V-Kfloating.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\V-VfloatingBedrest.pcl $(SCRIPT_DESTINATION)\V-Vfloating.pcl
+	copy /Y /V $(SCRIPT_DESTINATION)\K-KfloatingBedrest.pcl $(SCRIPT_DESTINATION)\K-Kfloating.pcl
 	echo %date% %time% > $@
 
 _common: *.sss *.pcl *.tsk *.sbj
