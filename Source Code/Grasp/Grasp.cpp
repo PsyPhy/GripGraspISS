@@ -176,9 +176,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// By default, the subject is simply asked to straighten the head on the shoulders and then press a button.
 	// But the presence of these cookie files allows one to choose another behavior.
 	// The 'Coda' method asks the subject to align the head to look down the Z axis of the Coda reference frame.
-	if ( FileExists( "CodaAlignGaze.flg" ) ) grasp->straightenHeadMethod = CODA_STRAIGHTEN;
+	if ( FileExists( "CodaAlignGaze.flg" ) && useCoda ) grasp->straightenHeadMethod = CODA_STRAIGHTEN;
 	// The 'Chest' methods asks the subject to gaze in a direction defined by the hmd and chest marker arrays.
-	if ( FileExists("ChestAlignGaze.flg" ) ) grasp->straightenHeadMethod = CHEST_STRAIGHTEN;
+	if ( FileExists("ChestAlignGaze.flg" ) && useCoda ) grasp->straightenHeadMethod = CHEST_STRAIGHTEN;
 
 	grasp->Initialize( display, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );

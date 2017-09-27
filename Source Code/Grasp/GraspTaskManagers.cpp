@@ -955,7 +955,13 @@ void GraspTaskManager::EnterBlockCompleted( void ) {
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateBlockCompleted( void ) { 
-	// After timer runs out, move on to the next trial or exit.
+	// This is a special case. At the end of a block of trials the subject
+	//  can just press Select as usual to exit. But the he or she has to doff
+	//  the HMD and look at the laptop screen. Here we give the option to 
+	//  exit by pressing the Back button on the VR remote, which is programmed by
+	//  OculusMouse to send a <return> keypress. By holding the Back key, multiple 
+	//  <return>s are sent and through a feature of the GUI, execution passes to
+	//  the next task in the list, which is presumably the next block.
 	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
@@ -967,7 +973,7 @@ void  GraspTaskManager::ExitBlockCompleted( void ) {
 
 // VRCompleted
 // Provide an indication that all current VR activities are done.
-// Promt the subject to doff the HMD.
+// Prompt the subject to doff the HMD.
 void GraspTaskManager::EnterVRCompleted( void ) {
 	// Show the success indicator.
 	renderer->vrCompletedIndicator->Enable();
@@ -976,8 +982,7 @@ void GraspTaskManager::EnterVRCompleted( void ) {
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateVRCompleted( void ) { 
-	// After timer runs out, move on to the next trial or exit.
-	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
+	if ( Validate() ) return( ExitStateMachine );
 	// Otherwise, continue in this state.
 	HandleHeadAlignment( false );
 	return( currentState );
@@ -988,7 +993,6 @@ void  GraspTaskManager::ExitVRCompleted( void ) {
 
 // Demo
 // Just show the VR world and prompt to exit.
-// Promt the subject to doff the HMD.
 void GraspTaskManager::EnterDemo( void ) {
 	// Show the success indicator.
 	renderer->demoIndicator->Enable();
@@ -997,9 +1001,7 @@ void GraspTaskManager::EnterDemo( void ) {
 	SetDesiredHeadRoll( 0.0, targetHeadTiltTolerance );
 }
 GraspTrialState GraspTaskManager::UpdateDemo( void ) { 
-	// After timer runs out, move on to the next trial or exit.
-	if ( Validate() ||  display->KeyDownEvents('\r') ) return( ExitStateMachine );
-	// Otherwise, continue in this state.
+	if ( Validate() ) return( ExitStateMachine );
 	HandleHeadAlignment( false );
 	return( currentState );
 }

@@ -3,4 +3,5 @@
 992; COMMAND; Experiment Trials Block 1; Executables\Grasp.bat --VtoV --sequence=Sequences\ShortTest.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 993; COMMAND; Experiment Trials Block 2; Executables\Grasp.bat --VtoV --sequence=Sequences\ShortTest.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
 994; COMMAND; Experiment Trials Block 3; Executables\Grasp.bat --VtoV --sequence=Sequences\ShortTest.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
-995; COMMAND@; End of Trials; Executables\Grasp.exe --doff; ProtocolFinished.prompt.html; StepRunning.instruction.html; ProtocolFinished.prompt.html; StepErrorFinish.status.html
+995; COMMAND=; End of Trials; Executables\Grasp.exe --doff; ProtocolFinished.prompt.html; StepRunning.instruction.html; ProtocolFinished.prompt.html; StepErrorFinish.status.html
+299; COMMAND@; Resume Interrupted (per Col-CC only); Executables\Grasp.bat --VtoV --sequence=%TEMP%\GraspRemainingTrials.seq; StepReadySeated.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; StepErrorFinish.status.html
