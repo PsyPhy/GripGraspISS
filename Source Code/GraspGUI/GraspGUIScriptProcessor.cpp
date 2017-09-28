@@ -378,25 +378,28 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		//WindowState = FormWindowState::Minimized;
 		Visible = false;
 
-		// Keep track of where we are in case we need to restart.
-		char *action_filename = "GraspLastAction.txt";
-		FILE *action_fp;
+		// Append a record of what we are about to do to the log file.
+		char *log_filename = (char*)(void*)Marshal::StringToHGlobalAnsi( resultsDirectory + "GraspGUI.log" ).ToPointer();
+		FILE *log_fp;
+		log_fp = fopen( log_filename, "a+" );
+		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for appending action record.", log_filename );
+		fprintf( log_fp, "Executing: %s", cmd );
+		fclose( log_fp );
 
-		action_fp = fopen( action_filename, "w" );
-		if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing action record.", action_filename );
-		fprintf( action_fp, "Executing: %s", cmd );
-		fclose( action_fp );
-
+		// Execute the command that we have constructed.
 		int return_code = system( cmd );
+		// Negative return codes can come back as positive numbers in a unsigned char.
+		// So convert larger return codes to negative values.
 		if ( return_code > 127 ) return_code -= 128;
 
-		action_fp = fopen( action_filename, "w" );
-		if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", action_filename );
-		if ( return_code < 0 ) fprintf( action_fp, "Completed abnormally (code %d): %s", return_code, cmd );
-		else fprintf( action_fp, "Completed normally (code %d): %s", return_code, cmd );
-		fclose( action_fp );
+		// Add the return code to the log.
+		log_fp = fopen( log_filename, "a+" );
+		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", log_filename );
+		if ( return_code < 0 ) fprintf( log_fp, "Completed abnormally (code %d).\n", return_code, cmd );
+		else fprintf( log_fp, "Completed normally (code %d).\n", return_code, cmd );
+		fclose( log_fp );
 
-		Marshal::FreeHGlobal( IntPtr( cmd ) );
+		Marshal::FreeHGlobal( IntPtr( log_filename ) );
 
 		// Restore the form.	
 		//WindowState = FormWindowState::Normal;
