@@ -37,6 +37,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\Grasp.exe $(DESTINATION)
 	copy ..\Grasp\Grasp.bat $(DESTINATION)
 	copy ..\Grasp\GraspPackData.bat $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GraspScreenshots.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspGUI.exe $(DESTINATION)
 	copy ..\GraspGUI\Grasp.ico $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe $(DESTINATION)
@@ -59,6 +60,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy MakeRigidBodies.bat $(ROOT)\Bdy
 	copy RunGRASP.bat.src $(ROOT)\RunGRASP.bat
 	copy RunDaemon.bat.src $(ROOT)\RunDaemon.bat
+	copy ..\GraspScreenshots\MakeCommScreenshots.bat.src $(ROOT)\MakeCommScreenshots.bat
 	-mkdir $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\EM $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\FM2 $(DESTINATION)\CodaCalFiles

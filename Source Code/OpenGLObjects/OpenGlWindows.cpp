@@ -368,7 +368,7 @@ void OpenGLWindow::SaveAsBMP( const char *filename )
 {
 	// Presumably we just did a swap. 
 	// Sleep a little to be sure that the bitmap has been updated.
-	Sleep( 500 );
+	Sleep( 100 );
 
 	HDC		hBmpFileDC = CreateCompatibleDC( hDC );
 	HBITMAP	hBmpFileBitmap = CreateCompatibleBitmap( hDC, width, height );

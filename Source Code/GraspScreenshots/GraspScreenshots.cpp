@@ -106,8 +106,6 @@ int _tmain(int argc, char *argv[])
 
 	objects = new GraspGLObjects();
 
-	objects->useBars = false;
-
 	objects->curve_facets = 180;
 	objects->outer_visor_radius = 600.0;
 
@@ -268,6 +266,14 @@ int _tmain(int argc, char *argv[])
 
 		else if ( !strcmp( argv[arg], "--NoRoom" )) {
 			objects->room->Disable();
+		}
+
+		else if ( !strcmp( argv[arg], "--balls" )) {
+			objects->useBars = false;
+		}
+
+		else if ( !strcmp( argv[arg], "--bars" )) {
+			objects->useBars = true;
 		}
 
 		else if ( !strcmp( argv[arg], "--Redress" )) {

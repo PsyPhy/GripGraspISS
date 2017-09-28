@@ -102,6 +102,9 @@
       <FileType>Document</FileType>
     </Library>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="MakeCommScreenshots.bat.src" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
