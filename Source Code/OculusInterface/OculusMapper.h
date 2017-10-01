@@ -28,7 +28,7 @@ public:
 	ovrHmdDesc			hmdDesc;
 	ovrEyeRenderDesc	EyeRenderDesc[2];
     ovrPosef            EyeRenderPose[2];
-	ovrVector3f         ViewOffset[2];
+	ovrPosef	        HmdToEyePose[2];
 	unsigned int		handStatusFlags[2];
 
 	double				sensorSampleTime;
@@ -131,8 +131,8 @@ public:
 	// Read the tracker and compute the poses for each of the eyes.
 	ovrPosef ReadHeadPose ( void ) {
 
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeOffset;
+        HmdToEyePose[0] = EyeRenderDesc[0].HmdToEyePose;
+		HmdToEyePose[1] = EyeRenderDesc[1].HmdToEyePose;
  
 		ovrPosef headPose;
         double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
@@ -140,15 +140,15 @@ public:
         sensorSampleTime = ovr_GetTimeInSeconds();
 		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
 		headPose = hmdState.HeadPose.ThePose;
-        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
+        ovr_CalcEyePoses( headPose, HmdToEyePose, EyeRenderPose );
 
 		return headPose;
 	}
 	// Read the tracker state compute the poses for each of the eyes.
 	ovrTrackingState ReadTrackingState ( ovrSensorData *sensorData = nullptr ) {
 
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeOffset;
+        HmdToEyePose[0] = EyeRenderDesc[0].HmdToEyePose;
+		HmdToEyePose[1] = EyeRenderDesc[1].HmdToEyePose;
  
 		ovrPosef headPose;
 		ovrTrackingState hmdState;
@@ -156,10 +156,10 @@ public:
         double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
          // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
-		/* if ( sensorData ) hmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, sensorData );
-		else */ hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
+		/*if ( sensorData ) hmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, sensorData );
+		else */hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
 		headPose = hmdState.HeadPose.ThePose;
-        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
+        ovr_CalcEyePoses( headPose, HmdToEyePose, EyeRenderPose );
 
 		return hmdState;
 	}
@@ -218,8 +218,8 @@ public:
         // Set up positional data.
         ovrViewScaleDesc viewScaleDesc;
         viewScaleDesc.HmdSpaceToWorldScaleInMeters = 1.0f;
-        viewScaleDesc.HmdToEyeOffset[0] = ViewOffset[0];
-        viewScaleDesc.HmdToEyeOffset[1] = ViewOffset[1];
+        viewScaleDesc.HmdToEyePose[0] = HmdToEyePose[0];
+        viewScaleDesc.HmdToEyePose[1] = HmdToEyePose[1];
 
         ovrLayerEyeFov ld;
 		// Here I am playing with the layer type to see how we might increase the frame rate.
