@@ -8,13 +8,6 @@ Joe McIntyre
 
 *****************************************************************************/
 
-// Flags to set the operating mode.
-bool useOVR = false;		// OVR style rendering.
-bool usePsyPhy = true;		// PsyPhy style rendering.
-bool useCoda = true;		// Do we have a Coda?
-bool saveCoda = true;		// Do we have a Coda?
-bool fullscreen = false;	// Size of mirror window on console screen.
-bool mirror = true;			// Do we mirror to the console or not?
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -47,6 +40,14 @@ bool mirror = true;			// Do we mirror to the console or not?
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
 #include "PsyPhyRendering.h"
+
+// Flags to set the operating mode.
+bool useOVR = false;		// OVR style rendering.
+bool usePsyPhy = true;		// PsyPhy style rendering.
+bool useCoda = true;		// Do we have a Coda?
+bool saveCoda = true;		// Do we have a Coda?
+bool fullscreen = false;	// Size of mirror window on console screen.
+bool mirror = true;			// Do we mirror to the console or not?
 
 // A device that records 3D marker positions.
 // Those marker positions will also drive the 6dof pose trackers.
