@@ -32,13 +32,13 @@ public:
 	unsigned int		handStatusFlags[2];
 
 	double				sensorSampleTime;
-	long long			frameIndex;
+	long long			myFrameIndex;
 
 
 	bool	isVisible;
 	bool	mirrorOn;
 
-	OculusMapper () : mirrorFBO( 0 ) , session( nullptr ) , display( nullptr ) , isVisible( true ), mirrorOn( false ), frameIndex(0)
+	OculusMapper () : mirrorFBO( 0 ) , session( nullptr ) , display( nullptr ) , isVisible( true ), mirrorOn( false ), myFrameIndex(0)
 	{
 		eyeRenderTexture[0] = eyeRenderTexture[1] = nullptr;
 		eyeDepthBuffer[0] = eyeDepthBuffer[1] = nullptr;
@@ -118,7 +118,7 @@ public:
 	ovrPosef ReadHandPose ( ovrHandType hand ) {
 
 		ovrPosef handPose;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
+        double ftiming = ovr_GetPredictedDisplayTime( session, myFrameIndex );
          // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         //sensorSampleTime = ovr_GetTimeInSeconds();
 		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
@@ -135,7 +135,7 @@ public:
 		HmdToEyePose[1] = EyeRenderDesc[1].HmdToEyePose;
  
 		ovrPosef headPose;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
+        double ftiming = ovr_GetPredictedDisplayTime( session, myFrameIndex );
          // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
 		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
@@ -152,8 +152,7 @@ public:
  
 		ovrPosef headPose;
 		ovrTrackingState hmdState;
-		frameIndex++;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
+        double ftiming = ovr_GetPredictedDisplayTime( session, myFrameIndex );
          // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
         sensorSampleTime = ovr_GetTimeInSeconds();
 		/*if ( sensorData ) hmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, sensorData );
@@ -239,11 +238,11 @@ public:
             ld.SensorSampleTime  = sensorSampleTime;
        } 	
         ovrLayerHeader *layers = &ld.Header;
-        ovrResult result = ovr_SubmitFrame( session, frameIndex, &viewScaleDesc, &layers, 1 );
+        ovrResult result = ovr_SubmitFrame( session, myFrameIndex, &viewScaleDesc, &layers, 1 );
         // exit the rendering loop if submit returns an error
         if ( !OVR_SUCCESS(result) ) return result;
-
         isVisible = (result == ovrSuccess);
+		myFrameIndex++;
 
 		if ( mirrorOn ) {
 			// Blit mirror texture to back buffer
