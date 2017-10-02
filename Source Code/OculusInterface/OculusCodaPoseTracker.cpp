@@ -45,7 +45,7 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 
 	// Need to have a reference time to compute the first delta in Update();
 	ovrTrackingState sensorState = oculusMapper->ReadTrackingState();
-	currentState.time = oculusMapper->sensorSampleTime;
+	currentState.time = ovr_GetTimeInSeconds();
 
 	// This pose tracker is always visible.
 	currentState.visible = true;
@@ -61,7 +61,7 @@ bool OculusCodaPoseTracker::Update( void ) {
 	ovrPosef headPose = sensorState.HeadPose.ThePose;
 
 	// Compute how much time since the last inertial update.
-	double time = oculusMapper->sensorSampleTime;
+	double time = sensorState.HeadPose.TimeInSeconds;
 	double delta_time = time - currentState.time;
 
 	// Compute a finite step rotation from gyro measurements and elapsed time.
