@@ -8,6 +8,10 @@ Joe McIntyre
 
 *****************************************************************************/
 
+// Set the following compiler constant to inhibit most of the keypresses.
+// I created this possibility to keep things simple when distributing the 
+// program to other users, e.g. for parabolic flights performed by CADMOS.
+#define INHIBIT_HOT_KEYS
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -42,10 +46,10 @@ Joe McIntyre
 #include "PsyPhyRendering.h"
 
 // Flags to set the operating mode.
-bool usePsyPhy = false;		// PsyPhy style rendering.
+bool usePsyPhy = true;		// PsyPhy style rendering.
 bool useCoda = true;		// Do we have a Coda?
-bool saveCoda = true;		// Do we have a Coda?
-bool fullscreen = false;	// Size of mirror window on console screen.
+bool saveData = false;		// Do we want to write data to a file?
+bool fullscreen = true;	// Size of mirror window on console screen.
 bool mirror = true;			// Do we mirror to the console or not?
 
 // A device that records 3D marker positions.
@@ -84,12 +88,18 @@ int nCodaUnits = 2;
 
 TrackerPose hmdPoses[MAX_FRAMES];
 TrackerPose codaPoses[MAX_FRAMES];
-PsyPhy::Vector3 accelerations[MAX_FRAMES];
+PsyPhy::Vector3 angular_velocity[MAX_FRAMES];
+PsyPhy::Vector3 angular_acceleration[MAX_FRAMES];
+PsyPhy::Vector3 linear_velocity[MAX_FRAMES];
+PsyPhy::Vector3 linear_acceleration[MAX_FRAMES];
 PsyPhy::Vector3 gyros[MAX_FRAMES];
-PsyPhy::Vector3 derivatives[MAX_FRAMES];
+PsyPhy::Vector3 accelerometers[MAX_FRAMES];
+PsyPhy::Vector3 magnetometers[MAX_FRAMES];
+double state_time[MAX_FRAMES];
+double sensor_time[MAX_FRAMES];
 int nRecordedFrames = 0;
 
-typedef enum { NONE, OCULUS, CODA, DERIVATIVES, FUSION, GROUNDED } TrackerStyle;
+typedef enum { NONE, OCULUS, CODA, DERIVATIVES, SENSORS, FUSION, GROUNDED } TrackerStyle;
 TrackerStyle defaultMode = GROUNDED;
 
 /*****************************************************************************/
@@ -174,6 +184,8 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 
 	// Create a tracker that integrates Oculus derivatives, without an absolute reference tracker.
 	oculusDerivativesPoseTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
+	if ( defaultMode == SENSORS ) oculusDerivativesPoseTracker->useRawSensors = true;
+	else oculusDerivativesPoseTracker->useRawSensors = false;
 	fAbortMessageOnCondition( !oculusDerivativesPoseTracker->Initialize(), "PsyPhyOculusDemo", "Error initializing oculusDerivativesPoseTracker." );
 
 	// Create a tracker that integrates Oculus derivatives that is anchored to the null pose.
@@ -189,6 +201,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		hmdTracker = oculusPoseTracker;
 		break;
 	case DERIVATIVES:
+	case SENSORS:
 		hmdTracker = oculusDerivativesPoseTracker;
 		break;
 	case FUSION:
@@ -230,11 +243,12 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		// Yaw is expressed here in radians.
 		static float Yaw( (float) 0.0 );  
 
-		// Boresight the Oculus tracker on 'B'.
+		// Boresight the Oculus tracker on <space>.
 		// This will only affect the PsyPhy rendering.
-		if ( platform->Key['B'] ) {
-			hmdTracker->Boresight();
-		}
+		if ( platform->Key[' '] ) hmdTracker->Boresight();
+		ovrInputState state;
+		ovr_GetInputState(	oculusMapper.session,  ovrControllerType_Remote, &state );
+		if ( state.Buttons & ovrButton_Enter )  hmdTracker->Boresight();
 		if ( platform->Key['U'] ) hmdTracker->Unboresight();
 
 		// Keyboard inputs to adjust player orientation in the horizontal plane.
@@ -247,7 +261,10 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		if ( !usePsyPhy ) PlayerPosition.y = ovr_GetFloat( oculusMapper.session, OVR_KEY_EYE_HEIGHT, PlayerPosition.y);
 
 		// Keyboard inputs to adjust player position. The forward, backward, leftward and rightward steps
-		//  are taken relative to the current viewing orientation of the subjec.
+		//  are taken relative to the current viewing orientation of the subject.
+
+#ifndef DISABLE_HOT_KEYS
+
 		if ( platform->Key['W'] || platform->Key[VK_UP] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, -0.05f) );
 		if ( platform->Key['S'] || platform->Key[VK_DOWN] )	PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( 0, 0, +0.05f) );
 		if ( platform->Key['D'] )							PlayerPosition += Matrix4f::RotationY( Yaw ).Transform( OVR::Vector3f( +0.05f, 0, 0) );
@@ -263,6 +280,7 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 		if ( platform->Key['V'] ) usePsyPhy = false;
 		if ( platform->Key['P'] ) usePsyPhy = true;
 
+#endif
 
 		// Compute the player's orientation transform in the world.
 		// The reference point for the viewing pose is determined by the 
@@ -330,26 +348,48 @@ ovrResult MainLoop( OculusDisplayOGL *platform )
 			// Note that if the tracker returns false, meaning that the tracker does not have a valid new value,
 			// the viewpoint offset and attitude are left unchanged, effectively using the last valid tracker reading.
 			PsyPhy::TrackerPose headPose, codaPose;
+			hmdTracker->GetCurrentPose( headPose );
+			handTracker->GetCurrentPose( codaPose );
 
 			// Store the poses for output to a file.
-			hmdTracker->GetCurrentPose( headPose );
-			CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
-			handTracker->GetCurrentPose( codaPose );
-			CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
+			if ( saveData ) {
+				CopyTrackerPose( hmdPoses[nRecordedFrames], headPose );
+				CopyTrackerPose( codaPoses[nRecordedFrames], codaPose );
 
-			derivatives[nRecordedFrames][X] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.x;
-			gyros[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Gyro.x;
-			accelerations[nRecordedFrames][X], oculusCodaPoseTracker->rawSensorData.Accelerometer.x;
+				angular_velocity[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularVelocity.x;
+				angular_velocity[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularVelocity.y;
+				angular_velocity[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularVelocity.z;
 
-			derivatives[nRecordedFrames][Y] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.y;
-			gyros[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Gyro.y;
-			accelerations[nRecordedFrames][Y], oculusCodaPoseTracker->rawSensorData.Accelerometer.y;
+				angular_acceleration[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularAcceleration.x;
+				angular_acceleration[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularAcceleration.y;
+				angular_acceleration[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.AngularAcceleration.z;
+
+				linear_velocity[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearVelocity.x;
+				linear_velocity[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearVelocity.y;
+				linear_velocity[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearVelocity.z;
+
+				linear_acceleration[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearAcceleration.x;
+				linear_acceleration[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearAcceleration.y;
+				linear_acceleration[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.LinearAcceleration.z;
+
+				gyros[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Gyro.x;
+				gyros[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Gyro.y;
+				gyros[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Gyro.z;
+
+				accelerometers[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Accelerometer.x;
+				accelerometers[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Accelerometer.y;
+				accelerometers[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Accelerometer.z;
+
+				magnetometers[nRecordedFrames][X] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Magnetometer.x;
+				magnetometers[nRecordedFrames][Y] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Magnetometer.y;
+				magnetometers[nRecordedFrames][Z] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.Magnetometer.z;
+
+				state_time[nRecordedFrames] = oculusDerivativesPoseTracker->oculusMapper->cachedHmdState.HeadPose.TimeInSeconds;
+				sensor_time[nRecordedFrames] = oculusDerivativesPoseTracker->oculusMapper->cachedSensorData.TimeInSeconds;
 			
-			derivatives[nRecordedFrames][Z] = oculusCodaPoseTracker->sensorState.HeadPose.AngularVelocity.z;
-			gyros[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Gyro.z;
-			accelerations[nRecordedFrames][Z], oculusCodaPoseTracker->rawSensorData.Accelerometer.z;
-			
-			if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
+				if ( nRecordedFrames < MAX_FRAMES - 1 ) nRecordedFrames++;
+			}
+
 			// The position and orientation of the viewpoint is first set by the player position.
 			// So we use the offset and attitude to turn the viewpoint according to the tracker
 			//  with respect to the player's position.
@@ -416,9 +456,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	}
 	else {
 		useCoda = false;
-		saveCoda = false;
 	}
-	if ( strstr( command_line, "--save" ) ) saveCoda = true;
+	if ( strstr( command_line, "--save" ) ) saveData = true;
 
 	// NONE, OCULUS, CODA, INERTIAL, DERIVATIVES, CODA_PLUS_DERIVATIVES, CODA_PLUS_INERTIAL, NULL_PLUS_DERIVATIVES
 	defaultMode = GROUNDED;
@@ -426,6 +465,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	if ( strstr( command_line, "--derivatives_plus_null" ) ) defaultMode = GROUNDED;
 	if ( strstr( command_line, "--only_oculus" ) ) defaultMode = OCULUS;
 	if ( strstr( command_line, "--only_derivatives" ) ) defaultMode = DERIVATIVES;
+	if ( strstr( command_line, "--only_sensors" ) ) defaultMode = SENSORS;
 	if ( strstr( command_line, "--only_coda" ) ) defaultMode = CODA;
 
 	if ( ptr = (char *)strstr( command_line, "--parent=" ) ) sscanf( ptr, "--parent=%d", &parent );
@@ -472,7 +512,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 		// Halt the continuous Coda acquisition.
 		codaTracker->StopAcquisition();
 
-		if ( saveCoda ) {
+		if ( saveData ) {
 			// Output the CODA data to a file.
 			char *marker_filename = "PsyPhyOculusDemo.mrk";
 			fOutputDebugString( "Writing CODA data to %s.\n", marker_filename );
@@ -485,14 +525,22 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 	}
 
 	// Output the Pose data to a file.
-	if ( saveCoda ) {
-		char *pose_filename = "PsyPhyOculusDemo.pse";
+	if ( saveData ) {
+
+		SYSTEMTIME st;
+		GetSystemTime( &st );
+		char datetimestr[MAX_PATH];
+		sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+
+		char pose_filename[MAX_PATH];
+		sprintf( pose_filename, "PsyPhyOculusDemo.%s.pse", datetimestr );
+
 		fOutputDebugString( "Writing CODA data to %s.\n", pose_filename );
 		FILE *fp = fopen( pose_filename, "w" );
 		fprintf( fp, "%s\n", command_line );
-		fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation\n" );
+		fprintf( fp, "frame; time; visible; position; orientation; time; visible; position; orientation;stateTime;linearVel;linearAcc;angularVel;AngularAcc;sensorTime;gyros;acceleros;magnetos\n" );
 		for ( int frame = 0; frame < nRecordedFrames; frame++ ) {
-			fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s; %s; %s; %s\n",
+			fprintf( fp, "%d; %.3f; %d; %s; %s;  %.3f; %d; %s; %s; %.3f; %s; %s; %s; %s; %.3f; %s; %s; %s\n",
 			frame, 
 			hmdPoses[frame].time, hmdPoses[frame].visible,
 			codaTracker->vstr( hmdPoses[frame].visible ? hmdPoses[frame].pose.position : codaTracker->zeroVector ),
@@ -500,7 +548,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 			codaPoses[frame].time, codaPoses[frame].visible,
 			codaTracker->vstr( codaPoses[frame].visible ? codaPoses[frame].pose.position : codaTracker->zeroVector ),
 			codaTracker->qstr( codaPoses[frame].visible ? codaPoses[frame].pose.orientation : codaTracker->nullQuaternion ),
-			codaTracker->vstr( gyros[frame] ), codaTracker->vstr( derivatives[frame] ), codaTracker->vstr( accelerations[frame] )
+			state_time[frame], 
+			codaTracker->vstr( linear_velocity[frame] ), codaTracker->vstr( linear_acceleration[frame] ),
+			codaTracker->vstr( angular_velocity[frame] ), codaTracker->vstr( angular_acceleration[frame] ), 
+			sensor_time[frame], 
+			codaTracker->vstr( gyros[frame] ), codaTracker->vstr( accelerometers[frame] ),  codaTracker->vstr( magnetometers[frame], "<%+8.6f %+8.6f %+8.6f>" )
 			);
 		}
 		fOutputDebugString( "File %s closed.\n", pose_filename );

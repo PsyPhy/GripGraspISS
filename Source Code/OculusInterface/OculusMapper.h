@@ -35,7 +35,8 @@ public:
 	// Keeps track of when the HMD tracker was last sampled and what was the pose of
 	// each eye when it was sampled. This is used by the compositor to do asynchronous
 	// time warping of the visual field.
-	ovrTrackingState	cachedHmdState;			
+	ovrTrackingState	cachedHmdState;	
+	ovrSensorData		cachedSensorData;
 	long long			cachedFrameIndex;
 	unsigned int		cachedHandStatusFlags[2];
 
@@ -122,15 +123,32 @@ public:
 		if ( session ) ovr_Destroy( session );
 	}
 
-	// Read the tracker state compute the poses for each of the eyes.
-	ovrTrackingState ReadTrackingState ( ovrSensorData *sensorData = nullptr ) {
+	// Read the tracker state.
+	ovrTrackingState ReadTrackingState ( void ) {
+		// This somehow predicts the time when the frame will be shown which is then
+		// used to return a predicted tracking state. I really don't know how the 
+		// prediction is done or how to choose the frame index. Based on OculusTinyRoom,
+		// I am using the index for the next frame to be shown.
         double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
-		if ( sensorData ) cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, sensorData );
-		else cachedHmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
+		// We keep track of the state that is returned. This is used when sending the frame to the Compositor.
+		// See BlastIt() below.
+		// It also allows us to get the hand poses that correspond to the most recent fetch of the HMD pose.
+		// See ReadCachedHandPose() below.
+		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
 		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
 		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
 		return cachedHmdState;
 	}
+
+	// Read the tracker state compute the poses for each of the eyes.
+	ovrSensorData ReadSensorData ( void ) {
+        double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
+		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
+		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
+		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
+		return cachedSensorData;
+	}
+
 	// Read the HMD tracker pose.
 	ovrPoseStatef ReadHeadPose () {
 		ovrTrackingState hmdState = ReadTrackingState();
@@ -153,6 +171,7 @@ public:
 		cachedHandStatusFlags[1] = hmdState.HandStatusFlags[1];
 		return handPose;
 	}
+
 
 	// Prepare for rendering to one or the other eye.
 	void SelectEye ( int eye ) {
@@ -194,25 +213,43 @@ public:
 	}
 
 	ovrResult BlastIt () {
-		
-		 
-		ovrResult result;
 
 		// Do distortion rendering, Present and flush/sync
 
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 		// Here is some magic that I do not fully understand.
 		// EyeRenderPose[] must contain the orientation as sensed by the HMD,
-		//  even if we have overridden the viewing orientation with another tracker. If the HMD 
-		//  orientation has been read 'recently', I assume that the viewpoints are already set.
+		// even if we have overridden the viewing orientation with another tracker. I believe
+		// that this is so that asynchronous time warping can be performed based on the 
+		// movement since the head pose was computed and used to render the scene.
+		
+		// If the HMD orientation has been read 'recently', I assume that the viewpoints are already set.
 		// But if the delay is long, then perhaps we are not using ReadHeadPose() at all
 		//  (i.e. we are using another tracker), so I perform a ReadHeadPose() here to be 
-		//  sure that the Viewpoints are prepared as needed.
+		//  sure that the Viewpoints are prepared as needed. This will mean that the asyncronous time warping
+		//  will be less effective if using a tracker that does not query the Oculus, because the rendering will
+		//  have been done earlier in time than what is used by the Compositor to compute the warp. But I don't 
+		//  see a way out. To make the warping a effective as possible, call ReadHeadPose() in your program when
+		//  you sample your other tracker just to give the Oculus a refence time and pose to be used to calculate
+		//  the delta for the warp.
 		if ( ovr_GetTimeInSeconds() - cachedHmdState.HeadPose.TimeInSeconds > PRESUMED_SAME_FRAME_THRESHOLD ) {
 			ReadHeadPose();
 		}
 
+		// The compositor needs to know where each eye is looking based on where it *thinks* the head is looking.
+		// The cached head pose may not be where the subject is actually looking, e.g. because the Oculus
+		// tracker does not work in 0g. But we don't care here where the subject is looking in the virtual world
+		// as the scene is already rendered from whatever viewpoint we computed based on another tracker. What the
+		// compositor cares about is where it *thought* that the eyes were looking based on the Oculus tracker at 
+		// the time that the rendering viewpoint was computed so that it can compute the delta compared with where the 
+		// Oculus tracker *thinks* that the subject is looking now , even if what the Oculus tracker *thinks* 
+		// is actually wrong.
+
 		ovrPosef	eyePose[2];
         ovr_CalcEyePoses( cachedHmdState.HeadPose.ThePose, hmdToEyePose, eyePose );
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		ovrLayerEyeFov ld;
         ld.Header.Type  = ovrLayerType_EyeFov;
@@ -226,7 +263,7 @@ public:
             ld.SensorSampleTime  = cachedHmdState.HeadPose.TimeInSeconds;
         } 	
         ovrLayerHeader *layers = &ld.Header;
-		result = ovr_SubmitFrame( session, cachedFrameIndex, nullptr, &layers, 1 );
+		ovrResult result = ovr_SubmitFrame( session, cachedFrameIndex, nullptr, &layers, 1 );
 
         // exit the rendering loop if submit returns an error
         if ( !OVR_SUCCESS(result) ) return result;

@@ -22,6 +22,9 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 	oculusMapper = mapper;
 	absoluteTracker = coda;
 
+	// Decide which data to use from the Oculus as rotation rate.
+	useRawSensors = false;
+
 	// This constant deterimines how fast the inertially-computed pose will be driven
 	// toward the absolute pose taken from the CODA. A large number means that drift will be corrected slowly.
 	InertialWeighting = 10.0;
@@ -52,23 +55,54 @@ bool OculusCodaPoseTracker::Initialize( void ) {
 
 	return true; 
 }
+
+double OculusCodaPoseTracker::GetRotationRate( Vector3 rate ) {
+
+	if ( useRawSensors ) {
+
+		// Retrieve the sensor data from the Oculus.
+		ovrSensorData rawSensorData = oculusMapper->ReadSensorData();
+
+		// Head pose angular velocities, as computed by OVR, are taken as the rotation rates.
+		// This may or may not be true, depending on whether OVR uses gravity when computing the
+		// angular velocities. In an alternate version we will read the sensors directly.
+		rate[X] = rawSensorData.Gyro.x;
+		rate[Y] = rawSensorData.Gyro.y; 
+		rate[Z] = rawSensorData.Gyro.z;
+	
+		return( rawSensorData.TimeInSeconds );
+
+	}
+	else {
+
+		// Retrieve the sensor data from the Oculus.
+		ovrTrackingState sensorState = oculusMapper->ReadTrackingState();
+
+		// Head pose angular velocities, as computed by OVR, are taken as the rotation rates.
+		// This may or may not be true, depending on whether OVR uses gravity when computing the
+		// angular velocities. In an alternate version we will read the sensors directly.
+		rate[X] = sensorState.HeadPose.AngularVelocity.x;
+		rate[Y] = sensorState.HeadPose.AngularVelocity.y; 
+		rate[Z] = sensorState.HeadPose.AngularVelocity.z;
+	
+		return( sensorState.HeadPose.TimeInSeconds );
+	}
+}
+
+
 bool OculusCodaPoseTracker::Update( void ) { 
 
 	static int cycle_counter = 0;
 	
-	// Retrieve the sensor data from the Oculus.
-	sensorState = oculusMapper->ReadTrackingState( &rawSensorData );
-	ovrPosef headPose = sensorState.HeadPose.ThePose;
-
 	// Compute how much time since the last inertial update.
-	double time = sensorState.HeadPose.TimeInSeconds;
+	Vector3 rate;
+	double time = GetRotationRate( rate );
 	double delta_time = time - currentState.time;
 
 	// Compute a finite step rotation from gyro measurements and elapsed time.
 	// I use here a full quaternion to compute the finite rotation. There are 
 	// other linearization methods that can be used, but I don't see an advantage to using them here.
 	//Vector3 rate = { rawSensorData.Gyro.x, rawSensorData.Gyro.y, rawSensorData.Gyro.z };
-	Vector3 rate = { sensorState.HeadPose.AngularVelocity.x, sensorState.HeadPose.AngularVelocity.y, sensorState.HeadPose.AngularVelocity.z };
 
 	Vector3 delta;
 	ScaleVector( delta, rate, delta_time / 2.0 );
