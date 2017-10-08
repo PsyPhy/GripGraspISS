@@ -142,9 +142,9 @@ public:
 
 	void TransformPose( Pose &result, Transform &xform, Pose &source );
 
-	char *vstr( const Vector3 v );
-	char *qstr( const Quaternion q );
-	char *mstr( const Matrix3x3 m );
+	char *vstr( const Vector3 v, const char *format = "<%+8.3f %+8.3f %+8.3f>" );
+	char *qstr( const Quaternion q, const char *format = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}" );
+	char *mstr( const Matrix3x3 m, const char *format = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]" );
 
 };
 
