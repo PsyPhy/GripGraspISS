@@ -49,7 +49,7 @@ Joe McIntyre
 bool usePsyPhy = true;		// PsyPhy style rendering.
 bool useCoda = true;		// Do we have a Coda?
 bool saveData = false;		// Do we want to write data to a file?
-bool fullscreen = true;	// Size of mirror window on console screen.
+bool fullscreen = false;	// Size of mirror window on console screen.
 bool mirror = true;			// Do we mirror to the console or not?
 
 // A device that records 3D marker positions.
