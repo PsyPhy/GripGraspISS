@@ -37,15 +37,19 @@ class OculusHMDPoseTracker : public OculusPoseTracker {
 		OculusHMDPoseTracker( OculusMapper *mapper = nullptr );
 		bool GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose );
 };
-class OculusRightHandPoseTracker : public OculusPoseTracker {
+class OculusHandPoseTracker : public OculusPoseTracker {
 	public:
-		OculusRightHandPoseTracker( OculusMapper *mapper = nullptr );
+		ovrHandType hand;
+		OculusHandPoseTracker( ovrHandType hand = ovrHand_Right, OculusMapper *mapper = nullptr );
 		bool GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose );
 };
-class OculusLeftHandPoseTracker : public OculusPoseTracker {
+class OculusRightHandPoseTracker : public OculusHandPoseTracker {
+	public:
+		OculusRightHandPoseTracker( OculusMapper *mapper = nullptr );
+};
+class OculusLeftHandPoseTracker : public OculusHandPoseTracker {
 	public:
 		OculusLeftHandPoseTracker( OculusMapper *mapper = nullptr );
-		bool GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose );
 };
 
 }

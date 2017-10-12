@@ -26,7 +26,7 @@
     <ClInclude Include="TinyRoomSceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
+    <ProjectReference Include="..\..\..\GraspOculusSDKv1.17\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
       <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
     </ProjectReference>
     <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">

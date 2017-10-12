@@ -32,23 +32,23 @@ OculusHMDPoseTracker::OculusHMDPoseTracker( OculusMapper *mapper ) {
 
 bool OculusHMDPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	
-	ovrPosef ovrHeadPose = oculusMapper->ReadHeadPose();
+	ovrPoseStatef ovrHeadPose = oculusMapper->ReadHeadPose();
 
-	pose.pose.position[X] = ovrHeadPose.Position.x * 1000.0;
-	pose.pose.position[Y] = ovrHeadPose.Position.y * 1000.0;
-	pose.pose.position[Z] = ovrHeadPose.Position.z * 1000.0;
-	pose.pose.orientation[X] = ovrHeadPose.Orientation.x;
-	pose.pose.orientation[Y] = ovrHeadPose.Orientation.y;
-	pose.pose.orientation[Z] = ovrHeadPose.Orientation.z;
-	pose.pose.orientation[M] = ovrHeadPose.Orientation.w;
+	pose.pose.position[X] = ovrHeadPose.ThePose.Position.x * 1000.0;
+	pose.pose.position[Y] = ovrHeadPose.ThePose.Position.y * 1000.0;
+	pose.pose.position[Z] = ovrHeadPose.ThePose.Position.z * 1000.0;
+	pose.pose.orientation[X] = ovrHeadPose.ThePose.Orientation.x;
+	pose.pose.orientation[Y] = ovrHeadPose.ThePose.Orientation.y;
+	pose.pose.orientation[Z] = ovrHeadPose.ThePose.Orientation.z;
+	pose.pose.orientation[M] = ovrHeadPose.ThePose.Orientation.w;
+	pose.time = ovrHeadPose.TimeInSeconds;
+
 	// Oculus seems to track the center of the head, while we have been tracking
 	// the centroid of the marker array. So I shift the position forward.
 	Vector3 shift;
 	RotateVector( shift, pose.pose.orientation, kVector );
 	ScaleVector( shift, shift, -100.0 );
 	AddVectors( pose.pose.position, pose.pose.position, shift );
-	// Timestamp the sample.
-	pose.time = oculusMapper->sensorSampleTime;
 
 	// We assume that the pose is always obtained for this tracker.
 	pose.visible = true;
@@ -58,48 +58,35 @@ bool OculusHMDPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) 
 }
 
 
-OculusRightHandPoseTracker::OculusRightHandPoseTracker( OculusMapper *mapper ) {
+OculusHandPoseTracker::OculusHandPoseTracker( ovrHandType hand, OculusMapper *mapper ) {
+	this->hand = hand;
 	oculusMapper = mapper;
-	OculusPoseTracker();
 }
 
-bool OculusRightHandPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
+bool OculusHandPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	
-	ovrPosef ovrHandPose = oculusMapper->ReadHandPose( ovrHand_Right );
+	unsigned int flags;
+	ovrPoseStatef handPose = oculusMapper->ReadHandPose( hand, &flags );
 
-	pose.pose.position[X] = ovrHandPose.Position.x * 1000.0;
-	pose.pose.position[Y] = ovrHandPose.Position.y * 1000.0;
-	pose.pose.position[Z] = ovrHandPose.Position.z * 1000.0;
-	pose.pose.orientation[X] = ovrHandPose.Orientation.x;
-	pose.pose.orientation[Y] = ovrHandPose.Orientation.y;
-	pose.pose.orientation[Z] = ovrHandPose.Orientation.z;
-	pose.pose.orientation[M] = ovrHandPose.Orientation.w;
+	pose.pose.position[X] = handPose.ThePose.Position.x * 1000.0;
+	pose.pose.position[Y] = handPose.ThePose.Position.y * 1000.0;
+	pose.pose.position[Z] = handPose.ThePose.Position.z * 1000.0;
+	pose.pose.orientation[X] = handPose.ThePose.Orientation.x;
+	pose.pose.orientation[Y] = handPose.ThePose.Orientation.y;
+	pose.pose.orientation[Z] = handPose.ThePose.Orientation.z;
+	pose.pose.orientation[M] = handPose.ThePose.Orientation.w;
+	pose.time = handPose.TimeInSeconds;
 
-	// Timestamp the sample.
-	pose.time = oculusMapper->sensorSampleTime;
-	pose.visible =  (oculusMapper->handStatusFlags[ ovrHand_Right ] & ovrStatus_OrientationTracked ) && (oculusMapper->handStatusFlags[ ovrHand_Right ] & ovrStatus_PositionTracked );
+	pose.visible = ( flags & ovrStatus_OrientationTracked ) && ( flags & ovrStatus_PositionTracked );
 	return( pose.visible );
 }
 
 OculusLeftHandPoseTracker::OculusLeftHandPoseTracker( OculusMapper *mapper ) {
 	oculusMapper = mapper;
-	OculusPoseTracker();
+	hand = ovrHand_Left;
 }
 
-bool OculusLeftHandPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
-	
-	ovrPosef ovrHandPose = oculusMapper->ReadHandPose( ovrHand_Left );
-
-	pose.pose.position[X] = ovrHandPose.Position.x * 1000.0;
-	pose.pose.position[Y] = ovrHandPose.Position.y * 1000.0;
-	pose.pose.position[Z] = ovrHandPose.Position.z * 1000.0;
-	pose.pose.orientation[X] = ovrHandPose.Orientation.x;
-	pose.pose.orientation[Y] = ovrHandPose.Orientation.y;
-	pose.pose.orientation[Z] = ovrHandPose.Orientation.z;
-	pose.pose.orientation[M] = ovrHandPose.Orientation.w;
-	// Timestamp the sample.
-	pose.time = oculusMapper->sensorSampleTime;
-	pose.visible =  (oculusMapper->handStatusFlags[ ovrHand_Left ] & ovrStatus_OrientationTracked ) && (oculusMapper->handStatusFlags[ ovrHand_Left ] & ovrStatus_PositionTracked );
-	return pose.visible; 
-
+OculusRightHandPoseTracker::OculusRightHandPoseTracker( OculusMapper *mapper ) {
+	oculusMapper = mapper;
+	hand = ovrHand_Right;
 }

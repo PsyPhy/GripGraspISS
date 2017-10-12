@@ -9,11 +9,10 @@ static const float pixelsPerDisplayPixel = 1.0f;
 class OculusMapper
 {
 
-public:
+private:
 
     static const bool   UseDebugContext = false;
 
-	OculusDisplayOGL	*display;
 
 	TextureBuffer		*eyeRenderTexture[2];
     DepthBuffer			*eyeDepthBuffer[2];
@@ -21,24 +20,30 @@ public:
 	GLuint				mirrorWidth;
 	GLuint				mirrorHeight;
     GLuint				mirrorFBO;
+
+	ovrGraphicsLuid		luid;
+
+public:
+
+	OculusDisplayOGL	*display;
+	ovrSession			session;
+
+	ovrHmdDesc			hmdDesc;
+	ovrPosef			hmdToEyePose[2];
 	ovrSizei			idealTextureSize;
 
-	ovrSession			session;
-	ovrGraphicsLuid		luid;
-	ovrHmdDesc			hmdDesc;
-	ovrEyeRenderDesc	EyeRenderDesc[2];
-    ovrPosef            EyeRenderPose[2];
-	ovrVector3f         ViewOffset[2];
-	unsigned int		handStatusFlags[2];
-
-	double				sensorSampleTime;
-	long long			frameIndex;
-
+	// Keeps track of when the HMD tracker was last sampled and what was the pose of
+	// each eye when it was sampled. This is used by the compositor to do asynchronous
+	// time warping of the visual field.
+	ovrTrackingState	cachedHmdState;	
+	ovrSensorData		cachedSensorData;
+	long long			cachedFrameIndex;
+	unsigned int		cachedHandStatusFlags[2];
 
 	bool	isVisible;
 	bool	mirrorOn;
 
-	OculusMapper () : mirrorFBO( 0 ) , session( nullptr ) , display( nullptr ) , isVisible( true ), mirrorOn( false ), frameIndex(0)
+	OculusMapper () : mirrorFBO( 0 ) , session( nullptr ) , display( nullptr ) , isVisible( true ), mirrorOn( false ), cachedFrameIndex(0)
 	{
 		eyeRenderTexture[0] = eyeRenderTexture[1] = nullptr;
 		eyeDepthBuffer[0] = eyeDepthBuffer[1] = nullptr;
@@ -54,6 +59,7 @@ public:
 
 		ovrResult result = ovr_Create( &session, &luid );
 		if ( !OVR_SUCCESS( result) ) return result;
+
 		hmdDesc = ovr_GetHmdDesc(session);
 
 		// Resize the mirror window to match the dimensions of the HMD.
@@ -92,9 +98,11 @@ public:
 		glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-		ovrEyeRenderDesc EyeRenderDesc[2]; 
-		EyeRenderDesc[0] = ovr_GetRenderDesc(session, ovrEye_Left, hmdDesc.DefaultEyeFov[0]);
-		EyeRenderDesc[1] = ovr_GetRenderDesc(session, ovrEye_Right, hmdDesc.DefaultEyeFov[1]);
+		ovrEyeRenderDesc	eye_render_desc;
+		eye_render_desc = ovr_GetRenderDesc(session, ovrEye_Left, hmdDesc.DefaultEyeFov[0]);
+        hmdToEyePose[0] = eye_render_desc.HmdToEyePose;
+		eye_render_desc = ovr_GetRenderDesc(session, ovrEye_Right, hmdDesc.DefaultEyeFov[1]);
+		hmdToEyePose[1] = eye_render_desc.HmdToEyePose;
 
 		// Turn off vsync to let the compositor do its magic
 		wglSwapIntervalEXT(0);
@@ -115,63 +123,62 @@ public:
 		if ( session ) ovr_Destroy( session );
 	}
 
-	ovrPosef ReadHandPose ( ovrHandType hand ) {
+	// Read the tracker state.
+	ovrTrackingState ReadTrackingState ( void ) {
+		// This somehow predicts the time when the frame will be shown which is then
+		// used to return a predicted tracking state. I really don't know how the 
+		// prediction is done or how to choose the frame index. Based on OculusTinyRoom,
+		// I am using the index for the next frame to be shown.
+        double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
+		// We keep track of the state that is returned. This is used when sending the frame to the Compositor.
+		// See BlastIt() below.
+		// It also allows us to get the hand poses that correspond to the most recent fetch of the HMD pose.
+		// See ReadCachedHandPose() below.
+		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
+		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
+		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
+		return cachedHmdState;
+	}
 
-		ovrPosef handPose;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
-         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
-        //sensorSampleTime = ovr_GetTimeInSeconds();
-		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
-		handPose = hmdState.HandPoses[hand].ThePose;
-		handStatusFlags[0] = hmdState.HandStatusFlags[0];
-		handStatusFlags[1] = hmdState.HandStatusFlags[1];
+	// Read the tracker state compute the poses for each of the eyes.
+	ovrSensorData ReadSensorData ( void ) {
+        double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
+		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
+		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
+		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
+		return cachedSensorData;
+	}
 
+	// Read the HMD tracker pose.
+	ovrPoseStatef ReadHeadPose () {
+		ovrTrackingState hmdState = ReadTrackingState();
+		return hmdState.HeadPose;
+	}
+
+	// Read a hand tracker pose as sampled with the previous HMD tracker pose.
+	ovrPoseStatef ReadCachedHandPose ( ovrHandType hand, unsigned int *flags = nullptr ) {
+		if ( flags ) *flags = cachedHmdState.HandStatusFlags[hand];
+		return cachedHmdState.HandPoses[hand];
+	}
+	// Read the hand tracker now. Does not depend on a previous read of the HMD tracker.
+	ovrPoseStatef ReadHandPose ( ovrHandType hand,unsigned int *flags = nullptr ) {
+		ovrPoseStatef handPose;
+        double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
+ 		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
+		handPose = hmdState.HandPoses[hand];
+		if ( flags ) *flags = hmdState.HandStatusFlags[hand];
+		cachedHandStatusFlags[0] = hmdState.HandStatusFlags[0];
+		cachedHandStatusFlags[1] = hmdState.HandStatusFlags[1];
 		return handPose;
 	}
-	// Read the tracker and compute the poses for each of the eyes.
-	ovrPosef ReadHeadPose ( void ) {
 
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeOffset;
- 
-		ovrPosef headPose;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
-         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
-        sensorSampleTime = ovr_GetTimeInSeconds();
-		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
-		headPose = hmdState.HeadPose.ThePose;
-        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
-
-		return headPose;
-	}
-	// Read the tracker state compute the poses for each of the eyes.
-	ovrTrackingState ReadTrackingState ( ovrSensorData *sensorData = nullptr ) {
-
-        ViewOffset[0] = EyeRenderDesc[0].HmdToEyeOffset;
-		ViewOffset[1] = EyeRenderDesc[1].HmdToEyeOffset;
- 
-		ovrPosef headPose;
-		ovrTrackingState hmdState;
-		frameIndex++;
-        double ftiming = ovr_GetPredictedDisplayTime( session, frameIndex );
-         // Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
-        sensorSampleTime = ovr_GetTimeInSeconds();
-		/* if ( sensorData ) hmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, sensorData );
-		else */ hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
-		headPose = hmdState.HeadPose.ThePose;
-        ovr_CalcEyePoses( headPose, ViewOffset, EyeRenderPose );
-
-		return hmdState;
-	}
 
 	// Prepare for rendering to one or the other eye.
 	void SelectEye ( int eye ) {
-
 		// Increment to use next texture, just before writing
         // eyeRenderTexture[eye]->TextureSet->CurrentIndex = (eyeRenderTexture[eye]->TextureSet->CurrentIndex + 1) % eyeRenderTexture[eye]->TextureSet->TextureCount;
         // Switch to eye render target
         eyeRenderTexture[eye]->SetAndClearRenderSurface( eyeDepthBuffer[eye] );
-
 	}
 
 	void DeselectEye ( int eye ) {
@@ -186,64 +193,82 @@ public:
 	
 	// Get the transforms that will map from world space to the space of each eye.
 	// Inputs are which eye, the position and the orientation of the player.
-	// The mapper takes care of transforming from player to head pose to eye pose.
+	// The mapper takes care of transforming from player to head pose to eye pose,
+	// taking into account the current pose of the HMD tracker.
 	// Outputs are the view and projection matrices for the specified eye.
 	void GetEyeProjections ( int eye, OVR::Vector3f position, OVR::Matrix4f orientation, OVR::Matrix4f *view, OVR::Matrix4f *projection ) {
 
-		OVR::Vector3f shiftedEyePosition = position + orientation.Transform( EyeRenderPose[eye].Position );
-		OVR::Matrix4f eyeOrientation = orientation * OVR::Matrix4f( EyeRenderPose[eye].Orientation );
+		ovrPoseStatef hmdPoseState = ReadHeadPose();
+		ovrPosef eyePose[2];
+		ovr_CalcEyePoses( hmdPoseState.ThePose, hmdToEyePose, eyePose );
+
+		OVR::Vector3f shiftedEyePosition = position + orientation.Transform( eyePose[eye].Position );
+		OVR::Matrix4f eyeOrientation = orientation * OVR::Matrix4f( eyePose[eye].Orientation );
         OVR::Vector3f up = eyeOrientation.Transform( OVR::Vector3f( 0, 1, 0 ) );
         OVR::Vector3f forward = eyeOrientation.Transform( OVR::Vector3f( 0, 0, -1 ) );
 
         *view = OVR::Matrix4f::LookAtRH( shiftedEyePosition, shiftedEyePosition + forward, up );
-       *projection = ovrMatrix4f_Projection( hmdDesc.DefaultEyeFov[eye], 0.2f, 1000.0f, ovrProjection_None );
+        *projection = ovrMatrix4f_Projection( hmdDesc.DefaultEyeFov[eye], 0.2f, 1000.0f, ovrProjection_None );
 
 	}
 
 	ovrResult BlastIt () {
-		
+
 		// Do distortion rendering, Present and flush/sync
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Here is some magic that I do not fully understand.
 		// EyeRenderPose[] must contain the orientation as sensed by the HMD,
-		//  even if we have overridden the viewing orientation with another tracker. If the HMD 
-		//  orientation has been read 'recently', I assume that the viewpoints are already set.
+		// even if we have overridden the viewing orientation with another tracker. I believe
+		// that this is so that asynchronous time warping can be performed based on the 
+		// movement since the head pose was computed and used to render the scene.
+		
+		// If the HMD orientation has been read 'recently', I assume that the viewpoints are already set.
 		// But if the delay is long, then perhaps we are not using ReadHeadPose() at all
 		//  (i.e. we are using another tracker), so I perform a ReadHeadPose() here to be 
-		//  sure that the Viewpoints are prepared as needed.
-		if ( ovr_GetTimeInSeconds() - sensorSampleTime > PRESUMED_SAME_FRAME_THRESHOLD ) {
+		//  sure that the Viewpoints are prepared as needed. This will mean that the asyncronous time warping
+		//  will be less effective if using a tracker that does not query the Oculus, because the rendering will
+		//  have been done earlier in time than what is used by the Compositor to compute the warp. But I don't 
+		//  see a way out. To make the warping a effective as possible, call ReadHeadPose() in your program when
+		//  you sample your other tracker just to give the Oculus a refence time and pose to be used to calculate
+		//  the delta for the warp.
+		if ( ovr_GetTimeInSeconds() - cachedHmdState.HeadPose.TimeInSeconds > PRESUMED_SAME_FRAME_THRESHOLD ) {
 			ReadHeadPose();
 		}
 
-        // Set up positional data.
-        ovrViewScaleDesc viewScaleDesc;
-        viewScaleDesc.HmdSpaceToWorldScaleInMeters = 1.0f;
-        viewScaleDesc.HmdToEyeOffset[0] = ViewOffset[0];
-        viewScaleDesc.HmdToEyeOffset[1] = ViewOffset[1];
+		// The compositor needs to know where each eye is looking based on where it *thinks* the head is looking.
+		// The cached head pose may not be where the subject is actually looking, e.g. because the Oculus
+		// tracker does not work in 0g. But we don't care here where the subject is looking in the virtual world
+		// as the scene is already rendered from whatever viewpoint we computed based on another tracker. What the
+		// compositor cares about is where it *thought* that the eyes were looking based on the Oculus tracker at 
+		// the time that the rendering viewpoint was computed so that it can compute the delta compared with where the 
+		// Oculus tracker *thinks* that the subject is looking now , even if what the Oculus tracker *thinks* 
+		// is actually wrong.
 
-        ovrLayerEyeFov ld;
-		// Here I am playing with the layer type to see how we might increase the frame rate.
-		// Pick EyeFov for distortion-cancelling and asyncronous time warp.
-       ld.Header.Type  = ovrLayerType_EyeFov;
-		// Direct will instead map directly without distortion correction.
-	    // I am not sure that it exists in 1.3.
- 		// ld.Header.Type  = ovrLayerType_Direct; 
- 
+		ovrPosef	eyePose[2];
+        ovr_CalcEyePoses( cachedHmdState.HeadPose.ThePose, hmdToEyePose, eyePose );
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		ovrLayerEyeFov ld;
+        ld.Header.Type  = ovrLayerType_EyeFov;
 		ld.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;   // Because OpenGL.
         for (int eye = 0; eye < 2; ++eye)
         {
             ld.ColorTexture[eye] = eyeRenderTexture[eye]->TextureChain;
             ld.Viewport[eye]     = OVR::Recti(eyeRenderTexture[eye]->GetSize());
             ld.Fov[eye]          = hmdDesc.DefaultEyeFov[eye];
-            ld.RenderPose[eye]   = EyeRenderPose[eye];
-            ld.SensorSampleTime  = sensorSampleTime;
-       } 	
+            ld.RenderPose[eye]   = eyePose[eye];
+            ld.SensorSampleTime  = cachedHmdState.HeadPose.TimeInSeconds;
+        } 	
         ovrLayerHeader *layers = &ld.Header;
-        ovrResult result = ovr_SubmitFrame( session, frameIndex, &viewScaleDesc, &layers, 1 );
+		ovrResult result = ovr_SubmitFrame( session, cachedFrameIndex, nullptr, &layers, 1 );
+
         // exit the rendering loop if submit returns an error
         if ( !OVR_SUCCESS(result) ) return result;
-
         isVisible = (result == ovrSuccess);
+		cachedFrameIndex++;
 
 		if ( mirrorOn ) {
 			// Blit mirror texture to back buffer

@@ -11,9 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
-      <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\AlignToAxisMarkersGUI\AlignToAxisMarkersGUI.vcxproj">
       <Project>{9aa8f18b-fde0-4b5b-8399-a5fe017305d7}</Project>
     </ProjectReference>

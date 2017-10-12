@@ -877,7 +877,7 @@ void VectorsMixin::QuaternionToCannonicalRotations( Vector3 r, Quaternion q ) {
 // These routines create ascii strings from vector and matrix objects.
 // They are useful for displaying the values of these object via printf();
 
-char *VectorsMixin::vstr( const Vector3 v ) {
+char *VectorsMixin::vstr( const Vector3 v, const char *format ) {
 
 	// This is a circular buffer of static strings.
 	// Each time this routine is calle we use a different string to hold the result.
@@ -891,7 +891,7 @@ char *VectorsMixin::vstr( const Vector3 v ) {
 	instance %= 256;
 
 	// Create the string here.
-	sprintf( str[instance], "<%+8.3f %+8.3f %+8.3f>", v[X], v[Y], v[Z] );
+	sprintf( str[instance], format, v[X], v[Y], v[Z] );
 
 	return( str[instance] );
 
@@ -899,21 +899,21 @@ char *VectorsMixin::vstr( const Vector3 v ) {
 
 
 // The others work in a similar fashion.
-char *VectorsMixin::qstr( const Quaternion q ) {
+char *VectorsMixin::qstr( const Quaternion q, const char *format ) {
 	static char str[256][256];
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], "{%6.3fi %+6.3fj %+6.3fk %+6.3f}", q[X], q[Y], q[Z], q[M] );
+	sprintf( str[instance], format, q[X], q[Y], q[Z], q[M] );
 	return( str[instance] );
 }
 
-char *VectorsMixin::mstr( const Matrix3x3 m ) {
+char *VectorsMixin::mstr( const Matrix3x3 m, const char *format ) {
 	static char str[256][256];
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]", 
+	sprintf( str[instance], format, 
 		m[X][X], m[Y][X], m[Z][X], m[X][Y], m[Y][Y], m[Z][Y], m[X][Z], m[Y][Z], m[Z][Z] );
 	return( str[instance] );
 }

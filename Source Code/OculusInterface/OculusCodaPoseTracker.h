@@ -17,7 +17,6 @@ class OculusCodaPoseTracker : public PoseTracker {
 
 	private:
 
-		OculusMapper	*oculusMapper;
 		PoseTracker		*absoluteTracker;
 
 		TrackerPose		currentState;
@@ -25,12 +24,14 @@ class OculusCodaPoseTracker : public PoseTracker {
 
 	protected:
 
+		double GetRotationRate( Vector3 rate );
+
 	public:
 
-		double InertialWeighting;
+		OculusMapper	*oculusMapper;
+		bool useRawSensors;
 
-		ovrTrackingState sensorState;
-		ovrSensorData rawSensorData;
+		double InertialWeighting;
 
 		OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda );
 		~OculusCodaPoseTracker();

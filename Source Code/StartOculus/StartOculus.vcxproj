@@ -83,9 +83,6 @@
     <ClCompile Include="StartOculus.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
-      <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
     </ProjectReference>

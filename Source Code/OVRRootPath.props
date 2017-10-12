@@ -5,9 +5,11 @@
     <OVRSDKROOT0_8>../../../GraspOculusSDKv0.8/</OVRSDKROOT0_8>
     <OVRSDKROOT1_3>../../../GraspOculusSDKv1.3/OculusSDK/</OVRSDKROOT1_3>
     <OVRSDKROOT1_6>../../../GraspOculusSDKv1.6/OculusSDK/</OVRSDKROOT1_6>
-    <OVRSDKROOT>../../../GraspOculusSDKv1.8/</OVRSDKROOT>
+    <OVRSDKROOT1_8>../../../GraspOculusSDKv1.8/</OVRSDKROOT1_8>
     <OVRSDKROOT1_9>../../../GraspOculusSDKv1.9/</OVRSDKROOT1_9>
-  </PropertyGroup>
+    <OVRSDKROOT1_17>../../../GraspOculusSDKv1.17/</OVRSDKROOT1_17>
+    <OVRSDKROOT>../../../GraspOculusSDKv1.17/</OVRSDKROOT>
+ </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
@@ -29,15 +31,27 @@
     </BuildMacro>
  </ItemGroup>
  <ItemGroup>
-    <BuildMacro Include="OVRSDKROOT">
-      <Value>$(OVRSDKROOT)</Value>
+    <BuildMacro Include="OVRSDKROOT1_8">
+      <Value>$(OVRSDKROOT1_8)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
  </ItemGroup>
 <ItemGroup>
     <BuildMacro Include="OVRSDKROOT1_9">
-      <Value>$(OVRSDKROOT)</Value>
+      <Value>$(OVRSDKROOT1_9)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
+<ItemGroup>
+    <BuildMacro Include="OVRSDKROOT1_17">
+      <Value>$(OVRSDKROOT1_17)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+ <ItemGroup>
+    <BuildMacro Include="OVRSDKROOT">
+      <Value>$(OVRSDKROOT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+ </ItemGroup>
 </Project>
