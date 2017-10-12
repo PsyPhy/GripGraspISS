@@ -371,3 +371,4 @@ MakeCommScreenshots.bat
 Source Code/GraspScripts/_flight
 Source Code/GraspScripts/_common
 *.frm
+Source Code/ForceRebuild/CommonTimestamp
