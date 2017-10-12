@@ -366,9 +366,8 @@ DeleteMe*
 RunGRASP.bat
 RunGRIPMMI.bat
 RunGRASPMMI.bat
-
+MakeCommScreenshots.bat
+# These are cookies that determine what gets built when.
 Source Code/GraspScripts/_flight
 Source Code/GraspScripts/_common
-Source Code/ForceRebuild/CommonTimestamp
 *.frm
-MakeCommScreenshots.bat
