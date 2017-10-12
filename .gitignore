@@ -348,6 +348,7 @@ Source Code/GraspBMPs/*.tiff
 Source Code/GraspBMPs/*.bmp.html
 Source Code/GraspBMPs/GraspVRMessages.pdf
 Source Code/GraspBMPs/GraspVRMessages.html
+# CommonTimestamp.h is automatically generated as part of the build process.
 Source Code/ForceRebuild/CommonTimestamp.h
 # Grasp documentation files are generated automatically in part, so the 
 # intermediate files should not be tracked.
