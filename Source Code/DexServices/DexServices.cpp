@@ -189,7 +189,9 @@ void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
 	int max_bytes = sizeof( rt.Slice[slice_count].clientData );
 	assert( bytes <= max_bytes );
 	rt.Slice[slice_count].clientTime = (float) TimerElapsedTime( stream_timer );
+	// Copy what we have been given into the slice.
 	memcpy( rt.Slice[slice_count].clientData, data, bytes );
+	// Set the rest of the client data to zero.
 	for ( int i = bytes; i < max_bytes; i++  ) rt.Slice[slice_count].clientData[i] = 0;
 
 	AdvanceIfReady();
@@ -204,7 +206,7 @@ void DexServices::AdvanceIfReady( void ) {
 	// sends a new slice before the timer runs out, we overwrite
 	// the previous slice. When the timer does run out we increment
 	// to the next slice. When there are enough slices to fill the
-	// packet, it gets sent, and we rest back to the begining of the
+	// packet, it gets sent, and we reset back to the begining of the
 	// slice buffer.
 	if ( TimerTimeout( slice_timer ) ) {
 		slice_count++;
