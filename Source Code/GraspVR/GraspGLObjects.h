@@ -101,6 +101,7 @@ namespace Grasp {
 
 		static const Vector3 target_location;
 		static const Vector3 sky_location;
+		static const Vector3 end_of_tunnel;
 		static const Vector3 prompt_location;
 		static const double prompt_radius;
 		static double inner_visor_radius;

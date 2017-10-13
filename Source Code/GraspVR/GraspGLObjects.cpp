@@ -75,8 +75,10 @@ const double GraspGLObjects::target_bar_radius = 20.0;						//Tagliabue
 const double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
 bool GraspGLObjects::useBars = true;
 
-const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - room_length / 2.0 };
+const Vector3 GraspGLObjects::end_of_tunnel = { 0.0, 0.0, - room_length / 2.0 };
 const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
+// Visual target is placed a little bit closer to the subject than the end of the tunnel.
+const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - ( room_length / 2.0 - 500.0 ) };
 
 const double GraspGLObjects::finger_ball_radius = 10.0;
 const double GraspGLObjects::finger_length = 100.0;
@@ -198,7 +200,7 @@ Assembly *GraspGLObjects::CreateOrientationTarget( void ) {
 	if ( useBars ) {
 		for (int trg = - target_bars ; trg <= target_bars ; trg++ ){
 			Cylinder *cylinder = new Cylinder( target_bar_radius, target_bar_radius,2.0 * room_radius );
-			cylinder->SetPosition( 0.0 + target_bar_spacing * trg, 0.0, 150.0 );
+			cylinder->SetPosition( 0.0 + target_bar_spacing * trg, 0.0, 0.0 );
 			cylinder->SetOrientation(0.0, 90.0, 0.0);
 			cylinder->SetColor( Translucid( BLUE ) );
 			target->AddComponent( cylinder );
@@ -613,8 +615,8 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	darkSky->SetPosition( sky_location );
 	successIndicator->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
-	positionOnlyTarget->SetPosition( target_location );
-	straightAheadTarget->SetPosition( target_location );
+	positionOnlyTarget->SetPosition( end_of_tunnel );
+	straightAheadTarget->SetPosition( end_of_tunnel );
 	// Place the stationary object that shows the subject's response a little bit in front of the targets.
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
 	wristZone->SetPosition( desired_wrist_location );
