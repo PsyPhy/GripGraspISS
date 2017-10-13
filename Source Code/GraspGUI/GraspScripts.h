@@ -95,6 +95,60 @@ namespace GraspGUI {
 		}
 		~Task(){}
 	};
+	public ref class Record {
+	public:
+
+		long	time;
+
+		int	subject;
+		int	protocol;
+		int	task;
+		int	step;
+
+		int	code;
+
+		#define	GRASP_START_TASK_CODE -9999
+		Record( int subject, int protocol, int task, int step, int code, long time ) {
+
+			this->subject = subject;
+			this->protocol = protocol;
+			this->task = task;
+			this->step = step;
+			this->code = code;
+			this->time = time;
+
+		}
+		Record( int subject, int protocol, int task, int step, int code ) {
+
+			this->subject = subject;
+			this->protocol = protocol;
+			this->task = task;
+			this->step = step;
+			this->code = code;
+
+			struct __timeb32 epmtime;
+			_ftime32_s( &epmtime );
+			time = epmtime.time 
+				- 315964800 // Offset in seconds between Unix 0 and GPS 0
+				+ 17;		// Offset taking into account leap seconds, as of Oct 2017.
+
+		}
+		~Record(){}
+	};
+
+	typedef struct {
+		long time;
+		short subject;
+		short protocol;
+		short task;
+		short step;
+		short code;
+	} GraspActionRecord;
+#define ITEMS_IN_SLICE 7
+	typedef struct {
+		char ID[8];
+		GraspActionRecord record[ITEMS_IN_SLICE];
+	} GraspActionSlice;
 
 	int ParseLine( char *token[MAX_TOKENS], char *line );
 

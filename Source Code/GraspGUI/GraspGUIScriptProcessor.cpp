@@ -388,9 +388,15 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		log_fp = fopen( log_filename, "a+" );
 		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for appending action record.", log_filename );
 		GetSystemTime( &st );
-		fprintf( log_fp, "%04d.%02d.%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		fprintf( log_fp, "\n%04d.%02d.%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		// The log file is written in a human readable form, so that it can be displayed 
+		//  as is in the history text box when the 'History' button on the GUI is pressed.
+		// Hence the '|' characters and extra spaces in the format string.
 		fprintf( log_fp, " | %03d | %03d | %03d | %03d", subjectID, protocolID, taskID, stepID );
 		fclose( log_fp );
+		// We also keep a running tab of actions that have been started and when they end. The list gets sent to ground.
+		actionList->Add( gcnew Record( subjectID, protocolID, taskID, stepID, GRASP_START_TASK_CODE ) );
+		WriteActionRecord( actionList[ actionList->Count - 1 ] );
 
 		// Execute the command that we have constructed.
 		int return_code = system( cmd );
@@ -404,8 +410,11 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		GetSystemTime( &st );
 		if ( return_code < 0 ) fprintf( log_fp, " | Completed abnormally (code %2d) ", return_code );
 		else fprintf( log_fp, " | Completed normally   (code %2d) ", return_code );
-		fprintf( log_fp, " | %04d.%02d.%02d %02d:%02d:%02d\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		fprintf( log_fp, " | %04d.%02d.%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 		fclose( log_fp );
+
+		actionList->Add( gcnew Record( subjectID, protocolID, taskID, stepID, return_code ) );
+		WriteActionRecord( actionList[ actionList->Count - 1 ] );
 
 		Marshal::FreeHGlobal( IntPtr( log_filename ) );
 		Marshal::FreeHGlobal( IntPtr( cmd ) );
@@ -551,8 +560,11 @@ void GraspDesktop::ShowHistory( void ) {
 		char line[1024];
 		strncpy( history, "", sizeof( history ) );
 		while( fgets( line, sizeof( line ), log_fp ) ) {
-			strncat( history, line, sizeof( history ) );
-			strncat( history, "\r\n", sizeof( history ) );
+			// If the line is not a blank line, add it to the text buffer that will be displayed.
+			if ( line[0] != '\n' ) {
+				strncat( history, line, sizeof( history ) );
+				strncat( history, "\r\n", sizeof( history ) );
+			}
 		}
 		HistoryForm^ hf = gcnew HistoryForm();
 		hf->historyTextBox->Text = gcnew String( history );
@@ -565,5 +577,32 @@ void GraspDesktop::ShowHistory( void ) {
 
 }
 
+
+void GraspDesktop::WriteActionRecord( Record ^record ) {
+	char *action_filename = (char*)(void*)Marshal::StringToHGlobalAnsi( resultsDirectory + "GraspGUI.act" ).ToPointer();
+	FILE *action_fp;
+	action_fp = fopen( action_filename, "a+" );
+	if ( !action_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing.", action_filename );
+	int characters = fprintf( action_fp, "%d %d %d %d %d %d\n", 
+		record->time, record->subject, record->protocol, record->task, record->step, record->code );
+	if ( characters < 0 ) fAbortMessage( "GraspGUI", "Error writing to %s.", action_filename );
+	fclose( action_fp );
+}
+
+void GraspDesktop::ReadPastActions( void ) {
+	int time, subject, protocol, task, step, code;
+	int items;
+	actionList->Clear();
+	char *action_filename = (char*)(void*)Marshal::StringToHGlobalAnsi( resultsDirectory + "GraspGUI.act" ).ToPointer();
+	FILE *action_fp;
+	action_fp = fopen( action_filename, "r" );
+	if ( action_fp ) {
+		while ( 6 == ( items = fscanf( action_fp, "%d %d %d %d %d %d", &time, &subject, &protocol, &task, &step, &code ) ) ) {
+			actionList->Add( gcnew Record( subject, protocol, task, step, code, time ) );
+		}
+		fclose( action_fp );
+	}
+	Marshal::FreeHGlobal( IntPtr( action_filename ) );
+}
 
 	// system( "bin\\WinSCP.com /command \"open ftp://administrator:dex@10.80.12.103\" \"cd DATA1\" \"cd DATA\" \"cd glog\" \"ls\" \"put scripts\\*\" \"exit\" & pause" );

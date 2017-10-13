@@ -17,6 +17,7 @@
 #include <string.h>
 #include <vcclr.h>
 #include <io.h>
+#include <SYS\timeb.h>
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"

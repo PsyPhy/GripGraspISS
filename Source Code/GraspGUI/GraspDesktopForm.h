@@ -15,6 +15,7 @@ namespace GraspGUI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Collections::Generic;
 	// We need InteropServics in order to convert a String to a char *.
 	using namespace System::Runtime::InteropServices;
 
@@ -34,6 +35,9 @@ namespace GraspGUI {
 		String^ resultsPath;
 		String^ resultsDirectory;
 		String^ instructionsDirectory;
+
+		List<GraspGUI::Record ^> ^actionList;
+		int nextActionToOutput;
 
 		array<GraspGUI::Subject ^> ^subjectList;
 		int nSubjects;
@@ -60,6 +64,7 @@ namespace GraspGUI {
 		bool cueStepCommand;
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
+
 	protected: System::Windows::Forms::Button^  historyButton;
 
 
@@ -105,6 +110,9 @@ namespace GraspGUI {
 			nSteps = 0;
 			currentStep = -1;
 			cueStepCommand = false;
+
+			actionList = gcnew List<GraspGUI::Record ^>();
+			nextActionToOutput = 0;
 
 			// It is convenient to define the root directory and predefine the various subdirectories.
 			// The web browser tool used to display instructions requires the full path to the file.
@@ -1003,7 +1011,32 @@ namespace GraspGUI {
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
 			dex->SendTaskInfo(  subjectID, protocolID, taskID, stepID, stepExecutionState );
+
+			// We keep track of all tasks that are started and when they stop.
+			// While in the GUI we circulate through the list of such events and send
+			// them to ground via telemtry as science packets. 
+			// If the user spends enough time idling in the GUI, we will eventually see
+			// evidence of everything that was done today, even if some of it happened 
+			// during LOS.
+			if ( actionList->Count > 0 ) {
+
+				GraspActionSlice slice;
+
+				strncpy( slice.ID, "GRSPGUI", sizeof( slice.ID ) );
+				for ( unsigned int j = 0; j < ITEMS_IN_SLICE; j++ ) {
+					Record ^next = actionList[ nextActionToOutput ];
+					slice.record[j].time = next->time;
+					slice.record[j].subject = next->subject;
+					slice.record[j].protocol = next->protocol;
+					slice.record[j].task = next->task;
+					slice.record[j].step = next->step;
+					slice.record[j].code = next->code;
+					nextActionToOutput = ( nextActionToOutput + 1 ) % actionList->Count;
+				}
+				dex->AddClientSlice( (unsigned char *) &slice, sizeof( slice ) );
+			}
 		}
+
 		void DisconnectFromDEX ( void ) {
 			dex->ResetTaskInfo();
 			dex->Disconnect();
@@ -1206,6 +1239,8 @@ namespace GraspGUI {
 		void retryButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void restartButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void ignoreButton_Click(System::Object^  sender, System::EventArgs^  e);
+		void WriteActionRecord( Record ^record );
+		void ReadPastActions( void );
 
 	protected:
 
@@ -1226,6 +1261,7 @@ namespace GraspGUI {
 			// Connect to DEX for telemetry of housekeeping info.
 			ConnectToDEX();
 			InitializeForm();
+			ReadPastActions();
 		}
 
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
