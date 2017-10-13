@@ -624,6 +624,8 @@ namespace GraspTrackerDaemon {
 
 			InitializeSockets();
 			Initialize();
+			Refresh();
+			Application::DoEvents();
 
 			visibilityTextBox1->Text = "";
 			visibilityTextBox0->Text = " Initializing TRACKER ... OK.";
@@ -637,6 +639,8 @@ namespace GraspTrackerDaemon {
 			dex->Initialize( nullptr );
 			dex->Connect();
 			dex->InitializeProxySocket();
+			Refresh();
+			Application::DoEvents();
 
 			// Renable the form now that we are ready to respond to the buttons.
 			Enabled = true;
