@@ -60,6 +60,8 @@ namespace GraspGUI {
 		bool cueStepCommand;
 		// Indicate the state of a step that involves an external command.
 		unsigned short stepExecutionState;
+	protected: System::Windows::Forms::Button^  historyButton;
+
 
 	protected: 
 
@@ -225,6 +227,10 @@ namespace GraspGUI {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->packetTimeTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->statusButton = (gcnew System::Windows::Forms::Button());
+			this->quitButton = (gcnew System::Windows::Forms::Button());
+			this->taskGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->taskListBox = (gcnew System::Windows::Forms::ListBox());
 			this->dexStatusGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->scriptEngineTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->scriptEngineLabel = (gcnew System::Windows::Forms::Label());
@@ -237,10 +243,6 @@ namespace GraspGUI {
 			this->visibleMarkersLabel = (gcnew System::Windows::Forms::Label());
 			this->snapshotsTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->snapshotsLabel = (gcnew System::Windows::Forms::Label());
-			this->statusButton = (gcnew System::Windows::Forms::Button());
-			this->quitButton = (gcnew System::Windows::Forms::Button());
-			this->taskGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->taskListBox = (gcnew System::Windows::Forms::ListBox());
 			this->protocolGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->protocolListBox = (gcnew System::Windows::Forms::ComboBox());
 			this->subjectGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -275,9 +277,10 @@ namespace GraspGUI {
 			this->commandGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->commandTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
+			this->historyButton = (gcnew System::Windows::Forms::Button());
 			this->navigatorGroupBox->SuspendLayout();
-			this->dexStatusGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
+			this->dexStatusGroupBox->SuspendLayout();
 			this->protocolGroupBox->SuspendLayout();
 			this->subjectGroupBox->SuspendLayout();
 			this->instructionsGroupBox->SuspendLayout();
@@ -293,6 +296,7 @@ namespace GraspGUI {
 			// navigatorGroupBox
 			// 
 			this->navigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->navigatorGroupBox->Controls->Add(this->historyButton);
 			this->navigatorGroupBox->Controls->Add(this->packetTimeTextBox);
 			this->navigatorGroupBox->Controls->Add(this->statusButton);
 			this->navigatorGroupBox->Controls->Add(this->quitButton);
@@ -320,6 +324,62 @@ namespace GraspGUI {
 			this->packetTimeTextBox->Text = L"00:00:00";
 			this->packetTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			this->packetTimeTextBox->Visible = false;
+			// 
+			// statusButton
+			// 
+			this->statusButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->statusButton->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->statusButton->Location = System::Drawing::Point(239, 926);
+			this->statusButton->Margin = System::Windows::Forms::Padding(4);
+			this->statusButton->Name = L"statusButton";
+			this->statusButton->Size = System::Drawing::Size(127, 44);
+			this->statusButton->TabIndex = 9;
+			this->statusButton->Text = L"Status";
+			this->statusButton->UseVisualStyleBackColor = true;
+			this->statusButton->Click += gcnew System::EventHandler(this, &GraspDesktop::statusButton_Click);
+			// 
+			// quitButton
+			// 
+			this->quitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->quitButton->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->quitButton->Location = System::Drawing::Point(40, 925);
+			this->quitButton->Margin = System::Windows::Forms::Padding(4);
+			this->quitButton->Name = L"quitButton";
+			this->quitButton->Size = System::Drawing::Size(127, 44);
+			this->quitButton->TabIndex = 8;
+			this->quitButton->Text = L"Quit";
+			this->quitButton->UseVisualStyleBackColor = true;
+			this->quitButton->Click += gcnew System::EventHandler(this, &GraspDesktop::CancelButton_Click);
+			// 
+			// taskGroupBox
+			// 
+			this->taskGroupBox->Controls->Add(this->taskListBox);
+			this->taskGroupBox->Controls->Add(this->dexStatusGroupBox);
+			this->taskGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->taskGroupBox->Location = System::Drawing::Point(6, 337);
+			this->taskGroupBox->Margin = System::Windows::Forms::Padding(4);
+			this->taskGroupBox->Name = L"taskGroupBox";
+			this->taskGroupBox->Padding = System::Windows::Forms::Padding(4);
+			this->taskGroupBox->Size = System::Drawing::Size(599, 568);
+			this->taskGroupBox->TabIndex = 7;
+			this->taskGroupBox->TabStop = false;
+			this->taskGroupBox->Text = L"Task";
+			// 
+			// taskListBox
+			// 
+			this->taskListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->taskListBox->FormattingEnabled = true;
+			this->taskListBox->ItemHeight = 37;
+			this->taskListBox->Location = System::Drawing::Point(11, 34);
+			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
+			this->taskListBox->Name = L"taskListBox";
+			this->taskListBox->Size = System::Drawing::Size(580, 522);
+			this->taskListBox->TabIndex = 5;
+			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
 			// dexStatusGroupBox
 			// 
@@ -440,62 +500,6 @@ namespace GraspGUI {
 			this->snapshotsLabel->TabIndex = 15;
 			this->snapshotsLabel->Text = L"Snap- shots";
 			this->snapshotsLabel->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
-			// 
-			// statusButton
-			// 
-			this->statusButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->statusButton->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->statusButton->Location = System::Drawing::Point(340, 926);
-			this->statusButton->Margin = System::Windows::Forms::Padding(4);
-			this->statusButton->Name = L"statusButton";
-			this->statusButton->Size = System::Drawing::Size(127, 44);
-			this->statusButton->TabIndex = 9;
-			this->statusButton->Text = L"Status";
-			this->statusButton->UseVisualStyleBackColor = true;
-			this->statusButton->Click += gcnew System::EventHandler(this, &GraspDesktop::statusButton_Click);
-			// 
-			// quitButton
-			// 
-			this->quitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->quitButton->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->quitButton->Location = System::Drawing::Point(148, 926);
-			this->quitButton->Margin = System::Windows::Forms::Padding(4);
-			this->quitButton->Name = L"quitButton";
-			this->quitButton->Size = System::Drawing::Size(127, 44);
-			this->quitButton->TabIndex = 8;
-			this->quitButton->Text = L"Quit";
-			this->quitButton->UseVisualStyleBackColor = true;
-			this->quitButton->Click += gcnew System::EventHandler(this, &GraspDesktop::CancelButton_Click);
-			// 
-			// taskGroupBox
-			// 
-			this->taskGroupBox->Controls->Add(this->taskListBox);
-			this->taskGroupBox->Controls->Add(this->dexStatusGroupBox);
-			this->taskGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->taskGroupBox->Location = System::Drawing::Point(6, 337);
-			this->taskGroupBox->Margin = System::Windows::Forms::Padding(4);
-			this->taskGroupBox->Name = L"taskGroupBox";
-			this->taskGroupBox->Padding = System::Windows::Forms::Padding(4);
-			this->taskGroupBox->Size = System::Drawing::Size(599, 568);
-			this->taskGroupBox->TabIndex = 7;
-			this->taskGroupBox->TabStop = false;
-			this->taskGroupBox->Text = L"Task";
-			// 
-			// taskListBox
-			// 
-			this->taskListBox->Font = (gcnew System::Drawing::Font(L"Candara", 18, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->taskListBox->FormattingEnabled = true;
-			this->taskListBox->ItemHeight = 37;
-			this->taskListBox->Location = System::Drawing::Point(11, 34);
-			this->taskListBox->Margin = System::Windows::Forms::Padding(4);
-			this->taskListBox->Name = L"taskListBox";
-			this->taskListBox->Size = System::Drawing::Size(580, 522);
-			this->taskListBox->TabIndex = 5;
-			this->taskListBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspDesktop::taskListBox_SelectedIndexChanged);
 			// 
 			// protocolGroupBox
 			// 
@@ -911,6 +915,20 @@ namespace GraspGUI {
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
 			// 
+			// historyButton
+			// 
+			this->historyButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->historyButton->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->historyButton->Location = System::Drawing::Point(438, 925);
+			this->historyButton->Margin = System::Windows::Forms::Padding(4);
+			this->historyButton->Name = L"historyButton";
+			this->historyButton->Size = System::Drawing::Size(127, 44);
+			this->historyButton->TabIndex = 22;
+			this->historyButton->Text = L"History";
+			this->historyButton->UseVisualStyleBackColor = true;
+			this->historyButton->Click += gcnew System::EventHandler(this, &GraspDesktop::historyButton_Click);
+			// 
 			// GraspDesktop
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -931,9 +949,9 @@ namespace GraspGUI {
 			this->Shown += gcnew System::EventHandler(this, &GraspDesktop::GraspDesktop_Shown);
 			this->navigatorGroupBox->ResumeLayout(false);
 			this->navigatorGroupBox->PerformLayout();
+			this->taskGroupBox->ResumeLayout(false);
 			this->dexStatusGroupBox->ResumeLayout(false);
 			this->dexStatusGroupBox->PerformLayout();
-			this->taskGroupBox->ResumeLayout(false);
 			this->protocolGroupBox->ResumeLayout(false);
 			this->subjectGroupBox->ResumeLayout(false);
 			this->instructionsGroupBox->ResumeLayout(false);
@@ -1178,6 +1196,7 @@ namespace GraspGUI {
 		// Run the buttons and menus in the GUI.
 		void ShowStep( void );
 		void ShowLogon( void );
+		void ShowHistory( void );
 		void nextButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void skipButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void previousButton_Click(System::Object^  sender, System::EventArgs^  e);
@@ -1244,6 +1263,9 @@ namespace GraspGUI {
 				}
 
 
+	private: System::Void historyButton_Click(System::Object^  sender, System::EventArgs^  e) {
+				 ShowHistory();
+		 }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

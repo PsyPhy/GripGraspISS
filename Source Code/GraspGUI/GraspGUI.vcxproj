@@ -101,6 +101,7 @@
     <ClCompile Include="GraspGUI.cpp" />
     <ClCompile Include="GraspGUIScriptProcessor.cpp" />
     <ClCompile Include="GraspScripts.cpp" />
+    <ClCompile Include="HistoryForm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -111,6 +112,9 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="GraspScripts.h" />
+    <ClInclude Include="HistoryForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -123,6 +127,10 @@
       <SubType>Designer</SubType>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspGUI.GraspDesktop.resources</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HistoryForm.resx">
+      <DependentUpon>HistoryForm.h</DependentUpon>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspHistory.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,9 @@
     <ClCompile Include="GraspGUIScriptProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HistoryForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraspDesktopForm.h">
@@ -53,6 +56,9 @@
     <ClInclude Include="GraspScripts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HistoryForm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -61,6 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GraspDesktopForm.resX">
+      <Filter>Source Files\Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HistoryForm.resx">
       <Filter>Source Files\Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

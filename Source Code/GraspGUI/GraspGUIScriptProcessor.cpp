@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include "GraspDesktopForm.h"
+#include "HistoryForm.h"
 #include "GraspScripts.h"
 #include "../Useful/WindowFocus.h"
 
@@ -78,7 +79,7 @@ void GraspDesktop::ParseProtocolFile( String ^filename ) {
 	static char linebuffer[10240];
 	int tokens;
 	char *token[MAX_TOKENS];
-	// Converst the String filename into a char *.
+	// Convert the String filename into a char *.
 	// Don't forget to free it when exiting.
 	char *fn = (char*)(void*)Marshal::StringToHGlobalAnsi( filename ).ToPointer();
 
@@ -307,6 +308,9 @@ String^ GraspDesktop::DateTimeString( void ) {
 
 // Trigger commands as needed after allowing the html viewer to fully load files.
 void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, System::Windows::Forms::WebBrowserDocumentCompletedEventArgs^  e) {
+
+	SYSTEMTIME st;
+
 	// Make sure that the windows have refreshed  before executing the command.
 	Refresh();
 	Application::DoEvents();
@@ -364,7 +368,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		// SYSTEM or SYSTEM@ do not add command line arguments.
 		else  cmdline = stepList[currentStep]->command;
 
-		// Run the command.
+		// Construct the command.
 		// IF the unitTesting flag is set, we don't actually run the command. We pass the command string to TaskProcessUnitTester.exe 
 		//  to simulate running the command. But even if we are not in unitTesting mode you can test a specific command by 
 		//  prepending "bin\TaskProcessUnitTester.exe " to you command line in the script file.
@@ -383,7 +387,9 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		FILE *log_fp;
 		log_fp = fopen( log_filename, "a+" );
 		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for appending action record.", log_filename );
-		fprintf( log_fp, "Executing: %s", cmd );
+		GetSystemTime( &st );
+		fprintf( log_fp, "%04d.%02d.%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		fprintf( log_fp, " | %03d | %03d | %03d | %03d", subjectID, protocolID, taskID, stepID );
 		fclose( log_fp );
 
 		// Execute the command that we have constructed.
@@ -395,11 +401,14 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		// Add the return code to the log.
 		log_fp = fopen( log_filename, "a+" );
 		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for writing closure record.", log_filename );
-		if ( return_code < 0 ) fprintf( log_fp, "Completed abnormally (code %d).\n", return_code, cmd );
-		else fprintf( log_fp, "Completed normally (code %d).\n", return_code, cmd );
+		GetSystemTime( &st );
+		if ( return_code < 0 ) fprintf( log_fp, " | Completed abnormally (code %2d) ", return_code );
+		else fprintf( log_fp, " | Completed normally   (code %2d) ", return_code );
+		fprintf( log_fp, " | %04d.%02d.%02d %02d:%02d:%02d\n", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 		fclose( log_fp );
 
 		Marshal::FreeHGlobal( IntPtr( log_filename ) );
+		Marshal::FreeHGlobal( IntPtr( cmd ) );
 
 		// Restore the form.	
 		//WindowState = FormWindowState::Normal;
@@ -528,5 +537,33 @@ void GraspDesktop::ShowLogon( void ) {
 	normalNavigationGroupBox->Enabled = false;
 	instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
 }
+
+void GraspDesktop::ShowHistory( void ) {
+
+		// Read the log file and show it to the user.
+		char *log_filename = (char*)(void*)Marshal::StringToHGlobalAnsi( resultsDirectory + "GraspGUI.log" ).ToPointer();
+		FILE *log_fp;
+		log_fp = fopen( log_filename, "r" );
+		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for reading.", log_filename );
+
+
+		char history[102400];
+		char line[1024];
+		strncpy( history, "", sizeof( history ) );
+		while( fgets( line, sizeof( line ), log_fp ) ) {
+			strncat( history, line, sizeof( history ) );
+			strncat( history, "\r\n", sizeof( history ) );
+		}
+		HistoryForm^ hf = gcnew HistoryForm();
+		hf->historyTextBox->Text = gcnew String( history );
+		hf->historyTextBox->SelectionStart = hf->historyTextBox->Text->Length;
+		hf->ShowDialog();
+		hf->historyTextBox->TextBoxBase::ScrollToCaret();
+
+		fclose( log_fp );
+		Marshal::FreeHGlobal( IntPtr( log_filename ) );
+
+}
+
 
 	// system( "bin\\WinSCP.com /command \"open ftp://administrator:dex@10.80.12.103\" \"cd DATA1\" \"cd DATA\" \"cd glog\" \"ls\" \"put scripts\\*\" \"exit\" & pause" );
