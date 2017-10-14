@@ -312,7 +312,7 @@ void GraspOculusLiteTrackers::Initialize( void ) {
 	hmdTracker = new PsyPhy::OculusHMDPoseTracker( oculusMapper );
 	// The next one uses our own inertial implementation, but we do not give it an absolute tracker for
 	//  drift compensation. It works pretty well when it's only for orientation tracking.
-	//hmdTracker = new PsyPhy::OculusCodaPoseTracker( &oculusMapper, nullptr );
+	// hmdTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, nullptr );
 	fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspOculusLiteTrackers", "Error initializing OculusPoseTracker." );
 
 	// The hand tracker is a mouse tracker to simulate the other protocols.
@@ -322,7 +322,7 @@ void GraspOculusLiteTrackers::Initialize( void ) {
 	fAbortMessageOnCondition( !handTracker->Initialize(), "GraspOculusLiteTrackers", "Error initializing tracker for the hand tracker." );
 	// Set the default position and orientation of the hand.
 	// The MouseRollPoseTracker will then rotate the tool around this constant position.
-	// handTracker->OffsetTo( handPoseK );
+	handTracker->OffsetTo( handPoseK );
 
 	// Create a arrow key tracker to simulate movements of the chest.
 	chestTrackerRaw = new PsyPhy::KeyboardPoseTracker( oculusMapper );

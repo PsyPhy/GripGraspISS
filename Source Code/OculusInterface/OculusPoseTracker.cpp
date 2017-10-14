@@ -32,23 +32,28 @@ OculusHMDPoseTracker::OculusHMDPoseTracker( OculusMapper *mapper ) {
 
 bool OculusHMDPoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) { 
 	
-	ovrPoseStatef ovrHeadPose = oculusMapper->ReadHeadPose();
+	unsigned int flags;
+	ovrPoseStatef ovrHeadPose = oculusMapper->ReadHeadPose( &flags );
 
-	pose.pose.position[X] = ovrHeadPose.ThePose.Position.x * 1000.0;
-	pose.pose.position[Y] = ovrHeadPose.ThePose.Position.y * 1000.0;
-	pose.pose.position[Z] = ovrHeadPose.ThePose.Position.z * 1000.0;
-	pose.pose.orientation[X] = ovrHeadPose.ThePose.Orientation.x;
-	pose.pose.orientation[Y] = ovrHeadPose.ThePose.Orientation.y;
-	pose.pose.orientation[Z] = ovrHeadPose.ThePose.Orientation.z;
-	pose.pose.orientation[M] = ovrHeadPose.ThePose.Orientation.w;
+	if ( flags & ovrStatus_PositionTracked ) {
+		pose.pose.position[X] = ovrHeadPose.ThePose.Position.x * 1000.0;
+		pose.pose.position[Y] = ovrHeadPose.ThePose.Position.y * 1000.0;
+		pose.pose.position[Z] = ovrHeadPose.ThePose.Position.z * 1000.0;
+		// Oculus seems to track the center of the head, while we have been tracking
+		// the centroid of the marker array. So I shift the position forward.
+		Vector3 shift;
+		RotateVector( shift, pose.pose.orientation, kVector );
+		ScaleVector( shift, shift, -100.0 );
+		AddVectors( pose.pose.position, pose.pose.position, shift );
+	}
+	else CopyVector( pose.pose.position, zeroVector );
+	if ( flags & ovrStatus_OrientationTracked ) {
+		pose.pose.orientation[X] = ovrHeadPose.ThePose.Orientation.x;
+		pose.pose.orientation[Y] = ovrHeadPose.ThePose.Orientation.y;
+		pose.pose.orientation[Z] = ovrHeadPose.ThePose.Orientation.z;
+		pose.pose.orientation[M] = ovrHeadPose.ThePose.Orientation.w;
+	}
 	pose.time = ovrHeadPose.TimeInSeconds;
-
-	// Oculus seems to track the center of the head, while we have been tracking
-	// the centroid of the marker array. So I shift the position forward.
-	Vector3 shift;
-	RotateVector( shift, pose.pose.orientation, kVector );
-	ScaleVector( shift, shift, -100.0 );
-	AddVectors( pose.pose.position, pose.pose.position, shift );
 
 	// We assume that the pose is always obtained for this tracker.
 	pose.visible = true;

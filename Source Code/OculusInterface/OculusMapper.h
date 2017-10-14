@@ -38,7 +38,6 @@ public:
 	ovrTrackingState	cachedHmdState;	
 	ovrSensorData		cachedSensorData;
 	long long			cachedFrameIndex;
-	unsigned int		cachedHandStatusFlags[2];
 
 	bool	isVisible;
 	bool	mirrorOn;
@@ -135,8 +134,6 @@ public:
 		// It also allows us to get the hand poses that correspond to the most recent fetch of the HMD pose.
 		// See ReadCachedHandPose() below.
 		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
-		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
-		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
 		return cachedHmdState;
 	}
 
@@ -144,14 +141,13 @@ public:
 	ovrSensorData ReadSensorData ( void ) {
         double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
 		cachedHmdState = ovr_GetTrackingStateWithSensorData( session, ftiming, ovrTrue, &cachedSensorData );
-		cachedHandStatusFlags[0] = cachedHmdState.HandStatusFlags[0];
-		cachedHandStatusFlags[1] = cachedHmdState.HandStatusFlags[1];
 		return cachedSensorData;
 	}
 
 	// Read the HMD tracker pose.
-	ovrPoseStatef ReadHeadPose () {
+	ovrPoseStatef ReadHeadPose ( unsigned int *flags = nullptr ) {
 		ovrTrackingState hmdState = ReadTrackingState();
+		if ( flags ) *flags = cachedHmdState.StatusFlags;
 		return hmdState.HeadPose;
 	}
 
@@ -160,15 +156,15 @@ public:
 		if ( flags ) *flags = cachedHmdState.HandStatusFlags[hand];
 		return cachedHmdState.HandPoses[hand];
 	}
+
 	// Read the hand tracker now. Does not depend on a previous read of the HMD tracker.
+	// Nor does it cache the HMD state for other calls.
 	ovrPoseStatef ReadHandPose ( ovrHandType hand,unsigned int *flags = nullptr ) {
 		ovrPoseStatef handPose;
         double ftiming = ovr_GetPredictedDisplayTime( session, cachedFrameIndex );
  		ovrTrackingState hmdState = ovr_GetTrackingState( session, ftiming, ovrTrue );
 		handPose = hmdState.HandPoses[hand];
 		if ( flags ) *flags = hmdState.HandStatusFlags[hand];
-		cachedHandStatusFlags[0] = hmdState.HandStatusFlags[0];
-		cachedHandStatusFlags[1] = hmdState.HandStatusFlags[1];
 		return handPose;
 	}
 
