@@ -130,6 +130,7 @@
     <EmbeddedResource Include="HistoryForm.resx">
       <DependentUpon>HistoryForm.h</DependentUpon>
       <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspHistory.resources</LogicalName>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GraspGUI.GraspHistory.resources</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
