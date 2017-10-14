@@ -7,13 +7,10 @@ CENTER( IMAGE(Pictures/exclamation-blue.png, 240) )
 
 - Press __'Retry'__ to repeat this block of trials from the beginning.
 
-- Press __'Ignore'__ to ignore and move on.
+- Press __'Ignore'__ to ignore and move on (per COL-CC only).
 	
-- To complete only the missing trials:
+- To complete only the missing trials (per COL-CC only):
 
-	+ Note the current trial block number in the task list. 
+	+ Note the number of the interrupted trial block (highlighted in the task list). 
 	+ Select *Resume Interrupted* to complete the aborted trials. 
-	+ Select the subsequent trial block in the task list and continue normally to complete the subsession.
-
-
- __Note:__ __'Ignore'__ should be used only with Col-CC autorization.
+	+ Return to the trial block following the interrupted block in the task list and continue normally to complete the subsession.
