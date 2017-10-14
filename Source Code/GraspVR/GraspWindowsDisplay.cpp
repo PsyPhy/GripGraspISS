@@ -17,13 +17,8 @@ void GraspWindowsDisplay::Initialize( HINSTANCE instance, HWND parent_window ) {
 	hInstance = instance;
 
 	window = new OpenGLWindow();
-	window->FullScreen = true;
-	window->Create(	parent_window, "GRASP", 0, 0, 1920, 1080 );
-
-	// Decide if we are in full screen mode or not.
-	// To avoid losing focus by clicking outside the desktop window it is best to be in fullscreen mode.
-	static const bool fullscreen = true;
-
+	window->FullScreen = fullscreen;
+	window->Create(	parent_window, "GRASP", 0, 0, 1024, 768 );
 
 }
 
