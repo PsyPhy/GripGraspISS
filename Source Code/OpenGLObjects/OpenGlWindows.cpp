@@ -22,7 +22,7 @@ LONG WINAPI OpenGLWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	// We should probably do some other sort of runtime type checking.
 	// But since this event handler is probably only used by windows created by
 	//  OpenGLWindow::Create(), there is little danger of making a mistake.
-	// Indeed, we could probably assume that the window passed here *is*  and 
+	// Indeed, we could probably assume that the window passed here *is*  an
 	//  OpenGLWindow.
 	if ( oglw ) {
 		return( oglw->WindowProc( hWnd, uMsg, wParam, lParam ) );
@@ -55,6 +55,15 @@ OpenGLWindow::OpenGLWindow( void ) {
 
 	width = 0;
 	height = 0;
+	
+	// Clear input
+	for (int i = 0; i < sizeof(Key) / sizeof(Key[0]); ++i) Key[i] = false;
+	for (int i = 0; i < sizeof(Button) / sizeof(Button[0]); ++i) Button[i] = false;
+	ClearKeyDownEvents();
+	ClearButtonDownEvents();
+	pointerLastX = UNDEFINED;
+	pointerLastY = UNDEFINED;
+
 
 }
 
@@ -457,6 +466,7 @@ LRESULT OpenGLWindow::WindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return 0;
 			break;
 
+#ifdef OLD
 		case WM_KEYDOWN:
 			if ( wParam >= VK_SPACE && wParam <= VK_HELP ) {
 				lastInput = wParam;
@@ -479,16 +489,63 @@ LRESULT OpenGLWindow::WindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 			return 0;
 			break;
 
+#else
+		case WM_LBUTTONDOWN:
+			lastInput = WM_LBUTTONDOWN;
+			Button[MOUSE_LEFT] = true;
+			ButtonDownEvents[MOUSE_LEFT]++;
+			break;
+		case WM_LBUTTONUP:
+			Button[MOUSE_LEFT] = false;
+			break;
+		case WM_MBUTTONDOWN:
+			lastInput = WM_MBUTTONDOWN;
+			Button[MOUSE_MIDDLE] = true;
+			ButtonDownEvents[MOUSE_MIDDLE]++;
+			break;
+		case WM_MBUTTONUP:
+			Button[MOUSE_MIDDLE] = false;
+			break;
+		case WM_RBUTTONDOWN:
+			lastInput = WM_RBUTTONDOWN;
+			Button[MOUSE_RIGHT] = true;
+			ButtonDownEvents[MOUSE_RIGHT]++;
+			break;
+		case WM_RBUTTONUP:
+			Button[MOUSE_RIGHT] = false;
+			break;
+
+		case WM_KEYDOWN:
+			Key[wParam] = true;
+			KeyDownEvents[wParam]++;
+			break;
+
+		case WM_KEYUP:
+			if ( wParam >= VK_SPACE && wParam <= VK_HELP ) {
+				lastInput = wParam;
+			}
+			Key[wParam] = false;
+			break;
+#endif
+
 		case WM_MOUSEMOVE:
 
 			unpack.param = lParam;
 			mouse_x = unpack.word[0];
 			mouse_y = unpack.word[1];
 
-			if ( wParam == MK_LBUTTON ) {
+			if ( wParam == MK_LBUTTON || FullScreen ) {
+
+				// If this is the first event we need to establish the reference point for mouseDeltaX and mouseDeltaY.
+				if ( pointerLastX == UNDEFINED ) {
+					pointerLastX = mouse_x;
+					pointerLastY = mouse_y;
+				}
 
 				mouseDeltaX = mouse_x - pointerLastX;
 				mouseDeltaY = mouse_y - pointerLastY;
+				mouseCumulativeX += mouseDeltaX;
+				mouseCumulativeY += mouseDeltaY;
 
 				if ( mouse_x < MARGIN ) {
 					POINT point;
@@ -560,6 +617,14 @@ void OpenGLWindow::SetEventCallback( bool (*callback)( HWND hWnd, UINT uMsg, WPA
 	event_callback = callback;
 }
 
+void OpenGLWindow::ClearKeyDownEvents( int key ) {
+	if ( key < 0 ) 	for (int i = 0; i < sizeof(KeyDownEvents) / sizeof(KeyDownEvents[0]); ++i) KeyDownEvents[i] = 0;
+	else KeyDownEvents[key] = 0;
+}
+void OpenGLWindow::ClearButtonDownEvents( int button ) {
+	if ( button < 0 ) 	for (int i = 0; i < sizeof(ButtonDownEvents) / sizeof(ButtonDownEvents[0]); ++i) ButtonDownEvents[i] = 0;
+	else ButtonDownEvents[button] = 0;
+}
 /*********************************************************************************/
 
 bool OpenGLWindow::RunOnce( void ) {

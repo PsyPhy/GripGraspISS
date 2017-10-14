@@ -141,3 +141,13 @@ void GraspOculusDisplay::ClearKeyDownEvents( void ) {
 	oculusDisplay->ClearKeyDownEvents();
 }
 
+
+bool GraspOculusDisplay::ButtonDownEvents( int button ) {
+	return( oculusDisplay->ButtonDownEvents[ button ] > 0 );
+}
+bool GraspOculusDisplay::ButtonDown( int button ) {
+	return( oculusDisplay->Button[ button ] );
+}
+void GraspOculusDisplay::ClearButtonDownEvents( void ) {
+	oculusDisplay->ClearButtonDownEvents();
+}

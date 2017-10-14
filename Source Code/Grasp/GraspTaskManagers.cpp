@@ -397,6 +397,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Clear any accumulated keydown events in preparation for the next cycle.
 		display->ClearKeyDownEvents();
+		display->ClearButtonDownEvents();
 	}
 
 	if ( response_fp ) fclose( response_fp );

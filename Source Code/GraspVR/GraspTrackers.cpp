@@ -350,9 +350,22 @@ void GraspOculusLiteTrackers::Initialize( void ) {
 
 void GraspSimulatedTrackers::Initialize( void ) {
 
-	 hmdTracker = new PsyPhy::NullPoseTracker();
-	 handTracker = new PsyPhy::NullPoseTracker();
-	 chestTracker = new PsyPhy::NullPoseTracker();
-	 rollTracker = new PsyPhy::NullPoseTracker();
+	hmdTracker = new PsyPhy::NullPoseTracker();
+	// The hand tracker is a mouse tracker to simulate the other protocols.
+	// If rollTrackers is also a mouse tracker, they will move in parallel to each other, 
+	// but  since they are never used together this should be OK.
+	handTracker = new PsyPhy::WindowsMouseRollPoseTracker( window, mouseGain );
+	fAbortMessageOnCondition( !handTracker->Initialize(), "GraspSimulatedTrackers", "Error initializing tracker for the hand tracker." );
+	// Set the default position and orientation of the hand.
+	// The MouseRollPoseTracker will then rotate the tool around this constant position.
+	handTracker->OffsetTo( handPoseK );
+	chestTracker = new PsyPhy::NullPoseTracker();
+	rollTracker = new PsyPhy::NullPoseTracker();
+	// Create a tracker to control roll movements of the hand for the *-V responses.
+	rollTracker = new PsyPhy::WindowsMouseRollPoseTracker( window, mouseGain );
+	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspSimulatedTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
+	// Set the position and orientation of the tool wrt the origin when in V-V mode.
+	// The rollTracker will then rotate the tool around this constant position.
+	rollTracker->OffsetTo( handPoseV );
 
 }

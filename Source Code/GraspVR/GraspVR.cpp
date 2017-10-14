@@ -617,6 +617,7 @@ void GraspVR::Render( void ) {
 	//  with OpenGLObjects. I am doing this each time we get ready to DrawObjects in 
 	//  case other GL stuff is going on elsewhere. Otherwise, we could probably
 	//  do this just once at the beginning, e.g. in CreateObjects.
+	display->Prepare();
 	glUsefulPrepareRendering();
 
 	for (int eye = 0; eye < 2; ++eye) {

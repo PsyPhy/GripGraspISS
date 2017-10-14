@@ -54,12 +54,16 @@ namespace Grasp {
 		virtual void DeselectEye( int eye ){};
 		virtual bool HandleMessages( void ){ return false; }
 		virtual void Present( void ){};
+		virtual void Prepare( void ){};
 
 		// Detect action of the subject to record a response.
 		virtual bool Validate( void ) { return false; }
 		virtual bool KeyDown( int key ){ return false; }
 		virtual bool KeyDownEvents( int key ){ return false; }
+		virtual bool ButtonDown( int button ){ return false; }
+		virtual bool ButtonDownEvents( int button ){ return false; }
 		virtual void ClearKeyDownEvents( void ){};
+		virtual void ClearButtonDownEvents( void ){};
 
 	};
 
@@ -102,6 +106,9 @@ namespace Grasp {
 		virtual bool KeyDownEvents( int key );
 		virtual bool KeyDown( int key );
 		virtual void ClearKeyDownEvents( void );
+		virtual bool ButtonDownEvents( int button );
+		virtual bool ButtonDown( int button );
+		virtual void ClearButtonDownEvents( void );
 
 	};
 
@@ -137,10 +144,15 @@ namespace Grasp {
 		virtual void DeselectEye( int eye );
 		virtual bool HandleMessages( void );
 		virtual void Present( void );
+		virtual void Prepare( void );
 
 		virtual bool Validate( void );
 		virtual bool KeyDownEvents( int key );
+		virtual bool KeyDown( int key );
 		virtual void ClearKeyDownEvents( void );
+		virtual bool ButtonDownEvents( int button );
+		virtual bool ButtonDown( int button );
+		virtual void ClearButtonDownEvents( void );
 
 	};
 }

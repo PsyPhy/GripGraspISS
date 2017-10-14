@@ -22,6 +22,8 @@
 #include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
 
+#include "../OpenGLObjects/OpenGLWindows.h"
+
 // Include 3D and 6D tracking capabilities.
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
@@ -41,6 +43,7 @@
 #include "../OculusInterface/OculusCodaPoseTracker.h"
 #include "../OculusInterface/MousePoseTrackers.h"
 #include "../Trackers/OculusRemotePoseTracker.h"
+#include "../Trackers/WindowsMousePoseTrackers.h"
 
 #include "../DexServices/DexServices.h"
 
@@ -62,7 +65,6 @@ namespace Grasp {
 		static double	mouseGain;
 		static double	arrowGain;
 		static Pose		chestPoseSim;
-		OculusMapper	*oculusMapper;
 
 	public: 
 
@@ -108,11 +110,17 @@ namespace Grasp {
 	};
 
 	// GraspSimulatedTrackers are intended to provide simulated movements of the 
-	// individual trackers without any trackign hardware.
+	// individual trackers without any tracking hardware.
 	class GraspSimulatedTrackers : public GraspTrackers {
+	protected:
+		OpenGLWindow	*window;
+
 	public:
 		virtual void Initialize( void );
 		GraspSimulatedTrackers( void ) {}
+		GraspSimulatedTrackers( OpenGLWindow *window ) {
+			this->window = window;
+		}
 		~GraspSimulatedTrackers( void ) {}
 	};
 
@@ -268,6 +276,10 @@ namespace Grasp {
 	// It uses a combined Oculus-Coda tracker for the HMD and marker-based Pose
 	// trackers for the chest and hand.
 	class GraspOculusCodaTrackers : public GraspDexTrackers {
+
+	protected:
+		OculusMapper	*oculusMapper;
+
 	public:
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 		OculusCodaPoseTracker *oculusCodaPoseTracker;
@@ -282,6 +294,9 @@ namespace Grasp {
 
 	// We use this one when we want to pretend that we have CODAs.
 	class GraspOculusTrackers : public GraspTrackers {
+	protected:
+		OculusMapper	*oculusMapper;
+
 	public:
 		PoseTracker *chestTrackerRaw;
 		GraspOculusTrackers( void ) {}
@@ -299,6 +314,9 @@ namespace Grasp {
 	//  for drift correction, and substitutes mouse and keyboard trackers for
 	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
 	class GraspOculusLiteTrackers : public GraspTrackers {
+	protected:
+		OculusMapper	*oculusMapper;
+
 	public:
 		PoseTracker *chestTrackerRaw;
 		void Initialize( void );

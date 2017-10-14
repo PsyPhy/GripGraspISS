@@ -8,8 +8,6 @@
 // For the moment it is used only for polled real-time tracking.
 // They could later be augmented to include continuous recording at a fixed frequency.
 
-#pragma once
-
 #include "stdafx.h"
 #include "NullPoseTracker.h"
 #include "../Useful/Useful.h"

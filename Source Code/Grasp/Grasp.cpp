@@ -102,37 +102,33 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	dex->SnapPicture( "STARTUP" );
 
 	//
-	// Start up the VR display. 
+	// Select a display and a set of trackers. 
 	//
 	GraspDisplay *display;
-	if ( useHMD) {
-		GraspOculusDisplay *oculus_display = new GraspOculusDisplay();
-		oculus_display->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow );
-		display = oculus_display;
-	}
-	else {
-		GraspWindowsDisplay *windows_display = new GraspWindowsDisplay();
-		windows_display->Initialize( hInstance, parentWindow );
-		display = windows_display;
-	}
-
-	// 
-	// Select a set of trackers and start them up.
-	//
 	GraspTrackers *trackers;
 	CodaRTnetTracker *codaTracker;
-	if ( useCoda ) {
-	    codaTracker = new CodaRTnetDaemonTracker();
-		trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
-	}
-	else if ( useTouch ) {
-		trackers = new GraspOculusTrackers( &_oculusMapper );
-	}
-	else if ( useHMD ) {
-		trackers = new GraspOculusLiteTrackers( &_oculusMapper );
+	GraspWindowsDisplay *windows_display;
+	if ( useHMD) {
+		GraspOculusDisplay *oculus_display;
+		oculus_display = new GraspOculusDisplay();
+		oculus_display->Initialize( hInstance, &_oculusDisplay, &_oculusMapper, parentWindow );
+		display = oculus_display;
+		if ( useCoda ) {
+			codaTracker = new CodaRTnetDaemonTracker();
+			trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
+		}
+		else if ( useTouch ) {
+			trackers = new GraspOculusTrackers( &_oculusMapper );
+		}
+		else  {
+			trackers = new GraspOculusLiteTrackers( &_oculusMapper );
+		}
 	}
 	else {
-		trackers = new GraspSimulatedTrackers();
+		windows_display = new GraspWindowsDisplay();
+		windows_display->Initialize( hInstance, parentWindow );
+		display = windows_display;
+		trackers = new GraspSimulatedTrackers( windows_display->window );
 	}
 	trackers->Initialize();
 

@@ -92,6 +92,7 @@
     <ClInclude Include="PoseTrackers.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Trackers.h" />
+    <ClInclude Include="WindowsMousePoseTrackers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CascadePoseTracker.cpp" />
@@ -111,6 +112,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Trackers.cpp" />
+    <ClCompile Include="WindowsMousePoseTrackers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodaLegacySDK\CodaLegacySDK.vcxproj">

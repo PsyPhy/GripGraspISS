@@ -392,7 +392,7 @@ struct OculusDisplayOGL
 			// fullscreen mode or not.
 			if ( wParam == MK_LBUTTON || p->fullscreen ) {
 
-				// If this is the fist event we need to establish the reference point for mouseDeltaX and mouseDeltaY.
+				// If this is the first event we need to establish the reference point for mouseDeltaX and mouseDeltaY.
 				if ( p->pointerLastX == UNDEFINED ) {
 					p->pointerLastX = mouse_x;
 					p->pointerLastY = mouse_y;
@@ -472,6 +472,10 @@ struct OculusDisplayOGL
 	void ClearKeyDownEvents( int key = -1 ) {
 		if ( key < 0 ) 	for (int i = 0; i < sizeof(KeyDownEvents) / sizeof(KeyDownEvents[0]); ++i) KeyDownEvents[i] = 0;
 		else KeyDownEvents[key] = 0;
+	}
+	void ClearButtonDownEvents( int button = -1 ) {
+		if ( button < 0 ) 	for (int i = 0; i < sizeof(ButtonDownEvents) / sizeof(ButtonDownEvents[0]); ++i) ButtonDownEvents[i] = 0;
+		else KeyDownEvents[button] = 0;
 	}
 
 	OculusDisplayOGL() :
