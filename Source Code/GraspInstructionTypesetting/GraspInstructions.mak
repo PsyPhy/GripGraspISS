@@ -23,7 +23,8 @@ ALL_HTML=GraspWelcome.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
 	TaskFinished.instruction.html ProtocolFinished.instruction.html ProtocolFinished.prompt.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
 	MaintenanceWelcome.instruction.html FileTransferReady.prompt.html \
-	FileTransferErrorFinish.status.html IncompleteErrorFinish.status.html MaxRetriesErrorFinish.status.html
+	FileTransferErrorFinish.status.html IncompleteErrorFinish.status.html MaxRetriesErrorFinish.status.html \
+	AlignCodaInterruptFinish.status.html AlignCodaMisalignFinish.status.html
 
 # This is a list of images that are created here in the makefile.
 # There are other images that are needed to create the html files, but they sit statically in the Pictures subdirectory.

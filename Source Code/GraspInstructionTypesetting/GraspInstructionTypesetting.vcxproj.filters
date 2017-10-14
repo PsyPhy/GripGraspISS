@@ -106,6 +106,12 @@
     <None Include="IncompleteErrorFinish.status.md">
       <Filter>Science</Filter>
     </None>
+    <None Include="AlignCodaMisalignFinish.status.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="AlignCodaInterruptFinish.status.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

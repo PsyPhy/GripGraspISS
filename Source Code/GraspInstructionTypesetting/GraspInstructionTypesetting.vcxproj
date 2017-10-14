@@ -60,6 +60,8 @@
     <None Include="04RespondK.instruction.md" />
     <None Include="04RespondV.instruction.md" />
     <None Include="05Feedback.instruction.md" />
+    <None Include="AlignCodaInterruptFinish.status.md" />
+    <None Include="AlignCodaMisalignFinish.status.md" />
     <None Include="CodaAlignFloating.prompt.md" />
     <None Include="CodaAlignSeated.prompt.md" />
     <None Include="00IntroK-K.instruction.md" />

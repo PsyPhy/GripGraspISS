@@ -487,7 +487,7 @@ namespace AlignToRigidBodyGUI {
 				 System::Windows::Forms::DialogResult response;
 				 response = MessageBox::Show( "Are you sure you want to exit without performing the alignment?", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
 				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
-					 Environment::ExitCode = -1;
+					 Environment::ExitCode = -3;
 					 Close();
 				 }
 				 //Presumably, were were in the visibility check state and we are returning there.
