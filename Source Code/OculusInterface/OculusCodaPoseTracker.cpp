@@ -25,15 +25,23 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 	// Decide which data to use from the Oculus as rotation rate.
 	useRawSensors = true;
 
-	// This constant deterimines how fast the inertially-computed pose will be driven
-	// toward the absolute pose taken from the CODA. A large number means that drift will be corrected slowly.
-	InertialWeighting = 10.0;
+	// A small value to react quickly to the first CODA pose.
+	precaptureInertialWeighting = 0.01;
+	// The value used after the first CODA sample has been used to initialize the pose.
+	// The value is large to filter artifacts from the computed CODA pose.
+	postcaptureInertialWeighting = 1000.0;
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();
 }
 bool OculusCodaPoseTracker::Initialize( void ) { 
 	
+	// Regardless of whether the the tracker has already been intilized,
+	// reset to the initial weighting of the inertial inputs. This allows
+	// one to anticipate large discrepancies between the CODA and inertial 
+	// poses and to react quickly to a new CODA pose.
+	InertialWeighting = precaptureInertialWeighting;
+
 	// Only initialize once.
 	if ( initialized ) return true;
 
@@ -116,7 +124,9 @@ bool OculusCodaPoseTracker::Update( void ) {
 
 	// Read the absolute pose from the CODA tracker (or some other tracker) and take a step towards it.
 	// The step is achieved by taking a weighted average between the current inertial state and the CODA state.
-	// More weight is given to the inertial state to make it responsive to rapid movement.
+	// In general, more weight is given to the inertial state to make it responsive to rapid movement and
+	// to filter artifacts in the CODA pose. But initially the CODA pose receives high weight to quickly initialize
+	// the output pose to be aligned with the CODA pose.
 	TrackerPose absolutePose;
 	if ( absoluteTracker ) {
 		absoluteTracker->Update();
@@ -124,8 +134,10 @@ bool OculusCodaPoseTracker::Update( void ) {
 		if ( absolutePose.visible ) {
 			// fOutputDebugString( "Cycle %4d: %s  %s  %s\n", cycle_counter, qstr( dQ ), qstr( currentState.pose.orientation ), qstr( absolutePose.pose.orientation ) );
 			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
+			// Once we have updated once toward a pose from the absolute tracker, subsequent steps
+			// will use a larger weigthing factor to slow down the corrective actions.
+			InertialWeighting = postcaptureInertialWeighting;
 			CopyVector( currentState.pose.position, absolutePose.pose.position );
-			//CopyVector( currentState.pose.position, zeroVector );
 		}
 //		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
 	}
