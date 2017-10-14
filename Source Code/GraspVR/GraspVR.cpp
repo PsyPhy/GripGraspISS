@@ -650,8 +650,8 @@ void GraspVR::DebugLoop( void ) {
 		UpdateTrackers();
 
 		// Boresight the HMD tracker on 'B'.
-		if ( display->KeyDownEvents( 'B' ) ) trackers->hmdTracker->Boresight();
-		if ( display->KeyDownEvents( 'U' ) ) trackers->hmdTracker->Unboresight();
+		if ( display->KeyDown( VK_CONTROL ) && display->KeyDownEvents( 'B' ) ) trackers->hmdTracker->Boresight();
+		if ( display->KeyDown( VK_CONTROL ) && display->KeyDownEvents( 'U' ) ) trackers->hmdTracker->Unboresight();
 
 		// Handle triggering and moving the projectiles.
 		if ( ( display->KeyDownEvents( VK_RETURN ) || display->KeyDownEvents( MOUSE_LEFT ) ) && currentProjectileState == cocked ) TriggerProjectiles();

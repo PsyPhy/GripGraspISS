@@ -57,6 +57,7 @@ namespace Grasp {
 
 		// Detect action of the subject to record a response.
 		virtual bool Validate( void ) { return false; }
+		virtual bool KeyDown( int key ){ return false; }
 		virtual bool KeyDownEvents( int key ){ return false; }
 		virtual void ClearKeyDownEvents( void ){};
 
@@ -99,6 +100,7 @@ namespace Grasp {
 
 		virtual bool Validate( void );
 		virtual bool KeyDownEvents( int key );
+		virtual bool KeyDown( int key );
 		virtual void ClearKeyDownEvents( void );
 
 	};
@@ -119,12 +121,12 @@ namespace Grasp {
 
 	public:
 
-		bool			fullScreen;
+		bool			fullscreen;
 
 		HINSTANCE		hInstance;
 		OpenGLWindow	*window;
 
-		GraspWindowsDisplay( void ) : fullScreen( false ) {}
+		GraspWindowsDisplay( void ) : fullscreen( true ) {}
 		~GraspWindowsDisplay( void ) {}
 
 		virtual void Initialize( HINSTANCE instance, HWND parentWindow );

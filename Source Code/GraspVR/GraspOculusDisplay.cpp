@@ -134,6 +134,9 @@ bool GraspOculusDisplay::Validate( void ) {
 bool GraspOculusDisplay::KeyDownEvents( int key ) {
 	return( oculusDisplay->KeyDownEvents[ key ] > 0 );
 }
+bool GraspOculusDisplay::KeyDown( int key ) {
+	return( oculusDisplay->Key[ key ] );
+}
 void GraspOculusDisplay::ClearKeyDownEvents( void ) {
 	oculusDisplay->ClearKeyDownEvents();
 }
