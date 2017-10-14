@@ -369,7 +369,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Boresight the HMD tracker on 'B' or align to the HMD on 'A'.
 		// This is here for debugging and should probably be removed.
-		if ( display->KeyDownEvents( 'A' ) ) {
+		if ( display->KeyDown( VK_CONTROL ) && display->KeyDownEvents( 'A' ) ) {
 			AlignToHMD();
 			fprintf( frame_fp, "Trial: %d  Time: %7.3f  *AlignToHMD: %s %s\n", 
 				currentTrial, TimerElapsedTime( blockTimer ),
@@ -377,11 +377,11 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 			fflush( frame_fp );
 		}
 
-		if ( display->KeyDownEvents( 'B' ) ) {
+		if ( display->KeyDown( VK_CONTROL ) && display->KeyDownEvents( 'B' ) ) {
 			trackers->hmdTracker->Boresight();
 			fprintf( frame_fp, "Trial: %d  Time: %7.3f  ***Boresight***\n", currentTrial, TimerElapsedTime( blockTimer ) );
 		}
-		if ( display->KeyDownEvents( 'U' ) ) {
+		if ( display->KeyDown( VK_CONTROL ) && display->KeyDownEvents( 'U' ) ) {
 			trackers->hmdTracker->Unboresight();
 			fprintf( frame_fp, "Trial: %d  Time: %7.3f  **Unboresight**\n", currentTrial, TimerElapsedTime( blockTimer ) );
 		}
