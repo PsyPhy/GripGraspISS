@@ -23,7 +23,7 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 	absoluteTracker = coda;
 
 	// Decide which data to use from the Oculus as rotation rate.
-	useRawSensors = false;
+	useRawSensors = true;
 
 	// This constant deterimines how fast the inertially-computed pose will be driven
 	// toward the absolute pose taken from the CODA. A large number means that drift will be corrected slowly.
