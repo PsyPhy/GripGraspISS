@@ -48,7 +48,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	bool useCoda = true;
 	bool useTouch = false;
 	bool useHMD = true;
-	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doVtoVtraining, doVtoKtraining, doKtoKtraining, doDemo, doDoff } paradigm = doVtoV;
+	enum { doVtoV, doVtoK, doVtoVK, doKtoK, doDemo, doDoff } paradigm = doVtoV;
 
 	char sequence_filename[FILENAME_MAX] = "";
 	char output_filename_root[FILENAME_MAX] = "";
@@ -59,18 +59,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	char *ptr;
 	fOutputDebugString( "Grasp Command Line: %s\n", lpCmdLine );
 
-	if ( FileExists( "NoCoda.flg" ) ) useCoda = false;
-	if ( strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
-	if ( FileExists( "Touch.flg" ) ) {
+	if ( FileExists( "NoHMD.flg" ) || strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
+	if ( FileExists( "NoCoda.flg" ) || strstr( lpCmdLine, "--nocoda" ) ) useCoda = false;
+	if ( FileExists( "Touch.flg" ) || strstr( lpCmdLine, "--touch" ) ) {
 		useTouch = true;
 		useCoda = false;
 	}
-	if ( strstr( lpCmdLine, "--touch" ) ) {
-		useTouch = true;
-		useCoda = false;
-	}
-	if ( FileExists( "NoHMD.flg" ) ) useHMD = false;
-	if ( strstr( lpCmdLine, "--nohmd" ) ) useHMD = false;
 
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
 	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
@@ -163,10 +157,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// Set which kind of visual stimuli to use (balls or bars).
 	// The default selection is set with cookie files.
 	// The cookies can be overridden with command line arguments.
-	if ( FileExists( "Balls.flg" ) ) grasp->renderer->useBars = false; 
-	if ( FileExists( "Bars.flg" ) ) grasp->renderer->useBars = false;
-	if ( strstr( lpCmdLine, "--bars" ) ) grasp->renderer->useBars = true;
-	if ( strstr( lpCmdLine, "--balls" ) ) grasp->renderer->useBars = false;
+	if ( FileExists( "Balls.flg" ) || strstr( lpCmdLine, "--balls" ) ) grasp->renderer->useBars = false; 
+	if ( FileExists( "Bars.flg" ) || strstr( lpCmdLine, "--bars" ) ) grasp->renderer->useBars = false;
 
 	// Take into account the offset between the position in depth of the chest markers
 	// and the position in depth of the HMD markers when the subject is looking straight

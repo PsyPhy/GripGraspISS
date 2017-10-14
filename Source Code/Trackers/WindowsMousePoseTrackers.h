@@ -46,4 +46,13 @@ public:
 		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
 };
 
+// A mouse tracker that controls roll and pitch with arrow keys.
+class WindowsArrowPoseTracker : public WindowsMousePoseTracker {
+public:
+		Vector3 eulerAngles;
+		WindowsArrowPoseTracker( OpenGLWindow *ptr = nullptr, double gain = 1.0 );
+		~WindowsArrowPoseTracker();
+		bool Update( void );
+		bool GetCurrentPoseIntrinsic( TrackerPose &pose );
+};
 }
