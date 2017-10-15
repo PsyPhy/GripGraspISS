@@ -270,30 +270,35 @@ void GraspGLObjects::SetHandColor( Assembly *hand, bool state ) {
 	}
 }
 
-Assembly *GraspGLObjects::CreateVisualTool( void ) {
+Assembly *GraspGLObjects::CreateVisualTool( double magnifier ) {
 
 	Assembly *tool = new Assembly();
 
 	// Create a set of 'fingers', each of which is a 'capsule' composed of a tube with rounded caps.
 	static int n_fingers = target_balls-1;
-	static double finger_spacing = finger_ball_radius*2;
+
+	double radius = finger_ball_radius * magnifier;
+	double length = finger_length * magnifier;
+
+	double spacing = radius * 2.0;
 
 	for ( int trg = - n_fingers; trg <= n_fingers ; trg++ ){
 
+
 		// Each finger is a 'capsule' composed of a cylinder that is capped on each end with a sphere.
 		Assembly *finger = new Assembly();
-		Sphere *sphere = new Sphere( finger_ball_radius );
+		Sphere *sphere = new Sphere( radius );
 		sphere->SetPosition( 0.0, 0.0, 0.0 );
 		finger->AddComponent( sphere );
-		Cylinder *cylinder = new Cylinder( finger_ball_radius, finger_ball_radius, finger_length );
-		cylinder->SetPosition( 0.0, 0.0, - finger_length / 2 );
+		Cylinder *cylinder = new Cylinder( radius, radius, length );
+		cylinder->SetPosition( 0.0, 0.0, - length / 2 );
 		finger->AddComponent( cylinder );
-		sphere = new Sphere( finger_ball_radius );
-		sphere->SetPosition( 0.0, 0.0, - finger_length );
+		sphere = new Sphere( radius );
+		sphere->SetPosition( 0.0, 0.0, - length );
 		finger->AddComponent( sphere );
 
 		// Space the fingers vertically.
-		finger->SetPosition( 0.0, finger_spacing * trg, 0.0 );
+		finger->SetPosition( 0.0, spacing * trg, 0.0 );
 		tool->AddComponent( finger );
 	}
 	SetHandColor( tool, true );
@@ -595,9 +600,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	wristZone = CreateZone();
 
 	// Orientated tool used when responding with only visual feedback (e.g. V-V).
-	vTool = CreateVisualTool();
+	vTool = CreateVisualTool( v_tool_size );
 	// Orientated tool that allows visual feedback of the hand's orientation.
-	vkTool = CreateVisualTool();
+	vkTool = CreateVisualTool( vk_tool_size );
 	// A tool that allows one to point, but does not show the roll orientation.
 	kTool = CreateKinestheticTool();
 	// Same as the above, but this one we use when presenting a kinesthetic target in K-K.
