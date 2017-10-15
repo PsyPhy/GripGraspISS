@@ -3,6 +3,7 @@
 EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\Grasp.exe \
 	..\Grasp\Grasp.bat.src \
+	..\Grasp\Grasp.ini.src \
 	..\Grasp\GraspPackData.bat.src \
 	..\GraspGUI\Grasp.ico ..\$(BUILDCONFIGURATION)\GraspGUI.exe \
 	..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe \
@@ -36,6 +37,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\OculusMouse.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\Grasp.exe $(DESTINATION)
 	copy ..\Grasp\Grasp.bat.src $(DESTINATION)\Grasp.bat
+	copy ..\Grasp\Grasp.ini.src $(ROOT)\Grasp.ini
 	copy ..\Grasp\GraspPackData.bat.src $(DESTINATION)\GraspPackData.bat
 	copy ..\$(BUILDCONFIGURATION)\GraspScreenshots.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspGUI.exe $(DESTINATION)

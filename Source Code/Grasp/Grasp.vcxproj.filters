@@ -10,6 +10,7 @@
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
     <None Include="Grasp.bat.src" />
     <None Include="GraspPackData.bat.src" />
+    <None Include="Grasp.ini.src" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />

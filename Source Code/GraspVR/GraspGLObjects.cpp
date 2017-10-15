@@ -65,14 +65,18 @@ double GraspGLObjects::inner_visor_radius = 250.0;
 Vector3 GraspGLObjects::desired_wrist_location = { 0.0, 0.0, -400.0 };
 Vector3 GraspGLObjects::initial_hand_position = { 0.0, -500.0, 0.0 };
 
+Vector3 GraspGLObjects::v_tool_location = { 0.0, 0.0, -500.0 };
+double GraspGLObjects::v_tool_size = 2.0;
+double GraspGLObjects::vk_tool_size = 1.0;
+
 // The target is a line of spheres.
-const double GraspGLObjects::target_ball_radius = 100.0;
-const double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
-const int GraspGLObjects::target_balls = 3;
+double GraspGLObjects::target_ball_radius = 100.0;
+double GraspGLObjects::target_ball_spacing = 2.0 * room_radius / 7.5;
+int GraspGLObjects::target_balls = 3;
 // Or it may be a set of parallel lines.
-const int GraspGLObjects::target_bars = 10;									//Tagliabue
-const double GraspGLObjects::target_bar_radius = 20.0;						//Tagliabue
-const double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
+int GraspGLObjects::target_bars = 10;								//Tagliabue
+double GraspGLObjects::target_bar_radius = 20.0;					//Tagliabue
+double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
 bool GraspGLObjects::useBars = true;
 
 const Vector3 GraspGLObjects::end_of_tunnel = { 0.0, 0.0, - room_length / 2.0 };
@@ -80,11 +84,11 @@ const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 // Visual target is placed a little bit closer to the subject than the end of the tunnel.
 const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - ( room_length / 2.0 - 500.0 ) };
 
-const double GraspGLObjects::finger_ball_radius = 10.0;
-const double GraspGLObjects::finger_length = 100.0;
+double GraspGLObjects::finger_ball_radius = 10.0;
+double GraspGLObjects::finger_length = 100.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
-const double GraspGLObjects::hmdTransparency = 0.5;
+double GraspGLObjects::hmdTransparency = 0.5;
 
 // A generic parameter that sets the number of facets in rounded objects.
 // More facets means smoother surfaces, but slower drawing times;
@@ -431,7 +435,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( gazeLaser );
 
 	// When responding in the V only mode, the virtual tool (hand) moves with the gaze.
-	vTool->SetOffset( 0.0, 0.0, -200.0 );
+	vTool->SetOffset( v_tool_location );
 	yoke->AddComponent( vTool );
 
 	// Round signs conveying messages to the subject also move with the head.

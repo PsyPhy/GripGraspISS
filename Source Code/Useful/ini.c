@@ -186,8 +186,7 @@ int ini_parse(const char* filename, ini_handler handler, void* user)
     int error;
 
     file = fopen(filename, "r");
-    if (!file)
-        return -1;
+    if (!file) return -1;
     error = ini_parse_file(file, handler, user);
     fclose(file);
     return error;

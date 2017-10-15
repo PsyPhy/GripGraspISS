@@ -17,6 +17,7 @@
 #include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Useful/OpenGLUseful.h"
+#include "../Useful/ini.h"
 
 #include "../OpenGLObjects/OpenGLColors.h"
 #include "../OpenGLObjects/OpenGLWindows.h"
@@ -108,18 +109,21 @@ namespace Grasp {
 		static double outer_visor_radius;
 		static Vector3 desired_wrist_location;
 		static Vector3 initial_hand_position;
+		static Vector3 v_tool_location;
+		static double v_tool_size;
+		static double vk_tool_size;
 
 		static bool useBars;
-		static const double target_ball_radius;
-		static const double finger_ball_radius;
-		static const double target_ball_spacing;
-		static const int target_balls;
-		static const int target_bars; //Tagliabue
-		static const double target_bar_radius;//Tagliabue
-		static const double target_bar_spacing;//Tagliabue
-		static const double finger_length;
+		static double target_ball_radius;
+		static double finger_ball_radius;
+		static double target_ball_spacing;
+		static int target_balls;
+		static int target_bars;				//Tagliabue
+		static double target_bar_radius;	//Tagliabue
+		static double target_bar_spacing;	//Tagliabue
+		static double finger_length;
 
-		static const double hmdTransparency;
+		static double hmdTransparency;
 
 		static const double errorColorMapTransparency;
 		static const double errorColorMapFadeDistance;
@@ -272,7 +276,14 @@ namespace Grasp {
 
 	public: 
 
-		GraspGLObjects( void ) {}
+		GraspGLObjects( char *ini_filename = "Grasp.ini" ) {
+			if ( ini_filename ) {
+				fOutputDebugString( "GraspGLObjects: Parsing %s.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fOutputDebugString( "GraspGLObjects: Parsing error (%d).\n", error );
+			}
+		}
+
 
 		void CreateTextures( void );
 		void SetLighting( void );
@@ -296,7 +307,7 @@ namespace Grasp {
 		// Draw the VR objects. Only those that are currently active will be drawn.
 		void GraspGLObjects::DrawVR( void );
 
-		Assembly *CreateVisualTool( void );
+		Assembly *CreateVisualTool( double magnifier );
 		Assembly *CreateKinestheticTool( void );
 		Assembly *CreateLaserPointer(void);
 		FuzzyPointer *CreateFuzzyLaserPointer( void );
@@ -332,6 +343,28 @@ namespace Grasp {
 		void DrawHead( TrackerPose *pose = nullptr );
 		void DrawTorso( TrackerPose *pose = nullptr );
 		void DrawBody( TrackerPose *pose = nullptr );
+
+		protected:
+		
+		// Provide the means to read a .ini file to set configuration parameters.
+		// This is defined here as static because its address is sent as a callback to a parsing routine.
+		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			GraspGLObjects *instance = (GraspGLObjects *) which_instance;
+			if ( !strcmp( name, "vToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->v_tool_size = atof( value );
+			if ( !strcmp( name, "vkToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->vk_tool_size = atof( value );
+			if ( !strcmp( name, "vToolLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->v_tool_location[X], &instance->v_tool_location[Y], &instance->v_tool_location[Z] );
+			if ( !strcmp( name, "targetBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_radius = atof( value );
+			if ( !strcmp( name, "targetBallSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_spacing = atof( value );
+			if ( !strcmp( name, "targetBalls" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_balls = atoi( value );
+			if ( !strcmp( name, "targetBarRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_radius = atof( value );
+			if ( !strcmp( name, "targetBarSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_spacing = atof( value );
+			if ( !strcmp( name, "targetBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bars = atoi( value );
+			if ( !strcmp( name, "useBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->useBars = (NULL != strstr( value, "true" ));
+			if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
+			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
+			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
+			return 1;
+		}
 
 	protected:
 		~GraspGLObjects() {}

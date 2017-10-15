@@ -344,6 +344,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 
 		// Update pose of tracked objects, including the viewpoint.
 		UpdateTrackers();
+		// Daemon sends the tracker info.
 		// dexServices->AddTrackerSlice( headPose, headPose, handPose, chestPose, rollPose, trackers->markerFrame );
 
 		// Send information about the state of the simulation to DEX.
