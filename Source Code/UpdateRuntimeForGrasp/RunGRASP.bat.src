@@ -31,6 +31,8 @@ cls
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+if exist NoHMD.flg goto NOHMD
+
 REM The Oculus runtime process may not start up until we try to access the Oculus from within a program.
 REM That could be annoyingly too late. So we launch a small process just to get the Oculus runtime to 
 REM start up and we take the same opportunity to minimize the window so that it is not a distraction.
@@ -42,14 +44,16 @@ REM subject on what to do in case it does to start up correctly.
 Start "Wait for Oculus" /WAIT Executables\OculusStartupCheck.exe 
 if NOT ERRORLEVEL 0 GOTO :EOF
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 REM Now start up OculuseMouse to be able to move the mouse pointer and click using the Oculus Remote.
 REM When GRASP exits, OculusMouse will still be running so that if the exit was accidental
 REM  the subject can use the Remote to navigate on the computer and restart.
 Start "OculusMouse" /b Executables\OculusMouse.exe 
 
+:NOHMD
+
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+if exist NoCODA.flg goto NOCODA
 
 REM Start up the CODA system and wait for it to be active. The Daemon window will minimize automatically.
 Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide
@@ -57,6 +61,8 @@ Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide
 REM Don't proceed until output from the tracker daemon has been detected.
 Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
 if NOT ERRORLEVEL 0 GOTO :EOF
+
+:NOCODA
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
