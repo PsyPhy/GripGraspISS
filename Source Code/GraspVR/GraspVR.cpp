@@ -27,9 +27,7 @@ double	GraspVR::desiredHeadRollSweetZone = 2.0;
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
 double	GraspVR::straightAheadThreshold = 0.995;	// approx. 2.5° Corresponds roughly to center target radius.
 
-double GraspVR::handFilterConstant = 2.0;
-
-double GraspVR::interpupillary_distance = 6.0;
+double GraspVR::interpupillary_distance = 60.0;
 // Define how much the chest markers are ahead of or behind the HMD markers
 //  in depth when the subject is looking level. Value is in mm. Positive if the
 //  chest markers are in front of the HMD, negative if behind.

@@ -64,7 +64,6 @@ namespace Grasp {
 		GraspTrackers	*trackers;
 
 		double conflictGain;
-		static double handFilterConstant;
 		static double chestOffset;
 		static double interpupillary_distance;
 
