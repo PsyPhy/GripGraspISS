@@ -209,7 +209,7 @@ void Viewpoint::Apply( OpenGLWindow *wnd, Eye eye ) {
     glLoadIdentity();
     aspect = (double) wnd->width / (double) wnd->height / 2.0;
     gluPerspective( fov, aspect, nearest, farthest );
-    glTranslated( - ipd, 0.0, 0.0 );
+    glTranslated( ipd, 0.0, 0.0 );
     break;
 
   case RIGHT_EYE:
@@ -218,7 +218,7 @@ void Viewpoint::Apply( OpenGLWindow *wnd, Eye eye ) {
     glLoadIdentity();
     aspect = (double) wnd->width / (double) wnd->height / 2.0;
     gluPerspective( fov, aspect, nearest, farthest );
-    glTranslated( ipd, 0.0, 0.0 );
+    glTranslated( - ipd, 0.0, 0.0 );
     break;
 
   default:
