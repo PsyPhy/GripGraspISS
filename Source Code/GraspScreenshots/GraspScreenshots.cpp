@@ -151,6 +151,7 @@ int _tmain(int argc, char *argv[])
 	objects->projectiles->Disable();
 	objects->glasses->Enable();
 	objects->gazeLaser->Disable();
+	objects->handLaser->Disable();
 	objects->successIndicator->Disable();
 	objects->timeoutIndicator->Disable();
 	objects->headMisalignIndicator->Disable();
@@ -168,6 +169,7 @@ int _tmain(int argc, char *argv[])
 		double angle;
 
 		if ( 1 == sscanf( argv[arg], "--head=%lf", &angle ) ) {
+			objects->hmd->SetOrientation( angle, 0.0, 0.0 );
 			viewpoint->SetOrientation( angle, 0.0, 0.0 );
 		}
 		else if ( 1 == sscanf( argv[arg], "--headError=%lf", &angle ) ) {
@@ -198,6 +200,10 @@ int _tmain(int argc, char *argv[])
 		else if ( !strcmp( argv[arg], "--shoulders" )) {
 			objects->glasses->SetColor( 0.0, 0.0, 1.0, 0.5 );
 			objects->straightenHeadIndicator->Enable();		
+		} 
+
+		else if ( !strcmp( argv[arg], "--blue" )) {
+			objects->glasses->SetColor( 0.0, 0.0, 1.0, 0.5 );
 		} 
 
 		else if ( !strcmp( argv[arg], "--vkTool" )) {
@@ -277,11 +283,12 @@ int _tmain(int argc, char *argv[])
 		}
 
 		else if ( !strcmp( argv[arg], "--Redress" )) {
-			objects->gazeLaser->Enable();
 			objects->straightAheadTarget->Enable();
+			objects->straightAheadTarget->SetColor( GREEN );
 		}
 		else if ( !strcmp( argv[arg], "--OffCenter" ) ) {
 			objects->hmd->SetOrientation( 3.0, 4.0, 0.0 );
+			objects->straightAheadTarget->SetColor( ORANGE );
 		}
 
 		else if ( !strcmp( argv[arg], "--confirm" )) {

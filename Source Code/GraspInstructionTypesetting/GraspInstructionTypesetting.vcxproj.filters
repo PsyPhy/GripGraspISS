@@ -112,6 +112,155 @@
     <None Include="AlignCodaInterruptFinish.status.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="00StraightenHeadCoda.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="02TargetVballs.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="02TargetVbars.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="05FeedbackBalls.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="05FeedbackBars.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="..\GraspScripts\UseBalls.bat.src" />
+    <None Include="..\GraspScripts\UseBars.bat.src" />
+    <None Include="00StraightenHead.instruction.md">
+      <Filter>Science</Filter>
+    </None>
+    <None Include="00IntroK-K.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00IntroV-K.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00IntroV-V.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00StraightenHead.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00StraightenHeadChest.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00StraightenHeadCoda.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="00StraightenHeadHonor.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="01StraightenHead.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="02TargetK.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="02TargetV.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="02TargetVballs.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="02TargetVbars.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="03TiltHead.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="04RespondK.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="04RespondV.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="05Feedback.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="05FeedbackBalls.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="05FeedbackBars.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="AlignCodaInterruptFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="AlignCodaMisalignFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="AlignmentRunning.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="CodaAlignFloating.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="CodaAlignSeated.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="FileTransferErrorFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="FileTransferReady.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="GraspWelcome.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="HMDStructureAssembly.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="IncompleteErrorFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="MaintenanceWelcome.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="MaxRetriesErrorFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="ObjectPositioningFloating.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="ObjectPositioningSeated.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="ProtocolFinished.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="ProtocolFinished.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="SetNoCodaReady.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="SetWithCodaReady.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepErrorFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepNormalFinish.status.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepReady.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepReadyFloating.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepReadySeated.prompt.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="StepRunning.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
+    <None Include="TaskFinished.instruction.html">
+      <Filter>HTML Output Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />
@@ -125,6 +274,9 @@
     </Filter>
     <Filter Include="Science">
       <UniqueIdentifier>{890e03ea-f746-47dd-9b7b-79b2f1cb10bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HTML Output Files">
+      <UniqueIdentifier>{8a85eb64-b6ed-46e6-8064-daec88574455}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

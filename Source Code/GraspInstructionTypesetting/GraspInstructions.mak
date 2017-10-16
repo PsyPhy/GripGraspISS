@@ -17,9 +17,12 @@ ALL_HTML=GraspWelcome.html \
 	HMDStructureAssembly.instruction.html \
 	StepReadySeated.prompt.html StepReadyFloating.prompt.html \
 	ObjectPositioningSeated.instruction.html ObjectPositioningFloating.instruction.html\
-	00StraightenHead.instruction.html 00StraightenHeadChest.instruction.html 00StraightenHeadHonor.instruction.html \
-	01StraightenHead.instruction.html 02TargetK.instruction.html 02TargetV.instruction.html \
-	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html 05Feedback.instruction.html \
+	00StraightenHead.instruction.html 00StraightenHeadChest.instruction.html \
+	00StraightenHeadCoda.instruction.html 00StraightenHeadHonor.instruction.html \
+	01StraightenHead.instruction.html 02TargetK.instruction.html \
+	02TargetV.instruction.html 02TargetVballs.instruction.html 02TargetVbars.instruction.html \
+	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html \
+	05Feedback.instruction.html 05FeedbackBalls.instruction.html 05FeedbackBars.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
 	TaskFinished.instruction.html ProtocolFinished.instruction.html ProtocolFinished.prompt.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
 	MaintenanceWelcome.instruction.html FileTransferReady.prompt.html \
@@ -28,7 +31,7 @@ ALL_HTML=GraspWelcome.html \
 
 # This is a list of images that are created here in the makefile.
 # There are other images that are needed to create the html files, but they sit statically in the Pictures subdirectory.
-VRIMAGES=Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
+VRIMAGES=Pictures/StraightenHeadCodaCentered.bmp Pictures/StraightenHeadCodaOffcenter.bmp Pictures/StraightenHeadChestCentered.bmp Pictures/StraightenHeadChestOffcenter.bmp Pictures/StraightenHeadGreen.bmp Pictures/StraightenHeadRed.bmp Pictures/StraightenHeadYellow.bmp Pictures/StraightenHeadCyan.bmp
 
 # This is going to install the instruction screens in the execution arboresence.
 # We delete the destination directory so that we eliminate any previous files that are no longer needed
@@ -49,6 +52,22 @@ SCHREENSHOTEXE=..\$(BUILDCONFIGURATION)\GraspScreenshots.exe
 # GraspScreenshots.exe must be executed while in the root directory. This command takes care
 # of moving there first. But you must then move the results to the target location.
 SCREENSHOTCMD=cd ..\.. & "Source Code\$(BUILDCONFIGURATION)\GraspScreenshots.exe" 
+
+Pictures\StraightenHeadCodaOffcenter.bmp: $(SCREENSHOTEXE)
+	$(SCREENSHOTCMD)  --NoRoom --Redress --size=512 --blue --Redress --OffCenter $(@F)
+	move "..\..\$(@F)" Pictures\
+
+Pictures\StraightenHeadCodaCentered.bmp: $(SCREENSHOTEXE)
+	$(SCREENSHOTCMD)  --NoRoom --Redress --size=512 --blue --Redress  $(@F)
+	move "..\..\$(@F)" Pictures\
+
+Pictures\StraightenHeadChestOffcenter.bmp: $(SCREENSHOTEXE)
+	$(SCREENSHOTCMD)  --NoRoom --Redress --size=512 --headError=10.0 --Redress --OffCenter $(@F)
+	move "..\..\$(@F)" Pictures\
+
+Pictures\StraightenHeadChestCentered.bmp: $(SCREENSHOTEXE)
+	$(SCREENSHOTCMD)  --NoRoom --Redress --size=512 --headError=0.0 --Redress  $(@F)
+	move "..\..\$(@F)" Pictures\
 
 Pictures\StraightenHeadGreen.bmp: $(SCREENSHOTEXE)
 	$(SCREENSHOTCMD)  --NoRoom --Redress --size=512 --headError=0.0  $(@F)

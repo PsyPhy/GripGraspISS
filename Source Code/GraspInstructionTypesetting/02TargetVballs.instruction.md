@@ -1,9 +1,9 @@
 HEADER( *__Step 2: Acquire the Target Orientation__* )
 
 Once your head is aligned with your body (i.e. when the HALO is bright green), 
-a set of parallel bars will appear at the end of the tunnel, representing the target orientation.
+a line of spheres will appear at the end of the tunnel, representing the target orientation.
 
-CENTER( IMAGE(Pictures/VtargetBars.jpg, 400) )
+CENTER( IMAGE(Pictures/VtargetBalls.jpg, 400) )
 
 Memorise the target orientation.
 

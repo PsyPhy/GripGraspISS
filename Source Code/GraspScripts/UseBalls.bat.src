@@ -1,0 +1,11 @@
+@echo off
+setlocal 
+
+copy /Y /V Instructions\02TargetVballs.instruction.html Instructions\02TargetV.instruction.html
+copy /Y /V Instructions\05FeedbackBalls.instruction.html Instructions\05Feedback.instruction.html
+del	/F /Q Bars.flg
+echo balls > Balls.flg
+
+
+
+

@@ -1,13 +1,15 @@
-HEADER( *__Step 0: Straighten Head__* )
+HEADER( *__Step 0: Straighten Head on Shoulders__* )
 
 You will observed a ball floating in a black sky through a halo.
 
-CENTER( IMAGE(Pictures/StraightenHeadChestOffcenter.bmp, 200)  )
+CENTER( IMAGE(Pictures/StraightenHeadChestOffcenter.bmp, 150)  )
 
-Look straight ahead with your head aligned with your body axis.
+Look straight ahead with your head aligned with your body axis.<br>
+Tilt your head in pitch and yaw until the ball turns green.<br>
+Tilt your head in roll until the halo turns bright green.
 
-Tilt the head in pitch and yaw to center the target ball.
+CENTER( IMAGE(Pictures/StraightenHeadChestCentered.bmp, 150)  )
 
-CENTER( IMAGE(Pictures/StraightenHeadChestCentered.bmp, 200)  )
+When the ball and halo are green, press the CBUTTON to start.
 
-When the target ball is centered and green, press the CBUTTON to start the trial.
+CENTER( IMAGE(Pictures/VRRemote.png, 180) )
