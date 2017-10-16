@@ -1,4 +1,4 @@
-@echo OFF
+@echo on
 setlocal
 
 REM 
@@ -21,7 +21,47 @@ set VERBOSE=
 REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy.
 pushd ..\..
 
-%TAR% --create %VERBOSE% --file=%ARCHIVE% Bdy/*
+%TAR% --create %VERBOSE% --file=%ARCHIVE% RunGRASP.bat
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+if NOT %1==Training goto :NOTTRAINING
+
+REM If we are creating a training version, then by default set for mirroring mode.
+echo Enabling mirroring.
+echo "Mirroring on." > Mirroring.flg
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Mirroring.flg
+
+REM Configure for EAC Codas and Marker Structures
+copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini 
+%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
+copy /Y Bdy\TrM\*.bdy Bdy
+
+goto :COMMON
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:NOTTRAINING
+
+if %1==Flight goto :FLIGHT
+if %1==Draft goto :FLIGHT
+
+goto :COMMON
+
+:FLIGHT
+
+REM Configure for FM2 Codas and FM Marker Structures
+copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini 
+%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
+copy /Y Bdy\FM\*.bdy Bdy
+
+goto :COMMON
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+:COMMON
+
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Bdy/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bmp/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Executables/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Utils/*
@@ -30,16 +70,15 @@ pushd ..\..
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% InitFiles/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
-%TAR% --append %VERBOSE% --file=%ARCHIVE% RunGRASP.bat
-%TAR% --append %VERBOSE% --file=%ARCHIVE% *.ini.*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Grasp.ini
 
-REM If we are creating a training version, then by default set for mirroring mode.
-if NOT %1==Training goto :NOMIRRORING
-echo Enabling mirroring.
-echo "Mirroring on." > Mirroring.flg
-%TAR% --append %VERBOSE% --file=%ARCHIVE% Mirroring.flg
-:NOMIRRORING
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+
+
+
+:FINISHED
 REM Keep a record of releases.
 echo %ARCHIVE% >> GripGraspReleases.log
 echo %ARCHIVE% >> GraspReleases.log

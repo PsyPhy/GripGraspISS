@@ -22,6 +22,8 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe \
 	..\$(BUILDCONFIGURATION)\StartOculus.exe \
 	..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe \
+	..\GraspScripts\UseBalls.bat.src \
+	..\GraspScripts\UseBars.bat.src \
 	GraspPacketsForSimulator.gpk \
 	LoadCodaCals.bat \
 	MakeRigidBodies.bat \
@@ -56,6 +58,8 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\StartOculus.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\MinimizeAll.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe $(DESTINATION)
+	copy ..\GraspScripts\UseBalls.bat.src $(DESTINATION)\UseBalls.bat
+	copy ..\GraspScripts\UseBars.bat.src $(DESTINATION)\UseBars.bat
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
 	copy LoadCodaCals.bat $(DESTINATION)
 	-copy ..\DLLs\*.dll $(DESTINATION)
