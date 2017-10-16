@@ -12,9 +12,9 @@ using namespace PsyPhy;
 //
 
 // Number of cycles that the head alignment has to be within tolerance to be considered good.
-const int GraspVR::secondsToBeGood = 0.75;
-const int GraspVR::handSecondsToBeGood = 3.0;
-const int GraspVR::secondsToBeBad = 2.0;
+int GraspVR::secondsToBeGood = 0.75;
+int GraspVR::handSecondsToBeGood = 3.0;
+int GraspVR::secondsToBeBad = 2.0;
 
 // The following are tolerances expressed in degrees.
 double	GraspVR::desiredHandRollTolerance = 5.0;

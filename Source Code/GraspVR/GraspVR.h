@@ -4,6 +4,8 @@
 
 #include "../OculusInterface/OculusInterface.h"
 
+#include "../Useful/ini.h"
+
 #include "GraspGLObjects.h"
 #include "GraspTrackers.h"
 #include "GraspDisplays.h"
@@ -32,9 +34,9 @@ namespace Grasp {
 	private:
 
 		// Count down of how many cycles that the orientation has been good.
-		static const int secondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
-		static const int secondsToBeBad; // Number of cycles that the head alignment has to be within tolerance to be considered good.
-		static const int handSecondsToBeGood; // Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static int secondsToBeGood;		// Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static int secondsToBeBad;		// Number of cycles that the head alignment has to be within tolerance to be considered good.
+		static int handSecondsToBeGood; // Number of cycles that the hand alignment has to be within tolerance to be considered good.
 		Timer	headGoodTimer;
 		Timer	headBadTimer;
 		Timer	handGoodTimer;
@@ -67,7 +69,7 @@ namespace Grasp {
 		static double chestOffset;
 		static double interpupillary_distance;
 
-		GraspVR( void )  : 
+		GraspVR( char *ini_filename = "Grasp.ini" )  : 
 
 			display( nullptr ),
 			trackers( nullptr ),
@@ -78,7 +80,20 @@ namespace Grasp {
 
 			conflictGain( 1.0 )
 
-			{}
+			{
+			if ( ini_filename ) {
+				fOutputDebugString( "GraspVR: Parsing %s.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fOutputDebugString( "GraspVR: Parsing error (%d).\n", error );
+			}
+		}
+		// Provide the means to read a .ini file to set configuration parameters.
+		// This is defined here as static because its address is sent as a callback to a parsing routine.
+		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			GraspVR *instance = (GraspVR *) which_instance;
+			if ( !strcmp( name, "IPD" ) && !strcmp( section, "GraspVR" ) ) instance->interpupillary_distance = atof( value );
+			return 1;
+		}
 
 		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs ) {
 				display = dsply;

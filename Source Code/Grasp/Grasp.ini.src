@@ -6,10 +6,22 @@
 
 vToolSize = 2.0
 vToolLocation = < 0.0 0.0 -500.0 >
+vkToolSize = 1.0
 hmdTransparency = 0.5
+
+targetBallRadius = 100.0
+;;; targetBallSpacing =
+targetBalls = 3
+targetBarRadius = 20.0
+;;; targetBarSpacing = 
+targetBars = 10
+useBars = true
+fingerBallRadius = 10.0
+fingerLength = 100.0
+
 
 
 [GraspVR]
 
-
+IPD = 60.0
 
