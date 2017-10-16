@@ -3,13 +3,58 @@
   <ItemGroup>
     <None Include="GraspDocumentation.mak" />
     <None Include="GraspGUIScreens.md" />
-    <None Include="VisualManualScenes.md" />
-    <None Include="ManualManualScenes.md" />
-    <None Include="VisualVisualScenes.md" />
     <None Include="GraspDocumentation.release.mak" />
     <None Include="GraspDocumentation.debug.mak" />
+    <None Include="GraspIntro.md" />
+    <None Include="ManualManualInstructions.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="VisualVisualScenes.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="ManualManualScenes.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="VisualManualInstructions.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="VisualManualScenes.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="VisualVisualInstructions.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="AllGraspScreensForReview.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="GraspGUIScreens.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="GraspIntro.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="GraspVRMessages.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="InstallFloating.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="InstallSeated.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
+    <None Include="ManualManualScenes.md" />
+    <None Include="VisualManualScenes.md" />
+    <None Include="VisualVisualScenes.md" />
+    <None Include="GeneralInstructions.pdf">
+      <Filter>PDF Output</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="PDF Output">
+      <UniqueIdentifier>{a2d8b9e3-120b-4c43-a85c-42c1df635933}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

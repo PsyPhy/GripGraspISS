@@ -21,7 +21,7 @@ is far from the desired posture, giving the subject an indication of which way t
 
 CENTER( IMAGE(leftFarRedress.bmp, SERIES) IMAGE(leftCloserRedress.bmp, SERIES) IMAGE(leftNearRedress.bmp, SERIES) IMAGE(goodRedress.bmp, SERIES) IMAGE(rightNearRedress.bmp, SERIES) IMAGE(rightCloserRedress.bmp, SERIES) IMAGE(rightFarRedress.bmp, SERIES))
 
-CENTER(Tilted to the Left ---------------------- Correct Orientation ---------------------- Tilted to the Right)
+CENTER(Tilted to the Left ------------------ Correct Orientation ------------------ Tilted to the Right)
 #endif
 
 The subject is then guided to place the hand at the target orientation.
@@ -43,7 +43,7 @@ of halo colors and direction arrows as described previously:
 
 CENTER( IMAGE(leftFarAlign.bmp, SERIES) IMAGE(leftCloserAlign.bmp, SERIES) IMAGE(leftNearAlign.bmp, SERIES) IMAGE(goodAlign.bmp, SERIES) IMAGE(rightNearAlign.bmp, SERIES) IMAGE(rightCloserAlign.bmp, SERIES) IMAGE(rightFarAlign.bmp, SERIES))
 
-CENTER(Tilted to the Left ---------------------- Correct Orientation ---------------------- Tilted to the Right)
+CENTER(Tilted to the Left ------------------ Correct Orientation ------------------ Tilted to the Right)
 
 Finally subject then reproduces the remembered target orientation with the hand. 
 The virtual tool, laser pointer and spherical target reappear, but this time the tool and laser pointer are constantly blue.
@@ -52,7 +52,7 @@ the hand to the remembered orientation without any further visual cues:
 
 CENTER( IMAGE(kTool.bmp, SINGLE) )
 
-The subject presses the Center Button on the Remote Control to validate the trial and move on to the next.
+The subject presses the Select Button on the VR Remote to validate the trial and move on to the next.
 If the block of trials is completed, a message is displayed to let the subject know:
 
 CENTER( IMAGE(blockCompleted.bmp, SINGLE))

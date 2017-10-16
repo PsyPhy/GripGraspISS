@@ -20,10 +20,10 @@ is far from the desired posture, giving the subject an indication of which way t
 
 CENTER( IMAGE(leftFarRedress.bmp, SERIES) IMAGE(leftCloserRedress.bmp, SERIES) IMAGE(leftNearRedress.bmp, SERIES) IMAGE(goodRedress.bmp, SERIES) IMAGE(rightNearRedress.bmp, SERIES) IMAGE(rightCloserRedress.bmp, SERIES) IMAGE(rightFarRedress.bmp, SERIES))
 
-CENTER(Tilted to the Left ---------------------- Correct Orientation ---------------------- Tilted to the Right)
+CENTER(Tilted to the Left ------------------ Correct Orientation ------------------ Tilted to the Right)
 #endif
 
-A target orientation is then presented to the subject in the form of a line of balls presented at the end of the tunnel:
+A target orientation is then presented to the subject in the form of a grill of parallel lines situated at the end of the tunnel:
 CENTER( IMAGE(vTarget.bmp, SINGLE) )
 
 The target disappears and the subject is prompted to tilt the head to a new orientation through the same system 
@@ -31,7 +31,7 @@ of halo colors and direction arrows as described previously:
 
 CENTER( IMAGE(leftFarAlign.bmp, SERIES) IMAGE(leftCloserAlign.bmp, SERIES) IMAGE(leftNearAlign.bmp, SERIES) IMAGE(goodAlign.bmp, SERIES) IMAGE(rightNearAlign.bmp, SERIES) IMAGE(rightCloserAlign.bmp, SERIES) IMAGE(rightFarAlign.bmp, SERIES))
 
-CENTER(Tilted to the Left ---------------------- Correct Orientation ---------------------- Tilted to the Right)
+CENTER(Tilted to the Left ------------------ Correct Orientation ------------------ Tilted to the Right)
 
 The subject then reproduces the remembered target orientation with the hand. 
 The subject sees a) an orange spherical target at the end of the tunnel, b) a virtual representation of a tool in the visual scene (a cylinder) 
@@ -41,7 +41,7 @@ laser pointer falls on the spherical target and then rotate the palm of the hand
 
 CENTER( IMAGE(kTool.bmp, SINGLE) )
 
-The subject presses the Center Button on the Remote Control to validate the trial and move on to the next.
+The subject presses the Select Button on the VR Remote  to validate the trial and move on to the next.
 If the block of trials is completed, a message is displayed to let the subject know:
 
 CENTER( IMAGE(blockCompleted.bmp, SINGLE))

@@ -5,4 +5,4 @@
 #define LEFT(x) <p style="text-align:left" > x </p>
 #define RIGHT(x) <p style="text-align:right" > x </p>
 #define SINGLE 200
-#define SERIES 150
+#define SERIES 120

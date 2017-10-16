@@ -11,13 +11,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="AllGraspScreensForReview.pdf" />
+    <None Include="GeneralInstructions.pdf" />
     <None Include="GraspDocumentation.debug.mak" />
     <None Include="GraspDocumentation.mak" />
     <None Include="GraspDocumentation.release.mak" />
     <None Include="GraspGUIScreens.md" />
+    <None Include="GraspGUIScreens.pdf" />
+    <None Include="GraspIntro.md" />
+    <None Include="GraspIntro.pdf" />
+    <None Include="GraspVRMessages.pdf" />
+    <None Include="InstallFloating.pdf" />
+    <None Include="InstallSeated.pdf" />
+    <None Include="ManualManualInstructions.pdf" />
     <None Include="ManualManualScenes.md" />
+    <None Include="ManualManualScenes.pdf" />
+    <None Include="VisualManualInstructions.pdf" />
     <None Include="VisualManualScenes.md" />
+    <None Include="VisualManualScenes.pdf" />
+    <None Include="VisualVisualInstructions.pdf" />
     <None Include="VisualVisualScenes.md" />
+    <None Include="VisualVisualScenes.pdf" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />

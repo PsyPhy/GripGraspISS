@@ -4,8 +4,8 @@ HEADER(__GRASP Visual Displays for Review__)
 The GRASP experiment is designed to probe for changes in eye-hand coordination on orbit.  
 Subjects (astronauts) perform a video game-like task using virtual reality that consists 
 of shooting a projectile out of a hand-held tool toward a target. 
-The target and the projectiles are presented as a line of sphere that can have 
-different orientations in space.
+The target is presented as a set of parallel lines that can have 
+different orientations in space and the tool and projectiles are presented as a line of spheres.
 Since the line of targets and projectiles are long and narrow, the tool must be placed
 at the same orientation as the target to achieve success. 
 
@@ -37,8 +37,7 @@ The subject also performs the experiment in two different postural conditions:
 - On orbit, subjects are either strapped in an upright, seated position with respect to the ISS module, 
 or for other trials, are maintained in a state of quasi-freefloating with no contact with the floor, walls or ceiling of the ISS module. 
 
-- On the ground subjects perform the experiment seated securely in a chair that may be upright 
-or may be tilted with respect to gravity.
+- On the ground subjects perform the experiment seated upright in a chair or lying supine with respect to gravity.
 
 The details of the experiment design can be found elsewhere (e.g. the ESR). 
 In this document we present the different visual displays that subjects and operators will see when performing the GRASP experiment.

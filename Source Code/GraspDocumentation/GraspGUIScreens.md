@@ -32,19 +32,6 @@ CENTER( IMAGE(GUIScreenshots\GraspTrackerDaemon.png, PROMPTSIZE) )
 
 should appear for ~10 sec and then dissapear (collapse to task bar).
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
 Finally, the GRASP main menu should appear:
 
 CENTER( IMAGE(GUIScreenshots\Login.png, GUISIZE) )
@@ -61,8 +48,17 @@ The first task is automatically selected. An example is shown here:
 
 CENTER( IMAGE(GUIScreenshots\StartTask.png, GUISIZE) )
 
-<br>
-<br>
+Note that at any time the subject can press the 'Status' button to bring up a screen showing the 
+visibility of the markers on various marker structures and a test window showing the status of the VR
+hardware.
+
+CENTER( IMAGE(GUIScreenshots\StatusDisplay.png, GUISIZE) )
+
+The subject can also press the 'History' button to display a list of the tasks that have been
+carried out on that day, with start and end time and an indication of the completion code for 
+each task.
+
+CENTER( IMAGE(GUIScreenshots\HistoryDisplay.png, GUISIZE) )
 
 SUBHEADER( __*Executing Tasks*__ )
 

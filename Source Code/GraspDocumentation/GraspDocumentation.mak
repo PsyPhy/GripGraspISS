@@ -28,7 +28,7 @@ SCREENSHOTEXE="Source Code\"$(BUILDCONFIGURATION)"\GraspScreenshots.exe" --size=
 
 ### A list of the documents that we want to produce.
 DOCUMENTS=AllGraspScreensForReview.pdf  \
-	GraspGUIScreens.pdf \
+	GraspGUIScreens.pdf GeneralInstructions.pdf\
 	InstallSeated.pdf InstallFloating.pdf ManualManualInstructions.pdf VisualManualInstructions.pdf VisualVisualInstructions.pdf \
 	VisualVisualScenes.pdf VisualManualScenes.pdf  ManualManualScenes.pdf GraspIntro.pdf
 
@@ -57,7 +57,7 @@ ready.bmp:
 	move ..\..\$@ .
 
 upright.bmp: 
-	cd ..\.. & $(SCREENSHOTEXE) --shoulders --NoRoom  $@
+	cd ..\.. & $(SCREENSHOTEXE) --NoRoom --headError=0.0 --Redress  $@
 	move ..\..\$@ .
 	
 vrCompleted.bmp:  
@@ -209,11 +209,11 @@ GraspAllStatusScreens.pdf: $(INSTRUCTIONS)\*.status.html
 
 INSTALL_SEATED = $(INSTRUCTIONS)\CodaAlignSeated.prompt.html $(INSTRUCTIONS)\AlignmentRunning.instruction.html   $(INSTRUCTIONS)\HMDStructureAssembly.instruction.html  $(INSTRUCTIONS)\ObjectPositioningSeated.instruction.html  
 InstallSeated.pdf: $(INSTALL_SEATED) 
-	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Install Seated Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
+	$(BUILDTOOLS)\wkhtmltopdf.exe   --page-height 180 --page-width 105  --default-header --header-left "Install Seated Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
 
 INSTALL_FLOATING = $(INSTRUCTIONS)\CodaAlignFloating.prompt.html  $(INSTRUCTIONS)\AlignmentRunning.instruction.html   $(INSTRUCTIONS)\HMDStructureAssembly.instruction.html  $(INSTRUCTIONS)\ObjectPositioningSeated.instruction.html 
 InstallFloating.pdf: $(INSTALL_FLOATING) 
-	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Install Floating Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
+	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-height 180 --page-width 105  --default-header --header-left "Install Floating Instruction Sequence" --header-font-size 8 --header-spacing 2 --margin-top 10  --margin-bottom 10 $(**) $@	
 
 MM =  $(INSTRUCTIONS)\00IntroK-K.instruction.html  \
 	$(INSTRUCTIONS)\00StraightenHead.instruction.html $(INSTRUCTIONS)\01StraightenHead.instruction.html  \
@@ -221,7 +221,7 @@ MM =  $(INSTRUCTIONS)\00IntroK-K.instruction.html  \
 	$(INSTRUCTIONS)\04RespondK.instruction.html  $(INSTRUCTIONS)\05Feedback.instruction.html 
 
 ManualManualInstructions.pdf: $(MM) 
-	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Manual-Manual Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
+	$(BUILDTOOLS)\wkhtmltopdf.exe --page-height 180 --page-width 105  --default-header --header-left "Manual-Manual Instruction Sequence" --header-font-size 8 --header-spacing 2 --margin-top 10  --margin-bottom 10 $(**) $@	
 
 VM = $(INSTRUCTIONS)\00IntroV-K.instruction.html  \
 	$(INSTRUCTIONS)\00StraightenHead.instruction.html $(INSTRUCTIONS)\01StraightenHead.instruction.html  \
@@ -229,7 +229,7 @@ VM = $(INSTRUCTIONS)\00IntroV-K.instruction.html  \
 	 $(INSTRUCTIONS)\04RespondK.instruction.html  $(INSTRUCTIONS)\05Feedback.instruction.html 
 
 VisualManualInstructions.pdf: $(VM) 
-	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Visual-Manual Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
+	$(BUILDTOOLS)\wkhtmltopdf.exe --page-height 180 --page-width 105   --default-header --header-left "Visual-Manual Instruction Sequence" --header-font-size 8 --header-spacing 2 --margin-top 10  --margin-bottom 10 $(**) $@	
 
 VV = $(INSTRUCTIONS)\00IntroV-V.instruction.html  \
 	$(INSTRUCTIONS)\00StraightenHead.instruction.html $(INSTRUCTIONS)\01StraightenHead.instruction.html  \
@@ -237,7 +237,33 @@ VV = $(INSTRUCTIONS)\00IntroV-V.instruction.html  \
 	 $(INSTRUCTIONS)\04RespondV.instruction.html  $(INSTRUCTIONS)\05Feedback.instruction.html 
 
 VisualVisualInstructions.pdf: $(VV) 
-	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-size A6  --default-header --header-left "Visual-Visual Instruction Sequence" --header-font-size 8 --header-spacing 5 --margin-top 15  --margin-bottom 10 $(**) $@	
+	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-height 180 --page-width 105  --default-header --header-left "Visual-Visual Instruction Sequence" --header-font-size 8 --header-spacing 2 --margin-top 10  --margin-bottom 10 $(**) $@	
+
+II = $(INSTRUCTIONS)\StepReady.prompt.html  \
+		$(INSTRUCTIONS)\StepReadySeated.prompt.html \
+		$(INSTRUCTIONS)\StepReadyFloating.prompt.html  \
+		$(INSTRUCTIONS)\StepRunning.instruction.html  \
+		$(INSTRUCTIONS)\StepNormalFinish.status.html  \
+		$(INSTRUCTIONS)\StepErrorFinish.status.html  \
+		$(INSTRUCTIONS)\CodaAlignSeated.prompt.html  \
+		$(INSTRUCTIONS)\CodaAlignFloating.prompt.html  \
+		$(INSTRUCTIONS)\AlignCodaInterruptFinish.status.html  \
+		$(INSTRUCTIONS)\AlignCodaMisalignFinish.status.html  \
+		$(INSTRUCTIONS)\HMDStructureAssembly.instruction.html  \
+		$(INSTRUCTIONS)\ObjectPositioningSeated.instruction.html  \
+		$(INSTRUCTIONS)\ObjectPositioningFloating.instruction.html  \
+		$(INSTRUCTIONS)\FileTransferErrorFinish.status.html  \
+		$(INSTRUCTIONS)\IncompleteErrorFinish.status.html  \
+		$(INSTRUCTIONS)\MaxRetriesErrorFinish.status.html  \
+		$(INSTRUCTIONS)\SetNoCodaReady.prompt.html  \
+		$(INSTRUCTIONS)\SetWithCodaReady.prompt.html  \
+		$(INSTRUCTIONS)\FileTransferReady.prompt.html  \
+		$(INSTRUCTIONS)\TaskFinished.instruction.html  \
+		$(INSTRUCTIONS)\ProtocolFinished.instruction.html  
+
+GeneralInstructions.pdf: $(II) 
+	echo this
+	$(BUILDTOOLS)\wkhtmltopdf.exe  --page-height 180 --page-width 105  --default-header --header-left "Instructions and Status Reports" --header-font-size 8 --header-spacing 2 --margin-top 10  --margin-bottom 10 $(**) $@	
 
 ### GraspVRMessages.pdf is created by the GraspBMP project. We just go and get the output.
 GraspVRMessages.pdf: $(VRMESSAGES)\GraspVRMessages.pdf
@@ -252,7 +278,7 @@ COMBINED = GraspIntro.pdf GraspGUIScreens.pdf \
 	VisualVisualInstructions.pdf VisualVisualScenes.pdf \
 	ManualManualInstructions.pdf ManualManualScenes.pdf \
 	VisualManualInstructions.pdf VisualManualScenes.pdf \
-	GraspVRMessages.pdf
+	GeneralInstructions.pdf GraspVRMessages.pdf
 
 AllGraspScreensForReview.pdf: $(COMBINED) $(VRMESSAGES)\GraspVRMessages.pdf 
 	 $(BUILDTOOLS)\pdftk.exe $(**) cat output $@
