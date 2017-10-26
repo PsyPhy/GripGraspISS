@@ -27,7 +27,7 @@
     <None Include="ReleaseGrasp.bat" />
     <None Include="ReleaseGrasp.debug.mak" />
     <None Include="ReleaseGrasp.draft.mak" />
-    <None Include="ReleaseGrasp.release.mak" />
+    <None Include="ReleaseGrasp.flight.mak" />
     <None Include="ReleaseGrasp.test.mak" />
     <None Include="ReleaseGrasp.training.mak" />
   </ItemGroup>

@@ -34,7 +34,6 @@ echo "Mirroring on." > Mirroring.flg
 
 REM Configure for EAC Codas and Marker Structures
 copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini 
-%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
 copy /Y Bdy\TrM\*.bdy Bdy
 
 goto :COMMON
@@ -46,14 +45,18 @@ goto :COMMON
 if %1==Flight goto :FLIGHT
 if %1==Draft goto :FLIGHT
 
+REM Not Training and not Flight-like
+REM Releasing local configuration (%1)
 goto :COMMON
 
 :FLIGHT
 
+REM Configure for Flight-like (%1)
 REM Configure for FM2 Codas and FM Marker Structures
 copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini 
-%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
 copy /Y Bdy\FM\*.bdy Bdy
+echo chest > ChestAlignGaze.flg
+%TAR% --append %VERBOSE% --file=%ARCHIVE% ChestAlignGaze.flg
 
 goto :COMMON
 
@@ -70,13 +73,10 @@ goto :COMMON
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Sequences/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% InitFiles/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
+%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Grasp.ini
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-
-
 
 :FINISHED
 REM Keep a record of releases.

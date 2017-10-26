@@ -1,0 +1,2 @@
+default:
+	ReleaseGrasp.bat Flight
