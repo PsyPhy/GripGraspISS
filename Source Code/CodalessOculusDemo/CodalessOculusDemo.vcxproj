@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\GraspOculusSDKv1.17\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj">
+      <Project>{ea50e705-5113-49e5-b105-2512edc8ddc6}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\OculusInterface\OculusInterface.vcxproj">
       <Project>{44ec28d5-22d2-414a-9f40-1bf29ef832d9}</Project>
     </ProjectReference>
