@@ -547,6 +547,26 @@ void GraspDesktop::ShowLogon( void ) {
 	instructionViewer->Navigate( instructionsDirectory + "GraspWelcome.html" );
 }
 
+void GraspDesktop::PrimeHistory( void ) {
+
+		SYSTEMTIME st;
+
+		// Append a record of what we are about to do to the log file.
+		char *log_filename = (char*)(void*)Marshal::StringToHGlobalAnsi( resultsDirectory + "GraspGUI.log" ).ToPointer();
+		FILE *log_fp;
+		log_fp = fopen( log_filename, "a+" );
+		if ( !log_fp ) fAbortMessage( "GraspGUI", "Error opening %s for appending action record.", log_filename );
+		GetSystemTime( &st );
+		fprintf( log_fp, "\n%04d.%02d.%02d %02d:%02d:%02d", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		// The log file is written in a human readable form, so that it can be displayed 
+		//  as is in the history text box when the 'History' button on the GUI is pressed.
+		// Hence the '|' characters and extra spaces in the format string.
+		fprintf( log_fp, " Grasp Initialized." );
+		fclose( log_fp );
+
+}
+
+
 void GraspDesktop::ShowHistory( void ) {
 
 		// Read the log file and show it to the user.

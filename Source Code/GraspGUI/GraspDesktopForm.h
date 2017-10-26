@@ -1230,6 +1230,7 @@ namespace GraspGUI {
 		void ShowStep( void );
 		void ShowLogon( void );
 		void ShowHistory( void );
+		void PrimeHistory( void );
 		void nextButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void skipButton_Click(System::Object^  sender, System::EventArgs^  e);
 		void previousButton_Click(System::Object^  sender, System::EventArgs^  e);
@@ -1261,6 +1262,7 @@ namespace GraspGUI {
 			// Connect to DEX for telemetry of housekeeping info.
 			ConnectToDEX();
 			InitializeForm();
+			PrimeHistory();
 			ReadPastActions();
 		}
 
