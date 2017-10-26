@@ -1,6 +1,6 @@
 #
 # Parameters for a sequence of GRASP trials.
-# This set is used for training.
+# This set is used for testing.
 # targetHeadTilt; targetOrientation; responseHeadTilt; conflictGain; feedback (0 or 1)
 #
 0.0; -30.0;  0.0; 1.0; 1

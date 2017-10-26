@@ -55,10 +55,13 @@ const Vector3 GraspGLObjects::head_shape = { 100.0, 150.0, 125.0 };
 // Torso shape is a slab with width, height and thickness.
 const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
 
+// This is where spinning prompts go.
+double GraspGLObjects::prompt_radius = 60.0;
+Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
+
 // We may want to use a circular arrow to indicate to the subject which
-//  way to tilt the head, in addition to color cues.
-const double GraspGLObjects::prompt_radius = 60.0;
-const Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
+//  way to tilt the head, in addition to color cues. This is where it is show wrt the eyes.
+Vector3 GraspGLObjects::arrow_location = { 0.0, 0.0, -100.0 };
 double GraspGLObjects::outer_visor_radius = 320.0;
 double GraspGLObjects::inner_visor_radius = 250.0;
 
@@ -79,10 +82,10 @@ double GraspGLObjects::target_bar_radius = 20.0;					//Tagliabue
 double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
 bool GraspGLObjects::useBars = true;
 
-const Vector3 GraspGLObjects::end_of_tunnel = { 0.0, 0.0, - room_length / 2.0 };
-const Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
+Vector3 GraspGLObjects::end_of_tunnel = { 0.0, 0.0, - room_length / 2.0 };
+Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
 // Visual target is placed a little bit closer to the subject than the end of the tunnel.
-const Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - ( room_length / 2.0 - 500.0 ) };
+Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - ( room_length / 2.0 - 500.0 ) };
 
 double GraspGLObjects::finger_ball_radius = 10.0;
 double GraspGLObjects::finger_length = 100.0;
@@ -431,7 +434,7 @@ Yoke *GraspGLObjects::CreateHUD( void ) {
 	yoke->AddComponent( glasses );
 
 	// An arrow that shows which way to tilt the head. It also moves as if in a heads up display.
-	headTiltPrompt->SetOffset( 0.0, 0.0, -100.0 );
+	headTiltPrompt->SetOffset( arrow_location );
 	yoke->AddComponent( headTiltPrompt );
 
 	// Similarly, the laser pointer attached to the head moves with it.
