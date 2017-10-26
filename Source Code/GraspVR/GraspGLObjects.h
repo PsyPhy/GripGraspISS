@@ -104,8 +104,8 @@ namespace Grasp {
 		static Vector3 sky_location;
 		static Vector3 end_of_tunnel;
 		static Vector3 arrow_location;
-		static double arrow_size;
-		static double arrow_radius;
+		static double hand_arrow_radius;
+		static double head_arrow_radius;
 		static Vector3 prompt_location;
 		static double prompt_radius;
 		static double inner_visor_radius;
@@ -125,6 +125,7 @@ namespace Grasp {
 		static double target_bar_radius;	//Tagliabue
 		static double target_bar_spacing;	//Tagliabue
 		static double finger_length;
+		static double laser_distance;
 
 		static double hmdTransparency;
 
@@ -322,7 +323,7 @@ namespace Grasp {
 		Assembly *CreateOrientationTarget( void );
 		Assembly *CreatePositionOnlyTarget( void );
 		Assembly *CreateResponse( void );
-		Assembly *CreateTiltPrompt( void );
+		Assembly *CreateRollPrompt( double size );
 		Assembly *CreateSuccessIndicator( void );
 		Assembly *CreateIndicator( Texture *texture, double hole_radius = 0.0 );
 		Assembly *CreateRoom( void );
@@ -357,8 +358,8 @@ namespace Grasp {
 			if ( !strcmp( name, "vkToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->vk_tool_size = atof( value );
 			if ( !strcmp( name, "vToolLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->v_tool_location[X], &instance->v_tool_location[Y], &instance->v_tool_location[Z] );
 			if ( !strcmp( name, "arrowLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->arrow_location[X], &instance->arrow_location[Y], &instance->arrow_location[Z] );
-			if ( !strcmp( name, "arrowSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->arrow_size = atof( value );
-			if ( !strcmp( name, "arrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->arrow_radius = atof( value );
+			if ( !strcmp( name, "headArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->head_arrow_radius = atof( value );
+			if ( !strcmp( name, "handArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hand_arrow_radius = atof( value );
 			if ( !strcmp( name, "targetBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_radius = atof( value );
 			if ( !strcmp( name, "targetBallSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_spacing = atof( value );
 			if ( !strcmp( name, "targetBalls" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_balls = atoi( value );
@@ -368,6 +369,7 @@ namespace Grasp {
 			if ( !strcmp( name, "useBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->useBars = (NULL != strstr( value, "true" ));
 			if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
 			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
+			if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
 			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
 			return 1;
 		}

@@ -62,8 +62,8 @@ Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
 // We may want to use a circular arrow to indicate to the subject which
 //  way to tilt the head, in addition to color cues. This is where it is show wrt the eyes.
 Vector3 GraspGLObjects::arrow_location = { 0.0, 0.0, -100.0 };
-double GraspGLObjects::arrow_radius = 60.0;
-double GraspGLObjects::arrow_size = 0.85;
+double GraspGLObjects::head_arrow_radius = 250.0;
+double GraspGLObjects::hand_arrow_radius = 60.0;
 double GraspGLObjects::outer_visor_radius = 320.0;
 double GraspGLObjects::inner_visor_radius = 250.0;
 
@@ -85,12 +85,13 @@ double GraspGLObjects::target_bar_spacing = 2.0 * room_radius / 20;	//Tagliabue
 bool GraspGLObjects::useBars = true;
 
 Vector3 GraspGLObjects::end_of_tunnel = { 0.0, 0.0, - room_length / 2.0 };
-Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 };
+Vector3 GraspGLObjects::sky_location = { 0.0, 0.0, - room_length / 2.0 - 1000.0 };
 // Visual target is placed a little bit closer to the subject than the end of the tunnel.
 Vector3 GraspGLObjects::target_location = { 0.0, 0.0, - ( room_length / 2.0 - 500.0 ) };
 
 double GraspGLObjects::finger_ball_radius = 10.0;
 double GraspGLObjects::finger_length = 100.0;
+double GraspGLObjects::laser_distance = room_length / 2.0 - room_radius - 500.0;
 
 // Make things attached to the heads-up display (HUD) semi-transparent.
 double GraspGLObjects::hmdTransparency = 0.5;
@@ -135,7 +136,7 @@ void GraspGLObjects::SetLighting( void ) {
 
 void GraspGLObjects::CreateTextures( void ) {
 
-	sky_texture = new Texture( sky_texture_bitmap, 2000, 2000 );
+	sky_texture = new Texture( sky_texture_bitmap, 4000, 4000 );
 	// The wall texture is 256 pixels wide by 512 high.
 	// We map this onto a patch that is 2 meters wide by 4 meter high in the virtual scene.
 	wall_texture = new Texture( wall_texture_bitmap, 1000, 2000 );
@@ -146,7 +147,7 @@ void GraspGLObjects::CreateTextures( void ) {
 
 Assembly *GraspGLObjects::CreateStarrySky( void ) {
 	Assembly *sky = new Assembly();
-	Patch *patch = new Patch( room_radius * 2.2, room_radius * 2.2 );
+	Patch *patch = new Patch( room_radius * 4.4, room_radius * 4.4 );
 	patch->SetTexture( sky_texture );
 	sky->AddComponent( patch );
 	sky->SetColor(WHITE);
@@ -334,7 +335,7 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 	Assembly *laserPointer = new Assembly();
 	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
-	sphere->SetPosition( 0.0, 0.0, -( room_length / 2.0 - 1000.0 ) );
+	sphere->SetPosition( 0.0, 0.0, - laser_distance );
 	laserPointer->AddComponent( sphere );
 	// Laser is off by default.
 	laserPointer->Disable();
@@ -343,7 +344,7 @@ Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 
 FuzzyPointer *GraspGLObjects::CreateFuzzyLaserPointer( void ) {
 	FuzzyPointer *laserPointer = new FuzzyPointer();
-	laserPointer->SetOffset( 0.0, 0.0, - ( room_length / 2.0 - 2.0 * room_radius ) );
+	laserPointer->SetOffset( 0.0, 0.0, - laser_distance );
 	laserPointer->SetColor( 1.0, 0.0, 1.0, 1.0 );
 	// Laser is off by default.
 	laserPointer->Disable();
@@ -360,24 +361,25 @@ Assembly *GraspGLObjects::CreateZone( void ) {
 	return assembly;
 }
 
-Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
+Assembly *GraspGLObjects::CreateRollPrompt( double radius ) {
 
 	Assembly *prompt = new Assembly();
 
 	// Angular extent of the circular arrow, where 1.0 = 360°.
-	double guage =  arrow_radius / 10.0;
+	double guage =  radius / 10.0;
+	double arc = 0.85;
 
-	Annulus *donut = new Annulus( arrow_radius, guage, arrow_size, curve_facets, curve_facets );
-	donut->SetAttitude( 0.0, 90.0, 0.0 );
+	Annulus *donut = new Annulus( radius, guage, arc, curve_facets, curve_facets );
+	donut->SetAttitude( 0.0, - 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
-	TaperedAnnulus *tip = new TaperedAnnulus( arrow_radius, arrow_radius / 3.0, 1.0, 0.05, curve_facets );
+	TaperedAnnulus *tip = new TaperedAnnulus( radius, radius / 3.0, 1.0, 0.05, curve_facets );
 	tip->SetAttitude( 0.0, 90.0, 0.0 );
-	tip->SetOrientation( - arrow_size * 360.0, 0.0, 0.0 );
+	tip->SetOrientation( - radius * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );
 
 	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
-	base->SetPosition( arrow_radius, 0.0, 0.0 );
+	base->SetPosition( radius, 0.0, 0.0 );
 	prompt->AddComponent( base );
 	prompt->SetColor( 0.5, 0.5, 0.5, 0.5 );
 
@@ -585,10 +587,10 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	room->AddComponent( response );
 	room->AddComponent( successIndicator );
 
-	headTiltPrompt = CreateTiltPrompt();
+	headTiltPrompt = CreateRollPrompt( head_arrow_radius );
 	headTiltPrompt->SetColor( 0.5, 0.0, 0.4 );
 
-	handRollPrompt = CreateTiltPrompt();
+	handRollPrompt = CreateRollPrompt( hand_arrow_radius );
 	handRollPrompt->SetColor( 0.0, 0.0, 0.4 );
 	handRollPrompt->SetOffset( 0.0, 0.0, - finger_length / 2.0 );
 
@@ -698,8 +700,8 @@ void GraspGLObjects::DrawVR( void ) {
 
 	// Draw some other objects in matte.
 	glUsefulMatteMaterial();
-
 	handLaser->Draw();
+
 	headTiltPrompt->Draw();
 	handRollPrompt->Draw();
 	spinners->Draw();
