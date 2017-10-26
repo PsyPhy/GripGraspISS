@@ -19,8 +19,9 @@ useBars = true
 fingerBallRadius = 10.0
 fingerLength = 100.0
 
-arrowLocation = < 0.0 0.0 -100.0 >
-
+arrowLocation = < 0.0 0.0 -600.0 >
+arrowRadius = 125.0;
+arrowSize = 0.85;
 
 [GraspVR]
 

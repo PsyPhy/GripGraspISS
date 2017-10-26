@@ -62,6 +62,8 @@ Vector3 GraspGLObjects::prompt_location = { 0.0, 0.0, -750.0 };
 // We may want to use a circular arrow to indicate to the subject which
 //  way to tilt the head, in addition to color cues. This is where it is show wrt the eyes.
 Vector3 GraspGLObjects::arrow_location = { 0.0, 0.0, -100.0 };
+double GraspGLObjects::arrow_radius = 60.0;
+double GraspGLObjects::arrow_size = 0.85;
 double GraspGLObjects::outer_visor_radius = 320.0;
 double GraspGLObjects::inner_visor_radius = 250.0;
 
@@ -363,20 +365,19 @@ Assembly *GraspGLObjects::CreateTiltPrompt( void ) {
 	Assembly *prompt = new Assembly();
 
 	// Angular extent of the circular arrow, where 1.0 = 360°.
-	static double size = 0.85;
-	double guage =  prompt_radius / 10.0;
+	double guage =  arrow_radius / 10.0;
 
-	Annulus *donut = new Annulus( prompt_radius, guage, size, curve_facets, curve_facets );
+	Annulus *donut = new Annulus( arrow_radius, guage, arrow_size, curve_facets, curve_facets );
 	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
-	TaperedAnnulus *tip = new TaperedAnnulus( prompt_radius, prompt_radius / 3.0, 1.0, 0.05, curve_facets );
+	TaperedAnnulus *tip = new TaperedAnnulus( arrow_radius, arrow_radius / 3.0, 1.0, 0.05, curve_facets );
 	tip->SetAttitude( 0.0, 90.0, 0.0 );
-	tip->SetOrientation( - size * 360.0, 0.0, 0.0 );
+	tip->SetOrientation( - arrow_size * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );
 
 	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
-	base->SetPosition( prompt_radius, 0.0, 0.0 );
+	base->SetPosition( arrow_radius, 0.0, 0.0 );
 	prompt->AddComponent( base );
 	prompt->SetColor( 0.5, 0.5, 0.5, 0.5 );
 
