@@ -29,5 +29,7 @@ handArrowRadius = 60.0
 IPD = 50.0
 armRaisedThreshold = 0.9
 straightAheadThreshold = 0.995
+viewpointOffset = 100
+chestOffset = 100
 
 

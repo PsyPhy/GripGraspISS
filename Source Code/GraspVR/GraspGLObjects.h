@@ -357,7 +357,7 @@ namespace Grasp {
 			if ( !strcmp( name, "vToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->v_tool_size = atof( value );
 			if ( !strcmp( name, "vkToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->vk_tool_size = atof( value );
 			if ( !strcmp( name, "vToolLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->v_tool_location[X], &instance->v_tool_location[Y], &instance->v_tool_location[Z] );
-			if ( !strcmp( name, "arrowLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->arrow_location[X], &instance->arrow_location[Y], &instance->arrow_location[Z] );
+			if ( !strcmp( name, "headArrowLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->arrow_location[X], &instance->arrow_location[Y], &instance->arrow_location[Z] );
 			if ( !strcmp( name, "headArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->head_arrow_radius = atof( value );
 			if ( !strcmp( name, "handArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hand_arrow_radius = atof( value );
 			if ( !strcmp( name, "targetBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_radius = atof( value );

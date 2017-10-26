@@ -67,6 +67,7 @@ namespace Grasp {
 
 		double conflictGain;
 		static double chestOffset;
+		static double viewpointOffset;
 		static double interpupillary_distance;
 
 		GraspVR( char *ini_filename = "Grasp.ini" )  : 
@@ -92,6 +93,8 @@ namespace Grasp {
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			GraspVR *instance = (GraspVR *) which_instance;
 			if ( !strcmp( name, "IPD" ) && !strcmp( section, "GraspVR" ) ) instance->interpupillary_distance = atof( value );
+			if ( !strcmp( name, "chestOffset" ) && !strcmp( section, "GraspVR" ) ) instance->chestOffset = atof( value );
+			if ( !strcmp( name, "viewpointOffset" ) && !strcmp( section, "GraspVR" ) ) instance->viewpointOffset = atof( value );
 			if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
 			if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
 			return 1;

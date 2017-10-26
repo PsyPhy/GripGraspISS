@@ -32,6 +32,8 @@ double GraspVR::interpupillary_distance = 60.0;
 //  in depth when the subject is looking level. Value is in mm. Positive if the
 //  chest markers are in front of the HMD, negative if behind.
 double GraspVR::chestOffset = 0.0;
+// Define how much the eyes are behind the HMD tracker.
+double GraspVR::viewpointOffset = 100.0;
 
 double GraspVR::near_clipping = 1.0;
 double GraspVR::far_clipping = 5500.0;
@@ -69,7 +71,7 @@ void GraspVR::UpdateTrackers( void ) {
 		// I shift the position backward.
 		Vector3 shift;
 		RotateVector( shift, headPose.pose.orientation, kVector );
-		ScaleVector( shift, shift, 100.0 );
+		ScaleVector( shift, shift, viewpointOffset );
 		AddVectors( headPose.pose.position, headPose.pose.position, shift );
 
 		// Set the viewpoint according to the measured pose.
