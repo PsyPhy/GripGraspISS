@@ -34,7 +34,7 @@ double GraspVR::interpupillary_distance = 60.0;
 double GraspVR::chestOffset = 0.0;
 
 double GraspVR::near_clipping = 1.0;
-double GraspVR::far_clipping = 5000.0;
+double GraspVR::far_clipping = 5500.0;
 
 double GraspVR::projectile_speed = 20.0;
 double GraspVR::prompt_spin_speed = - 0.75;
@@ -65,6 +65,13 @@ void GraspVR::UpdateTrackers( void ) {
 	else {
 		// Transform to the local reference frame centered on the initial HMD pose.
 		TransformPose( headPose.pose, localAlignment, headPose.pose );
+
+		// I shift the position backward.
+		Vector3 shift;
+		RotateVector( shift, headPose.pose.orientation, kVector );
+		ScaleVector( shift, shift, 100.0 );
+		AddVectors( headPose.pose.position, headPose.pose.position, shift );
+
 		// Set the viewpoint according to the measured pose.
 		viewpoint->SetPose( headPose.pose );
 		// Place objects that move with the heads up display.
@@ -469,10 +476,31 @@ AlignmentStatus GraspVR::HandleHeadOnShoulders( bool use_arrow ) {
 
 ArmStatus GraspVR::HandleHandElevation( void ) {
 
+
+#if 1
 	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
 	Vector3 relativeHandPosition;
-	SubtractVectors( relativeHandPosition,  renderer->hmd->position, renderer->hand->position );
+	SubtractVectors( relativeHandPosition, renderer->hand->position, renderer->hmd->position );
+	double z = relativeHandPosition[Z];
+	relativeHandPosition[Z] = 0;
+	if ( z > -100.0 || VectorNorm( relativeHandPosition ) >= renderer->inner_visor_radius ) {
+		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
+		renderer->SetHandColor( renderer->vkTool, false );
+		return( lowered );
+	}
+	else {
+		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );	// kTool is always blue regardless of the orientation.
+//		renderer->kkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandleHandOrientation.
+		renderer->SetHandColor( renderer->vkTool, true );
+		return( raised );
+	}
+#else
+	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition, renderer->hmd->position, renderer->hand->position );
 	NormalizeVector( relativeHandPosition );
+	
 	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
 		renderer->kTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
 		renderer->kkTool->SetColor( 0.0, 0.0, 0.0, 0.85 );
@@ -486,6 +514,7 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 		return( raised );
 	}
 
+#endif
 }
 
 double GraspVR::SetDesiredHandRoll( double desired_roll_angle, double tolerance ) {
@@ -509,6 +538,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 	// Check if the hand is raised properly. If not, it is shown in grey.
 	if ( lowered == HandleHandElevation() ) {
+		renderer->handRollPrompt->Disable();
 		TimerSet( handGoodTimer, handSecondsToBeGood );
 		TimerSet( handBadTimer, 0.0 );
 		return( misaligned );
@@ -564,14 +594,24 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 void GraspVR::HandleLasers( void ) {
 
-	// Check if the hand is raised in front of the eyes. 
+// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
+#if 1
+	Vector3 relativeHandPosition;
+	SubtractVectors( relativeHandPosition, renderer->hand->position, renderer->hmd->position );
+	double z = relativeHandPosition[Z];
+	relativeHandPosition[Z] = 0;
+	if ( z > -100.0 || VectorNorm( relativeHandPosition ) >= renderer->inner_visor_radius ) {
+#else
 	Vector3 relativeHandPosition;
 	SubtractVectors( relativeHandPosition,  renderer->hmd->position, renderer->hand->position );
 	NormalizeVector( relativeHandPosition );
 	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
+#endif
 
 		// Lasers should be visible only if the hand is in the field of view.
+
 		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
+		renderer->handLaser->SetOffset( 0.0, 0.0, renderer->laser_distance );
 
 	}
 	else {
@@ -580,6 +620,7 @@ void GraspVR::HandleLasers( void ) {
 		// This does not mean that they will be drawn. They are only drawn 
 		//  if the corresponding hand is enabled.
 		renderer->handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
+		renderer->handLaser->SetOffset( 0.0, 0.0, - renderer->laser_distance );
 
 		// Lasers in the hand should become diffuse if they do not point down the tunnel.
 		Vector3 tunnel_axis, hand_axis;

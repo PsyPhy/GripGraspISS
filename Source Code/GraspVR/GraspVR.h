@@ -92,6 +92,8 @@ namespace Grasp {
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			GraspVR *instance = (GraspVR *) which_instance;
 			if ( !strcmp( name, "IPD" ) && !strcmp( section, "GraspVR" ) ) instance->interpupillary_distance = atof( value );
+			if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
+			if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
 			return 1;
 		}
 
