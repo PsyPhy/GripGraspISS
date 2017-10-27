@@ -375,7 +375,7 @@ Assembly *GraspGLObjects::CreateRollPrompt( double radius ) {
 
 	TaperedAnnulus *tip = new TaperedAnnulus( radius, radius / 3.0, 1.0, 0.05, curve_facets );
 	tip->SetAttitude( 0.0, 90.0, 0.0 );
-	tip->SetOrientation( - radius * 360.0, 0.0, 0.0 );
+	tip->SetOrientation( - arc * 360.0, 0.0, 0.0 );
 	prompt->AddComponent( tip );
 
 	Ellipsoid *base = new Ellipsoid ( guage, guage / 2.0, guage );
