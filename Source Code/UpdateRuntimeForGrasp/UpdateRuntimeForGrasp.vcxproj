@@ -56,6 +56,9 @@
     <ProjectReference Include="..\PsyPhyOculusDemo\PsyPhyOculusDemo.vcxproj">
       <Project>{92626b0e-65f3-4caa-927c-3246d766c7be}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\SendGraspData\SendGraspData.vcxproj">
+      <Project>{0f72a13f-72b3-4d9b-8418-61f29b0e5657}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\StartOculus\StartOculus.vcxproj">
       <Project>{b9598f12-de85-4177-aec3-d5ae2400db33}</Project>
     </ProjectReference>
