@@ -370,7 +370,7 @@ Assembly *GraspGLObjects::CreateRollPrompt( double radius ) {
 	double arc = 0.85;
 
 	Annulus *donut = new Annulus( radius, guage, arc, curve_facets, curve_facets );
-	donut->SetAttitude( 0.0, - 90.0, 0.0 );
+	donut->SetAttitude( 0.0, 90.0, 0.0 );
 	prompt->AddComponent( donut );
 
 	TaperedAnnulus *tip = new TaperedAnnulus( radius, radius / 3.0, 1.0, 0.05, curve_facets );
