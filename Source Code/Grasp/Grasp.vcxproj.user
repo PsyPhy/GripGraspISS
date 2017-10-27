@@ -3,12 +3,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--VtoV --sequence=Sequences\ShortTest.seq --output=TestGrasp </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--KtoK --sequence=Sequences\TiltTest.seq --output=TestGrasp </LocalDebuggerCommandArguments>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--VtoV --bars --nocoda --sequence=Sequences\HU_Ser1_Block1.seq --output=TestGrasp </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--VtoV --bars --nocoda --sequence=Sequences\TiltTest.seq --output=TestGrasp </LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

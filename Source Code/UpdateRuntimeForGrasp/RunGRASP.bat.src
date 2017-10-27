@@ -7,14 +7,14 @@ REM
 REM RunGRASP.bat
 REM DOS script used to launch the GRASP GUI and associated processes.
 REM See GitHub for futher documentation.
-REM Copyright (r) 2016 PsyPhy Consulting.
+REM Copyright (r) 2016, 2017 PsyPhy Consulting.
 REM
 
 REM One can select a different path to the results file by editing the next line.
 REM Default it relative to where this file is executing.
 REM set GRASP_RESULTS_PATH="Results"
 REM Here we move it elsewhere.
-set GRASP_RESULTS_PATH="C:\GraspResults"
+set GRASP_RESULTS_PATH="C:\DATA\GraspResults"
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

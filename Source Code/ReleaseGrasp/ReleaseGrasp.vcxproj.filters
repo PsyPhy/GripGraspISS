@@ -3,10 +3,10 @@
   <ItemGroup>
     <None Include="ReleaseGrasp.bat" />
     <None Include="..\..\GraspReleases.log" />
-    <None Include="ReleaseGrasp.release.mak" />
     <None Include="ReleaseGrasp.draft.mak" />
     <None Include="ReleaseGrasp.debug.mak" />
     <None Include="ReleaseGrasp.test.mak" />
     <None Include="ReleaseGrasp.training.mak" />
+    <None Include="ReleaseGrasp.flight.mak" />
   </ItemGroup>
 </Project>

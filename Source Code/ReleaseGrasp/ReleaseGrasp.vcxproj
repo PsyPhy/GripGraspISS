@@ -27,7 +27,7 @@
     <None Include="ReleaseGrasp.bat" />
     <None Include="ReleaseGrasp.debug.mak" />
     <None Include="ReleaseGrasp.draft.mak" />
-    <None Include="ReleaseGrasp.release.mak" />
+    <None Include="ReleaseGrasp.flight.mak" />
     <None Include="ReleaseGrasp.test.mak" />
     <None Include="ReleaseGrasp.training.mak" />
   </ItemGroup>
@@ -95,8 +95,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGrasp.release.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGrasp.release.mak</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>nmake /NOLOGO ReleaseGrasp.flight.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>nmake /NOLOGO ReleaseGrasp.flight.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Training|Win32'">

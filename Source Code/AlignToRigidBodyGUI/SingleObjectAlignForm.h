@@ -27,6 +27,7 @@
 #define SHOW_RESULTS		50
 #define ALIGNMENT_ERROR		9999
 #define ABORT_REQUESTED		8888
+#define RESET_REQUESTED		7777
 	
 // Tag in the telemetry client packet to say whether the
 //  alignment transforms are pre-alignment or post-alignment
@@ -82,6 +83,10 @@ namespace AlignToRigidBodyGUI {
 		String^ filenameRoot;
 
 		double maxPositionError;
+	private: System::Windows::Forms::Button^  resetButton;
+	protected: 
+
+	protected: 
 
 	protected: 
 
@@ -158,6 +163,7 @@ namespace AlignToRigidBodyGUI {
 			this->fovPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->busy = (gcnew System::Windows::Forms::Label());
 			this->instructionsTextBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->resetButton = (gcnew System::Windows::Forms::Button());
 			this->vrGroupBox2->SuspendLayout();
 			this->vrGroupBox1->SuspendLayout();
 			this->groupBox1->SuspendLayout();
@@ -168,7 +174,7 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(641, 805);
+			this->alignButton->Location = System::Drawing::Point(1361, 805);
 			this->alignButton->Name = L"alignButton";
 			this->alignButton->Size = System::Drawing::Size(159, 56);
 			this->alignButton->TabIndex = 1;
@@ -302,12 +308,24 @@ namespace AlignToRigidBodyGUI {
 			// 
 			this->instructionsTextBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox3->Location = System::Drawing::Point(52, 793);
+			this->instructionsTextBox3->Location = System::Drawing::Point(61, 793);
 			this->instructionsTextBox3->Multiline = true;
 			this->instructionsTextBox3->Name = L"instructionsTextBox3";
-			this->instructionsTextBox3->Size = System::Drawing::Size(333, 68);
+			this->instructionsTextBox3->Size = System::Drawing::Size(324, 68);
 			this->instructionsTextBox3->TabIndex = 16;
 			this->instructionsTextBox3->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// resetButton
+			// 
+			this->resetButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->resetButton->Location = System::Drawing::Point(1000, 805);
+			this->resetButton->Name = L"resetButton";
+			this->resetButton->Size = System::Drawing::Size(159, 56);
+			this->resetButton->TabIndex = 17;
+			this->resetButton->Text = L"Reset";
+			this->resetButton->UseVisualStyleBackColor = true;
+			this->resetButton->Click += gcnew System::EventHandler(this, &SingleObjectForm::button1_Click);
 			// 
 			// SingleObjectForm
 			// 
@@ -317,6 +335,7 @@ namespace AlignToRigidBodyGUI {
 			this->CancelButton = this->cancelButton;
 			this->ClientSize = System::Drawing::Size(1652, 876);
 			this->ControlBox = false;
+			this->Controls->Add(this->resetButton);
 			this->Controls->Add(this->instructionsTextBox3);
 			this->Controls->Add(this->busy);
 			this->Controls->Add(this->instructionsTextBox2);
@@ -464,7 +483,7 @@ namespace AlignToRigidBodyGUI {
 				 Enabled = true;
 				 // Prompt for the required action.
 				 instructionsTextBox->Text = "Check that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
-				 instructionsTextBox2->Text = "Adjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.";
+				 instructionsTextBox2->Text = "Adjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.\r\n\r\nIf no green ball, contact COL-CC (if possible) or perform Reset.";
 				 instructionsTextBox3->Text = "When all conditions are met, press 'OK'.";
 
 				// Start a refresh time that will update the visibility of the LEDs in the GUI display.
@@ -517,6 +536,7 @@ namespace AlignToRigidBodyGUI {
 				 // Show the buttons on the form as being inactive.
 				 cancelButton->Enabled = false;
 				 alignButton->Enabled = false;
+				 resetButton->Enabled = false;
 				 Refresh();
 				 Application::DoEvents();
 
@@ -764,6 +784,40 @@ namespace AlignToRigidBodyGUI {
 				 refreshTimer->Stop();
 			 }		
 
-	};
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+				 // Send a message to ground to show our progress.
+				 dex->SendSubstep( ABORT_REQUESTED );
+				 System::Windows::Forms::DialogResult response;
+				 response = MessageBox::Show( "Are you sure you want to reset the alignment?\nIf yes, you must then perform the alignment again.", "AlignToRigidBodyGUI", MessageBoxButtons::YesNo );
+				 if ( response == System::Windows::Forms::DialogResult::Yes ) {
+					 // Show the buttons on the form as being inactive.
+					 cancelButton->Enabled = false;
+					 alignButton->Enabled = false;
+					 resetButton->Enabled = false;
+					 // Show a message while we are busy acquiring and computing the new alignment.
+					 busy->Text = L"Reset in Progress\r\nPlease wait ...";
+					 busy->Visible = true;
+					 Refresh();
+					 Application::DoEvents();
+					 // Log the data acquired in aligned coordinates.
+					 // The root for file names is passed as a String^. We need it as an ANSI string. Don't forget to free it aftwards.
+					 String ^alignmentFilename = filenameRoot + ".nullalign.dat";
+					 char *alignment_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( alignmentFilename ).ToPointer();
+					 coda->AnnulAlignment( alignment_file );
+					 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( alignment_file ) );
+					 // Because GraspTrackerDaemon is also the DexServices proxy, and because changing the alignment
+					 // for CodaRTnetDaemonTracker causes GraspTrackerDaemon to restart, we need to re-establish the 
+					 // connection to the DexServices proxy.
+					 dex->Connect();
+					 dex->ResendTaskInfo();
+					 cancelButton->Enabled = true;
+					 alignButton->Enabled = true;
+					 resetButton->Enabled = true;
+					 busy->Visible = false;
+				 }
+				 //Presumably, were were in the visibility check state and we are returning there.
+				 dex->SendSubstep( VISIBILITY );
+			 }
+};
 }
 

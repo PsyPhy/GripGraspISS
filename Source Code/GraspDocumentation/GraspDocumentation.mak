@@ -153,7 +153,7 @@ rightFarRedress.bmp:
 	move ..\..\$@ .
 
 # Define the path to the pandoc.exe program that does the conversion.
-PANDOC=pandoc.exe
+PANDOC=$(BUILDTOOLS)\pandoc.exe
 PANDOC_OPTIONS=
 
 # Define the preprocessor.

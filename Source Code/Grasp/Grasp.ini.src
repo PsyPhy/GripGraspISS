@@ -18,10 +18,18 @@ targetBars = 10
 useBars = true
 fingerBallRadius = 10.0
 fingerLength = 100.0
+laser_distance = 2000.0
 
-
+headArrowLocation = < 0.0 0.0 -600.0 >
+headArrowRadius = 250.0
+handArrowRadius = 60.0
 
 [GraspVR]
+	
+IPD = 50.0
+armRaisedThreshold = 0.9
+straightAheadThreshold = 0.995
+viewpointOffset = 100
+chestOffset = 100
 
-IPD = 60.0
 

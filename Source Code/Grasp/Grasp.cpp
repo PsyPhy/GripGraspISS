@@ -66,8 +66,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		useCoda = false;
 	}
 
-	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) items = sscanf( ptr, "--sequence=%s", sequence_filename );
-	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) {
+		items = sscanf( ptr, "--sequence=%s", sequence_filename );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for sequence.\n\n  %s\n\n(Remember: no spaces around '=')", lpCmdLine );
+	}
 	if ( strstr( sequence_filename, "%TEMP%" ) ) {
 		char buffer[FILENAME_MAX];
 		strcpy( buffer, getenv( "TEMP" ) );
@@ -75,12 +77,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		strcpy( sequence_filename, buffer );
 	}
 
-	if ( ptr = strstr( lpCmdLine, "--output" ) ) items = sscanf( ptr, "--output=%s", output_filename_root );
-	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--output" ) ) {
+		items = sscanf( ptr, "--output=%s", output_filename_root );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for --output.\n\n  %s\n\n(Remember: no spaces around '=')", lpCmdLine );
+	}
 
 	HWND parentWindow = nullptr;
-	if ( ptr = strstr( lpCmdLine, "--parent" ) ) items = sscanf( ptr, "--parent=%d", &parentWindow );
-	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--parent" ) ) {
+		items = sscanf( ptr, "--parent=%d", &parentWindow );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for --parent.\n\n  %s\n\n(Remember: no spaces around '=')", lpCmdLine );
+	}
 
 	//
 	// Connect to dex for telemetry and snapshots.
@@ -110,6 +116,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		if ( useCoda ) {
 			codaTracker = new CodaRTnetDaemonTracker();
 			trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker );
+			//// Create a tracker to control the roll orientation via the mouse.
+			//// Here we use the mouse tracker tied to the OculusMapper. 
+			//MouseRollPoseTracker *mouseRollTracker = new PsyPhy::MouseRollPoseTracker( &_oculusMapper, - 0.001 );
+			//fAbortMessageOnCondition( !mouseRollTracker->Initialize(), "GraspVR", "Error initializing mouseRollTracker." );
+			//trackers = new GraspDexTrackers( codaTracker, mouseRollTracker );
 		}
 		else if ( useTouch ) {
 			trackers = new GraspOculusTrackers( &_oculusMapper );
@@ -151,8 +162,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// When in supine or in bedrest it is better to accept any pitch or yaw
 	//  rotation of the head when starting the trial.
 	if ( strstr( lpCmdLine, "--anyPitchYaw" ) ) grasp->straightAheadThreshold = 0.0;
-	if ( ptr = strstr( lpCmdLine, "--ahead" ) ) items = sscanf( ptr, "--ahead=%lf", &grasp->straightAheadThreshold );
-	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--ahead" ) ) {
+		items = sscanf( ptr, "--ahead=%lf", &grasp->straightAheadThreshold );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	}
 
 	// Set which kind of visual stimuli to use (balls or bars).
 	// The default selection is set with cookie files.
@@ -163,8 +176,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// Take into account the offset between the position in depth of the chest markers
 	// and the position in depth of the HMD markers when the subject is looking straight
 	// ahead with the head straight on the shoulders. This is still experimental.
-	if ( ptr = strstr( lpCmdLine, "--chest" ) ) items = sscanf( ptr, "--chest=%lf", &grasp->chestOffset );
-	fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	if ( ptr = strstr( lpCmdLine, "--chest" ) ) {
+		items = sscanf( ptr, "--chest=%lf", &grasp->chestOffset );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument.\n\n  %s\n\n(Remember: no spaces around '=')", ptr );
+	}
 
 	// Select the method for guiding the subject to the initial head position.
 	// By default, the subject is simply asked to straighten the head on the shoulders and then press a button.

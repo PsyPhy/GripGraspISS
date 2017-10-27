@@ -26,10 +26,10 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 	useRawSensors = true;
 
 	// A small value to react quickly to the first CODA pose.
-	precaptureInertialWeighting = 0.01;
+	precaptureInertialWeighting = 10.0;
 	// The value used after the first CODA sample has been used to initialize the pose.
 	// The value is large to filter artifacts from the computed CODA pose.
-	postcaptureInertialWeighting = 1000.0;
+	postcaptureInertialWeighting = 10.0;
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();

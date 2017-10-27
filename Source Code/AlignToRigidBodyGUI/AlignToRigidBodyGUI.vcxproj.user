@@ -8,6 +8,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments> --body=Bdy\ChestTilted.bdy --output=Results\DeleteMe --user=111 --protocol=222 --task=333 --step=444</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments> --body=Bdy\ChestTilted.bdy --output=DeleteMe --user=111 --protocol=222 --task=333 --step=444</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
