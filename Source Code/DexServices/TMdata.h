@@ -6,13 +6,7 @@
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"
 #include "../VectorsMixin/VectorsMixin.h"
-
-
-#define GRASP_RT_SLICES_PER_PACKET 2
-#define GRASP_RT_SLICE_INTERVAL 0.250
-#define GRASP_RT_CLIENT_BYTES 128
-
-#define GRASP_HK_PACKET_INTERVAL 1.0
+#include "../Grip/GripPackets.h"
 
 typedef unsigned short u16;
 typedef signed short s16;
@@ -66,6 +60,8 @@ class RT_packet : public GraspPacket
 			unsigned char clientData[GRASP_RT_CLIENT_BYTES];
 		} Slice[GRASP_RT_SLICES_PER_PACKET];
 
+		RT_packet( void ) : rtdata_acq_id(0x12341234) , rtdata_pkt_counter( 0 ) {}
+			
 };
 
 class CameraTrigger_packet : public GraspPacket
@@ -83,6 +79,7 @@ class CameraTrigger_packet : public GraspPacket
  u32 extractTM(s32 &tm, u8 *buffer, u32 pos);
  u32 extractTM(f32 &tm, u8 *buffer, u32 pos);
  u32 extractTM( u8 &tm, u8 *buffer, u32 pos);
+ u32 extractTM( u8 *tm, int bytes, u8 *buffer, u32 pos);
  u32 extractTM(bool &tm, u8*buffer, u32 pos);
  u32 extractTM( PsyPhy::TrackerPose &pose, u8 *buffer, u32 pos );
  u32 extractTM( MarkerState &m, u8 *buffer, u32 pos );

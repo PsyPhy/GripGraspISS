@@ -10,7 +10,6 @@
 // Disable warnings about unsafe functions.
 // We use the 'unsafe' versions to maintain source-code compatibility with Visual C++ 6
 #define _CRT_SECURE_NO_WARNINGS
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <io.h>
@@ -24,6 +23,7 @@
 #include "..\Useful\Useful.h"
 
 #include "GripPackets.h"
+
 
 // Routines to change the byte order in various data types.
 // These are useful when inserting or extracting data from an EPM packet
@@ -358,7 +358,8 @@ void ExtractGripRealtimeDataInfo( GripRealtimeDataInfo *realtime_packet, const E
 }
 
 
-// Inssert real-time science data into an EPM data packet.
+
+// Insert real-time science data into an EPM data packet.
 void InsertGripRealtimeDataInfo( EPMTelemetryPacket *epm_packet, const GripRealtimeDataInfo *realtime_packet ) {
 
 	char *ptr;

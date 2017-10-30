@@ -61,6 +61,13 @@ using namespace PsyPhy;
 #define RT_DEFAULT_SECONDS_PER_SLICE 0.050
 #define RT_SECONDS_PER_TICK	0.001
 
+#define GRASP_RT_SLICES_PER_PACKET 2
+#define GRASP_RT_SLICE_INTERVAL 0.250
+#define GRASP_RT_CLIENT_BYTES 128
+
+#define GRASP_HK_PACKET_INTERVAL 1.0
+
+
 typedef struct {
 	unsigned long	epmLanSyncMarker;
 	unsigned char	spare1;
@@ -252,7 +259,6 @@ void InsertGripHealthAndStatusInfo( EPMTelemetryPacket *epm_packet, const GripHe
 
 void CreateGripPacketCacheFilename( char *filename, int max_characters, const GripPacketType type, const char *root );
 int GetLastPacketHK( EPMTelemetryHeaderInfo *epmHeader, GripHealthAndStatusInfo *hk, char *filename_root );
-
 
 #ifdef __cplusplus
 }

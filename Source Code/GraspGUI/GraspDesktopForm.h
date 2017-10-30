@@ -1023,7 +1023,7 @@ namespace GraspGUI {
 				GraspActionSlice slice;
 
 				strncpy( slice.ID, "GRSPGUI", sizeof( slice.ID ) );
-				for ( unsigned int j = 0; j < ITEMS_IN_SLICE; j++ ) {
+				for ( unsigned int j = 0; j < GUI_ITEMS_IN_SLICE; j++ ) {
 					Record ^next = actionList[ nextActionToOutput ];
 					slice.record[j].time = next->time;
 					slice.record[j].subject = next->subject;
@@ -1188,14 +1188,19 @@ namespace GraspGUI {
 
 		System::Void statusButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
-			// Disconnect from DEX telemetry services so that the task program can connect.
-			dex->Disconnect();
-
-			// Construct the command line, adding results filename root and task info.
 			int subjectID = (( currentSubject >= 0 ) ? subjectList[currentSubject]->number : 0 );
 			int protocolID = (( currentProtocol >= 0 ) ? protocolList[currentProtocol]->number : 0 );
 			int taskID = (( currentTask >= 0 ) ? taskList[currentTask]->number : 0 );
 			int stepID = (( currentStep >= 0 ) ? stepList[currentStep]->number : 0 );
+
+			// We keep a running tab of actions that have been started and when they end. The list gets sent to ground.
+			actionList->Add( gcnew Record( subjectID, protocolID, taskID, stepID, GRASP_START_STATUS_CODE ) );
+			WriteActionRecord( actionList[ actionList->Count - 1 ] );
+
+			// Disconnect from DEX telemetry services so that the task program can connect.
+			dex->Disconnect();
+
+			// Construct the command line, adding results filename root and task info.
 			String^ cmdline = "Executables\\GraspHardwareStatus.exe --output=" 
 				+ resultsDirectory 
 				+ "STATUS_" 
@@ -1213,6 +1218,8 @@ namespace GraspGUI {
 
 			// Reconnect to DEX for telemetry.
 			dex->Connect();
+			actionList->Add( gcnew Record( subjectID, protocolID, taskID, stepID, GRASP_STOP_STATUS_CODE ) );
+			WriteActionRecord( actionList[ actionList->Count - 1 ] );
 		}
 
 	protected:
@@ -1263,7 +1270,10 @@ namespace GraspGUI {
 			ConnectToDEX();
 			InitializeForm();
 			PrimeHistory();
+			// We keep a running tab of actions that have been started and when they end. The list gets sent to ground.
 			ReadPastActions();
+			actionList->Add( gcnew Record( 0, 0, 0, 0, GRASP_START_GUI_CODE ) );
+			WriteActionRecord( actionList[ actionList->Count - 1 ] );
 		}
 
 		virtual void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
