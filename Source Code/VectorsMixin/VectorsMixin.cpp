@@ -46,19 +46,16 @@ void VectorsMixin::CopyVector( Vector3 destination, const Vector3 source ){
 	destination[Y] = source[Y];
 	destination[Z] = source[Z];
 }
-
 void VectorsMixin::CopyVector( Vector3f destination, const Vector3 source ){
 	destination[X] = (float) source[X];
 	destination[Y] = (float) source[Y];
 	destination[Z] = (float) source[Z];
 }
-
 void VectorsMixin::CopyVector( Vector3 destination, const Vector3f source ){
 	destination[X] = (double) source[X];
 	destination[Y] = (double) source[Y];
 	destination[Z] = (double) source[Z];
 }
-
 void VectorsMixin::CopyVector( Vector3f destination, const Vector3f source ){
 	destination[X] = source[X];
 	destination[Y] = source[Y];
@@ -71,13 +68,25 @@ void VectorsMixin::CopyQuaternion( Quaternion destination, const Quaternion sour
 	destination[Z] = source[Z];
 	destination[M] = source[M];
 }
-
 void VectorsMixin::CopyQuaternion( fQuaternion destination, const Quaternion source ){
 	destination[X] = (float) source[X];
 	destination[Y] = (float) source[Y];
 	destination[Z] = (float) source[Z];
 	destination[M] = (float) source[M];
 }
+void VectorsMixin::CopyQuaternion( Quaternion destination, const fQuaternion source ){
+	destination[X] = (double) source[X];
+	destination[Y] = (double) source[Y];
+	destination[Z] = (double) source[Z];
+	destination[M] = (double) source[M];
+}
+void VectorsMixin::CopyQuaternion( fQuaternion destination, const fQuaternion source ){
+	destination[X] = source[X];
+	destination[Y] = source[Y];
+	destination[Z] = source[Z];
+	destination[M] = source[M];
+}
+
 void VectorsMixin::CopyPose( Pose &destination, const Pose &source ) {
 	CopyVector( destination.position, source.position );
 	CopyQuaternion( destination.orientation, source.orientation );
@@ -96,6 +105,18 @@ void VectorsMixin::CopyPose( CompactPose &destination, const Pose &source ) {
 
 }
 
+void VectorsMixin::CopyPose( Pose &destination, const CompactPose &source ) {
+
+	destination.position[X] = (short) (source.position[X] / 10.0);
+	destination.position[Y] = (short) (source.position[Y] / 10.0);
+	destination.position[Z] = (short) (source.position[Z] / 10.0);
+
+	destination.orientation[X] = (double) source.orientation[X];
+	destination.orientation[Y] = (double) source.orientation[Y];
+	destination.orientation[Z] = (double) source.orientation[Z];
+	destination.orientation[M] = (double) source.orientation[M];
+
+}
 void VectorsMixin::AddVectors( Vector3 result, const Vector3f a, const Vector3f b ) {
 	result[X] = (double) ( a[X] + b[X] );
 	result[Y] = (double) ( a[Y] + b[Y] );
@@ -213,10 +234,24 @@ void VectorsMixin::CopyMatrix( Matrix3x3 destination, const Matrix3x3 source ){
 		}
 	}
 }
-void VectorsMixin::CopyMatrix( float destination[3][3], const Matrix3x3 source ){
+void VectorsMixin::CopyMatrix( fMatrix3x3 destination, const Matrix3x3 source ){
 	for ( int i = 0; i < 3; i++ ) {
 		for ( int j = 0; j < 3; j++ ) {
 			destination[i][j] = (float) source[i][j];
+		}
+	}
+}
+void VectorsMixin::CopyMatrix( Matrix3x3 destination, const fMatrix3x3 source ){
+	for ( int i = 0; i < 3; i++ ) {
+		for ( int j = 0; j < 3; j++ ) {
+			destination[i][j] = (double) source[i][j];
+		}
+	}
+}
+void VectorsMixin::CopyMatrix( fMatrix3x3 destination, const fMatrix3x3 source ){
+	for ( int i = 0; i < 3; i++ ) {
+		for ( int j = 0; j < 3; j++ ) {
+			destination[i][j] = source[i][j];
 		}
 	}
 }
@@ -896,6 +931,11 @@ char *VectorsMixin::vstr( const Vector3 v, const char *format ) {
 	return( str[instance] );
 
 }
+char *VectorsMixin::vstr( const fVector3 v, const char *format ) {
+	Vector3 d;
+	CopyVector( d, v );
+	return( vstr( d, format ) );
+}
 
 
 // The others work in a similar fashion.
@@ -907,6 +947,11 @@ char *VectorsMixin::qstr( const Quaternion q, const char *format ) {
 	sprintf( str[instance], format, q[X], q[Y], q[Z], q[M] );
 	return( str[instance] );
 }
+char *VectorsMixin::qstr( const fQuaternion q, const char *format ) {
+	Quaternion d;
+	CopyQuaternion( d, q );
+	return( qstr( d, format ) );
+}
 
 char *VectorsMixin::mstr( const Matrix3x3 m, const char *format ) {
 	static char str[256][256];
@@ -917,4 +962,8 @@ char *VectorsMixin::mstr( const Matrix3x3 m, const char *format ) {
 		m[X][X], m[Y][X], m[Z][X], m[X][Y], m[Y][Y], m[Z][Y], m[X][Z], m[Y][Z], m[Z][Z] );
 	return( str[instance] );
 }
-
+char *VectorsMixin::mstr( const fMatrix3x3 m, const char *format ) {
+	Matrix3x3 d;
+	CopyMatrix( d, m );
+	return( mstr( d, format ) );
+}

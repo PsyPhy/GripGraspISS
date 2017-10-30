@@ -43,6 +43,7 @@ static unsigned long __nan = 0x7ff7ffff;
 
 #define YES	TRUE
 #define NO	FALSE
+#define ESCAPE 0x1B
 
 // Some useful constants.
 
@@ -70,11 +71,11 @@ namespace PsyPhy {
 #endif
 
 typedef double Vector3[3];
-typedef float  Vector3f[3];
+typedef float  Vector3f[3];		// This should go away in favor of fVector3.
 typedef float  fVector3[3];
-typedef double Quaternion[4];
 typedef double Matrix3x3[3][3];
 typedef float  fMatrix3x3[3][3];
+typedef double Quaternion[4];
 typedef float  fQuaternion[4];
 
 #ifdef __cplusplus

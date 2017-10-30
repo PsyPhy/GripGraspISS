@@ -16,11 +16,12 @@
 
 #include "../Trackers/CodaRTnetNullTracker.h"
 #include "../Trackers/PoseTrackers.h"
-#include "TMdata.h"
+
 #include "DexServices.h"
 
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/fMessageBox.h"
+
 
 using namespace Grasp;
 using namespace PsyPhy;
@@ -168,6 +169,12 @@ int DexServices::Send( const unsigned char *packet, int size ) {
 	return retval;
 }
 
+void DexServices::NullifyClientInfo( void ) {
+		for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
+			strncpy(  (char *) rt.Slice[i].clientData, "NULL", sizeof( rt.Slice[i].clientData ) );
+		}
+}
+
 void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[MAX_UNITS] ) {
 
 	// Fill the current slice with the new data.
@@ -212,6 +219,7 @@ void DexServices::AdvanceIfReady( void ) {
 		slice_count++;
 		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
 			SendScienceRealtimeData();
+			NullifyClientInfo();
 			slice_count = 0;
 		}
 		TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
@@ -458,9 +466,8 @@ bool DexServices::HandleProxyConnection( void ) {
 		}
 		TimerSet( client_connection_timer, CLIENT_CONNECTION_TIMEOUT );
 		// New connection, so initialize the client data ID.
-		for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
-			strncpy(  (char *) rt.Slice[i].clientData, "NULL", sizeof( rt.Slice[i].clientData ) );
-		}
+		NullifyClientInfo();
+
 	}
 
 	// We are connected so attempt to read a packet.
