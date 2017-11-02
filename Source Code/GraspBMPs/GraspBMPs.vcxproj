@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GraspBMPs.mak" />
+    <None Include="GraspVRMessages.pdf" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B36BAD29-9483-4CB8-A052-0ECFB8A13B3D}</ProjectGuid>
