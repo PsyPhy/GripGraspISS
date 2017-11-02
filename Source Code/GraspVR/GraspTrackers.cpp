@@ -89,13 +89,32 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 	handCascadeTracker = new CascadePoseTracker();
 	chestCascadeTracker = new CascadePoseTracker();
 
-	// for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-	for ( int unit = nCodaUnits - 1; unit >= 0 ; unit -- ) {
-
+	if ( headCodaCascade == 2  ) {
+		int unit = 1;
 		hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 		fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
 		hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
 		hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+	}
+	else if ( headCodaCascade == 1 ) { 
+		int unit = 0;
+		hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+		fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
+		hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
+		hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+	}
+	else {
+		for ( int unit = nCodaUnits - 1; unit >= 0 ; unit -- ) {
+			hmdCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
+			fAbortMessageOnCondition( !hmdCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing hmdCodaPoseTracker[%d].", unit );
+			hmdCodaPoseTracker[unit]->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
+			hmdCascadeTracker->AddTracker( hmdCodaPoseTracker[unit] );
+		}
+
+	}
+
+	// for ( int unit = 0; unit < nCodaUnits; unit++ ) {
+	for ( int unit = nCodaUnits - 1; unit >= 0 ; unit -- ) {
 
 		handCodaPoseTracker[unit] = new CodaPoseTracker( &markerFrame[unit] );
 		fAbortMessageOnCondition( !handCodaPoseTracker[unit]->Initialize(), "GraspVR", "Error initializing toolCodaPoseTracker[%d].", unit );

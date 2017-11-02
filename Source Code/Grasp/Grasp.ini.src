@@ -33,3 +33,7 @@ viewpointOffset = 100
 chestOffset = 100
 
 
+[GraspTrackers]
+
+;;; 1 for Coda 1 only, 2 for Coda 2 only or 0 for cascade of both (first 2 then 1)
+headCodaCascade = 2

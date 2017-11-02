@@ -21,6 +21,7 @@
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
 #include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/ini.h"
 
 #include "../OpenGLObjects/OpenGLWindows.h"
 
@@ -134,7 +135,7 @@ namespace Grasp {
 
 		int nMarkers;
 		int nCodaUnits;
-
+		int headCodaCascade;
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
 		Tracker *codaTracker;
@@ -163,16 +164,25 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers ( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) {
+		GraspDexTrackers( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) : headCodaCascade( -1 ) {
 
 #ifdef BACKGROUND_GET_DATA
 			threadHandle = nullptr;
 #endif
 
-			nMarkers = 24;
-			nCodaUnits = 2;
-			codaTracker = tracker;
-			rollTracker = roll;
+				nMarkers = 24;
+				nCodaUnits = 2;
+				codaTracker = tracker;
+				rollTracker = roll;
+				int error = ini_parse( "Grasp.ini", iniHandler, this );
+				if ( error != 0 ) fOutputDebugString( "GraspTrackers: Parsing error (%d).\n", error );
+			}
+		// Provide the means to read a .ini file to set configuration parameters.
+		// This is defined here as static because its address is sent as a callback to a parsing routine.
+		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			GraspDexTrackers *instance = (GraspDexTrackers *) which_instance;
+			if ( !strcmp( name, "headCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->headCodaCascade = atof( value );
+			return 1;
 		}
 		virtual void Initialize( void );
 		virtual void InitializeCodaTrackers( void );
