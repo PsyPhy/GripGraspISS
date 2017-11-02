@@ -88,6 +88,8 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="DataReTransfer.pcl" />
+    <None Include="DataReTransfer.tsk" />
     <None Include="DataTransfer.pcl" />
     <None Include="DataTransfer.tsk" />
     <None Include="GraspCommissioningSessions.sss" />

@@ -1,0 +1,4 @@
+# Instructions and commands to perform a data transfer.
+01; COMMAND; Executables\SendGraspData.exe; FileTransferReady.prompt.html; StepRunning.instruction.html; StepNormalFinish.status.html; FileTransferErrorFinish.status.html; StepErrorFinish.status.html
+02; INSTRUCTION; TaskFinished.instruction.html
+
