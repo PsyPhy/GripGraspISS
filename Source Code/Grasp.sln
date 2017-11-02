@@ -150,6 +150,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinimizeAll", "MinimizeAll\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TweakRigidBodyModel", "TweakRigidBodyModel\TweakRigidBodyModel.vcxproj", "{00D4A7EE-D855-4F9A-98D5-F5081D3A444E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SendGraspData", "SendGraspData\SendGraspData.vcxproj", "{0F72A13F-72B3-4D9B-8418-61F29B0E5657}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
