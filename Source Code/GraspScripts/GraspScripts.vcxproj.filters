@@ -125,5 +125,11 @@
     <None Include="GraspNominalSessionsBedrest.sss">
       <Filter>Generic</Filter>
     </None>
+    <None Include="DataReTransfer.pcl">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="DataReTransfer.tsk">
+      <Filter>Generic</Filter>
+    </None>
   </ItemGroup>
 </Project>

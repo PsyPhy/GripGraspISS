@@ -31,7 +31,15 @@ REM Create a date string in the form YYYY-MM-DD, trying to take into account the
 REM If the first field is the day of the week, then the 4th character will be a blank and we know that 
 REM we are in US format MM-DD-YYYY. Otherwise we assume European format DD-MM-YYYY. We transform either
 REM of them into YYYY-MM-DD.
-if "%date:~3,1%" EQU " " (set DTT=%date:~10,4%-%date:~4,2%-%date:~7,2%) else (set DTT=%date:~6,4%-%date:~3,2%-%date:~0,2%)
+
+if "%date:~3,1%" NEQ " " goto :NOTUS
+set DTT=%date:~10,4%-%date:~4,2%-%date:~7,2%
+goto :NEXT
+
+:NOTUS
+if "%date:~3,1%" EQU "." (set DTT=%date:~11,4%-%date:~8,2%-%date:~5,2%) else (set DTT=%date:~6,4%-%date:~3,2%-%date:~0,2%)
+
+:NEXT
 set TAG=%DTT% %HOUR%h%time:~3,2%m%time:~6,2%s
 
 REM Create a .h file that can be used for force rebuild of other projects. It also

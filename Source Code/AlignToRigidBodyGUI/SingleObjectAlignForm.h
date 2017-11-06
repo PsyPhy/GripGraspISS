@@ -14,35 +14,9 @@
 
 #include "../DexServices/DexServices.h"
 
-// The following defines are used to indicate progress through different
-// phases of the alignment process. These are sent as the sub-step indicator to 
-// ground via DEX using DexServices.
-#define STARTUP_VISIBILITY	10
-#define VISIBILITY			15
-#define SHUTDOWN_VISIBILITY 20
-#define ACQUIRE_PREALIGN	25
-#define COMPUTE_ALIGNMENT	30
-#define INSTALL_ALIGNMENT	40
-#define ACQUIRE_ALIGNED		45
-#define SHOW_RESULTS		50
-#define ALIGNMENT_ERROR		9999
-#define ABORT_REQUESTED		8888
-#define RESET_REQUESTED		7777
-	
-// Tag in the telemetry client packet to say whether the
-//  alignment transforms are pre-alignment or post-alignment
-#define PRE 0
-#define POST 1
+#include "AlignToRigidBodyGUI.h"
 
-struct {
 
-	char ID[8];
-
-	int	prePost;
-	PsyPhy::fVector3		offsets[MAX_UNITS];
-	PsyPhy::fMatrix3x3		rotations[MAX_UNITS];
-
-} ClientDataBuffer;
 
 namespace AlignToRigidBodyGUI {
 
@@ -76,23 +50,13 @@ namespace AlignToRigidBodyGUI {
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 		PsyPhy::Assembly						*fovSweetSpot;
 
-		PsyPhy::CodaRTnetDaemonTracker				*coda;
+		PsyPhy::CodaRTnetDaemonTracker			*coda;
 		Grasp::GraspGLObjects					*objects;
 
 		String^ modelFile;
 		String^ filenameRoot;
 
 		double maxPositionError;
-	private: System::Windows::Forms::Button^  resetButton;
-	protected: 
-
-	protected: 
-
-	protected: 
-
-
-
-	protected: 
 		double maxOrientationError;
 
 	public:
@@ -135,6 +99,7 @@ namespace AlignToRigidBodyGUI {
 		System::Windows::Forms::Panel^  fovPanel1;
 		System::Windows::Forms::Label^  busy;
 		System::Windows::Forms::TextBox^  instructionsTextBox3;
+		System::Windows::Forms::Button^  resetButton;
 
 	private:
 		/// <summary>
@@ -464,18 +429,20 @@ namespace AlignToRigidBodyGUI {
 				 coda = new CodaRTnetDaemonTracker();
 				 coda->Initialize();
 
-				 // Send a message to ground to show our progress.
+				 // Send a message to ground as part of housekeeping to show our progress.
 				 dex->SendSubstep( VISIBILITY );
+				 // Send more detailed information as part of a RT science packet.
+				 AlignClientBuffer clientBuffer;
 				 Vector3	offsets[MAX_UNITS];
 				 Matrix3x3	rotations[MAX_UNITS];
-				 strncpy( ClientDataBuffer.ID, "ALIGN", sizeof( ClientDataBuffer.ID ) );
-				 ClientDataBuffer.prePost = PRE;
+				 strncpy( clientBuffer.ID, "ALIGN", sizeof( clientBuffer.ID ) );
+				 clientBuffer.prePost = PRE;
 				 coda->GetAlignmentTransforms( offsets, rotations );
 				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-					 coda->CopyVector( ClientDataBuffer.offsets[unit], offsets[unit] );
-					 coda->CopyMatrix( ClientDataBuffer.rotations[unit], rotations[unit] );
+					 coda->CopyVector( clientBuffer.offsets[unit], offsets[unit] );
+					 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
 				 }
-				 dex->AddClientSlice( (unsigned char *) &ClientDataBuffer, sizeof( ClientDataBuffer ) );
+				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ) );
 
 				 // Hide the tracker message.
 				 busy->Visible = false;
@@ -626,17 +593,18 @@ namespace AlignToRigidBodyGUI {
 				 instructionsTextBox->Text = "[ Acquiring to confirm ... ]";
 				 Refresh();
 				 Application::DoEvents();
-
+				 // Send more details as part of an RT science packet.
+				 AlignClientBuffer clientBuffer;
 				 Vector3	offsets[MAX_UNITS];
 				 Matrix3x3	rotations[MAX_UNITS];
-				 strncpy( ClientDataBuffer.ID, "ALIGN", sizeof( ClientDataBuffer.ID ) );
-				 ClientDataBuffer.prePost = POST;
+				 strncpy( clientBuffer.ID, "ALIGN", sizeof( clientBuffer.ID ) );
+				 clientBuffer.prePost = POST;
 				 coda->GetAlignmentTransforms( offsets, rotations );
 				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-					 coda->CopyVector( ClientDataBuffer.offsets[unit], offsets[unit] );
-					 coda->CopyMatrix( ClientDataBuffer.rotations[unit], rotations[unit] );
+					 coda->CopyVector( clientBuffer.offsets[unit], offsets[unit] );
+					 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
 				 }
-				 dex->AddClientSlice( (unsigned char *) &ClientDataBuffer, sizeof( ClientDataBuffer ) );
+				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ) );
 
 				 fprintf( stderr, "[ Acquiring to confirm ... ]" );
 				 coda->StartAcquisition( 5.0 );

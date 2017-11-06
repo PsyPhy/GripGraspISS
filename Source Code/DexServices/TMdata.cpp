@@ -11,7 +11,8 @@ u16 HK_packet::getPktType() const {return 0x3002u;}
 u16 RT_packet::getPktType() const {return 0x1001u;}
 u16 CameraTrigger_packet::getPktType() const {return 0x8003u;}
 
-PsyPhy::VectorsMixin vm;
+// A local instance of VectorsMixin to perform vector operations.
+static PsyPhy::VectorsMixin vm;
 
 static u32 addTM(u16 tm, u8*buffer, u32 pos)
 {
@@ -211,6 +212,12 @@ u32 extractTM( u8 &tm, u8 *buffer, u32 pos)
     return pos;
 }
 
+u32 extractTM( u8 *tm, int bytes, u8 *buffer, u32 pos)
+{
+	for ( int i = 0; i < bytes; i++ ) *( tm + i ) = buffer[pos++];
+    return pos;
+}
+
 u32 extractTM(bool &tm, u8*buffer, u32 pos)
 {
     tm = (bool) buffer[pos++];
@@ -255,7 +262,7 @@ u32 extractTM( MarkerFrame &frame, u8 *buffer, u32 pos ) {
 	short int tenths;
 	u32 visibility_bits;
 	f32 value;
-	for ( int mrk = MAX_MARKERS - 1; mrk >= 0; mrk++ ) {
+	for ( int mrk = MAX_MARKERS - 1; mrk >= 0; mrk-- ) {
 		for ( int i = 0; i < 3; i++ ) {
 			pos = extractTM( tenths, buffer, pos );
 			frame.marker[mrk].position[i] = (double) tenths / 10.0;

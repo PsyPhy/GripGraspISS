@@ -67,9 +67,13 @@ public:
 	void CopyVector( Vector3f  destination, const Vector3f  source );
 
 	void CopyQuaternion( Quaternion destination, const Quaternion source );
-	void CopyQuaternion( fQuaternion, const Quaternion source );
+	void CopyQuaternion( fQuaternion destination, const Quaternion source );
+	void CopyQuaternion( Quaternion destination, const fQuaternion source );
+	void CopyQuaternion( fQuaternion destination, const fQuaternion source );
+
 	void CopyPose( Pose &destination, const Pose &source );
 	void CopyPose( CompactPose &destination, const Pose &source );
+	void CopyPose( Pose &destination, const CompactPose &source );
 
 	void AddVectors( Vector3f result, const Vector3 a, const Vector3 b );
 	void AddVectors( Vector3f result, const Vector3f a, const Vector3f b );
@@ -95,7 +99,10 @@ public:
 	void   ComputeCrossProduct( Vector3 result, const Vector3 v1, const Vector3 v2 );
 
 	void CopyMatrix( Matrix3x3 destination, const Matrix3x3 source );
-	void CopyMatrix( float destination[3][3], const Matrix3x3 source );
+	void CopyMatrix( fMatrix3x3 destination, const Matrix3x3 source );
+	void CopyMatrix( Matrix3x3 destination, const fMatrix3x3 source );
+	void CopyMatrix( fMatrix3x3 destination, const fMatrix3x3 source );
+
 	void TransposeMatrix( Matrix3x3 destination, const Matrix3x3 source );
 	void ScaleMatrix( Matrix3x3 destination, const Matrix3x3 source, const double scaling );
 	void MultiplyMatrices( Matrix3x3 result, const Matrix3x3 left, const Matrix3x3 right );
@@ -145,6 +152,10 @@ public:
 	char *vstr( const Vector3 v, const char *format = "<%+8.3f %+8.3f %+8.3f>" );
 	char *qstr( const Quaternion q, const char *format = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}" );
 	char *mstr( const Matrix3x3 m, const char *format = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]" );
+	
+	char *vstr( const fVector3 v, const char *format = "<%+8.3f %+8.3f %+8.3f>" );
+	char *qstr( const fQuaternion q, const char *format = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}" );
+	char *mstr( const fMatrix3x3 m, const char *format = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]" );
 
 };
 

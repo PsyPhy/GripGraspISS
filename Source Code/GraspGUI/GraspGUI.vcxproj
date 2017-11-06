@@ -110,6 +110,7 @@
     <ClInclude Include="GraspDesktopForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="GraspGUI.h" />
     <ClInclude Include="GraspScripts.h" />
     <ClInclude Include="HistoryForm.h">
       <FileType>CppForm</FileType>

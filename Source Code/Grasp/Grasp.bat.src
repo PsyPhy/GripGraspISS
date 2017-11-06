@@ -51,6 +51,7 @@ REM
 REM Compute the archive name from the specified local directory.
 REM Per CADMOS request, it should be YYDOY.tar.
 REM
+set GRASPROOT=DATA1/DATA/glog
 set yy=%local_directory:~-7,2%
 set mm=%local_directory:~-5,2%
 set dd=%local_directory:~-3,2%

@@ -57,6 +57,9 @@ copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini
 copy /Y Bdy\FM\*.bdy Bdy
 echo chest > ChestAlignGaze.flg
 %TAR% --append %VERBOSE% --file=%ARCHIVE% ChestAlignGaze.flg
+echo Enabling mirroring.
+echo "Mirroring on." > Mirroring.flg
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Mirroring.flg
 
 goto :COMMON
 

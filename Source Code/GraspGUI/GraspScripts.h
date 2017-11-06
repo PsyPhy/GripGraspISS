@@ -1,12 +1,8 @@
 #pragma once
 
-#define MAX_SUBJECTS	32
-#define MAX_SESSIONS	32
-#define MAX_PROTOCOLS	32
-#define MAX_TASKS		64
-#define MAX_STEPS		128
-#define MAX_PAGES		128
+#include "GraspGUI.h"
 
+#define MAX_PAGES		128
 #define MAX_TOKENS		16
 
 namespace GraspGUI {
@@ -107,7 +103,6 @@ namespace GraspGUI {
 
 		int	code;
 
-		#define	GRASP_START_TASK_CODE -9999
 		Record( int subject, int protocol, int task, int step, int code, long time ) {
 
 			this->subject = subject;
@@ -135,20 +130,6 @@ namespace GraspGUI {
 		}
 		~Record(){}
 	};
-
-	typedef struct {
-		long time;
-		short subject;
-		short protocol;
-		short task;
-		short step;
-		short code;
-	} GraspActionRecord;
-#define ITEMS_IN_SLICE 7
-	typedef struct {
-		char ID[8];
-		GraspActionRecord record[ITEMS_IN_SLICE];
-	} GraspActionSlice;
 
 	int ParseLine( char *token[MAX_TOKENS], char *line );
 

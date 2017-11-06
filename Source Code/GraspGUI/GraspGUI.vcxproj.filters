@@ -56,6 +56,9 @@
     <ClInclude Include="HistoryForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraspGUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

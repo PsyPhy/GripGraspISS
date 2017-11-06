@@ -108,6 +108,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlignToRigidBodyGUI.h" />
     <ClInclude Include="SingleObjectAlignForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>

@@ -32,6 +32,7 @@ int main(array<System::String ^> ^args)
 	folder_dialog->ShowNewFolderButton = false;
 	folder_dialog->RootFolder = System::Environment::SpecialFolder::MyComputer;
 	folder_dialog->SelectedPath = preselect;
+	folder_dialog->Description = gcnew String( "Select GRASP session to transfer." );
 	DialogResult response = folder_dialog->ShowDialog();
 	if ( response == DialogResult::OK ) {
 		String^ selected_path = folder_dialog->SelectedPath;
