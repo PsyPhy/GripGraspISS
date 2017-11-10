@@ -106,9 +106,11 @@ int main( int argc, char *argv[] )
 					Pose	pose;
 					char	*object;
 					int		visible;
+				
 //					vm.CopyPose( pose, grasp->headPose ); object = "Head"; visible = rtInfo.dataSlice[i].HMD.visible;
 //					vm.CopyPose( pose, grasp->handPose ); object = "Hand"; visible = rtInfo.dataSlice[i].hand.visible;
-					vm.CopyPose( pose, grasp->chestPose ); object = "Chest"; visible = rtInfo.dataSlice[i].chest.visible;
+					vm.CopyPose( pose, rtInfo.dataSlice[i].hand.pose ); object = "Hand"; visible = rtInfo.dataSlice[i].hand.visible;
+//					vm.CopyPose( pose, grasp->chestPose ); object = "Chest"; visible = rtInfo.dataSlice[i].chest.visible;
 					printf( "  %5s: %d %s %s", 
 						object, visible, vm.vstr( pose.position ), vm.qstr( pose.orientation ) );
 				}
