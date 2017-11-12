@@ -98,6 +98,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CmdLinePopup.cpp" />
     <ClCompile Include="GraspGUI.cpp" />
     <ClCompile Include="GraspGUIScriptProcessor.cpp" />
     <ClCompile Include="GraspScripts.cpp" />
@@ -107,6 +108,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CmdLinePopup.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="GraspDesktopForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -122,6 +126,10 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CmdLinePopup.resx">
+      <DependentUpon>CmdLinePopup.h</DependentUpon>
+      <LogicalName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GraspGUI.GraspDesktopPopup.resources</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="GraspDesktopForm.resX">
       <DependentUpon>GraspDesktopForm.h</DependentUpon>
       <SubType>Designer</SubType>

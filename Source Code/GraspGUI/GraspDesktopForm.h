@@ -32,7 +32,6 @@ namespace GraspGUI {
 		String^	rootDirectory;
 		String^ execDirectory;
 		String^ scriptDirectory;
-		String^ resultsPath;
 		String^ resultsDirectory;
 		String^ instructionsDirectory;
 
@@ -86,12 +85,9 @@ namespace GraspGUI {
 		}		
 
 	public:
-		GraspDesktop( String^ results_path )
-		{
 
-			// Caller can specify a path to the results directory.
-			resultsPath = gcnew String( results_path );
-
+		GraspDesktop( void ) {
+	
 			// The lists of subjects, protocols, tasks and steps are dynamically
 			//  read from text files. Here we initialize the lists.
 			// I treat the lists as arrays and define a separate counter to keep
@@ -128,6 +124,16 @@ namespace GraspGUI {
 			// add the absolute path to the root directory to the other file paths defined below.
 			scriptDirectory =  "Scripts\\";
 			execDirectory =  "Executables\\";
+
+			SetResultsPath( gcnew String( "Results" ) );
+
+			// Standard Windows Forms initialization.
+			InitializeComponent();
+
+			// Initialize what buttons are visible.
+			ShowLogon();
+		}
+		void SetResultsPath( String ^resultsPath ) {
 			// Define the name of the subdirectory for today's results.
 			SYSTEMTIME st;
 			GetSystemTime( &st );
@@ -135,12 +141,6 @@ namespace GraspGUI {
 			sprintf( datestr, "%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay );
 			String ^dateString = gcnew String( datestr );
 			resultsDirectory = resultsPath + "\\" +  dateString + "\\";
-
-			// Standard Windows Forms initialization.
-			InitializeComponent();
-
-			// Initialize what buttons are visible.
-			ShowLogon();
 		}
 		String^ DateTimeString( void );
 
@@ -216,7 +216,7 @@ namespace GraspGUI {
 
 		System::Windows::Forms::TextBox^  snapshotsTextBox;
 		System::Windows::Forms::Label^  snapshotsLabel;
-		System::Windows::Forms::Label^  errorCodeNote;
+
 		System::Windows::Forms::TextBox^  packetTimeTextBox;
 
 	protected:
@@ -234,6 +234,7 @@ namespace GraspGUI {
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspDesktop::typeid));
 			this->navigatorGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->historyButton = (gcnew System::Windows::Forms::Button());
 			this->packetTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->statusButton = (gcnew System::Windows::Forms::Button());
 			this->quitButton = (gcnew System::Windows::Forms::Button());
@@ -281,11 +282,9 @@ namespace GraspGUI {
 			this->stepCounterTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->stepHeaderTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->htmlGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->errorCodeNote = (gcnew System::Windows::Forms::Label());
 			this->commandGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->commandTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->instructionViewer = (gcnew System::Windows::Forms::WebBrowser());
-			this->historyButton = (gcnew System::Windows::Forms::Button());
 			this->navigatorGroupBox->SuspendLayout();
 			this->taskGroupBox->SuspendLayout();
 			this->dexStatusGroupBox->SuspendLayout();
@@ -304,6 +303,7 @@ namespace GraspGUI {
 			// navigatorGroupBox
 			// 
 			this->navigatorGroupBox->BackColor = System::Drawing::SystemColors::Window;
+			this->navigatorGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->navigatorGroupBox->Controls->Add(this->historyButton);
 			this->navigatorGroupBox->Controls->Add(this->packetTimeTextBox);
 			this->navigatorGroupBox->Controls->Add(this->statusButton);
@@ -321,6 +321,20 @@ namespace GraspGUI {
 			this->navigatorGroupBox->TabIndex = 5;
 			this->navigatorGroupBox->TabStop = false;
 			this->navigatorGroupBox->Text = L"Navigator";
+			// 
+			// historyButton
+			// 
+			this->historyButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->historyButton->ForeColor = System::Drawing::SystemColors::HotTrack;
+			this->historyButton->Location = System::Drawing::Point(438, 925);
+			this->historyButton->Margin = System::Windows::Forms::Padding(4);
+			this->historyButton->Name = L"historyButton";
+			this->historyButton->Size = System::Drawing::Size(127, 44);
+			this->historyButton->TabIndex = 22;
+			this->historyButton->Text = L"History";
+			this->historyButton->UseVisualStyleBackColor = true;
+			this->historyButton->Click += gcnew System::EventHandler(this, &GraspDesktop::historyButton_Click);
 			// 
 			// packetTimeTextBox
 			// 
@@ -364,7 +378,6 @@ namespace GraspGUI {
 			// taskGroupBox
 			// 
 			this->taskGroupBox->Controls->Add(this->taskListBox);
-			this->taskGroupBox->Controls->Add(this->dexStatusGroupBox);
 			this->taskGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->taskGroupBox->Location = System::Drawing::Point(6, 337);
@@ -405,7 +418,7 @@ namespace GraspGUI {
 			this->dexStatusGroupBox->Controls->Add(this->snapshotsLabel);
 			this->dexStatusGroupBox->Enabled = false;
 			this->dexStatusGroupBox->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->dexStatusGroupBox->Location = System::Drawing::Point(23, 532);
+			this->dexStatusGroupBox->Location = System::Drawing::Point(6, 911);
 			this->dexStatusGroupBox->Name = L"dexStatusGroupBox";
 			this->dexStatusGroupBox->Size = System::Drawing::Size(599, 68);
 			this->dexStatusGroupBox->TabIndex = 20;
@@ -869,7 +882,6 @@ namespace GraspGUI {
 			// 
 			// htmlGroupBox
 			// 
-			this->htmlGroupBox->Controls->Add(this->errorCodeNote);
 			this->htmlGroupBox->Controls->Add(this->commandGroupBox);
 			this->htmlGroupBox->Controls->Add(this->instructionViewer);
 			this->htmlGroupBox->Location = System::Drawing::Point(7, 92);
@@ -878,22 +890,10 @@ namespace GraspGUI {
 			this->htmlGroupBox->TabIndex = 5;
 			this->htmlGroupBox->TabStop = false;
 			// 
-			// errorCodeNote
-			// 
-			this->errorCodeNote->ForeColor = System::Drawing::Color::DarkMagenta;
-			this->errorCodeNote->Location = System::Drawing::Point(23, 737);
-			this->errorCodeNote->Name = L"errorCodeNote";
-			this->errorCodeNote->Size = System::Drawing::Size(544, 68);
-			this->errorCodeNote->TabIndex = 22;
-			this->errorCodeNote->Text = L"Note: The code given below is the number of the PAGE that is being displayed onbo" 
-				L"ard. To know what error caused this page to be presented you must ask the crewme" 
-				L"mber.";
-			this->errorCodeNote->Visible = false;
-			// 
 			// commandGroupBox
 			// 
 			this->commandGroupBox->Controls->Add(this->commandTextBox);
-			this->commandGroupBox->Location = System::Drawing::Point(8, 607);
+			this->commandGroupBox->Location = System::Drawing::Point(9, 675);
 			this->commandGroupBox->Name = L"commandGroupBox";
 			this->commandGroupBox->Size = System::Drawing::Size(575, 123);
 			this->commandGroupBox->TabIndex = 3;
@@ -922,20 +922,6 @@ namespace GraspGUI {
 			this->instructionViewer->Url = (gcnew System::Uri(L"", System::UriKind::Relative));
 			this->instructionViewer->WebBrowserShortcutsEnabled = false;
 			this->instructionViewer->DocumentCompleted += gcnew System::Windows::Forms::WebBrowserDocumentCompletedEventHandler(this, &GraspDesktop::instructionViewer_DocumentCompleted);
-			// 
-			// historyButton
-			// 
-			this->historyButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->historyButton->ForeColor = System::Drawing::SystemColors::HotTrack;
-			this->historyButton->Location = System::Drawing::Point(438, 925);
-			this->historyButton->Margin = System::Windows::Forms::Padding(4);
-			this->historyButton->Name = L"historyButton";
-			this->historyButton->Size = System::Drawing::Size(127, 44);
-			this->historyButton->TabIndex = 22;
-			this->historyButton->Text = L"History";
-			this->historyButton->UseVisualStyleBackColor = true;
-			this->historyButton->Click += gcnew System::EventHandler(this, &GraspDesktop::historyButton_Click);
 			// 
 			// GraspDesktop
 			// 

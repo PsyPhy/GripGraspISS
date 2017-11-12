@@ -199,9 +199,9 @@ private: System::ComponentModel::IContainer^  components;
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
-			System::Windows::Forms::TreeNode^  treeNode2 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
-			System::Windows::Forms::TreeNode^  treeNode3 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
+			System::Windows::Forms::TreeNode^  treeNode4 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
+			System::Windows::Forms::TreeNode^  treeNode5 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
+			System::Windows::Forms::TreeNode^  treeNode6 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspMMIGraphsForm::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->Spans = (gcnew System::Windows::Forms::Label());
@@ -278,14 +278,14 @@ private: System::ComponentModel::IContainer^  components;
 			// Spans
 			// 
 			this->Spans->AutoSize = true;
-			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->Spans->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 4.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->Spans->Location = System::Drawing::Point(10, 58);
+			this->Spans->Location = System::Drawing::Point(17, 58);
 			this->Spans->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->Spans->Name = L"Spans";
-			this->Spans->Size = System::Drawing::Size(164, 13);
+			this->Spans->Size = System::Drawing::Size(155, 12);
 			this->Spans->TabIndex = 13;
-			this->Spans->Text = L"12h  4h  1h 30m 10m 5m 60s 30s";
+			this->Spans->Text = L"  12h   4h   1h   30m 10m  5m  60s  30s";
 			// 
 			// dataLiveCheckBox
 			// 
@@ -295,7 +295,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(56, 22);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -306,7 +306,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->lastAbsoluteTimeTextBox->Location = System::Drawing::Point(871, 58);
 			this->lastAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->lastAbsoluteTimeTextBox->Name = L"lastAbsoluteTimeTextBox";
-			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
+			this->lastAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 24);
 			this->lastAbsoluteTimeTextBox->TabIndex = 3;
 			this->lastAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
@@ -315,7 +315,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->firstAbsoluteTimeTextBox->Location = System::Drawing::Point(182, 58);
 			this->firstAbsoluteTimeTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->firstAbsoluteTimeTextBox->Name = L"firstAbsoluteTimeTextBox";
-			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 21);
+			this->firstAbsoluteTimeTextBox->Size = System::Drawing::Size(72, 24);
 			this->firstAbsoluteTimeTextBox->TabIndex = 2;
 			this->firstAbsoluteTimeTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
@@ -326,7 +326,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->spanSelector->Margin = System::Windows::Forms::Padding(4);
 			this->spanSelector->Maximum = 7;
 			this->spanSelector->Name = L"spanSelector";
-			this->spanSelector->Size = System::Drawing::Size(162, 42);
+			this->spanSelector->Size = System::Drawing::Size(162, 56);
 			this->spanSelector->TabIndex = 1;
 			this->spanSelector->TickStyle = System::Windows::Forms::TickStyle::TopLeft;
 			this->spanSelector->Value = 2;
@@ -366,14 +366,14 @@ private: System::ComponentModel::IContainer^  components;
 			this->hmdContextMenu->Name = L"contextMenuStrip1";
 			this->hmdContextMenu->ShowCheckMargin = true;
 			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(122, 26);
+			this->hmdContextMenu->Size = System::Drawing::Size(144, 28);
 			this->hmdContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::hmdContextMenu_ItemClicked);
 			// 
 			// autoscaleHMD
 			// 
 			this->autoscaleHMD->CheckOnClick = true;
 			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(121, 22);
+			this->autoscaleHMD->Size = System::Drawing::Size(143, 24);
 			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// autoscaleIndicator
@@ -384,7 +384,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->autoscaleIndicator->Location = System::Drawing::Point(947, 14);
 			this->autoscaleIndicator->Name = L"autoscaleIndicator";
 			this->autoscaleIndicator->ReadOnly = true;
-			this->autoscaleIndicator->Size = System::Drawing::Size(112, 21);
+			this->autoscaleIndicator->Size = System::Drawing::Size(112, 24);
 			this->autoscaleIndicator->TabIndex = 1;
 			this->autoscaleIndicator->Text = L"Autoscale On";
 			this->autoscaleIndicator->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -416,7 +416,7 @@ private: System::ComponentModel::IContainer^  components;
 				this->toolStripSeparator2, this->toolStripTextBox2, this->toolStripMenuItem400, this->toolStripMenuItem500, this->toolStripMenuItem600, 
 				this->toolStripSeparator3, this->toolStripMenuItem000, this->toolStripMenuItem900});
 			this->taskContextMenu->Name = L"taskContextMenu";
-			this->taskContextMenu->Size = System::Drawing::Size(168, 268);
+			this->taskContextMenu->Size = System::Drawing::Size(211, 286);
 			this->taskContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskContextMenu_ItemClicked);
 			// 
 			// toolStripMenuItemAll
@@ -424,7 +424,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->toolStripMenuItemAll->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
 			this->toolStripMenuItemAll->ImageScaling = System::Windows::Forms::ToolStripItemImageScaling::None;
 			this->toolStripMenuItemAll->Name = L"toolStripMenuItemAll";
-			this->toolStripMenuItemAll->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItemAll->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItemAll->Tag = L"";
 			this->toolStripMenuItemAll->Text = L"Show All";
 			this->toolStripMenuItemAll->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -432,7 +432,7 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripSeparator1
 			// 
 			this->toolStripSeparator1->Name = L"toolStripSeparator1";
-			this->toolStripSeparator1->Size = System::Drawing::Size(164, 6);
+			this->toolStripSeparator1->Size = System::Drawing::Size(207, 6);
 			// 
 			// toolStripTextBox1
 			// 
@@ -445,28 +445,28 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripMenuItem100
 			// 
 			this->toolStripMenuItem100->Name = L"toolStripMenuItem100";
-			this->toolStripMenuItem100->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem100->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem100->Tag = L"100";
-			this->toolStripMenuItem100->Text = L"100 Visual-Visual";
+			this->toolStripMenuItem100->Text = L"100 Visual-Manual";
 			// 
 			// toolStripMenuItem200
 			// 
 			this->toolStripMenuItem200->Name = L"toolStripMenuItem200";
-			this->toolStripMenuItem200->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem200->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem200->Tag = L"200";
-			this->toolStripMenuItem200->Text = L"200 Visual-Manual";
+			this->toolStripMenuItem200->Text = L"200 Visual-Visual";
 			// 
 			// toolStripMenuItem300
 			// 
 			this->toolStripMenuItem300->Name = L"toolStripMenuItem300";
-			this->toolStripMenuItem300->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem300->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem300->Tag = L"300";
 			this->toolStripMenuItem300->Text = L"300 Manual-Manual";
 			// 
 			// toolStripSeparator2
 			// 
 			this->toolStripSeparator2->Name = L"toolStripSeparator2";
-			this->toolStripSeparator2->Size = System::Drawing::Size(164, 6);
+			this->toolStripSeparator2->Size = System::Drawing::Size(207, 6);
 			// 
 			// toolStripTextBox2
 			// 
@@ -479,40 +479,40 @@ private: System::ComponentModel::IContainer^  components;
 			// toolStripMenuItem400
 			// 
 			this->toolStripMenuItem400->Name = L"toolStripMenuItem400";
-			this->toolStripMenuItem400->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem400->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem400->Tag = L"400";
 			this->toolStripMenuItem400->Text = L"400 Visual-Visual";
 			// 
 			// toolStripMenuItem500
 			// 
 			this->toolStripMenuItem500->Name = L"toolStripMenuItem500";
-			this->toolStripMenuItem500->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem500->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem500->Tag = L"500";
 			this->toolStripMenuItem500->Text = L"500 Visual-Manual";
 			// 
 			// toolStripMenuItem600
 			// 
 			this->toolStripMenuItem600->Name = L"toolStripMenuItem600";
-			this->toolStripMenuItem600->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem600->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem600->Tag = L"600";
 			this->toolStripMenuItem600->Text = L"600 Manual-Manual";
 			// 
 			// toolStripSeparator3
 			// 
 			this->toolStripSeparator3->Name = L"toolStripSeparator3";
-			this->toolStripSeparator3->Size = System::Drawing::Size(164, 6);
+			this->toolStripSeparator3->Size = System::Drawing::Size(207, 6);
 			// 
 			// toolStripMenuItem000
 			// 
 			this->toolStripMenuItem000->Name = L"toolStripMenuItem000";
-			this->toolStripMenuItem000->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem000->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem000->Tag = L"0";
 			this->toolStripMenuItem000->Text = L"000 Setup / Stow";
 			// 
 			// toolStripMenuItem900
 			// 
 			this->toolStripMenuItem900->Name = L"toolStripMenuItem900";
-			this->toolStripMenuItem900->Size = System::Drawing::Size(167, 22);
+			this->toolStripMenuItem900->Size = System::Drawing::Size(210, 24);
 			this->toolStripMenuItem900->Tag = L"900";
 			this->toolStripMenuItem900->Text = L"900 Maintenance";
 			// 
@@ -521,7 +521,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->taskLeftTimeLimit->Location = System::Drawing::Point(12, 220);
 			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
-			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 21);
+			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 24);
 			this->taskLeftTimeLimit->TabIndex = 7;
 			this->taskLeftTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
@@ -530,7 +530,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->taskRightTimeLimit->Location = System::Drawing::Point(1016, 220);
 			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
-			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 21);
+			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 24);
 			this->taskRightTimeLimit->TabIndex = 8;
 			this->taskRightTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
@@ -568,10 +568,10 @@ private: System::ComponentModel::IContainer^  components;
 				static_cast<System::Byte>(0)));
 			this->historyTree->Location = System::Drawing::Point(199, 8);
 			this->historyTree->Name = L"historyTree";
-			treeNode1->ForeColor = System::Drawing::Color::Blue;
-			treeNode1->Name = L"Node0";
-			treeNode1->Text = L"This tree will be hidden.";
-			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode1});
+			treeNode4->ForeColor = System::Drawing::Color::Blue;
+			treeNode4->Name = L"Node0";
+			treeNode4->Text = L"This tree will be hidden.";
+			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode4});
 			this->historyTree->Size = System::Drawing::Size(207, 23);
 			this->historyTree->TabIndex = 0;
 			this->historyTree->Visible = false;
@@ -583,13 +583,13 @@ private: System::ComponentModel::IContainer^  components;
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->visibleHistoryTree->Location = System::Drawing::Point(6, 23);
 			this->visibleHistoryTree->Name = L"visibleHistoryTree";
-			treeNode2->ForeColor = System::Drawing::Color::Blue;
-			treeNode2->Name = L"Node0";
-			treeNode2->Text = L"Node0";
-			treeNode3->ForeColor = System::Drawing::SystemColors::WindowText;
-			treeNode3->Name = L"Node1";
-			treeNode3->Text = L"Node1";
-			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
+			treeNode5->ForeColor = System::Drawing::Color::Blue;
+			treeNode5->Name = L"Node0";
+			treeNode5->Text = L"Node0";
+			treeNode6->ForeColor = System::Drawing::SystemColors::WindowText;
+			treeNode6->Name = L"Node1";
+			treeNode6->Text = L"Node1";
+			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode5, treeNode6});
 			this->visibleHistoryTree->Size = System::Drawing::Size(425, 964);
 			this->visibleHistoryTree->TabIndex = 1;
 			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
@@ -600,30 +600,30 @@ private: System::ComponentModel::IContainer^  components;
 				this->toolStripSeparator4, this->clearItemErrorHighlight, this->clearAllErrorHighlights});
 			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
 			this->taskTreeContextMenu->ShowImageMargin = false;
-			this->taskTreeContextMenu->Size = System::Drawing::Size(168, 76);
+			this->taskTreeContextMenu->Size = System::Drawing::Size(220, 82);
 			this->taskTreeContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskTreeContextMenu_ItemClicked);
 			// 
 			// rebuildTree
 			// 
 			this->rebuildTree->Name = L"rebuildTree";
-			this->rebuildTree->Size = System::Drawing::Size(167, 22);
+			this->rebuildTree->Size = System::Drawing::Size(219, 24);
 			this->rebuildTree->Text = L"Rebuild Tree";
 			// 
 			// toolStripSeparator4
 			// 
 			this->toolStripSeparator4->Name = L"toolStripSeparator4";
-			this->toolStripSeparator4->Size = System::Drawing::Size(164, 6);
+			this->toolStripSeparator4->Size = System::Drawing::Size(216, 6);
 			// 
 			// clearItemErrorHighlight
 			// 
 			this->clearItemErrorHighlight->Name = L"clearItemErrorHighlight";
-			this->clearItemErrorHighlight->Size = System::Drawing::Size(167, 22);
+			this->clearItemErrorHighlight->Size = System::Drawing::Size(219, 24);
 			this->clearItemErrorHighlight->Text = L"Clear This Error Highlight";
 			// 
 			// clearAllErrorHighlights
 			// 
 			this->clearAllErrorHighlights->Name = L"clearAllErrorHighlights";
-			this->clearAllErrorHighlights->Size = System::Drawing::Size(167, 22);
+			this->clearAllErrorHighlights->Size = System::Drawing::Size(219, 24);
 			this->clearAllErrorHighlights->Text = L"Clear All Error Highlights";
 			// 
 			// pictureBox1

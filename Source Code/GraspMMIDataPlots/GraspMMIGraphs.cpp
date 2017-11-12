@@ -754,7 +754,7 @@ void GraspMMIGraphsForm::BuildHistoryTree( void ) {
 				// An normal exit has been detected.
 				// Add a leaf to the task node that provides information about the completion code.
 				if ( step != current_step ) {
-					int error_code = - ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_ABNORMAL );
+					int error_code = ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_NORMAL );
 					TreeNode^ node = gcnew TreeNode( "Step " + step +  " exited normally with code " + error_code );
 					node->ForeColor = System::Drawing::Color::Green;
 					current_task_leaf->Nodes->Add( node );

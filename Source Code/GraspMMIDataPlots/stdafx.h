@@ -6,6 +6,7 @@
 // Disable warnings about unsafe string functions.
 #define _CRT_SECURE_NO_WARNINGS
 
+#include <WinSock2.h>
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -19,6 +20,7 @@
 #include <vcclr.h>
 #include <io.h>
 #include <float.h>
+#include <SYS\timeb.h>
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
