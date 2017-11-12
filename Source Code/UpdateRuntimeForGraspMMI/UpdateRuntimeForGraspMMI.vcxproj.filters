@@ -4,6 +4,6 @@
     <None Include="InstallGraspMMI.debug.mak" />
     <None Include="InstallGraspMMI.mak" />
     <None Include="InstallGraspMMI.release.mak" />
-    <None Include="RunGraspMMI.bat" />
+    <None Include="RunGraspMMI.bat.src" />
   </ItemGroup>
 </Project>

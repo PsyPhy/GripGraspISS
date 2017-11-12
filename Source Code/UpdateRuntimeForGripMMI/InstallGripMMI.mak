@@ -26,7 +26,7 @@ install: $(EXECUTABLES) InstallGripMMI.mak
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy GripPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\glut32.dll $(DESTINATION)
-	copy RunGripMMI.bat $(ROOT)
+	copy RunGripMMI.bat.src $(ROOT)\RunGripMMI.bat
 	echo GripMMI Version Information > $(DESTINATION)\GripMMIVersionInfo.txt
 	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GripMMIVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@
