@@ -1,0 +1,14 @@
+# Protocol Definition: Hardware Configuration 
+950; INSTRUCTION=; Software Configuration; MaintenanceWelcome.instruction.html
+951; SYSTEM=; Align Gaze to CODA; copy /Y /V Instructions\00StraightenHeadCoda.instruction.html Instructions\00StraightenHead.instruction.html & del /F /Q ChestAlignGaze.flg & echo "AlignCoda" > CodaAlignGaze.flg; StepReady.prompt.html
+952; SYSTEM=; Align Gaze to Chest; copy /Y /V Instructions\00StraightenHeadChest.instruction.html Instructions\00StraightenHead.instruction.html & del /F /Q CodaAlignGaze.flg & echo "AlignChest" > ChestAlignGaze.flg; StepReady.prompt.html
+953; SYSTEM=; Gaze Self-Alignment; copy /Y /V Instructions\00StraightenHeadHonor.instruction.html Instructions\00StraightenHead.instruction.html & del /F /Q CodaAlignGaze.flg ChestAlignGaze.flg; StepReady.prompt.html
+954; SYSTEM=; Use Bar Targets; Executables\UseBars.bat; StepReady.prompt.html
+955; SYSTEM=; Use Ball Targets; Executables\UseBalls.bat; StepReady.prompt.html
+960; SYSTEM=; Enable VR Mirroring; echo "MirroringOn" > Mirroring.flg; StepReady.prompt.html
+961; SYSTEM=; Disable VR Mirroring; del /F /Q Mirroring.flg; StepReady.prompt.html
+962; SYSTEM=; Enable FTP Safety Copy; del /F /Q NoFTP.flg; StepReady.prompt.html
+963; SYSTEM=; Disable FTP Safety Copy; echo "FTP" > NoFTP.flg; StepReady.prompt.html
+964; SYSTEM=; Enable Training Subjects; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+965; SYSTEM=; Enable Bedrest Subjects; copy /Y /V Scripts\SubjectsBedrest.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+966; SYSTEM=; Enable Flight Subjects; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; StepReady.prompt.html
