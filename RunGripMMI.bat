@@ -1,7 +1,7 @@
 @echo OFF
 REM **************************************************************************
 
-REM GraspMMI Startup Script.
+REM GripMMI Startup Script.
 REM Copyright (c) 2014, 2015, 2016 PsyPhy Consulting
 REM All rights reserved.
 
@@ -23,14 +23,36 @@ REM The mirror directory must contain an exact copy of the runtime scripts that 
 REM on the GRIP hardware that is generating the telemetry data. You will find one or
 REM more candidates in the GripMMIMirrorEnvironments directory.
 REM The directory specification can be relative to this .bat file. 
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM Use this option if you want to run in simulation mode using the packets
+REM  captured during EST, which is the latest set of packets that we have available.
 set ScriptDir="GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\Scripts"
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM Use the following option instead when operating with the most recent script delivery.
+REM set ScriptDir="GripMMIMirrorEnvironments\GripFlightRelease (2018.02.19 04.00.30)\Scripts"
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 REM Provide a set of recorded packets corresponding to the above scripts for simulation mode.
 REM Note that this definition has no effect if you are in "-constructed" mode.
 REM Use PACKET_SOURCE="GripMMIExecutables\GripPacketsForSimulator.gpk" if you do not have a more specific file.
 REM Note that if the scripts do not correspond the behavior is undefined.
-REM Here we have recorded packets that correspond to the scripts above.
+REM Here we set a pointer to recorded packets that correspond to the scripts above.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM Use a set of packets were recorded during EST. Note that these packets were recorded
+REM with scripts that are different from the most current version of the scripts. To work properly,
+REM you must select the "GripFlightRelease (2017.01.24 12.01.27)" scripts above.
 set PACKET_SOURCE="GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\GripESTPacketsForSimulator.gpk"
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+REM We do not yet have a set of recorded packets corresponding to "GripFlightRelease (2018.02.19 04.00.30)".
+REM When we do, we can set PACKET_SOURCE accordingly so that the latest scripts 
+REM can be tested in simulation mode.
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 REM
 REM CLWS Emulator for testing

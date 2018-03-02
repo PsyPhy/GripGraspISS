@@ -10,7 +10,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\CLWSemulator.exe \
 	..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe \
 	GripPacketsForSimulator.gpk \
-	RunGripMMI.bat
+	RunGripMMI.bat.src
 
 # Runtime executables will go here.
 DESTINATION=..\..\GripMMIExecutables

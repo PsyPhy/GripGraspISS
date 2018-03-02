@@ -1,0 +1,63 @@
+# Special file for debugging.
+CMD_WAIT_SUBJ_READY,Fold down the retainer and lock in place.,CloseRetainer.bmp,300
+CMD_WAIT_SUBJ_READY,Force/torque baseline acquired.,info.bmp,300
+CMD_WAIT_SUBJ_READY,GRIP Scripts Version:\n\nGripFlightRelease (2018.02.19 04.00.30),GripLogo.bmp,300
+CMD_WAIT_SUBJ_READY,If necessary\, move Target Mast to Standby position (left side). Press OK to continue.,BarLeft.bmp,300
+CMD_WAIT_SUBJ_READY,If necessary\, place maniplulandum in any cradle and stow retainer. Press OK to continue.,PlaceAndFold.bmp,300
+CMD_WAIT_SUBJ_READY,If no other messages\, a centered grip was detected.,info.bmp,300
+CMD_WAIT_SUBJ_READY,If open\, close the locker.,LockerClosed.bmp,300
+CMD_WAIT_SUBJ_READY,If you removed the wrist strap\, please don it again now.,BeltsSeated.bmp,300
+CMD_WAIT_SUBJ_READY,Legs should be stretched out with heels resting on step.,Legs.bmp,300
+CMD_WAIT_SUBJ_READY,Lie down on the supine box\, attach the waist\, thigh and shoulder straps and attach the wrist box to your right wrist.,BeltsSupine.bmp,300
+CMD_WAIT_SUBJ_READY,Move the Target Mast to the Standby socket (left-hand side).,BarLeft.bmp,300
+CMD_WAIT_SUBJ_READY,Move the manipulandum to the retainer on the Workspace Tablet and lock in place (push pins).,RetainerManip.bmp,300
+CMD_WAIT_SUBJ_READY,Force offsets nullified.,ok.bmp,300
+CMD_WAIT_SUBJ_READY,Keep rubbing. Need more slips.,PrgBar2.bmp,300
+CMD_WAIT_SUBJ_READY,Keep rubbing. Need more slips.,PrgBar4.bmp,300
+CMD_WAIT_SUBJ_READY,Keep rubbing. Need more slips.,PrgBar6.bmp,300
+CMD_WAIT_SUBJ_READY,Keep rubbing. Need more slips.,PrgBar8.bmp,300
+CMD_WAIT_SUBJ_READY,Keep rubbing. Need more slips.,PrgBarF.bmp,300
+CMD_WAIT_SUBJ_READY,Maintian grip.,working.bmp,300
+CMD_WAIT_SUBJ_READY,Move quickly to each lighted target. Don't start early. Stop at each target.,working.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.,working.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 1),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 10),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 2),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 3),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 4),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 5),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 6),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 7),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 8),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Horizontal Target 9),MvToBlkH.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 1),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 10),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 11),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 12),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 13),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 2),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 3),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 4),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 5),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 6),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 7),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 8),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Move to blinking target.\n(Vertical Target 9),MvToBlkV.bmp,300
+CMD_WAIT_SUBJ_READY,Manipulandum obscured from view.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Manipulandum occluded too often. Press <Retry> to repeat (once or twice) or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 10mm.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 1mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 20mm.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 2mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 3mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of manipulandum markers\n > 5mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 10mm.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 1mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 20mm.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 2mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 3mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Misalignment of reference markers\n > 5mm.,info.bmp,300
+CMD_WAIT_SUBJ_READY,Movement amplitude out of range. Press <Retry> to repeat (once or twice) or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Movement amplitude out of range.\n- Movements were FRONT-TO-BACK?\n<Retry> to repeat or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Movement amplitude out of range.\n- Movements were SIDE-TO-SIDE?\n<Retry> to repeat or call COL-CC.,alert.bmp,300
+CMD_WAIT_SUBJ_READY,Movement amplitude out of range.\n- Movements were UP-AND-DOWN?\n<Retry> to repeat or call COL-CC.,alert.bmp,300
