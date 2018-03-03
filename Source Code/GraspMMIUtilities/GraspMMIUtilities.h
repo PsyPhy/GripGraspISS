@@ -12,6 +12,8 @@
 #define HMD_STRUCTURE	2
 #define MARKER_STRUCTURES	3
 
+static char *StructureLabel[MARKER_STRUCTURES] =  { "CHEST", "HAND", "HMD" };
+
 namespace GraspMMI {
 
 	// Data contained in realtime data packets.
@@ -33,6 +35,12 @@ namespace GraspMMI {
 		// Computed Items
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
 		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
+		double handRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
+		double handRollAngle;		// Rotation of the Hand around the roll axis.
+		double chestRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
+		double chestRollAngle;		// Rotation of the Hand around the roll axis.
+		double responseRollAngle;	// Rotation of the Hand around the roll axis, only when the hand is raised.
+
 	} GraspRealtimeDataSlice;
 
 	typedef struct {

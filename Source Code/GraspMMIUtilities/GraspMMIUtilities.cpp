@@ -16,19 +16,9 @@ using namespace PsyPhy;
 
 namespace GraspMMI {
 
-void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetryPacket &packet ) {
+u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buffer, u32 p ) {
 
-	u8 *buffer = packet.sections.rawData;
-	u32 p = 0;
-	// Each packet includes a small amount of data about the packet itself, then the actual data.
-	// Here we extract the packet info, but it does not go into the data arrays.
-	unsigned int acquisitionID;
-	unsigned int packetCount;
-
-	p = extractTM( acquisitionID, buffer, p );
-	p = extractTM( packetCount, buffer, p );
-
-	// Extract the slices.
+	static VectorsMixin vm;
 	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
 		p = extractTM( slice[i].fillTime, buffer, p );
 		p = extractTM( slice[i].globalCount, buffer, p );
@@ -38,9 +28,56 @@ void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetry
 
 		p = extractTM( slice[i].codaUnit, buffer, p );
 		p = extractTM( slice[i].codaFrame, buffer, p );
+
 		p = extractTM( slice[i].clientTime, buffer, p );
 		p = extractTM( slice[i].clientData, sizeof( slice[i].clientData ), buffer, p );
+		// It is convenient to compute some derived values here.
+		if ( slice[i].HMD.visible ) {
+			slice[i].hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].HMD.pose.orientation ) );
+			slice[i].hmdRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].HMD.pose.orientation ) );
+		}
+		else {
+			slice[i].hmdRotationAngle = MISSING_DOUBLE;
+			slice[i].hmdRollAngle = MISSING_DOUBLE;
+		}
+		if ( slice[i].hand.visible ) {
+			slice[i].handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].hand.pose.orientation ) );
+			slice[i].handRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].hand.pose.orientation ) );
+		}
+		else {
+			slice[i].handRotationAngle = MISSING_DOUBLE;
+			slice[i].handRollAngle = MISSING_DOUBLE;
+		}
+		if ( slice[i].chest.visible ) {
+			slice[i].chestRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].chest.pose.orientation ) );
+			slice[i].chestRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].chest.pose.orientation ) );
+		}
+		else {
+			slice[i].chestRotationAngle = MISSING_DOUBLE;
+			slice[i].chestRollAngle = MISSING_DOUBLE;
+		}
 	}
+
+	return( p );
+
+}
+
+void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetryPacket &packet ) {
+
+	u8 *buffer = packet.sections.rawData;
+	u32 p = 0;
+
+	// Each packet includes a small amount of data about the packet itself, then the actual data.
+	// Here we extract the packet info, but it does not go into the data arrays.
+	unsigned int acquisitionID;
+	unsigned int packetCount;
+
+	p = extractTM( acquisitionID, buffer, p );
+	p = extractTM( packetCount, buffer, p );
+
+	// Extract the slices.
+	p = ExtractGraspRealtimeDataSliceContent( slice, buffer, p );
+
 }
 
 void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPacket &packet ) {
@@ -48,33 +85,12 @@ void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPack
 	u8 *buffer = packet.sections.rawData;
 	u32 p = 0;
 
-	static VectorsMixin vm;
-	
-	// Packets that are sent to the GraspASW include a special sync word and packet type.
-	// But these do not get put into the data payload that is included in the DEX telemetry packet.
-	// I just leave this here as a reminder of the difference between what is sent to and from DEX.
-	// u32 sync;
-	// u16 pktype;
-	//p = extractTM( sync, buffer, p );
-	//p = extractTM( pktype, buffer, p );
-
 	// Each packet includes a small amount of data about the packet itself, then the actual data.
 	p = extractTM( info.acquisitionID, buffer, p );
 	p = extractTM( info.packetCount, buffer, p );
 	// Extract the slices.
-	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
-		p = extractTM( info.dataSlice[i].fillTime, buffer, p );
-		p = extractTM( info.dataSlice[i].globalCount, buffer, p );
-		p = extractTM( info.dataSlice[i].HMD, buffer, p );
-		p = extractTM( info.dataSlice[i].hand, buffer, p );
-		p = extractTM( info.dataSlice[i].chest, buffer, p );
+	p = ExtractGraspRealtimeDataSliceContent( info.dataSlice, buffer, p );
 
-		p = extractTM( info.dataSlice[i].codaUnit, buffer, p );
-		p = extractTM( info.dataSlice[i].codaFrame, buffer, p );
-
-		p = extractTM( info.dataSlice[i].clientTime, buffer, p );
-		p = extractTM( info.dataSlice[i].clientData, sizeof( info.dataSlice[i].clientData ), buffer, p );
-	}
 }
 
 ///
@@ -134,7 +150,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 
 	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
 	// By setting it to a really high number here (100 years into the future) we are sure that the 
-	//  calculate difference between this value and the first frame will be negative, as if there was no gap.
+	//  calculated difference between this value and the first frame will be negative, as if there was no gap.
 	double previous_packet_timestamp = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
 
 	// Similarly, we look for resets of the fill time for each slice, and when the latest fill time is less
