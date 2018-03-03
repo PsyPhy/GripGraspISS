@@ -38,7 +38,9 @@ namespace GraspMMI {
 		/// Display parameters.
 		///
 
-		static double	positionRadius = 500.0; // Range of XYZ values around zero in mm.
+		static double	headPositionRadius = 1000.0; // Range of XYZ values around zero in mm.
+		static double	handPositionRadius = 1000.0; // Range of XYZ values around zero in mm.
+		static double	chestPositionRadius = 1000.0; // Range of XYZ values around zero in mm.
 		static double	quaternionRadius = 0.5;	// Range for XYZ components of quaternions. Use 1.0 to see 360° rotations.
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
 		static	int		refreshInterval = 500;	// How often to update the display, in milliseconds.
@@ -50,11 +52,10 @@ namespace GraspMMI {
 		// Objects used to plot to the screen.
 		//
 
-		Display		hmdDisplay;
+		Display		poseDisplay;
 		Display		markerDisplay;
 		Display		historyDisplay;
-		::Layout	hmdStripChartLayout;
-		::Layout	tiltStripChartLayout;
+		::Layout	poseStripChartLayout;
 		::Layout	markerStripChartLayout;
 		::Layout	historyStripChartLayout;
 
@@ -89,18 +90,7 @@ namespace GraspMMI {
 		//
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
-
-	public: 
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
-	private: System::Windows::Forms::Label^  Spans;
-	private: System::Windows::Forms::PictureBox^  pictureBox1;
-	public: 
-
-	public: 
-
-	public: 
-
-	public: 
 		String^ scriptDirectory;			// Path to root file of the GUI menu tree.
 
 	public:
@@ -146,9 +136,9 @@ namespace GraspMMI {
 	private: System::Windows::Forms::TextBox^  firstAbsoluteTimeTextBox;
 	private: System::Windows::Forms::TrackBar^  spanSelector;
 	private: System::Windows::Forms::HScrollBar^  scrollBar;
-	private: System::Windows::Forms::GroupBox^  groupBox2;
+	private: System::Windows::Forms::GroupBox^  poseGraphGroupBox;
 	private: System::Windows::Forms::GroupBox^  groupBox3;
-	private: System::Windows::Forms::Panel^  hmdGraphPanel;
+	private: System::Windows::Forms::Panel^  poseGraphPanel;
 	private: System::Windows::Forms::Panel^  taskGraphPanel;
 	private: System::Windows::Forms::TextBox^  taskRightTimeLimit;
 	private: System::Windows::Forms::TextBox^  taskLeftTimeLimit;
@@ -181,6 +171,8 @@ namespace GraspMMI {
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator4;
 	private: System::Windows::Forms::ToolStripMenuItem^  clearAllErrorHighlights;
 	private: System::Windows::Forms::ToolStripMenuItem^  rebuildTree;
+	private: System::Windows::Forms::Label^  Spans;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
 
 
 private: System::ComponentModel::IContainer^  components;
@@ -210,8 +202,8 @@ private: System::ComponentModel::IContainer^  components;
 			this->firstAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->spanSelector = (gcnew System::Windows::Forms::TrackBar());
 			this->scrollBar = (gcnew System::Windows::Forms::HScrollBar());
-			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			this->hmdGraphPanel = (gcnew System::Windows::Forms::Panel());
+			this->poseGraphGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->poseGraphPanel = (gcnew System::Windows::Forms::Panel());
 			this->hmdContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->autoscaleHMD = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->autoscaleIndicator = (gcnew System::Windows::Forms::TextBox());
@@ -247,8 +239,8 @@ private: System::ComponentModel::IContainer^  components;
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
-			this->groupBox2->SuspendLayout();
-			this->hmdGraphPanel->SuspendLayout();
+			this->poseGraphGroupBox->SuspendLayout();
+			this->poseGraphPanel->SuspendLayout();
 			this->hmdContextMenu->SuspendLayout();
 			this->groupBox3->SuspendLayout();
 			this->taskContextMenu->SuspendLayout();
@@ -329,7 +321,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->spanSelector->Size = System::Drawing::Size(176, 45);
 			this->spanSelector->TabIndex = 1;
 			this->spanSelector->TickStyle = System::Windows::Forms::TickStyle::TopLeft;
-			this->spanSelector->Value = 2;
 			this->spanSelector->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::spanSelector_ValueChanged);
 			// 
 			// scrollBar
@@ -341,24 +332,24 @@ private: System::ComponentModel::IContainer^  components;
 			this->scrollBar->TabIndex = 0;
 			this->scrollBar->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::scrollBar_ValueChanged);
 			// 
-			// groupBox2
+			// poseGraphGroupBox
 			// 
-			this->groupBox2->Controls->Add(this->hmdGraphPanel);
-			this->groupBox2->Location = System::Drawing::Point(8, 96);
-			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(1098, 577);
-			this->groupBox2->TabIndex = 1;
-			this->groupBox2->TabStop = false;
-			this->groupBox2->Text = L"Head";
+			this->poseGraphGroupBox->Controls->Add(this->poseGraphPanel);
+			this->poseGraphGroupBox->Location = System::Drawing::Point(8, 96);
+			this->poseGraphGroupBox->Name = L"poseGraphGroupBox";
+			this->poseGraphGroupBox->Size = System::Drawing::Size(1098, 644);
+			this->poseGraphGroupBox->TabIndex = 1;
+			this->poseGraphGroupBox->TabStop = false;
+			this->poseGraphGroupBox->Text = L"Kinematics";
 			// 
-			// hmdGraphPanel
+			// poseGraphPanel
 			// 
-			this->hmdGraphPanel->ContextMenuStrip = this->hmdContextMenu;
-			this->hmdGraphPanel->Controls->Add(this->autoscaleIndicator);
-			this->hmdGraphPanel->Location = System::Drawing::Point(6, 23);
-			this->hmdGraphPanel->Name = L"hmdGraphPanel";
-			this->hmdGraphPanel->Size = System::Drawing::Size(1082, 548);
-			this->hmdGraphPanel->TabIndex = 0;
+			this->poseGraphPanel->ContextMenuStrip = this->hmdContextMenu;
+			this->poseGraphPanel->Controls->Add(this->autoscaleIndicator);
+			this->poseGraphPanel->Location = System::Drawing::Point(6, 23);
+			this->poseGraphPanel->Name = L"poseGraphPanel";
+			this->poseGraphPanel->Size = System::Drawing::Size(1082, 615);
+			this->poseGraphPanel->TabIndex = 0;
 			// 
 			// hmdContextMenu
 			// 
@@ -394,9 +385,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox3->Controls->Add(this->taskGraphPanel);
 			this->groupBox3->Controls->Add(this->taskLeftTimeLimit);
 			this->groupBox3->Controls->Add(this->taskRightTimeLimit);
-			this->groupBox3->Location = System::Drawing::Point(9, 805);
+			this->groupBox3->Location = System::Drawing::Point(9, 863);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(1098, 191);
+			this->groupBox3->Size = System::Drawing::Size(1098, 137);
 			this->groupBox3->TabIndex = 2;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Task Execution";
@@ -406,7 +397,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->taskGraphPanel->ContextMenuStrip = this->taskContextMenu;
 			this->taskGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->taskGraphPanel->Name = L"taskGraphPanel";
-			this->taskGraphPanel->Size = System::Drawing::Size(1082, 132);
+			this->taskGraphPanel->Size = System::Drawing::Size(1082, 80);
 			this->taskGraphPanel->TabIndex = 1;
 			// 
 			// taskContextMenu
@@ -518,7 +509,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// taskLeftTimeLimit
 			// 
-			this->taskLeftTimeLimit->Location = System::Drawing::Point(12, 162);
+			this->taskLeftTimeLimit->Location = System::Drawing::Point(11, 110);
 			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
 			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 21);
@@ -527,7 +518,7 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			// taskRightTimeLimit
 			// 
-			this->taskRightTimeLimit->Location = System::Drawing::Point(1016, 162);
+			this->taskRightTimeLimit->Location = System::Drawing::Point(1015, 110);
 			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
 			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
 			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 21);
@@ -537,9 +528,9 @@ private: System::ComponentModel::IContainer^  components;
 			// groupBox4
 			// 
 			this->groupBox4->Controls->Add(this->markerGraphPanel);
-			this->groupBox4->Location = System::Drawing::Point(9, 679);
+			this->groupBox4->Location = System::Drawing::Point(9, 746);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(1098, 120);
+			this->groupBox4->Size = System::Drawing::Size(1098, 111);
 			this->groupBox4->TabIndex = 2;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Marker Visibility";
@@ -548,16 +539,16 @@ private: System::ComponentModel::IContainer^  components;
 			// 
 			this->markerGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->markerGraphPanel->Name = L"markerGraphPanel";
-			this->markerGraphPanel->Size = System::Drawing::Size(1082, 91);
+			this->markerGraphPanel->Size = System::Drawing::Size(1082, 80);
 			this->markerGraphPanel->TabIndex = 0;
 			// 
 			// groupBox5
 			// 
 			this->groupBox5->Controls->Add(this->historyTree);
 			this->groupBox5->Controls->Add(this->visibleHistoryTree);
-			this->groupBox5->Location = System::Drawing::Point(1113, -2);
+			this->groupBox5->Location = System::Drawing::Point(1113, 4);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(437, 998);
+			this->groupBox5->Size = System::Drawing::Size(437, 996);
 			this->groupBox5->TabIndex = 9;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Task Execution History";
@@ -590,7 +581,7 @@ private: System::ComponentModel::IContainer^  components;
 			treeNode3->Name = L"Node1";
 			treeNode3->Text = L"Node1";
 			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
-			this->visibleHistoryTree->Size = System::Drawing::Size(425, 964);
+			this->visibleHistoryTree->Size = System::Drawing::Size(425, 969);
 			this->visibleHistoryTree->TabIndex = 1;
 			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
 			// 
@@ -643,7 +634,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->ClientSize = System::Drawing::Size(1552, 1008);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->groupBox5);
-			this->Controls->Add(this->groupBox2);
+			this->Controls->Add(this->poseGraphGroupBox);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox4);
@@ -660,9 +651,9 @@ private: System::ComponentModel::IContainer^  components;
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->EndInit();
-			this->groupBox2->ResumeLayout(false);
-			this->hmdGraphPanel->ResumeLayout(false);
-			this->hmdGraphPanel->PerformLayout();
+			this->poseGraphGroupBox->ResumeLayout(false);
+			this->poseGraphPanel->ResumeLayout(false);
+			this->poseGraphPanel->PerformLayout();
 			this->hmdContextMenu->ResumeLayout(false);
 			this->groupBox3->ResumeLayout(false);
 			this->groupBox3->PerformLayout();

@@ -27,7 +27,7 @@
 
 using namespace GraspMMI;
 
-#define HMD_STRIPCHARTS	4
+#define POSE_STRIPCHARTS	8
 #define MARKER_STRIPCHARTS	MARKER_STRUCTURES
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
@@ -67,18 +67,16 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 	// Then the Views are defined with respect to each Display and the 
 	//  limits in user coordinates are initialized. 
 
-	// HMD Strip Charts
-	parent = static_cast<HWND>( hmdGraphPanel->Handle.ToPointer());
-   	hmdDisplay = CreateOglDisplay();
+	// Pose Strip Charts
+	parent = static_cast<HWND>( poseGraphPanel->Handle.ToPointer());
+   	poseDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
-	DisplaySetSizePixels( hmdDisplay, hmdGraphPanel->Size.Width, hmdGraphPanel->Size.Height );
-	DisplaySetScreenPosition( hmdDisplay, 0, 0 );
-	DisplayInit( hmdDisplay );
-	DisplayErase( hmdDisplay );
-	hmdStripChartLayout = CreateLayout( hmdDisplay, HMD_STRIPCHARTS - 1, 1 );
-	LayoutSetDisplayEdgesRelative( hmdStripChartLayout, 0.0, 0.1, 1.0, 1.0 );
-	tiltStripChartLayout = CreateLayout( hmdDisplay, 1, 1 );
-	LayoutSetDisplayEdgesRelative( tiltStripChartLayout, 0.0, 0.0, 1.0, 0.1 );
+	DisplaySetSizePixels( poseDisplay, poseGraphPanel->Size.Width, poseGraphPanel->Size.Height );
+	DisplaySetScreenPosition( poseDisplay, 0, 0 );
+	DisplayInit( poseDisplay );
+	DisplayErase( poseDisplay );
+	poseStripChartLayout = CreateLayout( poseDisplay, POSE_STRIPCHARTS, 1 );
+	LayoutSetDisplayEdgesRelative( poseStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
 
 	// Marker Visibility Strip Charts
 	parent = static_cast<HWND>( markerGraphPanel->Handle.ToPointer());
@@ -186,6 +184,9 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 // of the plots is determined by the scroll bar and span slider.
 void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
+	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+	static int axis_color = GREY4;
+
 	int first_sample;
 	int last_sample;
 	int index;
@@ -224,15 +225,16 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
 
 	// Plot the continous data about the head position and orientation.
-	DisplayActivate( hmdDisplay );
-	DisplayErase( hmdDisplay );
-
+	DisplayActivate( poseDisplay );
+	DisplayErase( poseDisplay );
 	int row = 0;
-	int axis_color = GREY4;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+
+	//
+	// Head Pose
+	//
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	// Set the plotting limits.
 	ViewSetXLimits( view, first_instant, last_instant );
@@ -250,7 +252,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( min == max ) min = -1.0, max = 1.0;
 		ViewSetYLimits( view, min, max );
 	}
-	else ViewSetYLimits( view, - positionRadius, positionRadius );
+	else ViewSetYLimits( view, - headPositionRadius, headPositionRadius );
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
@@ -262,12 +264,13 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 			sizeof( graspDataSlice[first_sample] ),
 			MISSING_DOUBLE);
 	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	row++;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Orientation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	ViewColor( view, GREY7 );
 	ViewHorizontalLine( view, 0.0 );
 
@@ -298,6 +301,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 			sizeof( graspDataSlice[first_sample] ),
 			MISSING_DOUBLE);
 	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Orientation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	//
 	// Plot the amplitude of the head rotation away from straight ahead.
@@ -312,10 +317,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 
 	row++;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Rotation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	double angle_max = - DBL_MAX;
 	ViewSetXLimits( view, first_instant, last_instant );
 	if ( autoscaleHMD->Checked ) {
@@ -333,8 +337,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		autoscaleIndicator->Visible = false;
 	}
 
+	// Negative Enveloppe Border
 	ViewSetYLimits( view, angle_max, - angle_max );
-
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -343,7 +347,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
-
+	// Positive Enveloppe Border
 	ViewSetYLimits( view, - angle_max, angle_max );
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
@@ -353,7 +357,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
-
+	// Roll Angle
 	ViewColor( view, MAGENTA );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -362,12 +366,15 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Rotation from Zero", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
-	view = LayoutView( tiltStripChartLayout, 0, 0 );
+	// Plot the roll angle of the head as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, axis_color );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	ViewColor( view, MAGENTA );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -376,8 +383,120 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
-	DisplaySwap( hmdDisplay );
+	//
+	// Hand Pose
+	//
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewBox( view );
+
+	// Set the plotting limits.
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] > max ) max = graspDataSlice[i].hand.pose.position[j];
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] < min ) min = graspDataSlice[i].hand.pose.position[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - handPositionRadius, handPositionRadius );
+
+	for ( i = 0;  i < 3; i++ ) {
+		ViewSelectColor( view, i );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].hand.pose.position[i], 
+			first_sample, last_sample - 1, step,
+			sizeof( graspDataSlice[first_sample] ), 
+			sizeof( graspDataSlice[first_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Hand Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+	// Plot the roll angle of the hand as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewSetXLimits( view, first_instant, last_instant );
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewBox( view );
+	ViewColor( view, GREY6 );
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].handRollAngle, 
+		first_sample, last_sample - 1, step * 10,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Hand Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+
+	//
+	// Chest Pose
+	//
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewBox( view );
+
+	// Set the plotting limits.
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - chestPositionRadius, chestPositionRadius );
+
+	for ( i = 0;  i < 3; i++ ) {
+		ViewSelectColor( view, i );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].chest.pose.position[i], 
+			first_sample, last_sample - 1, step,
+			sizeof( graspDataSlice[first_sample] ), 
+			sizeof( graspDataSlice[first_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Chest Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+	// Plot the roll angle of the hand as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewSetXLimits( view, first_instant, last_instant );
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewBox( view );
+	ViewColor( view, GREY6 );
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].chestRollAngle, 
+		first_sample, last_sample - 1, step * 10,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+	// Zap it to the display.
+	DisplaySwap( poseDisplay );
 
 
 	// Find the indices into the arrays that correspond to the time window.
@@ -395,56 +514,47 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Plot how many markers are visible on each marker structure.
 	DisplayActivate( markerDisplay );
 	DisplayErase( markerDisplay );
-	for ( row = 0; row < MARKER_STRUCTURES; row++ ) {
-		view = LayoutView( markerStripChartLayout, row, 0 );
+	for ( int object = 0; object < MARKER_STRUCTURES; object++ ) {
+		view = LayoutView( markerStripChartLayout, MARKER_STRUCTURES - object - 1, 0 );
 		ViewSetXLimits( view, first_instant, last_instant );
 		ViewSetYLimits( view, 0, 8.0 );
 		ViewColor( view, axis_color );
 		ViewBox( view );
-		ViewSelectColor( view, row + 2 );
+		ViewSetColorRGB( view, 1.0f, 0.85f, 0.85f );
+		ViewHorizontalBand( view, 0.0, 4.0 );
+		ViewColor( view, color_by_object[object]);
 		ViewFillPlotAvailableDoubles( view,
 			&graspHousekeepingSlice[0].absoluteTime, 
-			&graspHousekeepingSlice[0].visibleMarkers[row], 
+			&graspHousekeepingSlice[0].visibleMarkers[object], 
 			first_sample, last_sample - 1, 1,
 			sizeof( *graspHousekeepingSlice ), 
 			sizeof( *graspHousekeepingSlice ),
 			MISSING_DOUBLE );
+		ViewColor( view, axis_color );
+		ViewTitle( view, StructureLabel[object], INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	}
-	view = LayoutView( markerStripChartLayout, HMD_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "HMD", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	view = LayoutView( markerStripChartLayout, HAND_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "Hand", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	view = LayoutView( markerStripChartLayout, CHEST_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "Chest", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	DisplaySwap( markerDisplay );
 
+	//
 	// Plot which protocol and task was executing at each point in time.
+	//
 	DisplayActivate( historyDisplay );
-	fOutputDebugString( "DisplayErase( historyDisplay ) started.\n" );
 	DisplayErase( historyDisplay );
-	fOutputDebugString( "DisplayErase( historyDisplay ) finished.\n" );
 
+	// Shade alternate bands of 100's to make it easier to understand the data plot.
 	row = 0;
 	double bottom = taskViewBottom;
 	double top = taskViewTop;
-
 	view = LayoutView( historyStripChartLayout, row++, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
 	ViewSetYLimits( view, bottom, top );
-
 	if ( ( top - bottom ) > 100.0 ) {
 		ViewColor( view, GREY7 );
 		for ( double y = bottom; y < top; y += 200.0 ) ViewHorizontalBand( view, y, y + 100.0 );
 	}
 
-	ViewColor( view, axis_color );
-	ViewBox( view );
-	ViewTitle( view, "Protocol", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-
+	// Plot the protocol data.
 	ViewSelectColor( view, 1 );
 	ViewScatterPlotAvailableDoubles( view, 
 		SYMBOL_FILLED_SQUARE,
@@ -464,16 +574,21 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( *graspHousekeepingSlice ),
 		MISSING_INT);
 
+	// Label the  bands.
+	ViewColor( view, axis_color );
+	ViewBox( view );
+
+	double shift_up = 10.0;	// A fudge factor to position the band labels correctly.
 	ViewColor( view, axis_color );
 	for ( double y = bottom; y < top; y += 200.0 ) {
 		char label[16];
 		sprintf( label, "%03.0f's", y );
-		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + 50.0 ), 0.0 );
+		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + shift_up ), 0.0 );
 	}
 	for ( double y = bottom + 100.0; y < top; y += 200.0 ) {
 		char label[16];
 		sprintf( label, "%03.0f's", y );
-		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + 50.0 ), 0.0 );
+		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + shift_up ), 0.0 );
 	}
 
 	DisplaySwap( historyDisplay );
@@ -485,7 +600,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 void GraspMMIGraphsForm::KillGraphics( void ) {
 	DisplayClose( historyDisplay );
 	DisplayClose( markerDisplay );
-	DisplayClose( hmdDisplay );
+	DisplayClose( poseDisplay );
 }
 
 
