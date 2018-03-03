@@ -1119,7 +1119,7 @@ void ViewTiltPlotAvailableDoubles (View view,
 	float x, x1, y1, x2, y2, radius, mid;
 	float r, sr, cr;
 
-	radius = (float) fabs( view->display_top - view->display_bottom ) * 0.4f;
+	radius = (float) fabs( view->display_top - view->display_bottom ) * 0.3f;
 	mid = ( view->display_top + view->display_bottom ) / 2;
 
 	for (i = start; i <= end; i += step ) {
