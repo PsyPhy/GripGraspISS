@@ -57,6 +57,14 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			slice[i].chestRotationAngle = MISSING_DOUBLE;
 			slice[i].chestRollAngle = MISSING_DOUBLE;
 		}
+		if ( slice[i].chest.visible && slice[i].HMD.visible ) {
+			Vector3 delta;
+			vm.SubtractVectors( delta, slice[i].HMD.pose.position, slice[i].chest.pose.position );
+			slice[i].torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
+		}
+		else {
+			slice[i].torsoRollAngle = MISSING_DOUBLE;
+		}
 	}
 
 	return( p );

@@ -37,9 +37,9 @@ namespace GraspMMI {
 		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
 		double handRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
 		double handRollAngle;		// Rotation of the Hand around the roll axis.
-		double chestRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
-		double chestRollAngle;		// Rotation of the Hand around the roll axis.
-		double responseRollAngle;	// Rotation of the Hand around the roll axis, only when the hand is raised.
+		double chestRotationAngle;	// Rotation of the Chest away from straight ahead, including pitch and yaw, in degrees.
+		double chestRollAngle;		// Rotation of the Chest around the roll axis.
+		double torsoRollAngle;		// Rotation of the line from Chest to HMD around the roll axis.
 
 	} GraspRealtimeDataSlice;
 
