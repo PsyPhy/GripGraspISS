@@ -37,14 +37,14 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			slice[i].hmdRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].HMD.pose.orientation ) );
 		}
 		else {
-			slice[i].hmdRotationAngle = MISSING_DOUBLE;
-			slice[i].hmdRollAngle = MISSING_DOUBLE;
+			vm.CopyPose( slice[i].HMD.pose, vm.missingPose );
 		}
 		if ( slice[i].hand.visible ) {
 			slice[i].handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].hand.pose.orientation ) );
 			slice[i].handRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].hand.pose.orientation ) );
 		}
 		else {
+			vm.CopyPose( slice[i].hand.pose, vm.missingPose );
 			slice[i].handRotationAngle = MISSING_DOUBLE;
 			slice[i].handRollAngle = MISSING_DOUBLE;
 		}
@@ -53,6 +53,7 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			slice[i].chestRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].chest.pose.orientation ) );
 		}
 		else {
+			vm.CopyPose( slice[i].chest.pose, vm.missingPose );
 			slice[i].chestRotationAngle = MISSING_DOUBLE;
 			slice[i].chestRollAngle = MISSING_DOUBLE;
 		}

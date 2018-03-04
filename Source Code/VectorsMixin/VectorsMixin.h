@@ -48,6 +48,10 @@ public:
 	static const Matrix3x3 zeroMatrix;
 	static const Pose nullPose;
 
+	static const Vector3 missingVector;
+	static const Quaternion missingQuaternion;
+	static const Pose missingPose;
+
 	static const Vector3 iVector;
 	static const Vector3 jVector;
 	static const Vector3 kVector;
