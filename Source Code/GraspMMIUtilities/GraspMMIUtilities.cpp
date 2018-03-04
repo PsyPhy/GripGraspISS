@@ -222,13 +222,15 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			// Each slice in a packet includes the fillTime, which is the time that the data in the packet
 			// was obtained with respect to the start of an acquisition. But each time that Grasp.exe is started
 			// the fillTime timer starts from zero. We equate the absoluteTime of the first packet with the 
-			// fillTime of the first slice in that packet, and use that reference to calculate the absoluteTime of
+			// fillTime of the last slice in that packet, and use that reference to calculate the absoluteTime of
 			// each subsequent slice in the same packet and in each subsequent packet. If the fillTime decreases
 			// from one packet to the next, we know that a new acquistion was started and we remap the fillTime of 
 			// that slice to the timestamp of the packet.
-			double fill_time_increment = grasp_data_slice[n_slices].fillTime - previous_fill_time;
+			double fill_time = grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
+			double fill_time_increment = fill_time - previous_fill_time;
 			if ( fill_time_increment < 0.0 ) {
-				absolute_time_reference = EPMtoSeconds( &epmHeader ) - grasp_data_slice[GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
+				absolute_time_reference = EPMtoSeconds( &epmHeader ) - fill_time;
+				fOutputDebugString( "Slice: %d Header: %f  fillTime: %f  reference: %f\n", n_slices, EPMtoSeconds( &epmHeader ), fill_time, absolute_time_reference );
 			}
 			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
 				grasp_data_slice[n_slices + s].absoluteTime = grasp_data_slice[n_slices + s].fillTime  + absolute_time_reference;

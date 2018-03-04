@@ -187,6 +187,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
 	static int axis_color = GREY4;
 
+	static bool __debug__ = false;
+
 	int first_sample;
 	int last_sample;
 	int index;
@@ -197,7 +199,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	static int refresh_count = 0; 
 
-	fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
+	if ( __debug__ ) fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
 
 	// Determine the time window, in seconds, based on the scroll bar position and the span slider.
 	double last_instant = scrollBar->Value;
@@ -222,7 +224,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	int step = 1;
 	while ( ((last_sample - first_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
 
-	fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
+	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
 
 	// Plot the continous data about the head position and orientation.
 	DisplayActivate( poseDisplay );
@@ -375,7 +377,6 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewSetXLimits( view, first_instant, last_instant );
 	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewColor( view, MAGENTA );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
@@ -430,7 +431,6 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewSetXLimits( view, first_instant, last_instant );
 	ViewColor( view, color_by_object[HAND_STRUCTURE]);
 	ViewBox( view );
-	ViewColor( view, GREY6 );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].handRollAngle, 
@@ -458,8 +458,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		double max = - DBL_MAX;
 		for ( i = first_sample + 1; i < last_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
-				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
-				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
+				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
+				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
 			}
 		}
 		if ( min == max ) min = -1.0, max = 1.0;
@@ -493,6 +493,14 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].torsoRollAngle, 
+		first_sample, last_sample - 1, step * 10,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	// Zap it to the display.
@@ -508,7 +516,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime < first_instant ) break;
 	}
 	first_sample = index + 1;
-	fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
+	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
 	// for ( int i = first_sample; i < last_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
 
 	// Plot how many markers are visible on each marker structure.
@@ -592,7 +600,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 
 	DisplaySwap( historyDisplay );
-	fOutputDebugString( "Finish RefreshGraphics().\n" );
+	if ( __debug__ ) fOutputDebugString( "Finish RefreshGraphics().\n" );
 
 }
 
