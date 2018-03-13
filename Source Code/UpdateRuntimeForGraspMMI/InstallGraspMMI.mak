@@ -7,6 +7,7 @@
 EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe \
 	..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe \
+	..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe \
 	..\$(BUILDCONFIGURATION)\CLWSemulator.exe \
 	..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe \
 	GraspPacketsForSimulator.gpk \
@@ -22,6 +23,7 @@ install: $(EXECUTABLES) InstallGraspMMI.mak
 	mkdir $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)

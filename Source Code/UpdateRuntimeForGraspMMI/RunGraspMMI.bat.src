@@ -173,4 +173,5 @@ start /REALTIME GraspMMIExecutables\DexGroundMonitorClient.exe %CachePath% %HOST
 REM Start the actual GraspMMI Mirror and Data Plots.
 REM First parameter is the path to the packet caches that serve as inputs.
 start /D %MirrorDir% GraspMMIExecutables\GraspMMIMirror.exe %CachePath%
+start /D %MirrorDir% GraspMMIExecutables\GraspMMIHistory.exe %CachePath% 
 start /D %MirrorDir% GraspMMIExecutables\GraspMMIDataPlots.exe %CachePath% 
