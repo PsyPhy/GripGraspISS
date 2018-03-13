@@ -262,6 +262,13 @@ namespace GraspGUI {
 			this->dexStatusGroupBox->Visible = true;
 			this->packetTimeTextBox->Visible = true;
 			InitializeForm();
+
+			// The GRASP GUI is a little too big to fit comfortably on the screens as CADMOS
+			// so we shrink it a little here and tweek some spacing to make it look more like
+			// what the astronaut sees on board.
+			this->subjectListBox->ColumnWidth = 160;
+			SizeF scaling = SizeF( 0.90f, 0.90f );
+			Scale( scaling );
 		}
 		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) override {
 		}

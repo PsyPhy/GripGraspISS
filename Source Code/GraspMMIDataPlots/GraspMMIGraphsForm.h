@@ -91,34 +91,34 @@ namespace GraspMMI {
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
-		String^ scriptDirectory;			// Path to root file of the GUI menu tree.
+		String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
 	public:
 
 		GraspMMIGraphsForm() : 
-			TimebaseOffset( -17 ), 
-			nDataSlices( 0 ), 
-			nHousekeepingSlices( 0 ),
-			current_subject( 0 ),
-			current_protocol( 0 ),
-			current_task( 0 ),
-			current_task_leaf( nullptr ),
-			previous_task_leaf( nullptr ),
-			current_task_start_time( 0.0 ),
-			task_tree_current_index( 0 ),
-			first_step( 0 ),
-			taskViewBottom( 0.0 ),
-			taskViewTop( 1000.0 )
-		{
-			InitializeComponent();
+		  TimebaseOffset( -17 ), 
+			  nDataSlices( 0 ), 
+			  nHousekeepingSlices( 0 ),
+			  current_subject( 0 ),
+			  current_protocol( 0 ),
+			  current_task( 0 ),
+			  current_task_leaf( nullptr ),
+			  previous_task_leaf( nullptr ),
+			  current_task_start_time( 0.0 ),
+			  task_tree_current_index( 0 ),
+			  first_step( 0 ),
+			  taskViewBottom( 0.0 ),
+			  taskViewTop( 1000.0 )
+		  {
+			  InitializeComponent();
 
-			// Allocate memory for display traces.
-			graspHousekeepingSlice = (GraspHousekeepingSlice *) malloc( MAX_SLICES * sizeof( GraspHousekeepingSlice ) );
-			if ( !graspHousekeepingSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Housekeeping Data", MAX_SLICES );
-			graspDataSlice = (GraspRealtimeDataSlice *) malloc( MAX_SLICES * sizeof( GraspRealtimeDataSlice ) );
-			if ( !graspDataSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Realtime Data", MAX_SLICES );
+			  // Allocate memory for display traces.
+			  graspHousekeepingSlice = (GraspHousekeepingSlice *) malloc( MAX_SLICES * sizeof( GraspHousekeepingSlice ) );
+			  if ( !graspHousekeepingSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Housekeeping Data", MAX_SLICES );
+			  graspDataSlice = (GraspRealtimeDataSlice *) malloc( MAX_SLICES * sizeof( GraspRealtimeDataSlice ) );
+			  if ( !graspDataSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Realtime Data", MAX_SLICES );
 
-		}
+		  }
 
 	protected:
 		/// Clean up any resources being used.
@@ -175,7 +175,7 @@ namespace GraspMMI {
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 
 
-private: System::ComponentModel::IContainer^  components;
+	private: System::ComponentModel::IContainer^  components;
 
 	private:
 		/// <summary>
@@ -287,7 +287,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -791,7 +791,7 @@ private: System::ComponentModel::IContainer^  components;
 				taskViewTop = 99.0 + taskViewBottom;
 			}
 			StartRefreshTimer();
-		 }
+		}
 
 
 		System::Void taskTreeContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
@@ -843,13 +843,13 @@ private: System::ComponentModel::IContainer^  components;
 			if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) clearItemErrorHighlight->Enabled = true;
 			else clearItemErrorHighlight->Enabled = false;
 
-		 }
+		}
 	private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
-			StartRefreshTimer();
-		 }
+				 StartRefreshTimer();
+			 }
 
-	// Add an 'About ...' item to the system menu. 
-	#define SYSMENU_ABOUT_ID 0x01
+			 // Add an 'About ...' item to the system menu. 
+#define SYSMENU_ABOUT_ID 0x01
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
 
@@ -873,7 +873,7 @@ private: System::ComponentModel::IContainer^  components;
 					{
 						char pwd[MAX_PATH];
 						int bytes = GetCurrentDirectory( sizeof( pwd ), pwd );
-						
+
 						// We need InteropServics in order to convert a String to a char *.
 						using namespace System::Runtime::InteropServices;
 
@@ -888,7 +888,7 @@ private: System::ComponentModel::IContainer^  components;
 						CreateGripPacketCacheFilename( rt_file, sizeof( rt_file ), GRIP_RT_SCIENCE_PACKET, cache_root );
 
 						fMessageBox( MB_OK, 
-							"GraspMMIMirror Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
+							"GraspMMIDataPlots Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
 							GripGraspSourceRelease, GripGraspBuildInfo, hk_file, rt_file, pwd );
 						// Release the memory used to create the ANSI string.
 						Marshal::FreeHGlobal( IntPtr( cache_root ) );
@@ -899,7 +899,6 @@ private: System::ComponentModel::IContainer^  components;
 					Form::WndProc( m );
 				}
 
-
-};
+	};
 }
 
