@@ -7,9 +7,9 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Grip/GripPackets.h"
 
-#define CHEST_STRUCTURE	0
+#define CHEST_STRUCTURE	2
 #define HAND_STRUCTURE	1
-#define HMD_STRUCTURE	2
+#define HMD_STRUCTURE	0
 #define MARKER_STRUCTURES	3
 
 static char *StructureLabel[MARKER_STRUCTURES] =  { "CHEST", "HAND", "HMD" };
@@ -31,6 +31,14 @@ namespace GraspMMI {
 		MarkerFrame		codaFrame;
 		f32				clientTime;
 		unsigned char	clientData[GRASP_RT_CLIENT_BYTES];
+
+		// These are the key poses that come from the GRASP client data.
+		unsigned long	enableBits;
+		unsigned long	spinnerBits;
+		double			targetOrientation;
+		PsyPhy::Pose	headPose;
+		PsyPhy::Pose	handPose;
+		PsyPhy::Pose	chestPose;
 
 		// Computed Items
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.

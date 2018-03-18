@@ -61,6 +61,7 @@ typedef struct {
 namespace PsyPhy {
 
 extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
+extern void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
 
 class Tracker : public PsyPhy::VectorsMixin {
 

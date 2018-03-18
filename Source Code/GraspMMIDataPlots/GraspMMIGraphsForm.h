@@ -22,6 +22,11 @@
 #include "..\PsyPhy2dGraphicsLib\Views.h"
 #include "..\PsyPhy2dGraphicsLib\Layouts.h"
 
+#include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
+#include "../Trackers/CodaPoseTracker.h"
+#include "../GraspVR/GraspGLObjects.h"
+
 
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
 #include "../GraspGUI/GraspScripts.h"
@@ -60,7 +65,7 @@ namespace GraspMMI {
 		static double	chestPositionRadius = 1000.0; // Range of XYZ values around zero in mm.
 		static double	quaternionRadius = 0.5;	// Range for XYZ components of quaternions. Use 1.0 to see 360° rotations.
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
-		static	int		refreshInterval = 500;	// How often to update the display, in milliseconds.
+		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
 
 		double taskViewBottom;
 		double taskViewTop;
@@ -83,16 +88,25 @@ namespace GraspMMI {
 		OpenGLWindow *chestWindow0;
 		OpenGLWindow *chestWindow1;
 
-		OpenGLWindow *vrWindow0;
-		OpenGLWindow *vrWindow1;
+		OpenGLWindow *codaWindow0;
+		OpenGLWindow *codaWindow1;
+		OpenGLWindow *subjectWindow;
+		OpenGLWindow *vrWindow;
 
 		Viewpoint *codaViewpoint0;
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
+		Viewpoint *sideViewpoint;
+		Viewpoint *subjectViewpoint;
+
+		CodaPoseTracker *hmdTracker;
+		CodaPoseTracker *handTracker;
+		CodaPoseTracker *chestTracker;
+
 
 		// A class that provides methods for making a lot of the 
 		// OpenGLObjects that we need for displaying the status.
-		GraspGLObjects *objects;
+		GraspGLObjects *renderer;
 		// A visual representation of each marker structure.
 		// These ones are always at the origin in the null orientation.
 		MarkerStructureGLObject *hmdStationary0;
@@ -109,6 +123,7 @@ namespace GraspMMI {
 		// Just a way to refer to all the mobile objects together.
 		// It makes it easier to draw all of them. 
 		Yoke *mobiles;
+
 
 		//
 		// Arrays to hold the data traces.
@@ -142,6 +157,10 @@ namespace GraspMMI {
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
+private: System::Windows::Forms::Panel^  vrPanel;
+public: 
+
+public: 
 
 	public: 
 
@@ -178,7 +197,6 @@ namespace GraspMMI {
 		{
 			if (components)
 			{
-				KillGraphics();
 				free( graspDataSlice );
 				free( graspHousekeepingSlice );
 				delete components;
@@ -198,7 +216,6 @@ namespace GraspMMI {
 	private: System::Windows::Forms::CheckBox^  dataLiveCheckBox;
 	private: System::Windows::Forms::GroupBox^  groupBox4;
 	private: System::Windows::Forms::Panel^  markerGraphPanel;
-
 	private: System::Windows::Forms::ContextMenuStrip^  hmdContextMenu;
 	private: System::Windows::Forms::ToolStripMenuItem^  autoscaleHMD;
 	private: System::Windows::Forms::ContextMenuStrip^  taskContextMenu;
@@ -224,10 +241,9 @@ namespace GraspMMI {
 	private: System::Windows::Forms::ToolStripMenuItem^  rebuildTree;
 	private: System::Windows::Forms::Label^  Spans;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
-
 	private: System::Windows::Forms::GroupBox^  groupBox2;
-	private: System::Windows::Forms::Panel^  vrPanel1;
-	private: System::Windows::Forms::Panel^  vrPanel0;
+	private: System::Windows::Forms::Panel^  codaPanel1;
+	private: System::Windows::Forms::Panel^  codaPanel0;
 	private: System::Windows::Forms::GroupBox^  chestGroupBox;
 	private: System::Windows::Forms::Panel^  chestPanel1;
 	private: System::Windows::Forms::Panel^  chestPanel0;
@@ -238,7 +254,7 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Panel^  hmdPanel1;
 	private: System::Windows::Forms::Panel^  hmdPanel0;
 	private: System::Windows::Forms::GroupBox^  groupBox5;
-	private: System::Windows::Forms::Panel^  columbusPanel;
+private: System::Windows::Forms::Panel^  subjectPanel;
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -298,8 +314,8 @@ namespace GraspMMI {
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
-			this->vrPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->chestPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->chestPanel0 = (gcnew System::Windows::Forms::Panel());
@@ -310,7 +326,8 @@ namespace GraspMMI {
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
-			this->columbusPanel = (gcnew System::Windows::Forms::Panel());
+			this->vrPanel = (gcnew System::Windows::Forms::Panel());
+			this->subjectPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -364,7 +381,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -659,8 +676,8 @@ namespace GraspMMI {
 			// 
 			// groupBox2
 			// 
-			this->groupBox2->Controls->Add(this->vrPanel1);
-			this->groupBox2->Controls->Add(this->vrPanel0);
+			this->groupBox2->Controls->Add(this->codaPanel1);
+			this->groupBox2->Controls->Add(this->codaPanel0);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox2->Location = System::Drawing::Point(1111, 204);
@@ -670,23 +687,23 @@ namespace GraspMMI {
 			this->groupBox2->Size = System::Drawing::Size(418, 196);
 			this->groupBox2->TabIndex = 21;
 			this->groupBox2->TabStop = false;
-			this->groupBox2->Text = L"3D View";
+			this->groupBox2->Text = L"Coda  View";
 			// 
-			// vrPanel1
+			// codaPanel1
 			// 
-			this->vrPanel1->Location = System::Drawing::Point(218, 22);
-			this->vrPanel1->Margin = System::Windows::Forms::Padding(2);
-			this->vrPanel1->Name = L"vrPanel1";
-			this->vrPanel1->Size = System::Drawing::Size(192, 167);
-			this->vrPanel1->TabIndex = 1;
+			this->codaPanel1->Location = System::Drawing::Point(218, 22);
+			this->codaPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->codaPanel1->Name = L"codaPanel1";
+			this->codaPanel1->Size = System::Drawing::Size(192, 167);
+			this->codaPanel1->TabIndex = 1;
 			// 
-			// vrPanel0
+			// codaPanel0
 			// 
-			this->vrPanel0->Location = System::Drawing::Point(13, 22);
-			this->vrPanel0->Margin = System::Windows::Forms::Padding(2);
-			this->vrPanel0->Name = L"vrPanel0";
-			this->vrPanel0->Size = System::Drawing::Size(192, 167);
-			this->vrPanel0->TabIndex = 0;
+			this->codaPanel0->Location = System::Drawing::Point(13, 22);
+			this->codaPanel0->Margin = System::Windows::Forms::Padding(2);
+			this->codaPanel0->Name = L"codaPanel0";
+			this->codaPanel0->Size = System::Drawing::Size(192, 167);
+			this->codaPanel0->TabIndex = 0;
 			// 
 			// chestGroupBox
 			// 
@@ -783,7 +800,8 @@ namespace GraspMMI {
 			// 
 			// groupBox5
 			// 
-			this->groupBox5->Controls->Add(this->columbusPanel);
+			this->groupBox5->Controls->Add(this->vrPanel);
+			this->groupBox5->Controls->Add(this->subjectPanel);
 			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox5->Location = System::Drawing::Point(1112, 4);
@@ -793,15 +811,23 @@ namespace GraspMMI {
 			this->groupBox5->Size = System::Drawing::Size(418, 196);
 			this->groupBox5->TabIndex = 22;
 			this->groupBox5->TabStop = false;
-			this->groupBox5->Text = L"Columbus";
+			this->groupBox5->Text = L"Subject View";
 			// 
-			// columbusPanel
+			// vrPanel
 			// 
-			this->columbusPanel->Location = System::Drawing::Point(13, 22);
-			this->columbusPanel->Margin = System::Windows::Forms::Padding(2);
-			this->columbusPanel->Name = L"columbusPanel";
-			this->columbusPanel->Size = System::Drawing::Size(396, 167);
-			this->columbusPanel->TabIndex = 0;
+			this->vrPanel->Location = System::Drawing::Point(218, 22);
+			this->vrPanel->Margin = System::Windows::Forms::Padding(2);
+			this->vrPanel->Name = L"vrPanel";
+			this->vrPanel->Size = System::Drawing::Size(191, 167);
+			this->vrPanel->TabIndex = 1;
+			// 
+			// subjectPanel
+			// 
+			this->subjectPanel->Location = System::Drawing::Point(13, 22);
+			this->subjectPanel->Margin = System::Windows::Forms::Padding(2);
+			this->subjectPanel->Name = L"subjectPanel";
+			this->subjectPanel->Size = System::Drawing::Size(191, 167);
+			this->subjectPanel->TabIndex = 0;
 			// 
 			// GraspMMIGraphsForm
 			// 
@@ -850,8 +876,9 @@ namespace GraspMMI {
 #pragma endregion
 
 	private: void InitializeVR( void );
-	private: void Render( void );
+	private: void RenderVR( unsigned int index );
 	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
+	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint );
 
 	private: void ReadTelemetryCache( String^ root );
 	private: void InitializeGraphics( void );
@@ -901,7 +928,8 @@ namespace GraspMMI {
 				dataLiveCheckBox->Checked = true;
 			}
 			RefreshGraphics();
-			Render();
+			// For the moment we show always the last frame.
+			if ( nDataSlices > 0 ) RenderVR( nDataSlices - 1 );
 			// Start the timer again to trigger the next cycle after a delay.
 			StartRefreshTimer();
 

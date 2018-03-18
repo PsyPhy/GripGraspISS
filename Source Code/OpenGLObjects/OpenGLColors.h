@@ -7,7 +7,7 @@
 
 namespace PsyPhy {
 
-enum OPENGL_COLORS {BLACK = 0, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA, ORANGE, GRAY, WHITE, COLORS };
+enum OPENGL_COLORS {BLACK = 0, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, ORANGE, GRAY, WHITE, COLORS };
 #define Translucid( color ) ( color + COLORS )
 #define Blinking( color ) ( color + 2*COLORS )
 #define SelectColor( index ) ( ( index % 7 ) + 1 )
