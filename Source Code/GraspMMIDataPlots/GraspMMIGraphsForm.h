@@ -3,9 +3,25 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
+#include "../OpenGLObjects/OpenGLWindows.h"
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
+#include "../OpenGLObjects/OpenGLWindowsInForms.h"
+#include "../GraspVR/GraspGLObjects.h"
+
 #include "..\PsyPhy2dGraphicsLib\Displays.h"
 #include "..\PsyPhy2dGraphicsLib\Views.h"
 #include "..\PsyPhy2dGraphicsLib\Layouts.h"
+
 
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
 #include "../GraspGUI/GraspScripts.h"
@@ -25,6 +41,7 @@ namespace GraspMMI {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace Grasp;
 
 	/// <summary>
 	/// Summary for GraspMMIGraphsForm
@@ -59,6 +76,40 @@ namespace GraspMMI {
 		::Layout	markerStripChartLayout;
 		::Layout	historyStripChartLayout;
 
+		OpenGLWindow *hmdWindow0;
+		OpenGLWindow *hmdWindow1;
+		OpenGLWindow *handWindow0;
+		OpenGLWindow *handWindow1;
+		OpenGLWindow *chestWindow0;
+		OpenGLWindow *chestWindow1;
+
+		OpenGLWindow *vrWindow0;
+		OpenGLWindow *vrWindow1;
+
+		Viewpoint *codaViewpoint0;
+		Viewpoint *codaViewpoint1;
+		Viewpoint *objectViewpoint;
+
+		// A class that provides methods for making a lot of the 
+		// OpenGLObjects that we need for displaying the status.
+		GraspGLObjects *objects;
+		// A visual representation of each marker structure.
+		// These ones are always at the origin in the null orientation.
+		MarkerStructureGLObject *hmdStationary0;
+		MarkerStructureGLObject *handStationary0;
+		MarkerStructureGLObject *chestStationary0;
+		MarkerStructureGLObject *hmdStationary1;
+		MarkerStructureGLObject *handStationary1;
+		MarkerStructureGLObject *chestStationary1;
+		// Another set of objects that will move around according to the tracker.
+		MarkerStructureGLObject *hmdMobile;
+		MarkerStructureGLObject *handMobile;
+		MarkerStructureGLObject *chestMobile;
+
+		// Just a way to refer to all the mobile objects together.
+		// It makes it easier to draw all of them. 
+		Yoke *mobiles;
+
 		//
 		// Arrays to hold the data traces.
 		//
@@ -91,9 +142,10 @@ namespace GraspMMI {
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
-		String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
-	public:
+	public: 
+
+			 String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
 		GraspMMIGraphsForm() : 
 		  TimebaseOffset( -17 ), 
@@ -126,6 +178,7 @@ namespace GraspMMI {
 		{
 			if (components)
 			{
+				KillGraphics();
 				free( graspDataSlice );
 				free( graspHousekeepingSlice );
 				delete components;
@@ -145,9 +198,7 @@ namespace GraspMMI {
 	private: System::Windows::Forms::CheckBox^  dataLiveCheckBox;
 	private: System::Windows::Forms::GroupBox^  groupBox4;
 	private: System::Windows::Forms::Panel^  markerGraphPanel;
-	private: System::Windows::Forms::GroupBox^  groupBox5;
-	private: System::Windows::Forms::TreeView^  historyTree;
-	private: System::Windows::Forms::TreeView^  visibleHistoryTree;
+
 	private: System::Windows::Forms::ContextMenuStrip^  hmdContextMenu;
 	private: System::Windows::Forms::ToolStripMenuItem^  autoscaleHMD;
 	private: System::Windows::Forms::ContextMenuStrip^  taskContextMenu;
@@ -174,6 +225,21 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Label^  Spans;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 
+	private: System::Windows::Forms::GroupBox^  groupBox2;
+	private: System::Windows::Forms::Panel^  vrPanel1;
+	private: System::Windows::Forms::Panel^  vrPanel0;
+	private: System::Windows::Forms::GroupBox^  chestGroupBox;
+	private: System::Windows::Forms::Panel^  chestPanel1;
+	private: System::Windows::Forms::Panel^  chestPanel0;
+	private: System::Windows::Forms::GroupBox^  handGroupBox;
+	private: System::Windows::Forms::Panel^  handPanel1;
+	private: System::Windows::Forms::Panel^  handPanel0;
+	private: System::Windows::Forms::GroupBox^  hmdGroupBox;
+	private: System::Windows::Forms::Panel^  hmdPanel1;
+	private: System::Windows::Forms::Panel^  hmdPanel0;
+	private: System::Windows::Forms::GroupBox^  groupBox5;
+	private: System::Windows::Forms::Panel^  columbusPanel;
+
 
 	private: System::ComponentModel::IContainer^  components;
 
@@ -191,9 +257,6 @@ namespace GraspMMI {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::TreeNode^  treeNode1 = (gcnew System::Windows::Forms::TreeNode(L"This tree will be hidden."));
-			System::Windows::Forms::TreeNode^  treeNode2 = (gcnew System::Windows::Forms::TreeNode(L"Node0"));
-			System::Windows::Forms::TreeNode^  treeNode3 = (gcnew System::Windows::Forms::TreeNode(L"Node1"));
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspMMIGraphsForm::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->Spans = (gcnew System::Windows::Forms::Label());
@@ -228,15 +291,26 @@ namespace GraspMMI {
 			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->markerGraphPanel = (gcnew System::Windows::Forms::Panel());
-			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
-			this->historyTree = (gcnew System::Windows::Forms::TreeView());
-			this->visibleHistoryTree = (gcnew System::Windows::Forms::TreeView());
 			this->taskTreeContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->rebuildTree = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
+			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->vrPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->vrPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->chestPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->chestPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->handGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+			this->columbusPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -245,9 +319,12 @@ namespace GraspMMI {
 			this->groupBox3->SuspendLayout();
 			this->taskContextMenu->SuspendLayout();
 			this->groupBox4->SuspendLayout();
-			this->groupBox5->SuspendLayout();
-			this->taskTreeContextMenu->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
+			this->groupBox2->SuspendLayout();
+			this->chestGroupBox->SuspendLayout();
+			this->handGroupBox->SuspendLayout();
+			this->hmdGroupBox->SuspendLayout();
+			this->groupBox5->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -287,7 +364,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -542,63 +619,15 @@ namespace GraspMMI {
 			this->markerGraphPanel->Size = System::Drawing::Size(1082, 80);
 			this->markerGraphPanel->TabIndex = 0;
 			// 
-			// groupBox5
-			// 
-			this->groupBox5->Controls->Add(this->historyTree);
-			this->groupBox5->Controls->Add(this->visibleHistoryTree);
-			this->groupBox5->Location = System::Drawing::Point(1113, 4);
-			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(437, 996);
-			this->groupBox5->TabIndex = 9;
-			this->groupBox5->TabStop = false;
-			this->groupBox5->Text = L"Task Execution History";
-			// 
-			// historyTree
-			// 
-			this->historyTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->historyTree->Location = System::Drawing::Point(199, 8);
-			this->historyTree->Name = L"historyTree";
-			treeNode1->ForeColor = System::Drawing::Color::Blue;
-			treeNode1->Name = L"Node0";
-			treeNode1->Text = L"This tree will be hidden.";
-			this->historyTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(1) {treeNode1});
-			this->historyTree->Size = System::Drawing::Size(207, 23);
-			this->historyTree->TabIndex = 0;
-			this->historyTree->Visible = false;
-			// 
-			// visibleHistoryTree
-			// 
-			this->visibleHistoryTree->ContextMenuStrip = this->taskTreeContextMenu;
-			this->visibleHistoryTree->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7.8F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->visibleHistoryTree->Location = System::Drawing::Point(6, 23);
-			this->visibleHistoryTree->Name = L"visibleHistoryTree";
-			treeNode2->ForeColor = System::Drawing::Color::Blue;
-			treeNode2->Name = L"Node0";
-			treeNode2->Text = L"Node0";
-			treeNode3->ForeColor = System::Drawing::SystemColors::WindowText;
-			treeNode3->Name = L"Node1";
-			treeNode3->Text = L"Node1";
-			this->visibleHistoryTree->Nodes->AddRange(gcnew cli::array< System::Windows::Forms::TreeNode^  >(2) {treeNode2, treeNode3});
-			this->visibleHistoryTree->Size = System::Drawing::Size(425, 969);
-			this->visibleHistoryTree->TabIndex = 1;
-			this->visibleHistoryTree->NodeMouseClick += gcnew System::Windows::Forms::TreeNodeMouseClickEventHandler(this, &GraspMMIGraphsForm::visibleHistoryTree_NodeMouseClick);
-			// 
 			// taskTreeContextMenu
 			// 
-			this->taskTreeContextMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->rebuildTree, 
-				this->toolStripSeparator4, this->clearItemErrorHighlight, this->clearAllErrorHighlights});
 			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
-			this->taskTreeContextMenu->ShowImageMargin = false;
-			this->taskTreeContextMenu->Size = System::Drawing::Size(179, 76);
-			this->taskTreeContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskTreeContextMenu_ItemClicked);
+			this->taskTreeContextMenu->Size = System::Drawing::Size(61, 4);
 			// 
 			// rebuildTree
 			// 
 			this->rebuildTree->Name = L"rebuildTree";
-			this->rebuildTree->Size = System::Drawing::Size(178, 22);
-			this->rebuildTree->Text = L"Rebuild Tree";
+			this->rebuildTree->Size = System::Drawing::Size(32, 19);
 			// 
 			// toolStripSeparator4
 			// 
@@ -628,12 +657,162 @@ namespace GraspMMI {
 			this->pictureBox1->TabIndex = 10;
 			this->pictureBox1->TabStop = false;
 			// 
+			// groupBox2
+			// 
+			this->groupBox2->Controls->Add(this->vrPanel1);
+			this->groupBox2->Controls->Add(this->vrPanel0);
+			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox2->Location = System::Drawing::Point(1111, 204);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(2);
+			this->groupBox2->Name = L"groupBox2";
+			this->groupBox2->Padding = System::Windows::Forms::Padding(2);
+			this->groupBox2->Size = System::Drawing::Size(418, 196);
+			this->groupBox2->TabIndex = 21;
+			this->groupBox2->TabStop = false;
+			this->groupBox2->Text = L"3D View";
+			// 
+			// vrPanel1
+			// 
+			this->vrPanel1->Location = System::Drawing::Point(218, 22);
+			this->vrPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->vrPanel1->Name = L"vrPanel1";
+			this->vrPanel1->Size = System::Drawing::Size(192, 167);
+			this->vrPanel1->TabIndex = 1;
+			// 
+			// vrPanel0
+			// 
+			this->vrPanel0->Location = System::Drawing::Point(13, 22);
+			this->vrPanel0->Margin = System::Windows::Forms::Padding(2);
+			this->vrPanel0->Name = L"vrPanel0";
+			this->vrPanel0->Size = System::Drawing::Size(192, 167);
+			this->vrPanel0->TabIndex = 0;
+			// 
+			// chestGroupBox
+			// 
+			this->chestGroupBox->Controls->Add(this->chestPanel1);
+			this->chestGroupBox->Controls->Add(this->chestPanel0);
+			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->chestGroupBox->Location = System::Drawing::Point(1111, 804);
+			this->chestGroupBox->Margin = System::Windows::Forms::Padding(2);
+			this->chestGroupBox->Name = L"chestGroupBox";
+			this->chestGroupBox->Padding = System::Windows::Forms::Padding(2);
+			this->chestGroupBox->Size = System::Drawing::Size(418, 196);
+			this->chestGroupBox->TabIndex = 18;
+			this->chestGroupBox->TabStop = false;
+			this->chestGroupBox->Text = L"Chest Marker Visibility";
+			// 
+			// chestPanel1
+			// 
+			this->chestPanel1->Location = System::Drawing::Point(218, 22);
+			this->chestPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->chestPanel1->Name = L"chestPanel1";
+			this->chestPanel1->Size = System::Drawing::Size(192, 167);
+			this->chestPanel1->TabIndex = 2;
+			// 
+			// chestPanel0
+			// 
+			this->chestPanel0->Location = System::Drawing::Point(9, 22);
+			this->chestPanel0->Margin = System::Windows::Forms::Padding(2);
+			this->chestPanel0->Name = L"chestPanel0";
+			this->chestPanel0->Size = System::Drawing::Size(192, 167);
+			this->chestPanel0->TabIndex = 1;
+			// 
+			// handGroupBox
+			// 
+			this->handGroupBox->Controls->Add(this->handPanel1);
+			this->handGroupBox->Controls->Add(this->handPanel0);
+			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->handGroupBox->Location = System::Drawing::Point(1111, 604);
+			this->handGroupBox->Margin = System::Windows::Forms::Padding(2);
+			this->handGroupBox->Name = L"handGroupBox";
+			this->handGroupBox->Padding = System::Windows::Forms::Padding(2);
+			this->handGroupBox->Size = System::Drawing::Size(418, 196);
+			this->handGroupBox->TabIndex = 17;
+			this->handGroupBox->TabStop = false;
+			this->handGroupBox->Text = L"Hand Marker Visibility";
+			// 
+			// handPanel1
+			// 
+			this->handPanel1->Location = System::Drawing::Point(218, 22);
+			this->handPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->handPanel1->Name = L"handPanel1";
+			this->handPanel1->Size = System::Drawing::Size(192, 167);
+			this->handPanel1->TabIndex = 2;
+			// 
+			// handPanel0
+			// 
+			this->handPanel0->Location = System::Drawing::Point(9, 22);
+			this->handPanel0->Margin = System::Windows::Forms::Padding(2);
+			this->handPanel0->Name = L"handPanel0";
+			this->handPanel0->Size = System::Drawing::Size(192, 167);
+			this->handPanel0->TabIndex = 1;
+			// 
+			// hmdGroupBox
+			// 
+			this->hmdGroupBox->Controls->Add(this->hmdPanel1);
+			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
+			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->hmdGroupBox->Location = System::Drawing::Point(1111, 404);
+			this->hmdGroupBox->Margin = System::Windows::Forms::Padding(2);
+			this->hmdGroupBox->Name = L"hmdGroupBox";
+			this->hmdGroupBox->Padding = System::Windows::Forms::Padding(2);
+			this->hmdGroupBox->Size = System::Drawing::Size(418, 196);
+			this->hmdGroupBox->TabIndex = 16;
+			this->hmdGroupBox->TabStop = false;
+			this->hmdGroupBox->Text = L"HMD Marker Visibility";
+			// 
+			// hmdPanel1
+			// 
+			this->hmdPanel1->Location = System::Drawing::Point(218, 22);
+			this->hmdPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->hmdPanel1->Name = L"hmdPanel1";
+			this->hmdPanel1->Size = System::Drawing::Size(192, 167);
+			this->hmdPanel1->TabIndex = 2;
+			// 
+			// hmdPanel0
+			// 
+			this->hmdPanel0->Location = System::Drawing::Point(9, 22);
+			this->hmdPanel0->Margin = System::Windows::Forms::Padding(2);
+			this->hmdPanel0->Name = L"hmdPanel0";
+			this->hmdPanel0->Size = System::Drawing::Size(192, 167);
+			this->hmdPanel0->TabIndex = 1;
+			// 
+			// groupBox5
+			// 
+			this->groupBox5->Controls->Add(this->columbusPanel);
+			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox5->Location = System::Drawing::Point(1112, 4);
+			this->groupBox5->Margin = System::Windows::Forms::Padding(2);
+			this->groupBox5->Name = L"groupBox5";
+			this->groupBox5->Padding = System::Windows::Forms::Padding(2);
+			this->groupBox5->Size = System::Drawing::Size(418, 196);
+			this->groupBox5->TabIndex = 22;
+			this->groupBox5->TabStop = false;
+			this->groupBox5->Text = L"Columbus";
+			// 
+			// columbusPanel
+			// 
+			this->columbusPanel->Location = System::Drawing::Point(13, 22);
+			this->columbusPanel->Margin = System::Windows::Forms::Padding(2);
+			this->columbusPanel->Name = L"columbusPanel";
+			this->columbusPanel->Size = System::Drawing::Size(396, 167);
+			this->columbusPanel->TabIndex = 0;
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->ClientSize = System::Drawing::Size(1552, 1008);
-			this->Controls->Add(this->pictureBox1);
+			this->ClientSize = System::Drawing::Size(1538, 1008);
 			this->Controls->Add(this->groupBox5);
+			this->Controls->Add(this->groupBox2);
+			this->Controls->Add(this->chestGroupBox);
+			this->Controls->Add(this->handGroupBox);
+			this->Controls->Add(this->hmdGroupBox);
+			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->poseGraphGroupBox);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox3);
@@ -659,13 +838,20 @@ namespace GraspMMI {
 			this->groupBox3->PerformLayout();
 			this->taskContextMenu->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
-			this->groupBox5->ResumeLayout(false);
-			this->taskTreeContextMenu->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
+			this->groupBox2->ResumeLayout(false);
+			this->chestGroupBox->ResumeLayout(false);
+			this->handGroupBox->ResumeLayout(false);
+			this->hmdGroupBox->ResumeLayout(false);
+			this->groupBox5->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
 #pragma endregion
+
+	private: void InitializeVR( void );
+	private: void Render( void );
+	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
 
 	private: void ReadTelemetryCache( String^ root );
 	private: void InitializeGraphics( void );
@@ -678,8 +864,6 @@ namespace GraspMMI {
 	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
 	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
 	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
-	private: void BuildHistoryTree( void );
-	private: void RebuildHistoryTree( void );
 	private:
 
 		// A timer to trigger new polling for packets after a delay.
@@ -717,8 +901,7 @@ namespace GraspMMI {
 				dataLiveCheckBox->Checked = true;
 			}
 			RefreshGraphics();
-			// Update the history tree.
-			BuildHistoryTree();
+			Render();
 			// Start the timer again to trigger the next cycle after a delay.
 			StartRefreshTimer();
 
@@ -744,12 +927,10 @@ namespace GraspMMI {
 
 		System::Void GraspMMIGraphsForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 			InitializeGraphics();
-			ParseSubjectFile( historyTree, scriptDirectory + gcnew String( "Subjects.sbj" ) );
-			visibleHistoryTree->Nodes->Clear();
+			InitializeVR();
 			ReadTelemetryCache( packetCacheFileRoot );
 			AdjustScrollSpan();
 			dataLiveCheckBox->Checked = true;
-			BuildHistoryTree();
 			CreateRefreshTimer( refreshInterval );
 			StartRefreshTimer();
 		}
@@ -793,57 +974,6 @@ namespace GraspMMI {
 			StartRefreshTimer();
 		}
 
-
-		System::Void taskTreeContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
-			TreeNode^ node = visibleHistoryTree->SelectedNode;
-			StopRefreshTimer();
-			if ( e->ClickedItem == clearItemErrorHighlight ) {
-				// Completed nodes that have errors persist as red in the tree.
-				// Here we give the user the possibility to clear the red color as a way of acknowledging the error.
-				// This makes newly occuring errors stand out more.
-				if ( node->Text->EndsWith( "!" ) && node->ForeColor == System::Drawing::Color::Red ) {
-					node->ForeColor = System::Drawing::SystemColors::WindowText;
-				}
-			}
-			else if (  e->ClickedItem == clearAllErrorHighlights ) {
-				// They can all be cleared as once.
-				ClearAllErrorHighlights();
-			}
-			else if (  e->ClickedItem == rebuildTree ) {
-				// Rebuilding the tree restores all of the error hightlights.
-				RebuildHistoryTree();
-			}
-			StartRefreshTimer();
-		}		 
-
-		System::Void ClearAllErrorHighlights( void ) {
-			StopRefreshTimer();
-			for ( int i = 0; i < visibleHistoryTree->Nodes->Count; i++ ) {
-				TreeNode^ subject_node = visibleHistoryTree->Nodes[i];
-				for ( int i = 0; i < subject_node->Nodes->Count; i++ ) {
-					TreeNode^ protocol_node = subject_node->Nodes[i];
-					for ( int i = 0; i < protocol_node->Nodes->Count; i++ ) {
-						TreeNode^ task_node = protocol_node->Nodes[i];
-						for ( int i = 0; i < task_node->Nodes->Count; i++ ) {
-							TreeNode^ task_leaf = task_node->Nodes[i];
-							if ( task_leaf->Text->EndsWith( "!" ) && task_leaf->ForeColor == System::Drawing::Color::Red ) {
-								task_leaf->ForeColor = System::Drawing::SystemColors::WindowText;
-							}
-						}
-					}
-				}
-			}
-			StartRefreshTimer();
-		}		 
-
-		System::Void visibleHistoryTree_NodeMouseClick(System::Object^  sender, System::Windows::Forms::TreeNodeMouseClickEventArgs^  e) {
-			// Normal behavior for a left click is to select the node, but right click leaves the selection unchanged.
-			// Here we force any click to select the node, which is convenient for setting the target of the context menu.
-			visibleHistoryTree->SelectedNode = e->Node;
-			if ( e->Node->Text->EndsWith( "!" ) && e->Node->ForeColor == System::Drawing::Color::Red ) clearItemErrorHighlight->Enabled = true;
-			else clearItemErrorHighlight->Enabled = false;
-
-		}
 	private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 				 StartRefreshTimer();
 			 }

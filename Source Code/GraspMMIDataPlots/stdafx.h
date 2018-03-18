@@ -24,3 +24,9 @@
 
 #include "../Useful/fMessageBox.h"
 #include "../Useful/fOutputDebugString.h"
+
+#include <gl\gl.h>
+#include <gl\glu.h>
+
+#include "../Include/glaux.h"
+#include "../Useful/OpenGLUseful.h"
