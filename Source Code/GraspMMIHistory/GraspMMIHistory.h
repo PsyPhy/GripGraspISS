@@ -266,6 +266,7 @@ namespace GraspMMI {
 				static_cast<System::Byte>(0)));
 			this->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->Name = L"GraspMMIHistoryForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspMMI History";
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIHistoryForm::Form_Shown);
 			this->groupBox3->ResumeLayout(false);
