@@ -57,6 +57,8 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	objectViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 	objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 	objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+	objectViewpoint0 = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
+	objectViewpoint1 = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 
 	// Create viewpoints for each coda.
 	codaViewpoint0 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
@@ -175,19 +177,23 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		Matrix3x3 back;
 
 		// Viewpoints look at the origin from the position of each CODA.
-		codaViewpoint0->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[0] );
 		vm.CopyVector( back[Z], graspDataSlice[alignmentIndex].alignmentOffset[0] );
 		vm.NormalizeVector( back[Z] );
 		vm.ComputeCrossProduct( back[X], vm.jVector, back[Z] );
 		vm.ComputeCrossProduct( back[Y], back[Z], back[X] );
+		codaViewpoint0->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[0] );
 		codaViewpoint0->SetOrientation( back );
+		objectViewpoint0->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		objectViewpoint0->SetOrientation( back );
 
-		codaViewpoint1->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[1] );
 		vm.CopyVector( back[Z], graspDataSlice[alignmentIndex].alignmentOffset[1] );
 		vm.NormalizeVector( back[Z] );
 		vm.ComputeCrossProduct( back[X], vm.jVector, back[Z] );
 		vm.ComputeCrossProduct( back[Y], back[Z], back[X] );
+		codaViewpoint1->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[1] );
 		codaViewpoint1->SetOrientation( back );
+		objectViewpoint1->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		objectViewpoint1->SetOrientation( back );
 
 		renderer->coda[0]->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[0] );
 		renderer->coda[0]->SetOrientation( graspDataSlice[alignmentIndex].alignmentRotation[0] );
@@ -261,9 +267,9 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	handStationary0->ShowVisibility( unitMarkerFrame[0], CYAN );
 	chestStationary0->ShowVisibility( unitMarkerFrame[0], BLUE );
 
-	RenderWindow( hmdWindow0, objectViewpoint, hmdStationary0 );
-	RenderWindow( handWindow0, objectViewpoint, handStationary0 );
-	RenderWindow( chestWindow0, objectViewpoint, chestStationary0 );
+	RenderWindow( hmdWindow0, objectViewpoint0, hmdStationary0 );
+	RenderWindow( handWindow0, objectViewpoint0, handStationary0 );
+	RenderWindow( chestWindow0, objectViewpoint0, chestStationary0 );
 
 	// Show the position and orientation of each marker structure
 	// from the perspective of each CODA unit.
@@ -304,9 +310,9 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	handStationary1->ShowVisibility( unitMarkerFrame[1], CYAN );
 	chestStationary1->ShowVisibility( unitMarkerFrame[1], BLUE );
 
-	RenderWindow( hmdWindow1, objectViewpoint, hmdStationary1 );
-	RenderWindow( handWindow1, objectViewpoint, handStationary1 );
-	RenderWindow( chestWindow1, objectViewpoint, chestStationary1 );
+	RenderWindow( hmdWindow1, objectViewpoint1, hmdStationary1 );
+	RenderWindow( handWindow1, objectViewpoint1, handStationary1 );
+	RenderWindow( chestWindow1, objectViewpoint1, chestStationary1 );
 
 	hmdMobile->ShowVisibility( unitMarkerFrame[1], GREEN );
 	handMobile->ShowVisibility( unitMarkerFrame[1], CYAN );

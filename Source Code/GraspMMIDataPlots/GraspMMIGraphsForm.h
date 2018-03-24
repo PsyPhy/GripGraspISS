@@ -96,6 +96,8 @@ namespace GraspMMI {
 		Viewpoint *codaViewpoint0;
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
+		Viewpoint *objectViewpoint0;
+		Viewpoint *objectViewpoint1;
 		Viewpoint *sideViewpoint;
 		Viewpoint *forwardViewpoint;
 		// OrthoViewpoint *forwardViewpoint;
@@ -351,17 +353,16 @@ public:
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
 			this->trackerTab = (gcnew System::Windows::Forms::TabPage());
-			this->VRtab = (gcnew System::Windows::Forms::TabPage());
-			this->sidePanel = (gcnew System::Windows::Forms::Panel());
-			this->vrPanel = (gcnew System::Windows::Forms::Panel());
 			this->forwardPanel = (gcnew System::Windows::Forms::Panel());
+			this->sidePanel = (gcnew System::Windows::Forms::Panel());
+			this->VRtab = (gcnew System::Windows::Forms::TabPage());
+			this->vrPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
 			this->poseGraphPanel->SuspendLayout();
 			this->hmdContextMenu->SuspendLayout();
 			this->groupBox3->SuspendLayout();
-			this->taskContextMenu->SuspendLayout();
 			this->groupBox4->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->groupBox2->SuspendLayout();
@@ -410,7 +411,7 @@ public:
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -849,16 +850,13 @@ public:
 			this->trackerTab->Text = L"Tracker";
 			this->trackerTab->UseVisualStyleBackColor = true;
 			// 
-			// VRtab
+			// forwardPanel
 			// 
-			this->VRtab->Controls->Add(this->vrPanel);
-			this->VRtab->Location = System::Drawing::Point(4, 24);
-			this->VRtab->Name = L"VRtab";
-			this->VRtab->Padding = System::Windows::Forms::Padding(3);
-			this->VRtab->Size = System::Drawing::Size(409, 181);
-			this->VRtab->TabIndex = 1;
-			this->VRtab->Text = L"  VR";
-			this->VRtab->UseVisualStyleBackColor = true;
+			this->forwardPanel->Location = System::Drawing::Point(211, 7);
+			this->forwardPanel->Margin = System::Windows::Forms::Padding(2);
+			this->forwardPanel->Name = L"forwardPanel";
+			this->forwardPanel->Size = System::Drawing::Size(191, 167);
+			this->forwardPanel->TabIndex = 3;
 			// 
 			// sidePanel
 			// 
@@ -868,6 +866,17 @@ public:
 			this->sidePanel->Size = System::Drawing::Size(191, 167);
 			this->sidePanel->TabIndex = 2;
 			// 
+			// VRtab
+			// 
+			this->VRtab->Controls->Add(this->vrPanel);
+			this->VRtab->Location = System::Drawing::Point(4, 22);
+			this->VRtab->Name = L"VRtab";
+			this->VRtab->Padding = System::Windows::Forms::Padding(3);
+			this->VRtab->Size = System::Drawing::Size(409, 183);
+			this->VRtab->TabIndex = 1;
+			this->VRtab->Text = L"  VR";
+			this->VRtab->UseVisualStyleBackColor = true;
+			// 
 			// vrPanel
 			// 
 			this->vrPanel->Location = System::Drawing::Point(213, 7);
@@ -875,14 +884,6 @@ public:
 			this->vrPanel->Name = L"vrPanel";
 			this->vrPanel->Size = System::Drawing::Size(191, 167);
 			this->vrPanel->TabIndex = 4;
-			// 
-			// forwardPanel
-			// 
-			this->forwardPanel->Location = System::Drawing::Point(211, 7);
-			this->forwardPanel->Margin = System::Windows::Forms::Padding(2);
-			this->forwardPanel->Name = L"forwardPanel";
-			this->forwardPanel->Size = System::Drawing::Size(191, 167);
-			this->forwardPanel->TabIndex = 3;
 			// 
 			// GraspMMIGraphsForm
 			// 
