@@ -115,12 +115,9 @@ namespace GraspMMI {
 		GraspGLObjects *renderer;
 		// A visual representation of each marker structure.
 		// These ones are always at the origin in the null orientation.
-		MarkerStructureGLObject *hmdStationary0;
-		MarkerStructureGLObject *handStationary0;
-		MarkerStructureGLObject *chestStationary0;
-		MarkerStructureGLObject *hmdStationary1;
-		MarkerStructureGLObject *handStationary1;
-		MarkerStructureGLObject *chestStationary1;
+		MarkerStructureGLObject *hmdStationary;
+		MarkerStructureGLObject *handStationary;
+		MarkerStructureGLObject *chestStationary;
 		// Another set of objects that will move around according to the tracker.
 		MarkerStructureGLObject *hmdMobile;
 		MarkerStructureGLObject *handMobile;
@@ -181,6 +178,9 @@ private: System::Windows::Forms::Panel^  sidePanel;
 
 private: System::Windows::Forms::Panel^  vrPanel;
 private: System::Windows::Forms::Panel^  forwardPanel;
+
+
+private: System::Windows::Forms::CheckBox^  fromCodaCheckBox;
 
 public: 
 
@@ -258,7 +258,7 @@ public:
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem900;
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox1;
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox2;
-	private: System::Windows::Forms::ContextMenuStrip^  taskTreeContextMenu;
+
 	private: System::Windows::Forms::ToolStripMenuItem^  clearItemErrorHighlight;
 	private: System::Windows::Forms::TextBox^  autoscaleIndicator;
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator4;
@@ -333,7 +333,6 @@ public:
 			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->markerGraphPanel = (gcnew System::Windows::Forms::Panel());
-			this->taskTreeContextMenu = (gcnew System::Windows::Forms::ContextMenuStrip(this->components));
 			this->rebuildTree = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolStripSeparator4 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->clearItemErrorHighlight = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -357,12 +356,14 @@ public:
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
 			this->VRtab = (gcnew System::Windows::Forms::TabPage());
 			this->vrPanel = (gcnew System::Windows::Forms::Panel());
+			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
 			this->poseGraphPanel->SuspendLayout();
 			this->hmdContextMenu->SuspendLayout();
 			this->groupBox3->SuspendLayout();
+			this->taskContextMenu->SuspendLayout();
 			this->groupBox4->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->groupBox2->SuspendLayout();
@@ -666,11 +667,6 @@ public:
 			this->markerGraphPanel->Size = System::Drawing::Size(1082, 80);
 			this->markerGraphPanel->TabIndex = 0;
 			// 
-			// taskTreeContextMenu
-			// 
-			this->taskTreeContextMenu->Name = L"taskTreeContextMenu";
-			this->taskTreeContextMenu->Size = System::Drawing::Size(61, 4);
-			// 
 			// rebuildTree
 			// 
 			this->rebuildTree->Name = L"rebuildTree";
@@ -799,6 +795,7 @@ public:
 			// 
 			// hmdGroupBox
 			// 
+			this->hmdGroupBox->Controls->Add(this->fromCodaCheckBox);
 			this->hmdGroupBox->Controls->Add(this->hmdPanel1);
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -885,6 +882,18 @@ public:
 			this->vrPanel->Size = System::Drawing::Size(191, 167);
 			this->vrPanel->TabIndex = 4;
 			// 
+			// fromCodaCheckBox
+			// 
+			this->fromCodaCheckBox->AutoSize = true;
+			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->fromCodaCheckBox->Location = System::Drawing::Point(305, 2);
+			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
+			this->fromCodaCheckBox->Size = System::Drawing::Size(105, 17);
+			this->fromCodaCheckBox->TabIndex = 3;
+			this->fromCodaCheckBox->Text = L"View from CODA";
+			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -925,6 +934,7 @@ public:
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
+			this->hmdGroupBox->PerformLayout();
 			this->worldTabs->ResumeLayout(false);
 			this->trackerTab->ResumeLayout(false);
 			this->VRtab->ResumeLayout(false);
@@ -938,6 +948,7 @@ public:
 	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
 	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
 	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
+	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
 
 	private: void ReadTelemetryCache( String^ root );
 	private: void InitializeGraphics( void );

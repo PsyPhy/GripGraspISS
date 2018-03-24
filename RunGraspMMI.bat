@@ -53,7 +53,6 @@ REM  (where N = 1 - 100), but if you set it too fast you will miss some events
 REM  and the stripchart data plots will be corrupted.
 REM set PACKET_SOURCE=%MirrorDir%\GraspESTPacketsForSimulator.gpk -skip=5280 -speed=1
 set PACKET_SOURCE=%MirrorDir%\GraspPackets.2017.11.09.any.gpk -skip=4800 -speed=1
-REM set PACKET_SOURCE=%MirrorDir%\GraspPackets.2017.11.09.any.gpk 
 
 REM Otherwise, you can uncomment the following line to use the default packets, but if the
 REM  runtime environment does not match you will get unpredictable results.
