@@ -90,14 +90,18 @@ namespace GraspMMI {
 
 		OpenGLWindow *codaWindow0;
 		OpenGLWindow *codaWindow1;
-		OpenGLWindow *subjectWindow;
-		OpenGLWindow *vrWindow;
+		OpenGLWindow *sideWindow;
+		OpenGLWindow *forwardWindow;
 
 		Viewpoint *codaViewpoint0;
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
 		Viewpoint *sideViewpoint;
+		Viewpoint *forwardViewpoint;
+		// OrthoViewpoint *forwardViewpoint;
+
 		Viewpoint *subjectViewpoint;
+		OpenGLWindow *vrWindow;
 
 		CodaPoseTracker *hmdTracker;
 		CodaPoseTracker *handTracker;
@@ -157,7 +161,25 @@ namespace GraspMMI {
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
+private: System::Windows::Forms::TabControl^  worldTabs;
+private: System::Windows::Forms::TabPage^  trackerTab;
+public: 
+
+public: 
+
+public: 
+
+private: System::Windows::Forms::TabPage^  VRtab;
+private: System::Windows::Forms::Panel^  sidePanel;
+
+
+
+
+
+
 private: System::Windows::Forms::Panel^  vrPanel;
+private: System::Windows::Forms::Panel^  forwardPanel;
+
 public: 
 
 public: 
@@ -202,6 +224,7 @@ public:
 				delete components;
 			}
 		}
+
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::TextBox^  lastAbsoluteTimeTextBox;
 	private: System::Windows::Forms::TextBox^  firstAbsoluteTimeTextBox;
@@ -253,8 +276,9 @@ public:
 	private: System::Windows::Forms::GroupBox^  hmdGroupBox;
 	private: System::Windows::Forms::Panel^  hmdPanel1;
 	private: System::Windows::Forms::Panel^  hmdPanel0;
-	private: System::Windows::Forms::GroupBox^  groupBox5;
-private: System::Windows::Forms::Panel^  subjectPanel;
+
+
+
 
 
 	private: System::ComponentModel::IContainer^  components;
@@ -325,9 +349,12 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
-			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
+			this->trackerTab = (gcnew System::Windows::Forms::TabPage());
+			this->VRtab = (gcnew System::Windows::Forms::TabPage());
+			this->sidePanel = (gcnew System::Windows::Forms::Panel());
 			this->vrPanel = (gcnew System::Windows::Forms::Panel());
-			this->subjectPanel = (gcnew System::Windows::Forms::Panel());
+			this->forwardPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -341,7 +368,9 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->chestGroupBox->SuspendLayout();
 			this->handGroupBox->SuspendLayout();
 			this->hmdGroupBox->SuspendLayout();
-			this->groupBox5->SuspendLayout();
+			this->worldTabs->SuspendLayout();
+			this->trackerTab->SuspendLayout();
+			this->VRtab->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// groupBox1
@@ -381,7 +410,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -479,7 +508,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->groupBox3->Controls->Add(this->taskGraphPanel);
 			this->groupBox3->Controls->Add(this->taskLeftTimeLimit);
 			this->groupBox3->Controls->Add(this->taskRightTimeLimit);
-			this->groupBox3->Location = System::Drawing::Point(9, 863);
+			this->groupBox3->Location = System::Drawing::Point(9, 861);
 			this->groupBox3->Name = L"groupBox3";
 			this->groupBox3->Size = System::Drawing::Size(1098, 137);
 			this->groupBox3->TabIndex = 2;
@@ -680,7 +709,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->groupBox2->Controls->Add(this->codaPanel0);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(1111, 204);
+			this->groupBox2->Location = System::Drawing::Point(1111, 214);
 			this->groupBox2->Margin = System::Windows::Forms::Padding(2);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Padding = System::Windows::Forms::Padding(2);
@@ -711,7 +740,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->chestGroupBox->Controls->Add(this->chestPanel0);
 			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->chestGroupBox->Location = System::Drawing::Point(1111, 804);
+			this->chestGroupBox->Location = System::Drawing::Point(1111, 802);
 			this->chestGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->chestGroupBox->Name = L"chestGroupBox";
 			this->chestGroupBox->Padding = System::Windows::Forms::Padding(2);
@@ -742,7 +771,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->handGroupBox->Controls->Add(this->handPanel0);
 			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->handGroupBox->Location = System::Drawing::Point(1111, 604);
+			this->handGroupBox->Location = System::Drawing::Point(1111, 606);
 			this->handGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->handGroupBox->Name = L"handGroupBox";
 			this->handGroupBox->Padding = System::Windows::Forms::Padding(2);
@@ -773,7 +802,7 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdGroupBox->Location = System::Drawing::Point(1111, 404);
+			this->hmdGroupBox->Location = System::Drawing::Point(1111, 410);
 			this->hmdGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->hmdGroupBox->Name = L"hmdGroupBox";
 			this->hmdGroupBox->Padding = System::Windows::Forms::Padding(2);
@@ -798,42 +827,68 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->hmdPanel0->Size = System::Drawing::Size(192, 167);
 			this->hmdPanel0->TabIndex = 1;
 			// 
-			// groupBox5
+			// worldTabs
 			// 
-			this->groupBox5->Controls->Add(this->vrPanel);
-			this->groupBox5->Controls->Add(this->subjectPanel);
-			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox5->Location = System::Drawing::Point(1112, 4);
-			this->groupBox5->Margin = System::Windows::Forms::Padding(2);
-			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Padding = System::Windows::Forms::Padding(2);
-			this->groupBox5->Size = System::Drawing::Size(418, 196);
-			this->groupBox5->TabIndex = 22;
-			this->groupBox5->TabStop = false;
-			this->groupBox5->Text = L"Subject View";
+			this->worldTabs->Controls->Add(this->trackerTab);
+			this->worldTabs->Controls->Add(this->VRtab);
+			this->worldTabs->Location = System::Drawing::Point(1112, 4);
+			this->worldTabs->Name = L"worldTabs";
+			this->worldTabs->SelectedIndex = 0;
+			this->worldTabs->Size = System::Drawing::Size(417, 209);
+			this->worldTabs->TabIndex = 22;
+			// 
+			// trackerTab
+			// 
+			this->trackerTab->Controls->Add(this->forwardPanel);
+			this->trackerTab->Controls->Add(this->sidePanel);
+			this->trackerTab->Location = System::Drawing::Point(4, 24);
+			this->trackerTab->Name = L"trackerTab";
+			this->trackerTab->Padding = System::Windows::Forms::Padding(3);
+			this->trackerTab->Size = System::Drawing::Size(409, 181);
+			this->trackerTab->TabIndex = 0;
+			this->trackerTab->Text = L"Tracker";
+			this->trackerTab->UseVisualStyleBackColor = true;
+			// 
+			// VRtab
+			// 
+			this->VRtab->Controls->Add(this->vrPanel);
+			this->VRtab->Location = System::Drawing::Point(4, 24);
+			this->VRtab->Name = L"VRtab";
+			this->VRtab->Padding = System::Windows::Forms::Padding(3);
+			this->VRtab->Size = System::Drawing::Size(409, 181);
+			this->VRtab->TabIndex = 1;
+			this->VRtab->Text = L"  VR";
+			this->VRtab->UseVisualStyleBackColor = true;
+			// 
+			// sidePanel
+			// 
+			this->sidePanel->Location = System::Drawing::Point(7, 7);
+			this->sidePanel->Margin = System::Windows::Forms::Padding(2);
+			this->sidePanel->Name = L"sidePanel";
+			this->sidePanel->Size = System::Drawing::Size(191, 167);
+			this->sidePanel->TabIndex = 2;
 			// 
 			// vrPanel
 			// 
-			this->vrPanel->Location = System::Drawing::Point(218, 22);
+			this->vrPanel->Location = System::Drawing::Point(213, 7);
 			this->vrPanel->Margin = System::Windows::Forms::Padding(2);
 			this->vrPanel->Name = L"vrPanel";
 			this->vrPanel->Size = System::Drawing::Size(191, 167);
-			this->vrPanel->TabIndex = 1;
+			this->vrPanel->TabIndex = 4;
 			// 
-			// subjectPanel
+			// forwardPanel
 			// 
-			this->subjectPanel->Location = System::Drawing::Point(13, 22);
-			this->subjectPanel->Margin = System::Windows::Forms::Padding(2);
-			this->subjectPanel->Name = L"subjectPanel";
-			this->subjectPanel->Size = System::Drawing::Size(191, 167);
-			this->subjectPanel->TabIndex = 0;
+			this->forwardPanel->Location = System::Drawing::Point(211, 7);
+			this->forwardPanel->Margin = System::Windows::Forms::Padding(2);
+			this->forwardPanel->Name = L"forwardPanel";
+			this->forwardPanel->Size = System::Drawing::Size(191, 167);
+			this->forwardPanel->TabIndex = 3;
 			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->ClientSize = System::Drawing::Size(1538, 1008);
-			this->Controls->Add(this->groupBox5);
+			this->Controls->Add(this->worldTabs);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->chestGroupBox);
 			this->Controls->Add(this->handGroupBox);
@@ -869,7 +924,9 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
-			this->groupBox5->ResumeLayout(false);
+			this->worldTabs->ResumeLayout(false);
+			this->trackerTab->ResumeLayout(false);
+			this->VRtab->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -878,7 +935,8 @@ private: System::Windows::Forms::Panel^  subjectPanel;
 	private: void InitializeVR( void );
 	private: void RenderVR( unsigned int index );
 	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
-	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint );
+	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
+	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 
 	private: void ReadTelemetryCache( String^ root );
 	private: void InitializeGraphics( void );

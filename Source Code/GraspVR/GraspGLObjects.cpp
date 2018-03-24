@@ -54,6 +54,8 @@ const double GraspGLObjects::reference_bar_facets = 8;
 const Vector3 GraspGLObjects::head_shape = { 100.0, 150.0, 125.0 };
 // Torso shape is a slab with width, height and thickness.
 const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
+const Vector3 GraspGLObjects::coda_shape = { 800.0, 100.0, 80.0 };
+
 
 // This is where spinning prompts go.
 double GraspGLObjects::prompt_radius = 60.0;
@@ -759,8 +761,27 @@ Assembly *GraspGLObjects::CreateTorso( void ) {
 
 }
 
+Assembly *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
+
+	Assembly *coda = new Assembly();
+	Slab *slab = new Slab( coda_shape[X], coda_shape[Y], coda_shape[Z] );
+	slab->SetColor( r, g, b, 1.0 );
+	coda->AddComponent( slab );
+	for ( int lens = 0; lens < 3; lens ++ ) {
+		slab = new Slab( coda_shape[X] / 10.0, coda_shape[Y] * 0.8, coda_shape[Z] );
+		slab->SetPosition( ( 1 - lens ) * 0.4 * coda_shape[X], 0.0, - 10.0 );
+		slab->SetColor( BLACK );
+		coda->AddComponent( slab );
+	}
+	coda->SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
+	coda->SetAttitude( 0.0, -90.0, 0.0 );
+	return coda;
+
+}
+
 
 void GraspGLObjects::CreateAuxiliaryObjects( void ) {
+
 	head = CreateHead();
 	torso = CreateTorso();
 
@@ -772,6 +793,12 @@ void GraspGLObjects::CreateAuxiliaryObjects( void ) {
 
 	chestStructure = CreateChestMarkerStructure( "Bdy\\CADChest.bdy" );
 	chestStructure->SetPosition( 0.0, 0.0, -500.0 );
+
+	coda[0] = CreateCodaBar( .5, .4, .4 );
+	coda[1] = CreateCodaBar( .4, .4, .6 );
+	codas = new Assembly;
+	codas->AddComponent( coda[0] );
+	codas->AddComponent( coda[1] );
 
 }
 
@@ -889,7 +916,7 @@ MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_
 	structure->AddComponent( frame );
 
 
-	structure->SetColor( Translucid( Translucid( GRAY ) ) );
+	structure->SetColor( Translucid( GRAY ) );
 	//	structure->SetOrientation( 0.0, 0.0, 90.0 );
 	return( structure );
 }

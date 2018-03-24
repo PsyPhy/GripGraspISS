@@ -99,6 +99,7 @@ namespace Grasp {
 		// Dimensions of objects in the room.
 		static const Vector3 head_shape;
 		static const Vector3 torso_shape;
+		static const Vector3 coda_shape;
 
 		static Vector3 target_location;
 		static Vector3 sky_location;
@@ -273,6 +274,9 @@ namespace Grasp {
 		// Objects used in third-person views of the virtual world.
 		Assembly		*head;
 		Assembly		*torso;
+		Assembly		*coda[MAX_UNITS];
+		Assembly		*codas;
+
 		// Representations of the CODA marker structures.
 		MarkerStructureGLObject		*hmdStructure;
 		MarkerStructureGLObject		*handStructure;
@@ -336,6 +340,7 @@ namespace Grasp {
 		void CreateAuxiliaryObjects( void );
 		Assembly *CreateHead( void );
 		Assembly *CreateTorso( void );
+		Assembly *CreateCodaBar( double r, double g, double b );
 
 		// Create an assembly that has spheres at the location of each marker,
 		// as defined by a rigid body definition file.

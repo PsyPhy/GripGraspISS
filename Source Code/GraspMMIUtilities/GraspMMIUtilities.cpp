@@ -74,8 +74,10 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			slice[i].torsoRollAngle = MISSING_DOUBLE;
 		}
 
+		slice[i].clientType = GraspRealtimeDataSlice::NONE;
 		if ( !strcmp( "GRASP", (char *) slice[i].clientData ) ) {
 			Grasp::GraspClientData *grasp = (Grasp::GraspClientData *)  &slice[i].clientData;
+			slice[i].clientType = GraspRealtimeDataSlice::GRASP;
 			vm.CopyPose( slice[i].headPose, grasp->headPose ); 
 			vm.CopyPose( slice[i].handPose, grasp->chestPose ); 
 			vm.CopyPose( slice[i].chestPose, grasp->chestPose ); 
@@ -83,11 +85,6 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			slice[i].enableBits = grasp->enableBits;
 			slice[i].spinnerBits = grasp->spinnerBits;
 		}
-		else {
-			slice[i].enableBits = 0;
-			slice[i].spinnerBits = 0;
-		}
-
 
 		if ( !strcmp( "GRSPGUI", (char *) slice[i].clientData ) ) {
 			GraspGUI::GraspActionSlice *action = (GraspGUI::GraspActionSlice *) &slice[i].clientData;
@@ -98,12 +95,12 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			
 		if ( !strcmp( "ALIGN", (char *) slice[i].clientData ) ) {
 			AlignToRigidBodyGUI::AlignClientBuffer *align = (AlignToRigidBodyGUI::AlignClientBuffer *) &slice[i].clientData;
-			//printf( " %4s", ( align->prePost == PRE ? "PRE" : "POST" ) );
-			//for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-			//	printf( "   Coda %d: %s %s", unit,
-			//		vm.vstr( align->offsets[unit], "<%+6.1f %+6.1f %+6.1f>" ), 
-			//		vm.mstr( align->rotations[unit], "[%+4.3f %+4.3f %+4.3f | %+4.3f %+4.3f %+4.3f | %+4.3f %+4.3f %+4.3f]" ) );
-			//}
+			if ( align->prePost == PRE ) slice[i].clientType = GraspRealtimeDataSlice::ALIGNPRE;
+			else  GraspRealtimeDataSlice::ALIGNPOST;
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				vm.CopyVector( slice[i].alignmentOffset[unit], align->offsets[unit] );
+				vm.CopyMatrix( slice[i].alignmentRotation[unit], align->rotations[unit] );
+			}
 		}
 
 	}

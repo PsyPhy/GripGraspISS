@@ -32,6 +32,8 @@ namespace GraspMMI {
 		f32				clientTime;
 		unsigned char	clientData[GRASP_RT_CLIENT_BYTES];
 
+		enum { NONE, GRASP, GRASPGUI, ALIGNPRE, ALIGNPOST } clientType;
+
 		// These are the key poses that come from the GRASP client data.
 		unsigned long	enableBits;
 		unsigned long	spinnerBits;
@@ -39,6 +41,10 @@ namespace GraspMMI {
 		PsyPhy::Pose	headPose;
 		PsyPhy::Pose	handPose;
 		PsyPhy::Pose	chestPose;
+
+		// These are the information about the CODA alignment transformations.
+		Vector3			alignmentOffset[MAX_UNITS];
+		Matrix3x3		alignmentRotation[MAX_UNITS];
 
 		// Computed Items
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
