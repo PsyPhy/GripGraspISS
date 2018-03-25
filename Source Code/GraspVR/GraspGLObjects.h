@@ -266,7 +266,7 @@ namespace Grasp {
 												// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
 
 		Assembly		*room;					// A collection of objects that make up the fixed visual environment.
-		Cylinder		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
+		Assembly		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
 		Assembly		*starrySky;				// Backgrounds that can be seen at the end of the tunnel.
 		Assembly		*darkSky;
 

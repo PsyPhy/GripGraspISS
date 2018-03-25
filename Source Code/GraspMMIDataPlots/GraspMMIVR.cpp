@@ -50,38 +50,45 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	sideWindow = CreateOpenGLWindowInForm( sidePanel, hmdWindow0->hRC );
 	forwardWindow = CreateOpenGLWindowInForm( forwardPanel, hmdWindow0->hRC );
 
-	vrWindow = CreateOpenGLWindowInForm( vrPanel );
+	vrSubjectWindow = CreateOpenGLWindowInForm( vrSubjectPanel );
+	vrSideWindow = CreateOpenGLWindowInForm( vrSidePanel, vrSubjectWindow->hRC );
 
 	// Create a viewpoint that looks at the origin from the negative Z axis.
 	// This is the cannonical viewpoint for an object at zero position and orientation.
 	objectViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 	objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 	objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
-	objectViewpoint0 = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
-	objectViewpoint1 = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
-
+	// The following viewpoint is used to zoom in on each object when it 
+	//  it at its position and orientation.
+	focusViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 	// Create viewpoints for each coda.
+	// Default view is from straight in front, but these will be 
+	// set to look at the origin from each coda when alignment
+	// information is available.
 	codaViewpoint0 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
-	codaViewpoint1 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
-
-	// Default view is from straight in front.
 	codaViewpoint0->SetPosition( 0.0, 200.0, - 2000.0 );
 	codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
+	codaViewpoint1 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
 	codaViewpoint1->SetPosition( 0.0, 200.0, - 2000.0 );
 	codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
-
+	// Look at the subject from the side.
 	sideViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
 	sideViewpoint->SetPosition( 2000.0, 200.0, -500.0 );
 	sideViewpoint->SetOrientation( 0.0, 0.0, - 90.0 );
-
 	// Look forward toward the codas. 
+	// We shift it forward and up so that the codas fall in a reasonable field of view.
 	forwardViewpoint = new Viewpoint( 6.0, 65.0, 10.0, 10000.0);
-	// Shift forward and up so that the codas fall in a reasonable field of view.
 	forwardViewpoint->SetPosition( 0.0, 500.0, -1000.0 );
-
-	subjectViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
-	subjectViewpoint->SetPosition( 0.0, 0.0, 0.0 );
-	subjectViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
+	forwardViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
+	// This is the viewpoint of the subject in the virtual world.
+	// Default is looking straight ahead.
+	vrSubjectViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
+	vrSubjectViewpoint->SetPosition( 0.0, 0.0, 0.0 );
+	vrSubjectViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
+	// Look at the subject from the side.
+	vrSideViewpoint = new Viewpoint( 6.0, 85.0, 10.0, 10000.0);
+	vrSideViewpoint->SetPosition( 900.0, 0.0, 200.0 );
+	vrSideViewpoint->SetOrientation( 0.0, 0.0, -45.0 );
 
 	// Create the OpenGLObjects that depict the marker array structure.
 	renderer = new Grasp::GraspGLObjects();
@@ -151,6 +158,17 @@ void GraspMMIGraphsForm::RenderSubjectView( OpenGLWindow *window, Viewpoint *vie
 	window->Swap();
 }
 
+void GraspMMIGraphsForm::RenderSideView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active ) {
+	window->Activate();
+	if ( vr_active ) {
+		window->Clear( BLACK );
+		viewpoint->Apply( window, CYCLOPS );
+		renderer->DrawVR();
+		renderer->DrawBody();
+	}
+	else window->Clear( 0.0, 0.3, 0.3, 1.0 );
+	window->Swap();
+}
 void GraspMMIGraphsForm::LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from ) {
 
 	static VectorsMixin vm;
@@ -166,16 +184,19 @@ void GraspMMIGraphsForm::LookAtFrom( Viewpoint *viewpoint, const Vector3 target,
 
 }
 
+
+
+
 void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	MarkerFrame unitMarkerFrame[2];	
 	MarkerFrame markerFrame;
-	TrackerPose pose;
+	TrackerPose hmdPose, handPose, chestPose;
 
-	bool fromCoda = fromCodaCheckBox->Checked;
 
 	int alignmentIndex;
 	static VectorsMixin vm;
+	bool fromCoda;
 
 	// Search for a slice with alignment information that tells us where the codas are.
 	for ( alignmentIndex = index; alignmentIndex > 0; alignmentIndex -- ) {
@@ -198,15 +219,26 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		renderer->coda[1]->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[1] );
 		renderer->coda[1]->SetOrientation( graspDataSlice[alignmentIndex].alignmentRotation[1] );
 
+		fromCodaCheckBox->Enabled = true;
+		fromCoda = fromCodaCheckBox->Checked;
+
+
 	}
 
 	else {
 
 		// View from straight in front.
-		codaViewpoint0->SetPosition( 0.0, 200.0, - 2000.0 );
+		static Vector3 proxy_position = { 0.0, 0.0, -3000.0 };
+		codaViewpoint0->SetPosition( proxy_position );
 		codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
-		codaViewpoint1->SetPosition( 0.0, 200.0, - 2000.0 );
+		codaViewpoint1->SetPosition( proxy_position );
 		codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
+		renderer->coda[0]->SetPosition( proxy_position );
+		renderer->coda[0]->SetOrientation( 0.0, 0.0, 180.0 );
+		renderer->coda[1]->SetPosition( proxy_position );
+		renderer->coda[1]->SetOrientation( 90.0, 0.0, 180.0 );
+		fromCoda = false;
+		fromCodaCheckBox->Enabled = false;
 
 	}
 
@@ -284,39 +316,39 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	chestMobile->ShowVisibility( unitMarkerFrame[0], BLUE );
 
 	hmdTracker->SetMarkerFrameBuffer( &unitMarkerFrame[0] );
-	hmdTracker->GetCurrentPose( pose );
-	if ( pose.visible ) {
-		hmdMobile->SetPose( pose.pose );
+	hmdTracker->GetCurrentPose( hmdPose );
+	if ( hmdPose.visible ) {
+		hmdMobile->SetPose( hmdPose.pose );
 		hmdMobile->Enable();
 	}
 	else hmdMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint0, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
-		RenderWindow( hmdWindow0, objectViewpoint0, hmdMobile );
+	if ( hmdPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		RenderWindow( hmdWindow0, focusViewpoint, hmdMobile );
 	}
 	else RenderWindow( hmdWindow0, objectViewpoint, hmdStationary );
 	handTracker->SetMarkerFrameBuffer( &unitMarkerFrame[0] );
-	handTracker->GetCurrentPose( pose );
-	if ( pose.visible ) {
-		handMobile->SetPose( pose.pose );
+	handTracker->GetCurrentPose( handPose );
+	if ( handPose.visible ) {
+		handMobile->SetPose( handPose.pose );
 		handMobile->Enable();
 	}
 	else handMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint0, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
-		RenderWindow( handWindow0, objectViewpoint0, handMobile );
+	if ( handPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		RenderWindow( handWindow0, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow0, objectViewpoint, handStationary );
-	chestTracker->GetCurrentPose( pose );
+	chestTracker->GetCurrentPose( chestPose );
 	chestTracker->SetMarkerFrameBuffer( &unitMarkerFrame[0] );
-	if ( pose.visible ) {
-		chestMobile->SetPose( pose.pose );
+	if ( chestPose.visible ) {
+		chestMobile->SetPose( chestPose.pose );
 		chestMobile->Enable();
 	}
 	else chestMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint0, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
-		RenderWindow( chestWindow0, objectViewpoint0, chestMobile );
+	if ( chestPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		RenderWindow( chestWindow0, focusViewpoint, chestMobile );
 	}
 	else RenderWindow( chestWindow0, objectViewpoint, chestStationary );
 
@@ -335,39 +367,39 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	chestMobile->ShowVisibility( unitMarkerFrame[1], BLUE );
 
 	hmdTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
-	hmdTracker->GetCurrentPose( pose );
-	if ( pose.visible ) {
-		hmdMobile->SetPose( pose.pose );
+	hmdTracker->GetCurrentPose( hmdPose );
+	if ( hmdPose.visible ) {
+		hmdMobile->SetPose( hmdPose.pose );
 		hmdMobile->Enable();
 	}
 	else hmdMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint1, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
-		RenderWindow( hmdWindow1, objectViewpoint1, hmdMobile );
+	if ( hmdPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		RenderWindow( hmdWindow1, focusViewpoint, hmdMobile );
 	}
 	else RenderWindow( hmdWindow1, objectViewpoint, hmdStationary );
 	handTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
-	handTracker->GetCurrentPose( pose );
-	if ( pose.visible ) {
-		handMobile->SetPose( pose.pose );
+	handTracker->GetCurrentPose( handPose );
+	if ( handPose.visible ) {
+		handMobile->SetPose( handPose.pose );
 		handMobile->Enable();
 	}
 	else handMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint1, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
-		RenderWindow( handWindow1, objectViewpoint1, handMobile );
+	if ( handPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		RenderWindow( handWindow1, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow1, objectViewpoint, handStationary );
-	chestTracker->GetCurrentPose( pose );
+	chestTracker->GetCurrentPose( chestPose );
 	chestTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
-	if ( pose.visible ) {
-		chestMobile->SetPose( pose.pose );
+	if ( chestPose.visible ) {
+		chestMobile->SetPose( chestPose.pose );
 		chestMobile->Enable();
 	}
 	else chestMobile->Disable();
-	if ( alignmentIndex > 0 && pose.visible && fromCoda ) {
-		LookAtFrom( objectViewpoint1, pose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
-		RenderWindow( chestWindow1, objectViewpoint1, chestMobile );
+	if ( chestPose.visible && fromCoda ) {
+		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		RenderWindow( chestWindow1, focusViewpoint, chestMobile );
 	}
 	else RenderWindow( chestWindow1, objectViewpoint, chestStationary );
 
@@ -391,7 +423,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		renderer->positionOnlyTarget->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
 		renderer->straightAheadTarget->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
 		renderer->response->enabled  = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
-		renderer->projectiles->enabled= ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
+		renderer->projectiles->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
 		renderer->multiProjectile->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
 		renderer->monoProjectile->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
 		renderer->glasses->enabled = ( graspDataSlice[index].enableBits & bit ) != 0; bit = bit << 1;
@@ -430,16 +462,59 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		renderer->vrCompletedIndicator->enabled = ( graspDataSlice[index].spinnerBits & bit ) != 0; bit = bit << 1;
 		renderer->demoIndicator->enabled = ( graspDataSlice[index].spinnerBits & bit ) != 0; bit = bit << 1;
 
-		// subjectViewpoint->SetOrientation( graspDataSlice[index].headPose.orientation );
-		subjectViewpoint->SetPose( graspDataSlice[index].headPose );
+		static	Vector3 projectile_direction;
+		static	Pose	projectile_start_pose;
+		static double	launch_time = 0.0;
+		static double	projectile_speed = 200.0;  
+		static bool		first = true;
+		if ( !renderer->projectiles->enabled || first ) {
+			// Position the projectiles to wherever the tool is now, in preparation for the next launch.
+			if ( renderer->vTool->enabled ) {
+				vm.CopyPose( projectile_start_pose, graspDataSlice[index].headPose );
+				vm.CopyVector( projectile_direction, vm.kVector );
+				renderer->projectiles->SetPose( graspDataSlice[index].headPose );
+				renderer->projectiles->SetOrientation( graspDataSlice[index].rollQuaternion );
+
+			}
+			else {
+				vm.CopyPose( projectile_start_pose, graspDataSlice[index].handPose );
+				vm.RotateVector( projectile_direction, graspDataSlice[index].handPose.orientation, vm.kVector );
+				vm.NormalizeVector( projectile_direction );
+				renderer->projectiles->SetPose( graspDataSlice[index].handPose );
+			}
+			launch_time = graspDataSlice[index].absoluteTime;
+			first = false;
+		}
+		else {
+			first = first;
+		}
+
+		Vector3 new_position, delta;
+		double  duration;
+		duration = graspDataSlice[index].absoluteTime - launch_time;
+		vm.ScaleVector( delta, projectile_direction, - duration * projectile_speed );
+		vm.AddVectors( new_position, projectile_start_pose.position, delta );
+		renderer->projectiles->SetPosition( new_position );
+
+		fOutputDebugString( "Duration: %f  Delta: %s\n", duration, vm.vstr( delta ) );
+
+		vrSubjectViewpoint->SetPose( graspDataSlice[index].headPose );
+		renderer->hmd->SetPose( graspDataSlice[index].headPose );
 		renderer->hand->SetPose( graspDataSlice[index].handPose );
-		RenderSubjectView( vrWindow, subjectViewpoint, true );
+		renderer->orientationTarget->SetOrientation( graspDataSlice[index].targetOrientation, 0.0, 0.0 );
+		RenderSubjectView( vrSubjectWindow, vrSubjectViewpoint, true );
+		renderer->tunnel->enabled = true;
+		renderer->glasses->enabled = false;
+		renderer->head->SetPose( graspDataSlice[index].headPose );
+
+		RenderSideView( vrSideWindow, vrSideViewpoint, true );
 
 
 
 	}	
 	else {
-		RenderSubjectView( vrWindow, subjectViewpoint, false );
+		RenderSubjectView( vrSubjectWindow, vrSubjectViewpoint, false );
+		RenderSubjectView( vrSideWindow, vrSideViewpoint, false );
 	}
 
 

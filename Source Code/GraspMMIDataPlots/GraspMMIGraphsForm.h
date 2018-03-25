@@ -96,14 +96,14 @@ namespace GraspMMI {
 		Viewpoint *codaViewpoint0;
 		Viewpoint *codaViewpoint1;
 		Viewpoint *objectViewpoint;
-		Viewpoint *objectViewpoint0;
-		Viewpoint *objectViewpoint1;
+		Viewpoint *focusViewpoint;
 		Viewpoint *sideViewpoint;
 		Viewpoint *forwardViewpoint;
-		// OrthoViewpoint *forwardViewpoint;
 
-		Viewpoint *subjectViewpoint;
-		OpenGLWindow *vrWindow;
+		Viewpoint *vrSubjectViewpoint;
+		OpenGLWindow *vrSubjectWindow;
+		Viewpoint *vrSideViewpoint;
+		OpenGLWindow *vrSideWindow;
 
 		CodaPoseTracker *hmdTracker;
 		CodaPoseTracker *handTracker;
@@ -152,6 +152,26 @@ namespace GraspMMI {
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
 
+	private: void InitializeVR( void );
+	private: void RenderVR( unsigned int index );
+	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
+	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
+	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
+	private: void RenderSideView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
+	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
+
+	private: void ReadTelemetryCache( String^ root );
+	private: void InitializeGraphics( void );
+	private: void RefreshGraphics( void );
+	private: void KillGraphics( void );
+	private: void AdjustScrollSpan( void );
+	private: void MoveToLatest( void );
+
+	private: int  ParseLine( char *token[MAX_TOKENS], char *line );
+	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
+	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
+	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
+	
 	public:
 
 		//
@@ -160,31 +180,6 @@ namespace GraspMMI {
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
-private: System::Windows::Forms::TabControl^  worldTabs;
-private: System::Windows::Forms::TabPage^  trackerTab;
-public: 
-
-public: 
-
-public: 
-
-private: System::Windows::Forms::TabPage^  VRtab;
-private: System::Windows::Forms::Panel^  sidePanel;
-
-
-
-
-
-
-private: System::Windows::Forms::Panel^  vrPanel;
-private: System::Windows::Forms::Panel^  forwardPanel;
-
-
-private: System::Windows::Forms::CheckBox^  fromCodaCheckBox;
-
-public: 
-
-public: 
 
 	public: 
 
@@ -227,6 +222,14 @@ public:
 			}
 		}
 
+	private: System::Windows::Forms::TabControl^  worldTabs;
+	private: System::Windows::Forms::TabPage^  trackerTab;
+	private: System::Windows::Forms::TabPage^  VRtab;
+	private: System::Windows::Forms::Panel^  sidePanel;
+	private: System::Windows::Forms::Panel^  vrSubjectPanel;
+	private: System::Windows::Forms::Panel^  forwardPanel;
+	private: System::Windows::Forms::CheckBox^  fromCodaCheckBox;
+	private: System::Windows::Forms::Panel^  vrSidePanel;
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::TextBox^  lastAbsoluteTimeTextBox;
 	private: System::Windows::Forms::TextBox^  firstAbsoluteTimeTextBox;
@@ -258,7 +261,6 @@ public:
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripMenuItem900;
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox1;
 	private: System::Windows::Forms::ToolStripMenuItem^  toolStripTextBox2;
-
 	private: System::Windows::Forms::ToolStripMenuItem^  clearItemErrorHighlight;
 	private: System::Windows::Forms::TextBox^  autoscaleIndicator;
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator4;
@@ -278,11 +280,6 @@ public:
 	private: System::Windows::Forms::GroupBox^  hmdGroupBox;
 	private: System::Windows::Forms::Panel^  hmdPanel1;
 	private: System::Windows::Forms::Panel^  hmdPanel0;
-
-
-
-
-
 	private: System::ComponentModel::IContainer^  components;
 
 	private:
@@ -348,6 +345,7 @@ public:
 			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
@@ -355,8 +353,8 @@ public:
 			this->forwardPanel = (gcnew System::Windows::Forms::Panel());
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
 			this->VRtab = (gcnew System::Windows::Forms::TabPage());
-			this->vrPanel = (gcnew System::Windows::Forms::Panel());
-			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->vrSubjectPanel = (gcnew System::Windows::Forms::Panel());
+			this->vrSidePanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -809,6 +807,18 @@ public:
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
 			// 
+			// fromCodaCheckBox
+			// 
+			this->fromCodaCheckBox->AutoSize = true;
+			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->fromCodaCheckBox->Location = System::Drawing::Point(305, 2);
+			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
+			this->fromCodaCheckBox->Size = System::Drawing::Size(105, 17);
+			this->fromCodaCheckBox->TabIndex = 3;
+			this->fromCodaCheckBox->Text = L"View from CODA";
+			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
+			// 
 			// hmdPanel1
 			// 
 			this->hmdPanel1->Location = System::Drawing::Point(218, 22);
@@ -865,34 +875,31 @@ public:
 			// 
 			// VRtab
 			// 
-			this->VRtab->Controls->Add(this->vrPanel);
-			this->VRtab->Location = System::Drawing::Point(4, 22);
+			this->VRtab->Controls->Add(this->vrSidePanel);
+			this->VRtab->Controls->Add(this->vrSubjectPanel);
+			this->VRtab->Location = System::Drawing::Point(4, 24);
 			this->VRtab->Name = L"VRtab";
 			this->VRtab->Padding = System::Windows::Forms::Padding(3);
-			this->VRtab->Size = System::Drawing::Size(409, 183);
+			this->VRtab->Size = System::Drawing::Size(409, 181);
 			this->VRtab->TabIndex = 1;
 			this->VRtab->Text = L"  VR";
 			this->VRtab->UseVisualStyleBackColor = true;
 			// 
-			// vrPanel
+			// vrSubjectPanel
 			// 
-			this->vrPanel->Location = System::Drawing::Point(213, 7);
-			this->vrPanel->Margin = System::Windows::Forms::Padding(2);
-			this->vrPanel->Name = L"vrPanel";
-			this->vrPanel->Size = System::Drawing::Size(191, 167);
-			this->vrPanel->TabIndex = 4;
+			this->vrSubjectPanel->Location = System::Drawing::Point(213, 7);
+			this->vrSubjectPanel->Margin = System::Windows::Forms::Padding(2);
+			this->vrSubjectPanel->Name = L"vrSubjectPanel";
+			this->vrSubjectPanel->Size = System::Drawing::Size(191, 167);
+			this->vrSubjectPanel->TabIndex = 4;
 			// 
-			// fromCodaCheckBox
+			// vrSidePanel
 			// 
-			this->fromCodaCheckBox->AutoSize = true;
-			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->fromCodaCheckBox->Location = System::Drawing::Point(305, 2);
-			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
-			this->fromCodaCheckBox->Size = System::Drawing::Size(105, 17);
-			this->fromCodaCheckBox->TabIndex = 3;
-			this->fromCodaCheckBox->Text = L"View from CODA";
-			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
+			this->vrSidePanel->Location = System::Drawing::Point(9, 7);
+			this->vrSidePanel->Margin = System::Windows::Forms::Padding(2);
+			this->vrSidePanel->Name = L"vrSidePanel";
+			this->vrSidePanel->Size = System::Drawing::Size(191, 167);
+			this->vrSidePanel->TabIndex = 5;
 			// 
 			// GraspMMIGraphsForm
 			// 
@@ -943,25 +950,7 @@ public:
 		}
 #pragma endregion
 
-	private: void InitializeVR( void );
-	private: void RenderVR( unsigned int index );
-	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
-	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
-	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
-	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
-
-	private: void ReadTelemetryCache( String^ root );
-	private: void InitializeGraphics( void );
-	private: void RefreshGraphics( void );
-	private: void KillGraphics( void );
-	private: void AdjustScrollSpan( void );
-	private: void MoveToLatest( void );
-
-	private: int  ParseLine( char *token[MAX_TOKENS], char *line );
-	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
-	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
-	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
-	private:
+private:
 
 		// A timer to trigger new polling for packets after a delay.
 		System::Windows::Forms::Timer^ timer;

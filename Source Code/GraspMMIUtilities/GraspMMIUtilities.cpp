@@ -79,8 +79,9 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 			Grasp::GraspClientData *grasp = (Grasp::GraspClientData *)  &slice[i].clientData;
 			slice[i].clientType = GraspRealtimeDataSlice::GRASP;
 			vm.CopyPose( slice[i].headPose, grasp->headPose ); 
-			vm.CopyPose( slice[i].handPose, grasp->chestPose ); 
+			vm.CopyPose( slice[i].handPose, grasp->handPose ); 
 			vm.CopyPose( slice[i].chestPose, grasp->chestPose ); 
+			vm.CopyQuaternion( slice[i].rollQuaternion, grasp->rollQuaternion ); 
 			slice[i].targetOrientation =  (double) grasp->targetOrientationD / 100.0;
 			slice[i].enableBits = grasp->enableBits;
 			slice[i].spinnerBits = grasp->spinnerBits;

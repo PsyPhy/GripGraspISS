@@ -41,6 +41,7 @@ namespace GraspMMI {
 		PsyPhy::Pose	headPose;
 		PsyPhy::Pose	handPose;
 		PsyPhy::Pose	chestPose;
+		Quaternion		rollQuaternion;
 
 		// These are the information about the CODA alignment transformations.
 		Vector3			alignmentOffset[MAX_UNITS];

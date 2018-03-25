@@ -53,7 +53,7 @@ const double GraspGLObjects::reference_bar_facets = 8;
 // Head shape is specified as the axis radii of an ellipsoid.
 const Vector3 GraspGLObjects::head_shape = { 100.0, 150.0, 125.0 };
 // Torso shape is a slab with width, height and thickness.
-const Vector3 GraspGLObjects::torso_shape = { 200.0, 300.0, 125.0 };
+const Vector3 GraspGLObjects::torso_shape = { 250.0, 300.0, 125.0 };
 const Vector3 GraspGLObjects::coda_shape = { 800.0, 100.0, 80.0 };
 
 
@@ -172,12 +172,12 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 	structure->SetColor( BLACK );
 
 	// Tunnel
-	tunnel = new Cylinder( room_radius, room_radius, room_length, room_facets );
-	tunnel->SetColor( WHITE );
-	tunnel->SetTexture( wall_texture );
-	tunnel->SetOrientation( 90.0, 0.0, 0.0 );
-	structure->AddComponent( tunnel );
-
+	tunnel = new Assembly();
+	Cylinder *cylinder = new Cylinder( room_radius, room_radius, room_length, room_facets );
+	cylinder->SetColor( WHITE );
+	cylinder->SetTexture( wall_texture );
+	cylinder->SetOrientation( 90.0, 0.0, 0.0 );
+	tunnel->AddComponent( cylinder );
 	// Reference Bars 
 	double bar_length = room_length - 5.0 * reference_bar_radius;
 	for (int i=0; i < reference_bars; i++ ){ 
@@ -187,15 +187,16 @@ Assembly *GraspGLObjects::CreateRoom( void ) {
 		referenceBar->SetColor(  1.0 - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0f - (double) i / reference_bars, 1.0 );
 		// The texturing on the bars may be commented out for the moment because it lengthens the rendering time too much.
 		referenceBar->SetTexture( references_texture );
-		structure->AddComponent( referenceBar );
+		tunnel->AddComponent( referenceBar );
 		referenceBar = new Cylinder( reference_bar_radius, reference_bar_radius, bar_length, reference_bar_facets );
 		referenceBar->SetOffset( room_radius, 0.0, 0.0 );
 		referenceBar->SetOrientation( - 90.0 + 180 * (float) i / (float) reference_bars, referenceBar->kVector );
 		referenceBar->SetColor(  (double) i / reference_bars, (double) i / reference_bars, (double) i / reference_bars, 1.0 );
 		// See above.
 		referenceBar->SetTexture( references_texture );
-		structure->AddComponent( referenceBar );
+		tunnel->AddComponent( referenceBar );
 	}
+	structure->AddComponent( tunnel );
 
 	Sphere *sphere = new Sphere( target_ball_radius );
 	sphere->SetPosition( 0.0, 0.0, room_length / 2.0 );
@@ -731,16 +732,16 @@ Assembly *GraspGLObjects::CreateHead( void ) {
 	// Eyes
 	head->AddComponent( skull );
 	Sphere *sphere = new Sphere( 20.0 );
-	sphere->SetColor( 1.0f, 0.0f, .5f );
+	sphere->SetColor( 0.0f, 0.0f, 1.0f );
 	sphere->SetPosition( -50.0, 20.0, -100.0 );
 	head->AddComponent( sphere );
 	sphere = new Sphere( 20.0 );
-	sphere->SetColor( 1.0f, 0.0f, .5f );
+	sphere->SetColor( 0.0f, 0.0f, 1.0f );
 	sphere->SetPosition( 50.0, 20.0, -100.0 );
 	head->AddComponent( sphere );
 	// Nose
 	Cylinder *cylinder = new Cylinder( 20.0, 5.0, 30.0 );	
-	cylinder->SetPosition( 0.0, -20.0, -100.0 );
+	cylinder->SetPosition( 0.0, -20.0, - head_shape[Z] );
 	cylinder->SetOrientation( 0.0, 90.0, 0.0 );
 	cylinder->SetColor( YELLOW );
 	head->AddComponent( cylinder );
@@ -819,13 +820,18 @@ void GraspGLObjects::DrawTorso(  TrackerPose *pose  ) {
 }
 
 void GraspGLObjects::DrawBody( TrackerPose *pose ) {
+	if ( pose != nullptr ) {
+		head->SetPosition( pose->pose.position );
+		head->SetOrientation( pose->pose.orientation );
+	}
+
 	Vector3 torso_position;
-	CopyVector( torso_position, pose->pose.position );
+	CopyVector( torso_position, head->position );
 	torso_position[Y] -= (head_shape[Y] + torso_shape[Y] / 2.0);
 	torso->SetPosition( torso_position );
 	torso->SetOrientation( nullQuaternion );
 	torso->Draw();
-	DrawHead( pose );
+	head->Draw();
 }
 
 #define STRUCTURE_BALL_RADIUS 15.0
