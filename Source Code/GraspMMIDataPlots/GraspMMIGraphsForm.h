@@ -77,9 +77,13 @@ namespace GraspMMI {
 		Display		poseDisplay;
 		Display		markerDisplay;
 		Display		historyDisplay;
+		Display		cursorDisplay;
 		::Layout	poseStripChartLayout;
+		::Layout	cursorLayout;
 		::Layout	markerStripChartLayout;
 		::Layout	historyStripChartLayout;
+
+		int	axis_color;
 
 		OpenGLWindow *hmdWindow0;
 		OpenGLWindow *hmdWindow1;
@@ -152,10 +156,17 @@ namespace GraspMMI {
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
 
+		unsigned int current_vr_slice;
+
+
 	private: void InitializeVR( void );
+	private: void MoveToInstant( double instant );
+	private: void MoveToSlice( int index );
 	private: void RenderVR( unsigned int index );
 	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
 	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
+	private: void EraseWindow( OpenGLWindow *window );
+	private: void RenderMissingVR( void );
 	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 	private: void RenderSideView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
@@ -198,7 +209,10 @@ namespace GraspMMI {
 			  task_tree_current_index( 0 ),
 			  first_step( 0 ),
 			  taskViewBottom( 0.0 ),
-			  taskViewTop( 1000.0 )
+			  taskViewTop( 1000.0 ),
+			  current_vr_slice( 0 ),
+			  axis_color( GREY4 )
+
 		  {
 			  InitializeComponent();
 
@@ -222,6 +236,13 @@ namespace GraspMMI {
 			}
 		}
 
+
+
+
+	private: System::Windows::Forms::HScrollBar^  playbackScrollBar;
+	private: System::Windows::Forms::TextBox^  taskRightTimeLimit;
+	private: System::Windows::Forms::TextBox^  taskLeftTimeLimit;
+	private: System::Windows::Forms::Panel^  cursorPanel;
 	private: System::Windows::Forms::TabControl^  worldTabs;
 	private: System::Windows::Forms::TabPage^  trackerTab;
 	private: System::Windows::Forms::TabPage^  VRtab;
@@ -239,8 +260,8 @@ namespace GraspMMI {
 	private: System::Windows::Forms::GroupBox^  groupBox3;
 	private: System::Windows::Forms::Panel^  poseGraphPanel;
 	private: System::Windows::Forms::Panel^  taskGraphPanel;
-	private: System::Windows::Forms::TextBox^  taskRightTimeLimit;
-	private: System::Windows::Forms::TextBox^  taskLeftTimeLimit;
+	private: System::Windows::Forms::TextBox^  alignmentFrameTextBox;
+	private: System::Windows::Forms::TextBox^  vrFrameTextBox;
 	private: System::Windows::Forms::CheckBox^  dataLiveCheckBox;
 	private: System::Windows::Forms::GroupBox^  groupBox4;
 	private: System::Windows::Forms::Panel^  markerGraphPanel;
@@ -281,6 +302,8 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Panel^  hmdPanel1;
 	private: System::Windows::Forms::Panel^  hmdPanel0;
 	private: System::ComponentModel::IContainer^  components;
+	private: System::Windows::Forms::Button^  stepForwardButton;
+	private: System::Windows::Forms::Button^  stepBackwardButton;
 
 	private:
 		/// <summary>
@@ -326,8 +349,6 @@ namespace GraspMMI {
 			this->toolStripSeparator3 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->toolStripMenuItem000 = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolStripMenuItem900 = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
-			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->markerGraphPanel = (gcnew System::Windows::Forms::Panel());
 			this->rebuildTree = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -351,10 +372,18 @@ namespace GraspMMI {
 			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
 			this->trackerTab = (gcnew System::Windows::Forms::TabPage());
 			this->forwardPanel = (gcnew System::Windows::Forms::Panel());
+			this->alignmentFrameTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
 			this->VRtab = (gcnew System::Windows::Forms::TabPage());
-			this->vrSubjectPanel = (gcnew System::Windows::Forms::Panel());
 			this->vrSidePanel = (gcnew System::Windows::Forms::Panel());
+			this->vrSubjectPanel = (gcnew System::Windows::Forms::Panel());
+			this->vrFrameTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->stepForwardButton = (gcnew System::Windows::Forms::Button());
+			this->stepBackwardButton = (gcnew System::Windows::Forms::Button());
+			this->playbackScrollBar = (gcnew System::Windows::Forms::HScrollBar());
+			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
+			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
+			this->cursorPanel = (gcnew System::Windows::Forms::Panel());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -370,6 +399,7 @@ namespace GraspMMI {
 			this->hmdGroupBox->SuspendLayout();
 			this->worldTabs->SuspendLayout();
 			this->trackerTab->SuspendLayout();
+			this->forwardPanel->SuspendLayout();
 			this->VRtab->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -410,7 +440,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -506,11 +536,9 @@ namespace GraspMMI {
 			// groupBox3
 			// 
 			this->groupBox3->Controls->Add(this->taskGraphPanel);
-			this->groupBox3->Controls->Add(this->taskLeftTimeLimit);
-			this->groupBox3->Controls->Add(this->taskRightTimeLimit);
-			this->groupBox3->Location = System::Drawing::Point(9, 861);
+			this->groupBox3->Location = System::Drawing::Point(9, 856);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(1098, 137);
+			this->groupBox3->Size = System::Drawing::Size(1098, 110);
 			this->groupBox3->TabIndex = 2;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Task Execution";
@@ -630,28 +658,10 @@ namespace GraspMMI {
 			this->toolStripMenuItem900->Tag = L"900";
 			this->toolStripMenuItem900->Text = L"900 Maintenance";
 			// 
-			// taskLeftTimeLimit
-			// 
-			this->taskLeftTimeLimit->Location = System::Drawing::Point(11, 110);
-			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
-			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
-			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 21);
-			this->taskLeftTimeLimit->TabIndex = 7;
-			this->taskLeftTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// taskRightTimeLimit
-			// 
-			this->taskRightTimeLimit->Location = System::Drawing::Point(1015, 110);
-			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
-			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
-			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 21);
-			this->taskRightTimeLimit->TabIndex = 8;
-			this->taskRightTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
 			// groupBox4
 			// 
 			this->groupBox4->Controls->Add(this->markerGraphPanel);
-			this->groupBox4->Location = System::Drawing::Point(9, 746);
+			this->groupBox4->Location = System::Drawing::Point(9, 743);
 			this->groupBox4->Name = L"groupBox4";
 			this->groupBox4->Size = System::Drawing::Size(1098, 111);
 			this->groupBox4->TabIndex = 2;
@@ -844,9 +854,11 @@ namespace GraspMMI {
 			this->worldTabs->SelectedIndex = 0;
 			this->worldTabs->Size = System::Drawing::Size(417, 209);
 			this->worldTabs->TabIndex = 22;
+			this->worldTabs->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::worldTabs_SelectedIndexChanged);
 			// 
 			// trackerTab
 			// 
+			this->trackerTab->BackColor = System::Drawing::SystemColors::Control;
 			this->trackerTab->Controls->Add(this->forwardPanel);
 			this->trackerTab->Controls->Add(this->sidePanel);
 			this->trackerTab->Location = System::Drawing::Point(4, 24);
@@ -855,15 +867,24 @@ namespace GraspMMI {
 			this->trackerTab->Size = System::Drawing::Size(409, 181);
 			this->trackerTab->TabIndex = 0;
 			this->trackerTab->Text = L"Tracker";
-			this->trackerTab->UseVisualStyleBackColor = true;
 			// 
 			// forwardPanel
 			// 
+			this->forwardPanel->Controls->Add(this->alignmentFrameTextBox);
 			this->forwardPanel->Location = System::Drawing::Point(211, 7);
 			this->forwardPanel->Margin = System::Windows::Forms::Padding(2);
 			this->forwardPanel->Name = L"forwardPanel";
 			this->forwardPanel->Size = System::Drawing::Size(191, 167);
 			this->forwardPanel->TabIndex = 3;
+			// 
+			// alignmentFrameTextBox
+			// 
+			this->alignmentFrameTextBox->Location = System::Drawing::Point(89, 4);
+			this->alignmentFrameTextBox->Margin = System::Windows::Forms::Padding(4);
+			this->alignmentFrameTextBox->Name = L"alignmentFrameTextBox";
+			this->alignmentFrameTextBox->Size = System::Drawing::Size(98, 21);
+			this->alignmentFrameTextBox->TabIndex = 27;
+			this->alignmentFrameTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			// 
 			// sidePanel
 			// 
@@ -877,21 +898,13 @@ namespace GraspMMI {
 			// 
 			this->VRtab->Controls->Add(this->vrSidePanel);
 			this->VRtab->Controls->Add(this->vrSubjectPanel);
-			this->VRtab->Location = System::Drawing::Point(4, 24);
+			this->VRtab->Location = System::Drawing::Point(4, 22);
 			this->VRtab->Name = L"VRtab";
 			this->VRtab->Padding = System::Windows::Forms::Padding(3);
-			this->VRtab->Size = System::Drawing::Size(409, 181);
+			this->VRtab->Size = System::Drawing::Size(409, 183);
 			this->VRtab->TabIndex = 1;
 			this->VRtab->Text = L"  VR";
 			this->VRtab->UseVisualStyleBackColor = true;
-			// 
-			// vrSubjectPanel
-			// 
-			this->vrSubjectPanel->Location = System::Drawing::Point(213, 7);
-			this->vrSubjectPanel->Margin = System::Windows::Forms::Padding(2);
-			this->vrSubjectPanel->Name = L"vrSubjectPanel";
-			this->vrSubjectPanel->Size = System::Drawing::Size(191, 167);
-			this->vrSubjectPanel->TabIndex = 4;
 			// 
 			// vrSidePanel
 			// 
@@ -901,12 +914,92 @@ namespace GraspMMI {
 			this->vrSidePanel->Size = System::Drawing::Size(191, 167);
 			this->vrSidePanel->TabIndex = 5;
 			// 
+			// vrSubjectPanel
+			// 
+			this->vrSubjectPanel->Location = System::Drawing::Point(213, 7);
+			this->vrSubjectPanel->Margin = System::Windows::Forms::Padding(2);
+			this->vrSubjectPanel->Name = L"vrSubjectPanel";
+			this->vrSubjectPanel->Size = System::Drawing::Size(191, 167);
+			this->vrSubjectPanel->TabIndex = 4;
+			// 
+			// vrFrameTextBox
+			// 
+			this->vrFrameTextBox->Location = System::Drawing::Point(1280, 1010);
+			this->vrFrameTextBox->Margin = System::Windows::Forms::Padding(4);
+			this->vrFrameTextBox->Name = L"vrFrameTextBox";
+			this->vrFrameTextBox->Size = System::Drawing::Size(85, 21);
+			this->vrFrameTextBox->TabIndex = 27;
+			this->vrFrameTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// stepForwardButton
+			// 
+			this->stepForwardButton->Location = System::Drawing::Point(1377, 1009);
+			this->stepForwardButton->Name = L"stepForwardButton";
+			this->stepForwardButton->Size = System::Drawing::Size(37, 24);
+			this->stepForwardButton->TabIndex = 28;
+			this->stepForwardButton->Text = L">";
+			this->stepForwardButton->UseVisualStyleBackColor = true;
+			this->stepForwardButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::stepForwardButton_Click);
+			// 
+			// stepBackwardButton
+			// 
+			this->stepBackwardButton->Location = System::Drawing::Point(1231, 1009);
+			this->stepBackwardButton->Name = L"stepBackwardButton";
+			this->stepBackwardButton->Size = System::Drawing::Size(37, 24);
+			this->stepBackwardButton->TabIndex = 29;
+			this->stepBackwardButton->Text = L"<";
+			this->stepBackwardButton->UseVisualStyleBackColor = true;
+			this->stepBackwardButton->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &GraspMMIGraphsForm::stepBackwardButton_MouseClick);
+			// 
+			// playbackScrollBar
+			// 
+			this->playbackScrollBar->LargeChange = 2;
+			this->playbackScrollBar->Location = System::Drawing::Point(16, 989);
+			this->playbackScrollBar->Maximum = 1000;
+			this->playbackScrollBar->Name = L"playbackScrollBar";
+			this->playbackScrollBar->Size = System::Drawing::Size(1084, 23);
+			this->playbackScrollBar->TabIndex = 25;
+			this->playbackScrollBar->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::playbackScrollBar_ValueChanged);
+			// 
+			// taskRightTimeLimit
+			// 
+			this->taskRightTimeLimit->Location = System::Drawing::Point(1020, 1016);
+			this->taskRightTimeLimit->Margin = System::Windows::Forms::Padding(4);
+			this->taskRightTimeLimit->Name = L"taskRightTimeLimit";
+			this->taskRightTimeLimit->Size = System::Drawing::Size(72, 21);
+			this->taskRightTimeLimit->TabIndex = 24;
+			this->taskRightTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// taskLeftTimeLimit
+			// 
+			this->taskLeftTimeLimit->Location = System::Drawing::Point(16, 1016);
+			this->taskLeftTimeLimit->Margin = System::Windows::Forms::Padding(4);
+			this->taskLeftTimeLimit->Name = L"taskLeftTimeLimit";
+			this->taskLeftTimeLimit->Size = System::Drawing::Size(72, 21);
+			this->taskLeftTimeLimit->TabIndex = 23;
+			this->taskLeftTimeLimit->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			// 
+			// cursorPanel
+			// 
+			this->cursorPanel->ContextMenuStrip = this->taskContextMenu;
+			this->cursorPanel->Location = System::Drawing::Point(14, 968);
+			this->cursorPanel->Name = L"cursorPanel";
+			this->cursorPanel->Size = System::Drawing::Size(1082, 16);
+			this->cursorPanel->TabIndex = 30;
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->ClientSize = System::Drawing::Size(1538, 1008);
+			this->ClientSize = System::Drawing::Size(1538, 1042);
+			this->Controls->Add(this->cursorPanel);
+			this->Controls->Add(this->stepBackwardButton);
+			this->Controls->Add(this->stepForwardButton);
+			this->Controls->Add(this->vrFrameTextBox);
+			this->Controls->Add(this->taskLeftTimeLimit);
+			this->Controls->Add(this->taskRightTimeLimit);
 			this->Controls->Add(this->worldTabs);
 			this->Controls->Add(this->groupBox2);
+			this->Controls->Add(this->playbackScrollBar);
 			this->Controls->Add(this->chestGroupBox);
 			this->Controls->Add(this->handGroupBox);
 			this->Controls->Add(this->hmdGroupBox);
@@ -933,7 +1026,6 @@ namespace GraspMMI {
 			this->poseGraphPanel->PerformLayout();
 			this->hmdContextMenu->ResumeLayout(false);
 			this->groupBox3->ResumeLayout(false);
-			this->groupBox3->PerformLayout();
 			this->taskContextMenu->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
@@ -944,8 +1036,11 @@ namespace GraspMMI {
 			this->hmdGroupBox->PerformLayout();
 			this->worldTabs->ResumeLayout(false);
 			this->trackerTab->ResumeLayout(false);
+			this->forwardPanel->ResumeLayout(false);
+			this->forwardPanel->PerformLayout();
 			this->VRtab->ResumeLayout(false);
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -987,8 +1082,6 @@ private:
 				dataLiveCheckBox->Checked = true;
 			}
 			RefreshGraphics();
-			// For the moment we show always the last frame.
-			if ( nDataSlices > 0 ) RenderVR( nDataSlices - 1 );
 			// Start the timer again to trigger the next cycle after a delay.
 			StartRefreshTimer();
 
@@ -1011,12 +1104,21 @@ private:
 			sprintf( label, "%02d:%02d:%02d", hour, minute, second );
 			return gcnew String( label );
 		}
+		String^ CreateTimeStringExtended( double seconds ) {
+			char label[256];
+			int day_first = (int) floor(( seconds + TimebaseOffset )) / (24 * 60 * 60);
+			int since_midnight = ((int) floor( seconds ) + TimebaseOffset ) % (24 * 60 * 60);
+			int hour = since_midnight / (60 * 60);
+			int minute = (since_midnight % (60 * 60)) / 60;
+			int second = (since_midnight % 60);
+			int fraction = (int) (( seconds - floor( seconds )) * 1000.0);
+			sprintf( label, "%02d:%02d:%02d.%03d", hour, minute, second, fraction );
+			return gcnew String( label );
+		}
 
 		System::Void GraspMMIGraphsForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 			InitializeGraphics();
 			InitializeVR();
-			ReadTelemetryCache( packetCacheFileRoot );
-			AdjustScrollSpan();
 			dataLiveCheckBox->Checked = true;
 			CreateRefreshTimer( refreshInterval );
 			StartRefreshTimer();
@@ -1048,6 +1150,14 @@ private:
 			if ( dataLiveCheckBox->Checked ) StartRefreshTimer();
 			else StopRefreshTimer();
 		}
+
+		System::Void playbackScrollBar_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			// Stop the timer so that we don't get overlapping refresh requests.
+			StopRefreshTimer();
+			if ( nDataSlices > 0 ) MoveToInstant( (double) playbackScrollBar->Value );
+			// Since we selected a time, then we are implicitly no longer live.
+			dataLiveCheckBox->Checked = false;
+		 }
 		System::Void taskContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 			if (  e->ClickedItem->Text->Contains( "All") || e->ClickedItem->Text->Contains( "all") ) {
 				taskViewBottom = 0;
@@ -1061,11 +1171,28 @@ private:
 			StartRefreshTimer();
 		}
 
-	private: System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
-				 StartRefreshTimer();
-			 }
+		System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
+			StartRefreshTimer();
+		}
+		System::Void worldTabs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			if ( nDataSlices > 0 ) RenderVR( current_vr_slice );
+		 }			 
 
-			 // Add an 'About ...' item to the system menu. 
+		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			if ( current_vr_slice < ( nDataSlices - 1 ) ) {
+				MoveToSlice( current_vr_slice + 1 );
+			}
+			dataLiveCheckBox->Checked = false;
+		}
+		System::Void stepBackwardButton_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			if ( current_vr_slice > 0 ) {
+				MoveToSlice( current_vr_slice - 1 );
+			}
+			dataLiveCheckBox->Checked = false;
+		 }
+		
+		
+		// Add an 'About ...' item to the system menu. 
 #define SYSMENU_ABOUT_ID 0x01
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
@@ -1116,6 +1243,8 @@ private:
 					Form::WndProc( m );
 				}
 
-	};
+
+
+};
 }
 

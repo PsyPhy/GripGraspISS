@@ -127,6 +127,11 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 
 }
 
+void GraspMMIGraphsForm::EraseWindow( OpenGLWindow *window ) {
+	window->Activate();
+	window->Clear( 0.10, 0.10, 0.30, 1.0 );
+	window->Swap();
+}
 
 // Draw the 3D graphics.
 void GraspMMIGraphsForm::RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object ) {
@@ -184,8 +189,31 @@ void GraspMMIGraphsForm::LookAtFrom( Viewpoint *viewpoint, const Vector3 target,
 
 }
 
+void GraspMMIGraphsForm::RenderMissingVR( void ) {
+	EraseWindow( vrSubjectWindow );
+	EraseWindow( vrSideWindow );
+	EraseWindow( hmdWindow0 );
+	EraseWindow( hmdWindow1 );
+	EraseWindow( handWindow0 );
+	EraseWindow( handWindow1 );
+	EraseWindow( chestWindow0 );
+	EraseWindow( chestWindow1 );
+	EraseWindow( codaWindow0 );
+	EraseWindow( codaWindow1 );
+}
 
-
+void GraspMMIGraphsForm::MoveToInstant( double instant ) {
+	unsigned int index;
+	for ( index = nDataSlices - 1; index > 0; index-- ) {
+		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= instant ) break;
+	}
+	fOutputDebugString( "Instant: %.3f  Index: %u  (%.3f)\n", instant, index, graspDataSlice[index].absoluteTime );
+	RenderVR( index );
+}
+void GraspMMIGraphsForm::MoveToSlice( int index ) {
+	fOutputDebugString( "Index: %u  Instant: %.3f\n", index, graspDataSlice[index].absoluteTime );
+	RenderVR( index );
+}
 
 void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
@@ -193,35 +221,38 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	MarkerFrame markerFrame;
 	TrackerPose hmdPose, handPose, chestPose;
 
-
-	int alignmentIndex;
+	int alignment_index;
 	static VectorsMixin vm;
 	bool fromCoda;
 
-	// Search for a slice with alignment information that tells us where the codas are.
-	for ( alignmentIndex = index; alignmentIndex > 0; alignmentIndex -- ) {
+	current_vr_slice = index;
 
-		if ( graspDataSlice[alignmentIndex].clientType == GraspRealtimeDataSlice::ALIGNPRE ||
-			 graspDataSlice[alignmentIndex].clientType == GraspRealtimeDataSlice::ALIGNPOST ) {
+		// Search for a slice with alignment information that tells us where the codas are.
+	for ( alignment_index = index; alignment_index > 0; alignment_index -- ) {
+
+		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ||
+			 graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPOST ) {
 
 			break;
 		}
 	}
 	// If we found the alignment information, define viewpoints that look from each coda to the origin.
 	// If not, use a canonical view from straight in front of the chair.
-	if ( alignmentIndex > 0 ) {
+	if ( alignment_index > 0 ) {
 
-		LookAtFrom( codaViewpoint0, vm.zeroVector, graspDataSlice[alignmentIndex].alignmentOffset[0] );
-		LookAtFrom( codaViewpoint1, vm.zeroVector, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		LookAtFrom( codaViewpoint0, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[0] );
+		LookAtFrom( codaViewpoint1, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[1] );
 
-		renderer->coda[0]->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[0] );
-		renderer->coda[0]->SetOrientation( graspDataSlice[alignmentIndex].alignmentRotation[0] );
-		renderer->coda[1]->SetPosition( graspDataSlice[alignmentIndex].alignmentOffset[1] );
-		renderer->coda[1]->SetOrientation( graspDataSlice[alignmentIndex].alignmentRotation[1] );
+		renderer->coda[0]->SetPosition( graspDataSlice[alignment_index].alignmentOffset[0] );
+		renderer->coda[0]->SetOrientation( graspDataSlice[alignment_index].alignmentRotation[0] );
+		renderer->coda[0]->Enable();
+		renderer->coda[1]->SetPosition( graspDataSlice[alignment_index].alignmentOffset[1] );
+		renderer->coda[1]->SetOrientation( graspDataSlice[alignment_index].alignmentRotation[1] );
+		renderer->coda[1]->Enable();
 
 		fromCodaCheckBox->Enabled = true;
 		fromCoda = fromCodaCheckBox->Checked;
-
+		alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime );
 
 	}
 
@@ -233,14 +264,15 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
 		codaViewpoint1->SetPosition( proxy_position );
 		codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
-		renderer->coda[0]->SetPosition( proxy_position );
-		renderer->coda[0]->SetOrientation( 0.0, 0.0, 180.0 );
-		renderer->coda[1]->SetPosition( proxy_position );
-		renderer->coda[1]->SetOrientation( 90.0, 0.0, 180.0 );
+		renderer->coda[0]->Disable();
+		renderer->coda[1]->Disable();
 		fromCoda = false;
 		fromCodaCheckBox->Enabled = false;
+		alignmentFrameTextBox->Text = "not available";
 
 	}
+
+	vrFrameTextBox->Text = CreateTimeStringExtended( graspDataSlice[index].absoluteTime );
 
 	// Each realtime slice has only one marker frame, corresponding to one or the other coda.
 	// Here we need to find the most recent slice that contains the marker information from
@@ -323,7 +355,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else hmdMobile->Disable();
 	if ( hmdPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
 		RenderWindow( hmdWindow0, focusViewpoint, hmdMobile );
 	}
 	else RenderWindow( hmdWindow0, objectViewpoint, hmdStationary );
@@ -335,7 +367,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else handMobile->Disable();
 	if ( handPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
 		RenderWindow( handWindow0, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow0, objectViewpoint, handStationary );
@@ -347,7 +379,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else chestMobile->Disable();
 	if ( chestPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[0] );
+		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
 		RenderWindow( chestWindow0, focusViewpoint, chestMobile );
 	}
 	else RenderWindow( chestWindow0, objectViewpoint, chestStationary );
@@ -374,7 +406,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else hmdMobile->Disable();
 	if ( hmdPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
 		RenderWindow( hmdWindow1, focusViewpoint, hmdMobile );
 	}
 	else RenderWindow( hmdWindow1, objectViewpoint, hmdStationary );
@@ -386,7 +418,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else handMobile->Disable();
 	if ( handPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
 		RenderWindow( handWindow1, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow1, objectViewpoint, handStationary );
@@ -398,7 +430,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	else chestMobile->Disable();
 	if ( chestPose.visible && fromCoda ) {
-		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignmentIndex].alignmentOffset[1] );
+		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
 		RenderWindow( chestWindow1, focusViewpoint, chestMobile );
 	}
 	else RenderWindow( chestWindow1, objectViewpoint, chestStationary );
@@ -517,5 +549,18 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		RenderSubjectView( vrSideWindow, vrSideViewpoint, false );
 	}
 
+	DisplayActivate( cursorDisplay );
+	DisplayErase( cursorDisplay );
+	::View view = LayoutView( cursorLayout, 0, 0 );
+	ViewColor( view, axis_color );
+	ViewBox( view );
+	double cursor_instant = graspDataSlice[index].absoluteTime;
+	if ( cursor_instant <  playbackScrollBar->Minimum )  cursor_instant =  playbackScrollBar->Minimum;
+	if ( cursor_instant > playbackScrollBar->Maximum  )  cursor_instant = playbackScrollBar->Maximum;
+	ViewSetXLimits( view, playbackScrollBar->Minimum, playbackScrollBar->Maximum );
+	ViewSetYLimits( view, 0, 1 );
+	ViewColor( view, MAGENTA );
+	ViewVerticalLine( view, cursor_instant );
+	DisplaySwap( cursorDisplay );
 
 }

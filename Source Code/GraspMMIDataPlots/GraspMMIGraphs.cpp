@@ -43,7 +43,7 @@ using namespace GraspMMI;
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
 #define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
-
+#define TILT_SKIP	4
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
@@ -77,6 +77,16 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 
 	// Then the Views are defined with respect to each Display and the 
 	//  limits in user coordinates are initialized. 
+
+	parent = static_cast<HWND>( cursorPanel->Handle.ToPointer());
+   	cursorDisplay = CreateOglDisplay();
+	SetOglWindowParent( parent );
+	DisplaySetSizePixels( cursorDisplay, cursorPanel->Size.Width, cursorPanel->Size.Height );
+	DisplaySetScreenPosition( cursorDisplay, 0, 0 );
+	DisplayInit( cursorDisplay );
+	DisplayErase( cursorDisplay );
+	cursorLayout = CreateLayout( cursorDisplay, 1, 1 );
+	LayoutSetDisplayEdgesRelative( cursorLayout, 0.0, 0.0, 1.0, 1.0 );
 
 	// Pose Strip Charts
 	parent = static_cast<HWND>( poseGraphPanel->Handle.ToPointer());
@@ -171,9 +181,11 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 	firstAbsoluteTimeTextBox->Text = CreateTimeString( min );
 }
 
-// When the display is 'live' we want to be able to automatically position the scroll bar 
+// When the display is 'live' we want to be able to automatically position the scroll bars 
 // so as to display the most recent data.
 void GraspMMIGraphsForm::MoveToLatest( void ) {
+	// Find the timestamp of the latest sample in the series.
+	// Need to check both RT science and housekeeping traces.
 	double latest;
 	for ( int i = nDataSlices - 1; i >= 0; i-- ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
@@ -187,7 +199,11 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 			break;
 		}
 	}
+	// Adjust the slider to match the latest epoch. 
 	scrollBar->Value = (int) ceil( latest );
+	// Point the VR display to the latest sample.
+	playbackScrollBar->Value = playbackScrollBar->Maximum;
+	MoveToInstant( playbackScrollBar->Value );
 }
 
 // Here we do the actual work of plotting the strip charts and phase plots.
@@ -196,7 +212,6 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
-	static int axis_color = GREY4;
 
 	static bool __debug__ = false;
 
@@ -230,6 +245,11 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < first_instant ) break;
 	}
 	first_sample = index + 1;
+
+	playbackScrollBar->Maximum = ceil( last_instant );
+	playbackScrollBar->Minimum = floor( first_instant );
+	if ( playbackScrollBar->Value < playbackScrollBar->Minimum ) playbackScrollBar->Value = playbackScrollBar->Minimum;
+	if ( playbackScrollBar->Value > playbackScrollBar->Maximum ) playbackScrollBar->Value = playbackScrollBar->Maximum;
 
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
@@ -391,7 +411,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_sample, last_sample - 1, step * 10,
+		first_sample, last_sample - 1, step * TILT_SKIP,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -445,7 +465,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].handRollAngle, 
-		first_sample, last_sample - 1, step * 10,
+		first_sample, last_sample - 1, step * TILT_SKIP,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -500,7 +520,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].chestRollAngle, 
-		first_sample, last_sample - 1, step * 10,
+		first_sample, last_sample - 1, step * TILT_SKIP,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -508,12 +528,13 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].torsoRollAngle, 
-		first_sample, last_sample - 1, step * 10,
+		first_sample, last_sample - 1, step * TILT_SKIP,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+
 	// Zap it to the display.
 	DisplaySwap( poseDisplay );
 
