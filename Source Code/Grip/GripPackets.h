@@ -40,7 +40,7 @@ using namespace PsyPhy;
 #define ERROR_CACHE_NOT_FOUND	-1000
 // If the time between two realtime data packets exceeds the following threshold
 //  then we insert a blank record into the data buffer to show the break in the strip charts.
-#define PACKET_STREAM_BREAK_THRESHOLD	2.0
+#define PACKET_STREAM_BREAK_THRESHOLD	5.0
 // We insert more than one sample so that routines that down sample the data always see the break.
 #define PACKET_STREAM_BREAK_INSERT_SAMPLES	32
 

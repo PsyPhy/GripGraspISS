@@ -1161,9 +1161,10 @@ void ViewFillPlotAvailableDoubles (View view,
 		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
 		ypt2 = (double *)(((char *) yarray) + i * ysize);
 		if ( *xpt1 != NA && *xpt2 != NA && *ypt1 != NA && *ypt2 != NA ) {
-			mid = (*xpt1 + *xpt2) / 2.0;
-			ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
-			ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
+			// mid = (*xpt1 + *xpt2) / 2.0;
+			//ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
+			//ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
+			ViewFilledRectangle(view, *xpt1, 0.0, *xpt2, *ypt1 );
 		}
 
 	}

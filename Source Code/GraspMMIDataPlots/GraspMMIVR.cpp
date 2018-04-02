@@ -189,9 +189,50 @@ void GraspMMIGraphsForm::LookAtFrom( Viewpoint *viewpoint, const Vector3 target,
 
 }
 
-void GraspMMIGraphsForm::RenderMissingVR( void ) {
+void GraspMMIGraphsForm::MoveToInstant( double instant ) {
+	unsigned int hk, rt;
+	for ( hk = nHousekeepingSlices - 1; hk > 0; hk-- ) {
+		if ( graspHousekeepingSlice[hk].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[hk].absoluteTime <= instant ) break;
+	}
+	for ( rt = nDataSlices - 1; rt > 0; rt-- ) {
+		if ( graspDataSlice[rt].absoluteTime != MISSING_DOUBLE && graspDataSlice[rt].absoluteTime <= instant ) break;
+	}
+	fOutputDebugString( "Instant: %.3f  HK: %u  (%.3f) %u  (%.3f)  RT: %u (%.3f)\n", instant, hk, graspHousekeepingSlice[hk].absoluteTime, hk+1, graspHousekeepingSlice[hk+1].absoluteTime, rt, graspDataSlice[rt].absoluteTime );
+	if ( fabs( graspDataSlice[rt].absoluteTime - instant ) < PACKET_STREAM_BREAK_THRESHOLD ) RenderVR( rt );
+	else if ( fabs( graspHousekeepingSlice[hk].absoluteTime - instant ) < PACKET_STREAM_BREAK_THRESHOLD ) RenderMissingVR( graspHousekeepingSlice[hk].absoluteTime );
+	else RenderMissingVR( instant );
+
+}
+void GraspMMIGraphsForm::MoveToSlice( int index ) {
+	fOutputDebugString( "MoveToSlice() Index: %u  Instant: %.3f\n", index, graspDataSlice[index].absoluteTime );
+	RenderVR( index );
+}
+
+void GraspMMIGraphsForm::PlotCursor( void ) {
+
+	DisplayActivate( cursorDisplay );
+	DisplayErase( cursorDisplay );
+	::View view = LayoutView( cursorLayout, 0, 0 );
+	ViewColor( view, axis_color );
+	ViewBox( view );
+	double cursor_instant = current_vr_instant;
+	if ( cursor_instant <  playbackScrollBar->Minimum )  cursor_instant =  playbackScrollBar->Minimum;
+	if ( cursor_instant > playbackScrollBar->Maximum  )  cursor_instant = playbackScrollBar->Maximum;
+	ViewSetXLimits( view, playbackScrollBar->Minimum, playbackScrollBar->Maximum );
+	ViewSetYLimits( view, 0, 1 );
+	ViewColor( view, MAGENTA );
+	ViewVerticalLine( view, cursor_instant );
+	DisplaySwap( cursorDisplay );
+
+}
+
+
+void GraspMMIGraphsForm::RenderMissingVR( double instant ) {
+
 	EraseWindow( vrSubjectWindow );
 	EraseWindow( vrSideWindow );
+	EraseWindow( sideWindow );
+	EraseWindow( forwardWindow );
 	EraseWindow( hmdWindow0 );
 	EraseWindow( hmdWindow1 );
 	EraseWindow( handWindow0 );
@@ -200,19 +241,12 @@ void GraspMMIGraphsForm::RenderMissingVR( void ) {
 	EraseWindow( chestWindow1 );
 	EraseWindow( codaWindow0 );
 	EraseWindow( codaWindow1 );
-}
+	// Show the time instant corresponding to this slice.
+	vrFrameTextBox->Text = CreateTimeStringExtended( instant );
+	// Keep track of it to be able to plot the cursor.
+	current_vr_instant = instant;
+	PlotCursor();
 
-void GraspMMIGraphsForm::MoveToInstant( double instant ) {
-	unsigned int index;
-	for ( index = nDataSlices - 1; index > 0; index-- ) {
-		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= instant ) break;
-	}
-	fOutputDebugString( "Instant: %.3f  Index: %u  (%.3f)\n", instant, index, graspDataSlice[index].absoluteTime );
-	RenderVR( index );
-}
-void GraspMMIGraphsForm::MoveToSlice( int index ) {
-	fOutputDebugString( "Index: %u  Instant: %.3f\n", index, graspDataSlice[index].absoluteTime );
-	RenderVR( index );
 }
 
 void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
@@ -225,9 +259,13 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	static VectorsMixin vm;
 	bool fromCoda;
 
-	current_vr_slice = index;
+	// Show the time instant corresponding to this slice.
+	double frame_time = graspDataSlice[index].absoluteTime;
+	vrFrameTextBox->Text = CreateTimeStringExtended( frame_time );
+	// Keep track of it to be able to plot the cursor.
+	current_vr_instant = frame_time;
 
-		// Search for a slice with alignment information that tells us where the codas are.
+	// Search for a slice with alignment information that tells us where the codas are.
 	for ( alignment_index = index; alignment_index > 0; alignment_index -- ) {
 
 		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ||
@@ -271,8 +309,6 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		alignmentFrameTextBox->Text = "not available";
 
 	}
-
-	vrFrameTextBox->Text = CreateTimeStringExtended( graspDataSlice[index].absoluteTime );
 
 	// Each realtime slice has only one marker frame, corresponding to one or the other coda.
 	// Here we need to find the most recent slice that contains the marker information from
@@ -549,18 +585,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		RenderSubjectView( vrSideWindow, vrSideViewpoint, false );
 	}
 
-	DisplayActivate( cursorDisplay );
-	DisplayErase( cursorDisplay );
-	::View view = LayoutView( cursorLayout, 0, 0 );
-	ViewColor( view, axis_color );
-	ViewBox( view );
-	double cursor_instant = graspDataSlice[index].absoluteTime;
-	if ( cursor_instant <  playbackScrollBar->Minimum )  cursor_instant =  playbackScrollBar->Minimum;
-	if ( cursor_instant > playbackScrollBar->Maximum  )  cursor_instant = playbackScrollBar->Maximum;
-	ViewSetXLimits( view, playbackScrollBar->Minimum, playbackScrollBar->Maximum );
-	ViewSetYLimits( view, 0, 1 );
-	ViewColor( view, MAGENTA );
-	ViewVerticalLine( view, cursor_instant );
-	DisplaySwap( cursorDisplay );
-
+	PlotCursor();
 }
+
+

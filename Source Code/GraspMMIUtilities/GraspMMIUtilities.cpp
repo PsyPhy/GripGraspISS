@@ -352,6 +352,11 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		exit( -1 );
 	}
 
+	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
+	// By setting it to a really high number here (100 years into the future) we are sure that the 
+	//  calculated difference between this value and the first frame will be negative, as if there was no gap.
+	double previous_packet_timestamp = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
+
 	// Read in all of the data packets in the file.
 	packets_read = 0;
 	while ( 1 ) {
@@ -370,11 +375,25 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			fMessageBox( MB_OK, "GraspMMI", "Unrecognized packet from %s.", filename );
 			exit( -1 );
 		}
+		// If there has been a break in the arrival of the packets, insert
+		//  a blank frame into the data buffer. This will cause breaks in
+		//  the traces in the data graphs.
+		if ( ( EPMtoSeconds( &epm_header ) - previous_packet_timestamp ) > PACKET_STREAM_BREAK_THRESHOLD ) {
+			trace[packets_read].absoluteTime = MISSING_DOUBLE;
+			trace[packets_read].stepID = MISSING_DOUBLE;
+			trace[packets_read].taskID = MISSING_DOUBLE;
+			trace[packets_read].protocolID = MISSING_DOUBLE;
+			trace[packets_read].userID = MISSING_DOUBLE;
+			trace[packets_read].scriptEngine = MISSING_INT;
+			packets_read++;
+			if ( packets_read >= max_slices ) break;
+		}
+
 		// Extract the interesting info in proper byte order.
 		ExtractGripHealthAndStatusInfo( &hk, &packet );
 		// Fill in the different components of the housekeeping history trace.
+		trace[packets_read].absoluteTime = EPMtoSeconds( &epm_header );
 		if ( hk.step == 0 && hk.task == 0 && hk.protocol == 0 && hk.user == 0 ) {
-			trace[packets_read].absoluteTime = MISSING_DOUBLE;
 			trace[packets_read].stepID = MISSING_DOUBLE;
 			trace[packets_read].taskID = MISSING_DOUBLE;
 			trace[packets_read].protocolID = MISSING_DOUBLE;
@@ -382,7 +401,6 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			trace[packets_read].scriptEngine = MISSING_INT;
 		}
 		else {
-			trace[packets_read].absoluteTime = EPMtoSeconds( &epm_header );
 			trace[packets_read].stepID = hk.step;
 			trace[packets_read].taskID = hk.task;
 			trace[packets_read].protocolID = hk.protocol;
@@ -396,6 +414,7 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			}
 			else trace[packets_read].visibleMarkers[bdy] = MISSING_DOUBLE;
 		}
+		previous_packet_timestamp = EPMtoSeconds( &epm_header );
 		packets_read++;
 		if ( packets_read >= max_slices ) break;
 	}

@@ -156,17 +156,18 @@ namespace GraspMMI {
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
 
-		unsigned int current_vr_slice;
+		double current_vr_instant;
 
 
 	private: void InitializeVR( void );
 	private: void MoveToInstant( double instant );
 	private: void MoveToSlice( int index );
+	private: void PlotCursor( void );
+	private: void RenderMissingVR( double instant );
 	private: void RenderVR( unsigned int index );
 	private: void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint, OpenGLObject *object );
 	private: void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint, OpenGLObject *object );
 	private: void EraseWindow( OpenGLWindow *window );
-	private: void RenderMissingVR( void );
 	private: void RenderSubjectView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 	private: void RenderSideView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
@@ -210,7 +211,6 @@ namespace GraspMMI {
 			  first_step( 0 ),
 			  taskViewBottom( 0.0 ),
 			  taskViewTop( 1000.0 ),
-			  current_vr_slice( 0 ),
 			  axis_color( GREY4 )
 
 		  {
@@ -440,7 +440,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -954,10 +954,10 @@ namespace GraspMMI {
 			// playbackScrollBar
 			// 
 			this->playbackScrollBar->LargeChange = 2;
-			this->playbackScrollBar->Location = System::Drawing::Point(16, 989);
+			this->playbackScrollBar->Location = System::Drawing::Point(9, 989);
 			this->playbackScrollBar->Maximum = 1000;
 			this->playbackScrollBar->Name = L"playbackScrollBar";
-			this->playbackScrollBar->Size = System::Drawing::Size(1084, 23);
+			this->playbackScrollBar->Size = System::Drawing::Size(1097, 23);
 			this->playbackScrollBar->TabIndex = 25;
 			this->playbackScrollBar->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::playbackScrollBar_ValueChanged);
 			// 
@@ -982,9 +982,9 @@ namespace GraspMMI {
 			// cursorPanel
 			// 
 			this->cursorPanel->ContextMenuStrip = this->taskContextMenu;
-			this->cursorPanel->Location = System::Drawing::Point(14, 968);
+			this->cursorPanel->Location = System::Drawing::Point(18, 972);
 			this->cursorPanel->Name = L"cursorPanel";
-			this->cursorPanel->Size = System::Drawing::Size(1082, 16);
+			this->cursorPanel->Size = System::Drawing::Size(1078, 12);
 			this->cursorPanel->TabIndex = 30;
 			// 
 			// GraspMMIGraphsForm
@@ -1143,6 +1143,7 @@ private:
 			dataLiveCheckBox->Checked = false;
 		}
 		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+			StopRefreshTimer();
 			KillGraphics();
 		}
 
@@ -1175,20 +1176,30 @@ private:
 			StartRefreshTimer();
 		}
 		System::Void worldTabs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			if ( nDataSlices > 0 ) RenderVR( current_vr_slice );
+			MoveToInstant( current_vr_instant );
 		 }			 
 
 		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
-			if ( current_vr_slice < ( nDataSlices - 1 ) ) {
-				MoveToSlice( current_vr_slice + 1 );
-			}
+			unsigned int index;
 			dataLiveCheckBox->Checked = false;
+			for ( index = nDataSlices - 1; index > 0; index-- ) {
+				if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= current_vr_instant ) break;
+			}
+			index++;
+			while ( index < nDataSlices ) {
+				if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE ) break;
+				index++;
+			}
+			if ( index < nDataSlices ) MoveToSlice( index );
 		}
+
 		System::Void stepBackwardButton_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			if ( current_vr_slice > 0 ) {
-				MoveToSlice( current_vr_slice - 1 );
-			}
+			unsigned int index;
 			dataLiveCheckBox->Checked = false;
+			for ( index = nDataSlices - 1; index > 0; index-- ) {
+				if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < current_vr_instant ) break;
+			}
+			MoveToSlice( index );
 		 }
 		
 		
