@@ -155,6 +155,8 @@ namespace GraspMMI {
 		TreeNode^ previous_task_leaf;
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
+private: System::Windows::Forms::Button^  exitButton;
+
 
 		double current_vr_instant;
 
@@ -384,6 +386,7 @@ namespace GraspMMI {
 			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->cursorPanel = (gcnew System::Windows::Forms::Panel());
+			this->exitButton = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -987,10 +990,24 @@ namespace GraspMMI {
 			this->cursorPanel->Size = System::Drawing::Size(1078, 12);
 			this->cursorPanel->TabIndex = 30;
 			// 
+			// exitButton
+			// 
+			this->exitButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
+			this->exitButton->Location = System::Drawing::Point(1457, 1005);
+			this->exitButton->Name = L"exitButton";
+			this->exitButton->Size = System::Drawing::Size(69, 26);
+			this->exitButton->TabIndex = 31;
+			this->exitButton->Text = L"Exit";
+			this->exitButton->UseVisualStyleBackColor = true;
+			this->exitButton->Visible = false;
+			this->exitButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::button1_Click);
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
+			this->CancelButton = this->exitButton;
 			this->ClientSize = System::Drawing::Size(1538, 1042);
+			this->Controls->Add(this->exitButton);
 			this->Controls->Add(this->cursorPanel);
 			this->Controls->Add(this->stepBackwardButton);
 			this->Controls->Add(this->stepForwardButton);
@@ -1256,6 +1273,9 @@ private:
 
 
 
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 Close();
+		 }
 };
 }
 
