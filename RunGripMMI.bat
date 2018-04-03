@@ -126,11 +126,12 @@ REM
 
 REM EPM used GPS time-of-day, but CADMOS displays UTC time. There is a small shift between them,
 REM  because UTC takes into account leap seconds, while GPS does not.
-REM Default value is -16 which corrects for leap seconds as of Jan. 2015.
-REM Modify the value if new leap seconds have been added (e.g. after July 2015 change to -17).
+REM Set to a value of -18 which corrects for leap seconds as of Jan. 2017.
+REM Modify the value if new leap seconds have been added.
+REM https://confluence.qps.nl/qinsy/en/utc-to-gps-time-correction-32245263.html
 
 REM Uncomment the next line if you want to display times aligned with UTC rather than GPS
-set TIMEBASE_CORRECTION=-17
+set TIMEBASE_CORRECTION=-18
 REM Uncomment the next line if you want to display times aligned with GPS time.
 REM set TIMEBASE_CORRECTION=0
 
@@ -154,8 +155,18 @@ set TIMESTAMP=%date:~6,4%.%date:~3,2%.%date:~0,2%
 :NEXT
 
 REM **************************************************************************
+REM **************************************************************************
+REM **                                                                      **
+REM **          Normally you will not need to edit below this line.         **
+REM **                                                                      **
+REM **************************************************************************
+REM **************************************************************************
 
-REM Normally you will not need to edit below this line.
+REM If the MMIs were already running, kill them and start over.
+TaskKill /F /IM GraspMMI*
+TaskKill /F /IM GripMMI*
+TaskKill /F /IM DexGroundMonitorClient*
+TaskKill /F /IM CLWSemulator*
 
 REM Root of the file names for the cache files
 set CacheRoot=GripPackets.%TIMESTAMP%
