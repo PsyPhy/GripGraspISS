@@ -638,6 +638,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 // Clean up resources allocated by the Views system.
 void GraspMMIGraphsForm::KillGraphics( void ) {
+	DisplayClose( cursorDisplay );
 	DisplayClose( historyDisplay );
 	DisplayClose( markerDisplay );
 	DisplayClose( poseDisplay );
