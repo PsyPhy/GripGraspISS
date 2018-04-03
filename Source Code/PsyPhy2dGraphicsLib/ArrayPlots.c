@@ -1152,7 +1152,7 @@ void ViewFillPlotAvailableDoubles (View view,
 {
 
 	register int i;
-	register double	*xpt1, *xpt2, *ypt1, *ypt2, mid;
+	register double	*xpt1, *xpt2, *ypt1, *ypt2;
 
 	for (i = start + 1; i <= end; i += step ) {
 
