@@ -43,7 +43,7 @@ using namespace GraspMMI;
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
 #define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
-#define TILT_SKIP	4
+#define TILT_SPREAD	8
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
@@ -254,6 +254,10 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
 	while ( ((last_sample - first_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
+	int tilt_spread;
+	if ( step <= 4 ) tilt_spread = 1;
+	else tilt_spread = TILT_SPREAD;
+
 
 	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
 
@@ -411,7 +415,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_sample, last_sample - 1, step * TILT_SKIP,
+		first_sample, last_sample - 1, step * tilt_spread,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -465,7 +469,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].handRollAngle, 
-		first_sample, last_sample - 1, step * TILT_SKIP,
+		first_sample, last_sample - 1, step * tilt_spread,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -520,7 +524,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].chestRollAngle, 
-		first_sample, last_sample - 1, step * TILT_SKIP,
+		first_sample, last_sample - 1, step * tilt_spread,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
@@ -528,7 +532,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].torsoRollAngle, 
-		first_sample, last_sample - 1, step * TILT_SKIP,
+		first_sample, last_sample - 1, step * tilt_spread,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
