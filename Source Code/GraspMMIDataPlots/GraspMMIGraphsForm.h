@@ -155,9 +155,7 @@ namespace GraspMMI {
 		TreeNode^ previous_task_leaf;
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
-private: System::Windows::Forms::Button^  exitButton;
-
-
+		bool leaveDataLive;
 		double current_vr_instant;
 
 
@@ -213,6 +211,7 @@ private: System::Windows::Forms::Button^  exitButton;
 			  first_step( 0 ),
 			  taskViewBottom( 0.0 ),
 			  taskViewTop( 1000.0 ),
+			  leaveDataLive( true ),
 			  axis_color( GREY4 )
 
 		  {
@@ -241,6 +240,7 @@ private: System::Windows::Forms::Button^  exitButton;
 
 
 
+	private: System::Windows::Forms::Button^  exitButton;
 	private: System::Windows::Forms::HScrollBar^  playbackScrollBar;
 	private: System::Windows::Forms::TextBox^  taskRightTimeLimit;
 	private: System::Windows::Forms::TextBox^  taskLeftTimeLimit;
@@ -1078,31 +1078,6 @@ private:
 			timer->Stop();
 		}
 
-		// This is what we do when the timer goes off.
-		void OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
-
-			// Stop the timer so that it does not retrigger until we are done refreshing.
-			StopRefreshTimer();
-			fOutputDebugString( "\n" );
-			fOutputDebugString( "Timer triggered.\n" );
-			// Get the realtime science data packets, if any. 
-			ReadTelemetryCache( packetCacheFileRoot );
-			// Adjust the scrollbar limits according to the newly loaded data.
-			AdjustScrollSpan();
-			//// If we are live, shift the limits of the plots to reflect the most recent data.
-			//// Otherwise, keep the window span where it is.
-			if ( dataLiveCheckBox->Checked ) {
-				MoveToLatest();
-				// MoveToLatest() has the side effect of unchecking the live check box, 
-				// becaue it causes a value change in the slider which is presumed to be by user action.
-				// So here we have to reset the check.
-				dataLiveCheckBox->Checked = true;
-			}
-			RefreshGraphics();
-			// Start the timer again to trigger the next cycle after a delay.
-			StartRefreshTimer();
-
-		}
 		String^ CreateDurationString( double interval ) {
 			char label[256];
 			int hours = (int) floor( interval ) / (60 * 60);
@@ -1140,6 +1115,41 @@ private:
 			CreateRefreshTimer( refreshInterval );
 			StartRefreshTimer();
 		}
+		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+			StopRefreshTimer();
+			KillGraphics();
+		}
+
+
+		// This is what we do when the timer goes off.
+		void OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
+
+			// Stop the timer so that it does not retrigger until we are done refreshing.
+			StopRefreshTimer();
+			fOutputDebugString( "\n" );
+			fOutputDebugString( "Timer triggered.\n" );
+			// Get the realtime science data packets, if any. 
+			ReadTelemetryCache( packetCacheFileRoot );
+			// Adjust the scrollbar limits according to the newly loaded data.
+			AdjustScrollSpan();
+			//// If we are live, shift the limits of the plots to reflect the most recent data.
+			//// Otherwise, keep the window span where it is.
+			if ( dataLiveCheckBox->Checked ) {
+				// MoveToLatest() has the side effect of changing the value of the scrollBar slider
+				// which in turn triggers a ValueChanged event on that slider. But when the user 
+				// moves the slider, we want to turn of the live mode. There is no way to detect inside
+				// spanSelector_ValueChanged() or scrollBar_ValueChanged() whether the change is due to
+				// user intervention of a MoveToLatest(). So we set a flag to say when the next
+				// ValueChanged events are due to a MoveToLatest.
+				leaveDataLive = true;
+				MoveToLatest();
+				leaveDataLive = false;
+				// Start the timer again to trigger the next cycle after a delay.
+				StartRefreshTimer();
+			}
+			RefreshGraphics();
+
+		}
 		System::Void spanSelector_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			// Stop the timer so that we don't get overlapping refresh requests.
 			StopRefreshTimer();
@@ -1147,21 +1157,18 @@ private:
 			AdjustScrollSpan();
 			// Display with the new span.
 			RefreshGraphics();
+			PlotCursor();
 			// If we are live, set up for the next refresh.
 			if ( dataLiveCheckBox->Checked ) StartRefreshTimer();
-			else StopRefreshTimer();
 		}
 		System::Void scrollBar_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			// Stop the timer so that we don't get overlapping refresh requests.
 			StopRefreshTimer();
 			// Display the data at the new time specified by the scroll bar.
 			RefreshGraphics();
+			PlotCursor();
 			// Since we selected a time, then we are implicitly no longer live.
-			dataLiveCheckBox->Checked = false;
-		}
-		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-			StopRefreshTimer();
-			KillGraphics();
+			if ( !leaveDataLive ) dataLiveCheckBox->Checked = false;
 		}
 
 		System::Void dataLiveCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1174,8 +1181,10 @@ private:
 			StopRefreshTimer();
 			if ( nDataSlices > 0 ) MoveToInstant( (double) playbackScrollBar->Value );
 			// Since we selected a time, then we are implicitly no longer live.
-			dataLiveCheckBox->Checked = false;
+			if ( !leaveDataLive ) dataLiveCheckBox->Checked = false;
+			//leaveDataLive = false;
 		 }
+
 		System::Void taskContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 			if (  e->ClickedItem->Text->Contains( "All") || e->ClickedItem->Text->Contains( "all") ) {
 				taskViewBottom = 0;

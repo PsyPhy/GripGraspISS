@@ -577,14 +577,11 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 		RenderSideView( vrSideWindow, vrSideViewpoint, true );
 
-
-
 	}	
 	else {
 		RenderSubjectView( vrSubjectWindow, vrSubjectViewpoint, false );
 		RenderSubjectView( vrSideWindow, vrSideViewpoint, false );
 	}
-
 	PlotCursor();
 }
 
