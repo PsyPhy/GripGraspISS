@@ -839,9 +839,29 @@ void GraspGLObjects::DrawBody( TrackerPose *pose ) {
 
 void MarkerStructureGLObject::ShowVisibility( MarkerFrame &marker_frame, int led_on_color ) {
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
-		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) component[mrk]->SetColor( led_on_color );
-		else component[mrk]->SetColor( BLACK );
+		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) modelMarkerBalls->component[mrk]->SetColor( led_on_color );
+		else modelMarkerBalls->component[mrk]->SetColor( BLACK );
 	}
+}
+
+void MarkerStructureGLObject::ShowRealMarkers( MarkerFrame &marker_frame ) {
+	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
+		if ( marker_frame.marker[ modelMarker[mrk].id ].visibility ) {
+			Vector3 relative_position, offset;
+			Matrix3x3 transpose;
+			SubtractVectors( offset, marker_frame.marker[ modelMarker[mrk].id ].position, position );
+			TransposeMatrix( transpose, orientation );
+			MultiplyVector( relative_position, offset, transpose );
+			realMarkerBalls->component[mrk]->SetPosition( relative_position  );
+			realMarkerBalls->component[mrk]->Enable();
+		}
+		else realMarkerBalls->component[mrk]->Disable();
+	}
+	realMarkerBalls->Enable();
+}
+
+void MarkerStructureGLObject::HideRealMarkers( void ) {
+	realMarkerBalls->Disable();
 }
 
 void MarkerStructureGLObject::AddBar( int marker1, int marker2 ) {
@@ -880,13 +900,23 @@ MarkerStructureGLObject::MarkerStructureGLObject( char *model_file ) {
 		fclose( fp );
 	}
 	else nModelMarkers = 0;
-
+	modelMarkerBalls = new Assembly();
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		Sphere *sphere = new Sphere( STRUCTURE_BALL_RADIUS );
 		sphere->SetPosition( modelMarker[mrk].position );
 		sphere->SetColor( 0.0, 1.0, 0.0, 1.0 );
-		AddComponent( sphere );
+		modelMarkerBalls->AddComponent( sphere );
 	}
+	AddComponent( modelMarkerBalls );
+	realMarkerBalls = new Assembly();
+	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
+		Sphere *sphere = new Sphere( STRUCTURE_BALL_RADIUS );
+		sphere->SetPosition( modelMarker[mrk].position );
+		sphere->SetColor( 0.5, 0.0, 0.5, 1.0 );
+		realMarkerBalls->AddComponent( sphere );
+	}
+	AddComponent( realMarkerBalls );
+	HideRealMarkers();
 
 }
 

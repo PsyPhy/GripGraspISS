@@ -74,6 +74,8 @@ namespace Grasp {
 			Vector3	position;
 		} modelMarker[MAX_MARKERS];
 		int nModelMarkers;
+		Assembly	*modelMarkerBalls;
+		Assembly	*realMarkerBalls;
 
 	public:
 		MarkerStructureGLObject( char *model_filename = NULL );
@@ -81,6 +83,8 @@ namespace Grasp {
 
 		void AddBar( int marker1, int marker2 );
 		void ShowVisibility( MarkerFrame &marker_frame, int led_on_color = CYAN );
+		void ShowRealMarkers( MarkerFrame &marker_frame );
+		void HideRealMarkers( void );
 	};
 
 	class GraspGLObjects : public VectorsMixin {

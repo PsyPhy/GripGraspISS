@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\GraspMMIMirrorEnvironments\GRASP Runtime Flight %282017-11-02 16h20m20s%29</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>c:\DexCache\GraspPackets.2018.04.04 Scripts\</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>c:\DexCache\GraspPackets.2018.03.04 Scripts\</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>..\..\GraspMMIMirrorEnvironments\GRASP Runtime Flight %282017-11-02 16h20m20s%29</LocalDebuggerWorkingDirectory>

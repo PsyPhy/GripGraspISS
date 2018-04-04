@@ -65,10 +65,10 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	// Default view is from straight in front, but these will be 
 	// set to look at the origin from each coda when alignment
 	// information is available.
-	codaViewpoint0 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
+	codaViewpoint0 = new Viewpoint( 6.0, 35.0, 10.0, 10000.0);
 	codaViewpoint0->SetPosition( 0.0, 200.0, - 2000.0 );
 	codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
-	codaViewpoint1 = new Viewpoint( 6.0, 45.0, 10.0, 10000.0);
+	codaViewpoint1 = new Viewpoint( 6.0, 35.0, 10.0, 10000.0);
 	codaViewpoint1->SetPosition( 0.0, 200.0, - 2000.0 );
 	codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
 	// Look at the subject from the side.
@@ -257,7 +257,8 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	int alignment_index;
 	static VectorsMixin vm;
-	bool fromCoda;
+	bool show_from_coda;
+	bool show_real_markers = realMarkersCheckBox->Checked;
 
 	// Show the time instant corresponding to this slice.
 	double frame_time = graspDataSlice[index].absoluteTime;
@@ -289,7 +290,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		renderer->coda[1]->Enable();
 
 		fromCodaCheckBox->Enabled = true;
-		fromCoda = fromCodaCheckBox->Checked;
+		show_from_coda = fromCodaCheckBox->Checked;
 		alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime );
 
 	}
@@ -304,7 +305,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
 		renderer->coda[0]->Disable();
 		renderer->coda[1]->Disable();
-		fromCoda = false;
+		show_from_coda = false;
 		fromCodaCheckBox->Enabled = false;
 		alignmentFrameTextBox->Text = "not available";
 
@@ -365,6 +366,13 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		chestMobile->Enable();
 	}
 	else chestMobile->Disable();
+
+	// We don't know which CODA was used to compute the pose of each object,
+	// so we don't try to show the real marker positions in this view.
+	hmdMobile->HideRealMarkers();
+	handMobile->HideRealMarkers();
+	chestMobile->HideRealMarkers();
+
 	RenderWindow( sideWindow, sideViewpoint, mobiles );
 	
 	// Show where the CODAs are, looking from the origin.
@@ -390,8 +398,9 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		hmdMobile->Enable();
 	}
 	else hmdMobile->Disable();
-	if ( hmdPose.visible && fromCoda ) {
+	if ( hmdPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
+		if ( show_real_markers ) hmdMobile->ShowRealMarkers( unitMarkerFrame[0] );
 		RenderWindow( hmdWindow0, focusViewpoint, hmdMobile );
 	}
 	else RenderWindow( hmdWindow0, objectViewpoint, hmdStationary );
@@ -402,8 +411,9 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		handMobile->Enable();
 	}
 	else handMobile->Disable();
-	if ( handPose.visible && fromCoda ) {
+	if ( handPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
+		if ( show_real_markers ) handMobile->ShowRealMarkers( unitMarkerFrame[0] );
 		RenderWindow( handWindow0, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow0, objectViewpoint, handStationary );
@@ -414,8 +424,9 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		chestMobile->Enable();
 	}
 	else chestMobile->Disable();
-	if ( chestPose.visible && fromCoda ) {
+	if ( chestPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[0] );
+		if ( show_real_markers ) chestMobile->ShowRealMarkers( unitMarkerFrame[0] );
 		RenderWindow( chestWindow0, focusViewpoint, chestMobile );
 	}
 	else RenderWindow( chestWindow0, objectViewpoint, chestStationary );
@@ -441,11 +452,14 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		hmdMobile->Enable();
 	}
 	else hmdMobile->Disable();
-	if ( hmdPose.visible && fromCoda ) {
+	if ( hmdPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
+		if ( show_real_markers ) hmdMobile->ShowRealMarkers( unitMarkerFrame[1] );
 		RenderWindow( hmdWindow1, focusViewpoint, hmdMobile );
 	}
-	else RenderWindow( hmdWindow1, objectViewpoint, hmdStationary );
+	else {
+		RenderWindow( hmdWindow1, objectViewpoint, hmdStationary );
+	}
 	handTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
 	handTracker->GetCurrentPose( handPose );
 	if ( handPose.visible ) {
@@ -453,27 +467,30 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		handMobile->Enable();
 	}
 	else handMobile->Disable();
-	if ( handPose.visible && fromCoda ) {
+	if ( handPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
+		if ( show_real_markers ) handMobile->ShowRealMarkers( unitMarkerFrame[1] );
 		RenderWindow( handWindow1, focusViewpoint, handMobile );
 	}
-	else RenderWindow( handWindow1, objectViewpoint, handStationary );
+	else {
+		RenderWindow( handWindow1, objectViewpoint, handStationary );
+	}
 	chestTracker->GetCurrentPose( chestPose );
 	chestTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
 	if ( chestPose.visible ) {
 		chestMobile->SetPose( chestPose.pose );
 		chestMobile->Enable();
 	}
-	else chestMobile->Disable();
-	if ( chestPose.visible && fromCoda ) {
+	else RenderWindow( handWindow1, objectViewpoint, handStationary );
+	if ( chestPose.visible && show_from_coda ) {
 		LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[1] );
+		if ( show_real_markers ) chestMobile->ShowRealMarkers( unitMarkerFrame[1] );
 		RenderWindow( chestWindow1, focusViewpoint, chestMobile );
 	}
-	else RenderWindow( chestWindow1, objectViewpoint, chestStationary );
-
+	else {
+		RenderWindow( chestWindow1, objectViewpoint, chestStationary );
+	}
 	RenderWindow( codaWindow1, codaViewpoint1, mobiles );
-
-
 
 	/// 
 	/// Show what the subject should be seeing in the VR display.

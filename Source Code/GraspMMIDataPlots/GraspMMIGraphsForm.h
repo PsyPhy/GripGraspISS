@@ -156,7 +156,9 @@ namespace GraspMMI {
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
 		bool leaveDataLive;
-		double current_vr_instant;
+private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+
+		 double current_vr_instant;
 
 
 	private: void InitializeVR( void );
@@ -359,6 +361,7 @@ namespace GraspMMI {
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -713,6 +716,7 @@ namespace GraspMMI {
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->realMarkersCheckBox);
 			this->groupBox2->Controls->Add(this->codaPanel1);
 			this->groupBox2->Controls->Add(this->codaPanel0);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -725,6 +729,21 @@ namespace GraspMMI {
 			this->groupBox2->TabIndex = 21;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Coda  View";
+			// 
+			// realMarkersCheckBox
+			// 
+			this->realMarkersCheckBox->AutoSize = true;
+			this->realMarkersCheckBox->Checked = true;
+			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->realMarkersCheckBox->Location = System::Drawing::Point(293, 1);
+			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
+			this->realMarkersCheckBox->Size = System::Drawing::Size(115, 17);
+			this->realMarkersCheckBox->TabIndex = 4;
+			this->realMarkersCheckBox->Text = L"View Real Markers";
+			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
+			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
 			// 
 			// codaPanel1
 			// 
@@ -823,14 +842,17 @@ namespace GraspMMI {
 			// fromCodaCheckBox
 			// 
 			this->fromCodaCheckBox->AutoSize = true;
+			this->fromCodaCheckBox->Checked = true;
+			this->fromCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->fromCodaCheckBox->Location = System::Drawing::Point(305, 2);
+			this->fromCodaCheckBox->Location = System::Drawing::Point(293, 2);
 			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
 			this->fromCodaCheckBox->Size = System::Drawing::Size(105, 17);
 			this->fromCodaCheckBox->TabIndex = 3;
 			this->fromCodaCheckBox->Text = L"View from CODA";
 			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
+			this->fromCodaCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::fromCodaCheckBox_CheckedChanged);
 			// 
 			// hmdPanel1
 			// 
@@ -882,7 +904,7 @@ namespace GraspMMI {
 			// 
 			// alignmentFrameTextBox
 			// 
-			this->alignmentFrameTextBox->Location = System::Drawing::Point(89, 4);
+			this->alignmentFrameTextBox->Location = System::Drawing::Point(50, 142);
 			this->alignmentFrameTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->alignmentFrameTextBox->Name = L"alignmentFrameTextBox";
 			this->alignmentFrameTextBox->Size = System::Drawing::Size(98, 21);
@@ -1047,6 +1069,7 @@ namespace GraspMMI {
 			this->groupBox4->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
 			this->groupBox2->ResumeLayout(false);
+			this->groupBox2->PerformLayout();
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
@@ -1119,7 +1142,12 @@ private:
 			StopRefreshTimer();
 			KillGraphics();
 		}
-
+		// We have a button that closes the window and thus the application only so that we can set the 
+		// CancelButton property to something. Otherwise, when the user presses ESC the program crashes.
+		// I'm not exactly why, but this seems to work.
+		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 Close();
+		 }
 
 		// This is what we do when the timer goes off.
 		void OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
@@ -1204,6 +1232,12 @@ private:
 		System::Void worldTabs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			MoveToInstant( current_vr_instant );
 		 }			 
+		System::Void fromCodaCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			MoveToInstant( current_vr_instant );
+		 }
+		System::Void realMarkersCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			MoveToInstant( current_vr_instant );
+		 }
 
 		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			unsigned int index;
@@ -1218,6 +1252,7 @@ private:
 			}
 			if ( index < nDataSlices ) MoveToSlice( index );
 		}
+
 
 		System::Void stepBackwardButton_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 			unsigned int index;
@@ -1280,11 +1315,6 @@ private:
 					Form::WndProc( m );
 				}
 
-
-
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Close();
-		 }
 };
 }
 
