@@ -197,7 +197,7 @@ void GraspMMIGraphsForm::MoveToInstant( double instant ) {
 	for ( rt = nDataSlices - 1; rt > 0; rt-- ) {
 		if ( graspDataSlice[rt].absoluteTime != MISSING_DOUBLE && graspDataSlice[rt].absoluteTime <= instant ) break;
 	}
-	fOutputDebugString( "Instant: %.3f  HK: %u  (%.3f) %u  (%.3f)  RT: %u (%.3f)\n", instant, hk, graspHousekeepingSlice[hk].absoluteTime, hk+1, graspHousekeepingSlice[hk+1].absoluteTime, rt, graspDataSlice[rt].absoluteTime );
+	// fOutputDebugString( "Instant: %.3f  HK: %u  (%.3f) %u  (%.3f)  RT: %u (%.3f)\n", instant, hk, graspHousekeepingSlice[hk].absoluteTime, hk+1, graspHousekeepingSlice[hk+1].absoluteTime, rt, graspDataSlice[rt].absoluteTime );
 	if ( fabs( graspDataSlice[rt].absoluteTime - instant ) < PACKET_STREAM_BREAK_THRESHOLD ) RenderVR( rt );
 	else if ( fabs( graspHousekeepingSlice[hk].absoluteTime - instant ) < PACKET_STREAM_BREAK_THRESHOLD ) RenderMissingVR( graspHousekeepingSlice[hk].absoluteTime );
 	else RenderMissingVR( instant );
