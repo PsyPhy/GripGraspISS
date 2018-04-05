@@ -279,9 +279,6 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	// If not, use a canonical view from straight in front of the chair.
 	if ( alignment_index > 0 ) {
 
-		LookAtFrom( codaViewpoint0, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[0] );
-		LookAtFrom( codaViewpoint1, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[1] );
-
 		renderer->coda[0]->SetPosition( graspDataSlice[alignment_index].alignmentOffset[0] );
 		renderer->coda[0]->SetOrientation( graspDataSlice[alignment_index].alignmentRotation[0] );
 		renderer->coda[0]->Enable();
@@ -290,27 +287,37 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		renderer->coda[1]->Enable();
 
 		fromCodaCheckBox->Enabled = true;
-		show_from_coda = fromCodaCheckBox->Checked;
-		alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime );
+		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ) alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " PRE";
+		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPOST ) alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " POST";
 
 	}
 
 	else {
 
-		// View from straight in front.
-		static Vector3 proxy_position = { 0.0, 0.0, -3000.0 };
-		codaViewpoint0->SetPosition( proxy_position );
-		codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
-		codaViewpoint1->SetPosition( proxy_position );
-		codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
+		fromCodaCheckBox->Enabled = false;
 		renderer->coda[0]->Disable();
 		renderer->coda[1]->Disable();
-		show_from_coda = false;
-		fromCodaCheckBox->Enabled = false;
 		alignmentFrameTextBox->Text = "not available";
 
 	}
+	show_from_coda = fromCodaCheckBox->Checked;
 
+	if ( alignment_index > 0 && show_from_coda ) {
+
+		LookAtFrom( codaViewpoint0, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[0] );
+		LookAtFrom( codaViewpoint1, vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[1] );
+
+	}
+	else {
+
+		// View from straight in front.
+		codaViewpoint0->SetPosition( 0.0, 0.0, -3000.0 );
+		codaViewpoint0->SetOrientation( 0.0, 0.0, 180.0 );
+		codaViewpoint1->SetPosition( 0.0, 0.0, -3000.0 );
+		codaViewpoint1->SetOrientation( 0.0, 0.0, 180.0 );
+
+	}
+	
 	// Each realtime slice has only one marker frame, corresponding to one or the other coda.
 	// Here we need to find the most recent slice that contains the marker information from
 	// the 'other' coda.  First, we set the visibility of all markers in a local instance of
