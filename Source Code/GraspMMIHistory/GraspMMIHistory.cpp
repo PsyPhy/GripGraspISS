@@ -277,8 +277,8 @@ void GraspMMIHistoryForm::BuildHistoryTree( void ) {
 					visibleHistoryTree->Nodes->Insert( j, subject_node );
 				}
 				TreeNode^ protocol_node = nullptr;
-				for ( int i = 0; i < subject_node->Nodes->Count; i++ ) {
-					if (  (int) subject_node->Nodes[i]->Tag == protocol ) protocol_node = subject_node->Nodes[i];
+				for ( i = 0; i < subject_node->Nodes->Count - 1; i++ ) {
+					if (  (int) subject_node->Nodes[i]->Tag == protocol ) break;
 				}
 				protocol_node = subject_node->Nodes[i];
 				fAbortMessageOnCondition( !protocol_node, "GraspMMI", "Could not find protocol ID %d for subject ID %d in history tree.", protocol, subject );
