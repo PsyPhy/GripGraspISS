@@ -37,6 +37,7 @@
 // Time span in seconds for each position of the span selector.
 #define SPAN_VALUES	8
 extern double windowSpanSeconds[SPAN_VALUES];
+static ::Timer playbackElapsedTimer;
 
 namespace GraspMMI {
 
@@ -66,6 +67,7 @@ namespace GraspMMI {
 		static double	quaternionRadius = 0.5;	// Range for XYZ components of quaternions. Use 1.0 to see 360° rotations.
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
 		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
+		static	int		playbackRefreshInterval = 50;	// How often to update the display, in milliseconds.
 
 		double taskViewBottom;
 		double taskViewTop;
@@ -156,9 +158,14 @@ namespace GraspMMI {
 		double current_task_start_time;
 		unsigned int task_tree_current_index;
 		bool leaveDataLive;
-private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 
-		 double current_vr_instant;
+		double current_vr_instant;
+		double	playbackReferenceTime;
+private: System::Windows::Forms::Button^  playBackwardButton;
+private: System::Windows::Forms::Button^  toCursorButton;
+private: System::Windows::Forms::Button^  stopPlaybackButton;
+
+		 bool	playbackForward;
 
 
 	private: void InitializeVR( void );
@@ -214,6 +221,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			  taskViewBottom( 0.0 ),
 			  taskViewTop( 1000.0 ),
 			  leaveDataLive( true ),
+			  playbackForward( true ),
 			  axis_color( GREY4 )
 
 		  {
@@ -308,6 +316,8 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 	private: System::ComponentModel::IContainer^  components;
 	private: System::Windows::Forms::Button^  stepForwardButton;
 	private: System::Windows::Forms::Button^  stepBackwardButton;
+	private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+	private: System::Windows::Forms::Button^  playForwardButton;
 
 	private:
 		/// <summary>
@@ -390,6 +400,10 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->taskLeftTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->cursorPanel = (gcnew System::Windows::Forms::Panel());
 			this->exitButton = (gcnew System::Windows::Forms::Button());
+			this->playForwardButton = (gcnew System::Windows::Forms::Button());
+			this->playBackwardButton = (gcnew System::Windows::Forms::Button());
+			this->toCursorButton = (gcnew System::Windows::Forms::Button());
+			this->stopPlaybackButton = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -949,7 +963,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// 
 			// vrFrameTextBox
 			// 
-			this->vrFrameTextBox->Location = System::Drawing::Point(1280, 1010);
+			this->vrFrameTextBox->Location = System::Drawing::Point(1277, 1011);
 			this->vrFrameTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->vrFrameTextBox->Name = L"vrFrameTextBox";
 			this->vrFrameTextBox->Size = System::Drawing::Size(85, 21);
@@ -958,21 +972,25 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// 
 			// stepForwardButton
 			// 
-			this->stepForwardButton->Location = System::Drawing::Point(1377, 1009);
+			this->stepForwardButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->stepForwardButton->Location = System::Drawing::Point(1364, 1010);
 			this->stepForwardButton->Name = L"stepForwardButton";
 			this->stepForwardButton->Size = System::Drawing::Size(37, 24);
 			this->stepForwardButton->TabIndex = 28;
-			this->stepForwardButton->Text = L">";
+			this->stepForwardButton->Text = L"+";
 			this->stepForwardButton->UseVisualStyleBackColor = true;
 			this->stepForwardButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::stepForwardButton_Click);
 			// 
 			// stepBackwardButton
 			// 
-			this->stepBackwardButton->Location = System::Drawing::Point(1231, 1009);
+			this->stepBackwardButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->stepBackwardButton->Location = System::Drawing::Point(1238, 1010);
 			this->stepBackwardButton->Name = L"stepBackwardButton";
 			this->stepBackwardButton->Size = System::Drawing::Size(37, 24);
 			this->stepBackwardButton->TabIndex = 29;
-			this->stepBackwardButton->Text = L"<";
+			this->stepBackwardButton->Text = L"-";
 			this->stepBackwardButton->UseVisualStyleBackColor = true;
 			this->stepBackwardButton->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &GraspMMIGraphsForm::stepBackwardButton_MouseClick);
 			// 
@@ -1015,20 +1033,72 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// exitButton
 			// 
 			this->exitButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->exitButton->Location = System::Drawing::Point(1457, 1005);
+			this->exitButton->Location = System::Drawing::Point(890, 1013);
 			this->exitButton->Name = L"exitButton";
-			this->exitButton->Size = System::Drawing::Size(69, 26);
+			this->exitButton->Size = System::Drawing::Size(19, 26);
 			this->exitButton->TabIndex = 31;
 			this->exitButton->Text = L"Exit";
 			this->exitButton->UseVisualStyleBackColor = true;
 			this->exitButton->Visible = false;
 			this->exitButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::button1_Click);
 			// 
+			// playForwardButton
+			// 
+			this->playForwardButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->playForwardButton->Location = System::Drawing::Point(1403, 1010);
+			this->playForwardButton->Name = L"playForwardButton";
+			this->playForwardButton->Size = System::Drawing::Size(37, 24);
+			this->playForwardButton->TabIndex = 32;
+			this->playForwardButton->Text = L">";
+			this->playForwardButton->UseVisualStyleBackColor = true;
+			this->playForwardButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::playForwardButton_Click);
+			// 
+			// playBackwardButton
+			// 
+			this->playBackwardButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->playBackwardButton->Location = System::Drawing::Point(1199, 1010);
+			this->playBackwardButton->Name = L"playBackwardButton";
+			this->playBackwardButton->Size = System::Drawing::Size(37, 24);
+			this->playBackwardButton->TabIndex = 33;
+			this->playBackwardButton->Text = L"<";
+			this->playBackwardButton->UseVisualStyleBackColor = true;
+			this->playBackwardButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::playBackwardButton_Click);
+			// 
+			// toCursorButton
+			// 
+			this->toCursorButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->toCursorButton->Location = System::Drawing::Point(1124, 1010);
+			this->toCursorButton->Name = L"toCursorButton";
+			this->toCursorButton->Size = System::Drawing::Size(37, 24);
+			this->toCursorButton->TabIndex = 34;
+			this->toCursorButton->Text = L"><";
+			this->toCursorButton->UseVisualStyleBackColor = true;
+			this->toCursorButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::toCursorButton_Click);
+			// 
+			// stopPlaybackButton
+			// 
+			this->stopPlaybackButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->stopPlaybackButton->Location = System::Drawing::Point(1484, 1009);
+			this->stopPlaybackButton->Name = L"stopPlaybackButton";
+			this->stopPlaybackButton->Size = System::Drawing::Size(37, 24);
+			this->stopPlaybackButton->TabIndex = 35;
+			this->stopPlaybackButton->Text = L"||";
+			this->stopPlaybackButton->UseVisualStyleBackColor = true;
+			this->stopPlaybackButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::stopPlaybackButton_Click);
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->exitButton;
 			this->ClientSize = System::Drawing::Size(1538, 1042);
+			this->Controls->Add(this->stopPlaybackButton);
+			this->Controls->Add(this->toCursorButton);
+			this->Controls->Add(this->playBackwardButton);
+			this->Controls->Add(this->playForwardButton);
 			this->Controls->Add(this->exitButton);
 			this->Controls->Add(this->cursorPanel);
 			this->Controls->Add(this->stepBackwardButton);
@@ -1101,6 +1171,31 @@ private:
 			timer->Stop();
 		}
 
+		// A timer to update VR during playback.
+		System::Windows::Forms::Timer^ playbackTimer;
+
+		void CreatePlaybackTimer( int interval ) {
+			playbackTimer = gcnew System::Windows::Forms::Timer;
+			playbackTimer->Interval = interval;
+			playbackTimer->Tick += gcnew EventHandler( this, &GraspMMI::GraspMMIGraphsForm::OnPlaybackTimerElapsed );
+		}
+		void StartPlaybackTimer( void ) {
+			playbackReferenceTime = current_vr_instant;
+			TimerStart( playbackElapsedTimer );
+			playbackTimer->Start();
+		}
+		// This is what we do when the timer goes off.
+		void OnPlaybackTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
+			// Stop the timer so that it does not retrigger until we are done refreshing.
+			playbackTimer->Stop();
+			fOutputDebugString( "\n" );
+			double elapsed = TimerElapsedTime( playbackElapsedTimer );
+			fOutputDebugString( "Playback Timer triggered Elapsed: %f.\n", elapsed  );
+			if ( playbackForward ) MoveToInstant( playbackReferenceTime + elapsed );
+			else MoveToInstant( playbackReferenceTime - elapsed );
+			playbackTimer->Start();
+		}
+
 		String^ CreateDurationString( double interval ) {
 			char label[256];
 			int hours = (int) floor( interval ) / (60 * 60);
@@ -1136,9 +1231,11 @@ private:
 			InitializeVR();
 			dataLiveCheckBox->Checked = true;
 			CreateRefreshTimer( refreshInterval );
+			CreatePlaybackTimer( playbackRefreshInterval );
 			StartRefreshTimer();
 		}
 		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+			playbackTimer->Stop();
 			StopRefreshTimer();
 			KillGraphics();
 		}
@@ -1207,6 +1304,7 @@ private:
 		System::Void playbackScrollBar_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			// Stop the timer so that we don't get overlapping refresh requests.
 			StopRefreshTimer();
+			playbackTimer->Stop();
 			if ( nDataSlices > 0 ) MoveToInstant( (double) playbackScrollBar->Value );
 			// Since we selected a time, then we are implicitly no longer live.
 			if ( !leaveDataLive ) dataLiveCheckBox->Checked = false;
@@ -1263,7 +1361,26 @@ private:
 			MoveToSlice( index );
 		 }
 		
-		
+		private: System::Void playForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			dataLiveCheckBox->Checked = false;
+			playbackForward = true;
+			StartPlaybackTimer();
+		 }		
+		private: System::Void playBackwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			dataLiveCheckBox->Checked = false;
+			playbackForward = false;
+			StartPlaybackTimer();
+		 }
+				 
+		private: System::Void stopPlaybackButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			playbackTimer->Stop();
+		}
+		private: System::Void toCursorButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			dataLiveCheckBox->Checked = false;
+			playbackTimer->Stop();
+			MoveToInstant( playbackScrollBar->Value );
+		 }
+
 		// Add an 'About ...' item to the system menu. 
 #define SYSMENU_ABOUT_ID 0x01
 
@@ -1314,6 +1431,10 @@ private:
 					// Do what one would normally do.
 					Form::WndProc( m );
 				}
+
+
+
+
 
 };
 }

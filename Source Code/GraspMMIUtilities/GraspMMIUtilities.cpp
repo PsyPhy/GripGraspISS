@@ -268,7 +268,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			// that slice to the timestamp of the packet.
 			double fill_time = grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
 			double fill_time_increment = fill_time - previous_fill_time;
-			if ( fill_time_increment < 0.0 ) {
+			if ( fill_time_increment < 0.0 || ( ( EPMtoSeconds( &epmHeader ) - previous_packet_timestamp ) > PACKET_STREAM_BREAK_THRESHOLD ) ) {
 				absolute_time_reference = EPMtoSeconds( &epmHeader ) - fill_time;
 				fOutputDebugString( "Slice: %d Header: %f  fillTime: %f  reference: %f\n", n_slices, EPMtoSeconds( &epmHeader ), fill_time, absolute_time_reference );
 			}
@@ -281,8 +281,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			//	somewhat less accurate, but the above method appears to have a bug.
 			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
 				grasp_data_slice[n_slices + s].absoluteTime = EPMtoSeconds( &epmHeader )
-					- ( grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime
-						- grasp_data_slice[n_slices + s].fillTime );
+					- ( grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime - grasp_data_slice[n_slices + s].fillTime );
 			}
 #endif
 		}
