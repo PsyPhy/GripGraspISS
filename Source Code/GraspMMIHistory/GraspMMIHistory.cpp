@@ -93,6 +93,7 @@ void GraspMMIHistoryForm::ParseSubjectFile( System::Windows::Forms::TreeView^ tr
 	static char linebuffer[10240];
 	int tokens;
 	char *token[MAX_TOKENS];
+	System::Windows::Forms::TreeNode^  node;
 
 	// Convert the String filename into a char *.
 	// Don't forget to free it when exiting.
@@ -107,7 +108,7 @@ void GraspMMIHistoryForm::ParseSubjectFile( System::Windows::Forms::TreeView^ tr
 		else if ( tokens == 4 ) {
 			int number;
 			sscanf( token[0], "%d", &number );
-			System::Windows::Forms::TreeNode^  node = (gcnew System::Windows::Forms::TreeNode( gcnew String( token[1] ) + " " + gcnew String( token[2] ) ));
+			node = (gcnew System::Windows::Forms::TreeNode( gcnew String( token[1] ) + " " + gcnew String( token[2] ) ));
 			node->Tag = number;
 			ParseSessionFile( node, (gcnew String( "Scripts\\" )) + (gcnew String( token[3] )));
 			tree->Nodes->Add( node );
@@ -116,6 +117,16 @@ void GraspMMIHistoryForm::ParseSubjectFile( System::Windows::Forms::TreeView^ tr
 	}
 	fclose( fp );
 	Marshal::FreeHGlobal( IntPtr(fn) );
+	System::Windows::Forms::TreeNode^  task = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unrecognized Task" ) ));
+	task->Tag = -1;
+	System::Windows::Forms::TreeNode^  protocol = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unrecognized Protocol" ) ));
+	protocol->Tag = -1;
+	System::Windows::Forms::TreeNode^  subject = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unrecognized Subject" ) ));
+	subject->Tag = -1;
+	protocol->Nodes->Add( task );
+	subject->Nodes->Add( protocol );
+	tree->Nodes->Add( subject );
+
 }
 
 void GraspMMIHistoryForm::ParseSessionFile( System::Windows::Forms::TreeNode^  subject, String^ filename ) {
@@ -146,6 +157,12 @@ void GraspMMIHistoryForm::ParseSessionFile( System::Windows::Forms::TreeNode^  s
 	}
 	fclose( fp );
 	Marshal::FreeHGlobal( IntPtr(fn) );
+	System::Windows::Forms::TreeNode^  task = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unecognized Task" ) ));
+	task->Tag = -1;
+	System::Windows::Forms::TreeNode^  protocol = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unrecognized Protocol" ) ));
+	protocol->Tag = -1;
+	protocol->Nodes->Add( task );
+	subject->Nodes->Add( protocol );
 
 }
 
@@ -175,6 +192,10 @@ void GraspMMIHistoryForm::ParseProtocolFile( System::Windows::Forms::TreeNode^ p
 	}
 	fclose( fp );
 	Marshal::FreeHGlobal( IntPtr(fn) );
+	System::Windows::Forms::TreeNode^  task = (gcnew System::Windows::Forms::TreeNode( gcnew String( "Unrecognized Task" ) ));
+	task->Tag = -1;
+	protocol->Nodes->Add( task );
+
 }
 
 // Read the cached packets.
@@ -241,16 +262,16 @@ void GraspMMIHistoryForm::BuildHistoryTree( void ) {
 					}
 				}
 				// If we did not find it in the tree, get it from the full tree.
+				int i;
+
 				if ( !subject_node ) {
-					for ( int i = 0; i < historyTree->Nodes->Count; i++ ) {
-						if (  (int) historyTree->Nodes[i]->Tag == subject ) {
-							subject_node = ( TreeNode^ ) historyTree->Nodes[i]->Clone();
-							break;
-						}
+					for ( i = 0; i < historyTree->Nodes->Count - 1; i++ ) {
+						if (  (int) historyTree->Nodes[i]->Tag == subject ) break;
 					}
+					subject_node = ( TreeNode^ ) historyTree->Nodes[i]->Clone();
 					fAbortMessageOnCondition( !subject_node, "GraspMMI", "Could not find subject ID %d in history tree.", subject );
 					// Insert it into the visible tree according to the subject ID number.
-					for ( j = 0; j < visibleHistoryTree->Nodes->Count; j++ ) {
+					for ( j = 0; j < visibleHistoryTree->Nodes->Count ; j++ ) {
 						if ( (int) visibleHistoryTree->Nodes[j]->Tag > subject ) break;
 					}
 					visibleHistoryTree->Nodes->Insert( j, subject_node );
@@ -259,11 +280,13 @@ void GraspMMIHistoryForm::BuildHistoryTree( void ) {
 				for ( int i = 0; i < subject_node->Nodes->Count; i++ ) {
 					if (  (int) subject_node->Nodes[i]->Tag == protocol ) protocol_node = subject_node->Nodes[i];
 				}
+				protocol_node = subject_node->Nodes[i];
 				fAbortMessageOnCondition( !protocol_node, "GraspMMI", "Could not find protocol ID %d for subject ID %d in history tree.", protocol, subject );
 				TreeNode^ task_node = nullptr;
-				for ( int i = 0; i < protocol_node->Nodes->Count; i++ ) {
-					if (  (int) protocol_node->Nodes[i]->Tag == task ) task_node = protocol_node->Nodes[i];
+				for ( i = 0; i < protocol_node->Nodes->Count - 1; i++ ) {
+					if (  (int) protocol_node->Nodes[i]->Tag == task ) break;
 				}
+				task_node = protocol_node->Nodes[i];
 				fAbortMessageOnCondition( !task_node, "GraspMMI", "Could not find task ID %d for protocol ID %d and subject ID %d in history tree.", task, protocol, subject );
 
 				// Show that a new instance of the task has been selected by creating a new leaf.
