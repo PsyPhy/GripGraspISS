@@ -23,9 +23,6 @@ namespace GraspMMI {
 
 	private:
 		String^ packetBufferPathRoot;
-	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::Button^  button1;
-			 System::Windows::Forms::Timer^	timer;
 
 	public:
 		GraspMMIDataPlotsStartup( String^ root )
@@ -51,47 +48,46 @@ namespace GraspMMI {
 
 	protected:
 
-	void GraspMMIDataPlotsStartup::OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
-		RefreshPrompt();
-	}
-	System::Void GraspMMIDataPlotsStartup_Shown(System::Object^  sender, System::EventArgs^  e) {
-		RefreshPrompt();
-	}	
-	
-	void GraspMMIDataPlotsStartup::RefreshPrompt( void ) {
-
-		char *root = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( packetBufferPathRoot ).ToPointer();
-
-		char rtCacheFilename[1024];
-		CreateGripPacketCacheFilename( rtCacheFilename, sizeof( rtCacheFilename ), GRIP_RT_SCIENCE_PACKET, root );
-		rtCacheFilenameText->Text = gcnew String( rtCacheFilename );
-
-		char hkCacheFilename[1024];
-		CreateGripPacketCacheFilename( hkCacheFilename, sizeof( hkCacheFilename ), GRIP_HK_BULK_PACKET, root );
-		hkCacheFilenameText->Text = gcnew String( hkCacheFilename );
-
-		System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( root ) );
-
-		Refresh();
-
-		int science_missing = _access( rtCacheFilename, 00 );
-		int housekeeping_missing = _access( hkCacheFilename, 00 );
-
-		// If HK packets are here, we exit this dialog with OK status, which will allow the program to continue.
-		// If the user closes the window by the cancel button or close button, exit status will be Cancel 
-		//  and the application will exit.
-		if ( housekeeping_missing == 0 ) {
-			this->DialogResult = System::Windows::Forms::DialogResult::OK;
-			this->Close();
+		void GraspMMIDataPlotsStartup::OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
+			RefreshPrompt();
 		}
-	}
+		System::Void GraspMMIDataPlotsStartup_Shown(System::Object^  sender, System::EventArgs^  e) {
+			RefreshPrompt();
+		}	
 
+		void GraspMMIDataPlotsStartup::RefreshPrompt( void ) {
+
+			char *root = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( packetBufferPathRoot ).ToPointer();
+
+			char rtCacheFilename[1024];
+			CreateGripPacketCacheFilename( rtCacheFilename, sizeof( rtCacheFilename ), GRIP_RT_SCIENCE_PACKET, root );
+			rtCacheFilenameText->Text = gcnew String( rtCacheFilename );
+
+			char hkCacheFilename[1024];
+			CreateGripPacketCacheFilename( hkCacheFilename, sizeof( hkCacheFilename ), GRIP_HK_BULK_PACKET, root );
+			hkCacheFilenameText->Text = gcnew String( hkCacheFilename );
+
+			System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( root ) );
+
+			Refresh();
+
+			int science_missing = _access( rtCacheFilename, 00 );
+			int housekeeping_missing = _access( hkCacheFilename, 00 );
+
+			// If HK packets are here, we exit this dialog with OK status, which will allow the program to continue.
+			// If the user closes the window by the cancel button or close button, exit status will be Cancel 
+			//  and the application will exit.
+			if ( housekeeping_missing == 0 ) {
+				this->DialogResult = System::Windows::Forms::DialogResult::OK;
+				this->Close();
+			}
+		}
+
+	private: System::Windows::Forms::Timer^	timer;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Label^  rtCacheFilenameText;
 	private: System::Windows::Forms::Label^  hkCacheFilenameText;
-	protected: 
-
-	protected: 
-
 
 	private:
 		/// <summary>
@@ -117,7 +113,7 @@ namespace GraspMMI {
 			this->rtCacheFilenameText->AutoSize = true;
 			this->rtCacheFilenameText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->rtCacheFilenameText->Location = System::Drawing::Point(56, 43);
+			this->rtCacheFilenameText->Location = System::Drawing::Point(63, 49);
 			this->rtCacheFilenameText->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->rtCacheFilenameText->Name = L"rtCacheFilenameText";
 			this->rtCacheFilenameText->Size = System::Drawing::Size(51, 20);
@@ -129,7 +125,7 @@ namespace GraspMMI {
 			this->hkCacheFilenameText->AutoSize = true;
 			this->hkCacheFilenameText->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->hkCacheFilenameText->Location = System::Drawing::Point(56, 68);
+			this->hkCacheFilenameText->Location = System::Drawing::Point(63, 74);
 			this->hkCacheFilenameText->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->hkCacheFilenameText->Name = L"hkCacheFilenameText";
 			this->hkCacheFilenameText->Size = System::Drawing::Size(51, 20);
@@ -141,7 +137,7 @@ namespace GraspMMI {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(4, 3);
+			this->label1->Location = System::Drawing::Point(11, 9);
 			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(309, 24);
@@ -153,8 +149,8 @@ namespace GraspMMI {
 			this->button1->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->button1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->button1->Location = System::Drawing::Point(166, 115);
-			this->button1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->button1->Location = System::Drawing::Point(173, 121);
+			this->button1->Margin = System::Windows::Forms::Padding(2);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(112, 32);
 			this->button1->TabIndex = 3;
@@ -165,12 +161,12 @@ namespace GraspMMI {
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->button1;
-			this->ClientSize = System::Drawing::Size(446, 158);
+			this->ClientSize = System::Drawing::Size(452, 166);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->hkCacheFilenameText);
 			this->Controls->Add(this->rtCacheFilenameText);
-			this->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->Margin = System::Windows::Forms::Padding(2);
 			this->Name = L"GraspMMIDataPlotsStartup";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspMMI Data Plots Startup";
@@ -181,5 +177,5 @@ namespace GraspMMI {
 		}
 #pragma endregion
 
-};
+	};
 }

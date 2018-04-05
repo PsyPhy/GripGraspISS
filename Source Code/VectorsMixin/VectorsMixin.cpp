@@ -31,11 +31,14 @@ const Vector3 VectorsMixin::jVectorMinus = { 0.0, -1.0, 0.0 };
 const Vector3 VectorsMixin::kVectorMinus = { 0.0, 0.0, -1.0 };
 
 const Quaternion VectorsMixin::nullQuaternion = {0.0, 0.0, 0.0, 1.0};
-
 const Pose VectorsMixin::nullPose = {{ 0.0, 0.0, 0.0 }, {0.0, 0.0, 0.0, 1.0}};
 
 const Matrix3x3 VectorsMixin::identityMatrix = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}};
 const Matrix3x3 VectorsMixin::zeroMatrix =     {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+
+const Vector3 VectorsMixin::missingVector = { MISSING_DOUBLE,  MISSING_DOUBLE, MISSING_DOUBLE };
+const Quaternion VectorsMixin::missingQuaternion = { MISSING_DOUBLE,  MISSING_DOUBLE, MISSING_DOUBLE, MISSING_DOUBLE };
+const Pose VectorsMixin::missingPose = {{ MISSING_DOUBLE,  MISSING_DOUBLE, MISSING_DOUBLE },{ MISSING_DOUBLE,  MISSING_DOUBLE, MISSING_DOUBLE, MISSING_DOUBLE }};
 
 double VectorsMixin::ToDegrees( double radians ) { return( radians * 180.0 / pi ); }
 double VectorsMixin::ToRadians( double degrees ) { return( degrees * pi / 180.0 ); }

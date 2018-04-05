@@ -84,7 +84,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GraspMMIHistory.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -93,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraspMMIHistory.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="GraspMMIHistoryStartup.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="resource.h" />
@@ -106,10 +108,28 @@
       <DependentUpon>GraspMMIHistory.h</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="GraspMMIHistoryStartup.resx">
+      <DependentUpon>GraspMMIHistoryStartup.h</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspMMIUtilities\GraspMMIUtilities.vcxproj">
+      <Project>{02a2555c-7310-461e-856d-6b1a75a56c57}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
+      <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Grip\Grip.vcxproj">
+      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VectorsMixin\VectorsMixin.vcxproj">
+      <Project>{6565a1ce-b49e-4e86-a49e-c5080df46b31}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

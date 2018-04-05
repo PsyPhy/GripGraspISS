@@ -230,8 +230,14 @@ bool OpenGLWindow::Create( HWND parent, char *title, int x, int y, int w, int h,
 		return false;										
 	}
 
-	if ( shared_hRC != nullptr ) hRC = shared_hRC;
-	else hRC = wglCreateContext( hDC );
+	if ( shared_hRC != nullptr ) {
+		hRC = shared_hRC;
+		hRCisShared = true;
+	}
+	else {
+		hRC = wglCreateContext( hDC );
+		hRCisShared = false;
+	}
 
 	// Are We Able To Get A Rendering Context?
 	if ( !( hRC ) )		
@@ -306,7 +312,7 @@ void OpenGLWindow::Destroy( void )
 	}
 
 	// Do We Have A Rendering Context?
-	if (hRC)											    
+	if (hRC && ! hRCisShared )											    
 	{
 		if ( !wglMakeCurrent(NULL,NULL) )	// Are We Able To Release The DC And RC Contexts?
 		{
@@ -320,7 +326,7 @@ void OpenGLWindow::Destroy( void )
 		hRC=NULL;	
 	}
 
-	if (hDC && !ReleaseDC( hWnd, hDC ))	// Are We Able To Release The DC
+	if (hDC && ! hRCisShared && !ReleaseDC( hWnd, hDC ))	// Are We Able To Release The DC
 	{
 		//    MessageBox(NULL,"Release Device Context Failed.","SHUTDOWN ERROR",MB_OK | MB_ICONINFORMATION);
 		hDC=NULL;	

@@ -172,7 +172,8 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	Recv_addr.sin_addr.s_addr = inet_addr( TRACKER_BROADCAST_ADDRESS );
 	int bind_value;
 
-	for ( int prt = 0; prt < TRACKER_DAEMON_PORTS; prt++ ) {
+	int prt;
+	for ( prt = 0; prt < TRACKER_DAEMON_PORTS; prt++ ) {
 		Recv_addr.sin_port = htons( TRACKER_DAEMON_PORT + prt );
 		bind_value = bind( daemonSocket, (sockaddr*) &Recv_addr, sizeof( Recv_addr ) );
 		if ( bind_value != SOCKET_ERROR ) break;
@@ -185,6 +186,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 		fAbortMessage( "CodaRTnetDaemonTracker", "Error binding socket (%d %d) ports %d - %d.", 
 			bind_value, error_value,  TRACKER_DAEMON_PORT, TRACKER_DAEMON_PORT + TRACKER_DAEMON_PORTS - 1 );		
 	}
+	else fOutputDebugString( "CodaRTnetDaemonTracker: Connected on port %d (%d)\n", prt, TRACKER_DAEMON_PORT + prt );
 	// Set the socket to do nonblocking calls to allow performing other actions while waiting for new data.
 	unsigned long noBlock = 1;
 	ioctlsocket( daemonSocket, FIONBIO, &noBlock );

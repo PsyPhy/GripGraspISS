@@ -135,7 +135,14 @@ namespace Grasp {
 
 		int nMarkers;
 		int nCodaUnits;
-		int headCodaCascade;
+		int hmdCodaCascade;
+		int handCodaCascade;
+		int chestCodaCascade;
+
+		double chestFilterConstant;
+		double handFilterConstant;
+		double hmdFilterConstant;
+
 		// A device that records 3D marker positions.
 		// Those marker positions will also drive the 6dof pose trackers.
 		Tracker *codaTracker;
@@ -164,7 +171,16 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) : headCodaCascade( -1 ) {
+		GraspDexTrackers( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) : 
+		  hmdCodaCascade( -1 ),
+		  handCodaCascade( -1 ), 
+		  chestCodaCascade( -1 ),
+
+		  chestFilterConstant( 10.0 ),
+		  handFilterConstant( 2.0 ),
+		  hmdFilterConstant( 2.0 )
+		  
+		  {
 
 #ifdef BACKGROUND_GET_DATA
 			threadHandle = nullptr;
@@ -181,7 +197,12 @@ namespace Grasp {
 		// This is defined here as static because its address is sent as a callback to a parsing routine.
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			GraspDexTrackers *instance = (GraspDexTrackers *) which_instance;
-			if ( !strcmp( name, "headCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->headCodaCascade = atof( value );
+			if ( !strcmp( name, "hmdCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdCodaCascade = atoi( value );
+			if ( !strcmp( name, "handCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->handCodaCascade = atoi( value );
+			if ( !strcmp( name, "chestCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestCodaCascade = atoi( value );
+			if ( !strcmp( name, "hmdFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdFilterConstant = atof( value );
+			if ( !strcmp( name, "handFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->handFilterConstant = atof( value );
+			if ( !strcmp( name, "chestFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestFilterConstant = atof( value );
 			return 1;
 		}
 		virtual void Initialize( void );

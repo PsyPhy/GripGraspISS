@@ -119,6 +119,7 @@ extern "C" {
 
 	void ViewColor (View view, int color);
 #define ViewSetColor( v, c ) ViewColor( v, c )
+	void ViewSetColorRGB( View view, float r, float g, float b );
 	void ViewSelectColor (View view, int color);
 	void ViewSetSpectrumColor( View view, double value );
 

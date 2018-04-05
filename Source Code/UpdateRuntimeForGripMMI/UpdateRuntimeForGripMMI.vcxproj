@@ -53,7 +53,7 @@
     <None Include="InstallGripMMI.debug.mak" />
     <None Include="InstallGripMMI.mak" />
     <None Include="InstallGripMMI.release.mak" />
-    <None Include="RunGripMMI.bat" />
+    <None Include="RunGripMMI.bat.src" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLWSemulator\CLWSemulator.vcxproj">

@@ -1,1 +1,10 @@
-﻿  No need to clean.
+﻿Build started 4/4/2018 12:15:58 PM.
+Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGripMMI\ReleaseGripMMI.vcxproj" on node 2 (clean target(s)).
+CoreClean:
+  @echo No need to clean.
+  No need to clean.
+Done Building Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGripMMI\ReleaseGripMMI.vcxproj" (clean target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.46

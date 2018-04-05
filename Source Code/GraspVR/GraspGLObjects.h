@@ -74,6 +74,8 @@ namespace Grasp {
 			Vector3	position;
 		} modelMarker[MAX_MARKERS];
 		int nModelMarkers;
+		Assembly	*modelMarkerBalls;
+		Assembly	*realMarkerBalls;
 
 	public:
 		MarkerStructureGLObject( char *model_filename = NULL );
@@ -81,6 +83,8 @@ namespace Grasp {
 
 		void AddBar( int marker1, int marker2 );
 		void ShowVisibility( MarkerFrame &marker_frame, int led_on_color = CYAN );
+		void ShowRealMarkers( MarkerFrame &marker_frame );
+		void HideRealMarkers( void );
 	};
 
 	class GraspGLObjects : public VectorsMixin {
@@ -99,6 +103,7 @@ namespace Grasp {
 		// Dimensions of objects in the room.
 		static const Vector3 head_shape;
 		static const Vector3 torso_shape;
+		static const Vector3 coda_shape;
 
 		static Vector3 target_location;
 		static Vector3 sky_location;
@@ -265,7 +270,7 @@ namespace Grasp {
 												// is along the viewing axis. So we expect each task handler to set this to the appropriate one.
 
 		Assembly		*room;					// A collection of objects that make up the fixed visual environment.
-		Cylinder		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
+		Assembly		*tunnel;				// Part of the room, but it allows us to access it directly to change its color.
 		Assembly		*starrySky;				// Backgrounds that can be seen at the end of the tunnel.
 		Assembly		*darkSky;
 
@@ -273,6 +278,9 @@ namespace Grasp {
 		// Objects used in third-person views of the virtual world.
 		Assembly		*head;
 		Assembly		*torso;
+		Assembly		*coda[MAX_UNITS];
+		Assembly		*codas;
+
 		// Representations of the CODA marker structures.
 		MarkerStructureGLObject		*hmdStructure;
 		MarkerStructureGLObject		*handStructure;
@@ -336,6 +344,7 @@ namespace Grasp {
 		void CreateAuxiliaryObjects( void );
 		Assembly *CreateHead( void );
 		Assembly *CreateTorso( void );
+		Assembly *CreateCodaBar( double r, double g, double b );
 
 		// Create an assembly that has spheres at the location of each marker,
 		// as defined by a rigid body definition file.

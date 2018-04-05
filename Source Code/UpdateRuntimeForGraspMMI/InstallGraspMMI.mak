@@ -7,10 +7,11 @@
 EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe \
 	..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe \
+	..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe \
 	..\$(BUILDCONFIGURATION)\CLWSemulator.exe \
 	..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe \
 	GraspPacketsForSimulator.gpk \
-	RunGraspMMI.bat
+	RunGraspMMI.bat.src
 
 # Runtime executables will go here.
 DESTINATION=..\..\GraspMMIExecutables
@@ -22,11 +23,12 @@ install: $(EXECUTABLES) InstallGraspMMI.mak
 	mkdir $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\DexGroundMonitorClient.exe $(DESTINATION)
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
 	-copy ..\DLLs\*.dll $(DESTINATION)
-	copy RunGraspMMI.bat $(ROOT)
+	copy RunGraspMMI.bat.src $(ROOT)\RunGraspMMI.bat
 	echo GraspMMI Version Information > $(DESTINATION)\GraspMMIVersionInfo.txt
 	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GraspMMIVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

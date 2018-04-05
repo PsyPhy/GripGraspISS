@@ -25,6 +25,31 @@ void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 	}
 }
 
+void	PsyPhy::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames ) {
+
+	static VectorsMixin vm;
+	int mrk, frm;
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		vm.CopyVector( frame.marker[mrk].position, vm.zeroVector );
+		frame.marker[mrk].visibility = false;
+	}
+	frame.time = 0.0;
+
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		int count = 0;
+		for ( frm = 0; frm < n_frames; frm++ ) {
+			if ( frames[frm].marker[mrk].visibility ) {
+				vm.AddVectors( frame.marker[mrk].position, frame.marker[mrk].position, frames[frm].marker[mrk].position );
+				count++;
+			}
+		}
+		if ( count > 0 ) {
+			frame.marker[mrk].visibility = true;
+			vm.ScaleVector( frame.marker[mrk].position, frame.marker[mrk].position, 1.0 / (double) count );
+		}
+	}
+}
+
 /***************************************************************************/
 
 // Accesssor methods for some key parameters.

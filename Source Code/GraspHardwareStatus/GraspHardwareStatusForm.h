@@ -191,9 +191,11 @@ namespace GraspHardwareStatus {
 			this->chestGroupBox->Controls->Add(this->chestPanel0);
 			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->chestGroupBox->Location = System::Drawing::Point(12, 604);
+			this->chestGroupBox->Location = System::Drawing::Point(9, 491);
+			this->chestGroupBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->chestGroupBox->Name = L"chestGroupBox";
-			this->chestGroupBox->Size = System::Drawing::Size(558, 280);
+			this->chestGroupBox->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->chestGroupBox->Size = System::Drawing::Size(418, 228);
 			this->chestGroupBox->TabIndex = 0;
 			this->chestGroupBox->TabStop = false;
 			this->chestGroupBox->Text = L"Chest Marker Visibility";
@@ -203,9 +205,10 @@ namespace GraspHardwareStatus {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(325, 249);
+			this->label2->Location = System::Drawing::Point(244, 202);
+			this->label2->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(196, 20);
+			this->label2->Size = System::Drawing::Size(168, 17);
 			this->label2->TabIndex = 6;
 			this->label2->Text = L"Tracker Camera Bar 2";
 			// 
@@ -214,24 +217,27 @@ namespace GraspHardwareStatus {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(47, 249);
+			this->label1->Location = System::Drawing::Point(35, 202);
+			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(196, 20);
+			this->label1->Size = System::Drawing::Size(168, 17);
 			this->label1->TabIndex = 5;
 			this->label1->Text = L"Tracker Camera Bar 1";
 			// 
 			// chestPanel1
 			// 
-			this->chestPanel1->Location = System::Drawing::Point(291, 33);
+			this->chestPanel1->Location = System::Drawing::Point(218, 27);
+			this->chestPanel1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->chestPanel1->Name = L"chestPanel1";
-			this->chestPanel1->Size = System::Drawing::Size(256, 205);
+			this->chestPanel1->Size = System::Drawing::Size(192, 167);
 			this->chestPanel1->TabIndex = 2;
 			// 
 			// chestPanel0
 			// 
-			this->chestPanel0->Location = System::Drawing::Point(12, 33);
+			this->chestPanel0->Location = System::Drawing::Point(9, 27);
+			this->chestPanel0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->chestPanel0->Name = L"chestPanel0";
-			this->chestPanel0->Size = System::Drawing::Size(256, 205);
+			this->chestPanel0->Size = System::Drawing::Size(192, 167);
 			this->chestPanel0->TabIndex = 1;
 			// 
 			// handGroupBox
@@ -242,9 +248,11 @@ namespace GraspHardwareStatus {
 			this->handGroupBox->Controls->Add(this->handPanel0);
 			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->handGroupBox->Location = System::Drawing::Point(12, 308);
+			this->handGroupBox->Location = System::Drawing::Point(9, 250);
+			this->handGroupBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->handGroupBox->Name = L"handGroupBox";
-			this->handGroupBox->Size = System::Drawing::Size(558, 280);
+			this->handGroupBox->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->handGroupBox->Size = System::Drawing::Size(418, 228);
 			this->handGroupBox->TabIndex = 1;
 			this->handGroupBox->TabStop = false;
 			this->handGroupBox->Text = L"Hand Marker Visibility";
@@ -254,9 +262,10 @@ namespace GraspHardwareStatus {
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(325, 249);
+			this->label4->Location = System::Drawing::Point(244, 202);
+			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(196, 20);
+			this->label4->Size = System::Drawing::Size(168, 17);
 			this->label4->TabIndex = 8;
 			this->label4->Text = L"Tracker Camera Bar 2";
 			// 
@@ -265,24 +274,27 @@ namespace GraspHardwareStatus {
 			this->label5->AutoSize = true;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label5->Location = System::Drawing::Point(47, 249);
+			this->label5->Location = System::Drawing::Point(35, 202);
+			this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(196, 20);
+			this->label5->Size = System::Drawing::Size(168, 17);
 			this->label5->TabIndex = 7;
 			this->label5->Text = L"Tracker Camera Bar 1";
 			// 
 			// handPanel1
 			// 
-			this->handPanel1->Location = System::Drawing::Point(291, 33);
+			this->handPanel1->Location = System::Drawing::Point(218, 27);
+			this->handPanel1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->handPanel1->Name = L"handPanel1";
-			this->handPanel1->Size = System::Drawing::Size(256, 205);
+			this->handPanel1->Size = System::Drawing::Size(192, 167);
 			this->handPanel1->TabIndex = 2;
 			// 
 			// handPanel0
 			// 
-			this->handPanel0->Location = System::Drawing::Point(12, 33);
+			this->handPanel0->Location = System::Drawing::Point(9, 27);
+			this->handPanel0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->handPanel0->Name = L"handPanel0";
-			this->handPanel0->Size = System::Drawing::Size(256, 205);
+			this->handPanel0->Size = System::Drawing::Size(192, 167);
 			this->handPanel0->TabIndex = 1;
 			// 
 			// hmdGroupBox
@@ -293,9 +305,11 @@ namespace GraspHardwareStatus {
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdGroupBox->Location = System::Drawing::Point(12, 12);
+			this->hmdGroupBox->Location = System::Drawing::Point(9, 10);
+			this->hmdGroupBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->hmdGroupBox->Name = L"hmdGroupBox";
-			this->hmdGroupBox->Size = System::Drawing::Size(558, 280);
+			this->hmdGroupBox->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->hmdGroupBox->Size = System::Drawing::Size(418, 228);
 			this->hmdGroupBox->TabIndex = 2;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
@@ -305,9 +319,10 @@ namespace GraspHardwareStatus {
 			this->label6->AutoSize = true;
 			this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label6->Location = System::Drawing::Point(325, 249);
+			this->label6->Location = System::Drawing::Point(244, 202);
+			this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(196, 20);
+			this->label6->Size = System::Drawing::Size(168, 17);
 			this->label6->TabIndex = 10;
 			this->label6->Text = L"Tracker Camera Bar 2";
 			// 
@@ -316,24 +331,27 @@ namespace GraspHardwareStatus {
 			this->label7->AutoSize = true;
 			this->label7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label7->Location = System::Drawing::Point(47, 249);
+			this->label7->Location = System::Drawing::Point(35, 202);
+			this->label7->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(196, 20);
+			this->label7->Size = System::Drawing::Size(168, 17);
 			this->label7->TabIndex = 9;
 			this->label7->Text = L"Tracker Camera Bar 1";
 			// 
 			// hmdPanel1
 			// 
-			this->hmdPanel1->Location = System::Drawing::Point(291, 33);
+			this->hmdPanel1->Location = System::Drawing::Point(218, 27);
+			this->hmdPanel1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->hmdPanel1->Name = L"hmdPanel1";
-			this->hmdPanel1->Size = System::Drawing::Size(256, 205);
+			this->hmdPanel1->Size = System::Drawing::Size(192, 167);
 			this->hmdPanel1->TabIndex = 2;
 			// 
 			// hmdPanel0
 			// 
-			this->hmdPanel0->Location = System::Drawing::Point(12, 33);
+			this->hmdPanel0->Location = System::Drawing::Point(9, 27);
+			this->hmdPanel0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->hmdPanel0->Name = L"hmdPanel0";
-			this->hmdPanel0->Size = System::Drawing::Size(256, 205);
+			this->hmdPanel0->Size = System::Drawing::Size(192, 167);
 			this->hmdPanel0->TabIndex = 1;
 			// 
 			// groupBox1
@@ -341,9 +359,11 @@ namespace GraspHardwareStatus {
 			this->groupBox1->Controls->Add(this->oculusPanel);
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(592, 12);
+			this->groupBox1->Location = System::Drawing::Point(444, 10);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(852, 423);
+			this->groupBox1->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox1->Size = System::Drawing::Size(639, 344);
 			this->groupBox1->TabIndex = 6;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"VR Headset";
@@ -351,19 +371,21 @@ namespace GraspHardwareStatus {
 			// oculusPanel
 			// 
 			this->oculusPanel->Controls->Add(this->label3);
-			this->oculusPanel->Location = System::Drawing::Point(17, 31);
+			this->oculusPanel->Location = System::Drawing::Point(13, 25);
+			this->oculusPanel->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->oculusPanel->Name = L"oculusPanel";
-			this->oculusPanel->Size = System::Drawing::Size(829, 375);
+			this->oculusPanel->Size = System::Drawing::Size(622, 305);
 			this->oculusPanel->TabIndex = 0;
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
 			this->label3->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->label3->Location = System::Drawing::Point(136, 137);
+			this->label3->Location = System::Drawing::Point(102, 111);
+			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label3->Name = L"label3";
-			this->label3->Padding = System::Windows::Forms::Padding(5);
-			this->label3->Size = System::Drawing::Size(587, 70);
+			this->label3->Padding = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->label3->Size = System::Drawing::Size(463, 58);
 			this->label3->TabIndex = 0;
 			this->label3->Text = L"If no VR images appear, check cables to VR Headset\r\n           then double click " 
 				L"on this message to retry.";
@@ -377,9 +399,11 @@ namespace GraspHardwareStatus {
 			this->groupBox2->Controls->Add(this->vrPanel0);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(592, 441);
+			this->groupBox2->Location = System::Drawing::Point(444, 358);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(852, 443);
+			this->groupBox2->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox2->Size = System::Drawing::Size(639, 360);
 			this->groupBox2->TabIndex = 7;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"3D Tracking";
@@ -389,9 +413,10 @@ namespace GraspHardwareStatus {
 			this->label8->AutoSize = true;
 			this->label8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label8->Location = System::Drawing::Point(492, 420);
+			this->label8->Location = System::Drawing::Point(369, 341);
+			this->label8->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(286, 20);
+			this->label8->Size = System::Drawing::Size(243, 17);
 			this->label8->TabIndex = 8;
 			this->label8->Text = L"View from Tracker Camera Bar 2";
 			// 
@@ -400,24 +425,27 @@ namespace GraspHardwareStatus {
 			this->label9->AutoSize = true;
 			this->label9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label9->Location = System::Drawing::Point(78, 420);
+			this->label9->Location = System::Drawing::Point(58, 341);
+			this->label9->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label9->Name = L"label9";
-			this->label9->Size = System::Drawing::Size(286, 20);
+			this->label9->Size = System::Drawing::Size(243, 17);
 			this->label9->TabIndex = 7;
 			this->label9->Text = L"View from Tracker Camera Bar 1";
 			// 
 			// vrPanel1
 			// 
-			this->vrPanel1->Location = System::Drawing::Point(431, 33);
+			this->vrPanel1->Location = System::Drawing::Point(323, 27);
+			this->vrPanel1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->vrPanel1->Name = L"vrPanel1";
-			this->vrPanel1->Size = System::Drawing::Size(408, 375);
+			this->vrPanel1->Size = System::Drawing::Size(306, 305);
 			this->vrPanel1->TabIndex = 1;
 			// 
 			// vrPanel0
 			// 
-			this->vrPanel0->Location = System::Drawing::Point(17, 33);
+			this->vrPanel0->Location = System::Drawing::Point(13, 27);
+			this->vrPanel0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->vrPanel0->Name = L"vrPanel0";
-			this->vrPanel0->Size = System::Drawing::Size(408, 375);
+			this->vrPanel0->Size = System::Drawing::Size(306, 305);
 			this->vrPanel0->TabIndex = 0;
 			// 
 			// closeButton
@@ -425,9 +453,10 @@ namespace GraspHardwareStatus {
 			this->closeButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 			this->closeButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->closeButton->Location = System::Drawing::Point(1330, 899);
+			this->closeButton->Location = System::Drawing::Point(998, 730);
+			this->closeButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->closeButton->Name = L"closeButton";
-			this->closeButton->Size = System::Drawing::Size(114, 42);
+			this->closeButton->Size = System::Drawing::Size(86, 34);
 			this->closeButton->TabIndex = 8;
 			this->closeButton->Text = L"Close";
 			this->closeButton->UseVisualStyleBackColor = true;
@@ -436,16 +465,17 @@ namespace GraspHardwareStatus {
 			// Form1
 			// 
 			this->AcceptButton = this->closeButton;
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->closeButton;
-			this->ClientSize = System::Drawing::Size(1454, 953);
+			this->ClientSize = System::Drawing::Size(1090, 774);
 			this->Controls->Add(this->closeButton);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->hmdGroupBox);
 			this->Controls->Add(this->handGroupBox);
 			this->Controls->Add(this->chestGroupBox);
+			this->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GRASP Hardware Status";

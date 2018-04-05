@@ -95,8 +95,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\GraspGUI\GraspScripts.cpp" />
+    <ClCompile Include="..\GraspVR\GraspGLObjects.cpp" />
+    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="GraspMMIDataPlots.cpp" />
     <ClCompile Include="GraspMMIGraphs.cpp" />
+    <ClCompile Include="GraspMMIVR.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -133,14 +139,14 @@
     <ProjectReference Include="..\GraspMMIUtilities\GraspMMIUtilities.vcxproj">
       <Project>{02a2555c-7310-461e-856d-6b1a75a56c57}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
-      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
       <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Grip\Grip.vcxproj">
       <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
+      <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
       <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>

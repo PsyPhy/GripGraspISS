@@ -102,8 +102,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StartOculus", "StartOculus\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WaitForCodaDaemon", "WaitForCodaDaemon\WaitForCodaDaemon.vcxproj", "{C8FB03D6-66AF-46CD-A8FA-0D70B32A68C0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\GraspOculusSDKv1.8\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj", "{EA50E705-5113-49E5-B105-2512EDC8DDC6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OculusStartupCheck", "OculusStartupCheck\OculusStartupCheck.vcxproj", "{465AEFC2-B087-4FF6-B090-B60B01AF175F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiveFocusDamnIt", "GiveFocusDamnIt\GiveFocusDamnIt.vcxproj", "{FC7A2632-0A84-4E2E-B852-1AC3A2908325}"
@@ -145,6 +143,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommonTimestamp", "ForceRebuild\ForceRebuild.vcxproj", "{22A5F628-DC55-43A9-A729-95BD524B7054}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIMirror", "GraspMMIMirror\GraspMMIMirror.vcxproj", "{EBCF095F-8685-4C8B-9778-502379D0DE58}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "..\..\GraspOculusSDKv1.17\LibOVR\Projects\Windows\VS2010\LibOVR.vcxproj", "{EA50E705-5113-49E5-B105-2512EDC8DDC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -530,14 +530,6 @@ Global
 		{C8FB03D6-66AF-46CD-A8FA-0D70B32A68C0}.ReleaseDraft|Win32.Build.0 = Release|Win32
 		{C8FB03D6-66AF-46CD-A8FA-0D70B32A68C0}.Test|Win32.ActiveCfg = Release|Win32
 		{C8FB03D6-66AF-46CD-A8FA-0D70B32A68C0}.Test|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.Build.0 = Debug|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.ReleaseDraft|Win32.Build.0 = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Test|Win32.ActiveCfg = Release|Win32
-		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Test|Win32.Build.0 = Release|Win32
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.Debug|Win32.Build.0 = Debug|Win32
 		{465AEFC2-B087-4FF6-B090-B60B01AF175F}.Release|Win32.ActiveCfg = Release|Win32
@@ -706,6 +698,14 @@ Global
 		{EBCF095F-8685-4C8B-9778-502379D0DE58}.ReleaseDraft|Win32.Build.0 = Release|Win32
 		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Test|Win32.ActiveCfg = Release|Win32
 		{EBCF095F-8685-4C8B-9778-502379D0DE58}.Test|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Debug|Win32.Build.0 = Debug|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.ReleaseDraft|Win32.Build.0 = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Test|Win32.ActiveCfg = Release|Win32
+		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Test|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

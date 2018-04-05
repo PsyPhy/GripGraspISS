@@ -33,6 +33,15 @@
     <ClCompile Include="..\GraspGUI\GraspScripts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GraspMMIVR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GraspVR\GraspGLObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

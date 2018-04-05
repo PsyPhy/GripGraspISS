@@ -1119,7 +1119,7 @@ void ViewTiltPlotAvailableDoubles (View view,
 	float x, x1, y1, x2, y2, radius, mid;
 	float r, sr, cr;
 
-	radius = (float) fabs( view->display_top - view->display_bottom ) * 0.4f;
+	radius = (float) fabs( view->display_top - view->display_bottom ) * 0.3f;
 	mid = ( view->display_top + view->display_bottom ) / 2;
 
 	for (i = start; i <= end; i += step ) {
@@ -1152,7 +1152,7 @@ void ViewFillPlotAvailableDoubles (View view,
 {
 
 	register int i;
-	register double	*xpt1, *xpt2, *ypt1, *ypt2, mid;
+	register double	*xpt1, *xpt2, *ypt1, *ypt2;
 
 	for (i = start + 1; i <= end; i += step ) {
 
@@ -1161,9 +1161,10 @@ void ViewFillPlotAvailableDoubles (View view,
 		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
 		ypt2 = (double *)(((char *) yarray) + i * ysize);
 		if ( *xpt1 != NA && *xpt2 != NA && *ypt1 != NA && *ypt2 != NA ) {
-			mid = (*xpt1 + *xpt2) / 2.0;
-			ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
-			ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
+			// mid = (*xpt1 + *xpt2) / 2.0;
+			//ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
+			//ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
+			ViewFilledRectangle(view, *xpt1, 0.0, *xpt2, *ypt1 );
 		}
 
 	}

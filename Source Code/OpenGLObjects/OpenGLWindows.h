@@ -42,8 +42,9 @@ namespace PsyPhy {
 	public:
 
 		HINSTANCE hInstance;	// Holds The Instance Of The Application
-		HDC	    hDC;		    // Private GDI Device Context
+		HDC		hDC;		    // Private GDI Device Context
 		HGLRC     hRC;		    // Permanent Rendering Context
+		bool	hRCisShared;
 
 		HWND      hWnd;	    	// Holds Our Window Handle
 		HWND      hParent;		// Parent window.

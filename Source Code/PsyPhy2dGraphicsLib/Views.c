@@ -573,17 +573,17 @@ void ViewAlu (View view, int alu) {
 /***************************************************************************/
 
 void ViewColor (View view, int color) {
-	
 	Color(view->display, color);
-	
+}
+
+void ViewSetColorRGB ( View view, float r, float g, float b ) {
+	ColorRGB(view->display, r, g, b);
 }
 
 void ViewSelectColor (View view, int color) {
-	
 	Color( view->display, 
 		color_select_table[ color % ( sizeof( color_select_table ) / sizeof( *color_select_table ) ) ]
 		);
-	
 }
 
 /***************************************************************************/

@@ -16,6 +16,17 @@
 #include "..\Useful\fOutputDebugString.h"
 #include "..\Useful\fMessageBox.h"
 
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
+#include "../OpenGLObjects/OpenGLWindows.h"
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
+#include "../OpenGLObjects/OpenGLWindowsInForms.h"
+#include "../GraspVR/GraspGLObjects.h"
+
+
 // We make use of a package of plotting routines that I have had around for decades.
 #include "..\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
 #include "..\PsyPhy2dGraphicsLib\OglDisplay.h"
@@ -27,12 +38,12 @@
 
 using namespace GraspMMI;
 
-#define HMD_STRIPCHARTS	4
+#define POSE_STRIPCHARTS	8
 #define MARKER_STRIPCHARTS	MARKER_STRUCTURES
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
 #define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
-
+#define TILT_SPREAD	8
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
@@ -67,18 +78,26 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 	// Then the Views are defined with respect to each Display and the 
 	//  limits in user coordinates are initialized. 
 
-	// HMD Strip Charts
-	parent = static_cast<HWND>( hmdGraphPanel->Handle.ToPointer());
-   	hmdDisplay = CreateOglDisplay();
+	parent = static_cast<HWND>( cursorPanel->Handle.ToPointer());
+   	cursorDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
-	DisplaySetSizePixels( hmdDisplay, hmdGraphPanel->Size.Width, hmdGraphPanel->Size.Height );
-	DisplaySetScreenPosition( hmdDisplay, 0, 0 );
-	DisplayInit( hmdDisplay );
-	DisplayErase( hmdDisplay );
-	hmdStripChartLayout = CreateLayout( hmdDisplay, HMD_STRIPCHARTS - 1, 1 );
-	LayoutSetDisplayEdgesRelative( hmdStripChartLayout, 0.0, 0.1, 1.0, 1.0 );
-	tiltStripChartLayout = CreateLayout( hmdDisplay, 1, 1 );
-	LayoutSetDisplayEdgesRelative( tiltStripChartLayout, 0.0, 0.0, 1.0, 0.1 );
+	DisplaySetSizePixels( cursorDisplay, cursorPanel->Size.Width, cursorPanel->Size.Height );
+	DisplaySetScreenPosition( cursorDisplay, 0, 0 );
+	DisplayInit( cursorDisplay );
+	DisplayErase( cursorDisplay );
+	cursorLayout = CreateLayout( cursorDisplay, 1, 1 );
+	LayoutSetDisplayEdgesRelative( cursorLayout, 0.0, 0.0, 1.0, 1.0 );
+
+	// Pose Strip Charts
+	parent = static_cast<HWND>( poseGraphPanel->Handle.ToPointer());
+   	poseDisplay = CreateOglDisplay();
+	SetOglWindowParent( parent );
+	DisplaySetSizePixels( poseDisplay, poseGraphPanel->Size.Width, poseGraphPanel->Size.Height );
+	DisplaySetScreenPosition( poseDisplay, 0, 0 );
+	DisplayInit( poseDisplay );
+	DisplayErase( poseDisplay );
+	poseStripChartLayout = CreateLayout( poseDisplay, POSE_STRIPCHARTS, 1 );
+	LayoutSetDisplayEdgesRelative( poseStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
 
 	// Marker Visibility Strip Charts
 	parent = static_cast<HWND>( markerGraphPanel->Handle.ToPointer());
@@ -162,9 +181,11 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 	firstAbsoluteTimeTextBox->Text = CreateTimeString( min );
 }
 
-// When the display is 'live' we want to be able to automatically position the scroll bar 
+// When the display is 'live' we want to be able to automatically position the scroll bars 
 // so as to display the most recent data.
 void GraspMMIGraphsForm::MoveToLatest( void ) {
+	// Find the timestamp of the latest sample in the series.
+	// Need to check both RT science and housekeeping traces.
 	double latest;
 	for ( int i = nDataSlices - 1; i >= 0; i-- ) {
 		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
@@ -178,13 +199,21 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 			break;
 		}
 	}
+	// Adjust the slider to match the latest epoch. 
 	scrollBar->Value = (int) ceil( latest );
+	// Point the VR display to the latest sample.
+	playbackScrollBar->Value = playbackScrollBar->Maximum;
+	MoveToInstant( playbackScrollBar->Value );
 }
 
 // Here we do the actual work of plotting the strip charts and phase plots.
 // It is assumed that the global data arrays have been filled. The time span
 // of the plots is determined by the scroll bar and span slider.
 void GraspMMIGraphsForm::RefreshGraphics( void ) {
+
+	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+
+	static bool __debug__ = false;
 
 	int first_sample;
 	int last_sample;
@@ -196,7 +225,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	static int refresh_count = 0; 
 
-	fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
+	if ( __debug__ ) fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
 
 	// Determine the time window, in seconds, based on the scroll bar position and the span slider.
 	double last_instant = scrollBar->Value;
@@ -217,22 +246,32 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	first_sample = index + 1;
 
+	playbackScrollBar->Maximum = ceil( last_instant );
+	playbackScrollBar->Minimum = floor( first_instant );
+	if ( playbackScrollBar->Value < playbackScrollBar->Minimum ) playbackScrollBar->Value = playbackScrollBar->Minimum;
+	if ( playbackScrollBar->Value > playbackScrollBar->Maximum ) playbackScrollBar->Value = playbackScrollBar->Maximum;
+
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
 	while ( ((last_sample - first_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
+	int tilt_spread;
+	if ( step <= 4 ) tilt_spread = 1;
+	else tilt_spread = TILT_SPREAD;
 
-	fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
+
+	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
 
 	// Plot the continous data about the head position and orientation.
-	DisplayActivate( hmdDisplay );
-	DisplayErase( hmdDisplay );
-
+	DisplayActivate( poseDisplay );
+	DisplayErase( poseDisplay );
 	int row = 0;
-	int axis_color = GREY4;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+
+	//
+	// Head Pose
+	//
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	// Set the plotting limits.
 	ViewSetXLimits( view, first_instant, last_instant );
@@ -250,7 +289,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( min == max ) min = -1.0, max = 1.0;
 		ViewSetYLimits( view, min, max );
 	}
-	else ViewSetYLimits( view, - positionRadius, positionRadius );
+	else ViewSetYLimits( view, - headPositionRadius, headPositionRadius );
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
@@ -262,12 +301,13 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 			sizeof( graspDataSlice[first_sample] ),
 			MISSING_DOUBLE);
 	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	row++;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Orientation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	ViewColor( view, GREY7 );
 	ViewHorizontalLine( view, 0.0 );
 
@@ -298,6 +338,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 			sizeof( graspDataSlice[first_sample] ),
 			MISSING_DOUBLE);
 	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Orientation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	//
 	// Plot the amplitude of the head rotation away from straight ahead.
@@ -312,10 +354,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 
 	row++;
-	view = LayoutView( hmdStripChartLayout, row, 0 );
-	ViewColor( view, axis_color );
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Rotation", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	double angle_max = - DBL_MAX;
 	ViewSetXLimits( view, first_instant, last_instant );
 	if ( autoscaleHMD->Checked ) {
@@ -333,8 +374,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		autoscaleIndicator->Visible = false;
 	}
 
+	// Negative Enveloppe Border
 	ViewSetYLimits( view, angle_max, - angle_max );
-
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -343,7 +384,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
-
+	// Positive Enveloppe Border
 	ViewSetYLimits( view, - angle_max, angle_max );
 	ViewColor( view, GREY6 );
 	ViewXYPlotAvailableDoubles( view, 
@@ -353,7 +394,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
-
+	// Roll Angle
 	ViewColor( view, MAGENTA );
 	ViewXYPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -362,22 +403,144 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Rotation from Zero", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
-	view = LayoutView( tiltStripChartLayout, 0, 0 );
+	// Plot the roll angle of the head as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, axis_color );
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
-	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	ViewColor( view, MAGENTA );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_sample, last_sample - 1, step * 10,
+		first_sample, last_sample - 1, step * tilt_spread,
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
-	DisplaySwap( hmdDisplay );
+	//
+	// Hand Pose
+	//
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewBox( view );
+
+	// Set the plotting limits.
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] > max ) max = graspDataSlice[i].hand.pose.position[j];
+				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] < min ) min = graspDataSlice[i].hand.pose.position[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - handPositionRadius, handPositionRadius );
+
+	for ( i = 0;  i < 3; i++ ) {
+		ViewSelectColor( view, i );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].hand.pose.position[i], 
+			first_sample, last_sample - 1, step,
+			sizeof( graspDataSlice[first_sample] ), 
+			sizeof( graspDataSlice[first_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Hand Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+	// Plot the roll angle of the hand as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewSetXLimits( view, first_instant, last_instant );
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewBox( view );
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].handRollAngle, 
+		first_sample, last_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Hand Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+
+	//
+	// Chest Pose
+	//
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewBox( view );
+
+	// Set the plotting limits.
+	ViewSetXLimits( view, first_instant, last_instant );
+	if ( autoscaleHMD->Checked ) {
+		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
+		// Position and quaternion values are not defined when visibility is false.
+		double min = DBL_MAX;
+		double max = - DBL_MAX;
+		for ( i = first_sample + 1; i < last_sample; i++ ) {
+			for ( j = 0;  j < 3; j++ ) {
+				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
+				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
+			}
+		}
+		if ( min == max ) min = -1.0, max = 1.0;
+		ViewSetYLimits( view, min, max );
+	}
+	else ViewSetYLimits( view, - chestPositionRadius, chestPositionRadius );
+
+	for ( i = 0;  i < 3; i++ ) {
+		ViewSelectColor( view, i );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].chest.pose.position[i], 
+			first_sample, last_sample - 1, step,
+			sizeof( graspDataSlice[first_sample] ), 
+			sizeof( graspDataSlice[first_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Chest Position", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+	// Plot the roll angle of the hand as a stick figure.
+	row++;
+	view = LayoutView( poseStripChartLayout, row, 0 );
+	ViewSetXLimits( view, first_instant, last_instant );
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewBox( view );
+	ViewColor( view, GREY6 );
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].chestRollAngle, 
+		first_sample, last_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewTiltPlotAvailableDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].torsoRollAngle, 
+		first_sample, last_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_sample] ), 
+		sizeof( graspDataSlice[first_sample] ),
+		MISSING_DOUBLE);
+	ViewColor( view, BLACK );
+	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+
+	// Zap it to the display.
+	DisplaySwap( poseDisplay );
 
 
 	// Find the indices into the arrays that correspond to the time window.
@@ -389,62 +552,53 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime < first_instant ) break;
 	}
 	first_sample = index + 1;
-	fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
+	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
 	// for ( int i = first_sample; i < last_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
 
 	// Plot how many markers are visible on each marker structure.
 	DisplayActivate( markerDisplay );
 	DisplayErase( markerDisplay );
-	for ( row = 0; row < MARKER_STRUCTURES; row++ ) {
-		view = LayoutView( markerStripChartLayout, row, 0 );
+	for ( int object = 0; object < MARKER_STRUCTURES; object++ ) {
+		view = LayoutView( markerStripChartLayout, MARKER_STRUCTURES - object - 1, 0 );
 		ViewSetXLimits( view, first_instant, last_instant );
 		ViewSetYLimits( view, 0, 8.0 );
 		ViewColor( view, axis_color );
 		ViewBox( view );
-		ViewSelectColor( view, row + 2 );
+		ViewSetColorRGB( view, 1.0f, 0.85f, 0.85f );
+		ViewHorizontalBand( view, 0.0, 4.0 );
+		ViewColor( view, color_by_object[object]);
 		ViewFillPlotAvailableDoubles( view,
 			&graspHousekeepingSlice[0].absoluteTime, 
-			&graspHousekeepingSlice[0].visibleMarkers[row], 
+			&graspHousekeepingSlice[0].visibleMarkers[object], 
 			first_sample, last_sample - 1, 1,
 			sizeof( *graspHousekeepingSlice ), 
 			sizeof( *graspHousekeepingSlice ),
 			MISSING_DOUBLE );
+		ViewColor( view, axis_color );
+		ViewTitle( view, StructureLabel[object], INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	}
-	view = LayoutView( markerStripChartLayout, HMD_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "HMD", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	view = LayoutView( markerStripChartLayout, HAND_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "Hand", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-	view = LayoutView( markerStripChartLayout, CHEST_STRUCTURE, 0 );
-	ViewColor( view, axis_color );
-	ViewTitle( view, "Chest", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 	DisplaySwap( markerDisplay );
 
+	//
 	// Plot which protocol and task was executing at each point in time.
+	//
 	DisplayActivate( historyDisplay );
-	fOutputDebugString( "DisplayErase( historyDisplay ) started.\n" );
 	DisplayErase( historyDisplay );
-	fOutputDebugString( "DisplayErase( historyDisplay ) finished.\n" );
 
+	// Shade alternate bands of 100's to make it easier to understand the data plot.
 	row = 0;
 	double bottom = taskViewBottom;
 	double top = taskViewTop;
-
 	view = LayoutView( historyStripChartLayout, row++, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
 	ViewSetYLimits( view, bottom, top );
-
 	if ( ( top - bottom ) > 100.0 ) {
 		ViewColor( view, GREY7 );
 		for ( double y = bottom; y < top; y += 200.0 ) ViewHorizontalBand( view, y, y + 100.0 );
 	}
 
-	ViewColor( view, axis_color );
-	ViewBox( view );
-	ViewTitle( view, "Protocol", INSIDE_LEFT, INSIDE_TOP, 0.0 );
-
+	// Plot the protocol data.
 	ViewSelectColor( view, 1 );
 	ViewScatterPlotAvailableDoubles( view, 
 		SYMBOL_FILLED_SQUARE,
@@ -464,27 +618,34 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( *graspHousekeepingSlice ),
 		MISSING_INT);
 
+	// Label the  bands.
+	ViewColor( view, axis_color );
+	ViewBox( view );
+
+	double shift_up = 10.0;	// A fudge factor to position the band labels correctly.
 	ViewColor( view, axis_color );
 	for ( double y = bottom; y < top; y += 200.0 ) {
 		char label[16];
 		sprintf( label, "%03.0f's", y );
-		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + 50.0 ), 0.0 );
+		ViewTitle( view, label, INSIDE_LEFT, UserToDisplayY( view, y + shift_up ), 0.0 );
 	}
 	for ( double y = bottom + 100.0; y < top; y += 200.0 ) {
 		char label[16];
 		sprintf( label, "%03.0f's", y );
-		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + 50.0 ), 0.0 );
+		ViewTitle( view, label, INSIDE_RIGHT, UserToDisplayY( view, y + shift_up ), 0.0 );
 	}
 
 	DisplaySwap( historyDisplay );
-	fOutputDebugString( "Finish RefreshGraphics().\n" );
+	if ( __debug__ ) fOutputDebugString( "Finish RefreshGraphics().\n" );
 
 }
 
 // Clean up resources allocated by the Views system.
 void GraspMMIGraphsForm::KillGraphics( void ) {
-	DisplayClose( hmdDisplay );
+	DisplayClose( cursorDisplay );
 	DisplayClose( historyDisplay );
+	DisplayClose( markerDisplay );
+	DisplayClose( poseDisplay );
 }
 
 
@@ -624,148 +785,6 @@ void GraspMMIGraphsForm::ParseProtocolFile( System::Windows::Forms::TreeNode^ pr
 	Marshal::FreeHGlobal( IntPtr(fn) );
 }
 
-void GraspMMIGraphsForm::RebuildHistoryTree( void ) {
-	visibleHistoryTree->Nodes->Clear();
-	task_tree_current_index = 0;
-	BuildHistoryTree();
-}
 
-void GraspMMIGraphsForm::BuildHistoryTree( void ) {
-
-	// Starting from where we left off, look for the beginning and end of each task.
-	for ( unsigned int index = task_tree_current_index; index < nHousekeepingSlices; index++ ) {
-
-		// Get the pertinent data from the housekeeping packet.
-		int subject = (int) graspHousekeepingSlice[index].userID;
-		int protocol = (int) graspHousekeepingSlice[index].protocolID;
-		int task = (int) graspHousekeepingSlice[index].taskID;
-		int step = (int) graspHousekeepingSlice[index].stepID;
-
-		// Ignore 0000 combinations and whenever there is missing data.
-		if ( subject != 0 && protocol != 0 && task != 0 && subject != MISSING_INT && protocol != MISSING_INT && task != MISSING_INT ) {
-
-			// Look for transitions in the subject, protocol and task IDs.
-			if ( task != current_task || protocol != current_protocol || subject != current_subject ) {
-
-				// Tasks that are older than the task just completed are maintained in normal color text.
-				if ( previous_task_leaf && previous_task_leaf->ForeColor !=  System::Drawing::Color::Red ) previous_task_leaf->ForeColor = System::Drawing::SystemColors::WindowText;
-
-				// If the task has changed from what was the running task, then we have a new task.
-				// Mark when the previous task ended. NB: This may not be correct if we had an LOS.
-				if ( current_task_leaf ) {
-					if ( current_task_leaf->Text->StartsWith( "Initiated:" ) ) {
-						current_task_leaf->Text += 
-							"Finished: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) +
-							" Duration: " + CreateDurationString( graspHousekeepingSlice[index].absoluteTime - current_task_start_time ) +
-							current_task_leaf->Tag;
-					}
-					// Set color of the task that just completed according to completion code.
-					if ( current_task_leaf->Text->EndsWith( "!"  ) ) current_task_leaf->ForeColor = System::Drawing::Color::Red;
-					else if ( current_task_leaf->Text->EndsWith( "OK"  ) ) current_task_leaf->ForeColor = System::Drawing::Color::Green;
-					// No completion codes were noted, so mark it as done, but neurtrally as to good or bad.
-					else current_task_leaf->ForeColor = System::Drawing::Color::Blue;
-					// Keep track of this node so that we can change its color back to normal.
-					previous_task_leaf = current_task_leaf;
-				}
-
-				// Find the node corresponding to the new task.
-				// First see if it is present in the tree that is visible to the user.
-				TreeNode^ subject_node = nullptr;
-				int j;
-				for ( j = 0; j < visibleHistoryTree->Nodes->Count; j++ ) {
-					if ( (int) visibleHistoryTree->Nodes[j]->Tag == subject ) {
-						subject_node = visibleHistoryTree->Nodes[j];
-						break;
-					}
-				}
-				// If we did not find it in the tree, get it from the full tree.
-				if ( !subject_node ) {
-					for ( int i = 0; i < historyTree->Nodes->Count; i++ ) {
-						if (  (int) historyTree->Nodes[i]->Tag == subject ) {
-							subject_node = ( TreeNode^ ) historyTree->Nodes[i]->Clone();
-							break;
-						}
-					}
-					fAbortMessageOnCondition( !subject_node, "GraspMMI", "Could not find subject ID %d in history tree.", subject );
-					// Insert it into the visible tree according to the subject ID number.
-					for ( j = 0; j < visibleHistoryTree->Nodes->Count; j++ ) {
-						if ( (int) visibleHistoryTree->Nodes[j]->Tag > subject ) break;
-					}
-					visibleHistoryTree->Nodes->Insert( j, subject_node );
-				}
-				TreeNode^ protocol_node = nullptr;
-				for ( int i = 0; i < subject_node->Nodes->Count; i++ ) {
-					if (  (int) subject_node->Nodes[i]->Tag == protocol ) protocol_node = subject_node->Nodes[i];
-				}
-				fAbortMessageOnCondition( !protocol_node, "GraspMMI", "Could not find protocol ID %d for subject ID %d in history tree.", protocol, subject );
-				TreeNode^ task_node = nullptr;
-				for ( int i = 0; i < protocol_node->Nodes->Count; i++ ) {
-					if (  (int) protocol_node->Nodes[i]->Tag == task ) task_node = protocol_node->Nodes[i];
-				}
-				fAbortMessageOnCondition( !task_node, "GraspMMI", "Could not find task ID %d for protocol ID %d and subject ID %d in history tree.", task, protocol, subject );
-
-				// Show that a new instance of the task has been selected by creating a new leaf.
-				task_node->Nodes->Add( "Selected: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) );
-				// Keep track of the leaf so that we can annotate it when the task finishes.
-				current_task_leaf = task_node->Nodes[task_node->Nodes->Count - 1];
-				// Highlight the active task.
-				current_task_leaf->ForeColor = System::Drawing::Color::Purple;
-				current_task_leaf->Tag = gcnew String( "" );
-				current_task_start_time = graspHousekeepingSlice[index].absoluteTime;
-				// When a new instance of a task starts, we want the user to notice. So we expand the node corresponding to that task.
-				// But we do not expand the full tree. This allows the user to collapes a protocol (session) that is no longer active
-				// and it will stay collapsed.
-				subject_node->Expand();
-				protocol_node->Expand();
-				task_node->Expand();
-				// Note the characteristics of the new instance so that we can detect changes.
-				current_subject = subject;
-				current_protocol = protocol;
-				current_task = task;
-				current_step = -1;
-				first_step = step;
-			}
-			// Because tasks get selected automatically when the previous task is finished, changes of the task ID 
-			// do not necessarily mean that the subject has started the task. We look for some activity to indicate
-			// that the task has actually started and we update the indicator and start time accordingly.
-			else if ( current_task_leaf->Text->StartsWith( "Selected:" ) && ( step != first_step || graspHousekeepingSlice[index].scriptEngine >= STEP_EXECUTING )) {
-				// Activity has been detected, so change from "Selected" to "Initiated" and update the time.
-				current_task_leaf->Text = "Initiated: " + CreateTimeString( graspHousekeepingSlice[index].absoluteTime ) + " GMT ";
-				current_task_start_time = graspHousekeepingSlice[index].absoluteTime;
-				// Change the color to attract the attention of the user.
-				current_task_leaf->ForeColor = System::Drawing::Color::Magenta;
-			}
-			// If a task has been initiated, look for indications that it completed successfully or not.
-			else if ( current_task_leaf->Text->StartsWith( "Initiated:" ) && ( graspHousekeepingSlice[index].scriptEngine >= STEP_FINISHED_ABNORMAL )) {
-				// A task has exited with an error code.
-				// Prepare the tag to be added to the text of the leaf to show that there was a problem during the execution of this task.
-				current_task_leaf->Tag = gcnew String( " !!!" );
-				// Add a leaf to the task node that provides information about the completion code.
-				if ( step != current_step ) {
-					int error_code = - ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_ABNORMAL );
-					TreeNode^ node = gcnew TreeNode( "Step " + step +  " exited with error code " + error_code );
-					node->ForeColor = System::Drawing::Color::Red;
-					current_task_leaf->Nodes->Add( node );
-					// Keep track of the step number so that we don't repeat for the same step.
-					current_step = step;
-				}
-			}
-			else if ( current_task_leaf->Text->StartsWith( "Initiated:" ) && ( graspHousekeepingSlice[index].scriptEngine >= STEP_FINISHED_NORMAL )) {
-				// An normal exit has been detected.
-				// Add a leaf to the task node that provides information about the completion code.
-				if ( step != current_step ) {
-					int error_code = - ( ( (int) graspHousekeepingSlice[index].scriptEngine ) - STEP_FINISHED_ABNORMAL );
-					TreeNode^ node = gcnew TreeNode( "Step " + step +  " exited normally with code " + error_code );
-					node->ForeColor = System::Drawing::Color::Green;
-					current_task_leaf->Nodes->Add( node );
-					// Keep track of the step number so that we don't repeat for the same step.
-					current_step = step;
-				}
-			}
-		}
-	}
-	// Keep track of where we left off so that we don't re-traverse the entire tree again on the next refresh cycle.
-	task_tree_current_index = nHousekeepingSlices;
-}
 
 

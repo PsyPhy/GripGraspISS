@@ -2,6 +2,11 @@
 
 #include "stdafx.h"
 #include "..\DexServices\TMdata.h"
+
+#include "..\Grasp\Grasp.h"
+#include "..\GraspGUI\GraspGUI.h"
+#include "..\AlignToRigidBodyGUI\AligntoRigidBodyGUI.h"
+
 #include "GraspMMIUtilities.h"
 
 using namespace GraspMMI;
@@ -16,19 +21,9 @@ using namespace PsyPhy;
 
 namespace GraspMMI {
 
-void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetryPacket &packet ) {
+u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buffer, u32 p ) {
 
-	u8 *buffer = packet.sections.rawData;
-	u32 p = 0;
-	// Each packet includes a small amount of data about the packet itself, then the actual data.
-	// Here we extract the packet info, but it does not go into the data arrays.
-	unsigned int acquisitionID;
-	unsigned int packetCount;
-
-	p = extractTM( acquisitionID, buffer, p );
-	p = extractTM( packetCount, buffer, p );
-
-	// Extract the slices.
+	static VectorsMixin vm;
 	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
 		p = extractTM( slice[i].fillTime, buffer, p );
 		p = extractTM( slice[i].globalCount, buffer, p );
@@ -38,9 +33,99 @@ void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetry
 
 		p = extractTM( slice[i].codaUnit, buffer, p );
 		p = extractTM( slice[i].codaFrame, buffer, p );
+
 		p = extractTM( slice[i].clientTime, buffer, p );
 		p = extractTM( slice[i].clientData, sizeof( slice[i].clientData ), buffer, p );
+
+
+
+		// It is convenient to compute some derived values here.
+		if ( slice[i].HMD.visible ) {
+			slice[i].hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].HMD.pose.orientation ) );
+			slice[i].hmdRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].HMD.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( slice[i].HMD.pose, vm.missingPose );
+		}
+		if ( slice[i].hand.visible ) {
+			slice[i].handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].hand.pose.orientation ) );
+			slice[i].handRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].hand.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( slice[i].hand.pose, vm.missingPose );
+			slice[i].handRotationAngle = MISSING_DOUBLE;
+			slice[i].handRollAngle = MISSING_DOUBLE;
+		}
+		if ( slice[i].chest.visible ) {
+			slice[i].chestRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].chest.pose.orientation ) );
+			slice[i].chestRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].chest.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( slice[i].chest.pose, vm.missingPose );
+			slice[i].chestRotationAngle = MISSING_DOUBLE;
+			slice[i].chestRollAngle = MISSING_DOUBLE;
+		}
+		if ( slice[i].chest.visible && slice[i].HMD.visible ) {
+			Vector3 delta;
+			vm.SubtractVectors( delta, slice[i].HMD.pose.position, slice[i].chest.pose.position );
+			slice[i].torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
+		}
+		else {
+			slice[i].torsoRollAngle = MISSING_DOUBLE;
+		}
+
+		slice[i].clientType = GraspRealtimeDataSlice::NONE;
+		if ( !strcmp( "GRASP", (char *) slice[i].clientData ) ) {
+			Grasp::GraspClientData *grasp = (Grasp::GraspClientData *)  &slice[i].clientData;
+			slice[i].clientType = GraspRealtimeDataSlice::GRASP;
+			vm.CopyPose( slice[i].headPose, grasp->headPose ); 
+			vm.CopyPose( slice[i].handPose, grasp->handPose ); 
+			vm.CopyPose( slice[i].chestPose, grasp->chestPose ); 
+			vm.CopyQuaternion( slice[i].rollQuaternion, grasp->rollQuaternion ); 
+			slice[i].targetOrientation =  (double) grasp->targetOrientationD / 100.0;
+			slice[i].enableBits = grasp->enableBits;
+			slice[i].spinnerBits = grasp->spinnerBits;
+		}
+
+		if ( !strcmp( "GRSPGUI", (char *) slice[i].clientData ) ) {
+			GraspGUI::GraspActionSlice *action = (GraspGUI::GraspActionSlice *) &slice[i].clientData;
+			//for (int j = 0; j < GUI_ITEMS_IN_SLICE; j++ ) {
+			//	printf( "  %03d.%03d.%05d", action->record[j].task, action->record[j].step, action->record[j].code );
+			//}
+		}
+			
+		if ( !strcmp( "ALIGN", (char *) slice[i].clientData ) ) {
+			AlignToRigidBodyGUI::AlignClientBuffer *align = (AlignToRigidBodyGUI::AlignClientBuffer *) &slice[i].clientData;
+			if ( align->prePost == PRE ) slice[i].clientType = GraspRealtimeDataSlice::ALIGNPRE;
+			else  GraspRealtimeDataSlice::ALIGNPOST;
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				vm.CopyVector( slice[i].alignmentOffset[unit], align->offsets[unit] );
+				vm.CopyMatrix( slice[i].alignmentRotation[unit], align->rotations[unit] );
+			}
+		}
+
 	}
+
+	return( p );
+
+}
+
+void ExtractGraspRealtimeDataSlices( GraspRealtimeDataSlice *slice, EPMTelemetryPacket &packet ) {
+
+	u8 *buffer = packet.sections.rawData;
+	u32 p = 0;
+
+	// Each packet includes a small amount of data about the packet itself, then the actual data.
+	// Here we extract the packet info, but it does not go into the data arrays.
+	unsigned int acquisitionID;
+	unsigned int packetCount;
+
+	p = extractTM( acquisitionID, buffer, p );
+	p = extractTM( packetCount, buffer, p );
+
+	// Extract the slices.
+	p = ExtractGraspRealtimeDataSliceContent( slice, buffer, p );
+
 }
 
 void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPacket &packet ) {
@@ -48,33 +133,12 @@ void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPack
 	u8 *buffer = packet.sections.rawData;
 	u32 p = 0;
 
-	static VectorsMixin vm;
-	
-	// Packets that are sent to the GraspASW include a special sync word and packet type.
-	// But these do not get put into the data payload that is included in the DEX telemetry packet.
-	// I just leave this here as a reminder of the difference between what is sent to and from DEX.
-	// u32 sync;
-	// u16 pktype;
-	//p = extractTM( sync, buffer, p );
-	//p = extractTM( pktype, buffer, p );
-
 	// Each packet includes a small amount of data about the packet itself, then the actual data.
 	p = extractTM( info.acquisitionID, buffer, p );
 	p = extractTM( info.packetCount, buffer, p );
 	// Extract the slices.
-	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
-		p = extractTM( info.dataSlice[i].fillTime, buffer, p );
-		p = extractTM( info.dataSlice[i].globalCount, buffer, p );
-		p = extractTM( info.dataSlice[i].HMD, buffer, p );
-		p = extractTM( info.dataSlice[i].hand, buffer, p );
-		p = extractTM( info.dataSlice[i].chest, buffer, p );
+	p = ExtractGraspRealtimeDataSliceContent( info.dataSlice, buffer, p );
 
-		p = extractTM( info.dataSlice[i].codaUnit, buffer, p );
-		p = extractTM( info.dataSlice[i].codaFrame, buffer, p );
-
-		p = extractTM( info.dataSlice[i].clientTime, buffer, p );
-		p = extractTM( info.dataSlice[i].clientData, sizeof( info.dataSlice[i].clientData ), buffer, p );
-	}
 }
 
 ///
@@ -134,7 +198,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 
 	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
 	// By setting it to a really high number here (100 years into the future) we are sure that the 
-	//  calculate difference between this value and the first frame will be negative, as if there was no gap.
+	//  calculated difference between this value and the first frame will be negative, as if there was no gap.
 	double previous_packet_timestamp = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
 
 	// Similarly, we look for resets of the fill time for each slice, and when the latest fill time is less
@@ -191,25 +255,36 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 		// Each packet is a set of slices. Extract each one.
 		if ( n_slices < max_slices - GRASP_RT_SLICES_PER_PACKET ) {
 			ExtractGraspRealtimeDataSlices( &grasp_data_slice[n_slices],  packet );
+#if 1
 			// We need to map each data slice to an absolute point in time.
 			// Each packet has a timestamp generated by EPM with respect to our absolute time reference.
 			// But it does not give the time of each individual slice within the packet.
 			// Each slice in a packet includes the fillTime, which is the time that the data in the packet
 			// was obtained with respect to the start of an acquisition. But each time that Grasp.exe is started
 			// the fillTime timer starts from zero. We equate the absoluteTime of the first packet with the 
-			// fillTime of the first slice in that packet, and use that reference to calculate the absoluteTime of
+			// fillTime of the last slice in that packet, and use that reference to calculate the absoluteTime of
 			// each subsequent slice in the same packet and in each subsequent packet. If the fillTime decreases
 			// from one packet to the next, we know that a new acquistion was started and we remap the fillTime of 
 			// that slice to the timestamp of the packet.
-			double fill_time_increment = grasp_data_slice[n_slices].fillTime - previous_fill_time;
-			if ( fill_time_increment < 0.0 ) {
-				absolute_time_reference = EPMtoSeconds( &epmHeader ) - grasp_data_slice[GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
+			double fill_time = grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
+			double fill_time_increment = fill_time - previous_fill_time;
+			if ( fill_time_increment < 0.0 || ( ( EPMtoSeconds( &epmHeader ) - previous_packet_timestamp ) > PACKET_STREAM_BREAK_THRESHOLD ) ) {
+				absolute_time_reference = EPMtoSeconds( &epmHeader ) - fill_time;
+				fOutputDebugString( "Slice: %d Header: %f  fillTime: %f  reference: %f\n", n_slices, EPMtoSeconds( &epmHeader ), fill_time, absolute_time_reference );
 			}
 			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
 				grasp_data_slice[n_slices + s].absoluteTime = grasp_data_slice[n_slices + s].fillTime  + absolute_time_reference;
 			}
+#else 
+			// In this alternate version, we just give the last slice the same time as the EPM packet time and
+			//  then compute the time of the other packets based on differences in fill itmes.  This may be 
+			//	somewhat less accurate, but the above method appears to have a bug.
+			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
+				grasp_data_slice[n_slices + s].absoluteTime = EPMtoSeconds( &epmHeader )
+					- ( grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime - grasp_data_slice[n_slices + s].fillTime );
+			}
+#endif
 		}
-
 		previous_packet_timestamp = EPMtoSeconds( &epmHeader );
 		previous_fill_time = grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime;
 		n_slices += GRASP_RT_SLICES_PER_PACKET;
@@ -276,6 +351,11 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		exit( -1 );
 	}
 
+	// Prepare for reading in packets. This is used to calculate the elapsed time between two packets.
+	// By setting it to a really high number here (100 years into the future) we are sure that the 
+	//  calculated difference between this value and the first frame will be negative, as if there was no gap.
+	double previous_packet_timestamp = 100.0 * 365.0 * 24.0 * 60.0 * 60.0;
+
 	// Read in all of the data packets in the file.
 	packets_read = 0;
 	while ( 1 ) {
@@ -294,11 +374,25 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			fMessageBox( MB_OK, "GraspMMI", "Unrecognized packet from %s.", filename );
 			exit( -1 );
 		}
+		// If there has been a break in the arrival of the packets, insert
+		//  a blank frame into the data buffer. This will cause breaks in
+		//  the traces in the data graphs.
+		if ( ( EPMtoSeconds( &epm_header ) - previous_packet_timestamp ) > PACKET_STREAM_BREAK_THRESHOLD ) {
+			trace[packets_read].absoluteTime = MISSING_DOUBLE;
+			trace[packets_read].stepID = MISSING_DOUBLE;
+			trace[packets_read].taskID = MISSING_DOUBLE;
+			trace[packets_read].protocolID = MISSING_DOUBLE;
+			trace[packets_read].userID = MISSING_DOUBLE;
+			trace[packets_read].scriptEngine = MISSING_INT;
+			packets_read++;
+			if ( packets_read >= max_slices ) break;
+		}
+
 		// Extract the interesting info in proper byte order.
 		ExtractGripHealthAndStatusInfo( &hk, &packet );
 		// Fill in the different components of the housekeeping history trace.
+		trace[packets_read].absoluteTime = EPMtoSeconds( &epm_header );
 		if ( hk.step == 0 && hk.task == 0 && hk.protocol == 0 && hk.user == 0 ) {
-			trace[packets_read].absoluteTime = MISSING_DOUBLE;
 			trace[packets_read].stepID = MISSING_DOUBLE;
 			trace[packets_read].taskID = MISSING_DOUBLE;
 			trace[packets_read].protocolID = MISSING_DOUBLE;
@@ -306,7 +400,6 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 			trace[packets_read].scriptEngine = MISSING_INT;
 		}
 		else {
-			trace[packets_read].absoluteTime = EPMtoSeconds( &epm_header );
 			trace[packets_read].stepID = hk.step;
 			trace[packets_read].taskID = hk.task;
 			trace[packets_read].protocolID = hk.protocol;
@@ -315,11 +408,12 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		}
 		for ( int bdy = 0; bdy < MARKER_STRUCTURES; bdy++ ) {
 			if ( hk.motionTrackerStatusEnum < TRACKER_ANOMALY ) {
-				int visible = (hk.motionTrackerStatusEnum / (int) pow( 10.0, bdy )) % 10;
+				int visible = (hk.motionTrackerStatusEnum / (int) pow( 10.0, MARKER_STRUCTURES - bdy - 1 )) % 10;
 				trace[packets_read].visibleMarkers[bdy] = visible;
 			}
 			else trace[packets_read].visibleMarkers[bdy] = MISSING_DOUBLE;
 		}
+		previous_packet_timestamp = EPMtoSeconds( &epm_header );
 		packets_read++;
 		if ( packets_read >= max_slices ) break;
 	}

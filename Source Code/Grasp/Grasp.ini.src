@@ -36,4 +36,10 @@ chestOffset = 100
 [GraspTrackers]
 
 ;;; 1 for Coda 1 only, 2 for Coda 2 only or 0 for cascade of both (first 2 then 1)
-headCodaCascade = 2
+hmdCodaCascade = 2
+handCodaCascade = 21
+chestCodaCascade = 21
+
+hmdFilterConstant = 2.0
+handFilterConstant = 2.0
+chestFilterConstant = 10.0

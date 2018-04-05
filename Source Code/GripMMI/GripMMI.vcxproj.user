@@ -6,7 +6,7 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>c:\DexCache\GripPackets.2017.02.23  "GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\Scripts"\</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>c:\DexCache\GraspPackets.2018.04.03  "GripMMIMirrorEnvironments\GripFlightRelease (2017.01.24 12.01.27)\Scripts"\</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

@@ -373,3 +373,5 @@ Source Code/GraspScripts/_common
 *.frm
 Source Code/ForceRebuild/CommonTimestamp
 Grasp.ini
+GraspMMIMirrorEnvironments/GRASP Runtime Flight (2017-11-02 16h20m20s) (built from candidate).tar
+RunGripMMI.bat

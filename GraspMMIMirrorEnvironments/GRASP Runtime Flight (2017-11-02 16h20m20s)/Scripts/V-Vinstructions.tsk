@@ -1,0 +1,8 @@
+# Task instructions - Visual to Visual 
+20; INSTRUCTION; 00StraightenHead.instruction.html
+21; INSTRUCTION; 01StraightenHead.instruction.html
+22; INSTRUCTION; 02TargetV.instruction.html
+23; INSTRUCTION; 03TiltHead.instruction.html
+24; INSTRUCTION; 04RespondV.instruction.html
+25; INSTRUCTION; 05Feedback.instruction.html
+

@@ -7,10 +7,12 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Grip/GripPackets.h"
 
-#define CHEST_STRUCTURE	0
+#define CHEST_STRUCTURE	2
 #define HAND_STRUCTURE	1
-#define HMD_STRUCTURE	2
+#define HMD_STRUCTURE	0
 #define MARKER_STRUCTURES	3
+
+static char *StructureLabel[MARKER_STRUCTURES] =  { "CHEST", "HAND", "HMD" };
 
 namespace GraspMMI {
 
@@ -30,9 +32,30 @@ namespace GraspMMI {
 		f32				clientTime;
 		unsigned char	clientData[GRASP_RT_CLIENT_BYTES];
 
+		enum { NONE, GRASP, GRASPGUI, ALIGNPRE, ALIGNPOST } clientType;
+
+		// These are the key poses that come from the GRASP client data.
+		unsigned long	enableBits;
+		unsigned long	spinnerBits;
+		double			targetOrientation;
+		PsyPhy::Pose	headPose;
+		PsyPhy::Pose	handPose;
+		PsyPhy::Pose	chestPose;
+		Quaternion		rollQuaternion;
+
+		// These are the information about the CODA alignment transformations.
+		Vector3			alignmentOffset[MAX_UNITS];
+		Matrix3x3		alignmentRotation[MAX_UNITS];
+
 		// Computed Items
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
 		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
+		double handRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
+		double handRollAngle;		// Rotation of the Hand around the roll axis.
+		double chestRotationAngle;	// Rotation of the Chest away from straight ahead, including pitch and yaw, in degrees.
+		double chestRollAngle;		// Rotation of the Chest around the roll axis.
+		double torsoRollAngle;		// Rotation of the line from Chest to HMD around the roll axis.
+
 	} GraspRealtimeDataSlice;
 
 	typedef struct {

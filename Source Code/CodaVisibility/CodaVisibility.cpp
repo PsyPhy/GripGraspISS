@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			fprintf( stderr, "%s %s\n", codaTracker->vstr( localFrame[0].marker[which_marker].position), codaTracker->vstr( localFrame[1].marker[which_marker].position ));
 		}
 		else  fprintf( stderr, "%s\n", codaTracker->vstr( localFrame[0].marker[which_marker].position) );
-		Sleep( 5 );
+		Sleep( 40 );
 	}
 	int key = _getch(); // Clear the _kbhit().
 	codaTracker->AbortAcquisition();

@@ -96,9 +96,9 @@ namespace GraspGUI {
 			chestVisibilityBar->BackColor = color;
 
 			if ( tracker_status < TRACKER_ANOMALY ) {
-				chestVisibilityBar->Value = tracker_status % 10;
+				hmdVisibilityBar->Value = tracker_status % 10;
 				handVisibilityBar->Value = (tracker_status / 10) % 10;
-				hmdVisibilityBar->Value = (tracker_status / 100) % 10;
+				chestVisibilityBar->Value = (tracker_status / 100) % 10;
 			}
 			else {
 				hmdVisibilityBar->Value = 0;
@@ -124,7 +124,6 @@ namespace GraspGUI {
 
 			// Make sure that these two items were not left visible.
 			commandGroupBox->Visible = false;
-			errorCodeNote->Visible = false;
 
 			// Make selections in each menu.
 			if ( subject_id != previous_subject ) {
@@ -183,7 +182,6 @@ namespace GraspGUI {
 					commandNavigationGroupBox->Visible = false;
 					stepProgressGroupBox->Visible = false;
 					commandGroupBox->Visible = false;
-					errorCodeNote->Visible = false;
 				}
 
 				if ( stepList[currentStep]->type->StartsWith( "INSTRUCTION" ) ) {
@@ -231,10 +229,15 @@ namespace GraspGUI {
 						commandTextBox->Text = stepList[currentStep]->command;
 						commandGroupBox->Visible = true;
 						errorNavigationGroupBox->Visible = true;
-						errorCodeNote->Visible = true;
-						int code = (state - STEP_FINISHED_ABNORMAL) % 100;
+						// We know it is an error code because we are above STEP_FINISHED_ABNORMAL.
+						// Error codes are, however, negative. So we convert back to the negative number here.
+						// I don't remember what the '% 100' is for by I am leaving it in place in case it is important.
+						int code = - (state - STEP_FINISHED_ABNORMAL) % 100;
 						errorCodeTextBox->Text = code.ToString();
-						if ( previous_page != PGFAILURE ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ code ] );
+						// Now that we have reported the error code as a negative number, we need to decide which 
+						// is the corresponding instruction page to show. Those are stored in a list according to the
+						// absolute value of the error code.
+						if ( previous_page != PGFAILURE ) instructionViewer->Navigate( instructionsDirectory + stepList[currentStep]->exit[ abs( code ) ] );
 						previous_page = PGFAILURE;
 					}
 				}
@@ -259,6 +262,13 @@ namespace GraspGUI {
 			this->dexStatusGroupBox->Visible = true;
 			this->packetTimeTextBox->Visible = true;
 			InitializeForm();
+
+			// The GRASP GUI is a little too big to fit comfortably on the screens as CADMOS
+			// so we shrink it a little here and tweek some spacing to make it look more like
+			// what the astronaut sees on board.
+			this->subjectListBox->ColumnWidth = 160;
+			SizeF scaling = SizeF( 0.90f, 0.90f );
+			Scale( scaling );
 		}
 		virtual System::Void GraspDesktop_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) override {
 		}

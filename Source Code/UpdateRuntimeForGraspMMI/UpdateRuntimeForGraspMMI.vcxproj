@@ -14,7 +14,7 @@
     <None Include="InstallGraspMMI.debug.mak" />
     <None Include="InstallGraspMMI.mak" />
     <None Include="InstallGraspMMI.release.mak" />
-    <None Include="RunGraspMMI.bat" />
+    <None Include="RunGraspMMI.bat.src" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLWSemulator\CLWSemulator.vcxproj">
@@ -25,6 +25,9 @@
     </ProjectReference>
     <ProjectReference Include="..\GraspMMIDataPlots\GraspMMIDataPlots.vcxproj">
       <Project>{44066fc7-1873-48a2-8151-c6867a15d0df}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspMMIHistory\GraspMMIHistory.vcxproj">
+      <Project>{aaa54e0c-8dd1-428e-bf0d-562a7e305a04}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspMMIMirror\GraspMMIMirror.vcxproj">
       <Project>{ebcf095f-8685-4c8b-9778-502379d0de58}</Project>
