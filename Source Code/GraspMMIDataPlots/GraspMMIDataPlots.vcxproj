@@ -139,9 +139,6 @@
     <ProjectReference Include="..\GraspMMIUtilities\GraspMMIUtilities.vcxproj">
       <Project>{02a2555c-7310-461e-856d-6b1a75a56c57}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
-      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
       <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
     </ProjectReference>
