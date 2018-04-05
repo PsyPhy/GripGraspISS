@@ -161,9 +161,6 @@ namespace GraspMMI {
 
 		double current_vr_instant;
 		double	playbackReferenceTime;
-private: System::Windows::Forms::Button^  playBackwardButton;
-private: System::Windows::Forms::Button^  toCursorButton;
-private: System::Windows::Forms::Button^  stopPlaybackButton;
 
 		 bool	playbackForward;
 
@@ -248,8 +245,9 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 		}
 
 
-
-
+	private: System::Windows::Forms::Button^  playBackwardButton;
+	private: System::Windows::Forms::Button^  toCursorButton;
+	private: System::Windows::Forms::Button^  stopPlaybackButton;
 	private: System::Windows::Forms::Button^  exitButton;
 	private: System::Windows::Forms::HScrollBar^  playbackScrollBar;
 	private: System::Windows::Forms::TextBox^  taskRightTimeLimit;
@@ -730,6 +728,7 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->fromCodaCheckBox);
 			this->groupBox2->Controls->Add(this->realMarkersCheckBox);
 			this->groupBox2->Controls->Add(this->codaPanel1);
 			this->groupBox2->Controls->Add(this->codaPanel0);
@@ -751,11 +750,11 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->realMarkersCheckBox->Location = System::Drawing::Point(293, 1);
+			this->realMarkersCheckBox->Location = System::Drawing::Point(218, 1);
 			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
-			this->realMarkersCheckBox->Size = System::Drawing::Size(115, 17);
+			this->realMarkersCheckBox->Size = System::Drawing::Size(89, 17);
 			this->realMarkersCheckBox->TabIndex = 4;
-			this->realMarkersCheckBox->Text = L"View Real Markers";
+			this->realMarkersCheckBox->Text = L"Real Markers";
 			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
 			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
 			// 
@@ -839,7 +838,6 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 			// 
 			// hmdGroupBox
 			// 
-			this->hmdGroupBox->Controls->Add(this->fromCodaCheckBox);
 			this->hmdGroupBox->Controls->Add(this->hmdPanel1);
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -860,11 +858,11 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 			this->fromCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->fromCodaCheckBox->Location = System::Drawing::Point(293, 2);
+			this->fromCodaCheckBox->Location = System::Drawing::Point(332, 1);
 			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
-			this->fromCodaCheckBox->Size = System::Drawing::Size(105, 17);
+			this->fromCodaCheckBox->Size = System::Drawing::Size(82, 17);
 			this->fromCodaCheckBox->TabIndex = 3;
-			this->fromCodaCheckBox->Text = L"View from CODA";
+			this->fromCodaCheckBox->Text = L"From CODA";
 			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
 			this->fromCodaCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::fromCodaCheckBox_CheckedChanged);
 			// 
@@ -1143,7 +1141,6 @@ private: System::Windows::Forms::Button^  stopPlaybackButton;
 			this->chestGroupBox->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
-			this->hmdGroupBox->PerformLayout();
 			this->worldTabs->ResumeLayout(false);
 			this->trackerTab->ResumeLayout(false);
 			this->forwardPanel->ResumeLayout(false);
@@ -1188,9 +1185,9 @@ private:
 		void OnPlaybackTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
 			// Stop the timer so that it does not retrigger until we are done refreshing.
 			playbackTimer->Stop();
-			fOutputDebugString( "\n" );
+			// fOutputDebugString( "\n" );
 			double elapsed = TimerElapsedTime( playbackElapsedTimer );
-			fOutputDebugString( "Playback Timer triggered Elapsed: %f.\n", elapsed  );
+			// fOutputDebugString( "Playback Timer triggered Elapsed: %f.\n", elapsed  );
 			if ( playbackForward ) MoveToInstant( playbackReferenceTime + elapsed );
 			else MoveToInstant( playbackReferenceTime - elapsed );
 			playbackTimer->Start();

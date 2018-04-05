@@ -417,8 +417,8 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		RenderWindow( handWindow0, focusViewpoint, handMobile );
 	}
 	else RenderWindow( handWindow0, objectViewpoint, handStationary );
-	chestTracker->GetCurrentPose( chestPose );
 	chestTracker->SetMarkerFrameBuffer( &unitMarkerFrame[0] );
+	chestTracker->GetCurrentPose( chestPose );
 	if ( chestPose.visible ) {
 		chestMobile->SetPose( chestPose.pose );
 		chestMobile->Enable();
@@ -475,8 +475,8 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	else {
 		RenderWindow( handWindow1, objectViewpoint, handStationary );
 	}
-	chestTracker->GetCurrentPose( chestPose );
 	chestTracker->SetMarkerFrameBuffer( &unitMarkerFrame[1] );
+	chestTracker->GetCurrentPose( chestPose );
 	if ( chestPose.visible ) {
 		chestMobile->SetPose( chestPose.pose );
 		chestMobile->Enable();
@@ -581,7 +581,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		vm.AddVectors( new_position, projectile_start_pose.position, delta );
 		renderer->projectiles->SetPosition( new_position );
 
-		fOutputDebugString( "Duration: %f  Delta: %s\n", duration, vm.vstr( delta ) );
+		// fOutputDebugString( "Duration: %f  Delta: %s\n", duration, vm.vstr( delta ) );
 
 		vrSubjectViewpoint->SetPose( graspDataSlice[index].headPose );
 		renderer->hmd->SetPose( graspDataSlice[index].headPose );

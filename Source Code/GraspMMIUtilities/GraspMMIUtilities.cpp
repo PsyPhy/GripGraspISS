@@ -97,7 +97,7 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 		if ( !strcmp( "ALIGN", (char *) slice[i].clientData ) ) {
 			AlignToRigidBodyGUI::AlignClientBuffer *align = (AlignToRigidBodyGUI::AlignClientBuffer *) &slice[i].clientData;
 			if ( align->prePost == PRE ) slice[i].clientType = GraspRealtimeDataSlice::ALIGNPRE;
-			else  GraspRealtimeDataSlice::ALIGNPOST;
+			else  slice[i].clientType = GraspRealtimeDataSlice::ALIGNPOST;
 			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 				vm.CopyVector( slice[i].alignmentOffset[unit], align->offsets[unit] );
 				vm.CopyMatrix( slice[i].alignmentRotation[unit], align->rotations[unit] );
@@ -287,10 +287,10 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			for ( int s = 0; s < GRASP_RT_SLICES_PER_PACKET; s++ ) {
 				grasp_data_slice[n_slices + s].absoluteTime = EPMtoSeconds( &epmHeader )
 					- ( grasp_data_slice[n_slices + GRASP_RT_SLICES_PER_PACKET - 1].fillTime - grasp_data_slice[n_slices + s].fillTime );
-				fOutputDebugString( "  Slice: %4d Header: %.3f  fillTime: %8.3f absoluteTime: %.3f  delta: %.3f\n", 
-					n_slices + s, EPMtoSeconds( &epmHeader ), grasp_data_slice[n_slices + s].fillTime, 
-					grasp_data_slice[n_slices + s].absoluteTime,
-					( n_slices > 0 ? grasp_data_slice[n_slices + s].absoluteTime - grasp_data_slice[n_slices + s - 1].absoluteTime : 0.0 ));
+				//fOutputDebugString( "  Slice: %4d Header: %.3f  fillTime: %8.3f absoluteTime: %.3f  delta: %.3f\n", 
+				//	n_slices + s, EPMtoSeconds( &epmHeader ), grasp_data_slice[n_slices + s].fillTime, 
+				//	grasp_data_slice[n_slices + s].absoluteTime,
+				//	( n_slices > 0 ? grasp_data_slice[n_slices + s].absoluteTime - grasp_data_slice[n_slices + s - 1].absoluteTime : 0.0 ));
 			}
 #endif
 		}
