@@ -7,9 +7,9 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Grip/GripPackets.h"
 
-#define CHEST_STRUCTURE	2
+#define CHEST_STRUCTURE	0
 #define HAND_STRUCTURE	1
-#define HMD_STRUCTURE	0
+#define HMD_STRUCTURE	2
 #define MARKER_STRUCTURES	3
 
 static char *StructureLabel[MARKER_STRUCTURES] =  { "CHEST", "HAND", "HMD" };
