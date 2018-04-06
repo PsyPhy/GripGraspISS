@@ -67,7 +67,7 @@ namespace GraspMMI {
 		static double	quaternionRadius = 0.5;	// Range for XYZ components of quaternions. Use 1.0 to see 360° rotations.
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
 		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
-		static	int		playbackRefreshInterval = 50;	// How often to update the display, in milliseconds.
+		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
 
 		double taskViewBottom;
 		double taskViewTop;
@@ -369,6 +369,7 @@ namespace GraspMMI {
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
@@ -379,7 +380,6 @@ namespace GraspMMI {
 			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
@@ -458,7 +458,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -492,6 +492,7 @@ namespace GraspMMI {
 			this->spanSelector->Size = System::Drawing::Size(176, 45);
 			this->spanSelector->TabIndex = 1;
 			this->spanSelector->TickStyle = System::Windows::Forms::TickStyle::TopLeft;
+			this->spanSelector->Value = 6;
 			this->spanSelector->ValueChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::spanSelector_ValueChanged);
 			// 
 			// scrollBar
@@ -743,6 +744,21 @@ namespace GraspMMI {
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Coda  View";
 			// 
+			// fromCodaCheckBox
+			// 
+			this->fromCodaCheckBox->AutoSize = true;
+			this->fromCodaCheckBox->Checked = true;
+			this->fromCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->fromCodaCheckBox->Location = System::Drawing::Point(332, 1);
+			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
+			this->fromCodaCheckBox->Size = System::Drawing::Size(82, 17);
+			this->fromCodaCheckBox->TabIndex = 3;
+			this->fromCodaCheckBox->Text = L"From CODA";
+			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
+			this->fromCodaCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::fromCodaCheckBox_CheckedChanged);
+			// 
 			// realMarkersCheckBox
 			// 
 			this->realMarkersCheckBox->AutoSize = true;
@@ -850,21 +866,6 @@ namespace GraspMMI {
 			this->hmdGroupBox->TabIndex = 16;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
-			// 
-			// fromCodaCheckBox
-			// 
-			this->fromCodaCheckBox->AutoSize = true;
-			this->fromCodaCheckBox->Checked = true;
-			this->fromCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->fromCodaCheckBox->Location = System::Drawing::Point(332, 1);
-			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
-			this->fromCodaCheckBox->Size = System::Drawing::Size(82, 17);
-			this->fromCodaCheckBox->TabIndex = 3;
-			this->fromCodaCheckBox->Text = L"From CODA";
-			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
-			this->fromCodaCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::fromCodaCheckBox_CheckedChanged);
 			// 
 			// hmdPanel1
 			// 
