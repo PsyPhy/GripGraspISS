@@ -60,7 +60,7 @@ void setPacketTime( EPMTelemetryHeaderInfo *header ) {
 	// UTC takes into account leap seconds, GPS does not.
 	header->coarseTime = epmtime.time 
 		- 315964800 // Offset in seconds between Unix 0 and GPS 0
-		+ 16;		// Offset taking into account leap seconds, as of 1 Jan 2015.
+		+ 18;		// Offset taking into account leap seconds, as of 1 Jan 2017.
 
 	// Also, EPM somehow gets time in 10ths of milliseconds and puts that in the header. 
 	// We don't expect to get two packets in a span of less than a millisecond, so I don't worry about it.
@@ -158,7 +158,12 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 					if ( delta_time < 0 ) delta_time = 1;
 					// If there has been a long real delay, limit it to 30 seconds.
 					if ( delta_time > 30000 ) delta_time = 30000;
-					printf( " G:%d:%d ", elapsed_packet_count, delta_time );
+					printf( "\nG:%d:%d:%u:%4u:%3d", 
+						elapsed_packet_count, 
+						epmPacketHeaderInfo.TMCounter, 
+						epmPacketHeaderInfo.coarseTime, 
+						epmPacketHeaderInfo.fineTime, 
+						delta_time );
 					Sleep( delta_time / speed );
 
 				}
