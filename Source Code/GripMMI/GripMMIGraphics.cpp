@@ -412,7 +412,7 @@ void GripMMIDesktop::GraphManipulandumPosition( ::View view, double start_instan
 			ViewSetYLimits( view, lowerPositionLimit, upperPositionLimit );
 		}
 		// Actually plot the data.
-		ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &ManipulandumPosition[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
+		ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &ManipulandumPosition[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
 	}
 
 }
@@ -439,7 +439,7 @@ void GripMMIDesktop::GraphManipulandumPositionComponent( int component, ::View v
 	else ViewSetYLimits( view, lowerPositionLimit, upperPositionLimit );
 	ViewAxes( view );
 	ViewSelectColor( view, component );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &ManipulandumPosition[0][component], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &ManipulandumPosition[0][component], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
 }
 
 void GripMMIDesktop::GraphAccelerationComponent( int component, ::View view, double start_instant, double stop_instant, int start_frame, int stop_frame, int step ){
@@ -465,7 +465,7 @@ void GripMMIDesktop::GraphAccelerationComponent( int component, ::View view, dou
 	else ViewSetYLimits( view, lowerAccelerationLimit, upperAccelerationLimit );
 	ViewAxes( view );
 	ViewSelectColor( view, component );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &Acceleration[0][component], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *Acceleration ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &Acceleration[0][component], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *Acceleration ), MISSING_DOUBLE );
 }
 
 void GripMMIDesktop::GraphManipulandumRotations( ::View view, double start_instant, double stop_instant, int start_frame, int stop_frame, int step ){
@@ -486,7 +486,7 @@ void GripMMIDesktop::GraphManipulandumRotations( ::View view, double start_insta
 	ViewAxes( view );
 	for ( int i = X; i <= Z; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &ManipulandumRotations[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumRotations ), MISSING_DOUBLE );
+		ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &ManipulandumRotations[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *ManipulandumRotations ), MISSING_DOUBLE );
 	}
 }
 
@@ -516,10 +516,10 @@ void GripMMIDesktop::GraphLoadForce( ::View view, double start_instant, double s
 	if ( view->user_bottom < -4.0 ) ViewHorizontalLine( view, -4.0 );
 	for ( i = X; i <= Z; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &LoadForce[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *LoadForce ), MISSING_DOUBLE );
+		ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &LoadForce[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *LoadForce ), MISSING_DOUBLE );
 	}
 	ViewSelectColor( view, i );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &LoadForceMagnitude[0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *LoadForceMagnitude ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &LoadForceMagnitude[0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *LoadForceMagnitude ), MISSING_DOUBLE );
 
 }
 void GripMMIDesktop::GraphAcceleration( ::View view, double start_instant, double stop_instant, int start_frame, int stop_frame, int step ) {
@@ -540,7 +540,7 @@ void GripMMIDesktop::GraphAcceleration( ::View view, double start_instant, doubl
 	ViewAxes( view );	
 	for ( int i = 0; i < 3; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &Acceleration[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *Acceleration ), MISSING_DOUBLE );
+		ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &Acceleration[0][i], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *Acceleration ), MISSING_DOUBLE );
 	}
 }
 
@@ -564,11 +564,11 @@ void GripMMIDesktop::GraphGripForce( ::View view, double start_instant, double s
 	}
 
 	ViewColor( view, atiColorMap[LEFT_ATI] );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &NormalForce[LEFT_ATI][0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *NormalForce[LEFT_ATI] ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &NormalForce[LEFT_ATI][0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *NormalForce[LEFT_ATI] ), MISSING_DOUBLE );
 	ViewColor( view, atiColorMap[RIGHT_ATI] );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &NormalForce[RIGHT_ATI][0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *NormalForce[LEFT_ATI] ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &NormalForce[RIGHT_ATI][0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *NormalForce[LEFT_ATI] ), MISSING_DOUBLE );
 	ViewColor( view, GREEN );
-	ViewXYPlotAvailableDoubles( view, &RealMarkerTime[0], &GripForce[0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *GripForce ), MISSING_DOUBLE );
+	ViewXYPlotClippedDoubles( view, &RealMarkerTime[0], &GripForce[0], start_frame, stop_frame, step, sizeof( *RealMarkerTime ), sizeof( *GripForce ), MISSING_DOUBLE );
 
 }
 
@@ -655,7 +655,7 @@ void GripMMIDesktop::PlotManipulandumPosition( double start_instant, double stop
 		ViewMakeSquare( view );
 		ViewSelectColor( view, i );
 		// ViewBox( view );
-		if ( stop_frame > start_frame ) ViewXYPlotAvailableDoubles( view, &ManipulandumPosition[0][pair[i].abscissa], &ManipulandumPosition[0][pair[i].ordinate], start_frame, stop_frame, step, sizeof( *ManipulandumPosition ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
+		if ( stop_frame > start_frame ) ViewXYPlotClippedDoubles( view, &ManipulandumPosition[0][pair[i].abscissa], &ManipulandumPosition[0][pair[i].ordinate], start_frame, stop_frame, step, sizeof( *ManipulandumPosition ), sizeof( *ManipulandumPosition ), MISSING_DOUBLE );
 		OglSwap( phase_display[i] );
 	}
 }
