@@ -293,7 +293,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, 
+		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].HMD.pose.position[i], 
 			first_sample, last_sample - 1, step,
@@ -330,7 +330,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, 
+		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].HMD.pose.orientation[i], 
 			first_sample, last_sample - 1, step,
@@ -377,7 +377,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Negative Enveloppe Border
 	ViewSetYLimits( view, angle_max, - angle_max );
 	ViewColor( view, GREY6 );
-	ViewXYPlotAvailableDoubles( view, 
+	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRotationAngle, 
 		first_sample, last_sample - 1, step,
@@ -387,7 +387,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Positive Enveloppe Border
 	ViewSetYLimits( view, - angle_max, angle_max );
 	ViewColor( view, GREY6 );
-	ViewXYPlotAvailableDoubles( view, 
+	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRotationAngle, 
 		first_sample, last_sample - 1, step,
@@ -396,7 +396,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		MISSING_DOUBLE);
 	// Roll Angle
 	ViewColor( view, MAGENTA );
-	ViewXYPlotAvailableDoubles( view, 
+	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
 		first_sample, last_sample - 1, step,
@@ -450,7 +450,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, 
+		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].hand.pose.position[i], 
 			first_sample, last_sample - 1, step,
@@ -504,7 +504,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	for ( i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
-		ViewXYPlotAvailableDoubles( view, 
+		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].chest.pose.position[i], 
 			first_sample, last_sample - 1, step,
