@@ -46,6 +46,8 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 		}
 		else {
 			vm.CopyPose( slice[i].HMD.pose, vm.missingPose );
+			slice[i].hmdRotationAngle = MISSING_DOUBLE;
+			slice[i].hmdRollAngle = MISSING_DOUBLE;
 		}
 		if ( slice[i].hand.visible ) {
 			slice[i].handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].hand.pose.orientation ) );
