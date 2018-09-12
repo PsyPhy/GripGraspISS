@@ -19,6 +19,9 @@
 #include "..\Useful\fMessageBox.h"
 #include "..\Useful\fOutputDebugString.h"
 #include "..\GripGraspVersionControl\GripGraspVersionControl.h"
+#include <stdio.h>
+#include <time.h>
+
 
 // Need to link with Ws2_32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -45,7 +48,7 @@ bool	verbose = true;
 
 // Can enable some debugging messages, if needed. 
 // Off by default.
-bool _debug = true;
+bool _debug = false;
 
 // Output the contents of a packet to a cache file in binary format, using low level write so that 
 //  another process can read the same file without colliding.
@@ -327,8 +330,20 @@ int __cdecl main(int argc, const char **argv)
 						);
 				}
 				else {
-					printf( "Bytes: %4d %4d %4d %02x:%02x:%02x TM: 0x%04x %06d",
-						
+					FILE *shell_log_fp;
+					char shell_log_filename[1024];
+					char tstr[26];
+					struct tm   *newTime;  
+					time_t      szClock;  
+					// Get time in seconds  
+					time( &szClock );  
+					// Convert time to struct tm form   
+					newTime = localtime( &szClock );  
+					strcpy( tstr, asctime( newTime ) );
+					tstr[24] = 0;
+
+					printf( "%s Bytes: %4d %4d %4d %02x:%02x:%02x TM: 0x%04x %06d",
+						tstr,
 						iResult,													// Actual # bytes received.
 						epmPacketHeaderInfo.transferFrameInfo.numberOfWords * 2,	// Bytes supposedly received according to transfer frame header.
 						epmPacketHeaderInfo.numberOfWords * 2,						// Bytes supposedly recieved according to the EPM Telemetry packet, excluding transfer frame info.  
@@ -341,8 +356,8 @@ int __cdecl main(int argc, const char **argv)
 						epmPacketHeaderInfo.TMCounter
 					);
 					// Then check the type of EPM packet and sort into appropriate cache files.
-					// We are only concerned with two packet types: 
-					//   0x0301 for housekeeping data and 0x1001 for realtime science data.
+					// We are only concerned with three packet types: 
+					//   0x0301 for housekeeping data, 0x1001 for realtime science data and 1002 for RESP_SHELL output.
 					switch ( epmPacketHeaderInfo.TMIdentifier ) {
 
 					case GRIP_HK_ID:
@@ -355,10 +370,21 @@ int __cdecl main(int argc, const char **argv)
 						outputRT( &epmPacket );
 						break;
 
+					case GRIP_SH_ID:
+						printf( "        SHELL RESPONSE: %s\n", epmPacket.sections.rawData );
+						sprintf( shell_log_filename, "%s_shell_output.log", packetCacheFilenameRoot );
+						shell_log_fp = fopen( shell_log_filename, "a+" );
+						if ( !shell_log_fp ) fprintf( stderr, "Error logging shell response to %s.\n", shell_log_filename );
+						else {
+							fprintf( shell_log_fp, "\n%s  %s\n", tstr, epmPacket.sections.rawData );
+							fclose( shell_log_fp );
+						}
+ 						break;
+
 					default:
 						// It would be surprising to get here as it would
 						//  mean that GRIP sent an unexpected packet type.
-						printf( " ??????\n" );
+						printf( "        OTHER %0x04 %s\n", epmPacketHeaderInfo.TMIdentifier, epmPacket.sections.rawData );
 						break;
 
 					}

@@ -35,10 +35,7 @@ char hkPacketCacheFilePath[1024];
 int main( int argc, char *argv[] )
 {
 
-	BOOL new_hk;
-	BOOL new_rt;
-
-	int i;
+	BOOL more = false;
 
 	if ( argc < 2 ) printf( "Using default root path for cache files: %s\n", packetCacheFilenameRoot );
 	else {
@@ -134,7 +131,14 @@ int main( int argc, char *argv[] )
 			}
 		}
 
-		if ( 0 == ( packets_read % 1000 ) ) {
+		if ( _kbhit() ) {
+			// Clear the keypress.
+			_getch();
+			break;
+		}
+
+		// If more is enabled, ask for acknowledgements every 1000 lines.
+		if ( 0 == ( packets_read % 1000 ) && more ) {
 			printf( "\nPress a key to continue ..." );
 			fflush( stdout );
 			int c = _getch();

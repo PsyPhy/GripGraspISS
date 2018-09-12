@@ -6,7 +6,7 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LocalDebuggerCommandArguments>-recorded -port=2345 "GraspMMIExecutables\GraspPacketsForSimulator.gpk" -skip=480</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-recorded -port=2345 "GraspMMIMirrorEnvironments\GRASP Runtime Flight (2017-11-02 16h20m20s)\GraspPackets.2018.04.05.any.gpk"</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

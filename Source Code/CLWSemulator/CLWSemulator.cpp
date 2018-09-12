@@ -87,6 +87,7 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 
 	while ( 1 ) {
 
+		// Now start sending out stored packets.
 		printf( "Sending out recorded packets:\n\n  %s\n\n", PacketSourceFile );
 
 		// Open the file where the packets are stored.
@@ -118,6 +119,26 @@ int sendRecordedPackets ( SOCKET socket, const char *PacketSourceFile, int skip_
 		
 		// Loop to read all of the packets in the file.
 		do {
+
+			if ( !( elapsed_packet_count % 20 ) ) {
+
+				// Here we create and send random RESP_SHELL packet to test that functionality, because
+				// we don't have any such recorded packets (as far as I know).
+
+				EPMTelemetryPacket shPacket;
+				EPMTelemetryHeaderInfo shHeaderInfo;
+
+				memcpy( &shHeaderInfo, &shHeader, sizeof( shHeaderInfo ) );
+				// Insert the current packet count and time into the packet.
+				shHeaderInfo.TMCounter = packetCount++;
+				setPacketTime( &shHeaderInfo );
+				InsertEPMTelemetryHeaderInfo( &shPacket, &shHeaderInfo );
+				strcpy( (char *) shPacket.sections.rawData, "Hi Joe!" );
+				printf( "Sending out RESP_SHELL packet:\n\n  %s\n\n", shPacket.sections.rawData );
+				send( socket, shPacket.buffer, shPacketLengthInBytes, 0 );
+				Sleep( 100 );
+			}
+
 
 			// Extract the EPM header info into a usable form from the packet that is stored in ESA-required byte order.
 			ExtractEPMTelemetryHeaderInfo( &epmPacketHeaderInfo, &recordedPacket );

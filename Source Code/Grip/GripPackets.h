@@ -55,6 +55,7 @@ using namespace PsyPhy;
 #define EPM_TELEMETRY_SYNC_VALUE		0xFFDB544D
 #define GRIP_HK_ID	0x0301
 #define GRIP_RT_ID	0x1001
+#define GRIP_SH_ID	0x1002	// RESP_SHELL
 
 // Compute the time in seconds.
 #define RT_SLICES_PER_PACKET 10
@@ -240,8 +241,18 @@ static EPMTelemetryHeaderInfo rtHeader = {
 	EPM_TELEMETRY_SYNC_VALUE, 0, GRIP_SUBSYSTEM_ID, 0, 0, GRIP_RT_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 static int rtPacketLengthInBytes = RT_SCIENCE_BYTES;
 
+// Define a static packet header that is representative of a SHELL_CMD response.
+// The TM Identifier is 0x1002 for RESP_SHELL per DEX-ICD-00383-QS.
+// The total number of words is 1026 / 2 = 513 for the RESP_SHELL packet, 6 for the Transfer Frame header,
+//  15 for the EPM header and 1 for the checksum = 535 words = 1070 bytes.
+#define SHELL_RESP_BYTES	1070
+static EPMTelemetryHeaderInfo shHeader = { 
+	EPM_TRANSFER_FRAME_SYNC_VALUE, SPARE, GRIP_MMI_SOFTWARE_UNIT_ID, TRANSFER_FRAME_TELEMETRY, SPARE, SHELL_RESP_BYTES / 2,
+	EPM_TELEMETRY_SYNC_VALUE, 0, GRIP_SUBSYSTEM_ID, 0, 0, GRIP_SH_ID, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static int shPacketLengthInBytes = SHELL_RESP_BYTES;
 
-typedef enum { GRIP_RT_SCIENCE_PACKET, GRIP_HK_BULK_PACKET, GRIP_UNKNOWN_PACKET } GripPacketType;
+
+typedef enum { GRIP_RT_SCIENCE_PACKET, GRIP_HK_BULK_PACKET, GRIP_SHELL_RESP_PACKET, GRIP_UNKNOWN_PACKET } GripPacketType;
 
 #ifdef __cplusplus
 extern "C" {
