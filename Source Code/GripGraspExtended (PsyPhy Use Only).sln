@@ -166,6 +166,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIlite", "GraspMMIlit
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsyPhyLauncher", "PsyPhyLauncher\PsyPhyLauncher.vcxproj", "{4F789DA4-0FF0-49B2-95B1-731368C132A7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIColumbus", "GraspMMIColumbus\GraspMMIColumbus.vcxproj", "{09E7D244-36A1-4D6F-9D15-888D6CDD2976}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1442,6 +1444,22 @@ Global
 		{4F789DA4-0FF0-49B2-95B1-731368C132A7}.ReleaseTraining|Win32.Build.0 = Release|Win32
 		{4F789DA4-0FF0-49B2-95B1-731368C132A7}.Test|Win32.ActiveCfg = Release|Win32
 		{4F789DA4-0FF0-49B2-95B1-731368C132A7}.Test|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Debug|Win32.ActiveCfg = Debug|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Debug|Win32.Build.0 = Debug|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.DebugTraining|Win32.ActiveCfg = Debug|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.DebugTraining|Win32.Build.0 = Debug|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Release|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Release|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseBedrest|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseBedrest|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseDraft|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseFlight|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseFlight|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseTraining|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseTraining|Win32.Build.0 = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Test|Win32.ActiveCfg = Release|Win32
+		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Test|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

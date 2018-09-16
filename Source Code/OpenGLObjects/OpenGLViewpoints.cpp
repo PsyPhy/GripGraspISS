@@ -270,7 +270,7 @@ void OrthoViewpoint::Apply( OpenGLWindow *wnd, Eye eye ) {
 
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
-  gluOrtho2D( min_x, max_x, min_y, max_y );
+  glOrtho( min_x, max_x, min_y, max_y, nearest, farthest );
 
   // This additional translation and rotationallows us to change the 
   // control point of the viewpoint, i.e. where it is looking
