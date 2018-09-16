@@ -775,8 +775,12 @@ Assembly *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
 		slab->SetColor( lens + 1 );
 		coda->AddComponent( slab );
 	}
+	//coda->SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
+	//coda->SetAttitude( 0.0, -90.0, 0.0 );
+
+	coda->SetAttitude( 180.0, - 90.0, 0.0 );
 	coda->SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
-	coda->SetAttitude( 0.0, -90.0, 0.0 );
+
 	return coda;
 
 }
