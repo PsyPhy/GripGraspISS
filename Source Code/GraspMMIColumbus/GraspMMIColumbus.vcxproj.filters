@@ -47,6 +47,9 @@
     <ClInclude Include="GraspMMIColumbusForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraspData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -69,5 +72,10 @@
     <Library Include="..\Lib\OPENGL32.LIB">
       <Filter>Library Files</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GraspMMIColumbusForm.resX">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

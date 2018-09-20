@@ -766,7 +766,7 @@ Assembly *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
 
 	Assembly *coda = new Assembly();
 	Slab *slab = new Slab( coda_shape[X], coda_shape[Y], coda_shape[Z] );
-	slab->SetColor( r, g, b, 0.5 );
+	slab->SetColor( r, g, b, 1.0 );
 	coda->AddComponent( slab );
 	for ( int lens = 0; lens < 3; lens ++ ) {
 		slab = new Slab( coda_shape[X] / 10.0, coda_shape[Y] * 0.8, coda_shape[Z] / 10.0 );

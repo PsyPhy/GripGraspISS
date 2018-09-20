@@ -1574,3 +1574,72 @@ void WindowFrame::Draw( void ) {
 }
 
 
+/***************************************************************************/
+
+// A string of points.
+
+Beads::Beads( Vector3 *array, unsigned int n ) {
+
+  this->vertex = array;
+  this->n_vertices = n;
+
+  OpenGLObject();   // Do what every OpenGlObject does at creation.
+
+}
+
+void Beads::Reload( Vector3 *array, unsigned int n ) {
+
+  this->vertex = array;
+  this->n_vertices = n;
+
+}
+
+void Beads::Draw( void ) {
+
+	if ( ! enabled ) return;
+	PrepDraw();
+
+	glBegin(GL_POINTS);
+
+	for ( unsigned int i = 0; i < n_vertices; i++ ) {
+		glVertex3d( vertex[i][X], vertex[i][Y], vertex[i][Z]  );
+	}
+
+	glEnd();
+	FinishDraw();
+}
+
+/***************************************************************************/
+
+// A string of points.
+
+Cord::Cord( Vector3 *array, unsigned int n ) {
+
+  this->vertex = array;
+  this->n_vertices = n;
+
+  OpenGLObject();   // Do what every OpenGlObject does at creation.
+
+}
+
+void Cord::Reload( Vector3 *array, unsigned int n ) {
+
+  this->vertex = array;
+  this->n_vertices = n;
+
+}
+
+void Cord::Draw( void ) {
+
+	if ( ! enabled || n_vertices < 2 ) return;
+	PrepDraw();
+
+	glBegin(GL_LINE_STRIP);
+
+	for ( unsigned int i = 0; i < n_vertices; i++ ) {
+		glVertex3d( vertex[i][X], vertex[i][Y], vertex[i][Z]  );
+	}
+
+	glEnd();
+	FinishDraw();
+}

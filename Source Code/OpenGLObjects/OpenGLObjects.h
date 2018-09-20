@@ -164,6 +164,43 @@ public:
 
 //---------------------------------------------------------------------------
 
+class Beads : public OpenGLObject {
+
+private:
+
+protected:
+
+public:
+
+  Vector3		*vertex;
+  unsigned int	n_vertices;
+
+  Beads( Vector3 *points, unsigned int n );
+  void Reload( Vector3 *points, unsigned int n );
+  void  Draw();
+
+};
+//---------------------------------------------------------------------------
+
+class Cord : public OpenGLObject {
+
+private:
+
+protected:
+
+public:
+
+  Vector3		*vertex;
+  unsigned int	n_vertices;
+
+  Cord( Vector3 *points, unsigned int n );
+  void Reload( Vector3 *points, unsigned int n );
+  void  Draw();
+
+};
+
+//---------------------------------------------------------------------------
+
 class Box : public OpenGLObject {
 
 private:
