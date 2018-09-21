@@ -84,13 +84,17 @@ namespace GraspMMIColumbus {
 		}
 	private: System::Windows::Forms::GroupBox^  endconeGroupBox;
 	private: System::Windows::Forms::Panel^  endconePanel;
-	private: System::Windows::Forms::GroupBox^  topViewGroupBox;
+	private: System::Windows::Forms::GroupBox^  topGroupBox;
+
 	private: System::Windows::Forms::Panel^  topPanel;
+
+
 	private: System::Windows::Forms::GroupBox^  nodeGroupBox;
 	private: System::Windows::Forms::Panel^  nodePanel;
 	private: System::Windows::Forms::GroupBox^  sideGroupBox;
 	private: System::Windows::Forms::Panel^  sidePanel;
-	private: System::Windows::Forms::GroupBox^  conifigurationGroupBox;
+	private: System::Windows::Forms::GroupBox^  configurationGroupBox;
+
 	private: System::Windows::Forms::RadioButton^  gripSupineButton;
 	private: System::Windows::Forms::RadioButton^  gripSeatedButton;
 	private: System::Windows::Forms::Label^  label2;
@@ -129,13 +133,13 @@ namespace GraspMMIColumbus {
 		{
 			this->endconeGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->endconePanel = (gcnew System::Windows::Forms::Panel());
-			this->topViewGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->topGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->topPanel = (gcnew System::Windows::Forms::Panel());
 			this->nodeGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->nodePanel = (gcnew System::Windows::Forms::Panel());
 			this->sideGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->sidePanel = (gcnew System::Windows::Forms::Panel());
-			this->conifigurationGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->configurationGroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->loadGraspTrajectoryButton = (gcnew System::Windows::Forms::Button());
 			this->nominalCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -159,10 +163,10 @@ namespace GraspMMIColumbus {
 			this->coda1Panel = (gcnew System::Windows::Forms::Panel());
 			this->openGraspTrajectory = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->endconeGroupBox->SuspendLayout();
-			this->topViewGroupBox->SuspendLayout();
+			this->topGroupBox->SuspendLayout();
 			this->nodeGroupBox->SuspendLayout();
 			this->sideGroupBox->SuspendLayout();
-			this->conifigurationGroupBox->SuspendLayout();
+			this->configurationGroupBox->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->coda0GroupBox->SuspendLayout();
 			this->coda1GroupBox->SuspendLayout();
@@ -170,90 +174,107 @@ namespace GraspMMIColumbus {
 			// 
 			// endconeGroupBox
 			// 
+			this->endconeGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->endconeGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->endconeGroupBox->Controls->Add(this->endconePanel);
-			this->endconeGroupBox->Location = System::Drawing::Point(974, 576);
+			this->endconeGroupBox->Location = System::Drawing::Point(793, 358);
 			this->endconeGroupBox->Name = L"endconeGroupBox";
-			this->endconeGroupBox->Size = System::Drawing::Size(550, 550);
+			this->endconeGroupBox->Size = System::Drawing::Size(316, 339);
 			this->endconeGroupBox->TabIndex = 0;
 			this->endconeGroupBox->TabStop = false;
 			this->endconeGroupBox->Text = L"From End Cone";
+			this->endconeGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::endconeGroupBox_SizeChanged);
 			// 
 			// endconePanel
 			// 
 			this->endconePanel->Location = System::Drawing::Point(10, 20);
 			this->endconePanel->Name = L"endconePanel";
-			this->endconePanel->Size = System::Drawing::Size(534, 524);
+			this->endconePanel->Size = System::Drawing::Size(300, 300);
 			this->endconePanel->TabIndex = 0;
+			this->endconePanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::endconePanel_SizeChanged);
 			// 
-			// topViewGroupBox
+			// topGroupBox
 			// 
-			this->topViewGroupBox->Controls->Add(this->topPanel);
-			this->topViewGroupBox->Location = System::Drawing::Point(12, 12);
-			this->topViewGroupBox->Name = L"topViewGroupBox";
-			this->topViewGroupBox->Size = System::Drawing::Size(956, 550);
-			this->topViewGroupBox->TabIndex = 1;
-			this->topViewGroupBox->TabStop = false;
-			this->topViewGroupBox->Text = L"Top View";
+			this->topGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->topGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+			this->topGroupBox->Controls->Add(this->topPanel);
+			this->topGroupBox->Location = System::Drawing::Point(171, 12);
+			this->topGroupBox->Name = L"topGroupBox";
+			this->topGroupBox->Size = System::Drawing::Size(616, 339);
+			this->topGroupBox->TabIndex = 1;
+			this->topGroupBox->TabStop = false;
+			this->topGroupBox->Text = L"Top View";
+			this->topGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::topGroupBox_SizeChanged);
 			// 
 			// topPanel
 			// 
+			this->topPanel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			this->topPanel->Location = System::Drawing::Point(10, 20);
 			this->topPanel->Name = L"topPanel";
-			this->topPanel->Size = System::Drawing::Size(940, 524);
+			this->topPanel->Size = System::Drawing::Size(600, 300);
 			this->topPanel->TabIndex = 1;
+			this->topPanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::topPanel_SizeChanged);
 			// 
 			// nodeGroupBox
 			// 
+			this->nodeGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->nodeGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->nodeGroupBox->Controls->Add(this->nodePanel);
-			this->nodeGroupBox->Location = System::Drawing::Point(1530, 576);
+			this->nodeGroupBox->Location = System::Drawing::Point(1115, 355);
 			this->nodeGroupBox->Name = L"nodeGroupBox";
-			this->nodeGroupBox->Size = System::Drawing::Size(550, 550);
+			this->nodeGroupBox->Size = System::Drawing::Size(316, 339);
 			this->nodeGroupBox->TabIndex = 2;
 			this->nodeGroupBox->TabStop = false;
 			this->nodeGroupBox->Text = L"From Node";
+			this->nodeGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::nodeGroupBox_SizeChanged);
 			// 
 			// nodePanel
 			// 
 			this->nodePanel->Location = System::Drawing::Point(10, 20);
 			this->nodePanel->Name = L"nodePanel";
-			this->nodePanel->Size = System::Drawing::Size(534, 524);
+			this->nodePanel->Size = System::Drawing::Size(300, 300);
 			this->nodePanel->TabIndex = 1;
+			this->nodePanel->Resize += gcnew System::EventHandler(this, &GraspMMIColumbusForm::nodePanel_Resize);
 			// 
 			// sideGroupBox
 			// 
+			this->sideGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->sideGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->sideGroupBox->Controls->Add(this->sidePanel);
-			this->sideGroupBox->Location = System::Drawing::Point(12, 576);
+			this->sideGroupBox->Location = System::Drawing::Point(171, 358);
 			this->sideGroupBox->Name = L"sideGroupBox";
-			this->sideGroupBox->Size = System::Drawing::Size(956, 550);
+			this->sideGroupBox->Size = System::Drawing::Size(616, 339);
 			this->sideGroupBox->TabIndex = 3;
 			this->sideGroupBox->TabStop = false;
 			this->sideGroupBox->Text = L"Side View";
+			this->sideGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::sideGroupBox_SizeChanged);
 			// 
 			// sidePanel
 			// 
 			this->sidePanel->Location = System::Drawing::Point(10, 20);
 			this->sidePanel->Name = L"sidePanel";
-			this->sidePanel->Size = System::Drawing::Size(940, 524);
+			this->sidePanel->Size = System::Drawing::Size(600, 300);
 			this->sidePanel->TabIndex = 1;
+			this->sidePanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::sidePanel_SizeChanged);
 			// 
-			// conifigurationGroupBox
+			// configurationGroupBox
 			// 
-			this->conifigurationGroupBox->Controls->Add(this->loadGraspTrajectoryButton);
-			this->conifigurationGroupBox->Controls->Add(this->nominalCodaCheckBox);
-			this->conifigurationGroupBox->Controls->Add(this->label2);
-			this->conifigurationGroupBox->Controls->Add(this->loadGraspButton);
-			this->conifigurationGroupBox->Controls->Add(this->graspFreefloatingButton);
-			this->conifigurationGroupBox->Controls->Add(this->loadGripButton);
-			this->conifigurationGroupBox->Controls->Add(this->graspSeatedButton);
-			this->conifigurationGroupBox->Controls->Add(this->label1);
-			this->conifigurationGroupBox->Controls->Add(this->gripSupineButton);
-			this->conifigurationGroupBox->Controls->Add(this->gripSeatedButton);
-			this->conifigurationGroupBox->Location = System::Drawing::Point(2086, 12);
-			this->conifigurationGroupBox->Name = L"conifigurationGroupBox";
-			this->conifigurationGroupBox->Size = System::Drawing::Size(153, 517);
-			this->conifigurationGroupBox->TabIndex = 4;
-			this->conifigurationGroupBox->TabStop = false;
-			this->conifigurationGroupBox->Text = L"Configuration";
+			this->configurationGroupBox->Controls->Add(this->loadGraspTrajectoryButton);
+			this->configurationGroupBox->Controls->Add(this->nominalCodaCheckBox);
+			this->configurationGroupBox->Controls->Add(this->label2);
+			this->configurationGroupBox->Controls->Add(this->loadGraspButton);
+			this->configurationGroupBox->Controls->Add(this->graspFreefloatingButton);
+			this->configurationGroupBox->Controls->Add(this->loadGripButton);
+			this->configurationGroupBox->Controls->Add(this->graspSeatedButton);
+			this->configurationGroupBox->Controls->Add(this->label1);
+			this->configurationGroupBox->Controls->Add(this->gripSupineButton);
+			this->configurationGroupBox->Controls->Add(this->gripSeatedButton);
+			this->configurationGroupBox->Location = System::Drawing::Point(12, 12);
+			this->configurationGroupBox->Name = L"configurationGroupBox";
+			this->configurationGroupBox->Size = System::Drawing::Size(153, 553);
+			this->configurationGroupBox->TabIndex = 4;
+			this->configurationGroupBox->TabStop = false;
+			this->configurationGroupBox->Text = L"Configuration";
 			// 
 			// loadGraspTrajectoryButton
 			// 
@@ -374,7 +395,7 @@ namespace GraspMMIColumbus {
 			this->groupBox2->Controls->Add(this->bodyCheckBox);
 			this->groupBox2->Controls->Add(this->tabletCheckBox);
 			this->groupBox2->Controls->Add(this->markerStructureCheckBox);
-			this->groupBox2->Location = System::Drawing::Point(2086, 576);
+			this->groupBox2->Location = System::Drawing::Point(12, 571);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Size = System::Drawing::Size(153, 126);
 			this->groupBox2->TabIndex = 5;
@@ -437,37 +458,45 @@ namespace GraspMMIColumbus {
 			// 
 			// coda0GroupBox
 			// 
+			this->coda0GroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->coda0GroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->coda0GroupBox->Controls->Add(this->coda0Panel);
-			this->coda0GroupBox->Location = System::Drawing::Point(974, 12);
+			this->coda0GroupBox->Location = System::Drawing::Point(793, 12);
 			this->coda0GroupBox->Name = L"coda0GroupBox";
-			this->coda0GroupBox->Size = System::Drawing::Size(550, 550);
+			this->coda0GroupBox->Size = System::Drawing::Size(316, 339);
 			this->coda0GroupBox->TabIndex = 3;
 			this->coda0GroupBox->TabStop = false;
 			this->coda0GroupBox->Text = L"From Coda 1";
+			this->coda0GroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::coda0GroupBox_SizeChanged);
 			// 
 			// coda0Panel
 			// 
 			this->coda0Panel->Location = System::Drawing::Point(10, 20);
 			this->coda0Panel->Name = L"coda0Panel";
-			this->coda0Panel->Size = System::Drawing::Size(534, 524);
+			this->coda0Panel->Size = System::Drawing::Size(300, 300);
 			this->coda0Panel->TabIndex = 1;
+			this->coda0Panel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::coda0Panel_SizeChanged);
 			// 
 			// coda1GroupBox
 			// 
+			this->coda1GroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->coda1GroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->coda1GroupBox->Controls->Add(this->coda1Panel);
-			this->coda1GroupBox->Location = System::Drawing::Point(1530, 12);
+			this->coda1GroupBox->Location = System::Drawing::Point(1115, 12);
 			this->coda1GroupBox->Name = L"coda1GroupBox";
-			this->coda1GroupBox->Size = System::Drawing::Size(550, 550);
+			this->coda1GroupBox->Size = System::Drawing::Size(316, 339);
 			this->coda1GroupBox->TabIndex = 4;
 			this->coda1GroupBox->TabStop = false;
 			this->coda1GroupBox->Text = L"From Coda 2";
+			this->coda1GroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::coda1GroupBox_SizeChanged);
 			// 
 			// coda1Panel
 			// 
 			this->coda1Panel->Location = System::Drawing::Point(10, 20);
 			this->coda1Panel->Name = L"coda1Panel";
-			this->coda1Panel->Size = System::Drawing::Size(534, 524);
+			this->coda1Panel->Size = System::Drawing::Size(300, 300);
 			this->coda1Panel->TabIndex = 1;
+			this->coda1Panel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::coda1Panel_SizeChanged);
 			// 
 			// openGraspTrajectory
 			// 
@@ -478,27 +507,29 @@ namespace GraspMMIColumbus {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(2251, 1138);
+			this->ClientSize = System::Drawing::Size(1438, 717);
 			this->Controls->Add(this->coda1GroupBox);
 			this->Controls->Add(this->coda0GroupBox);
 			this->Controls->Add(this->groupBox2);
-			this->Controls->Add(this->conifigurationGroupBox);
+			this->Controls->Add(this->configurationGroupBox);
 			this->Controls->Add(this->sideGroupBox);
 			this->Controls->Add(this->endconeGroupBox);
 			this->Controls->Add(this->nodeGroupBox);
-			this->Controls->Add(this->topViewGroupBox);
+			this->Controls->Add(this->topGroupBox);
 			this->Location = System::Drawing::Point(10, 100);
 			this->Name = L"GraspMMIColumbusForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GraspMMI Columbus";
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_Shown);
+			this->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_SizeChanged);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_Paint);
+			this->Resize += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_SizeChanged);
 			this->endconeGroupBox->ResumeLayout(false);
-			this->topViewGroupBox->ResumeLayout(false);
+			this->topGroupBox->ResumeLayout(false);
 			this->nodeGroupBox->ResumeLayout(false);
 			this->sideGroupBox->ResumeLayout(false);
-			this->conifigurationGroupBox->ResumeLayout(false);
-			this->conifigurationGroupBox->PerformLayout();
+			this->configurationGroupBox->ResumeLayout(false);
+			this->configurationGroupBox->PerformLayout();
 			this->groupBox2->ResumeLayout(false);
 			this->groupBox2->PerformLayout();
 			this->coda0GroupBox->ResumeLayout(false);
@@ -683,8 +714,6 @@ namespace GraspMMIColumbus {
 				}
 			}
 
-
-
 			// Set nominal values for the pose of each object.
 			double nominal_head_height = 500.0;
 			double nominal_chest_depth = 200.0;
@@ -759,7 +788,6 @@ namespace GraspMMIColumbus {
 			axis->SetColor( BLUE );
 			axes->AddComponent( axis );
 
-
 			// Create an anchor that we can rotate and displace to take into account
 			// where the origin is with respect to the ISS module for a given hardware configuration.
 			ensemble = new Assembly();
@@ -774,12 +802,11 @@ namespace GraspMMIColumbus {
 			ensemble->AddComponent( renderer->torso );
 			for (int unit = 0; unit < MAX_UNITS; unit++ ) ensemble->AddComponent( tracers[unit] );
 
-
-
 			hmd->Disable();
 			hand->Disable();
 			chest->Disable();
 
+			LayoutVR();
 			Render();
 
 		}
@@ -1052,9 +1079,6 @@ namespace GraspMMIColumbus {
 				 AlignmentFilename = openGraspAlignment->FileName;
 			 }
 
-
-
-
 	private: System::Void GraspMMIColumbusForm_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 				 Render();
 			 }
@@ -1116,22 +1140,94 @@ namespace GraspMMIColumbus {
 					 graspData->LoadGraspData( fp );
 					 fclose( fp );
 				 }
-				System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
+				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
 
-				for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-					for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
-						hmdPath[unit][i]->Load( graspData->visibleMarker[unit][hmd->modelMarker[i].id], graspData->nVisibleSamples[unit][hmd->modelMarker[i].id] );
-					}
-					for ( int i = 0; i < hand->nModelMarkers; i++ ) {
-						handPath[unit][i]->Load( graspData->visibleMarker[unit][hand->modelMarker[i].id], graspData->nVisibleSamples[unit][hand->modelMarker[i].id] );
-					}
-					for ( int i = 0; i < chest->nModelMarkers; i++ ) {
-						chestPath[unit][i]->Load( graspData->visibleMarker[unit][chest->modelMarker[i].id], graspData->nVisibleSamples[unit][chest->modelMarker[i].id] );
-					}
-				}
-				TrajectoryFilename = openGraspTrajectory->FileName;
-				Render();
+				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					 for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
+						 hmdPath[unit][i]->Load( graspData->visibleMarker[unit][hmd->modelMarker[i].id], graspData->nVisibleSamples[unit][hmd->modelMarker[i].id] );
+					 }
+					 for ( int i = 0; i < hand->nModelMarkers; i++ ) {
+						 handPath[unit][i]->Load( graspData->visibleMarker[unit][hand->modelMarker[i].id], graspData->nVisibleSamples[unit][hand->modelMarker[i].id] );
+					 }
+					 for ( int i = 0; i < chest->nModelMarkers; i++ ) {
+						 chestPath[unit][i]->Load( graspData->visibleMarker[unit][chest->modelMarker[i].id], graspData->nVisibleSamples[unit][chest->modelMarker[i].id] );
+					 }
+				 }
+				 TrajectoryFilename = openGraspTrajectory->FileName;
+				 Render();
 
+			 }
+	private: System::Void LayoutVR( void ) {
+
+// Need to undefine the X and Y macro defs to be able to access Point members.
+#undef X
+#undef Y
+				 int spacer = 3;
+				 int x = this->configurationGroupBox->Location.X + this->configurationGroupBox->Size.Width + spacer;
+				 int upper = this->configurationGroupBox->Location.Y;
+				 int lower = this->configurationGroupBox->Location.Y + this->topGroupBox->Size.Height + spacer;
+				 int w = ( this->ClientSize.Width - x - 3 * spacer ) / 4 ;
+				 int h = ( this->ClientSize.Height - upper - 2 * spacer ) / 2 ;
+				 this->topGroupBox->Size = System::Drawing::Size( 2 * w, h );
+				 this->sideGroupBox->Size = System::Drawing::Size( 2 * w, h );
+				 this->coda0GroupBox->Size = System::Drawing::Size( w, h );
+				 this->coda1GroupBox->Size = System::Drawing::Size( w, h );
+				 this->endconeGroupBox->Size = System::Drawing::Size( w, h );
+				 this->nodeGroupBox->Size = System::Drawing::Size( w, h );
+
+				 Refresh();
+				 this->topGroupBox->Location = System::Drawing::Point( x , upper );
+				 this->sideGroupBox->Location = System::Drawing::Point( x, lower  );
+
+				 x = x + this->topGroupBox->Size.Width + spacer;
+				 this->coda0GroupBox->Location = System::Drawing::Point( x, upper );
+				 this->endconeGroupBox->Location = System::Drawing::Point( x, lower );
+
+				 x = x + this->coda0GroupBox->Size.Width + spacer;
+				 this->coda1GroupBox->Location = System::Drawing::Point( x, upper );
+				 this->nodeGroupBox->Location = System::Drawing::Point( x, lower );
+			 }
+			
+	private: System::Void GraspMMIColumbusForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 LayoutVR();
+			 }
+
+#define BORDER 10
+	private: System::Void topGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->topPanel->Size = System::Drawing::Size( this->topGroupBox->ClientSize.Width - 2 * BORDER,this->topGroupBox->ClientSize.Height - 3 * BORDER ) ;
+			 }
+	private: System::Void sideGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->sidePanel->Size = System::Drawing::Size( this->sideGroupBox->ClientSize.Width - 2 * BORDER,this->sideGroupBox->ClientSize.Height  - 3 * BORDER ) ;
+			 }
+	private: System::Void coda0GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->coda0Panel->Size = System::Drawing::Size( this->coda0GroupBox->ClientSize.Width - 2 * BORDER,this->coda0GroupBox->ClientSize.Height - 3 * BORDER ) ;
+			 }
+	private: System::Void endconeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->endconePanel->Size = System::Drawing::Size( this->endconeGroupBox->ClientSize.Width - 2 * BORDER,this->endconeGroupBox->ClientSize.Height  - 3 * BORDER ) ;
+			 }
+	private: System::Void coda1GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->coda1Panel->Size = System::Drawing::Size( this->coda1GroupBox->ClientSize.Width - 2 * BORDER,this->coda1GroupBox->ClientSize.Height  - 3 * BORDER );
+			 }
+	private: System::Void nodeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 this->nodePanel->Size = System::Drawing::Size( this->nodeGroupBox->ClientSize.Width - 2 * BORDER,this->nodeGroupBox->ClientSize.Height  - 3 * BORDER  ) ;
+			 }
+	private: System::Void topPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( topWindow->hWnd, HWND_TOP, 0, 0, this->topPanel->ClientSize.Width, this->topPanel->ClientSize.Height, SWP_NOMOVE );
+			 }
+	private: System::Void sidePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( sideWindow->hWnd, HWND_TOP, 0, 0, this->sidePanel->ClientSize.Width, this->sidePanel->ClientSize.Height, SWP_NOMOVE );
+			 }
+	private: System::Void coda0Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( coda0Window->hWnd, HWND_TOP, 0, 0, this->coda0Panel->ClientSize.Width, this->coda0Panel->ClientSize.Height, SWP_NOMOVE );
+			 }
+	private: System::Void coda1Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( coda1Window->hWnd, HWND_TOP, 0, 0, this->coda1Panel->ClientSize.Width, this->coda1Panel->ClientSize.Height, SWP_NOMOVE );
+			 }
+	private: System::Void endconePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( endconeWindow->hWnd, HWND_TOP, 0, 0, this->endconePanel->ClientSize.Width, this->endconePanel->ClientSize.Height, SWP_NOMOVE );
+			 }
+	private: System::Void nodePanel_Resize(System::Object^  sender, System::EventArgs^  e) {
+				 SetWindowPos( nodeWindow->hWnd, HWND_TOP, 0, 0, this->nodePanel->ClientSize.Width, this->nodePanel->ClientSize.Height, SWP_NOMOVE );
 			 }
 	};
 }
