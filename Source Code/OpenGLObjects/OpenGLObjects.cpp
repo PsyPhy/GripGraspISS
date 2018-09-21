@@ -1613,21 +1613,45 @@ void Beads::Draw( void ) {
 
 // A string of points.
 
-Cord::Cord( Vector3 *array, unsigned int n ) {
 
-  this->vertex = array;
-  this->n_vertices = n;
+void Cord::Load( Vector3 *array, unsigned int n ) {
 
-  OpenGLObject();   // Do what every OpenGlObject does at creation.
-
-}
-
-void Cord::Reload( Vector3 *array, unsigned int n ) {
-
-  this->vertex = array;
-  this->n_vertices = n;
+  this->trajectory = array;
+  this->n_points = n;
+  Cut( 1.0 );
 
 }
+
+int Cord::Cut( double resolution  ) {
+
+	if ( n_points < MAX_KINKS ) {
+		for ( unsigned int i = 0; i < n_points; i++ ) CopyVector( vertex[i], trajectory[i] );
+		n_vertices = n_points;
+		fOutputDebugString( "Kinks = Points: %d\n", n_vertices );
+		return( n_vertices );
+	}
+	else {
+		n_vertices = 1;
+		double resolution_squared = resolution * resolution;
+		CopyVector( vertex[0], trajectory[0] );
+		for ( unsigned int i = 1; i < n_points; i++ ) {
+			double x = trajectory[i][X] - vertex[n_vertices][X];
+			double y = trajectory[i][Y] - vertex[n_vertices][Y];
+			double z = trajectory[i][Z] - vertex[n_vertices][Z];
+			if ( ( x * x + y * y + z * z ) > resolution_squared ) {
+				CopyVector( vertex[n_vertices], trajectory[i] );
+				n_vertices++;
+				if ( n_vertices >= MAX_KINKS ) return( Cut( resolution * 2 ) );
+			}
+		}
+		fOutputDebugString( "Resolution: %f Kinks: %d\n", resolution, n_vertices );
+		return( n_vertices );
+	}
+}
+
+
+
+
 
 void Cord::Draw( void ) {
 

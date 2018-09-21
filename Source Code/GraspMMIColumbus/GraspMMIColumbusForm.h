@@ -433,6 +433,7 @@ namespace GraspMMIColumbus {
 			// openGraspAlignment
 			// 
 			this->openGraspAlignment->DefaultExt = L"dat";
+			this->openGraspAlignment->Filter = L"Grasp Alignment|*.dat|All Files|*.*";
 			// 
 			// coda0GroupBox
 			// 
@@ -486,7 +487,9 @@ namespace GraspMMIColumbus {
 			this->Controls->Add(this->endconeGroupBox);
 			this->Controls->Add(this->nodeGroupBox);
 			this->Controls->Add(this->topViewGroupBox);
+			this->Location = System::Drawing::Point(10, 100);
 			this->Name = L"GraspMMIColumbusForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GraspMMI Columbus";
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_Shown);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_Paint);
@@ -506,6 +509,9 @@ namespace GraspMMIColumbus {
 #pragma endregion
 
 	private:
+
+		String^ AlignmentFilename;
+		String^ TrajectoryFilename;
 
 		OpenGLWindow *topWindow, *sideWindow, *endconeWindow, *nodeWindow, *coda0Window, *coda1Window;
 		Viewpoint *topViewpoint, *sideViewpoint, *endconeViewpoint, *nodeViewpoint, *coda0Viewpoint, *coda1Viewpoint;
@@ -529,9 +535,10 @@ namespace GraspMMIColumbus {
 		Cylinder *handEmissionCone;
 		Cylinder *hmdEmissionCone;
 
-		Cord  *hmdPath;
-		Cord  *handPath;
-		Cord  *chestPath;
+		Assembly **tracers;
+		Cord  ***hmdPath;
+		Cord  ***handPath;
+		Cord  ***chestPath;
 
 		// Bars showing the canonical axes.
 		Assembly *axes;
@@ -643,6 +650,41 @@ namespace GraspMMIColumbus {
 			hand = renderer->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chest = renderer->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
 
+			tracers = (Assembly **) calloc( MAX_UNITS, sizeof( *tracers ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) tracers[unit] = new Assembly();
+
+			hmdPath = (Cord ***) calloc( MAX_UNITS, sizeof( **hmdPath ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				hmdPath[unit] = (Cord **) calloc( hmd->nModelMarkers, sizeof( *hmdPath ) );
+				for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
+					hmdPath[unit][i] = new Cord();
+					hmdPath[unit][i]->SetColor( unit == 0 ? RED : MAGENTA );
+					tracers[unit]->AddComponent( hmdPath[unit][i] );
+				}
+			}
+
+			handPath = (Cord ***) calloc( MAX_UNITS, sizeof( **handPath ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				handPath[unit] = (Cord **) calloc( hmd->nModelMarkers, sizeof( *handPath ) );
+				for ( int i = 0; i < hand->nModelMarkers; i++ ) {
+					handPath[unit][i] = new Cord();
+					handPath[unit][i]->SetColor( unit == 0 ? GREEN : YELLOW );
+					tracers[unit]->AddComponent( handPath[unit][i] );
+				}
+			}
+
+			chestPath = (Cord ***) calloc( MAX_UNITS, sizeof( **chestPath ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				chestPath[unit] = (Cord **) calloc( chest->nModelMarkers, sizeof( *chestPath ) );
+				for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
+					chestPath[unit][i] = new Cord();
+					chestPath[unit][i]->SetColor( unit == 0 ? BLUE : CYAN );
+					tracers[unit]->AddComponent( chestPath[unit][i] );
+				}
+			}
+
+
+
 			// Set nominal values for the pose of each object.
 			double nominal_head_height = 500.0;
 			double nominal_chest_depth = 200.0;
@@ -717,12 +759,6 @@ namespace GraspMMIColumbus {
 			axis->SetColor( BLUE );
 			axes->AddComponent( axis );
 
-			hmdPath = new Cord( graspData->visibleMarker[0][20], graspData->nVisibleSamples[0][20] );
-			hmdPath->SetColor( RED );
-			handPath = new Cord( graspData->visibleMarker[0][12], graspData->nVisibleSamples[0][12] );
-			handPath->SetColor( GREEN );
-			chestPath = new Cord( graspData->visibleMarker[0][18], graspData->nVisibleSamples[0][18] );
-			chestPath->SetColor( YELLOW );
 
 			// Create an anchor that we can rotate and displace to take into account
 			// where the origin is with respect to the ISS module for a given hardware configuration.
@@ -736,9 +772,9 @@ namespace GraspMMIColumbus {
 			ensemble->AddComponent( tablet );
 			ensemble->AddComponent( renderer->head );
 			ensemble->AddComponent( renderer->torso );
-			ensemble->AddComponent( handPath );
-			ensemble->AddComponent( hmdPath );
-			ensemble->AddComponent( chestPath );
+			for (int unit = 0; unit < MAX_UNITS; unit++ ) ensemble->AddComponent( tracers[unit] );
+
+
 
 			hmd->Disable();
 			hand->Disable();
@@ -898,13 +934,20 @@ namespace GraspMMIColumbus {
 			RenderWindow( nodeWindow, nodeViewpoint );
 
 			renderer->coda[0]->Disable();
+			tracers[1]->Disable();
 			LookAtFrom( coda0Viewpoint, vm->zeroVector, renderer->coda[0]->position, up );
 			RenderWindowLocal( coda0Window, coda0Viewpoint );
+			tracers[1]->Enable();
 			renderer->coda[0]->Enable();
+
 			renderer->coda[1]->Disable();
+			tracers[0]->Disable();
 			LookAtFrom( coda1Viewpoint, vm->zeroVector, renderer->coda[1]->position, up );
 			RenderWindowLocal( coda1Window, coda1Viewpoint );
+			tracers[0]->Enable();
 			renderer->coda[1]->Enable();
+
+			Text = AlignmentFilename + " | " + TrajectoryFilename;
 
 		}
 
@@ -953,7 +996,7 @@ namespace GraspMMIColumbus {
 					 fclose( fp );
 				 }
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
-				 Text = openGripAlignment->FileName;
+				 AlignmentFilename = openGripAlignment->FileName;
 				 nominalCodaCheckBox->Checked = false;
 
 			 }
@@ -1005,8 +1048,8 @@ namespace GraspMMIColumbus {
 					 fclose( fp );
 				 }
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
-				 Text = openGraspAlignment->FileName;
 				 nominalCodaCheckBox->Checked = false;
+				 AlignmentFilename = openGraspAlignment->FileName;
 			 }
 
 
@@ -1075,10 +1118,18 @@ namespace GraspMMIColumbus {
 				 }
 				System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
 
-				hmdPath->Reload( graspData->visibleMarker[0][4], graspData->nVisibleSamples[0][4] );
-				handPath->Reload( graspData->visibleMarker[0][12], graspData->nVisibleSamples[0][12] );
-				chestPath->Reload( graspData->visibleMarker[0][18], graspData->nVisibleSamples[0][18] );
-
+				for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
+						hmdPath[unit][i]->Load( graspData->visibleMarker[unit][hmd->modelMarker[i].id], graspData->nVisibleSamples[unit][hmd->modelMarker[i].id] );
+					}
+					for ( int i = 0; i < hand->nModelMarkers; i++ ) {
+						handPath[unit][i]->Load( graspData->visibleMarker[unit][hand->modelMarker[i].id], graspData->nVisibleSamples[unit][hand->modelMarker[i].id] );
+					}
+					for ( int i = 0; i < chest->nModelMarkers; i++ ) {
+						chestPath[unit][i]->Load( graspData->visibleMarker[unit][chest->modelMarker[i].id], graspData->nVisibleSamples[unit][chest->modelMarker[i].id] );
+					}
+				}
+				TrajectoryFilename = openGraspTrajectory->FileName;
 				Render();
 
 			 }

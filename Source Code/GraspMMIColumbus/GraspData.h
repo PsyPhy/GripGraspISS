@@ -126,7 +126,7 @@ namespace Grasp {
 			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 				for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
 					nVisibleSamples[unit][mrk] = 0;
-					for ( unsigned int i = 0; i < nSamples; i += 100 ) {
+					for ( unsigned int i = 0; i < nSamples; i++ ) {
 						if ( sample[i].markerFrame[unit].marker[mrk].visibility ) {
 							CopyVector( visibleMarker[unit][mrk][ nVisibleSamples[unit][mrk]++ ],
 								sample[i].markerFrame[unit].marker[mrk].position );

@@ -53,6 +53,7 @@ namespace PsyPhy {
  * Maximum number of points in a polygon for structures like an extrusion.
  */
 #define MAX_VERTICES 255
+#define MAX_KINKS 2048
 
 /***************************************************************************/
 
@@ -190,12 +191,18 @@ protected:
 
 public:
 
-  Vector3		*vertex;
-  unsigned int	n_vertices;
+	Vector3			*trajectory;
+	unsigned int	n_points;
+	Vector3			vertex[MAX_KINKS];
+	unsigned int	n_vertices;
 
-  Cord( Vector3 *points, unsigned int n );
-  void Reload( Vector3 *points, unsigned int n );
-  void  Draw();
+	Cord () {
+		n_vertices = 0;
+		n_points = 0;
+	}
+	void Load( Vector3 *points, unsigned int n );
+	int  Cut( double resolution );
+	void  Draw();
 
 };
 
