@@ -1159,7 +1159,7 @@ namespace GraspMMIColumbus {
 			 }
 	private: System::Void LayoutVR( void ) {
 
-// Need to undefine the X and Y macro defs to be able to access Point members.
+				 // Need to undefine the X and Y macro defs to be able to access Point members.
 #undef X
 #undef Y
 				 int spacer = 3;
@@ -1187,7 +1187,7 @@ namespace GraspMMIColumbus {
 				 this->coda1GroupBox->Location = System::Drawing::Point( x, upper );
 				 this->nodeGroupBox->Location = System::Drawing::Point( x, lower );
 			 }
-			
+
 	private: System::Void GraspMMIColumbusForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 				 LayoutVR();
 			 }
@@ -1229,6 +1229,32 @@ namespace GraspMMIColumbus {
 	private: System::Void nodePanel_Resize(System::Object^  sender, System::EventArgs^  e) {
 				 SetWindowPos( nodeWindow->hWnd, HWND_TOP, 0, 0, this->nodePanel->ClientSize.Width, this->nodePanel->ClientSize.Height, SWP_NOMOVE );
 			 }
+
+
+	protected: virtual void WndProc(Message% m) override {
+				   // The following is a real kludge.
+				   // When the Form gets maximized and then restored, my VR windows don't full redraw. 
+				   // I don't know why. But if the Form is minimized and then restored, they redraw
+				   // just fine. So what I do here is that I intercept the restore event. If the current
+				   // state is maximized, I return it to Normal, then minimize and then restore again.
+				   // This makes my VR windows redraw after returning from maximized.
+
+				   if( m.Msg == 0x0112 ) // WM_SYSCOMMAND
+				   {
+					   // Check your window state here
+					   if (m.WParam == IntPtr( SC_RESTORE ) ) 
+					   {
+						   if ( WindowState == FormWindowState::Maximized ) {
+							   WindowState = FormWindowState::Normal;
+							   Form::WndProc(m);
+							   WindowState = FormWindowState::Minimized;
+							   Form::WndProc(m);
+						   }
+					   }
+				   }
+				   Form::WndProc(m);
+			   }
+
 	};
 }
 
