@@ -859,15 +859,15 @@ namespace GraspMMIColumbus {
 
 		System::Void Render( void ) {
 
+			// If we get this call before the graphics items are created
+			// then ignore and return.
+			if ( ensemble == nullptr ) return;
+
 			// When we look at the subject from each of the CODAs, we need to define
 			// the roll orientation. We choose the direction pointing up toward the 
 			// ceiling. But it has to be expressed in the local reference frame, so 
 			// it depends on the hardware configuration.
 			Vector3		up;
-
-			// If we get this call before the graphics items are created
-			// then ignore and return.
-			if ( ensemble == nullptr ) return;
 
 			// Rotate and displace the ensemble of objects depending on
 			// which hardware configuration was used to align the CODAs.
@@ -1193,42 +1193,53 @@ namespace GraspMMIColumbus {
 			 }
 
 #define BORDER 10
-	private: System::Void topGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->topPanel->Size = System::Drawing::Size( this->topGroupBox->ClientSize.Width - 2 * BORDER,this->topGroupBox->ClientSize.Height - 3 * BORDER ) ;
-			 }
-	private: System::Void sideGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->sidePanel->Size = System::Drawing::Size( this->sideGroupBox->ClientSize.Width - 2 * BORDER,this->sideGroupBox->ClientSize.Height  - 3 * BORDER ) ;
-			 }
-	private: System::Void coda0GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->coda0Panel->Size = System::Drawing::Size( this->coda0GroupBox->ClientSize.Width - 2 * BORDER,this->coda0GroupBox->ClientSize.Height - 3 * BORDER ) ;
-			 }
-	private: System::Void endconeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->endconePanel->Size = System::Drawing::Size( this->endconeGroupBox->ClientSize.Width - 2 * BORDER,this->endconeGroupBox->ClientSize.Height  - 3 * BORDER ) ;
-			 }
-	private: System::Void coda1GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->coda1Panel->Size = System::Drawing::Size( this->coda1GroupBox->ClientSize.Width - 2 * BORDER,this->coda1GroupBox->ClientSize.Height  - 3 * BORDER );
-			 }
-	private: System::Void nodeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 this->nodePanel->Size = System::Drawing::Size( this->nodeGroupBox->ClientSize.Width - 2 * BORDER,this->nodeGroupBox->ClientSize.Height  - 3 * BORDER  ) ;
-			 }
-	private: System::Void topPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( topWindow->hWnd, HWND_TOP, 0, 0, this->topPanel->ClientSize.Width, this->topPanel->ClientSize.Height, SWP_NOMOVE );
-			 }
-	private: System::Void sidePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( sideWindow->hWnd, HWND_TOP, 0, 0, this->sidePanel->ClientSize.Width, this->sidePanel->ClientSize.Height, SWP_NOMOVE );
-			 }
-	private: System::Void coda0Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( coda0Window->hWnd, HWND_TOP, 0, 0, this->coda0Panel->ClientSize.Width, this->coda0Panel->ClientSize.Height, SWP_NOMOVE );
-			 }
-	private: System::Void coda1Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( coda1Window->hWnd, HWND_TOP, 0, 0, this->coda1Panel->ClientSize.Width, this->coda1Panel->ClientSize.Height, SWP_NOMOVE );
-			 }
-	private: System::Void endconePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( endconeWindow->hWnd, HWND_TOP, 0, 0, this->endconePanel->ClientSize.Width, this->endconePanel->ClientSize.Height, SWP_NOMOVE );
-			 }
-	private: System::Void nodePanel_Resize(System::Object^  sender, System::EventArgs^  e) {
-				 SetWindowPos( nodeWindow->hWnd, HWND_TOP, 0, 0, this->nodePanel->ClientSize.Width, this->nodePanel->ClientSize.Height, SWP_NOMOVE );
-			 }
+
+	private:
+
+		//
+		// When a group box is resized, resize the panel that it contains.
+		// There should be a better way to do this.
+		//
+		System::Void topGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->topPanel->Size = System::Drawing::Size( this->topGroupBox->ClientSize.Width - 2 * BORDER,this->topGroupBox->ClientSize.Height - 3 * BORDER ) ;
+		}
+		System::Void sideGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->sidePanel->Size = System::Drawing::Size( this->sideGroupBox->ClientSize.Width - 2 * BORDER,this->sideGroupBox->ClientSize.Height  - 3 * BORDER ) ;
+		}
+		System::Void coda0GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->coda0Panel->Size = System::Drawing::Size( this->coda0GroupBox->ClientSize.Width - 2 * BORDER,this->coda0GroupBox->ClientSize.Height - 3 * BORDER ) ;
+		}
+		System::Void endconeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->endconePanel->Size = System::Drawing::Size( this->endconeGroupBox->ClientSize.Width - 2 * BORDER,this->endconeGroupBox->ClientSize.Height  - 3 * BORDER ) ;
+		}
+		System::Void coda1GroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->coda1Panel->Size = System::Drawing::Size( this->coda1GroupBox->ClientSize.Width - 2 * BORDER,this->coda1GroupBox->ClientSize.Height  - 3 * BORDER );
+		}
+		System::Void nodeGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			this->nodePanel->Size = System::Drawing::Size( this->nodeGroupBox->ClientSize.Width - 2 * BORDER,this->nodeGroupBox->ClientSize.Height  - 3 * BORDER  ) ;
+		}
+		//
+		// When the panels holding VR windows are resized, we need to resize the windows associated with the OpenGLWindows.
+		// I really wish that we did not need to specify that here, but I haven't found the solution.
+		//
+		System::Void topPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( topWindow->hWnd, HWND_TOP, 0, 0, this->topPanel->ClientSize.Width, this->topPanel->ClientSize.Height, SWP_NOMOVE );
+		}
+		System::Void sidePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( sideWindow->hWnd, HWND_TOP, 0, 0, this->sidePanel->ClientSize.Width, this->sidePanel->ClientSize.Height, SWP_NOMOVE );
+		}
+		System::Void coda0Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( coda0Window->hWnd, HWND_TOP, 0, 0, this->coda0Panel->ClientSize.Width, this->coda0Panel->ClientSize.Height, SWP_NOMOVE );
+		}
+		System::Void coda1Panel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( coda1Window->hWnd, HWND_TOP, 0, 0, this->coda1Panel->ClientSize.Width, this->coda1Panel->ClientSize.Height, SWP_NOMOVE );
+		}
+		System::Void endconePanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( endconeWindow->hWnd, HWND_TOP, 0, 0, this->endconePanel->ClientSize.Width, this->endconePanel->ClientSize.Height, SWP_NOMOVE );
+		}
+		System::Void nodePanel_Resize(System::Object^  sender, System::EventArgs^  e) {
+			SetWindowPos( nodeWindow->hWnd, HWND_TOP, 0, 0, this->nodePanel->ClientSize.Width, this->nodePanel->ClientSize.Height, SWP_NOMOVE );
+		}
 
 
 	protected: virtual void WndProc(Message% m) override {
