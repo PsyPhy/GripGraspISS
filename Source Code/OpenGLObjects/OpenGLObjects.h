@@ -53,7 +53,7 @@ namespace PsyPhy {
  * Maximum number of points in a polygon for structures like an extrusion.
  */
 #define MAX_VERTICES 255
-#define MAX_KINKS 8000
+#define MAX_KINKS 2000
 
 /***************************************************************************/
 

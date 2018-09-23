@@ -27,12 +27,15 @@
 
 #define CODAS  2
 
+double codaMinimumDistance980 = 1500.0;
+double codaMinimumDistance992 = 1750.0;
+
 PsyPhy::Vector3 tabletPositionSeated = { 0.0, -200.0, 1100 };
 PsyPhy::Vector3 tabletPositionSupine = { 0.0, 200.0, 1250 };
 
 PsyPhy::Vector3 codaPositionGripSeated[2] = {{ -800.0, 500.0, 2200.0 }, { -300.0, 1000.0, 2200.0 }};
 PsyPhy::Vector3 codaPositionGripSupine[2] = {{ 800.0, 2200.0, 400.0 }, { 500.0, 2200.0, 800.0 }};
-PsyPhy::Vector3 codaPositionGraspSeated[2] = {{ 1000.0, 650.0, -2800.0 }, { 300.0, 1200.0, -2800.0 }};
+PsyPhy::Vector3 codaPositionGraspSeated[2] = {{ 800.0, 650.0, -2800.0 }, { 300.0, 1200.0, -2800.0 }};
 PsyPhy::Vector3 codaPositionGraspFloating[2] = {{ -700.0, 450.0, -2800.0 }, { -400.0, 400.0, -2800.0 }};
 
 PsyPhy::Matrix3x3 codaOrientationGripSeated[2] = {{ 0.0, -1.0, 0.0, 0.0, 0.0, -1.0, 1.0, 0.0, 0.0 }, { -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0 }};
@@ -48,6 +51,7 @@ namespace GraspMMIColumbus {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Drawing::Printing;
 	// We need InteropServics in order to convert a String to a char *.
 	using namespace System::Runtime::InteropServices;
 
@@ -85,16 +89,12 @@ namespace GraspMMIColumbus {
 	private: System::Windows::Forms::GroupBox^  endconeGroupBox;
 	private: System::Windows::Forms::Panel^  endconePanel;
 	private: System::Windows::Forms::GroupBox^  topGroupBox;
-
 	private: System::Windows::Forms::Panel^  topPanel;
-
-
 	private: System::Windows::Forms::GroupBox^  nodeGroupBox;
 	private: System::Windows::Forms::Panel^  nodePanel;
 	private: System::Windows::Forms::GroupBox^  sideGroupBox;
 	private: System::Windows::Forms::Panel^  sidePanel;
 	private: System::Windows::Forms::GroupBox^  configurationGroupBox;
-
 	private: System::Windows::Forms::RadioButton^  gripSupineButton;
 	private: System::Windows::Forms::RadioButton^  gripSeatedButton;
 	private: System::Windows::Forms::Label^  label2;
@@ -117,6 +117,14 @@ namespace GraspMMIColumbus {
 	private: System::Windows::Forms::Panel^  coda1Panel;
 	private: System::Windows::Forms::Button^  loadGraspTrajectoryButton;
 	private: System::Windows::Forms::OpenFileDialog^  openGraspTrajectory;
+	private: System::Windows::Forms::Button^  printButton;
+	private: System::Windows::Forms::FolderBrowserDialog^  screenshotFolderDialog;
+	private: System::Windows::Forms::Button^  selectScreenshotButton;
+	private: System::Windows::Forms::CheckBox^  tracerCheckBox;
+	private: System::Windows::Forms::Label^  loadingLabel;
+	private: System::Windows::Forms::CheckBox^  proximityCheckBox;
+	private: System::Windows::Forms::RadioButton^  threshold992RadioButton;
+	private: System::Windows::Forms::RadioButton^  threshold980RadioButton;
 
 	private:
 		/// <summary>
@@ -151,6 +159,10 @@ namespace GraspMMIColumbus {
 			this->gripSupineButton = (gcnew System::Windows::Forms::RadioButton());
 			this->gripSeatedButton = (gcnew System::Windows::Forms::RadioButton());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->threshold992RadioButton = (gcnew System::Windows::Forms::RadioButton());
+			this->threshold980RadioButton = (gcnew System::Windows::Forms::RadioButton());
+			this->proximityCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->tracerCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->axesCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->bodyCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->tabletCheckBox = (gcnew System::Windows::Forms::CheckBox());
@@ -162,6 +174,10 @@ namespace GraspMMIColumbus {
 			this->coda1GroupBox = (gcnew System::Windows::Forms::GroupBox());
 			this->coda1Panel = (gcnew System::Windows::Forms::Panel());
 			this->openGraspTrajectory = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->printButton = (gcnew System::Windows::Forms::Button());
+			this->screenshotFolderDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->selectScreenshotButton = (gcnew System::Windows::Forms::Button());
+			this->loadingLabel = (gcnew System::Windows::Forms::Label());
 			this->endconeGroupBox->SuspendLayout();
 			this->topGroupBox->SuspendLayout();
 			this->nodeGroupBox->SuspendLayout();
@@ -271,14 +287,14 @@ namespace GraspMMIColumbus {
 			this->configurationGroupBox->Controls->Add(this->gripSeatedButton);
 			this->configurationGroupBox->Location = System::Drawing::Point(12, 12);
 			this->configurationGroupBox->Name = L"configurationGroupBox";
-			this->configurationGroupBox->Size = System::Drawing::Size(153, 553);
+			this->configurationGroupBox->Size = System::Drawing::Size(153, 371);
 			this->configurationGroupBox->TabIndex = 4;
 			this->configurationGroupBox->TabStop = false;
 			this->configurationGroupBox->Text = L"Configuration";
 			// 
 			// loadGraspTrajectoryButton
 			// 
-			this->loadGraspTrajectoryButton->Location = System::Drawing::Point(6, 310);
+			this->loadGraspTrajectoryButton->Location = System::Drawing::Point(6, 289);
 			this->loadGraspTrajectoryButton->Name = L"loadGraspTrajectoryButton";
 			this->loadGraspTrajectoryButton->Size = System::Drawing::Size(139, 47);
 			this->loadGraspTrajectoryButton->TabIndex = 11;
@@ -291,7 +307,7 @@ namespace GraspMMIColumbus {
 			this->nominalCodaCheckBox->AutoSize = true;
 			this->nominalCodaCheckBox->Checked = true;
 			this->nominalCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->nominalCodaCheckBox->Location = System::Drawing::Point(6, 485);
+			this->nominalCodaCheckBox->Location = System::Drawing::Point(13, 345);
 			this->nominalCodaCheckBox->Name = L"nominalCodaCheckBox";
 			this->nominalCodaCheckBox->Size = System::Drawing::Size(132, 17);
 			this->nominalCodaCheckBox->TabIndex = 11;
@@ -304,7 +320,7 @@ namespace GraspMMIColumbus {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(14, 180);
+			this->label2->Location = System::Drawing::Point(14, 159);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(49, 13);
 			this->label2->TabIndex = 5;
@@ -312,7 +328,7 @@ namespace GraspMMIColumbus {
 			// 
 			// loadGraspButton
 			// 
-			this->loadGraspButton->Location = System::Drawing::Point(6, 257);
+			this->loadGraspButton->Location = System::Drawing::Point(6, 236);
 			this->loadGraspButton->Name = L"loadGraspButton";
 			this->loadGraspButton->Size = System::Drawing::Size(139, 47);
 			this->loadGraspButton->TabIndex = 10;
@@ -323,7 +339,7 @@ namespace GraspMMIColumbus {
 			// graspFreefloatingButton
 			// 
 			this->graspFreefloatingButton->AutoSize = true;
-			this->graspFreefloatingButton->Location = System::Drawing::Point(27, 230);
+			this->graspFreefloatingButton->Location = System::Drawing::Point(27, 209);
 			this->graspFreefloatingButton->Name = L"graspFreefloatingButton";
 			this->graspFreefloatingButton->Size = System::Drawing::Size(80, 17);
 			this->graspFreefloatingButton->TabIndex = 4;
@@ -345,7 +361,7 @@ namespace GraspMMIColumbus {
 			// graspSeatedButton
 			// 
 			this->graspSeatedButton->AutoSize = true;
-			this->graspSeatedButton->Location = System::Drawing::Point(27, 203);
+			this->graspSeatedButton->Location = System::Drawing::Point(27, 182);
 			this->graspSeatedButton->Name = L"graspSeatedButton";
 			this->graspSeatedButton->Size = System::Drawing::Size(59, 17);
 			this->graspSeatedButton->TabIndex = 3;
@@ -391,21 +407,72 @@ namespace GraspMMIColumbus {
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->threshold992RadioButton);
+			this->groupBox2->Controls->Add(this->threshold980RadioButton);
+			this->groupBox2->Controls->Add(this->proximityCheckBox);
+			this->groupBox2->Controls->Add(this->tracerCheckBox);
 			this->groupBox2->Controls->Add(this->axesCheckBox);
 			this->groupBox2->Controls->Add(this->bodyCheckBox);
 			this->groupBox2->Controls->Add(this->tabletCheckBox);
 			this->groupBox2->Controls->Add(this->markerStructureCheckBox);
-			this->groupBox2->Location = System::Drawing::Point(12, 571);
+			this->groupBox2->Location = System::Drawing::Point(12, 389);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(153, 126);
+			this->groupBox2->Size = System::Drawing::Size(153, 226);
 			this->groupBox2->TabIndex = 5;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Objects";
 			// 
+			// threshold992RadioButton
+			// 
+			this->threshold992RadioButton->AutoSize = true;
+			this->threshold992RadioButton->Checked = true;
+			this->threshold992RadioButton->Location = System::Drawing::Point(40, 180);
+			this->threshold992RadioButton->Name = L"threshold992RadioButton";
+			this->threshold992RadioButton->Size = System::Drawing::Size(52, 17);
+			this->threshold992RadioButton->TabIndex = 7;
+			this->threshold992RadioButton->TabStop = true;
+			this->threshold992RadioButton->Text = L"0.992";
+			this->threshold992RadioButton->UseVisualStyleBackColor = true;
+			this->threshold992RadioButton->Click += gcnew System::EventHandler(this, &GraspMMIColumbusForm::Button_Click);
+			// 
+			// threshold980RadioButton
+			// 
+			this->threshold980RadioButton->AutoSize = true;
+			this->threshold980RadioButton->Location = System::Drawing::Point(40, 157);
+			this->threshold980RadioButton->Name = L"threshold980RadioButton";
+			this->threshold980RadioButton->Size = System::Drawing::Size(52, 17);
+			this->threshold980RadioButton->TabIndex = 6;
+			this->threshold980RadioButton->TabStop = true;
+			this->threshold980RadioButton->Text = L"0.980";
+			this->threshold980RadioButton->UseVisualStyleBackColor = true;
+			this->threshold980RadioButton->Click += gcnew System::EventHandler(this, &GraspMMIColumbusForm::Button_Click);
+			// 
+			// proximityCheckBox
+			// 
+			this->proximityCheckBox->AutoSize = true;
+			this->proximityCheckBox->Location = System::Drawing::Point(17, 138);
+			this->proximityCheckBox->Name = L"proximityCheckBox";
+			this->proximityCheckBox->Size = System::Drawing::Size(109, 17);
+			this->proximityCheckBox->TabIndex = 5;
+			this->proximityCheckBox->Text = L"Proximity Spheres";
+			this->proximityCheckBox->UseVisualStyleBackColor = true;
+			this->proximityCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::Button_Click);
+			// 
+			// tracerCheckBox
+			// 
+			this->tracerCheckBox->AutoSize = true;
+			this->tracerCheckBox->Location = System::Drawing::Point(17, 116);
+			this->tracerCheckBox->Name = L"tracerCheckBox";
+			this->tracerCheckBox->Size = System::Drawing::Size(98, 17);
+			this->tracerCheckBox->TabIndex = 4;
+			this->tracerCheckBox->Text = L"Marker Tracers";
+			this->tracerCheckBox->UseVisualStyleBackColor = true;
+			this->tracerCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::Button_Click);
+			// 
 			// axesCheckBox
 			// 
 			this->axesCheckBox->AutoSize = true;
-			this->axesCheckBox->Location = System::Drawing::Point(16, 97);
+			this->axesCheckBox->Location = System::Drawing::Point(16, 94);
 			this->axesCheckBox->Name = L"axesCheckBox";
 			this->axesCheckBox->Size = System::Drawing::Size(134, 17);
 			this->axesCheckBox->TabIndex = 3;
@@ -416,7 +483,7 @@ namespace GraspMMIColumbus {
 			// bodyCheckBox
 			// 
 			this->bodyCheckBox->AutoSize = true;
-			this->bodyCheckBox->Location = System::Drawing::Point(16, 74);
+			this->bodyCheckBox->Location = System::Drawing::Point(16, 72);
 			this->bodyCheckBox->Name = L"bodyCheckBox";
 			this->bodyCheckBox->Size = System::Drawing::Size(103, 17);
 			this->bodyCheckBox->TabIndex = 2;
@@ -427,7 +494,7 @@ namespace GraspMMIColumbus {
 			// tabletCheckBox
 			// 
 			this->tabletCheckBox->AutoSize = true;
-			this->tabletCheckBox->Location = System::Drawing::Point(16, 51);
+			this->tabletCheckBox->Location = System::Drawing::Point(16, 50);
 			this->tabletCheckBox->Name = L"tabletCheckBox";
 			this->tabletCheckBox->Size = System::Drawing::Size(85, 17);
 			this->tabletCheckBox->TabIndex = 1;
@@ -503,11 +570,49 @@ namespace GraspMMIColumbus {
 			this->openGraspTrajectory->DefaultExt = L"pse";
 			this->openGraspTrajectory->Filter = L"PSE Files|*.pse|All Files|*.*";
 			// 
+			// printButton
+			// 
+			this->printButton->Location = System::Drawing::Point(26, 661);
+			this->printButton->Name = L"printButton";
+			this->printButton->Size = System::Drawing::Size(101, 33);
+			this->printButton->TabIndex = 6;
+			this->printButton->Text = L"Save";
+			this->printButton->UseVisualStyleBackColor = true;
+			this->printButton->Click += gcnew System::EventHandler(this, &GraspMMIColumbusForm::button1_Click);
+			// 
+			// selectScreenshotButton
+			// 
+			this->selectScreenshotButton->Location = System::Drawing::Point(26, 621);
+			this->selectScreenshotButton->Name = L"selectScreenshotButton";
+			this->selectScreenshotButton->Size = System::Drawing::Size(101, 33);
+			this->selectScreenshotButton->TabIndex = 7;
+			this->selectScreenshotButton->Text = L"Screeshot Folder";
+			this->selectScreenshotButton->UseVisualStyleBackColor = true;
+			this->selectScreenshotButton->Click += gcnew System::EventHandler(this, &GraspMMIColumbusForm::selectScreenshotButton_Click);
+			// 
+			// loadingLabel
+			// 
+			this->loadingLabel->Anchor = System::Windows::Forms::AnchorStyles::Top;
+			this->loadingLabel->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->loadingLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->loadingLabel->ForeColor = System::Drawing::Color::Red;
+			this->loadingLabel->Location = System::Drawing::Point(420, 300);
+			this->loadingLabel->Name = L"loadingLabel";
+			this->loadingLabel->Size = System::Drawing::Size(800, 200);
+			this->loadingLabel->TabIndex = 8;
+			this->loadingLabel->Text = L"Loading Trajectory";
+			this->loadingLabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->loadingLabel->Visible = false;
+			// 
 			// GraspMMIColumbusForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1438, 717);
+			this->Controls->Add(this->loadingLabel);
+			this->Controls->Add(this->selectScreenshotButton);
+			this->Controls->Add(this->printButton);
 			this->Controls->Add(this->coda1GroupBox);
 			this->Controls->Add(this->coda0GroupBox);
 			this->Controls->Add(this->groupBox2);
@@ -545,7 +650,7 @@ namespace GraspMMIColumbus {
 		String^ TrajectoryFilename;
 
 		OpenGLWindow *topWindow, *sideWindow, *endconeWindow, *nodeWindow, *coda0Window, *coda1Window;
-		Viewpoint *topViewpoint, *sideViewpoint, *endconeViewpoint, *nodeViewpoint, *coda0Viewpoint, *coda1Viewpoint;
+		Viewpoint *topViewpoint, *sideViewpoint, *endconeViewpoint, *nodeViewpoint, **codaViewpoint;
 		OrthoViewpoint *sideOrthoViewpoint, *topOrthoViewpoint;
 
 		// A class that provides methods for making a lot of the 
@@ -566,10 +671,13 @@ namespace GraspMMIColumbus {
 		Cylinder *handEmissionCone;
 		Cylinder *hmdEmissionCone;
 
-		Assembly **tracers;
+		Assembly *tracers;
+		Assembly **tracer;
 		Cord  ***hmdPath;
 		Cord  ***handPath;
 		Cord  ***chestPath;
+
+		Sphere **proximitySphere;
 
 		// Bars showing the canonical axes.
 		Assembly *axes;
@@ -607,6 +715,9 @@ namespace GraspMMIColumbus {
 		// When the form is show, create all of the graphical objects.
 		System::Void GraspMMIColumbusForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 
+			AlignmentFilename = "(none)";
+			TrajectoryFilename = "(none)";
+
 			// Create the required OpenGLWindows each linked to a pane in the Form.
 			sideWindow = CreateOpenGLWindowInForm( sidePanel );
 			topWindow = CreateOpenGLWindowInForm( topPanel );
@@ -620,9 +731,6 @@ namespace GraspMMIColumbus {
 			topViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 15000.0);
 			topViewpoint->SetPosition( 0.0, 6000.0, 0.0 );
 			topViewpoint->SetOrientation( 90.0, 90.0, 0.0 );
-
-			coda0Viewpoint = new Viewpoint( 6.0, 45.0, 10.0, 15000.0);
-			coda1Viewpoint = new Viewpoint( 6.0, 45.0, 10.0, 15000.0);
 
 			topOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000 );
 			topOrthoViewpoint->SetPosition( 0.0, 6000.0, 0.0 );
@@ -676,13 +784,38 @@ namespace GraspMMIColumbus {
 			renderer->PlaceVRObjects();
 			renderer->CreateAuxiliaryObjects();
 
+
 			// VR Objects to represent the marker structures.
 			hmd = renderer->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
 			hand = renderer->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chest = renderer->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
 
-			tracers = (Assembly **) calloc( MAX_UNITS, sizeof( *tracers ) );
-			for ( int unit = 0; unit < MAX_UNITS; unit++ ) tracers[unit] = new Assembly();
+			// Create viewpoins that look at Columbus from the point of view of the CODA.
+			// When a CODA is at the null orientation (according to it's internal alignment
+			// transformations, it is looking down the positive Y axis, but in the OpenGL
+			// system, the null orientation is looking down the negative Z axis. To make it
+			// so that we can apply the orientation reported by the CODA system directly, we
+			// apply an 'attitude' to the viewpoint. This is the same attitude set for the 
+			// graphical representation of the coda (see GraspGLObjects). 
+			codaViewpoint = (Viewpoint **) calloc( MAX_UNITS, sizeof( *codaViewpoint ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				codaViewpoint[unit] =  new Viewpoint( 6.0, 85.0, 10.0, 15000.0);
+				codaViewpoint[unit]->SetAttitude( renderer->coda[0]->attitude );
+				codaViewpoint[unit]->SetOffset( renderer->coda[0]->offset );
+			}
+
+			// Add a sphere showing the exclusion zone for each coda.
+			proximitySphere = (Sphere **) calloc( MAX_UNITS, sizeof( *proximitySphere ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				proximitySphere[unit] = new Sphere( codaMinimumDistance980 );
+				renderer->coda[unit]->AddComponent( proximitySphere[unit] );
+			}
+			proximitySphere[0]->SetColor( 1.0, 0.3, 0.3, 0.07 );
+			proximitySphere[1]->SetColor( 0.3, 0.3, 1.0, 0.07 );
+
+			tracers = new Assembly();
+			tracer = (Assembly **) calloc( MAX_UNITS, sizeof( *tracer ) );
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) tracer[unit] = new Assembly();
 
 			hmdPath = (Cord ***) calloc( MAX_UNITS, sizeof( **hmdPath ) );
 			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
@@ -690,7 +823,8 @@ namespace GraspMMIColumbus {
 				for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
 					hmdPath[unit][i] = new Cord();
 					hmdPath[unit][i]->SetColor( unit == 0 ? RED : MAGENTA );
-					tracers[unit]->AddComponent( hmdPath[unit][i] );
+					tracer[unit]->AddComponent( hmdPath[unit][i] );
+					tracers->AddComponent( tracer[unit] );
 				}
 			}
 
@@ -700,7 +834,8 @@ namespace GraspMMIColumbus {
 				for ( int i = 0; i < hand->nModelMarkers; i++ ) {
 					handPath[unit][i] = new Cord();
 					handPath[unit][i]->SetColor( unit == 0 ? GREEN : YELLOW );
-					tracers[unit]->AddComponent( handPath[unit][i] );
+					tracer[unit]->AddComponent( handPath[unit][i] );
+					tracers->AddComponent( tracer[unit] );
 				}
 			}
 
@@ -710,7 +845,8 @@ namespace GraspMMIColumbus {
 				for ( int i = 0; i < hmd->nModelMarkers; i++ ) {
 					chestPath[unit][i] = new Cord();
 					chestPath[unit][i]->SetColor( unit == 0 ? BLUE : CYAN );
-					tracers[unit]->AddComponent( chestPath[unit][i] );
+					tracer[unit]->AddComponent( chestPath[unit][i] );
+					tracers->AddComponent( tracer[unit] );
 				}
 			}
 
@@ -800,7 +936,7 @@ namespace GraspMMIColumbus {
 			ensemble->AddComponent( tablet );
 			ensemble->AddComponent( renderer->head );
 			ensemble->AddComponent( renderer->torso );
-			for (int unit = 0; unit < MAX_UNITS; unit++ ) ensemble->AddComponent( tracers[unit] );
+			ensemble->AddComponent( tracers );
 
 			hmd->Disable();
 			hand->Disable();
@@ -880,6 +1016,7 @@ namespace GraspMMIColumbus {
 					renderer->coda[0]->SetOrientation( codaOrientationGripSeated[0] );
 					renderer->coda[1]->SetPosition( codaPositionGripSeated[1] );
 					renderer->coda[1]->SetOrientation( codaOrientationGripSeated[1] );
+					AlignmentFilename = "(Nominal GRIP Seated)";
 				}
 			}
 			else if ( gripSupineButton->Checked ) {
@@ -891,6 +1028,7 @@ namespace GraspMMIColumbus {
 					renderer->coda[0]->SetOrientation( codaOrientationGripSupine[0] );
 					renderer->coda[1]->SetPosition( codaPositionGripSupine[1] );
 					renderer->coda[1]->SetOrientation( codaOrientationGripSupine[1] );
+					AlignmentFilename = "(Nominal GRIP Supine)";
 				}
 			}
 			else if ( graspSeatedButton->Checked ) {
@@ -902,6 +1040,7 @@ namespace GraspMMIColumbus {
 					renderer->coda[0]->SetOrientation( codaOrientationGraspSeated[0] );
 					renderer->coda[1]->SetPosition( codaPositionGraspSeated[1] );
 					renderer->coda[1]->SetOrientation( codaOrientationGraspSeated[1] );
+					AlignmentFilename = "(Nominal GRASP Seated)";
 				}
 			}
 			else if ( graspFreefloatingButton->Checked ) {
@@ -916,7 +1055,7 @@ namespace GraspMMIColumbus {
 					renderer->coda[0]->SetOrientation( codaOrientationGraspFloating[0] );
 					renderer->coda[1]->SetPosition( codaPositionGraspFloating[1] );
 					renderer->coda[1]->SetOrientation( codaOrientationGraspFloating[1] );
-
+					AlignmentFilename = "(Nominal GRASP Freefloating)";
 				}
 			}
 
@@ -946,6 +1085,16 @@ namespace GraspMMIColumbus {
 			if ( axesCheckBox->Checked ) axes->Enable();
 			else axes->Disable();
 
+			if ( tracerCheckBox->Checked ) tracers->Enable();
+			else tracers->Disable();
+
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+				if ( proximityCheckBox->Checked ) proximitySphere[unit]->Enable();
+				else proximitySphere[unit]->Disable();
+				if ( threshold980RadioButton->Checked ) proximitySphere[unit]->SetRadius( codaMinimumDistance980 );
+				else proximitySphere[unit]->SetRadius( codaMinimumDistance992 );
+			}
+
 			// This is a hack. The cone looks better for certain roll orientations.
 			handEmissionCone->SetAttitude( 0.0, 0.0, 0.0 );
 			handEmissionCone->Enable();
@@ -955,23 +1104,28 @@ namespace GraspMMIColumbus {
 			handEmissionCone->SetAttitude( 90.0, 0.0, 0.0 );
 			RenderWindow( sideWindow, sideOrthoViewpoint );
 
+			// Don't draw the proximity spheres in any other view.
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) proximitySphere[unit]->Disable();
+
 			// Another hack. Don't draw the cone when looking from either end.
 			handEmissionCone->Disable();
 			RenderWindow( endconeWindow, endconeViewpoint );
 			RenderWindow( nodeWindow, nodeViewpoint );
 
 			renderer->coda[0]->Disable();
-			tracers[1]->Disable();
-			LookAtFrom( coda0Viewpoint, vm->zeroVector, renderer->coda[0]->position, up );
-			RenderWindowLocal( coda0Window, coda0Viewpoint );
-			tracers[1]->Enable();
+			tracer[1]->Disable();
+			codaViewpoint[0]->SetPosition( renderer->coda[0]->position );
+			codaViewpoint[0]->SetOrientation( renderer->coda[0]->orientation );
+			RenderWindowLocal( coda0Window, codaViewpoint[0] );
+			tracer[1]->Enable();
 			renderer->coda[0]->Enable();
 
 			renderer->coda[1]->Disable();
-			tracers[0]->Disable();
-			LookAtFrom( coda1Viewpoint, vm->zeroVector, renderer->coda[1]->position, up );
-			RenderWindowLocal( coda1Window, coda1Viewpoint );
-			tracers[0]->Enable();
+			tracer[0]->Disable();
+			codaViewpoint[1]->SetPosition( renderer->coda[1]->position );
+			codaViewpoint[1]->SetOrientation( renderer->coda[1]->orientation );
+			RenderWindowLocal( coda1Window, codaViewpoint[1] );
+			tracer[0]->Enable();
 			renderer->coda[1]->Enable();
 
 			Text = AlignmentFilename + " | " + TrajectoryFilename;
@@ -979,9 +1133,10 @@ namespace GraspMMIColumbus {
 		}
 
 
-		// Read one line of a GRIP alignment record, containing the alignment for one CODA.
-		// It is used below to read the contents of the file that contains both alignments.
 	private: System::Void ReadSingleGripCodaAlignment( FILE *fp, int unit ) {
+
+				 // Read one line of a GRIP alignment record, containing the alignment for one CODA.
+				 // It is used below to read the contents of the file that contains both alignments.
 
 				 PsyPhy::Matrix3x3	R;
 				 PsyPhy::Vector3	p;
@@ -1001,8 +1156,9 @@ namespace GraspMMIColumbus {
 				 renderer->coda[unit]->SetOrientation( R );
 			 }
 
-			 // Read a file containing the CODA alignment transformations sent by GRIP.
 	private: System::Void LoadGripCodaAlignment( void ) {
+
+				 // Read a file containing the CODA alignment transformations sent by GRIP.
 
 				 openGripAlignment->ShowDialog();
 
@@ -1023,12 +1179,14 @@ namespace GraspMMIColumbus {
 					 fclose( fp );
 				 }
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
-				 AlignmentFilename = openGripAlignment->FileName;
+				 AlignmentFilename = openGripAlignment->SafeFileName;
 				 nominalCodaCheckBox->Checked = false;
 
 			 }
 
 	private: System::Void LoadGraspCodaAlignment ( void ) {
+
+				 // Read a file containing the CODA alignment transformations stored by GRASP.
 
 				 openGraspAlignment->ShowDialog();
 
@@ -1076,11 +1234,7 @@ namespace GraspMMIColumbus {
 				 }
 				 System::Runtime::InteropServices::Marshal::FreeHGlobal( IntPtr( path ) );
 				 nominalCodaCheckBox->Checked = false;
-				 AlignmentFilename = openGraspAlignment->FileName;
-			 }
-
-	private: System::Void GraspMMIColumbusForm_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
-				 Render();
+				 AlignmentFilename = openGraspAlignment->SafeFileName;
 			 }
 
 	private: System::Void loadGripButton_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1107,6 +1261,7 @@ namespace GraspMMIColumbus {
 	private: System::Void Button_Click(System::Object^  sender, System::EventArgs^  e) {
 				 Render();
 			 }
+
 	private: System::Void gripSeatedButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 tabletCheckBox->Checked = true;
 				 markerStructureCheckBox->Checked = false;
@@ -1131,6 +1286,9 @@ namespace GraspMMIColumbus {
 	private: System::Void loadGraspTrajectoryButton_Click(System::Object^  sender, System::EventArgs^  e) {
 				 openGraspTrajectory->ShowDialog();
 
+				 loadingLabel->Visible = true;
+				 Refresh();
+
 				 char *path = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( openGraspTrajectory->FileName ).ToPointer();
 				 FILE *fp = fopen( path, "r" );
 				 if ( !fp ) {
@@ -1153,7 +1311,11 @@ namespace GraspMMIColumbus {
 						 chestPath[unit][i]->Load( graspData->visibleMarker[unit][chest->modelMarker[i].id], graspData->nVisibleSamples[unit][chest->modelMarker[i].id] );
 					 }
 				 }
-				 TrajectoryFilename = openGraspTrajectory->FileName;
+				 TrajectoryFilename = openGraspTrajectory->SafeFileName;
+				 markerStructureCheckBox->Checked = false;
+				 tracerCheckBox->Checked = true;
+				 loadingLabel->Visible = false;
+
 				 Render();
 
 			 }
@@ -1188,6 +1350,9 @@ namespace GraspMMIColumbus {
 				 this->nodeGroupBox->Location = System::Drawing::Point( x, lower );
 			 }
 
+	private: System::Void GraspMMIColumbusForm_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+				 Render();
+			 }
 	private: System::Void GraspMMIColumbusForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 				 LayoutVR();
 			 }
@@ -1242,30 +1407,45 @@ namespace GraspMMIColumbus {
 		}
 
 
-	protected: virtual void WndProc(Message% m) override {
-				   // The following is a real kludge.
-				   // When the Form gets maximized and then restored, my VR windows don't full redraw. 
-				   // I don't know why. But if the Form is minimized and then restored, they redraw
-				   // just fine. So what I do here is that I intercept the restore event. If the current
-				   // state is maximized, I return it to Normal, then minimize and then restore again.
-				   // This makes my VR windows redraw after returning from maximized.
+	//protected: virtual void WndProc(Message% m) override {
+	//			   // The following is a real kludge.
+	//			   // When the Form gets maximized and then restored, my VR windows don't full redraw. 
+	//			   // I don't know why. But if the Form is minimized and then restored, they redraw
+	//			   // just fine. So what I do here is that I intercept the restore event. If the current
+	//			   // state is maximized, I return it to Normal, then minimize and then restore again.
+	//			   // This makes my VR windows redraw after returning from maximized.
 
-				   if( m.Msg == 0x0112 ) // WM_SYSCOMMAND
-				   {
-					   // Check your window state here
-					   if (m.WParam == IntPtr( SC_RESTORE ) ) 
-					   {
-						   if ( WindowState == FormWindowState::Maximized ) {
-							   WindowState = FormWindowState::Normal;
-							   Form::WndProc(m);
-							   WindowState = FormWindowState::Minimized;
-							   Form::WndProc(m);
-						   }
-					   }
-				   }
-				   Form::WndProc(m);
-			   }
+	//			   if( m.Msg == 0x0112 ) // WM_SYSCOMMAND
+	//			   {
+	//				   // Check your window state here
+	//				   if (m.WParam == IntPtr( SC_RESTORE ) ) 
+	//				   {
+	//					   if ( WindowState == FormWindowState::Maximized ) {
+	//						   WindowState = FormWindowState::Normal;
+	//						   Form::WndProc(m);
+	//						   WindowState = FormWindowState::Minimized;
+	//						   Form::WndProc(m);
+	//					   }
+	//				   }
+	//			   }
+	//			   Form::WndProc(m);
+	//		   }
 
+	private: 
+
+		Bitmap^ memoryImage;
+		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+
+			Graphics^ myGraphics = this->CreateGraphics();
+			memoryImage = gcnew Bitmap(this->Size.Width, this->Size.Height, myGraphics);
+			Graphics^ memoryGraphics = Graphics::FromImage( memoryImage );
+			memoryGraphics->CopyFromScreen( this->Location.X, this->Location.Y, 0, 0, this->Size );
+			memoryImage->Save( screenshotFolderDialog->SelectedPath + "\\" + TrajectoryFilename->Replace( ".dat", ".png" ) );
+
+		}
+		System::Void selectScreenshotButton_Click(System::Object^  sender, System::EventArgs^  e) {
+			screenshotFolderDialog->ShowDialog();
+		}
 	};
 }
 

@@ -800,8 +800,8 @@ void GraspGLObjects::CreateAuxiliaryObjects( void ) {
 	chestStructure = CreateChestMarkerStructure( "Bdy\\CADChest.bdy" );
 	chestStructure->SetPosition( 0.0, 0.0, -500.0 );
 
-	coda[0] = CreateCodaBar( .5, .4, .4 );
-	coda[1] = CreateCodaBar( .4, .4, .6 );
+	coda[0] = CreateCodaBar( .5, .1, .1 );
+	coda[1] = CreateCodaBar( .1, .1, .6 );
 	codas = new Assembly;
 	codas->AddComponent( coda[0] );
 	codas->AddComponent( coda[1] );
