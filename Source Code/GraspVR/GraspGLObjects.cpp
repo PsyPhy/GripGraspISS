@@ -54,7 +54,6 @@ const double GraspGLObjects::reference_bar_facets = 8;
 const Vector3 GraspGLObjects::head_shape = { 100.0, 150.0, 125.0 };
 // Torso shape is a slab with width, height and thickness.
 const Vector3 GraspGLObjects::torso_shape = { 250.0, 300.0, 125.0 };
-const Vector3 GraspGLObjects::coda_shape = { 800.0, 100.0, 80.0 };
 
 
 // This is where spinning prompts go.
@@ -762,27 +761,11 @@ Assembly *GraspGLObjects::CreateTorso( void ) {
 
 }
 
-Assembly *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
+Coda *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
 
-	Assembly *coda = new Assembly();
-	Slab *slab = new Slab( coda_shape[X], coda_shape[Y], coda_shape[Z] );
-	slab->SetColor( r, g, b, 1.0 );
-	coda->AddComponent( slab );
-	for ( int lens = 0; lens < 3; lens ++ ) {
-		slab = new Slab( coda_shape[X] / 10.0, coda_shape[Y] * 0.8, coda_shape[Z] / 10.0 );
-		slab->SetPosition( ( lens - 1 ) * 0.4 * coda_shape[X], 0.0, - coda_shape[Z]/ 2.0 );
-		slab->SetOrientation( 0.0, 0.0, 0.0 );
-		slab->SetColor( lens + 1 );
-		coda->AddComponent( slab );
-	}
-	//coda->SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
-	//coda->SetAttitude( 0.0, -90.0, 0.0 );
-
-	coda->SetAttitude( 180.0, - 90.0, 0.0 );
-	coda->SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
-
+	Coda *coda = new Coda();
+	coda->SetColor( r, g, b );
 	return coda;
-
 }
 
 
@@ -1121,6 +1104,43 @@ void FuzzyPointer::Draw( void ) {
 		sphere[beam]->SetOrientation( angle, 0.0, 0.0 );
 	}
 	Assembly::Draw();
+}
+
+
+const Vector3 Coda::coda_shape = { 800.0, 100.0, 80.0 };
+Coda::Coda( void ) {
+
+	bar = new Assembly();
+
+	Slab *slab = new Slab( coda_shape[X], coda_shape[Y], coda_shape[Z] );
+	bar->AddComponent( slab );
+	for ( int lens = 0; lens < 3; lens ++ ) {
+		slab = new Slab( coda_shape[X] / 10.0, coda_shape[Y] * 0.8, coda_shape[Z] / 10.0 );
+		slab->SetPosition( ( lens - 1 ) * 0.4 * coda_shape[X], 0.0, - coda_shape[Z]/ 2.0 );
+		slab->SetOrientation( 0.0, 0.0, 0.0 );
+		slab->SetColor( lens + 1 );
+		bar->AddComponent( slab );
+	}
+	AddComponent( bar );
+
+	proximity = new Sphere( 1800.0 );
+	AddComponent( proximity );
+
+	// Make the ray length negative so that it shoots out the front of the CODA.
+	ray = new Ray( - 2400.0 );
+	ray->SetColor( GREEN );
+	AddComponent( ray );
+
+	fov = new WindowFrame( 3900.0, 4200.0, 50.0 );
+	fov->SetColor( RED );
+	fov->SetPosition( 0.0, 0.0, -3000.0 );
+	AddComponent( fov );
+	fov->Disable();
+
+	SetAttitude( 180.0, - 90.0, 0.0 );
+	SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
+
+
 }
 
 

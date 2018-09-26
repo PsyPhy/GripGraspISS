@@ -160,6 +160,36 @@ void OpenGLObject::SetPose( Pose &pose ) {
 	SetOrientation( pose.orientation );
 }
 
+//void OpenGLObject::PointAt( const Vector3 target, const Vector3 up ) {
+//
+//	Matrix3x3 back;
+//
+//	// Point an object at a location;
+//	SubtractVectors( back[Z], position, target );
+//	NormalizeVector( back[Z] );
+//	ComputeCrossProduct( back[X], up, back[Z] );
+//	NormalizeVector( back[X] );
+//	ComputeCrossProduct( back[Y], back[Z], back[X] );
+//	NormalizeVector( back[Y] );
+//	SetOrientation( back );
+//
+//}
+
+void OpenGLObject::PointYAt( const Vector3 target, const Vector3 up ) {
+
+	Matrix3x3 back;
+
+	// Point an object at a location;
+	SubtractVectors( back[Y], target, position );
+	NormalizeVector( back[Y] );
+	ComputeCrossProduct( back[X], up, back[Y] );
+	NormalizeVector( back[X] );
+	ComputeCrossProduct( back[Z], back[X], back[Y] );
+	NormalizeVector( back[Z] );
+	SetOrientation( back );
+
+}
+
 // Set the attitude of an object when it is at it's zero orientation.
 
 void OpenGLObject::SetAttitude( Matrix3x3 m ) {
@@ -1650,9 +1680,6 @@ int Cord::Cut( double resolution  ) {
 }
 
 
-
-
-
 void Cord::Draw( void ) {
 
 	if ( ! enabled || n_vertices < 2 ) return;
@@ -1665,5 +1692,18 @@ void Cord::Draw( void ) {
 	}
 
 	glEnd();
+	FinishDraw();
+}
+
+void Ray::Draw( void ) {
+
+	if ( ! enabled ) return;
+	PrepDraw();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex3d( 0.0, 0.0, 0.0  );
+	glVertex3d( 0.0, 0.0, length );
+	glEnd();
+
 	FinishDraw();
 }

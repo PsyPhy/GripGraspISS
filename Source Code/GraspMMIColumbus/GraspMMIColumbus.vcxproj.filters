@@ -50,6 +50,12 @@
     <ClInclude Include="GraspData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GripGLObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GripData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

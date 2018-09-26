@@ -89,6 +89,9 @@ public:
 
   virtual void SetPose( Pose &pose );
 
+  void PointAt( const Vector3 target, Vector3 const up );
+  void PointYAt( const Vector3 target, Vector3 const up );
+
   void	SetAttitude( const Quaternion q );
   void  SetAttitude( Matrix3x3 m );
   void  SetAttitude( double angle, const Vector3 axis );
@@ -162,6 +165,24 @@ public:
 /*
  * Some basic 3D shapes.
  */
+
+//---------------------------------------------------------------------------
+
+class Ray : public OpenGLObject {
+
+private:
+
+protected:
+
+public:
+
+  double		length;
+  Ray( double length = 1.0  ) {
+	  this->length = length;
+  };
+  void  Draw();
+
+};
 
 //---------------------------------------------------------------------------
 

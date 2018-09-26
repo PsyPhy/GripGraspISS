@@ -1,0 +1,75 @@
+#pragma once
+
+#include "../Useful/Useful.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/fOutputDebugString.h"
+#include "../VectorsMixin/VectorsMixin.h"
+#include "../Useful/OpenGLUseful.h"
+
+#include "../OpenGLObjects/OpenGLColors.h"
+#include "../OpenGLObjects/OpenGLWindows.h"
+#include "../OpenGLObjects/OpenGLObjects.h"
+#include "../OpenGLObjects/OpenGLViewpoints.h"
+#include "../OpenGLObjects/OpenGLTextures.h"
+#include "../OpenGLObjects/OpenGLWindowsInForms.h"
+
+#include "../Trackers/CodaRTnetTracker.h"
+#include "../Trackers/CodaRTnetDaemonTracker.h"
+#include "../Trackers/CodaPoseTracker.h"
+
+#include "GraspData.h"
+
+
+namespace PsyPhy {
+
+	using namespace PsyPhy;
+	using namespace Grasp;
+
+	double tablet_width = 500.0;
+	double tablet_length = 500.0;
+	double tablet_thickness = 100.0;
+
+	GLfloat tablet_color[4] = { .5f, .35f, .25f, 1.0f };
+	GLfloat phantom_tablet_color[4] = { .25f, .85f, .25f, 0.25f };
+
+	public class GripTablet : public Assembly {
+
+	public:
+
+		GripTablet( void ) {
+
+			// Create objects to represent the GRIP hardware.
+			Slab *slab;
+			slab = new Slab( tablet_width / 2.0, tablet_length, 0.75 * tablet_thickness );
+			slab->SetPosition( 0.265 * tablet_width, 0.0,  tablet_thickness / 2.0 );
+			AddComponent( slab );
+			slab = new Slab( tablet_width / 2.0, tablet_length, tablet_thickness );
+			slab->SetPosition( - 0.265 * tablet_width, 0.0, 0.0 );
+			AddComponent( slab );
+
+			Assembly *mast = new Assembly();
+			Sphere *target;
+			double mast_width = 25.0;
+			double mast_height = 600.0;
+			slab = new Slab( mast_width, mast_width, mast_height );
+			slab->SetPosition( 0.0, 0.0, mast_height / 2.0 + tablet_thickness / 2.0 );
+			mast->AddComponent( slab );
+			for ( int i = 0; i < 11; i++ ) {
+				target = new Sphere( 10.0 );
+				target->SetColor( Translucid( RED ) );
+				target->SetPosition( 0.0, mast_width, i * 50.0 + 100.0 );
+				mast->AddComponent( target );
+			}
+			mast->SetPosition( - 0.45 * tablet_width, - 0.20 * tablet_length, 0.0 );
+			AddComponent( mast );
+			SetAttitude( 0.0, 90.0, 0.0 );
+			SetOffset( tablet_width / 2.0, - tablet_thickness / 2.0, - tablet_length / 2.0 );
+			SetColor( tablet_color );
+
+		}
+	};
+
+
+
+}
+

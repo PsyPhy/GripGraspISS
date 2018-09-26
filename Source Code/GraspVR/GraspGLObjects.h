@@ -38,6 +38,23 @@ namespace Grasp {
 #define LASER_DIFFUSION_CONSTANT 1.0
 #define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.99
 
+	class Coda : public PsyPhy::Assembly {
+
+	private:
+
+		static const Vector3 coda_shape;
+
+	public:
+
+		Assembly	*bar;
+		Ray			*ray;
+		Sphere		*proximity;
+		WindowFrame	*fov;
+
+		Coda( void );
+
+	};
+
 	class FuzzyPointer : public PsyPhy::Assembly {
 	public:
 		Disk *sphere[LASER_BEAMS];
@@ -103,7 +120,6 @@ namespace Grasp {
 		// Dimensions of objects in the room.
 		static const Vector3 head_shape;
 		static const Vector3 torso_shape;
-		static const Vector3 coda_shape;
 
 		static Vector3 target_location;
 		static Vector3 sky_location;
@@ -278,7 +294,7 @@ namespace Grasp {
 		// Objects used in third-person views of the virtual world.
 		Assembly		*head;
 		Assembly		*torso;
-		Assembly		*coda[MAX_UNITS];
+		Coda			*coda[MAX_UNITS];
 		Assembly		*codas;
 
 		// Representations of the CODA marker structures.
@@ -344,7 +360,7 @@ namespace Grasp {
 		void CreateAuxiliaryObjects( void );
 		Assembly *CreateHead( void );
 		Assembly *CreateTorso( void );
-		Assembly *CreateCodaBar( double r, double g, double b );
+		Coda	 *CreateCodaBar( double r, double g, double b );
 
 		// Create an assembly that has spheres at the location of each marker,
 		// as defined by a rigid body definition file.
