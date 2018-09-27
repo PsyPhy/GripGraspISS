@@ -161,8 +161,13 @@ namespace GraspMMI {
 
 		double current_vr_instant;
 		double	playbackReferenceTime;
+private: System::Windows::Forms::OpenFileDialog^  packetFileDialog;
 
-		 bool	playbackForward;
+private: System::Windows::Forms::Label^  filenameLabel;
+
+
+
+			 bool	playbackForward;
 
 
 	private: void InitializeVR( void );
@@ -189,7 +194,7 @@ namespace GraspMMI {
 	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
 	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
 	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
-	
+
 	public:
 
 		//
@@ -201,36 +206,36 @@ namespace GraspMMI {
 
 	public: 
 
-			 String^ scriptDirectory;		// Path to root file of the GUI menu tree.
+		String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
 		GraspMMIGraphsForm() : 
-		  TimebaseOffset( -17 ), 
-			  nDataSlices( 0 ), 
-			  nHousekeepingSlices( 0 ),
-			  current_subject( 0 ),
-			  current_protocol( 0 ),
-			  current_task( 0 ),
-			  current_task_leaf( nullptr ),
-			  previous_task_leaf( nullptr ),
-			  current_task_start_time( 0.0 ),
-			  task_tree_current_index( 0 ),
-			  first_step( 0 ),
-			  taskViewBottom( 0.0 ),
-			  taskViewTop( 1000.0 ),
-			  leaveDataLive( true ),
-			  playbackForward( true ),
-			  axis_color( GREY4 )
+		TimebaseOffset( -17 ), 
+			nDataSlices( 0 ), 
+			nHousekeepingSlices( 0 ),
+			current_subject( 0 ),
+			current_protocol( 0 ),
+			current_task( 0 ),
+			current_task_leaf( nullptr ),
+			previous_task_leaf( nullptr ),
+			current_task_start_time( 0.0 ),
+			task_tree_current_index( 0 ),
+			first_step( 0 ),
+			taskViewBottom( 0.0 ),
+			taskViewTop( 1000.0 ),
+			leaveDataLive( true ),
+			playbackForward( true ),
+			axis_color( GREY4 )
 
-		  {
-			  InitializeComponent();
+		{
+			InitializeComponent();
 
-			  // Allocate memory for display traces.
-			  graspHousekeepingSlice = (GraspHousekeepingSlice *) malloc( MAX_SLICES * sizeof( GraspHousekeepingSlice ) );
-			  if ( !graspHousekeepingSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Housekeeping Data", MAX_SLICES );
-			  graspDataSlice = (GraspRealtimeDataSlice *) malloc( MAX_SLICES * sizeof( GraspRealtimeDataSlice ) );
-			  if ( !graspDataSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Realtime Data", MAX_SLICES );
+			// Allocate memory for display traces.
+			graspHousekeepingSlice = (GraspHousekeepingSlice *) malloc( MAX_SLICES * sizeof( GraspHousekeepingSlice ) );
+			if ( !graspHousekeepingSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Housekeeping Data", MAX_SLICES );
+			graspDataSlice = (GraspRealtimeDataSlice *) malloc( MAX_SLICES * sizeof( GraspRealtimeDataSlice ) );
+			if ( !graspDataSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Realtime Data", MAX_SLICES );
 
-		  }
+		}
 
 	protected:
 		/// Clean up any resources being used.
@@ -333,6 +338,7 @@ namespace GraspMMI {
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GraspMMIGraphsForm::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->filenameLabel = (gcnew System::Windows::Forms::Label());
 			this->Spans = (gcnew System::Windows::Forms::Label());
 			this->dataLiveCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->lastAbsoluteTimeTextBox = (gcnew System::Windows::Forms::TextBox());
@@ -402,6 +408,7 @@ namespace GraspMMI {
 			this->playBackwardButton = (gcnew System::Windows::Forms::Button());
 			this->toCursorButton = (gcnew System::Windows::Forms::Button());
 			this->stopPlaybackButton = (gcnew System::Windows::Forms::Button());
+			this->packetFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -423,6 +430,7 @@ namespace GraspMMI {
 			// 
 			// groupBox1
 			// 
+			this->groupBox1->Controls->Add(this->filenameLabel);
 			this->groupBox1->Controls->Add(this->Spans);
 			this->groupBox1->Controls->Add(this->dataLiveCheckBox);
 			this->groupBox1->Controls->Add(this->lastAbsoluteTimeTextBox);
@@ -437,6 +445,14 @@ namespace GraspMMI {
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Time Series";
+			// 
+			// filenameLabel
+			// 
+			this->filenameLabel->Location = System::Drawing::Point(277, 59);
+			this->filenameLabel->Name = L"filenameLabel";
+			this->filenameLabel->Size = System::Drawing::Size(589, 19);
+			this->filenameLabel->TabIndex = 14;
+			this->filenameLabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
 			// Spans
 			// 
@@ -458,7 +474,7 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -1089,11 +1105,16 @@ namespace GraspMMI {
 			this->stopPlaybackButton->UseVisualStyleBackColor = true;
 			this->stopPlaybackButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::stopPlaybackButton_Click);
 			// 
+			// packetFileDialog
+			// 
+			this->packetFileDialog->Filter = L"Packet File|*.gpk|All Files|*.*";
+			this->packetFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::packetFileDialog_FileOk);
+			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(1538, 1042);
+			this->ClientSize = System::Drawing::Size(1538, 1028);
 			this->Controls->Add(this->stopPlaybackButton);
 			this->Controls->Add(this->toCursorButton);
 			this->Controls->Add(this->playBackwardButton);
@@ -1153,7 +1174,14 @@ namespace GraspMMI {
 		}
 #pragma endregion
 
-private:
+	private:
+
+		void ReadRecordedData( void ) {
+			nDataSlices = 1;
+			nHousekeepingSlices = 1;
+			graspDataSlice[nDataSlices].absoluteTime = MISSING_DOUBLE;
+			graspHousekeepingSlice[nHousekeepingSlices].absoluteTime = MISSING_DOUBLE;
+		}
 
 		// A timer to trigger new polling for packets after a delay.
 		System::Windows::Forms::Timer^ timer;
@@ -1240,9 +1268,9 @@ private:
 		// We have a button that closes the window and thus the application only so that we can set the 
 		// CancelButton property to something. Otherwise, when the user presses ESC the program crashes.
 		// I'm not exactly why, but this seems to work.
-		private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Close();
-		 }
+		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			Close();
+		}
 
 		// This is what we do when the timer goes off.
 		void OnTimerElapsed( System::Object^ source, System::EventArgs ^ e ) {
@@ -1251,6 +1279,8 @@ private:
 			StopRefreshTimer();
 			fOutputDebugString( "\n" );
 			fOutputDebugString( "Timer triggered.\n" );
+			// Erase the filename of any manually loaded file.
+			filenameLabel->Text = "";
 			// Get the realtime science data packets, if any. 
 			ReadTelemetryCache( packetCacheFileRoot );
 			// Adjust the scrollbar limits according to the newly loaded data.
@@ -1307,7 +1337,7 @@ private:
 			// Since we selected a time, then we are implicitly no longer live.
 			if ( !leaveDataLive ) dataLiveCheckBox->Checked = false;
 			//leaveDataLive = false;
-		 }
+		}
 
 		System::Void taskContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 			if (  e->ClickedItem->Text->Contains( "All") || e->ClickedItem->Text->Contains( "all") ) {
@@ -1327,13 +1357,13 @@ private:
 		}
 		System::Void worldTabs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			MoveToInstant( current_vr_instant );
-		 }			 
+		}			 
 		System::Void fromCodaCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			MoveToInstant( current_vr_instant );
-		 }
+		}
 		System::Void realMarkersCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			MoveToInstant( current_vr_instant );
-		 }
+		}
 
 		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			unsigned int index;
@@ -1349,7 +1379,6 @@ private:
 			if ( index < nDataSlices ) MoveToSlice( index );
 		}
 
-
 		System::Void stepBackwardButton_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 			unsigned int index;
 			dataLiveCheckBox->Checked = false;
@@ -1357,30 +1386,31 @@ private:
 				if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < current_vr_instant ) break;
 			}
 			MoveToSlice( index );
-		 }
-		
-		private: System::Void playForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
+		}
+
+		System::Void playForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			dataLiveCheckBox->Checked = false;
 			playbackForward = true;
 			StartPlaybackTimer();
-		 }		
-		private: System::Void playBackwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
+		}		
+		System::Void playBackwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			dataLiveCheckBox->Checked = false;
 			playbackForward = false;
 			StartPlaybackTimer();
-		 }
-				 
-		private: System::Void stopPlaybackButton_Click(System::Object^  sender, System::EventArgs^  e) {
+		}
+
+		System::Void stopPlaybackButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			playbackTimer->Stop();
 		}
-		private: System::Void toCursorButton_Click(System::Object^  sender, System::EventArgs^  e) {
+		System::Void toCursorButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			dataLiveCheckBox->Checked = false;
 			playbackTimer->Stop();
 			MoveToInstant( playbackScrollBar->Value );
-		 }
+		}
 
 		// Add an 'About ...' item to the system menu. 
 #define SYSMENU_ABOUT_ID 0x01
+#define SYSMENU_READ_PACKET_FILE_ID	 0x02
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
 
@@ -1394,46 +1424,66 @@ private:
 					// Add a separator
 					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
 					// Add the About menu item
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_PACKET_FILE_ID, "Read Packet File");
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
 
 				}
 
 	protected:  virtual void WndProc(System::Windows::Forms::Message% m) override {	
 					// Test if the About item was selected from the system menu
-					if ((m.Msg == WM_SYSCOMMAND) && ((int)m.WParam == SYSMENU_ABOUT_ID))
-					{
-						char pwd[MAX_PATH];
-						int bytes = GetCurrentDirectory( sizeof( pwd ), pwd );
+					if ( m.Msg == WM_SYSCOMMAND ) {
+						if ( (int) m.WParam == SYSMENU_ABOUT_ID ) {
+							char pwd[MAX_PATH];
+							int bytes = GetCurrentDirectory( sizeof( pwd ), pwd );
 
-						// We need InteropServics in order to convert a String to a char *.
-						using namespace System::Runtime::InteropServices;
+							// We need InteropServics in order to convert a String to a char *.
+							using namespace System::Runtime::InteropServices;
 
-						// Converts the String into a char *.
-						// Don't forget to free it when exiting.
-						char *cache_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetCacheFileRoot ).ToPointer();
-						char hk_file[MAX_PATHLENGTH];
-						char rt_file[MAX_PATHLENGTH];
+							// Converts the String into a char *.
+							// Don't forget to free it when exiting.
+							char *cache_root = (char*)(void*)Marshal::StringToHGlobalAnsi( packetCacheFileRoot ).ToPointer();
+							char hk_file[MAX_PATHLENGTH];
+							char rt_file[MAX_PATHLENGTH];
 
-						// Create the paths to the housekeeping packet file, based on the root and the packet type.
-						CreateGripPacketCacheFilename( hk_file, sizeof( hk_file ), GRIP_HK_BULK_PACKET, cache_root );
-						CreateGripPacketCacheFilename( rt_file, sizeof( rt_file ), GRIP_RT_SCIENCE_PACKET, cache_root );
+							// Create the paths to the housekeeping packet file, based on the root and the packet type.
+							CreateGripPacketCacheFilename( hk_file, sizeof( hk_file ), GRIP_HK_BULK_PACKET, cache_root );
+							CreateGripPacketCacheFilename( rt_file, sizeof( rt_file ), GRIP_RT_SCIENCE_PACKET, cache_root );
 
-						fMessageBox( MB_OK, 
-							"GraspMMIDataPlots Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
-							GripGraspSourceRelease, GripGraspBuildInfo, hk_file, rt_file, pwd );
-						// Release the memory used to create the ANSI string.
-						Marshal::FreeHGlobal( IntPtr( cache_root ) );
+							fMessageBox( MB_OK, 
+								"GraspMMIDataPlots Version Info", "Source Release:  %s\n         Build Info:  %s\n\nPacket Caches:\n\n  %s\n  %s\n\nExecuting in:\n\n  %s\n", 
+								GripGraspSourceRelease, GripGraspBuildInfo, hk_file, rt_file, pwd );
+							// Release the memory used to create the ANSI string.
+							Marshal::FreeHGlobal( IntPtr( cache_root ) );
 
-						return;
+							return;
+						}
+						else if ( (int) m.WParam == SYSMENU_READ_PACKET_FILE_ID ) {
+							packetFileDialog->ShowDialog();
+						}
 					}
 					// Do what one would normally do.
 					Form::WndProc( m );
 				}
 
-
-
-
-
-};
+	private: System::Void packetFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+				 // We are loading a previously recorded packet file, so stop being live.
+				 dataLiveCheckBox->Checked = false;
+				 // We actually need to load a pair of files, one with realtime data, one with housekeeping.
+				 // We let the user select either in the dialog, or even the "any" file,
+				 // but then we strip it down to the root.
+				 String^ root;
+				 root = packetFileDialog->FileName->Replace( ".rt.gpk", "" );
+				 root = root->Replace( ".hk.gpk", "" );
+				 root = root->Replace( ".any.gpk", "" );
+				 // Show which file we are loading.
+				 filenameLabel->Text = root;
+				 // Get the realtime science data packets, if any. 
+				 ReadTelemetryCache( root );
+				 // Adjust the scrollbar limits according to the newly loaded data.
+				 AdjustScrollSpan();
+				 MoveToLatest();
+				 RefreshGraphics();
+			 }
+	};
 }
 
