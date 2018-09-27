@@ -23,6 +23,9 @@
     <ProjectReference Include="..\DexGroundMonitorClient\DexGroundMonitorClient.vcxproj">
       <Project>{26c677e6-bba3-4406-9e10-ce856aac42f2}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GraspMMIColumbus\GraspMMIColumbus.vcxproj">
+      <Project>{09e7d244-36a1-4d6f-9d15-888d6cdd2976}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspMMIDataPlots\GraspMMIDataPlots.vcxproj">
       <Project>{44066fc7-1873-48a2-8151-c6867a15d0df}</Project>
     </ProjectReference>

@@ -43,13 +43,16 @@ namespace Grasp {
 	private:
 
 		static const Vector3 coda_shape;
+		static const double ray_length;
 
 	public:
 
 		Assembly	*bar;
-		Ray			*ray;
+		Assembly	*rays;
+		Ray			*ray[3];
 		Sphere		*proximity;
-		WindowFrame	*fov;
+
+		Assembly	*fov;
 
 		Coda( void );
 

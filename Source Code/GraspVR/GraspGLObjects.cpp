@@ -1108,9 +1108,12 @@ void FuzzyPointer::Draw( void ) {
 
 
 const Vector3 Coda::coda_shape = { 800.0, 100.0, 80.0 };
+const double Coda::ray_length = 3000.0;
 Coda::Coda( void ) {
 
 	bar = new Assembly();
+	rays = new Assembly();
+	fov = new Assembly();
 
 	Slab *slab = new Slab( coda_shape[X], coda_shape[Y], coda_shape[Z] );
 	bar->AddComponent( slab );
@@ -1122,20 +1125,28 @@ Coda::Coda( void ) {
 		bar->AddComponent( slab );
 	}
 	AddComponent( bar );
+	int lens = 1;
+	// Make the ray length negative so that it shoots out the front of the CODA.
+	ray[lens] = new Ray( - ray_length );
+	ray[lens]->SetPosition( ( lens - 1 ) * 0.4 * coda_shape[X], 0.0, - coda_shape[Z]/ 2.0 );
+	ray[lens]->SetColor( lens + 1 );
+	rays->AddComponent( ray[lens] );
+	AddComponent( rays );
 
 	proximity = new Sphere( 1800.0 );
 	AddComponent( proximity );
 
-	// Make the ray length negative so that it shoots out the front of the CODA.
-	ray = new Ray( - 2400.0 );
-	ray->SetColor( GREEN );
-	AddComponent( ray );
 
-	fov = new WindowFrame( 3900.0, 4200.0, 50.0 );
-	fov->SetColor( RED );
-	fov->SetPosition( 0.0, 0.0, -3000.0 );
-	AddComponent( fov );
+	WindowFrame *frame;
+	
+	frame = new WindowFrame( 3900.0, 4200.0, 50.0 );
+	frame->SetPosition( 0.0, 0.0, -3000.0 );
+	fov->AddComponent( frame );
+	//frame = new WindowFrame( 1950.0, 2100.0, 50.0 );
+	//frame->SetPosition( 0.0, 0.0, -1500.0 );
+	//fov->AddComponent( frame );
 	fov->Disable();
+	AddComponent( fov );
 
 	SetAttitude( 180.0, - 90.0, 0.0 );
 	SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );

@@ -6,6 +6,7 @@
 
 EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe \
+	..\$(BUILDCONFIGURATION)\GraspMMIColumbus.exe \
 	..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe \
 	..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe \
 	..\$(BUILDCONFIGURATION)\CLWSemulator.exe \
@@ -22,6 +23,7 @@ install: $(EXECUTABLES) InstallGraspMMI.mak
 	-rmdir /S /Q $(DESTINATION)
 	mkdir $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIMirror.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GraspMMIColumbus.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIDataPlots.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspMMIHistory.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CLWSemulator.exe $(DESTINATION)

@@ -37,7 +37,7 @@ PsyPhy::Vector3 tabletPositionSupine = { 0.0, 0.0, 1300 };
 PsyPhy::Vector3 chairPosition = { -300.0, -200.0, 1900 };
 PsyPhy::Vector3 platePosition = { 0.0, 0.0, 1300 };
 
-PsyPhy::Vector3 codaNominalPosition[2] = {{ 800.0, 600.0, -1000.0 }, { 0.0, 900.0, -1000.0 }};
+PsyPhy::Vector3 codaNominalPosition[2] = {{ -800.0, 600.0, -500.0 }, { 0.0, 900.0, -500.0 }};
 
 int n_manipulandum_markers = 8;
 int n_wrist_markers = 8;
@@ -836,7 +836,7 @@ namespace GraspMMIColumbus {
 			sideViewpoint->SetPosition( - 6000.0, 0.0, 0.0 );
 			sideViewpoint->SetOrientation( 0.0, 0.0, 90.0 );
 
-			sideOrthoViewpoint = new Viewpoint( 6.0, 15.0, 10000.0, 15000.0);
+			sideOrthoViewpoint = new Viewpoint( 6.0, 15.0, 9000.0, 15000.0);
 			sideOrthoViewpoint->SetPosition( -10000.0, 0.0, 0.0 );
 			sideOrthoViewpoint->SetOrientation( 0.0, 0.0, 90.0 );
 			//sideOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000 );
@@ -948,6 +948,7 @@ namespace GraspMMIColumbus {
 			handEmissionCone->SetOffset( 0.0, 0.0, - cone_length / 2.0  );
 			handEmissionCone->SetColor( Translucid( RED ) );
 			hand->AddComponent( handEmissionCone );
+			handEmissionCone->Disable();
 
 			Cylinder *axis;
 			double axis_thickness = 5.0;
@@ -1205,7 +1206,6 @@ namespace GraspMMIColumbus {
 			coda[0]->proximity->SetAttitude( 0.0, 0.0, 0.0 );
 			coda[1]->proximity->SetAttitude( 0.0, 0.0, 0.0 );
 			handEmissionCone->SetAttitude( 0.0, 0.0, 0.0 );
-			handEmissionCone->Enable();
 			RenderWindow( topWindow, topOrthoViewpoint );
 
 			// This is a hack. The cone looks better for certain roll orientations.
@@ -1219,9 +1219,9 @@ namespace GraspMMIColumbus {
 			// Don't draw the proximity spheres or the line of sight in any other view.
 			for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 				coda[unit]->proximity->Disable();
-				coda[unit]->ray->Disable();
+				coda[unit]->rays->Disable();
 				presetCoda[unit]->proximity->Disable();
-				presetCoda[unit]->ray->Disable();
+				presetCoda[unit]->rays->Disable();
 			}
 
 			// Another hack. Don't draw the cone when looking from either end.
@@ -1262,9 +1262,9 @@ namespace GraspMMIColumbus {
 
 			for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 				coda[unit]->bar->Enable();
-				coda[unit]->ray->Enable();
+				coda[unit]->rays->Enable();
 				presetCoda[unit]->bar->Enable();
-				presetCoda[unit]->ray->Enable();
+				presetCoda[unit]->rays->Enable();
 			}
 
 			Text = AlignmentFilename + " | " + TrajectoryFilename;
