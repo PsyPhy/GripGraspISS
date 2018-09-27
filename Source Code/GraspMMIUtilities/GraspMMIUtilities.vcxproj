@@ -77,7 +77,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GraspData.h" />
     <ClInclude Include="GraspMMIUtilities.h" />
+    <ClInclude Include="GripData.h" />
+    <ClInclude Include="GripGLObjects.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>

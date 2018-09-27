@@ -17,10 +17,9 @@
 #include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaPoseTracker.h"
 #include "../GraspVR/GraspGLObjects.h"
-#include "GripGLObjects.h"
-
-#include "GraspData.h"
-#include "GripData.h"
+#include "../GraspMMIUtilities/GraspData.h"
+#include "../GraspMMIUtilities/GripGLObjects.h"
+#include "../GraspMMIUtilities/GripData.h"
 
 #define BODIES 3
 #define HMD 0
