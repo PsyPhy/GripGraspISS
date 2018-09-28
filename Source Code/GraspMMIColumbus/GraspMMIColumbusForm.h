@@ -1387,7 +1387,7 @@ namespace GraspMMIColumbus {
 				 // Guess which GRASP configuration we are in, based on the orientation of CODA 2.
 				 if ( coda[1]->orientation[0][0] > 0 ) graspSeatedButton->Checked = true;
 				 else graspFreefloatingButton->Checked = true;
-				 gripButton_Click( sender, e );
+				 graspButton_Click( sender, e );
 			 }
 
 	private: System::Void Button_Click(System::Object^  sender, System::EventArgs^  e) {
