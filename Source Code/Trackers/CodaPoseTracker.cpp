@@ -20,6 +20,10 @@ bool CodaPoseTracker::Update( void ) { return true; }
 bool CodaPoseTracker::Release( void ) { return true; }
 
 bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) { 
+	return( ComputePose( pose, this->frame ) );
+}
+
+bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) { 
 
 	Vector3		selected_model[MAX_MARKERS];
 	Vector3		selected_actual[MAX_MARKERS];

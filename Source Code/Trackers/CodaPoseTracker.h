@@ -61,6 +61,7 @@ class CodaPoseTracker : public PoseTracker {
 		bool Release( void );
 
 		bool	GetCurrentPoseIntrinsic( TrackerPose &pose );
+		bool	ComputePose( TrackerPose &pose, MarkerFrame *frame );
 		int		SetModelMarkerPositions( int n_markers, int *marker_list, MarkerFrame *frame = nullptr );
 		void	ReadModelMarkerPositions( FILE *fp );
 		void	WriteModelMarkerPositions( FILE *fp );
