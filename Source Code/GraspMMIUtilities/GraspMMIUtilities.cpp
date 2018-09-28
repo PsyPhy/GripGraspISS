@@ -32,7 +32,7 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 		p = extractTM( slice[i].chest, buffer, p );
 
 		p = extractTM( slice[i].codaUnit, buffer, p );
-		p = extractTM( slice[i].codaFrame, buffer, p );
+		p = extractTM( slice[i].codaFrame[ slice[i].codaUnit ], buffer, p );
 
 		p = extractTM( slice[i].clientTime, buffer, p );
 		p = extractTM( slice[i].clientData, sizeof( slice[i].clientData ), buffer, p );
@@ -80,9 +80,9 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 		if ( !strcmp( "GRASP", (char *) slice[i].clientData ) ) {
 			Grasp::GraspClientData *grasp = (Grasp::GraspClientData *)  &slice[i].clientData;
 			slice[i].clientType = GraspRealtimeDataSlice::GRASP;
-			vm.CopyPose( slice[i].headPose, grasp->headPose ); 
-			vm.CopyPose( slice[i].handPose, grasp->handPose ); 
-			vm.CopyPose( slice[i].chestPose, grasp->chestPose ); 
+			vm.CopyPose( slice[i].headPose.pose, grasp->headPose ); 
+			vm.CopyPose( slice[i].handPose.pose, grasp->handPose ); 
+			vm.CopyPose( slice[i].chestPose.pose, grasp->chestPose ); 
 			vm.CopyQuaternion( slice[i].rollQuaternion, grasp->rollQuaternion ); 
 			slice[i].targetOrientation =  (double) grasp->targetOrientationD / 100.0;
 			slice[i].enableBits = grasp->enableBits;
@@ -250,6 +250,9 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 				grasp_data_slice[n_slices].HMD.visible = false;
 				grasp_data_slice[n_slices].hand.visible = false;
 				grasp_data_slice[n_slices].chest.visible = false;
+				for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) grasp_data_slice[n_slices].codaFrame[unit].marker[mrk].visibility = false;
+				}
 				n_slices++;
 			}
 		}

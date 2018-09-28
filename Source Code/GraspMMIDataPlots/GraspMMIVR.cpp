@@ -318,28 +318,40 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	}
 	
-	// Each realtime slice has only one marker frame, corresponding to one or the other coda.
-	// Here we need to find the most recent slice that contains the marker information from
-	// the 'other' coda.  First, we set the visibility of all markers in a local instance of
-	// marker frames so that if there is no previous slice that contains the 'other' coda's frame
-	// we will show here that the markers are not visible.
-	for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-		unitMarkerFrame[0].marker[mrk].visibility = false;
-		unitMarkerFrame[1].marker[mrk].visibility = false;
+	// Data recorded in .pse files contains the marker frames from both CODAs, but
+	// the real-time packets each have only one at a time, in alternance, with the codaUnit 
+	// parameter saying which one. When a .pse file is loaded, the codaUnit value is
+	// set to -1 to indicate that marker frames from both CODAs are available. Here we
+	// handle those two different cases for displaying the marker information.
+	if (  graspDataSlice[index].codaUnit < 0 ) {
+		// If we are here, the slices have come from a recorded trial that has marker info from all units.
+		// So we just need to copy the data.
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( unitMarkerFrame[unit], graspDataSlice[index].codaFrame[unit] );
 	}
-	// Copy the frame from the current slice into the appropriate local copy.
-	int currentCodaUnit = graspDataSlice[index].codaUnit;
-	CopyMarkerFrame( unitMarkerFrame[currentCodaUnit], graspDataSlice[index].codaFrame );
-	// Now look backward for a slice that contains the frame from the other coda.
-	// If we find it, copy that frame into the local frame for the other coda.
-	int otherIndex;
-	int otherCodaUnit;
-	for ( otherIndex = index; otherIndex > 0; otherIndex -- ) {
-		if ( currentCodaUnit != graspDataSlice[otherIndex].codaUnit ) break;
-	}
-	if ( otherIndex >= 0 ) 	{
-		otherCodaUnit = graspDataSlice[otherIndex].codaUnit;
-		CopyMarkerFrame( unitMarkerFrame[otherCodaUnit], graspDataSlice[otherIndex].codaFrame );
+	else {
+
+		// Each realtime slice has only one marker frame, corresponding to one or the other coda.
+		// Here we need to find the most recent slice that contains the marker information from
+		// the 'other' coda.  First, we set the visibility of all markers in a local instance of
+		// marker frames so that if there is no previous slice that contains the 'other' coda's frame
+		// we will show here that the markers are not visible in that CODA.
+		for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+			for ( int unit = 0; unit < MAX_UNITS; unit++ ) unitMarkerFrame[unit].marker[mrk].visibility = false;
+		}
+		// Copy the frame from the current slice into the appropriate local copy.
+		int currentCodaUnit = graspDataSlice[index].codaUnit;
+		CopyMarkerFrame( unitMarkerFrame[currentCodaUnit], graspDataSlice[index].codaFrame[currentCodaUnit] );
+		// Now look backward for a slice that contains the frame from the other coda.
+		// If we find it, copy that frame into the local frame for the other coda.
+		int otherIndex;
+		int otherCodaUnit;
+		for ( otherIndex = index; otherIndex > 0; otherIndex -- ) {
+			if ( currentCodaUnit != graspDataSlice[otherIndex].codaUnit ) break;
+		}
+		if ( otherIndex >= 0 ) 	{
+			otherCodaUnit = graspDataSlice[otherIndex].codaUnit;
+			CopyMarkerFrame( unitMarkerFrame[otherCodaUnit], graspDataSlice[otherIndex].codaFrame[otherCodaUnit] );
+		}
 	}
 
 	// Show the objects from the side.
@@ -562,17 +574,17 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		if ( !renderer->projectiles->enabled || first ) {
 			// Position the projectiles to wherever the tool is now, in preparation for the next launch.
 			if ( renderer->vTool->enabled ) {
-				vm.CopyPose( projectile_start_pose, graspDataSlice[index].headPose );
+				vm.CopyPose( projectile_start_pose, graspDataSlice[index].headPose.pose );
 				vm.CopyVector( projectile_direction, vm.kVector );
-				renderer->projectiles->SetPose( graspDataSlice[index].headPose );
+				renderer->projectiles->SetPose( graspDataSlice[index].headPose.pose );
 				renderer->projectiles->SetOrientation( graspDataSlice[index].rollQuaternion );
 
 			}
 			else {
-				vm.CopyPose( projectile_start_pose, graspDataSlice[index].handPose );
-				vm.RotateVector( projectile_direction, graspDataSlice[index].handPose.orientation, vm.kVector );
+				vm.CopyPose( projectile_start_pose, graspDataSlice[index].handPose.pose );
+				vm.RotateVector( projectile_direction, graspDataSlice[index].handPose.pose.orientation, vm.kVector );
 				vm.NormalizeVector( projectile_direction );
-				renderer->projectiles->SetPose( graspDataSlice[index].handPose );
+				renderer->projectiles->SetPose( graspDataSlice[index].handPose.pose );
 			}
 			launch_time = graspDataSlice[index].absoluteTime;
 			first = false;
@@ -590,14 +602,14 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 		// fOutputDebugString( "Duration: %f  Delta: %s\n", duration, vm.vstr( delta ) );
 
-		vrSubjectViewpoint->SetPose( graspDataSlice[index].headPose );
-		renderer->hmd->SetPose( graspDataSlice[index].headPose );
-		renderer->hand->SetPose( graspDataSlice[index].handPose );
+		vrSubjectViewpoint->SetPose( graspDataSlice[index].headPose.pose );
+		renderer->hmd->SetPose( graspDataSlice[index].headPose.pose );
+		renderer->hand->SetPose( graspDataSlice[index].handPose.pose );
 		renderer->orientationTarget->SetOrientation( graspDataSlice[index].targetOrientation, 0.0, 0.0 );
 		RenderSubjectView( vrSubjectWindow, vrSubjectViewpoint, true );
 		renderer->tunnel->enabled = true;
 		renderer->glasses->enabled = false;
-		renderer->head->SetPose( graspDataSlice[index].headPose );
+		renderer->head->SetPose( graspDataSlice[index].headPose.pose );
 
 		RenderSideView( vrSideWindow, vrSideViewpoint, true );
 

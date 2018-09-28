@@ -141,8 +141,8 @@ namespace Grasp {
 		
 			char header[2048];
 			fOutputDebugString( "Start LoadGraspData().\n" );
-			nSamples = 0;
 			fgets( header, sizeof( header ), fid );
+			nSamples = 0;
 			while ( nSamples < MAX_FRAMES ) {
 				bool result = ReadGraspSample( fid, &sample[ nSamples ] );
 				if ( !result ) break;
@@ -154,8 +154,15 @@ namespace Grasp {
 	
 		}
 
-
-
+		int LoadGraspData( char *filename ) {  
+			FILE *fp = fopen( filename, "r" );
+			if ( !fp ) {
+				fMessageBox( MB_OK, "GraspData", "Error opening %s for read.", filename );
+				return( 0 );
+			}
+			int samples = LoadGraspData( fp );
+			fclose( fp );
+		}
 
 	};
 

@@ -26,6 +26,8 @@
 #include "../OpenGLObjects/OpenGLWindowsInForms.h"
 #include "../GraspVR/GraspGLObjects.h"
 
+#include "../GraspMMIUtilities/GraspData.h"
+
 
 // We make use of a package of plotting routines that I have had around for decades.
 #include "..\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
@@ -49,6 +51,136 @@ using namespace System::Runtime::InteropServices;
 
 // Time span in seconds for each position of the span selector.
 double  windowSpanSeconds[SPAN_VALUES] = { 43200.0, 14400.0, 3600.0, 1800.0, 600.0, 300.0, 60.0, 30.0 };
+
+// Read data stored by the GRASP application.
+bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
+
+	static VectorsMixin vm;
+
+	char header[2048];
+
+	// Convert the String filename into a char *.
+	// Don't forget to free it when exiting.
+	char *filename_root = (char*)(void*)Marshal::StringToHGlobalAnsi( root ).ToPointer();
+	FILE *fid = fopen( filename_root, "r" );
+	fgets( header, sizeof( header ), fid );
+
+	for ( nDataSlices = 0; nDataSlices < MAX_SLICES; nDataSlices++ ) {
+
+		int trial;
+		int state;
+		double time;
+		TrackerPose pose;
+
+		int result;
+		result = fscanf( fid, "%d;", &trial );
+		if ( result < 1 ) break;
+		result = fscanf( fid, "%lf;", &time );
+		if ( result < 1 ) break;
+		result = fscanf( fid, "%x;", &state );
+		if ( result < 1 ) break;
+
+		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].headPose );
+		if ( result < 0 ) break;
+		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].handPose );
+		if ( result < 0 ) break;
+		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].chestPose );
+		if ( result < 0 ) break;
+		result = ReadTrackerPose( fid, &pose );
+		if ( result < 0 ) break;
+		vm.CopyQuaternion( graspDataSlice[ nDataSlices ].rollQuaternion, pose.pose.orientation );
+
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+			result = ReadMarkerFrame( fid, &graspDataSlice[ nDataSlices ].codaFrame[unit] );
+		if ( result < 0 ) break;
+		}
+
+		graspDataSlice[ nDataSlices ].absoluteTime = time + 12.0 * 60 * 60;
+		fOutputDebugString( "graspDataSlice[ nDataSlices ].absoluteTime[%d] {%d} = %f\n", nDataSlices, MAX_SLICES, graspDataSlice[ nDataSlices ].absoluteTime );
+
+		// For each marker structure, compute the pose using one CODA, then if it is not visible, try the other.
+		// This is what the cascade trackers are doing on board. But it's not clear which comes first onboard.
+		hmdTracker->ComputePose( graspDataSlice[ nDataSlices ].HMD, &graspDataSlice[ nDataSlices ].codaFrame[0] );
+		if ( !graspDataSlice[ nDataSlices ].HMD.visible ) hmdTracker->ComputePose( graspDataSlice[ nDataSlices ].HMD, &graspDataSlice[ nDataSlices ].codaFrame[1] );
+		if ( !graspDataSlice[ nDataSlices ].HMD.visible ) vm.CopyPose( graspDataSlice[ nDataSlices ].HMD.pose, vm.missingPose );
+		handTracker->ComputePose( graspDataSlice[ nDataSlices ].hand, &graspDataSlice[ nDataSlices ].codaFrame[0] );
+		if ( !graspDataSlice[ nDataSlices ].hand.visible ) handTracker->ComputePose( graspDataSlice[ nDataSlices ].hand, &graspDataSlice[ nDataSlices ].codaFrame[1] );
+		if ( !graspDataSlice[ nDataSlices ].hand.visible ) vm.CopyPose( graspDataSlice[ nDataSlices ].hand.pose, vm.missingPose );
+		chestTracker->ComputePose( graspDataSlice[ nDataSlices ].chest, &graspDataSlice[ nDataSlices ].codaFrame[0] );
+		if ( !graspDataSlice[ nDataSlices ].chest.visible ) chestTracker->ComputePose( graspDataSlice[ nDataSlices ].chest, &graspDataSlice[ nDataSlices ].codaFrame[1] );
+		if ( !graspDataSlice[ nDataSlices ].chest.visible ) vm.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, vm.missingPose );
+
+		// It is convenient to compute some derived values here.
+		if ( graspDataSlice[ nDataSlices ].HMD.visible ) {
+			graspDataSlice[ nDataSlices ].hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].HMD.pose.orientation ) );
+			graspDataSlice[ nDataSlices ].hmdRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].HMD.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( graspDataSlice[ nDataSlices ].HMD.pose, vm.missingPose );
+			graspDataSlice[ nDataSlices ].hmdRotationAngle = MISSING_DOUBLE;
+			graspDataSlice[ nDataSlices ].hmdRollAngle = MISSING_DOUBLE;
+		}
+		if ( graspDataSlice[ nDataSlices ].hand.visible ) {
+			graspDataSlice[ nDataSlices ].handRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].hand.pose.orientation ) );
+			graspDataSlice[ nDataSlices ].handRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].hand.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( graspDataSlice[ nDataSlices ].hand.pose, vm.missingPose );
+			graspDataSlice[ nDataSlices ].handRotationAngle = MISSING_DOUBLE;
+			graspDataSlice[ nDataSlices ].handRollAngle = MISSING_DOUBLE;
+		}
+		if ( graspDataSlice[ nDataSlices ].chest.visible ) {
+			graspDataSlice[ nDataSlices ].chestRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].chest.pose.orientation ) );
+			graspDataSlice[ nDataSlices ].chestRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].chest.pose.orientation ) );
+		}
+		else {
+			vm.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, vm.missingPose );
+			graspDataSlice[ nDataSlices ].chestRotationAngle = MISSING_DOUBLE;
+			graspDataSlice[ nDataSlices ].chestRollAngle = MISSING_DOUBLE;
+		}
+		if ( graspDataSlice[ nDataSlices ].chest.visible && graspDataSlice[ nDataSlices ].HMD.visible ) {
+			Vector3 delta;
+			vm.SubtractVectors( delta, graspDataSlice[ nDataSlices ].HMD.pose.position, graspDataSlice[ nDataSlices ].chest.pose.position );
+			graspDataSlice[ nDataSlices ].torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
+		}
+		else {
+			graspDataSlice[ nDataSlices ].torsoRollAngle = MISSING_DOUBLE;
+		}
+
+		//// Here we would like to have the pose of the optical trackers, as sent by 
+		//// GraspTrackerDaemon. But they are not in the .pse file. We will need to 
+		//// recompute them from the marker frames. But for the moment I put here the 
+		//// poses from the GraspVR, which are included in the .pse.
+
+		//CopyTrackerPose( graspDataSlice[ nDataSlices ].HMD, data.sample[i].hmd );
+		//if ( !graspDataSlice[ nDataSlices ].HMD.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].HMD.pose, data.missingPose );
+		//CopyTrackerPose( graspDataSlice[ nDataSlices ].hand, data.sample[i].hand );
+		//if ( !graspDataSlice[ nDataSlices ].hand.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].hand.pose, data.missingPose );
+		//CopyTrackerPose( graspDataSlice[ nDataSlices ].chest, data.sample[i].chest );
+		//if ( !graspDataSlice[ nDataSlices ].chest.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, data.missingPose );
+
+
+		// The pse file unfortunately does not include the enable bits of the VR objects.
+		// We can try to deduce them from the state variable, but for the moment
+		// I just try to enable the tunnel and the hand.
+		graspDataSlice[ nDataSlices ].enableBits = 1 << 2 | 1 << 14 | 1 << 20 | 1 << 19 | 1 << 21;
+		//graspDataSlice[ nDataSlices ].enableBits = ~0;
+		graspDataSlice[ nDataSlices ].spinnerBits = 0;
+		graspDataSlice[ nDataSlices ].targetOrientation = 0.0;
+
+	}
+	fOutputDebugString( "graspDataSlices %d\n", nDataSlices );
+
+	//nDataSlices = GetGraspRT( graspDataSlice, MAX_SLICES, filename_root );
+	//nHousekeepingSlices = GetHousekeepingTrace( graspHousekeepingSlice, MAX_SLICES, filename_root );
+	nHousekeepingSlices = 1;
+	graspHousekeepingSlice[0].absoluteTime = MISSING_DOUBLE;
+
+	Marshal::FreeHGlobal( IntPtr(filename_root) );
+
+	return true;
+
+}
 
 // Read the cached packets.
 void GraspMMIGraphsForm::ReadTelemetryCache( String^ root ) {
@@ -79,7 +211,7 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 	//  limits in user coordinates are initialized. 
 
 	parent = static_cast<HWND>( cursorPanel->Handle.ToPointer());
-   	cursorDisplay = CreateOglDisplay();
+	cursorDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
 	DisplaySetSizePixels( cursorDisplay, cursorPanel->Size.Width, cursorPanel->Size.Height );
 	DisplaySetScreenPosition( cursorDisplay, 0, 0 );
@@ -90,7 +222,7 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 
 	// Pose Strip Charts
 	parent = static_cast<HWND>( poseGraphPanel->Handle.ToPointer());
-   	poseDisplay = CreateOglDisplay();
+	poseDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
 	DisplaySetSizePixels( poseDisplay, poseGraphPanel->Size.Width, poseGraphPanel->Size.Height );
 	DisplaySetScreenPosition( poseDisplay, 0, 0 );
@@ -101,7 +233,7 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 
 	// Marker Visibility Strip Charts
 	parent = static_cast<HWND>( markerGraphPanel->Handle.ToPointer());
-   	markerDisplay = CreateOglDisplay();
+	markerDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
 	DisplaySetSizePixels( markerDisplay, markerGraphPanel->Size.Width, markerGraphPanel->Size.Height );
 	DisplaySetScreenPosition( markerDisplay, 0, 0 );
@@ -112,7 +244,7 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 
 	// Task History Strip Chart
 	parent = static_cast<HWND>( taskGraphPanel->Handle.ToPointer());
-   	historyDisplay = CreateOglDisplay();
+	historyDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
 	DisplaySetSizePixels( historyDisplay, taskGraphPanel->Size.Width, taskGraphPanel->Size.Height );
 	DisplaySetScreenPosition( historyDisplay, 0, 0 );
@@ -135,30 +267,36 @@ void GraspMMIGraphsForm::AdjustScrollSpan( void ) {
 	// The time span of data to plot is determined by the slider.
 	double span = windowSpanSeconds[spanSelector->Value];
 
-	// Find the time window of the available data packets.
-	// The global array RealMarkerTime[] has been filled previously.
-	min = DBL_MAX;
-	for ( i = 0; i < nDataSlices; i++ ) {
-		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
-			min = graspDataSlice[i].absoluteTime;
-			break;
+	if ( nDataSlices < 2 && nHousekeepingSlices < 2 ) {
+		min = 0.0;
+		max = 1.0;
+	}
+	else {
+		// Find the time window of the available data packets.
+		// The global array RealMarkerTime[] has been filled previously.
+		min = DBL_MAX;
+		for ( i = 0; i < nDataSlices; i++ ) {
+			if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) {
+				min = graspDataSlice[i].absoluteTime;
+				break;
+			}
 		}
-	}
-	for ( i = 0; i < nHousekeepingSlices; i++ ) {
-		if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) {
-			if ( graspHousekeepingSlice[i].absoluteTime < min ) min = graspHousekeepingSlice[i].absoluteTime;
-			break;
+		for ( i = 0; i < nHousekeepingSlices; i++ ) {
+			if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) {
+				if ( graspHousekeepingSlice[i].absoluteTime < min ) min = graspHousekeepingSlice[i].absoluteTime;
+				break;
+			}
 		}
+		max = span;
+		for ( i = nDataSlices - 1; i > 0 && nDataSlices > 0; i-- ) {
+			if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) break;
+		}
+		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE && graspDataSlice[i].absoluteTime > max ) max = graspDataSlice[i].absoluteTime;
+		for ( i = nHousekeepingSlices - 1; i > 0 && nHousekeepingSlices > 0; i-- ) {
+			if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) break;
+		}
+		if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[i].absoluteTime > max ) max = graspHousekeepingSlice[i].absoluteTime;	
 	}
-	max = span;
-	for ( i = nDataSlices - 1; i > 0 && nDataSlices > 0; i-- ) {
-		if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE ) break;
-	}
-	if ( graspDataSlice[i].absoluteTime != MISSING_DOUBLE && graspDataSlice[i].absoluteTime > max ) max = graspDataSlice[i].absoluteTime;
-	for ( i = nHousekeepingSlices - 1; i > 0 && nHousekeepingSlices > 0; i-- ) {
-		if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE ) break;
-	}
-	if ( graspHousekeepingSlice[i].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[i].absoluteTime > max ) max = graspHousekeepingSlice[i].absoluteTime;	
 
 	// Adjust the behavior of the scroll bar depending on the selected 
 	// time span of the data window. A large step moves a full window

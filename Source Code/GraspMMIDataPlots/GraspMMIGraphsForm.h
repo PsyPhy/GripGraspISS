@@ -29,6 +29,8 @@
 
 
 #include "../GraspMMIUtilities/GraspMMIUtilities.h"
+#include "../GraspMMIUtilities/GraspData.h"
+
 #include "../GraspGUI/GraspScripts.h"
 
 #include "../GripGraspVersionControl/GripGraspVersionControl.h"
@@ -124,6 +126,7 @@ namespace GraspMMI {
 		MarkerStructureGLObject *hmdStationary;
 		MarkerStructureGLObject *handStationary;
 		MarkerStructureGLObject *chestStationary;
+
 		// Another set of objects that will move around according to the tracker.
 		MarkerStructureGLObject *hmdMobile;
 		MarkerStructureGLObject *handMobile;
@@ -161,13 +164,7 @@ namespace GraspMMI {
 
 		double current_vr_instant;
 		double	playbackReferenceTime;
-private: System::Windows::Forms::OpenFileDialog^  packetFileDialog;
-
-private: System::Windows::Forms::Label^  filenameLabel;
-
-
-
-			 bool	playbackForward;
+		bool	playbackForward;
 
 
 	private: void InitializeVR( void );
@@ -184,6 +181,7 @@ private: System::Windows::Forms::Label^  filenameLabel;
 	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
 
 	private: void ReadTelemetryCache( String^ root );
+	private: bool ReadGraspData( String^ root );
 	private: void InitializeGraphics( void );
 	private: void RefreshGraphics( void );
 	private: void KillGraphics( void );
@@ -194,6 +192,43 @@ private: System::Windows::Forms::Label^  filenameLabel;
 	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
 	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
 	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
+
+	private:
+
+		int ReadMarkerFrame( FILE *fid, MarkerFrame *frame ) {
+			int result;
+			int visible;
+			result = fscanf( fid, "%lf;", &frame->time );
+			if ( result < 1 ) return( -1 );
+			for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+				result = fscanf( fid, " %d; %lf; %lf; %lf;",
+					&visible,
+					&frame->marker[mrk].position[X],
+					&frame->marker[mrk].position[Y],
+					&frame->marker[mrk].position[Z] );
+				if ( result < 4 ) return( -1 );
+				frame->marker[mrk].visibility = ( visible != 0 );
+			}
+			return( 0 );
+		}
+
+		int ReadTrackerPose( FILE *fid, TrackerPose *pose ) {
+			int result;
+			bool visible;
+			result = fscanf( fid, " %lf;", &pose->time );
+			if ( result < 1 ) return( -1 );
+			result = fscanf( fid, " %d;", &visible );
+			if ( result < 1 ) return( -1 );
+			pose->visible = ( visible != 0 );
+			result = fscanf( fid, " < %lf %lf %lf>;",
+				&pose->pose.position[X], &pose->pose.position[Y], &pose->pose.position[Z] );
+			if ( result < 3 ) return( -1 );
+			result = fscanf( fid, " {%lfi %lfj %lfk %lf};",
+				&pose->pose.orientation[X], &pose->pose.orientation[Y], &pose->pose.orientation[Z], &pose->pose.orientation[M] );
+			if ( result < 4 ) return( -1 );
+			return( 0 );
+		}
+
 
 	public:
 
@@ -250,6 +285,9 @@ private: System::Windows::Forms::Label^  filenameLabel;
 		}
 
 
+	private: System::Windows::Forms::OpenFileDialog^  packetFileDialog;
+	private: System::Windows::Forms::Label^  filenameLabel;
+	private: System::Windows::Forms::OpenFileDialog^  pseFileDialog;
 	private: System::Windows::Forms::Button^  playBackwardButton;
 	private: System::Windows::Forms::Button^  toCursorButton;
 	private: System::Windows::Forms::Button^  stopPlaybackButton;
@@ -409,6 +447,7 @@ private: System::Windows::Forms::Label^  filenameLabel;
 			this->toCursorButton = (gcnew System::Windows::Forms::Button());
 			this->stopPlaybackButton = (gcnew System::Windows::Forms::Button());
 			this->packetFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->pseFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -763,8 +802,6 @@ private: System::Windows::Forms::Label^  filenameLabel;
 			// fromCodaCheckBox
 			// 
 			this->fromCodaCheckBox->AutoSize = true;
-			this->fromCodaCheckBox->Checked = true;
-			this->fromCodaCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->fromCodaCheckBox->Location = System::Drawing::Point(332, 1);
@@ -1107,14 +1144,19 @@ private: System::Windows::Forms::Label^  filenameLabel;
 			// 
 			// packetFileDialog
 			// 
-			this->packetFileDialog->Filter = L"Packet File|*.gpk|All Files|*.*";
+			this->packetFileDialog->Filter = L"Packet File|Grasp*.gpk|All Files|*.*";
 			this->packetFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::packetFileDialog_FileOk);
+			// 
+			// pseFileDialog
+			// 
+			this->pseFileDialog->Filter = L"Recorded Files|*.pse|All Files|*.*";
+			this->pseFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::pseFileDialog_FileOk);
 			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(1538, 1028);
+			this->ClientSize = System::Drawing::Size(1538, 1043);
 			this->Controls->Add(this->stopPlaybackButton);
 			this->Controls->Add(this->toCursorButton);
 			this->Controls->Add(this->playBackwardButton);
@@ -1411,6 +1453,7 @@ private: System::Windows::Forms::Label^  filenameLabel;
 		// Add an 'About ...' item to the system menu. 
 #define SYSMENU_ABOUT_ID 0x01
 #define SYSMENU_READ_PACKET_FILE_ID	 0x02
+#define SYSMENU_READ_PSE_FILE_ID	 0x03
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
 
@@ -1425,6 +1468,7 @@ private: System::Windows::Forms::Label^  filenameLabel;
 					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
 					// Add the About menu item
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_PACKET_FILE_ID, "Read Packet File");
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_PSE_FILE_ID, "Read PSE File");
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
 
 				}
@@ -1460,12 +1504,16 @@ private: System::Windows::Forms::Label^  filenameLabel;
 						else if ( (int) m.WParam == SYSMENU_READ_PACKET_FILE_ID ) {
 							packetFileDialog->ShowDialog();
 						}
+						else if ( (int) m.WParam == SYSMENU_READ_PSE_FILE_ID ) {
+							pseFileDialog->ShowDialog();
+						}
 					}
 					// Do what one would normally do.
 					Form::WndProc( m );
 				}
 
 	private: System::Void packetFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+
 				 // We are loading a previously recorded packet file, so stop being live.
 				 dataLiveCheckBox->Checked = false;
 				 // We actually need to load a pair of files, one with realtime data, one with housekeeping.
@@ -1481,8 +1529,23 @@ private: System::Windows::Forms::Label^  filenameLabel;
 				 ReadTelemetryCache( root );
 				 // Adjust the scrollbar limits according to the newly loaded data.
 				 AdjustScrollSpan();
+				 // Move to the end of the reccorded data.
 				 MoveToLatest();
 				 RefreshGraphics();
+
+			 }
+	private: System::Void pseFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+				 // We are loading a previously recorded packet file, so stop being live.
+				 dataLiveCheckBox->Checked = false;
+				 // Show which file we are loading.
+				 filenameLabel->Text = pseFileDialog->FileName;
+				 ReadGraspData( pseFileDialog->FileName );
+				 // Adjust the scrollbar limits according to the newly loaded data.
+				 AdjustScrollSpan();
+				 // Move to the end of the reccorded data.
+				 MoveToLatest();
+				 RefreshGraphics();
+
 			 }
 	};
 }

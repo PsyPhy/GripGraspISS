@@ -18,6 +18,7 @@ namespace GraspMMI {
 
 	// Data contained in realtime data packets.
 	typedef struct {
+
 		// Transmitted Items
 		double absoluteTime;
 		f32 fillTime;
@@ -28,20 +29,20 @@ namespace GraspMMI {
 		PsyPhy::TrackerPose chest;
 		
 		unsigned char	codaUnit;
-		MarkerFrame		codaFrame;
+		MarkerFrame		codaFrame[MAX_UNITS];
 		f32				clientTime;
 		unsigned char	clientData[GRASP_RT_CLIENT_BYTES];
 
 		enum { NONE, GRASP, GRASPGUI, ALIGNPRE, ALIGNPOST } clientType;
 
 		// These are the key poses that come from the GRASP client data.
-		unsigned long	enableBits;
-		unsigned long	spinnerBits;
-		double			targetOrientation;
-		PsyPhy::Pose	headPose;
-		PsyPhy::Pose	handPose;
-		PsyPhy::Pose	chestPose;
-		Quaternion		rollQuaternion;
+		unsigned long		enableBits;
+		unsigned long		spinnerBits;
+		double				targetOrientation;
+		PsyPhy::TrackerPose	headPose;
+		PsyPhy::TrackerPose	handPose;
+		PsyPhy::TrackerPose	chestPose;
+		Quaternion			rollQuaternion;
 
 		// These are the information about the CODA alignment transformations.
 		Vector3			alignmentOffset[MAX_UNITS];
