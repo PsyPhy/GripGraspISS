@@ -71,19 +71,6 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 	// it in comments here just until I get a chance to do a rigorous cleanup.
 	//codaTracker.StartAcquisition( 600.0 );
 
-#ifdef BACKGROUND_GET_DATA
-	// Initiate real-time retrieval of CODA marker frames in a background thread 
-	// so that waiting for the frame to come back from the CODA does not slow down
-	// the rendering loop.
-	requestSharedMemoryParent = false;
-	requestSharedMemoryChild = false;
-	parentHasPriority = false;
-
-	stopMarkerGrabs = false;
-	threadHandle = CreateThread( NULL, 0, GetCodaMarkerFramesInBackground, this, 0, &threadID );
-	// SetThreadPriority( threadHandle, THREAD_PRIORITY_HIGHEST );
-#endif
-
 	// Create PoseTrackers that combine data from multiple CODAs.
 	hmdCascadeTracker = new CascadePoseTracker();
 	handCascadeTracker = new CascadePoseTracker();
@@ -202,16 +189,11 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 }
 
 void GraspDexTrackers::GetMarkerData( void ) {
-#ifdef BACKGROUND_GET_DATA
-	// Get the current position of the CODA markers.
-	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
-		GetMarkerFrameFromBackground( unit, &markerFrame[unit] );
-	}
-#else 
+
 	for ( int unit = 0; unit < nCodaUnits; unit++ ) {
 		codaTracker->GetCurrentMarkerFrameUnit( markerFrame[unit], unit );
 	}
-#endif
+
 }
 void GraspDexTrackers::UpdatePoseTrackers( void ) {
 	// The base class does this nicely.
@@ -219,15 +201,6 @@ void GraspDexTrackers::UpdatePoseTrackers( void ) {
 }
 
 void GraspDexTrackers::Update( void ) {
-		
-#ifdef BACKGROUND_GET_DATA
-	// Check if the thread is still running.
-	// I don't know why it should stop, but it seems to be happening in Release mode.
-	if ( threadHandle ) {
-		int result = WaitForSingleObject( threadHandle, 0 );
-		if ( result == WAIT_OBJECT_0 ) fAbortMessage( "GraspTrackers", "Retrieval thread has unexpectedly terminated!" );
-	}
-#endif
 
 	// Retrieve the marker data from the CODA.
 	GetMarkerData();

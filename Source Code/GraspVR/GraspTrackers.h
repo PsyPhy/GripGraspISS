@@ -181,11 +181,6 @@ namespace Grasp {
 		  hmdFilterConstant( 2.0 )
 		  
 		  {
-
-#ifdef BACKGROUND_GET_DATA
-			threadHandle = nullptr;
-#endif
-
 				nMarkers = 24;
 				nCodaUnits = 2;
 				codaTracker = tracker;
@@ -217,89 +212,7 @@ namespace Grasp {
 		~GraspDexTrackers( void ) {}
 
 	private:
-#ifdef BACKGROUND_GET_DATA
-		// Polling the CODA in the rendering loop can cause non-smooth updating.
-		// We use a thread to get the CODA pose data in the background.
-		// The following provides the means to use a thread.
 
-		bool			requestSharedMemoryParent;
-		bool			requestSharedMemoryChild;
-		bool			parentHasPriority;
-
-		MarkerFrame		sharedMarkerFrame[MAX_UNITS];
-		bool			stopMarkerGrabs;
-		HANDLE			threadHandle;
-		DWORD			threadID;
-
-	protected:
-
-		// A static function that will be run in a separate thread.
-		// It sits in the background and acquires the latest marker frames from CODA.
-		static DWORD WINAPI GetCodaMarkerFramesInBackground( LPVOID prm ) {
-
-#ifdef _DEBUG
-			// A buffer to hold sample times, used to debug loop times.
-			static double	isi[MAX_ISI];
-			unsigned long	n_isi;
-			n_isi = 0;
-#endif
-			// The function passed to a new thread takes a single pointer as an argument.
-			// The GraspDexTrackers instance that creates the thread passes a pointer to itself 
-			//  as the argument and here we cast it back to a GraspDexTrackers pointer.
-			GraspDexTrackers *caller = (GraspDexTrackers *)prm;
-
-			// A buffer to hold one frame of marker data.
-			MarkerFrame localFrame;
-
-			// A cycle counter and timer just for debugging.
-			int count = 0;
-			Timer timer;
-			TimerStart( timer );
-
-			// Loop until the main thread tells us to stop.
-			while ( !caller->stopMarkerGrabs ) {
-
-				for ( int unit = 0; unit < caller->nCodaUnits; unit++ ) {
-
-					// Get the latest marker data into a local frame buffer.
-					caller->codaTracker->GetCurrentMarkerFrameUnit( localFrame, unit );
-					// Copy it to a shared buffer, being careful not to allow simultaneous access.
-					caller->requestSharedMemoryChild = true;
-					caller->parentHasPriority = true;
-					while ( caller->requestSharedMemoryParent && caller->parentHasPriority ) Sleep( 1 );
-					memcpy( &caller->sharedMarkerFrame[unit], &localFrame, sizeof( caller->sharedMarkerFrame[unit] ) );
-					caller->requestSharedMemoryChild = false;
-
-				}
-				if ( !( count % 1000 ) ) fOutputDebugString( "Background cycle count: %d %.3f\n", count, TimerElapsedTime( timer ) );
-				count++;
-#ifdef _DEBUG
-				isi[n_isi] = TimerElapsedTime( timer );
-				if ( n_isi < MAX_ISI ) n_isi++;
-#endif
-				Sleep( 1 );
-			}
-			OutputDebugString( "GetCodaMarkerFramesInBackground() thread exiting.\n" );
-#ifdef _DEBUG
-			fOutputDebugString( "GraspTrackers Updates: %d of %d\n", n_isi, MAX_ISI );
-			for ( unsigned long i = 1; i < n_isi; i++ ) {
-				double delta;
-				if ( ( delta = isi[i] - isi[i-1] ) >= 0.002 ) fOutputDebugString( "%d %.3f\n", i, isi[i] - isi[i-1] );
-			}
-#endif
-			return NULL;
-		}
-
-		void GetMarkerFrameFromBackground( int unit, MarkerFrame *destination ) {
-
-			requestSharedMemoryParent = true;
-			parentHasPriority = false;
-			while ( requestSharedMemoryChild && !parentHasPriority ) Sleep( 1 );
-			memcpy( destination, &sharedMarkerFrame[unit], sizeof( *destination ) );
-			requestSharedMemoryParent = true;
-
-		}
-#endif
 
 	};
 
