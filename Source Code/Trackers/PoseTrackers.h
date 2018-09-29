@@ -22,7 +22,8 @@ typedef struct {
 } TrackerPose;
 
 extern TrackerPose NullTrackerPose;
-void CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) ;
+extern void CopyTrackerPose( TrackerPose &destination, TrackerPose &source );
+extern bool ReadTrackerPose( TrackerPose &pose, FILE *fid );
 
 class PoseTracker : public PsyPhy::VectorsMixin {
 

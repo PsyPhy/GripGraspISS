@@ -20,15 +20,41 @@ using namespace PsyPhy;
 
 TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, true, 0.0};
 
-// A global function to facilitate copying tracker poses even if you are not a tracker.
+// Global functions to facilitate copying tracker poses even if you are not a tracker.
 
 void PsyPhy::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
+	// TrackerPose is just a structure, not a class.
+	// Need an instance of VectorsMixin to get that functionality.
+	// It might make more sense to redefine TrackerPose as a class and to
+	// build VectorsMixin into it, and then define this as a method.
+	// But that would be a big change.
 	static VectorsMixin vm;
 	destination.time = source.time;
 	destination.visible = source.visible;
 	vm.CopyVector( destination.pose.position, source.pose.position );
 	vm.CopyQuaternion( destination.pose.orientation, source.pose.orientation );
 };
+
+bool PsyPhy::ReadTrackerPose( TrackerPose &pose, FILE *fid ) {
+	// TrackerPose is just a structure, not a class.
+	// Need an instance of VectorsMixin to get that functionality.
+	// It might make more sense to redefine TrackerPose as a class and to
+	// build VectorsMixin into it, and then define this as a method.
+	// But that would be a big change.
+	static VectorsMixin vm;
+	int result;
+	int visible;
+	result = fscanf( fid, " %lf;", &pose.time );
+	if ( result < 1 ) return( false );
+	result = fscanf( fid, " %d;", &visible );
+	if ( result < 1 ) return( false );
+	pose.visible = ( visible != 0 );
+	if ( ! vm.ReadVector( pose.pose.position, fid ) ) return( false );
+	fscanf( fid, " ; " );
+	if ( ! vm.ReadQuaternion( pose.pose.orientation, fid ) ) return( false );
+	return( true );
+}
+
 
 // Transform such that the null pose in intrinsic coordinates gives the specified pose.
 void PoseTracker::OffsetTo( const Pose &pose ) {
