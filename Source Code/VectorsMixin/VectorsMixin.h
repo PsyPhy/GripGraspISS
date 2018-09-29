@@ -17,7 +17,9 @@
 
 #define MAX_RIGID_BODY_MARKERS	256
 
+
 namespace PsyPhy {
+
 
 typedef struct {
 	Vector3	position;
@@ -153,14 +155,43 @@ public:
 
 	void TransformPose( Pose &result, Transform &xform, Pose &source );
 
-	char *vstr( const Vector3 v, const char *format = "<%+8.3f %+8.3f %+8.3f>" );
-	char *qstr( const Quaternion q, const char *format = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}" );
-	char *mstr( const Matrix3x3 m, const char *format = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]" );
+	char *vstr( const Vector3 v, const char *format = nullptr );
+	char *qstr( const Quaternion q, const char *format = nullptr );
+	char *mstr( const Matrix3x3 m, const char *format = nullptr );
 	
-	char *vstr( const fVector3 v, const char *format = "<%+8.3f %+8.3f %+8.3f>" );
-	char *qstr( const fQuaternion q, const char *format = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}" );
-	char *mstr( const fMatrix3x3 m, const char *format = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]" );
+	char *vstr( const fVector3 v, const char *format = nullptr );
+	char *qstr( const fQuaternion q, const char *format = nullptr );
+	char *mstr( const fMatrix3x3 m, const char *format = nullptr );
 
+	bool ReadVector( Vector3 v, FILE *fid ) {
+		return( 3 == fscanf( fid, " < %lf %lf %lf>", &v[X], &v[Y], &v[Z] ) );
+	}
+	bool ReadQuaternion( Quaternion q, FILE *fid ) {
+		return( 4 == fscanf( fid, " {%lfi %lfj %lfk %lf}", &q[X], &q[Y], &q[Z], &q[M] ) ); 
+	}
+	bool ReadMatrix( Matrix3x3 m, FILE *fid ) {
+		return( 9 == fscanf( fid, " [%lfi %lfj %lfk | %lfi %lfj %lfk | %lfi %lfj %lfk ]", 
+			&m[X][X], &m[Y][X],&m[Z][X], &m[X][Y], &m[Y][Y],&m[Z][Y],&m[X][Z], &m[Y][Z],&m[Z][Z] ) ); 
+	}
+
+	char *defaultVectorFormatString;
+	char *defaultQuaternionFormatString;
+	char *defaultMatrixFormatString;
+
+	VectorsMixin( void ) {
+		defaultVectorFormatString = "<%+8.3f %+8.3f %+8.3f>";
+		defaultQuaternionFormatString = "{%6.3fi %+6.3fj %+6.3fk %+6.3f}";
+		defaultMatrixFormatString = "[%8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f | %8.3f %8.3f %8.3f ]";
+	}
 };
+
+// Create a global inherit VectorsMixin to be used outside of classes
+// that inherit VectorsMixin. Incorporating VectorsMixin into your 
+// class is preferred, because it allows you to override functions and
+// to have your own state for the vector processing apparatus. But
+// managed classes don't allow you to mix in an unmanaged class and in other
+// cases you may wish to use the functionality that is part of a global
+// function that is not associated with any class.
+extern VectorsMixin _vm;
 
 }

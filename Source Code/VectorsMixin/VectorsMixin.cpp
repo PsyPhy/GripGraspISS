@@ -18,6 +18,8 @@
 
 using namespace PsyPhy;
 
+VectorsMixin _vm;
+
 const double VectorsMixin::pi = 3.14159265358979;
 const double VectorsMixin::epsilon = 0.0001;
 
@@ -929,7 +931,7 @@ char *VectorsMixin::vstr( const Vector3 v, const char *format ) {
 	instance %= 256;
 
 	// Create the string here.
-	sprintf( str[instance], format, v[X], v[Y], v[Z] );
+	sprintf( str[instance], ( format ? format : defaultVectorFormatString), v[X], v[Y], v[Z] );
 
 	return( str[instance] );
 
@@ -947,7 +949,7 @@ char *VectorsMixin::qstr( const Quaternion q, const char *format ) {
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], format, q[X], q[Y], q[Z], q[M] );
+	sprintf( str[instance], ( format ? format : defaultQuaternionFormatString) , q[X], q[Y], q[Z], q[M] );
 	return( str[instance] );
 }
 char *VectorsMixin::qstr( const fQuaternion q, const char *format ) {
@@ -961,7 +963,7 @@ char *VectorsMixin::mstr( const Matrix3x3 m, const char *format ) {
 	static int instance = 0;
 	instance++;
 	instance %= 256;
-	sprintf( str[instance], format, 
+	sprintf( str[instance], ( format ? format : defaultMatrixFormatString) , 
 		m[X][X], m[Y][X], m[Z][X], m[X][Y], m[Y][Y], m[Z][Y], m[X][Z], m[Y][Z], m[Z][Z] );
 	return( str[instance] );
 }
