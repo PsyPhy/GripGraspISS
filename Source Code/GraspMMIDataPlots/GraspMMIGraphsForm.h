@@ -267,11 +267,13 @@ namespace GraspMMI {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::OpenFileDialog^  readFileDialog;
+	protected: 
 
 
-	private: System::Windows::Forms::OpenFileDialog^  packetFileDialog;
+
 	private: System::Windows::Forms::Label^  filenameLabel;
-	private: System::Windows::Forms::OpenFileDialog^  pseFileDialog;
+
 	private: System::Windows::Forms::Button^  playBackwardButton;
 	private: System::Windows::Forms::Button^  toCursorButton;
 	private: System::Windows::Forms::Button^  stopPlaybackButton;
@@ -430,8 +432,7 @@ namespace GraspMMI {
 			this->playBackwardButton = (gcnew System::Windows::Forms::Button());
 			this->toCursorButton = (gcnew System::Windows::Forms::Button());
 			this->stopPlaybackButton = (gcnew System::Windows::Forms::Button());
-			this->packetFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
-			this->pseFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->readFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
 			this->poseGraphGroupBox->SuspendLayout();
@@ -1126,15 +1127,11 @@ namespace GraspMMI {
 			this->stopPlaybackButton->UseVisualStyleBackColor = true;
 			this->stopPlaybackButton->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::stopPlaybackButton_Click);
 			// 
-			// packetFileDialog
+			// readFileDialog
 			// 
-			this->packetFileDialog->Filter = L"Packet File|Grasp*.gpk|All Files|*.*";
-			this->packetFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::packetFileDialog_FileOk);
-			// 
-			// pseFileDialog
-			// 
-			this->pseFileDialog->Filter = L"Recorded Files|*.pse|All Files|*.*";
-			this->pseFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::pseFileDialog_FileOk);
+			this->readFileDialog->Filter = L"Readable Files|Grasp*.gpk;*.pse|Packet Files|Grasp.gpk|Result Files|*.pse|All Fil" 
+				L"es|*.*";
+			this->readFileDialog->FileOk += gcnew System::ComponentModel::CancelEventHandler(this, &GraspMMIGraphsForm::readFileDialog_FileOk);
 			// 
 			// GraspMMIGraphsForm
 			// 
@@ -1435,9 +1432,8 @@ namespace GraspMMI {
 		}
 
 		// Add an 'About ...' item to the system menu. 
-#define SYSMENU_ABOUT_ID 0x01
-#define SYSMENU_READ_PACKET_FILE_ID	 0x02
-#define SYSMENU_READ_PSE_FILE_ID	 0x03
+#define SYSMENU_ABOUT_ID		0x01
+#define SYSMENU_READ_FILE_ID	0x02
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
 
@@ -1451,8 +1447,7 @@ namespace GraspMMI {
 					// Add a separator
 					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
 					// Add the About menu item
-					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_PACKET_FILE_ID, "Read Packet File");
-					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_PSE_FILE_ID, "Read PSE File");
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_FILE_ID, "Read data from file …");
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
 
 				}
@@ -1485,51 +1480,46 @@ namespace GraspMMI {
 
 							return;
 						}
-						else if ( (int) m.WParam == SYSMENU_READ_PACKET_FILE_ID ) {
-							packetFileDialog->ShowDialog();
-						}
-						else if ( (int) m.WParam == SYSMENU_READ_PSE_FILE_ID ) {
-							pseFileDialog->ShowDialog();
+						else if ( (int) m.WParam == SYSMENU_READ_FILE_ID  ) {
+							readFileDialog->ShowDialog();
 						}
 					}
 					// Do what one would normally do.
 					Form::WndProc( m );
 				}
 
-	private: System::Void packetFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+	private: System::Void readFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 
-				 // We are loading a previously recorded packet file, so stop being live.
+				 // We are loading a previously recorded  file, so stop being live.
 				 dataLiveCheckBox->Checked = false;
-				 // We actually need to load a pair of files, one with realtime data, one with housekeeping.
-				 // We let the user select either in the dialog, or even the "any" file,
-				 // but then we strip it down to the root.
-				 String^ root;
-				 root = packetFileDialog->FileName->Replace( ".rt.gpk", "" );
-				 root = root->Replace( ".hk.gpk", "" );
-				 root = root->Replace( ".any.gpk", "" );
-				 // Show which file we are loading.
-				 filenameLabel->Text = root;
-				 // Get the realtime science data packets, if any. 
-				 ReadTelemetryCache( root );
+				 bool is_packet_file = readFileDialog->FileName->EndsWith( ".gpk" );
+				// We actually need to load a pair of files.
+				// We let the user select either in the dialog, or even the "any" file,
+				// but then we strip it down to the root.
+				String^ root;
+				root = readFileDialog->FileName->Replace( ".rt.gpk", "" );
+				root = root->Replace( ".hk.gpk", "" );
+				root = root->Replace( ".any.gpk", "" );
+				root = root->Replace( ".pse", "" );
+				// Show which file we are loading.
+				filenameLabel->Text = root;
+				if ( is_packet_file ) ReadTelemetryCache( root );
+				else ReadGraspData( root );
+					
+				// Set the span to encompass all of the data that was loaded.
+				int i;
+				double span = graspDataSlice[ nDataSlices - 1 ].absoluteTime - graspDataSlice[ 0 ].absoluteTime;
+				for ( i = SPAN_VALUES - 1; i > 0; i-- ) {
+					if ( windowSpanSeconds[i] > span ) break;
+				}
+				spanSelector->Value = i;
+
 				 // Adjust the scrollbar limits according to the newly loaded data.
 				 AdjustScrollSpan();
+
 				 // Move to the end of the reccorded data.
 				 MoveToLatest();
 				 RefreshGraphics();
-
-			 }
-	private: System::Void pseFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
-				 // We are loading a previously recorded packet file, so stop being live.
-				 dataLiveCheckBox->Checked = false;
-				 // Show which file we are loading.
-				 filenameLabel->Text = pseFileDialog->FileName;
-				 ReadGraspData( pseFileDialog->FileName );
-				 // Adjust the scrollbar limits according to the newly loaded data.
-				 AdjustScrollSpan();
-				 // Move to the end of the reccorded data.
-				 MoveToLatest();
-				 RefreshGraphics();
-
 			 }
 	};
 }
