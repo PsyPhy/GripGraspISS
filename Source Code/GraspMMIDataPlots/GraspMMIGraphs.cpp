@@ -59,10 +59,12 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 
 	char header[2048];
 
+	String^ filename = root + ".pse";
+
 	// Convert the String filename into a char *.
 	// Don't forget to free it when exiting.
-	char *filename_root = (char*)(void*)Marshal::StringToHGlobalAnsi( root ).ToPointer();
-	FILE *fid = fopen( filename_root, "r" );
+	char *path = (char*)(void*)Marshal::StringToHGlobalAnsi( filename ).ToPointer();
+	FILE *fid = fopen( path, "r" );
 	fgets( header, sizeof( header ), fid );
 
 	for ( nDataSlices = 0; nDataSlices < MAX_SLICES; nDataSlices++ ) {
@@ -73,6 +75,8 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		TrackerPose pose;
 
 		int result;
+		bool success;
+
 		result = fscanf( fid, "%d;", &trial );
 		if ( result < 1 ) break;
 		result = fscanf( fid, "%lf;", &time );
@@ -80,23 +84,26 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		result = fscanf( fid, "%x;", &state );
 		if ( result < 1 ) break;
 
-		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].headPose );
-		if ( result < 0 ) break;
-		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].handPose );
-		if ( result < 0 ) break;
-		result = ReadTrackerPose( fid, &graspDataSlice[ nDataSlices ].chestPose );
-		if ( result < 0 ) break;
-		result = ReadTrackerPose( fid, &pose );
-		if ( result < 0 ) break;
+		success = ReadTrackerPose( graspDataSlice[ nDataSlices ].headPose, fid );
+		if ( !success ) break;
+		fscanf( fid, " ; " );
+		success = ReadTrackerPose( graspDataSlice[ nDataSlices ].handPose, fid );
+		if ( !success ) break;
+		fscanf( fid, " ; " );
+		success = ReadTrackerPose( graspDataSlice[ nDataSlices ].chestPose, fid );
+		if ( !success ) break;
+		fscanf( fid, " ; " );
+		success = ReadTrackerPose( pose, fid );
+		if ( !success ) break;
+		fscanf( fid, " ; " );
 		vm.CopyQuaternion( graspDataSlice[ nDataSlices ].rollQuaternion, pose.pose.orientation );
 
 		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 			result = ReadMarkerFrame( fid, &graspDataSlice[ nDataSlices ].codaFrame[unit] );
-		if ( result < 0 ) break;
+			if ( result < 0 ) break;
 		}
 
 		graspDataSlice[ nDataSlices ].absoluteTime = time + 12.0 * 60 * 60;
-		fOutputDebugString( "graspDataSlice[ nDataSlices ].absoluteTime[%d] {%d} = %f\n", nDataSlices, MAX_SLICES, graspDataSlice[ nDataSlices ].absoluteTime );
 
 		// For each marker structure, compute the pose using one CODA, then if it is not visible, try the other.
 		// This is what the cascade trackers are doing on board. But it's not clear which comes first onboard.
@@ -176,7 +183,7 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 	nHousekeepingSlices = 1;
 	graspHousekeepingSlice[0].absoluteTime = MISSING_DOUBLE;
 
-	Marshal::FreeHGlobal( IntPtr(filename_root) );
+	Marshal::FreeHGlobal( IntPtr( path ) );
 
 	return true;
 

@@ -212,22 +212,6 @@ namespace GraspMMI {
 			return( 0 );
 		}
 
-		int ReadTrackerPose( FILE *fid, TrackerPose *pose ) {
-			int result;
-			bool visible;
-			result = fscanf( fid, " %lf;", &pose->time );
-			if ( result < 1 ) return( -1 );
-			result = fscanf( fid, " %d;", &visible );
-			if ( result < 1 ) return( -1 );
-			pose->visible = ( visible != 0 );
-			result = fscanf( fid, " < %lf %lf %lf>;",
-				&pose->pose.position[X], &pose->pose.position[Y], &pose->pose.position[Z] );
-			if ( result < 3 ) return( -1 );
-			result = fscanf( fid, " {%lfi %lfj %lfk %lf};",
-				&pose->pose.orientation[X], &pose->pose.orientation[Y], &pose->pose.orientation[Z], &pose->pose.orientation[M] );
-			if ( result < 4 ) return( -1 );
-			return( 0 );
-		}
 
 
 	public:
