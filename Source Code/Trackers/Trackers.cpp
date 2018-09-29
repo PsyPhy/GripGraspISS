@@ -15,7 +15,29 @@ using namespace PsyPhy;
 
 // Provide some generic methods for copying marker frames.
 
+bool PsyPhy::ReadMarkerFrame( MarkerFrame &frame, FILE *fid ) {
+	int result;
+	int visible;
+	result = fscanf( fid, "%lf;", &frame.time );
+	if ( result < 1 ) return( false );
+	for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+		result = fscanf( fid, " %d; %lf; %lf; %lf;",
+			&visible,
+			&frame.marker[mrk].position[X],
+			&frame.marker[mrk].position[Y],
+			&frame.marker[mrk].position[Z] );
+		if ( result < 4 ) return( false );
+		frame.marker[mrk].visibility = ( visible != 0 );
+	}
+	return( true );
+}
+
 void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
+	// MarkerFrame is just a structure, not a class.
+	// Need an instance of VectorsMixin to get that functionality.
+	// It might make more sense to redefine MarkerFrame as a class and to
+	// build VectorsMixin into it, and then define this as a method.
+	// But that would be a big change.
 	static VectorsMixin vm;
 	int mrk;
 	destination.time = source.time;
@@ -26,7 +48,11 @@ void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 }
 
 void	PsyPhy::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames ) {
-
+	// MarkerFrame is just a structure, not a class.
+	// Need an instance of VectorsMixin to get that functionality.
+	// It might make more sense to redefine MarkerFrame as a class and to
+	// build VectorsMixin into it, and then define this as a method.
+	// But that would be a big change.
 	static VectorsMixin vm;
 	int mrk, frm;
 	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {

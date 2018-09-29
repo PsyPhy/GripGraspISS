@@ -62,6 +62,7 @@ namespace PsyPhy {
 
 extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
 extern void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
+extern bool ReadMarkerFrame( MarkerFrame &frame, FILE *fid );
 
 class Tracker : public PsyPhy::VectorsMixin {
 
