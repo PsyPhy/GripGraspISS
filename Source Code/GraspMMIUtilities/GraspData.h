@@ -61,40 +61,6 @@ namespace Grasp {
 		}
 
 
-		int ReadMarkerFrame( FILE *fid, MarkerFrame *frame ) {
-			int result;
-			int visible;
-			result = fscanf( fid, "%lf;", &frame->time );
-			if ( result < 1 ) return( -1 );
-			for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-				result = fscanf( fid, " %d; %lf; %lf; %lf;",
-					&visible,
-					&frame->marker[mrk].position[X],
-					&frame->marker[mrk].position[Y],
-					&frame->marker[mrk].position[Z] );
-				if ( result < 4 ) return( -1 );
-				frame->marker[mrk].visibility = ( visible != 0 );
-			}
-			return( 0 );
-		}
-
-		int ReadTrackerPose( FILE *fid, TrackerPose *pose ) {
-			int result;
-			bool visible;
-			result = fscanf( fid, " %lf;", &pose->time );
-			if ( result < 1 ) return( -1 );
-			result = fscanf( fid, " %d;", &visible );
-			if ( result < 1 ) return( -1 );
-			pose->visible = ( visible != 0 );
-			result = fscanf( fid, " < %lf %lf %lf>;",
-				&pose->pose.position[X], &pose->pose.position[Y], &pose->pose.position[Z] );
-			if ( result < 3 ) return( -1 );
-			result = fscanf( fid, " {%lfi %lfj %lfk %lf};",
-				&pose->pose.orientation[X], &pose->pose.orientation[Y], &pose->pose.orientation[Z], &pose->pose.orientation[M] );
-			if ( result < 4 ) return( -1 );
-			return( 0 );
-		}
-
 		bool ReadGraspSample( FILE *fid, GraspSample *sample ) {
 
 			int result;
@@ -105,17 +71,21 @@ namespace Grasp {
 			result = fscanf( fid, "%x;", &sample->state );
 			if ( result < 1 ) return false;
 
-			result = ReadTrackerPose( fid, &sample->hmd );
+			result = ReadTrackerPose( sample->hmd, fid );
 			if ( result < 0 ) return false;
-			result = ReadTrackerPose( fid, &sample->hand );
+			fscanf( fid, ";" );
+			result = ReadTrackerPose( sample->hand, fid );
 			if ( result < 0 ) return false;
-			result = ReadTrackerPose( fid, &sample->chest );
+			fscanf( fid, ";" );
+			result = ReadTrackerPose( sample->chest, fid );
 			if ( result < 0 ) return false;
-			result = ReadTrackerPose( fid, &sample->roll );
+			fscanf( fid, ";" );
+			result = ReadTrackerPose( sample->roll, fid );
 			if ( result < 0 ) return false;
+			fscanf( fid, ";" );
 
 			for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-				result = ReadMarkerFrame( fid, &sample->markerFrame[unit] );
+				result = ReadMarkerFrame( sample->markerFrame[unit], fid );
 				if ( result < 0 ) return false;
 			}
 			return true;
