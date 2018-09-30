@@ -700,7 +700,7 @@ GraspTrialState GraspTaskManager::UpdatePresentTarget( void ) {
 	// this state for the next cycle.
 	return( currentState );
 }
-// Here we provide a common routing to handle updating during a visual 
+// Here we provide a common routine to handle updating during a visual 
 // target presentation. It does not get called by the base class, but a derived class
 // can call it from within its own UpdatePresentTarget() handler.
 GraspTrialState GraspTaskManager::UpdateVisualTarget( void ) { 

@@ -191,6 +191,8 @@ namespace Grasp {
 			data.enableBits = 0;
 			unsigned long bit = 0x01;
 
+			// If you change the next lines, you need to change the #defines in Grasp.h.
+
 			if ( renderer->orientationTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->positionOnlyTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->straightAheadTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
