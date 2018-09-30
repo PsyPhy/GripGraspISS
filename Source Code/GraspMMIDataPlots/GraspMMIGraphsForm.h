@@ -249,9 +249,9 @@ namespace GraspMMI {
 			InitializeComponent();
 
 			// Allocate memory for display traces.
-			graspHousekeepingSlice = (GraspHousekeepingSlice *) malloc( MAX_SLICES * sizeof( GraspHousekeepingSlice ) );
+			graspHousekeepingSlice = (GraspHousekeepingSlice *) calloc( MAX_SLICES, sizeof( GraspHousekeepingSlice ) );
 			if ( !graspHousekeepingSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Housekeeping Data", MAX_SLICES );
-			graspDataSlice = (GraspRealtimeDataSlice *) malloc( MAX_SLICES * sizeof( GraspRealtimeDataSlice ) );
+			graspDataSlice = (GraspRealtimeDataSlice *) calloc( MAX_SLICES, sizeof( GraspRealtimeDataSlice ) );
 			if ( !graspDataSlice ) fAbortMessage( "GraspMMI", "Error allocating %d frames for Grasp Realtime Data", MAX_SLICES );
 
 		}
