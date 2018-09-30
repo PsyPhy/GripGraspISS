@@ -23,6 +23,20 @@ bool CodaPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	return( ComputePose( pose, this->frame ) );
 }
 
+int  CodaPoseTracker::VisibleMarkers( MarkerFrame *frame ) {
+	int visible_markers = 0;
+	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
+		int id = modelMarker[mrk].id;
+		if ( frame->marker[id].visibility ) visible_markers++;
+	}
+	return( visible_markers );
+}
+
+int  CodaPoseTracker::VisibleMarkers( void ) {
+	return( VisibleMarkers( this->frame ) );
+}
+
+
 bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) { 
 
 	Vector3		selected_model[MAX_MARKERS];
