@@ -76,7 +76,7 @@ namespace GraspMMI {
 		double		taskID;
 		double		protocolID;
 		double		userID;
-		double		visibleMarkers[MARKER_STRUCTURES];
+		double		visibleMarkers[MAX_UNITS][MARKER_STRUCTURES];
 		unsigned int	scriptEngine;
 	} GraspHousekeepingSlice;
 

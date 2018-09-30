@@ -25,6 +25,7 @@
 #include "../OpenGLObjects/OpenGLTextures.h"
 #include "../OpenGLObjects/OpenGLWindowsInForms.h"
 #include "../GraspVR/GraspGLObjects.h"
+#include "../Grasp/Grasp.h"
 
 #include "../GraspMMIUtilities/GraspData.h"
 
@@ -52,22 +53,96 @@ using namespace System::Runtime::InteropServices;
 // Time span in seconds for each position of the span selector.
 double  windowSpanSeconds[SPAN_VALUES] = { 43200.0, 14400.0, 3600.0, 1800.0, 600.0, 300.0, 60.0, 30.0 };
 
+// Trial parameters.
+// I have to put them here as statics because a managed class
+// cannot have mixed types.
+struct {
+	int		trial;
+	char	paradigm[16];
+	double	target_head_tilt;
+	double	target_head_tilt_tolerance;
+	double	target_head_tilt_duration;
+	double	target_orientation;
+	double	target_orientation_tolerance;
+	double	target_duration;
+	double	response_head_tilt;
+	double	response_head_tilt_tolerance;
+	double	response_head_tilt_duration;
+	double	response_timeout;
+	double	conflict_gain;
+	int		feedback;
+	double	time;
+	char	*response;
+} trial_parameters[MAX_GRASP_TRIALS];
+int n_trials;
+
 // Read data stored by the GRASP application.
 bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 
 	static VectorsMixin vm;
 
-	char header[2048];
+	char line[2048];
+	char *path;
+	FILE *fid;
 
-	String^ filename = root + ".pse";
+	// Parse the filename for the subject, subsession and session IDs.
+	// Note that we don't care too much. So if the filename is not standard
+	// it should be OK. 
+	double	subject = 0;
+	double	protocol = 0;
+	double	task = 0;
+
+	String^ name_only = root->Substring( root->LastIndexOf( "\\" ) + 1 );
+	char *ptr = (char*)(void*)Marshal::StringToHGlobalAnsi( name_only ).ToPointer();
+	sscanf( ptr, "S%lf_%lf_%lf", &subject, &protocol, &task );
+	Marshal::FreeHGlobal( IntPtr( ptr ) );
+
+	String^ response_filename = root + ".rsp";
 
 	// Convert the String filename into a char *.
 	// Don't forget to free it when exiting.
-	char *path = (char*)(void*)Marshal::StringToHGlobalAnsi( filename ).ToPointer();
-	FILE *fid = fopen( path, "r" );
-	fgets( header, sizeof( header ), fid );
+	path = (char*)(void*)Marshal::StringToHGlobalAnsi( response_filename ).ToPointer();
 
-	for ( nDataSlices = 0; nDataSlices < MAX_SLICES; nDataSlices++ ) {
+
+	fid = fopen( path, "r" );
+	// Read and ignore header.
+	fgets( line, sizeof( line ), fid );
+	for ( n_trials = 0; n_trials < MAX_GRASP_TRIALS; n_trials++ ) {
+		if ( ! fgets( line, sizeof( line ), fid ) ) break;
+		sscanf( line, "%d; %s %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %lf; %d; %lf;",
+			&trial_parameters[ n_trials ].trial,
+			trial_parameters[ n_trials ].paradigm,
+			&trial_parameters[ n_trials ].target_head_tilt,
+			&trial_parameters[ n_trials ].target_head_tilt_tolerance,
+			&trial_parameters[ n_trials ].target_head_tilt_duration,
+			&trial_parameters[ n_trials ].target_orientation,
+			&trial_parameters[ n_trials ].target_orientation_tolerance,
+			&trial_parameters[ n_trials ].target_duration,
+			&trial_parameters[ n_trials ].response_head_tilt,
+			&trial_parameters[ n_trials ].response_head_tilt_tolerance,
+			&trial_parameters[ n_trials ].response_head_tilt_duration,
+			&trial_parameters[ n_trials ].response_timeout,
+			&trial_parameters[ n_trials ].conflict_gain,
+			&trial_parameters[ n_trials ].feedback,
+			&trial_parameters[ n_trials ].time );
+			trial_parameters[ n_trials ].response = "IGNORE";
+
+	}
+	fclose( fid );
+	Marshal::FreeHGlobal( IntPtr( path ) );
+
+	/// Read the poses and marker data.
+	String^ pose_filename = root + ".pse";
+
+	// Convert the String filename into a char *.
+	// Don't forget to free it when exiting.
+	path = (char*)(void*)Marshal::StringToHGlobalAnsi( pose_filename ).ToPointer();
+	fid = fopen( path, "r" );
+	// Read and ignore header.
+	fgets( line, sizeof( line ), fid );
+
+	double start_time = 36.0 * 60 * 60;
+	for ( nDataSlices = 0, nHousekeepingSlices = 0; nDataSlices < MAX_SLICES; nDataSlices++, nHousekeepingSlices++ ) {
 
 		int trial;
 		int state;
@@ -77,11 +152,13 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		int result;
 		bool success;
 
+		int preceeding_state = 0;
+
 		result = fscanf( fid, "%d;", &trial );
 		if ( result < 1 ) break;
 		result = fscanf( fid, "%lf;", &time );
 		if ( result < 1 ) break;
-		result = fscanf( fid, "%x;", &state );
+		result = fscanf( fid, "%d;", &state );
 		if ( result < 1 ) break;
 
 		success = ReadTrackerPose( graspDataSlice[ nDataSlices ].headPose, fid );
@@ -103,7 +180,7 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 			if ( result < 0 ) break;
 		}
 
-		graspDataSlice[ nDataSlices ].absoluteTime = time + 12.0 * 60 * 60;
+		graspDataSlice[ nDataSlices ].absoluteTime = time + start_time;
 
 		// For each marker structure, compute the pose using one CODA, then if it is not visible, try the other.
 		// This is what the cascade trackers are doing on board. But it's not clear which comes first onboard.
@@ -154,35 +231,155 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 			graspDataSlice[ nDataSlices ].torsoRollAngle = MISSING_DOUBLE;
 		}
 
-		//// Here we would like to have the pose of the optical trackers, as sent by 
-		//// GraspTrackerDaemon. But they are not in the .pse file. We will need to 
-		//// recompute them from the marker frames. But for the moment I put here the 
-		//// poses from the GraspVR, which are included in the .pse.
-
-		//CopyTrackerPose( graspDataSlice[ nDataSlices ].HMD, data.sample[i].hmd );
-		//if ( !graspDataSlice[ nDataSlices ].HMD.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].HMD.pose, data.missingPose );
-		//CopyTrackerPose( graspDataSlice[ nDataSlices ].hand, data.sample[i].hand );
-		//if ( !graspDataSlice[ nDataSlices ].hand.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].hand.pose, data.missingPose );
-		//CopyTrackerPose( graspDataSlice[ nDataSlices ].chest, data.sample[i].chest );
-		//if ( !graspDataSlice[ nDataSlices ].chest.visible ) data.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, data.missingPose );
-
+		graspDataSlice[ nDataSlices ].clientType = GraspRealtimeDataSlice::GRASP;
 
 		// The pse file unfortunately does not include the enable bits of the VR objects.
-		// We can try to deduce them from the state variable, but for the moment
-		// I just try to enable the tunnel and the hand.
-		graspDataSlice[ nDataSlices ].enableBits = 1 << 2 | 1 << 14 | 1 << 20 | 1 << 19 | 1 << 21;
-		//graspDataSlice[ nDataSlices ].enableBits = ~0;
-		graspDataSlice[ nDataSlices ].spinnerBits = 0;
-		graspDataSlice[ nDataSlices ].targetOrientation = 0.0;
+		// We can try to deduce them from the state variable.
+
+		switch ( state ) {
+
+		case StartBlock:
+			graspDataSlice[ nDataSlices ].enableBits = VK_TOOL;
+			graspDataSlice[ nDataSlices ].spinnerBits = READY_TO_START_INDICATOR;
+			break;
+
+		case StartTrial:
+			graspDataSlice[ nDataSlices ].enableBits = 0;
+			graspDataSlice[ nDataSlices ].spinnerBits = READY_TO_START_INDICATOR;
+			break;
+
+		case StraightenHead:
+			graspDataSlice[ nDataSlices ].enableBits = 
+				STARRY_SKY | STRAIGHT_AHEAD_TARGET | K_TOOL;
+			graspDataSlice[ nDataSlices ].spinnerBits = STRAIGHTEN_HEAD_INDICATOR;
+			break;
+
+		case AlignHead:
+			graspDataSlice[ nDataSlices ].enableBits = GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case PresentTarget:
+			// Always show the visual target and the VK tool, so we can tell what is happening.
+			graspDataSlice[ nDataSlices ].enableBits = VK_TOOL | GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY | ORIENTATION_TARGET;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case TiltHead:
+			graspDataSlice[ nDataSlices ].enableBits = GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case ObtainResponse:
+			// Always show the visual target and the VK tool, so we can tell what is happening.
+			graspDataSlice[ nDataSlices ].enableBits = 
+				GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY | POSITION_ONLY_TARGET | VK_TOOL | HAND_LASER;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case ProvideFeedback:
+			graspDataSlice[ nDataSlices ].enableBits = 
+				GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY | PROJECTILES | MULTI_PROJECTILE | ORIENTATION_TARGET;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case TrialCompleted:
+			graspDataSlice[ nDataSlices ].enableBits = 
+				GRASP_ROOM | GRASP_TUNNEL | STARRY_SKY | SUCCESS_INDICATOR;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+			break;
+
+		case BlockCompleted:
+			graspDataSlice[ nDataSlices ].enableBits = VK_TOOL;
+			graspDataSlice[ nDataSlices ].spinnerBits = BLOCK_COMPLETED_INDICATOR;
+			break;
+
+		case VRCompleted:
+			graspDataSlice[ nDataSlices ].enableBits = DARK_SKY | VK_TOOL;
+			graspDataSlice[ nDataSlices ].spinnerBits = BLOCK_COMPLETED_INDICATOR;
+			break;
+
+		case TrialInterrupted:
+			graspDataSlice[ nDataSlices ].enableBits = GRASP_ROOM | DARK_SKY | VK_TOOL;
+			switch ( preceeding_state ) {
+			case StraightenHead:
+				graspDataSlice[ nDataSlices ].spinnerBits = HEAD_ALIGN_TIMEOUT_INDICATOR;
+				break;
+
+			case AlignHead:
+				graspDataSlice[ nDataSlices ].spinnerBits = HEAD_ALIGN_TIMEOUT_INDICATOR;
+				break;
+
+			case PresentTarget:
+				graspDataSlice[ nDataSlices ].spinnerBits = HEAD_MISALIGNED_INDICATOR;
+				break;
+
+			case TiltHead:
+				graspDataSlice[ nDataSlices ].spinnerBits = HEAD_ALIGN_TIMEOUT_INDICATOR;
+				break;
+
+			case ObtainResponse:
+				graspDataSlice[ nDataSlices ].spinnerBits = RESPONSE_TIMEOUT_INDICATOR;
+				break;
+
+			case ProvideFeedback:
+				graspDataSlice[ nDataSlices ].spinnerBits = MANUAL_REJECT_INDICATOR;
+				break;
+
+
+			default:
+				graspDataSlice[ nDataSlices ].spinnerBits = INTERRUPT_INDICATOR;
+				break;
+			}
+			break;
+
+		case Demo:
+			graspDataSlice[ nDataSlices ].enableBits = GRASP_ROOM | STARRY_SKY | VK_TOOL;
+			graspDataSlice[ nDataSlices ].spinnerBits = DEMO_STATE_INDICATOR;
+			break;
+
+		default:
+			graspDataSlice[ nDataSlices ].enableBits = 
+				ORIENTATION_TARGET | VK_TOOL | GRASP_TUNNEL | GRASP_ROOM | DARK_SKY;
+			graspDataSlice[ nDataSlices ].spinnerBits = 0;
+		}
+		graspDataSlice[ nDataSlices ].targetOrientation = trial_parameters[trial].target_orientation;
+
+		graspHousekeepingSlice[nHousekeepingSlices].absoluteTime = time + start_time;
+		graspHousekeepingSlice[nHousekeepingSlices].userID = subject;
+		graspHousekeepingSlice[nHousekeepingSlices].protocolID = protocol;
+		graspHousekeepingSlice[nHousekeepingSlices].taskID = task;
+		graspHousekeepingSlice[nHousekeepingSlices].stepID = -1;
+		graspHousekeepingSlice[nHousekeepingSlices].scriptEngine = -1;
+
+		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
+
+			int count = 0;
+			for ( int i = 0; i < hmdTracker->nModelMarkers; i++ ) {
+				int mrk = hmdTracker->modelMarker[i].id;
+				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
+			}
+			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][HMD_STRUCTURE] = count;
+
+			count = 0;
+			for ( int i = 0; i < handTracker->nModelMarkers; i++ ) {
+				int mrk = handTracker->modelMarker[i].id;
+				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
+			}
+			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][HAND_STRUCTURE] = count;
+
+			count = 0;
+			for ( int i = 0; i < chestTracker->nModelMarkers; i++ ) {
+				int mrk = chestTracker->modelMarker[i].id;
+				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
+			}
+			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][CHEST_STRUCTURE] = count;
+
+		}
+		preceeding_state = state;
 
 	}
-	fOutputDebugString( "graspDataSlices %d\n", nDataSlices );
-
-	//nDataSlices = GetGraspRT( graspDataSlice, MAX_SLICES, filename_root );
-	//nHousekeepingSlices = GetHousekeepingTrace( graspHousekeepingSlice, MAX_SLICES, filename_root );
-	nHousekeepingSlices = 1;
-	graspHousekeepingSlice[0].absoluteTime = MISSING_DOUBLE;
-
+	fOutputDebugString( "graspDataSlices %d of %d\n", nDataSlices, MAX_SLICES );
 	Marshal::FreeHGlobal( IntPtr( path ) );
 
 	return true;
@@ -356,7 +553,7 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 // of the plots is determined by the scroll bar and span slider.
 void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
-	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+	static int color_by_object[MAX_UNITS][MARKER_STRUCTURES] = { { BLUE, CYAN, GREEN }, { MAGENTA, MAGENTA, MAGENTA } };
 
 	static bool __debug__ = false;
 
@@ -415,7 +612,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Head Pose
 	//
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -451,7 +648,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
 	ViewBox( view );
 	ViewColor( view, GREY7 );
 	ViewHorizontalLine( view, 0.0 );
@@ -500,7 +697,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
 	ViewBox( view );
 	double angle_max = - DBL_MAX;
 	ViewSetXLimits( view, first_instant, last_instant );
@@ -555,7 +752,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
 	ViewBox( view );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -572,7 +769,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HAND_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -609,7 +806,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[HAND_STRUCTURE]);
+	ViewColor( view, color_by_object[0][HAND_STRUCTURE]);
 	ViewBox( view );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
@@ -626,7 +823,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -663,7 +860,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
 	ViewBox( view );
 	ViewColor( view, GREY6 );
 	ViewTiltPlotAvailableDoubles( view, 
@@ -673,7 +870,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		sizeof( graspDataSlice[first_sample] ), 
 		sizeof( graspDataSlice[first_sample] ),
 		MISSING_DOUBLE);
-	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].torsoRollAngle, 
@@ -698,6 +895,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	first_sample = index + 1;
 	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
+	if ( true ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
 	// for ( int i = first_sample; i < last_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
 
 	// Plot how many markers are visible on each marker structure.
@@ -711,14 +909,27 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewBox( view );
 		ViewSetColorRGB( view, 1.0f, 0.85f, 0.85f );
 		ViewHorizontalBand( view, 0.0, 4.0 );
-		ViewColor( view, color_by_object[object]);
+
+		int unit = 0;
+		ViewColor( view, color_by_object[unit][object]);
 		ViewFillPlotAvailableDoubles( view,
 			&graspHousekeepingSlice[0].absoluteTime, 
-			&graspHousekeepingSlice[0].visibleMarkers[object], 
+			&graspHousekeepingSlice[0].visibleMarkers[unit][object], 
 			first_sample, last_sample - 1, 1,
 			sizeof( *graspHousekeepingSlice ), 
 			sizeof( *graspHousekeepingSlice ),
 			MISSING_DOUBLE );
+
+		unit = 1;
+		ViewColor( view, color_by_object[unit][object]);
+		ViewXYPlotAvailableDoubles( view,
+			&graspHousekeepingSlice[0].absoluteTime, 
+			&graspHousekeepingSlice[0].visibleMarkers[unit][object], 
+			first_sample, last_sample - 1, 1,
+			sizeof( *graspHousekeepingSlice ), 
+			sizeof( *graspHousekeepingSlice ),
+			MISSING_DOUBLE );
+
 		ViewColor( view, axis_color );
 		ViewTitle( view, StructureLabel[object], INSIDE_LEFT, INSIDE_TOP, 0.0 );
 

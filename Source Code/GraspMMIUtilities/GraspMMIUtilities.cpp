@@ -423,9 +423,10 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		for ( int bdy = 0; bdy < MARKER_STRUCTURES; bdy++ ) {
 			if ( hk.motionTrackerStatusEnum < TRACKER_ANOMALY ) {
 				int visible = (hk.motionTrackerStatusEnum / (int) pow( 10.0, MARKER_STRUCTURES - bdy - 1 )) % 10;
-				trace[packets_read].visibleMarkers[bdy] = visible;
+				trace[packets_read].visibleMarkers[0][bdy] = visible;
 			}
-			else trace[packets_read].visibleMarkers[bdy] = MISSING_DOUBLE;
+			else trace[packets_read].visibleMarkers[0][bdy] = MISSING_DOUBLE;
+			trace[packets_read].visibleMarkers[1][bdy] = MISSING_DOUBLE;
 		}
 		previous_packet_timestamp = EPMtoSeconds( &epm_header );
 		packets_read++;

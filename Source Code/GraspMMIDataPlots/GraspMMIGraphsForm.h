@@ -1206,6 +1206,20 @@ namespace GraspMMI {
 			graspHousekeepingSlice[nHousekeepingSlices].absoluteTime = MISSING_DOUBLE;
 		}
 
+		// A timer to cue up a single refresh.
+		System::Windows::Forms::Timer^ oneShot;
+		void CreateOneShotTimer( void ) {
+			oneShot = gcnew System::Windows::Forms::Timer;
+			oneShot->Interval = 100;
+			oneShot->Tick += gcnew EventHandler( this, &GraspMMI::GraspMMIGraphsForm::OnOneShotElapsed );
+		}
+		void OnOneShotElapsed( System::Object^ source, System::EventArgs ^ e ) {
+			RefreshGraphics();
+		}
+		void CueRefresh( void ) {
+			oneShot->Start();
+		}
+
 		// A timer to trigger new polling for packets after a delay.
 		System::Windows::Forms::Timer^ timer;
 		void CreateRefreshTimer( int interval ) {
@@ -1281,6 +1295,7 @@ namespace GraspMMI {
 			dataLiveCheckBox->Checked = true;
 			CreateRefreshTimer( refreshInterval );
 			CreatePlaybackTimer( playbackRefreshInterval );
+			CreateOneShotTimer();
 			StartRefreshTimer();
 		}
 		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
@@ -1372,11 +1387,11 @@ namespace GraspMMI {
 				taskViewBottom = bottom;
 				taskViewTop = 99.0 + taskViewBottom;
 			}
-			StartRefreshTimer();
+			CueRefresh();
 		}
 
 		System::Void hmdContextMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
-			StartRefreshTimer();
+			CueRefresh();
 		}
 		System::Void worldTabs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			MoveToInstant( current_vr_instant );
