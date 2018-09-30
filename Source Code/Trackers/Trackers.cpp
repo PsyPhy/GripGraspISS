@@ -47,6 +47,11 @@ void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 	}
 }
 
+void PsyPhy::OccludeMarkerFrame( MarkerFrame &destination ) {
+	int mrk;
+	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) destination.marker[mrk].visibility = false;
+}
+
 void	PsyPhy::ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames ) {
 	// MarkerFrame is just a structure, not a class.
 	// Need an instance of VectorsMixin to get that functionality.
