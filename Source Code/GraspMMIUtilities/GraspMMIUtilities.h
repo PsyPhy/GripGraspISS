@@ -49,6 +49,8 @@ namespace GraspMMI {
 		Matrix3x3		alignmentRotation[MAX_UNITS];
 
 		// Computed Items
+		double visibleMarkers[MAX_UNITS][MARKER_STRUCTURES];
+
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
 		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
 		double handRotationAngle;	// Rotation of the Hand away from straight ahead, including pitch and yaw, in degrees.
@@ -76,10 +78,11 @@ namespace GraspMMI {
 		double		taskID;
 		double		protocolID;
 		double		userID;
-		double		visibleMarkers[MAX_UNITS][MARKER_STRUCTURES];
+		double		visibleMarkers[MARKER_STRUCTURES];
 		unsigned int	scriptEngine;
 	} GraspHousekeepingSlice;
 
+	void ComputeGraspRTDerivedValues( GraspRealtimeDataSlice *slice );
 	int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );
 	int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *filename_root );
 	void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPacket &epm_packet );

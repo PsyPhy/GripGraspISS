@@ -21,10 +21,54 @@ using namespace PsyPhy;
 
 namespace GraspMMI {
 
+void ComputeGraspRTDerivedValues( GraspRealtimeDataSlice *slice ) {
+
+	static VectorsMixin vm;
+
+	// Compute some pertinent angles from the orientation information.
+	if ( slice->HMD.visible ) {
+		slice->hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( slice->HMD.pose.orientation ) );
+		slice->hmdRollAngle = vm.ToDegrees( vm.RollAngle( slice->HMD.pose.orientation ) );
+	}
+	else {
+		vm.CopyPose( slice->HMD.pose, vm.missingPose );
+		slice->hmdRotationAngle = MISSING_DOUBLE;
+		slice->hmdRollAngle = MISSING_DOUBLE;
+	}
+	if ( slice->hand.visible ) {
+		slice->handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice->hand.pose.orientation ) );
+		slice->handRollAngle = vm.ToDegrees( vm.RollAngle( slice->hand.pose.orientation ) );
+	}
+	else {
+		vm.CopyPose( slice->hand.pose, vm.missingPose );
+		slice->handRotationAngle = MISSING_DOUBLE;
+		slice->handRollAngle = MISSING_DOUBLE;
+	}
+	if ( slice->chest.visible ) {
+		slice->chestRotationAngle = vm.ToDegrees( vm.RotationAngle( slice->chest.pose.orientation ) );
+		slice->chestRollAngle = vm.ToDegrees( vm.RollAngle( slice->chest.pose.orientation ) );
+	}
+	else {
+		vm.CopyPose( slice->chest.pose, vm.missingPose );
+		slice->chestRotationAngle = MISSING_DOUBLE;
+		slice->chestRollAngle = MISSING_DOUBLE;
+	}
+	if ( slice->chest.visible && slice->HMD.visible ) {
+		Vector3 delta;
+		vm.SubtractVectors( delta, slice->HMD.pose.position, slice->chest.pose.position );
+		slice->torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
+	}
+	else {
+		slice->torsoRollAngle = MISSING_DOUBLE;
+	}
+
+}
+
 u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buffer, u32 p ) {
 
 	static VectorsMixin vm;
 	for ( int i = 0; i < GRASP_RT_SLICES_PER_PACKET; i++ ) {
+
 		p = extractTM( slice[i].fillTime, buffer, p );
 		p = extractTM( slice[i].globalCount, buffer, p );
 		p = extractTM( slice[i].HMD, buffer, p );
@@ -37,44 +81,8 @@ u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buf
 		p = extractTM( slice[i].clientTime, buffer, p );
 		p = extractTM( slice[i].clientData, sizeof( slice[i].clientData ), buffer, p );
 
-
-
 		// It is convenient to compute some derived values here.
-		if ( slice[i].HMD.visible ) {
-			slice[i].hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].HMD.pose.orientation ) );
-			slice[i].hmdRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].HMD.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( slice[i].HMD.pose, vm.missingPose );
-			slice[i].hmdRotationAngle = MISSING_DOUBLE;
-			slice[i].hmdRollAngle = MISSING_DOUBLE;
-		}
-		if ( slice[i].hand.visible ) {
-			slice[i].handRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].hand.pose.orientation ) );
-			slice[i].handRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].hand.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( slice[i].hand.pose, vm.missingPose );
-			slice[i].handRotationAngle = MISSING_DOUBLE;
-			slice[i].handRollAngle = MISSING_DOUBLE;
-		}
-		if ( slice[i].chest.visible ) {
-			slice[i].chestRotationAngle = vm.ToDegrees( vm.RotationAngle( slice[i].chest.pose.orientation ) );
-			slice[i].chestRollAngle = vm.ToDegrees( vm.RollAngle( slice[i].chest.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( slice[i].chest.pose, vm.missingPose );
-			slice[i].chestRotationAngle = MISSING_DOUBLE;
-			slice[i].chestRollAngle = MISSING_DOUBLE;
-		}
-		if ( slice[i].chest.visible && slice[i].HMD.visible ) {
-			Vector3 delta;
-			vm.SubtractVectors( delta, slice[i].HMD.pose.position, slice[i].chest.pose.position );
-			slice[i].torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
-		}
-		else {
-			slice[i].torsoRollAngle = MISSING_DOUBLE;
-		}
+		ComputeGraspRTDerivedValues( &slice[i] );
 
 		slice[i].clientType = GraspRealtimeDataSlice::NONE;
 		if ( !strcmp( "GRASP", (char *) slice[i].clientData ) ) {
@@ -250,6 +258,7 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 				grasp_data_slice[n_slices].HMD.visible = false;
 				grasp_data_slice[n_slices].hand.visible = false;
 				grasp_data_slice[n_slices].chest.visible = false;
+				grasp_data_slice[n_slices].codaUnit = MISSING_CHAR;
 				for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 					for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) grasp_data_slice[n_slices].codaFrame[unit].marker[mrk].visibility = false;
 				}
@@ -319,6 +328,18 @@ int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char 
 			filename, filename2 );
 		// Signal for the next call that we have already reached the limit of the buffers.
 		buffers_full_alert = true;
+	}
+
+	// Each realtime slice has only one marker frame, corresponding to one or the other coda.
+	// If the preceding slice contains the other frame, we copy it here.
+	// Otherwise we set all of the markers in the missing frame to be occluded.
+	for ( int i = 0; i < n_slices; i++ ) {
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+			if ( unit != grasp_data_slice[i].codaUnit ) {
+				if ( ( i > 0 ) && ( grasp_data_slice[i-1].codaUnit == unit ) ) CopyMarkerFrame( grasp_data_slice[i].codaFrame[unit], grasp_data_slice[i-1].codaFrame[unit] );
+				else OccludeMarkerFrame( grasp_data_slice[i].codaFrame[unit] );
+			}
+		}
 	}
 	
 	return ( n_slices );
@@ -423,10 +444,9 @@ int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *f
 		for ( int bdy = 0; bdy < MARKER_STRUCTURES; bdy++ ) {
 			if ( hk.motionTrackerStatusEnum < TRACKER_ANOMALY ) {
 				int visible = (hk.motionTrackerStatusEnum / (int) pow( 10.0, MARKER_STRUCTURES - bdy - 1 )) % 10;
-				trace[packets_read].visibleMarkers[0][bdy] = visible;
+				trace[packets_read].visibleMarkers[bdy] = visible;
 			}
-			else trace[packets_read].visibleMarkers[0][bdy] = MISSING_DOUBLE;
-			trace[packets_read].visibleMarkers[1][bdy] = MISSING_DOUBLE;
+			else trace[packets_read].visibleMarkers[bdy] = MISSING_DOUBLE;
 		}
 		previous_packet_timestamp = EPMtoSeconds( &epm_header );
 		packets_read++;

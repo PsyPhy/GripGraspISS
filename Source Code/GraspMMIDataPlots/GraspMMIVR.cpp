@@ -322,42 +322,8 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	}
 	
-	// Data recorded in .pse files contains the marker frames from both CODAs, but
-	// the real-time packets each have only one at a time, in alternance, with the codaUnit 
-	// parameter saying which one. When a .pse file is loaded, the codaUnit value is
-	// set to -1 to indicate that marker frames from both CODAs are available. Here we
-	// handle those two different cases for displaying the marker information.
-	if (  graspDataSlice[index].codaUnit < 0 ) {
-		// If we are here, the slices have come from a recorded trial that has marker info from all units.
-		// So we just need to copy the data.
-		for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( unitMarkerFrame[unit], graspDataSlice[index].codaFrame[unit] );
-	}
-	else {
-
-		// Each realtime slice has only one marker frame, corresponding to one or the other coda.
-		// Here we need to find the most recent slice that contains the marker information from
-		// the 'other' coda.  First, we set the visibility of all markers in a local instance of
-		// marker frames so that if there is no previous slice that contains the 'other' coda's frame
-		// we will show here that the markers are not visible in that CODA.
-		for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-			for ( int unit = 0; unit < MAX_UNITS; unit++ ) unitMarkerFrame[unit].marker[mrk].visibility = false;
-		}
-		// Copy the frame from the current slice into the appropriate local copy.
-		int currentCodaUnit = graspDataSlice[index].codaUnit;
-		CopyMarkerFrame( unitMarkerFrame[currentCodaUnit], graspDataSlice[index].codaFrame[currentCodaUnit] );
-		// Now look backward for a slice that contains the frame from the other coda.
-		// If we find it, copy that frame into the local frame for the other coda.
-		int otherIndex;
-		int otherCodaUnit;
-		for ( otherIndex = index; otherIndex > 0; otherIndex -- ) {
-			if ( currentCodaUnit != graspDataSlice[otherIndex].codaUnit ) break;
-		}
-		if ( otherIndex >= 0 ) 	{
-			otherCodaUnit = graspDataSlice[otherIndex].codaUnit;
-			CopyMarkerFrame( unitMarkerFrame[otherCodaUnit], graspDataSlice[otherIndex].codaFrame[otherCodaUnit] );
-		}
-	}
-
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) CopyMarkerFrame( unitMarkerFrame[unit], graspDataSlice[index].codaFrame[unit] );
+	
 	// Show the objects from the side.
 	// Use the pose that was computed by the GraspDaemonTracker.
 	// We want to show which markers were visible, but we don't know which coda was actually

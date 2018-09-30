@@ -28,7 +28,7 @@
 #include "../Grasp/Grasp.h"
 
 #include "../GraspMMIUtilities/GraspData.h"
-
+#include "../GraspMMIUtilities/GraspMMIUtilities.h"
 
 // We make use of a package of plotting routines that I have had around for decades.
 #include "..\PsyPhy2dGraphicsLib\OglDisplayInterface.h"
@@ -75,6 +75,25 @@ struct {
 	char	*response;
 } trial_parameters[MAX_GRASP_TRIALS];
 int n_trials;
+
+void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSlice *slice, int n_slices ) {
+
+	int n;
+	for ( int i = 0; i < n_slices; i++ ) {
+
+		// Compute the marker visibility for each unit.
+		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
+			n = slice[i].visibleMarkers[unit][HMD_STRUCTURE] = 
+				hmdTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+			slice[i].visibleMarkers[unit][HAND_STRUCTURE] = 
+				handTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+			slice[i].visibleMarkers[unit][CHEST_STRUCTURE] = 
+				chestTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+		}
+	}
+
+}
+
 
 // Read data stored by the GRASP application.
 bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
@@ -194,42 +213,9 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		if ( !graspDataSlice[ nDataSlices ].chest.visible ) chestTracker->ComputePose( graspDataSlice[ nDataSlices ].chest, &graspDataSlice[ nDataSlices ].codaFrame[1] );
 		if ( !graspDataSlice[ nDataSlices ].chest.visible ) vm.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, vm.missingPose );
 
+
 		// It is convenient to compute some derived values here.
-		if ( graspDataSlice[ nDataSlices ].HMD.visible ) {
-			graspDataSlice[ nDataSlices ].hmdRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].HMD.pose.orientation ) );
-			graspDataSlice[ nDataSlices ].hmdRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].HMD.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( graspDataSlice[ nDataSlices ].HMD.pose, vm.missingPose );
-			graspDataSlice[ nDataSlices ].hmdRotationAngle = MISSING_DOUBLE;
-			graspDataSlice[ nDataSlices ].hmdRollAngle = MISSING_DOUBLE;
-		}
-		if ( graspDataSlice[ nDataSlices ].hand.visible ) {
-			graspDataSlice[ nDataSlices ].handRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].hand.pose.orientation ) );
-			graspDataSlice[ nDataSlices ].handRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].hand.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( graspDataSlice[ nDataSlices ].hand.pose, vm.missingPose );
-			graspDataSlice[ nDataSlices ].handRotationAngle = MISSING_DOUBLE;
-			graspDataSlice[ nDataSlices ].handRollAngle = MISSING_DOUBLE;
-		}
-		if ( graspDataSlice[ nDataSlices ].chest.visible ) {
-			graspDataSlice[ nDataSlices ].chestRotationAngle = vm.ToDegrees( vm.RotationAngle( graspDataSlice[ nDataSlices ].chest.pose.orientation ) );
-			graspDataSlice[ nDataSlices ].chestRollAngle = vm.ToDegrees( vm.RollAngle( graspDataSlice[ nDataSlices ].chest.pose.orientation ) );
-		}
-		else {
-			vm.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, vm.missingPose );
-			graspDataSlice[ nDataSlices ].chestRotationAngle = MISSING_DOUBLE;
-			graspDataSlice[ nDataSlices ].chestRollAngle = MISSING_DOUBLE;
-		}
-		if ( graspDataSlice[ nDataSlices ].chest.visible && graspDataSlice[ nDataSlices ].HMD.visible ) {
-			Vector3 delta;
-			vm.SubtractVectors( delta, graspDataSlice[ nDataSlices ].HMD.pose.position, graspDataSlice[ nDataSlices ].chest.pose.position );
-			graspDataSlice[ nDataSlices ].torsoRollAngle = vm.ToDegrees( atan2( - delta[X], delta[Y] ) );
-		}
-		else {
-			graspDataSlice[ nDataSlices ].torsoRollAngle = MISSING_DOUBLE;
-		}
+		ComputeGraspRTDerivedValues( &graspDataSlice[ nDataSlices ] );
 
 		graspDataSlice[ nDataSlices ].clientType = GraspRealtimeDataSlice::GRASP;
 
@@ -352,33 +338,25 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		graspHousekeepingSlice[nHousekeepingSlices].stepID = -1;
 		graspHousekeepingSlice[nHousekeepingSlices].scriptEngine = -1;
 
-		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
-
-			int count = 0;
-			for ( int i = 0; i < hmdTracker->nModelMarkers; i++ ) {
-				int mrk = hmdTracker->modelMarker[i].id;
-				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
+		//Do what GraspDexTrackers::GetTrackerStatus() does to compute the HK visibility.
+		unsigned int status = 0;
+		int group, id, mrk, unit;
+		for ( group = 0, id = 0; group < 3 && id < MAX_MARKERS; group ++ ) {
+			int group_count = 0;
+			for ( mrk = 0; mrk < 8 && id < MAX_MARKERS; mrk++ , id++ ) {
+				bool visibility = false;
+				for ( unit = 0; unit < MAX_UNITS; unit++ ) {
+					if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[id].visibility ) visibility = true;
+				}
+				if ( visibility ) group_count++;
 			}
-			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][HMD_STRUCTURE] = count;
-
-			count = 0;
-			for ( int i = 0; i < handTracker->nModelMarkers; i++ ) {
-				int mrk = handTracker->modelMarker[i].id;
-				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
-			}
-			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][HAND_STRUCTURE] = count;
-
-			count = 0;
-			for ( int i = 0; i < chestTracker->nModelMarkers; i++ ) {
-				int mrk = chestTracker->modelMarker[i].id;
-				if ( graspDataSlice[ nDataSlices ].codaFrame[unit].marker[mrk].visibility ) count++;
-			}
-			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[unit][CHEST_STRUCTURE] = count;
-
+			graspHousekeepingSlice[nHousekeepingSlices].visibleMarkers[group] = group_count;
 		}
+
 		preceeding_state = state;
 
 	}
+	ComputeIndividualMarkerVisibility( graspDataSlice, nDataSlices );
 	fOutputDebugString( "graspDataSlices %d of %d\n", nDataSlices, MAX_SLICES );
 	Marshal::FreeHGlobal( IntPtr( path ) );
 
@@ -393,6 +371,7 @@ void GraspMMIGraphsForm::ReadTelemetryCache( String^ root ) {
 	char *filename_root = (char*)(void*)Marshal::StringToHGlobalAnsi( root ).ToPointer();
 	nDataSlices = GetGraspRT( graspDataSlice, MAX_SLICES, filename_root );
 	nHousekeepingSlices = GetHousekeepingTrace( graspHousekeepingSlice, MAX_SLICES, filename_root );
+	ComputeIndividualMarkerVisibility( graspDataSlice, nDataSlices );
 	Marshal::FreeHGlobal( IntPtr(filename_root) );
 }
 
@@ -553,12 +532,15 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 // of the plots is determined by the scroll bar and span slider.
 void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
-	static int color_by_object[MAX_UNITS][MARKER_STRUCTURES] = { { BLUE, CYAN, GREEN }, { MAGENTA, MAGENTA, MAGENTA } };
+	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+	static float color_by_unit[MAX_UNITS][3] = { {0.5f, 0.0f, 0.5f}, {0.75f, 0.25f, 0.0f }};
 
 	static bool __debug__ = false;
 
-	int first_sample;
-	int last_sample;
+	int first_rt_sample;
+	int last_rt_sample;
+	int first_hk_sample;
+	int last_hk_sample;
 	int index;
 
 	int i, j;
@@ -582,11 +564,11 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	for ( index = nDataSlices - 1; index > 0; index -- ) {
 		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= last_instant ) break;
 	}
-	last_sample = index;
+	last_rt_sample = index;
 	for ( index = index; index > 0; index -- ) {
 		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < first_instant ) break;
 	}
-	first_sample = index + 1;
+	first_rt_sample = index + 1;
 
 	playbackScrollBar->Maximum = ceil( last_instant );
 	playbackScrollBar->Minimum = floor( first_instant );
@@ -595,13 +577,13 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
-	while ( ((last_sample - first_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
+	while ( ((last_rt_sample - first_rt_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
 	int tilt_spread;
 	if ( step <= 4 ) tilt_spread = 1;
 	else tilt_spread = TILT_SPREAD;
 
 
-	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample), step );
+	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_rt_sample, last_rt_sample, (last_rt_sample - first_rt_sample), step );
 
 	// Plot the continous data about the head position and orientation.
 	DisplayActivate( poseDisplay );
@@ -612,7 +594,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Head Pose
 	//
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -622,7 +604,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_sample + 1; i < last_sample; i++ ) {
+		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] > max ) max = graspDataSlice[i].HMD.pose.position[j];
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] < min ) min = graspDataSlice[i].HMD.pose.position[j];
@@ -638,9 +620,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].HMD.pose.position[i], 
-			first_sample, last_sample - 1, step,
-			sizeof( graspDataSlice[first_sample] ), 
-			sizeof( graspDataSlice[first_sample] ),
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
 			MISSING_DOUBLE);
 	}
 	ViewColor( view, BLACK );
@@ -648,7 +630,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
 	ViewColor( view, GREY7 );
 	ViewHorizontalLine( view, 0.0 );
@@ -659,7 +641,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_sample + 1; i < last_sample; i++ ) {
+		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] > max ) max = graspDataSlice[i].HMD.pose.orientation[j];
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] < min ) min = graspDataSlice[i].HMD.pose.orientation[j];
@@ -675,9 +657,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].HMD.pose.orientation[i], 
-			first_sample, last_sample - 1, step,
-			sizeof( graspDataSlice[first_sample] ), 
-			sizeof( graspDataSlice[first_sample] ),
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
 			MISSING_DOUBLE);
 	}
 	ViewColor( view, BLACK );
@@ -697,7 +679,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
 	double angle_max = - DBL_MAX;
 	ViewSetXLimits( view, first_instant, last_instant );
@@ -705,7 +687,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		autoscaleIndicator->Visible = true;
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.
-		for ( i = first_sample + 1; i < last_sample; i++ ) {
+		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && fabs( graspDataSlice[i].hmdRotationAngle ) > angle_max ) angle_max = fabs( graspDataSlice[i].hmdRotationAngle );
 			}
@@ -722,9 +704,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRotationAngle, 
-		first_sample, last_sample - 1, step,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	// Positive Enveloppe Border
 	ViewSetYLimits( view, - angle_max, angle_max );
@@ -732,18 +714,18 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRotationAngle, 
-		first_sample, last_sample - 1, step,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	// Roll Angle
 	ViewColor( view, MAGENTA );
 	ViewXYPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_sample, last_sample - 1, step,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "HMD Rotation from Zero", INSIDE_LEFT, INSIDE_TOP, 0.0 );
@@ -752,14 +734,14 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[0][HMD_STRUCTURE]);
+	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_sample, last_sample - 1, step * tilt_spread,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
@@ -769,7 +751,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[0][HAND_STRUCTURE]);
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -779,7 +761,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_sample + 1; i < last_sample; i++ ) {
+		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] > max ) max = graspDataSlice[i].hand.pose.position[j];
 				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] < min ) min = graspDataSlice[i].hand.pose.position[j];
@@ -795,9 +777,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].hand.pose.position[i], 
-			first_sample, last_sample - 1, step,
-			sizeof( graspDataSlice[first_sample] ), 
-			sizeof( graspDataSlice[first_sample] ),
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
 			MISSING_DOUBLE);
 	}
 	ViewColor( view, BLACK );
@@ -806,14 +788,14 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[0][HAND_STRUCTURE]);
+	ViewColor( view, color_by_object[HAND_STRUCTURE]);
 	ViewBox( view );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].handRollAngle, 
-		first_sample, last_sample - 1, step * tilt_spread,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Hand Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
@@ -823,7 +805,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	//
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
-	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
 	ViewBox( view );
 
 	// Set the plotting limits.
@@ -833,7 +815,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_sample + 1; i < last_sample; i++ ) {
+		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
 			for ( j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
 				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
@@ -849,9 +831,9 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
 			&graspDataSlice[0].chest.pose.position[i], 
-			first_sample, last_sample - 1, step,
-			sizeof( graspDataSlice[first_sample] ), 
-			sizeof( graspDataSlice[first_sample] ),
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
 			MISSING_DOUBLE);
 	}
 	ViewColor( view, BLACK );
@@ -860,23 +842,23 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	row++;
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewSetXLimits( view, first_instant, last_instant );
-	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
 	ViewBox( view );
 	ViewColor( view, GREY6 );
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].chestRollAngle, 
-		first_sample, last_sample - 1, step * tilt_spread,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
-	ViewColor( view, color_by_object[0][CHEST_STRUCTURE]);
+	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].torsoRollAngle, 
-		first_sample, last_sample - 1, step * tilt_spread,
-		sizeof( graspDataSlice[first_sample] ), 
-		sizeof( graspDataSlice[first_sample] ),
+		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
@@ -889,14 +871,14 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	for ( index = nHousekeepingSlices - 1; index > 0; index -- ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime <= last_instant ) break;
 	}
-	last_sample = index;
+	last_hk_sample = index;
 	for ( index = index; index > 0; index -- ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime < first_instant ) break;
 	}
-	first_sample = index + 1;
-	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
-	if ( true ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_sample, last_sample, (last_sample - first_sample) );
-	// for ( int i = first_sample; i < last_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
+	first_hk_sample = index + 1;
+	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_hk_sample, last_hk_sample, (last_hk_sample - first_hk_sample) );
+	if ( true ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_hk_sample, last_hk_sample, (last_hk_sample - first_hk_sample) );
+	// for ( int i = first_hk_sample; i < last_hk_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
 
 	// Plot how many markers are visible on each marker structure.
 	DisplayActivate( markerDisplay );
@@ -910,25 +892,25 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewSetColorRGB( view, 1.0f, 0.85f, 0.85f );
 		ViewHorizontalBand( view, 0.0, 4.0 );
 
-		int unit = 0;
-		ViewColor( view, color_by_object[unit][object]);
+		ViewColor( view, color_by_object[object]);
 		ViewFillPlotAvailableDoubles( view,
 			&graspHousekeepingSlice[0].absoluteTime, 
-			&graspHousekeepingSlice[0].visibleMarkers[unit][object], 
-			first_sample, last_sample - 1, 1,
+			&graspHousekeepingSlice[0].visibleMarkers[object], 
+			first_hk_sample, last_hk_sample - 1, 1,
 			sizeof( *graspHousekeepingSlice ), 
 			sizeof( *graspHousekeepingSlice ),
 			MISSING_DOUBLE );
 
-		unit = 1;
-		ViewColor( view, color_by_object[unit][object]);
-		ViewXYPlotAvailableDoubles( view,
-			&graspHousekeepingSlice[0].absoluteTime, 
-			&graspHousekeepingSlice[0].visibleMarkers[unit][object], 
-			first_sample, last_sample - 1, 1,
-			sizeof( *graspHousekeepingSlice ), 
-			sizeof( *graspHousekeepingSlice ),
-			MISSING_DOUBLE );
+		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+			ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
+			ViewXYPlotAvailableDoubles( view,
+				&graspDataSlice[0].absoluteTime, 
+				&graspDataSlice[0].visibleMarkers[unit][object], 
+				first_rt_sample, last_rt_sample - 1, 1,
+				sizeof( *graspDataSlice ), 
+				sizeof( *graspDataSlice ),
+				MISSING_DOUBLE );
+		}
 
 		ViewColor( view, axis_color );
 		ViewTitle( view, StructureLabel[object], INSIDE_LEFT, INSIDE_TOP, 0.0 );
@@ -960,7 +942,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		SYMBOL_FILLED_SQUARE,
 		&graspHousekeepingSlice[0].absoluteTime, 
 		&graspHousekeepingSlice[0].protocolID, 
-		first_sample, last_sample - 1, 1,
+		first_hk_sample, last_hk_sample - 1, 1,
 		sizeof( *graspHousekeepingSlice ), 
 		sizeof( *graspHousekeepingSlice ),
 		MISSING_INT);
@@ -969,7 +951,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		SYMBOL_FILLED_SQUARE,
 		&graspHousekeepingSlice[0].absoluteTime, 
 		&graspHousekeepingSlice[0].taskID, 
-		first_sample, last_sample - 1, 1,
+		first_hk_sample, last_hk_sample - 1, 1,
 		sizeof( *graspHousekeepingSlice ), 
 		sizeof( *graspHousekeepingSlice ),
 		MISSING_INT);

@@ -180,6 +180,7 @@ namespace GraspMMI {
 	private: void RenderSideView( OpenGLWindow *window, Viewpoint *viewpoint, bool vr_active );
 	private: void LookAtFrom( Viewpoint *viewpoint, const Vector3 target, Vector3 from );
 
+	private: void ComputeIndividualMarkerVisibility( GraspRealtimeDataSlice *slice, int n_slices );
 	private: void ReadTelemetryCache( String^ root );
 	private: bool ReadGraspData( String^ root );
 	private: void InitializeGraphics( void );
