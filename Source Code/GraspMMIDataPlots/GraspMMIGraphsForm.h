@@ -70,6 +70,7 @@ namespace GraspMMI {
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
 		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
 		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
+		static double	residualMaximum = 10.0;
 
 		double taskViewBottom;
 		double taskViewTop;
@@ -252,12 +253,7 @@ namespace GraspMMI {
 			}
 		}
 	private: System::Windows::Forms::OpenFileDialog^  readFileDialog;
-	protected: 
-
-
-
 	private: System::Windows::Forms::Label^  filenameLabel;
-
 	private: System::Windows::Forms::Button^  playBackwardButton;
 	private: System::Windows::Forms::Button^  toCursorButton;
 	private: System::Windows::Forms::Button^  stopPlaybackButton;

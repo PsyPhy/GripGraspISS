@@ -46,7 +46,8 @@ using namespace GraspMMI;
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
 #define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
-#define TILT_SPREAD	8
+#define MAX_TILT_SAMPLES 200
+
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
@@ -78,15 +79,17 @@ int n_trials;
 
 void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSlice *slice, int n_slices ) {
 
-	int n;
 	for ( int i = 0; i < n_slices; i++ ) {
 
 		// Compute the marker visibility for each unit.
 		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
-			n = slice[i].visibleMarkers[unit][HMD_STRUCTURE] = 
+			hmdTracker->ComputePose( slice[i].unitHMD[unit], &slice[i].codaFrame[unit], true );
+			slice[i].visibleMarkers[unit][HMD_STRUCTURE] = 
 				hmdTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+			handTracker->ComputePose( slice[i].unitHand[unit], &slice[i].codaFrame[unit], true );
 			slice[i].visibleMarkers[unit][HAND_STRUCTURE] = 
 				handTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+			chestTracker->ComputePose( slice[i].unitChest[unit], &slice[i].codaFrame[unit], true );
 			slice[i].visibleMarkers[unit][CHEST_STRUCTURE] = 
 				chestTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
 		}
@@ -211,7 +214,6 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		chestTracker->ComputePose( graspDataSlice[ nDataSlices ].chest, &graspDataSlice[ nDataSlices ].codaFrame[0] );
 		if ( !graspDataSlice[ nDataSlices ].chest.visible ) chestTracker->ComputePose( graspDataSlice[ nDataSlices ].chest, &graspDataSlice[ nDataSlices ].codaFrame[1] );
 		if ( !graspDataSlice[ nDataSlices ].chest.visible ) vm.CopyPose( graspDataSlice[ nDataSlices ].chest.pose, vm.missingPose );
-
 
 		// It is convenient to compute some derived values here.
 		ComputeGraspRTDerivedValues( &graspDataSlice[ nDataSlices ] );
@@ -577,9 +579,10 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
 	while ( ((last_rt_sample - first_rt_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
-	int tilt_spread;
-	if ( step <= 4 ) tilt_spread = 1;
-	else tilt_spread = TILT_SPREAD;
+
+	int tilt_step;
+	tilt_step = ( last_rt_sample - first_rt_sample ) / MAX_TILT_SAMPLES;
+	if ( tilt_step < 1 ) tilt_step = 1;
 
 
 	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_rt_sample, last_rt_sample, (last_rt_sample - first_rt_sample), step );
@@ -738,12 +741,29 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].hmdRollAngle, 
-		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		first_rt_sample, last_rt_sample - 1, tilt_step,
 		sizeof( graspDataSlice[first_rt_sample] ), 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
+
+	// Overlay the residuals.
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		// The following is a trick to invert one of the two traces.
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].unitHMD[unit].fidelity, 
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, GREY4 );
+	ViewHorizontalLine( view, 0.0 );
 	ViewColor( view, BLACK );
 	ViewTitle( view, "HMD Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
+
 
 	//
 	// Hand Pose
@@ -792,10 +812,25 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].handRollAngle, 
-		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		first_rt_sample, last_rt_sample - 1, tilt_step,
 		sizeof( graspDataSlice[first_rt_sample] ), 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
+	// Overlay the residuals.
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		// The following is a trick to invert one of the two traces.
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].unitHand[unit].fidelity, 
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, GREY4 );
+	ViewHorizontalLine( view, 0.0 );
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Hand Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
@@ -847,7 +882,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].chestRollAngle, 
-		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		first_rt_sample, last_rt_sample - 1, tilt_step,
 		sizeof( graspDataSlice[first_rt_sample] ), 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
@@ -855,10 +890,25 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	ViewTiltPlotAvailableDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].torsoRollAngle, 
-		first_rt_sample, last_rt_sample - 1, step * tilt_spread,
+		first_rt_sample, last_rt_sample - 1, tilt_step,
 		sizeof( graspDataSlice[first_rt_sample] ), 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
+	// Overlay the residuals.
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		// The following is a trick to invert one of the two traces.
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
+		ViewXYPlotAvailableDoubles( view, 
+			&graspDataSlice[0].absoluteTime, 
+			&graspDataSlice[0].unitChest[unit].fidelity, 
+			first_rt_sample, last_rt_sample - 1, step,
+			sizeof( graspDataSlice[first_rt_sample] ), 
+			sizeof( graspDataSlice[first_rt_sample] ),
+			MISSING_DOUBLE);
+	}
+	ViewColor( view, GREY4 );
+	ViewHorizontalLine( view, 0.0 );
 	ViewColor( view, BLACK );
 	ViewTitle( view, "Chest Roll", INSIDE_LEFT, INSIDE_TOP, 0.0 );
 

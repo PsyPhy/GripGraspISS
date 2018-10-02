@@ -24,9 +24,15 @@ namespace GraspMMI {
 		f32 fillTime;
 		u32 globalCount;
 		u32 objectStateBits;
+
 		PsyPhy::TrackerPose	HMD;
 		PsyPhy::TrackerPose hand;
 		PsyPhy::TrackerPose chest;
+
+		PsyPhy::TrackerPose	unitHMD[MAX_UNITS];
+		PsyPhy::TrackerPose unitHand[MAX_UNITS];
+		PsyPhy::TrackerPose unitChest[MAX_UNITS];
+
 		
 		unsigned char	codaUnit;
 		MarkerFrame		codaFrame[MAX_UNITS];
