@@ -195,8 +195,7 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		vm.CopyQuaternion( graspDataSlice[ nDataSlices ].rollQuaternion, pose.pose.orientation );
 
 		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-			result = ReadMarkerFrame( fid, &graspDataSlice[ nDataSlices ].codaFrame[unit] );
-			if ( result < 0 ) break;
+			if ( ! ReadMarkerFrame( graspDataSlice[ nDataSlices ].codaFrame[unit], fid ) ) break;
 		}
 
 		graspDataSlice[ nDataSlices ].absoluteTime = time + start_time;

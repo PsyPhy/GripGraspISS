@@ -196,23 +196,6 @@ namespace GraspMMI {
 
 	private:
 
-		int ReadMarkerFrame( FILE *fid, MarkerFrame *frame ) {
-			int result;
-			int visible;
-			result = fscanf( fid, "%lf;", &frame->time );
-			if ( result < 1 ) return( -1 );
-			for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
-				result = fscanf( fid, " %d; %lf; %lf; %lf;",
-					&visible,
-					&frame->marker[mrk].position[X],
-					&frame->marker[mrk].position[Y],
-					&frame->marker[mrk].position[Z] );
-				if ( result < 4 ) return( -1 );
-				frame->marker[mrk].visibility = ( visible != 0 );
-			}
-			return( 0 );
-		}
-
 
 
 	public:
