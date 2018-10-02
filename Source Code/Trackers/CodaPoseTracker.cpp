@@ -36,8 +36,31 @@ int  CodaPoseTracker::VisibleMarkers( void ) {
 	return( VisibleMarkers( this->frame ) );
 }
 
+double CodaPoseTracker::Residual( MarkerFrame *frame ) {
+	double	sum = 0.0;
+	double	count = 0.0;
+	Vector3	rotated;
+	Vector3 transformed;
+	Vector3	difference;
+	TrackerPose	pose;
+	ComputePose( pose, frame );
 
-bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) { 
+	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
+		int id = modelMarker[mrk].id;
+		if ( frame->marker[id].visibility ) {
+			RotateVector( rotated, pose.pose.orientation, modelMarker[mrk].position );
+			AddVectors( transformed, rotated, pose.pose.position );
+			SubtractVectors( difference, frame->marker[id].position, transformed );
+			sum += difference[X] * difference[X] + difference[Y] * difference[Y] + difference[Z] * difference[Z];
+			count++;
+		}
+	}
+	if ( sum > 0 ) return( sqrt( sum / count ) );
+	else return( MISSING_DOUBLE );
+}
+
+
+bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame, bool compute_indicators ) { 
 
 	Vector3		selected_model[MAX_MARKERS];
 	Vector3		selected_actual[MAX_MARKERS];
@@ -45,13 +68,13 @@ bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) {
 	Vector3		validated_actual[MAX_MARKERS];
 
 	// Select the visible output markers and the corresponding inputs.
-	int visible_markers = 0;
+	int selected_markers = 0;
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		int id = modelMarker[mrk].id;
 		if ( frame->marker[id].visibility ) {
-			CopyVector( selected_model[visible_markers], modelMarker[mrk].position );
-			CopyVector( selected_actual[visible_markers], frame->marker[id].position );
-			visible_markers++;
+			CopyVector( selected_model[selected_markers], modelMarker[mrk].position );
+			CopyVector( selected_actual[selected_markers], frame->marker[id].position );
+			selected_markers++;
 		}
 	}
 
@@ -61,8 +84,8 @@ bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) {
 	// at least one distance is within tolerance, then the first marker is included in the 
 	// validated list. 
 	int validated_markers = 0;
-	for ( int mrk1 = 0; mrk1 < visible_markers; mrk1++ ) {
-		for ( int mrk2 = 0; mrk2 < visible_markers; mrk2++ ) {
+	for ( int mrk1 = 0; mrk1 < selected_markers; mrk1++ ) {
+		for ( int mrk2 = 0; mrk2 < selected_markers; mrk2++ ) {
 			if ( mrk1 != mrk2 ) {
 				Vector3 delta_model, delta_actual;
 				SubtractVectors( delta_model, selected_model[mrk1], selected_model[mrk2] );
@@ -80,15 +103,46 @@ bool CodaPoseTracker::ComputePose( TrackerPose &pose, MarkerFrame *frame ) {
 	//	fOutputDebugString( "%08x Visible Markers: %d Rejected %d markers.\n", (unsigned int) this, visible_markers, visible_markers - validated_markers );
 	//}
 
-	if ( validated_markers < 4 ) pose.visible = false;
-	// ComputeRigidBodyPose() does it all!
+	// A measure of the quality of the sample is that of how many markers
+	// are rejected based on the intermarker distance criterion.
+	pose.quality = selected_markers - validated_markers;
+
+	if ( validated_markers < 4 ) {
+		pose.visible = false;
+		pose.fidelity = MISSING_DOUBLE;
+	}
 	else {
+		
+		// ComputeRigidBodyPose() does it all!
 		pose.visible = ComputeRigidBodyPose( pose.pose.position, pose.pose.orientation, validated_model, validated_actual, validated_markers, nullptr );
+
+		// Compute the residual of the selected markers as a measure of fidelity.
+		// But only do it if we are not in fast mode.
+		if ( pose.visible && compute_indicators ) {
+
+			double	sum = 0.0;
+			double	count = 0.0;
+			Vector3	rotated;
+			Vector3 transformed;
+			Vector3	difference[MAX_MARKERS];
+
+			for ( int mrk = 0; mrk < validated_markers; mrk++ ) {
+				RotateVector( rotated, pose.pose.orientation, validated_model[mrk] );
+				AddVectors( transformed, rotated, pose.pose.position );
+				SubtractVectors( difference[mrk], validated_actual[mrk], transformed );
+				sum += difference[mrk][X] * difference[mrk][X] + difference[mrk][Y] * difference[mrk][Y] + difference[mrk][Z] * difference[mrk][Z];
+				count++;
+			}
+			pose.fidelity = sqrt( sum / count );
+
+		}
+		else pose.fidelity = MISSING_DOUBLE;
+
 		// Scale the position. This can be used to convert the intrinsic mm to meters.
 		ScaleVector( pose.pose.position, pose.pose.position, positionScaleFactor );
 	}
 
-	// Here we shoud set the time of the sample with respect to some clock common to the other tracker.
+	// Here we should set the time of the sample with respect to some clock common to the other tracker.
 	// For the moment I use the time of the marker frame.
 	pose.time = frame->time;
 
@@ -143,9 +197,9 @@ int CodaPoseTracker::SetModelMarkerPositions( int n_markers, int *marker_list, M
 }
 
 void CodaPoseTracker::WriteModelMarkerPositions( FILE *fp ) {
-	    
+
 	SYSTEMTIME  st;
-    GetSystemTime( &st );
+	GetSystemTime( &st );
 
 	for ( int mrk = 0; mrk < nModelMarkers; mrk++ ) {
 		fprintf( fp, "%d\t%8.3f\t%8.3f\t%8.3f\n", modelMarker[mrk].id, modelMarker[mrk].position[X], modelMarker[mrk].position[Y], modelMarker[mrk].position[Z] );

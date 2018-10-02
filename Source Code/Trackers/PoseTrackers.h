@@ -19,6 +19,16 @@ typedef struct {
 	Pose		pose;
 	bool		visible;
 	double		time;
+	// The next two parameters are inspired by computing poses based on 
+	// markers attached to rigid bodies, where deviations in marker positions
+	// affect the quality of the estimate. For CodaPoseTracker, quality is the
+	// number of visual markers that were rejected due to an inter-marker distance
+	// being above threshold, while fidelity is the residual of only those
+	// markers retained in the pose calculation. Other PoseTrackers may treat
+	// these values differently, but they should follow the convention that 
+	// small is better.
+	double		quality;
+	double		fidelity;
 } TrackerPose;
 
 extern TrackerPose NullTrackerPose;

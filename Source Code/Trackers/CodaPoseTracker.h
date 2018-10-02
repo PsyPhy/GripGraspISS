@@ -36,7 +36,8 @@ class CodaPoseTracker : public PoseTracker {
 		} modelMarker[MAX_MARKERS];
 		int nModelMarkers;
 
-		double intermarkerDistanceTolerance;
+		// A flag that can be set to inhibit calculation of quality and fidelity.
+		double	intermarkerDistanceTolerance;
 		double 	positionScaleFactor;
 
 		CodaPoseTracker( MarkerFrame *frame = nullptr ) : 
@@ -61,10 +62,12 @@ class CodaPoseTracker : public PoseTracker {
 		bool Release( void );
 
 		bool	GetCurrentPoseIntrinsic( TrackerPose &pose );
-		bool	ComputePose( TrackerPose &pose, MarkerFrame *frame );
+		bool	ComputePose( TrackerPose &pose, MarkerFrame *frame, bool compute_indicators = false );
 
 		int  VisibleMarkers( MarkerFrame *frame );
 		int  VisibleMarkers( void );
+
+		double	Residual( MarkerFrame *frame );
 
 		int		SetModelMarkerPositions( int n_markers, int *marker_list, MarkerFrame *frame = nullptr );
 		void	ReadModelMarkerPositions( FILE *fp );

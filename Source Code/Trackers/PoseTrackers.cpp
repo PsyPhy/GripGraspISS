@@ -23,6 +23,8 @@ TrackerPose PsyPhy::NullTrackerPose = {{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 1.0}}, 
 // Global functions to facilitate copying tracker poses even if you are not a tracker.
 
 void PsyPhy::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
+
+#if 1
 	// TrackerPose is just a structure, not a class.
 	// Need an instance of VectorsMixin to get that functionality.
 	// It might make more sense to redefine TrackerPose as a class and to
@@ -33,6 +35,11 @@ void PsyPhy::CopyTrackerPose( TrackerPose &destination, TrackerPose &source ) {
 	destination.visible = source.visible;
 	vm.CopyVector( destination.pose.position, source.pose.position );
 	vm.CopyQuaternion( destination.pose.orientation, source.pose.orientation );
+	destination.quality = source.quality;
+	destination.fidelity = source.fidelity;
+#else
+	memcpy( &destination, &source, sizeof( destination ) );
+#endif
 };
 
 bool PsyPhy::ReadTrackerPose( TrackerPose &pose, FILE *fid ) {
