@@ -13,6 +13,7 @@
 #include <gl\gl.h>
 #include <gl\glu.h>
 
+#include "../Useful/fMessageBox.h"
 #include "OpenGLObjects.h"
 
 namespace PsyPhy {
@@ -36,6 +37,7 @@ namespace PsyPhy {
  */
 
 typedef enum { LEFT_EYE = 0, RIGHT_EYE = 1, CYCLOPS = -1 } Eye;
+
 
 class Viewpoint : public OpenGLObject {
 
@@ -72,6 +74,7 @@ public:
 
 };
 
+
 class OrthoViewpoint : public OpenGLObject {
 
 private:
@@ -99,5 +102,10 @@ public:
 
 };
 
+
+
 };
+
+extern PsyPhy::Viewpoint **CreateViewpointArray( int n );
+
 #endif

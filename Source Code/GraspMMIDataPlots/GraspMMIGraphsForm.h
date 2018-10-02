@@ -90,20 +90,15 @@ namespace GraspMMI {
 
 		int	axis_color;
 
-		OpenGLWindow *hmdWindow0;
-		OpenGLWindow *hmdWindow1;
-		OpenGLWindow *handWindow0;
-		OpenGLWindow *handWindow1;
-		OpenGLWindow *chestWindow0;
-		OpenGLWindow *chestWindow1;
+		OpenGLWindow **hmdWindow;
+		OpenGLWindow **handWindow;
+		OpenGLWindow **chestWindow;
+		OpenGLWindow **codaWindow;
 
-		OpenGLWindow *codaWindow0;
-		OpenGLWindow *codaWindow1;
 		OpenGLWindow *sideWindow;
 		OpenGLWindow *forwardWindow;
 
-		Viewpoint *codaViewpoint0;
-		Viewpoint *codaViewpoint1;
+		Viewpoint **codaViewpoint;
 		Viewpoint *objectViewpoint;
 		Viewpoint *focusViewpoint;
 		Viewpoint *sideViewpoint;

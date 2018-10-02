@@ -5,6 +5,12 @@
 
 using namespace PsyPhy;
 
+PsyPhy::Viewpoint **CreateViewpointArray( int n ) {
+	Viewpoint **array = (Viewpoint **) calloc( n, sizeof( *array ) );
+	fAbortMessageOnCondition( !array, "OpenGLViewpoints", "Error allocating memory for *Viewpoint array." );
+	return( array );
+}
+
 /********************************************************************************/
 
 Viewpoint::Viewpoint( double i, double f, double nr, double fr ) {

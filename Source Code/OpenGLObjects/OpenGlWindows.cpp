@@ -7,6 +7,13 @@ using namespace PsyPhy;
 
 static bool already_registered = false;
 
+PsyPhy::OpenGLWindow **CreateOpenGLWindowArray( int n ) {
+	OpenGLWindow **array = (OpenGLWindow **) calloc( n, sizeof( *array ) );
+	fAbortMessageOnCondition( !array, "OpenGLWindows", "Error allocating memory for *OpenGLWindow array." );
+	return( array );
+}
+
+
 /********************************************************************************/
 
 // An event handler that recognizes OpenGLWindows.

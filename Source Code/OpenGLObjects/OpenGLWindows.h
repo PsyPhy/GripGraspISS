@@ -109,4 +109,6 @@ namespace PsyPhy {
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
 OpenGLWindow *CreateMainGlWindow( int argc, char *argv[] );
 
+
 };
+extern PsyPhy::OpenGLWindow **CreateOpenGLWindowArray( int n );
