@@ -369,19 +369,22 @@ void SetOglWindow( OglWindow *params ) {
 	//ShowWindow( s_hWnd, SW_SHOW );
 }
 
+
 /*********************************************************************************/
 
 void PrepOglWindow( void ) {
 	
-	GLfloat viewport_dimensions[4];
-	glGetFloatv( GL_VIEWPORT, viewport_dimensions );
+//	GLfloat viewport_dimensions[4];
+//	glGetFloatv( GL_VIEWPORT, viewport_dimensions );
 
-//	glViewport(0, 0, s_winwidth, s_winheight );
-	glViewport( viewport_dimensions[0], viewport_dimensions[1], viewport_dimensions[2], viewport_dimensions[3]);
+	// Get the dimensions of the window that is currently active (s_hWnd).
+	RECT	rect;
+	GetClientRect( s_hWnd, &rect );
+	// Set the viewport and projection matrics to fit the window.
+	glViewport( rect.left, rect.top, rect.right, rect.bottom );
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-//	gluOrtho2D(0, s_winwidth, 0, s_winheight);
-	gluOrtho2D(viewport_dimensions[0], viewport_dimensions[2], viewport_dimensions[1], viewport_dimensions[3]);
+	gluOrtho2D( rect.left, rect.right, rect.top, rect.bottom );
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glClearColor( 1.0F, 1.0F, 1.0F, 0.0F );

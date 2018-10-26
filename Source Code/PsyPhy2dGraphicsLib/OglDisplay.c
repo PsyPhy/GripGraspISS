@@ -10,7 +10,8 @@
 #include <math.h>
 #include <string.h>
 #include "windows.h"
-#include "..\Useful\Useful.h"
+#include "../Useful/Useful.h"
+#include "../Useful/fOutputDebugString.h"
 
 #include <gl/gl.h>
 #include "glut.h"
@@ -256,6 +257,22 @@ void	OglInit ( Display display ) {
   // Set the object of the refresh and print callbacks.
   _ogl_display = display;
   
+}
+
+/***************************************************************************/
+
+void OglResize( Display display, float width, float height ) {
+	
+	OglParams	*params = (OglParams *) display->parameters;
+	HWND hwnd = params->ogl_window.hWnd;
+	SetWindowPos( hwnd, NULL, 0, 0, (int) width, (int) height, SWP_NOMOVE );
+	display->left = 0.0f;
+	display->right = width;
+	display->top = height;
+	display->bottom = 0.0f;
+	OglActivate( display );
+	PrepOglWindow();
+	fOutputDebugString( "OglResize\n" );
 }
 
 /***************************************************************************/

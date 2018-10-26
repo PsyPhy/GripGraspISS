@@ -22,6 +22,8 @@ extern int StartOglWindow( char *name, int x, int y, int width, int height, BOOL
                  void refresh_callback( HWND hwnd ),
                  void print_callback( void ) );
 extern BOOL InitOglWindow( HWND parent, char *name, int x, int y, int width, int height, BOOL fullscreen );
+void ResizeOglWindow( OglWindow *win, int width, int height );
+
 extern void PrepOglWindow( void );
 extern void ActivateOglWindow( void );
 extern void ShowOglWindow( void );

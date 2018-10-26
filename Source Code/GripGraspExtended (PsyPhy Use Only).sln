@@ -168,6 +168,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsyPhyLauncher", "PsyPhyLau
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GraspMMIColumbus", "GraspMMIColumbus\GraspMMIColumbus.vcxproj", "{09E7D244-36A1-4D6F-9D15-888D6CDD2976}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestOpenGLWindowsInForm", "TestOpenGLWindowsInForm\TestOpenGLWindowsInForm.vcxproj", "{684D7E9F-E560-47D7-9139-0B76BE47E8DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1460,6 +1462,22 @@ Global
 		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.ReleaseTraining|Win32.Build.0 = Release|Win32
 		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Test|Win32.ActiveCfg = Release|Win32
 		{09E7D244-36A1-4D6F-9D15-888D6CDD2976}.Test|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Debug|Win32.Build.0 = Debug|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.DebugTraining|Win32.ActiveCfg = Debug|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.DebugTraining|Win32.Build.0 = Debug|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Release|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Release|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseBedrest|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseBedrest|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseDraft|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseFlight|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseFlight|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseTraining|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.ReleaseTraining|Win32.Build.0 = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Test|Win32.ActiveCfg = Release|Win32
+		{684D7E9F-E560-47D7-9139-0B76BE47E8DC}.Test|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

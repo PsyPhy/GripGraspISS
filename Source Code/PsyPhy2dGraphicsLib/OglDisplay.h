@@ -16,6 +16,8 @@ void DestroyOglDisplays( void );
 
 void	OglInit( Display display );
 void	OglActivate( Display display );
+void	OglResize( Display display, float width, float height );
+void	OglDisplayRedraw ( Display display );
 void	OglSwap ( Display display );
 
 void	OglClose( Display display );
