@@ -27,6 +27,7 @@ const Vector3 VectorsMixin::zeroVector = {0.0, 0.0, 0.0};
 const Vector3 VectorsMixin::iVector = { 1.0, 0.0, 0.0 };
 const Vector3 VectorsMixin::jVector = { 0.0, 1.0, 0.0 };
 const Vector3 VectorsMixin::kVector = { 0.0, 0.0, 1.0 };
+const double  VectorsMixin::canonicalVector[6][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {-1.0, 0.0, 0.0}, {0.0, -1.0, 0.0}, {0.0, 0.0, -1.0 }};
 
 const Vector3 VectorsMixin::iVectorMinus = { -1.0, 0.0, 0.0 };
 const Vector3 VectorsMixin::jVectorMinus = { 0.0, -1.0, 0.0 };

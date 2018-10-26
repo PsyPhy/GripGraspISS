@@ -16,6 +16,10 @@
 #define Z	2
 #define M	3
 
+#define Xminus 3
+#define Yminus 4
+#define Zminus 5
+
 #define ROLL	0
 #define PITCH	1
 #define YAW		2

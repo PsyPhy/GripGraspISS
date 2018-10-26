@@ -9,6 +9,7 @@
 // Vectors here are 3D. Quaternions are 4D.
 
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 
 #include "../Useful/Useful.h"
 
@@ -57,6 +58,7 @@ public:
 	static const Vector3 iVector;
 	static const Vector3 jVector;
 	static const Vector3 kVector;
+	static const double  canonicalVector[6][3];
 
 	static const Vector3 iVectorMinus;
 	static const Vector3 jVectorMinus;
