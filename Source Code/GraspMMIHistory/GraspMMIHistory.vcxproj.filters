@@ -51,5 +51,8 @@
     <EmbeddedResource Include="GraspMMIHistory.resX">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
+    <EmbeddedResource Include="GraspMMIHistoryStartup.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

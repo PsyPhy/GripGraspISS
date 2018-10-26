@@ -1111,6 +1111,8 @@ const Vector3 Coda::coda_shape = { 800.0, 100.0, 80.0 };
 const double Coda::ray_length = 3000.0;
 Coda::Coda( void ) {
 
+	double camera_a_offset = - 0.4 * coda_shape[X];
+
 	bar = new Assembly();
 	rays = new Assembly();
 	fov = new Assembly();
@@ -1125,15 +1127,17 @@ Coda::Coda( void ) {
 		bar->AddComponent( slab );
 	}
 	AddComponent( bar );
-	int lens = 1;
-	// Make the ray length negative so that it shoots out the front of the CODA.
-	ray[lens] = new Ray( - ray_length );
-	ray[lens]->SetPosition( ( lens - 1 ) * 0.4 * coda_shape[X], 0.0, - coda_shape[Z]/ 2.0 );
-	ray[lens]->SetColor( lens + 1 );
-	rays->AddComponent( ray[lens] );
+	for ( int lens = 0; lens < 3; lens ++ ) {
+		// Make the ray length negative so that it shoots out the front of the CODA.
+		ray[lens] = new Ray( - ray_length );
+		ray[lens]->SetPosition( ( lens - 1 ) * 0.4 * coda_shape[X], 0.0, - coda_shape[Z]/ 2.0 );
+		ray[lens]->SetColor( lens + 1 );
+		rays->AddComponent( ray[lens] );
+	}
 	AddComponent( rays );
 
 	proximity = new Sphere( 1800.0 );
+	proximity->Disable();
 	AddComponent( proximity );
 
 
@@ -1148,8 +1152,13 @@ Coda::Coda( void ) {
 	fov->Disable();
 	AddComponent( fov );
 
+	// When then CODA is in it's 0 orientation, it points along
+	// the positive Y axis. This attitude reflects that in the 
+	// representation of the CODA bar.
 	SetAttitude( 180.0, - 90.0, 0.0 );
-	SetOffset( - 0.4 * coda_shape[X], 0.0, 0.0 );
+	// The origin of the CODA intrinsic coordinate system is the 
+	// center of the A camera.
+	SetOffset( camera_a_offset, 0.0, 0.0 );
 
 
 }

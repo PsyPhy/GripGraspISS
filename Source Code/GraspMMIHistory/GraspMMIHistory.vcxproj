@@ -125,6 +125,9 @@
     <ProjectReference Include="..\Grip\Grip.vcxproj">
       <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Trackers\Trackers.vcxproj">
+      <Project>{964bbd65-c198-4a02-8255-349803bdb59d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
     </ProjectReference>

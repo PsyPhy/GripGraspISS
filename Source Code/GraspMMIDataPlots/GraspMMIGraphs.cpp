@@ -42,7 +42,8 @@
 using namespace GraspMMI;
 
 #define POSE_STRIPCHARTS	8
-#define MARKER_STRIPCHARTS	MARKER_STRUCTURES
+#define MARKER_STRIPCHARTS	MARKER_STRUCTURES * 3			// Separate XYZ for each marker structure
+#define VISIBILITY_STRIPCHARTS	MARKER_STRUCTURES
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
 #define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
@@ -92,6 +93,14 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 			chestTracker->ComputePose( slice[i].unitChest[unit], &slice[i].codaFrame[unit], true );
 			slice[i].visibleMarkers[unit][CHEST_STRUCTURE] = 
 				chestTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
+
+			for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+				if ( ! slice[i].codaFrame[unit].marker[mrk].visibility ) {
+					slice[i].codaFrame[unit].marker[mrk].position[X] =
+						slice[i].codaFrame[unit].marker[mrk].position[Y] =
+						slice[i].codaFrame[unit].marker[mrk].position[Z] = MISSING_DOUBLE;
+				}
+			}
 		}
 	}
 
@@ -414,17 +423,19 @@ void GraspMMIGraphsForm::InitializeGraphics( void ) {
 	DisplayErase( poseDisplay );
 	poseStripChartLayout = CreateLayout( poseDisplay, POSE_STRIPCHARTS, 1 );
 	LayoutSetDisplayEdgesRelative( poseStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
+	markerStripChartLayout = CreateLayout( poseDisplay, MARKER_STRIPCHARTS, 1 );
+	LayoutSetDisplayEdgesRelative( markerStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
 
 	// Marker Visibility Strip Charts
 	parent = static_cast<HWND>( markerGraphPanel->Handle.ToPointer());
-	markerDisplay = CreateOglDisplay();
+	visibilityDisplay = CreateOglDisplay();
 	SetOglWindowParent( parent );
-	DisplaySetSizePixels( markerDisplay, markerGraphPanel->Size.Width, markerGraphPanel->Size.Height );
-	DisplaySetScreenPosition( markerDisplay, 0, 0 );
-	DisplayInit( markerDisplay );
-	DisplayErase( markerDisplay );
-	markerStripChartLayout = CreateLayout( markerDisplay, MARKER_STRIPCHARTS, 1 );
-	LayoutSetDisplayEdgesRelative( markerStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
+	DisplaySetSizePixels( visibilityDisplay, markerGraphPanel->Size.Width, markerGraphPanel->Size.Height );
+	DisplaySetScreenPosition( visibilityDisplay, 0, 0 );
+	DisplayInit( visibilityDisplay );
+	DisplayErase( visibilityDisplay );
+	visibilityStripChartLayout = CreateLayout( visibilityDisplay, VISIBILITY_STRIPCHARTS, 1 );
+	LayoutSetDisplayEdgesRelative( visibilityStripChartLayout, 0.0, 0.0, 1.0, 1.0 );
 
 	// Task History Strip Chart
 	parent = static_cast<HWND>( taskGraphPanel->Handle.ToPointer());
@@ -528,40 +539,26 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 	MoveToInstant( playbackScrollBar->Value );
 }
 
+/// 
+/// Ploting of various time series.
+///
+
 // Here we do the actual work of plotting the strip charts and phase plots.
 // It is assumed that the global data arrays have been filled. The time span
 // of the plots is determined by the scroll bar and span slider.
-void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
-	static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
-	static float color_by_unit[MAX_UNITS][3] = { {0.5f, 0.0f, 0.5f}, {0.75f, 0.25f, 0.0f }};
 
-	static bool __debug__ = false;
+static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+static float color_by_unit[MAX_UNITS][3] = { {0.5f, 0.0f, 0.5f}, {0.75f, 0.25f, 0.0f }};
 
-	int first_rt_sample;
-	int last_rt_sample;
-	int first_hk_sample;
-	int last_hk_sample;
-	int index;
-
-	int i, j;
+void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) {
 
 	::View view;
 
-	static int refresh_count = 0; 
-
-	if ( __debug__ ) fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
-
-	// Determine the time window, in seconds, based on the scroll bar position and the span slider.
-	double last_instant = scrollBar->Value;
-	double span = windowSpanSeconds[spanSelector->Value];
-	double first_instant = last_instant - span;
-
-	// Convert the earliest and latest instants to clock format and display them.
-	taskLeftTimeLimit->Text = CreateTimeString( first_instant );
-	taskRightTimeLimit->Text = CreateTimeString( last_instant );
-
 	// Find the indices into the arrays that correspond to the time window.
+	int first_rt_sample;
+	int last_rt_sample;
+	int index;
 	for ( index = nDataSlices - 1; index > 0; index -- ) {
 		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= last_instant ) break;
 	}
@@ -571,11 +568,6 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	first_rt_sample = index + 1;
 
-	playbackScrollBar->Maximum = ceil( last_instant );
-	playbackScrollBar->Minimum = floor( first_instant );
-	if ( playbackScrollBar->Value < playbackScrollBar->Minimum ) playbackScrollBar->Value = playbackScrollBar->Minimum;
-	if ( playbackScrollBar->Value > playbackScrollBar->Maximum ) playbackScrollBar->Value = playbackScrollBar->Maximum;
-
 	// Subsample the data if there is a lot to be plotted.
 	int step = 1;
 	while ( ((last_rt_sample - first_rt_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
@@ -583,9 +575,6 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	int tilt_step;
 	tilt_step = ( last_rt_sample - first_rt_sample ) / MAX_TILT_SAMPLES;
 	if ( tilt_step < 1 ) tilt_step = 1;
-
-
-	if ( __debug__ ) fOutputDebugString( "Realtime Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)  Step: %d\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_rt_sample, last_rt_sample, (last_rt_sample - first_rt_sample), step );
 
 	// Plot the continous data about the head position and orientation.
 	DisplayActivate( poseDisplay );
@@ -606,8 +595,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
-			for ( j = 0;  j < 3; j++ ) {
+		for ( int i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
+			for ( int j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] > max ) max = graspDataSlice[i].HMD.pose.position[j];
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.position[j] < min ) min = graspDataSlice[i].HMD.pose.position[j];
 			}
@@ -617,7 +606,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	else ViewSetYLimits( view, - headPositionRadius, headPositionRadius );
 
-	for ( i = 0;  i < 3; i++ ) {
+	for ( int i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -643,8 +632,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
-			for ( j = 0;  j < 3; j++ ) {
+		for ( int i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
+			for ( int j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] > max ) max = graspDataSlice[i].HMD.pose.orientation[j];
 				if ( graspDataSlice[i].HMD.visible && graspDataSlice[i].HMD.pose.orientation[j] < min ) min = graspDataSlice[i].HMD.pose.orientation[j];
 			}
@@ -654,7 +643,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	else ViewSetYLimits( view, - quaternionRadius, quaternionRadius );
 
-	for ( i = 0;  i < 3; i++ ) {
+	for ( int i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -689,8 +678,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		autoscaleIndicator->Visible = true;
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.
-		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
-			for ( j = 0;  j < 3; j++ ) {
+		for ( int i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
+			for ( int j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].HMD.visible && fabs( graspDataSlice[i].hmdRotationAngle ) > angle_max ) angle_max = fabs( graspDataSlice[i].hmdRotationAngle );
 			}
 		}
@@ -780,8 +769,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
-			for ( j = 0;  j < 3; j++ ) {
+		for ( int i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
+			for ( int j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] > max ) max = graspDataSlice[i].hand.pose.position[j];
 				if ( graspDataSlice[i].hand.visible && graspDataSlice[i].hand.pose.position[j] < min ) min = graspDataSlice[i].hand.pose.position[j];
 			}
@@ -791,7 +780,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	else ViewSetYLimits( view, - handPositionRadius, handPositionRadius );
 
-	for ( i = 0;  i < 3; i++ ) {
+	for ( int i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -849,8 +838,8 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		// Position and quaternion values are not defined when visibility is false.
 		double min = DBL_MAX;
 		double max = - DBL_MAX;
-		for ( i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
-			for ( j = 0;  j < 3; j++ ) {
+		for ( int i = first_rt_sample + 1; i < last_rt_sample; i++ ) {
+			for ( int j = 0;  j < 3; j++ ) {
 				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] > max ) max = graspDataSlice[i].chest.pose.position[j];
 				if ( graspDataSlice[i].chest.visible && graspDataSlice[i].chest.pose.position[j] < min ) min = graspDataSlice[i].chest.pose.position[j];
 			}
@@ -860,7 +849,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 	else ViewSetYLimits( view, - chestPositionRadius, chestPositionRadius );
 
-	for ( i = 0;  i < 3; i++ ) {
+	for ( int i = 0;  i < 3; i++ ) {
 		ViewSelectColor( view, i );
 		ViewXYPlotClippedDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -914,9 +903,85 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 
 	// Zap it to the display.
 	DisplaySwap( poseDisplay );
+}
 
+void GraspMMIGraphsForm::PlotMarkers( int unit, double first_instant, double last_instant ) {
+
+	::View view;
+
+	int first_unit, last_unit;
+	if ( unit == -1 ) {
+		first_unit = 0;
+		last_unit = MAX_UNITS - 1;
+	}
+	else first_unit = last_unit = unit;
 
 	// Find the indices into the arrays that correspond to the time window.
+	int first_rt_sample;
+	int last_rt_sample;
+	int index;
+	for ( index = nDataSlices - 1; index > 0; index -- ) {
+		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= last_instant ) break;
+	}
+	last_rt_sample = index;
+	for ( index = index; index > 0; index -- ) {
+		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < first_instant ) break;
+	}
+	first_rt_sample = index + 1;
+
+	// Subsample the data if there is a lot to be plotted.
+	int step = 1;
+	while ( ((last_rt_sample - first_rt_sample) / step) > MAX_PLOT_SAMPLES && step < (MAX_PLOT_STEP - 1) ) step *= 2;
+
+	DisplayActivate( poseDisplay );
+	DisplayErase( poseDisplay );
+
+	for ( int object = 0; object < MARKER_STRUCTURES; object++ ) {
+		for ( int j = 0; j < 3; j++ ) {
+			view = LayoutView( markerStripChartLayout, (MARKER_STRUCTURES - object - 1) * 3 + j, 0 );
+			ViewColor( view, color_by_object[object]);
+			ViewBox( view );
+			ViewSetXLimits( view, first_instant, last_instant );
+			ViewSetYLimits( view, -1000.0, 1000.0 );
+			for ( int mrk = 0; mrk < tracker[object]->nModelMarkers; mrk++ ) {
+				ViewSelectColor( view, mrk );
+				int id = tracker[object]->modelMarker[mrk].id;
+				for ( int unit = first_unit; unit <= last_unit; unit++ ) {
+					ViewXYPlotAvailableDoubles( view, 
+						&graspDataSlice[0].absoluteTime, 
+						&graspDataSlice[0].codaFrame[unit].marker[id].position[j], 
+						first_rt_sample, last_rt_sample - 1, step,
+						sizeof( graspDataSlice[first_rt_sample] ), 
+						sizeof( graspDataSlice[first_rt_sample] ),
+						MISSING_DOUBLE);
+				}
+			}
+		}
+	}
+	// Zap it to the display.
+	DisplaySwap( poseDisplay );
+
+}
+
+void GraspMMIGraphsForm::PlotVisibility( double first_instant, double last_instant ) {
+
+	::View view;
+
+	// Find the indices into the arrays that correspond to the time window.
+	int first_rt_sample;
+	int last_rt_sample;
+	int index;
+	for ( index = nDataSlices - 1; index > 0; index -- ) {
+		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime <= last_instant ) break;
+	}
+	last_rt_sample = index;
+	for ( index = index; index > 0; index -- ) {
+		if ( graspDataSlice[index].absoluteTime != MISSING_DOUBLE && graspDataSlice[index].absoluteTime < first_instant ) break;
+	}
+	first_rt_sample = index + 1;
+
+	int first_hk_sample;
+	int last_hk_sample;
 	for ( index = nHousekeepingSlices - 1; index > 0; index -- ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime <= last_instant ) break;
 	}
@@ -925,15 +990,12 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime < first_instant ) break;
 	}
 	first_hk_sample = index + 1;
-	if ( __debug__ ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_hk_sample, last_hk_sample, (last_hk_sample - first_hk_sample) );
-	if ( true ) fOutputDebugString( "Housekeeping Data: %d to %d Graph: %lf to %lf Indices: %d to %d (%d)\n", scrollBar->Minimum, scrollBar->Maximum, first_instant, last_instant, first_hk_sample, last_hk_sample, (last_hk_sample - first_hk_sample) );
-	// for ( int i = first_hk_sample; i < last_hk_sample; i++ ) fOutputDebugString( "Sample: %d  Time: %f  Protocol: %.0f  Step: %.0f\n", i, graspHousekeepingSlice[i].absoluteTime, graspHousekeepingSlice[i].protocolID, graspHousekeepingSlice[i].taskID );
 
 	// Plot how many markers are visible on each marker structure.
-	DisplayActivate( markerDisplay );
-	DisplayErase( markerDisplay );
+	DisplayActivate( visibilityDisplay );
+	DisplayErase( visibilityDisplay );
 	for ( int object = 0; object < MARKER_STRUCTURES; object++ ) {
-		view = LayoutView( markerStripChartLayout, MARKER_STRUCTURES - object - 1, 0 );
+		view = LayoutView( visibilityStripChartLayout, MARKER_STRUCTURES - object - 1, 0 );
 		ViewSetXLimits( view, first_instant, last_instant );
 		ViewSetYLimits( view, 0, 8.0 );
 		ViewColor( view, axis_color );
@@ -965,8 +1027,25 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 		ViewTitle( view, StructureLabel[object], INSIDE_LEFT, INSIDE_TOP, 0.0 );
 
 	}
-	DisplaySwap( markerDisplay );
+	DisplaySwap( visibilityDisplay );
+}
 
+void GraspMMIGraphsForm::PlotHistory( double first_instant, double last_instant ) {
+
+	::View view;
+
+	// Find the indices into the arrays that correspond to the time window.
+	int index;
+	int first_hk_sample;
+	int last_hk_sample;
+	for ( index = nHousekeepingSlices - 1; index > 0; index -- ) {
+		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime <= last_instant ) break;
+	}
+	last_hk_sample = index;
+	for ( index = index; index > 0; index -- ) {
+		if ( graspHousekeepingSlice[index].absoluteTime != MISSING_DOUBLE && graspHousekeepingSlice[index].absoluteTime < first_instant ) break;
+	}
+	first_hk_sample = index + 1;
 	//
 	// Plot which protocol and task was executing at each point in time.
 	//
@@ -974,7 +1053,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	DisplayErase( historyDisplay );
 
 	// Shade alternate bands of 100's to make it easier to understand the data plot.
-	row = 0;
+	int row = 0;
 	double bottom = taskViewBottom;
 	double top = taskViewTop;
 	view = LayoutView( historyStripChartLayout, row++, 0 );
@@ -1023,6 +1102,42 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 	}
 
 	DisplaySwap( historyDisplay );
+	}
+void GraspMMIGraphsForm::RefreshGraphics( void ) {
+
+
+	static bool __debug__ = false;
+
+	static int refresh_count = 0; 
+
+	if ( __debug__ ) fOutputDebugString( "Start RefreshGraphics(). %d\n", refresh_count++ );
+
+	// Determine the time window, in seconds, based on the scroll bar position and the span slider.
+	double last_instant = scrollBar->Value;
+	double span = windowSpanSeconds[spanSelector->Value];
+	double first_instant = last_instant - span;
+
+	// Convert the earliest and latest instants to clock format and display them.
+	taskLeftTimeLimit->Text = CreateTimeString( first_instant );
+	taskRightTimeLimit->Text = CreateTimeString( last_instant );
+
+	playbackScrollBar->Maximum = ceil( last_instant );
+	playbackScrollBar->Minimum = floor( first_instant );
+	if ( playbackScrollBar->Value < playbackScrollBar->Minimum ) playbackScrollBar->Value = playbackScrollBar->Minimum;
+	if ( playbackScrollBar->Value > playbackScrollBar->Maximum ) playbackScrollBar->Value = playbackScrollBar->Maximum;
+
+	if ( plotSelectionComboBox->SelectedIndex == 0 ) PlotPoses( first_instant, last_instant );
+	else if ( plotSelectionComboBox->SelectedIndex == 1 ) PlotMarkers( 0, first_instant, last_instant );
+	else if ( plotSelectionComboBox->SelectedIndex == 2 ) PlotMarkers( 1, first_instant, last_instant );
+	else if ( plotSelectionComboBox->SelectedIndex == 3 ) PlotMarkers( -1, first_instant, last_instant );
+	else {
+		DisplayActivate( poseDisplay );
+		DisplayErase( poseDisplay );
+	}
+
+	PlotVisibility( first_instant, last_instant );
+	PlotHistory( first_instant, last_instant );
+
 	if ( __debug__ ) fOutputDebugString( "Finish RefreshGraphics().\n" );
 
 }
@@ -1031,7 +1146,7 @@ void GraspMMIGraphsForm::RefreshGraphics( void ) {
 void GraspMMIGraphsForm::KillGraphics( void ) {
 	DisplayClose( cursorDisplay );
 	DisplayClose( historyDisplay );
-	DisplayClose( markerDisplay );
+	DisplayClose( visibilityDisplay );
 	DisplayClose( poseDisplay );
 }
 

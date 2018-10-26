@@ -89,8 +89,9 @@ namespace GraspMMI {
 	} GraspHousekeepingSlice;
 
 	void ComputeGraspRTDerivedValues( GraspRealtimeDataSlice *slice );
-	int GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );
+	int	GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );
 	int GetHousekeepingTrace( GraspHousekeepingSlice *trace, int max_slices, char *filename_root );
 	void ExtractGraspRealtimeDataInfo( GraspRealtimeDataInfo &info, EPMTelemetryPacket &epm_packet );
+	bool LoadGraspCodaAlignment ( GraspRealtimeDataSlice *slice, const char *filename );
 
 }

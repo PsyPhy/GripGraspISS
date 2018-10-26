@@ -30,10 +30,11 @@
 #include "..\GraspGUI\GraspGUI.h"
 #include "..\AlignToRigidBodyGUI\AligntoRigidBodyGUI.h"
 
-
 #include "GraspMMIGraphsForm.h"
 
 using namespace GraspMMI;
+
+#define CODA_UNITS 2
 
 
 void GraspMMIGraphsForm::InitializeVR( void ) {
@@ -85,8 +86,8 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	sideViewpoint->SetOrientation( 0.0, 0.0, - 90.0 );
 	// Look forward toward the codas. 
 	// We shift it forward and up so that the codas fall in a reasonable field of view.
-	forwardViewpoint = new Viewpoint( 6.0, 65.0, 10.0, 10000.0);
-	forwardViewpoint->SetPosition( 0.0, 500.0, -1000.0 );
+	forwardViewpoint = new Viewpoint( 6.0, 25.0, 10.0, 8000.0);
+	forwardViewpoint->SetPosition( 0.0, 0.0, 3000.0 );
 	forwardViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 	// This is the viewpoint of the subject in the virtual world.
 	// Default is looking straight ahead.
@@ -112,15 +113,33 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	renderer->PlaceVRObjects();
 	renderer->CreateAuxiliaryObjects();
 
+	codas = new Assembly();
+	coda = (Coda **) calloc( CODA_UNITS, sizeof( *coda ) );
+	for (int unit = 0; unit < CODA_UNITS; unit++ ) {
+		coda[unit] = new Coda();
+		codas->AddComponent( coda[unit] );
+	}
+	coda[0]->SetColor( .5, .1, .1 );
+	coda[1]->SetColor( .1, .1, .6 );
+	coda[0]->proximity->SetColor( 1.0, 0.5, 0.5, 0.2 );
+	coda[1]->proximity->SetColor( 0.5, 0.5, 1.0, 0.2 );
+	coda[0]->proximity->Disable();
+	coda[1]->proximity->Disable();
+	coda[0]->fov->SetColor( 1.0, 0.0, 0.0, 0.5 );
+	coda[1]->fov->SetColor( 0.0, 0.0, 1.0, 0.5 );
+
+
 	// Create trackers that will transform marker positions into poses.
 	// This frame is just a place holder.
 	MarkerFrame codaFrame;
-	hmdTracker = new CodaPoseTracker( &codaFrame );
+	tracker = (CodaPoseTracker **) calloc( MARKER_STRUCTURES, sizeof( *tracker ) );
+	tracker[HMD_STRUCTURE] = hmdTracker = new CodaPoseTracker( &codaFrame );
 	hmdTracker->ReadModelMarkerPositions( "Bdy\\HMD.bdy" );
-	handTracker = new CodaPoseTracker( &codaFrame );
+	tracker[HAND_STRUCTURE] = handTracker = new CodaPoseTracker( &codaFrame );
 	handTracker->ReadModelMarkerPositions( "Bdy\\Hand.bdy" );
-	chestTracker = new CodaPoseTracker( &codaFrame );
+	tracker[CHEST_STRUCTURE] = chestTracker = new CodaPoseTracker( &codaFrame );
 	chestTracker->ReadModelMarkerPositions( "Bdy\\Chest.bdy" );
+
 
 
 	// Initially set the hand and chest away from the center.
@@ -191,7 +210,9 @@ void GraspMMIGraphsForm::LookAtFrom( Viewpoint *viewpoint, const Vector3 target,
 	vm.SubtractVectors( back[Z], from, target );
 	vm.NormalizeVector( back[Z] );
 	vm.ComputeCrossProduct( back[X], vm.jVector, back[Z] );
+	vm.NormalizeVector( back[X] );
 	vm.ComputeCrossProduct( back[Y], back[Z], back[X] );
+	vm.NormalizeVector( back[Y] );
 	viewpoint->SetPosition( from );
 	viewpoint->SetOrientation( back );
 
@@ -277,7 +298,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	current_vr_instant = frame_time;
 
 	// Search for a slice with alignment information that tells us where the codas are.
-	for ( alignment_index = index; alignment_index > 0; alignment_index -- ) {
+	for ( alignment_index = index; alignment_index >= 0; alignment_index -- ) {
 
 		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ||
 			 graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPOST ) {
@@ -287,46 +308,42 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	}
 	// If we found the alignment information, define viewpoints that look from each coda to the origin.
 	// If not, use a canonical view from straight in front of the chair.
-	if ( alignment_index > 0 ) {
+	if ( alignment_index >= 0 ) {
 
+		Matrix3x3 inverse, transpose;
 		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-
-			renderer->coda[0]->SetPosition( graspDataSlice[alignment_index].alignmentOffset[unit] );
-			renderer->coda[0]->SetOrientation( graspDataSlice[alignment_index].alignmentRotation[unit] );
-			renderer->coda[0]->Enable();
+			coda[unit]->SetPosition( graspDataSlice[alignment_index].alignmentOffset[unit] );
+			vm.TransposeMatrix( transpose, graspDataSlice[alignment_index].alignmentRotation[unit] );
+			vm.InvertMatrix( inverse, graspDataSlice[alignment_index].alignmentRotation[unit] );
+			coda[unit]->SetOrientation( inverse );
+			coda[unit]->Enable();
+			LookAtFrom( codaViewpoint[unit], vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[unit] );
 		}
 
 		fromCodaCheckBox->Enabled = true;
-		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ) alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " PRE";
-		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPOST ) alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " POST";
+		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPRE ) {
+			alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " PRE";
+		}
+		if ( graspDataSlice[alignment_index].clientType == GraspRealtimeDataSlice::ALIGNPOST ) {
+			alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " POST";
+		}
 
 	}
 
 	else {
 
 		fromCodaCheckBox->Enabled = false;
-		renderer->coda[0]->Disable();
-		renderer->coda[1]->Disable();
-		alignmentFrameTextBox->Text = "not available";
-
-	}
-	show_from_coda = fromCodaCheckBox->Checked;
-
-	if ( alignment_index > 0 && show_from_coda ) {
-
-		LookAtFrom( codaViewpoint[0], vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[0] );
-		LookAtFrom( codaViewpoint[1], vm.zeroVector, graspDataSlice[alignment_index].alignmentOffset[1] );
-
-	}
-	else {
-
-		// View from straight in front.
+		fromCodaCheckBox->Checked = false;	
 		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+			coda[unit]->Disable();
 			codaViewpoint[unit]->SetPosition( 0.0, 0.0, -3000.0 );
 			codaViewpoint[unit]->SetOrientation( 0.0, 0.0, 180.0 );
 		}
+		alignmentFrameTextBox->Text = "not available";
 
 	}
+
+	show_from_coda = fromCodaCheckBox->Checked;
 	
 	// We want to show which markers were visible, but we don't know which coda was actually
 	// used to compute the pose in the cascade tracker. So we 
@@ -369,7 +386,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	RenderWindow( sideWindow, sideViewpoint, mobiles );
 	
 	// Show where the CODAs are, looking from the origin.
-	RenderWindow( forwardWindow, forwardViewpoint, renderer->codas );
+	RenderWindow( forwardWindow, forwardViewpoint, codas );
 
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 

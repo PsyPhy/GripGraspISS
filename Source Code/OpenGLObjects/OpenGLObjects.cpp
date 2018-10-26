@@ -160,20 +160,20 @@ void OpenGLObject::SetPose( Pose &pose ) {
 	SetOrientation( pose.orientation );
 }
 
-//void OpenGLObject::PointAt( const Vector3 target, const Vector3 up ) {
-//
-//	Matrix3x3 back;
-//
-//	// Point an object at a location;
-//	SubtractVectors( back[Z], position, target );
-//	NormalizeVector( back[Z] );
-//	ComputeCrossProduct( back[X], up, back[Z] );
-//	NormalizeVector( back[X] );
-//	ComputeCrossProduct( back[Y], back[Z], back[X] );
-//	NormalizeVector( back[Y] );
-//	SetOrientation( back );
-//
-//}
+void OpenGLObject::PointAt( const Vector3 target, const Vector3 up ) {
+
+	Matrix3x3 back;
+
+	// Point an object at a location;
+	SubtractVectors( back[Z], position, target );
+	NormalizeVector( back[Z] );
+	ComputeCrossProduct( back[X], up, back[Z] );
+	NormalizeVector( back[X] );
+	ComputeCrossProduct( back[Y], back[Z], back[X] );
+	NormalizeVector( back[Y] );
+	SetOrientation( back );
+
+}
 
 void OpenGLObject::PointYAt( const Vector3 target, const Vector3 up ) {
 
