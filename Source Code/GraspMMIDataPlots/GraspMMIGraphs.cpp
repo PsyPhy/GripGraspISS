@@ -79,7 +79,7 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 
 	for ( int i = 0; i < n_slices; i++ ) {
 
-		// Compute the marker visibility for each unit.
+		// Compute the pose, the fidelity and the marker visibility for each unit.
 		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
 			hmdTracker->ComputePose( slice[i].unitHMD[unit], &slice[i].codaFrame[unit], true );
 			slice[i].visibleMarkers[unit][HMD_STRUCTURE] = 
@@ -99,7 +99,29 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 				}
 			}
 		}
+		// Compute a check on the coherence of the position data between the coda units.
+		// This can be used to detect if the data from the codas is out of sync.
+		if (  slice[i].unitHMD[0].visible && slice[i].unitHMD[1].visible ) {
+			Vector3 delta;
+			hmdTracker->SubtractVectors( delta, slice[i].unitHMD[0].pose.position, slice[i].unitHMD[1].pose.position );
+			slice[i].interUnitCoherence[HMD_STRUCTURE] = hmdTracker->VectorNorm( delta );
+		}
+		else slice[i].interUnitCoherence[HMD_STRUCTURE] = MISSING_DOUBLE;
+		if (  slice[i].unitHand[0].visible && slice[i].unitHand[1].visible ) {
+			Vector3 delta;
+			handTracker->SubtractVectors( delta, slice[i].unitHand[0].pose.position, slice[i].unitHand[1].pose.position );
+			slice[i].interUnitCoherence[HAND_STRUCTURE] = handTracker->VectorNorm( delta );
+		}
+		else slice[i].interUnitCoherence[HAND_STRUCTURE] = MISSING_DOUBLE;
+		if (  slice[i].unitChest[0].visible && slice[i].unitChest[1].visible ) {
+			Vector3 delta;
+			chestTracker->SubtractVectors( delta, slice[i].unitChest[0].pose.position, slice[i].unitChest[1].pose.position );
+			slice[i].interUnitCoherence[CHEST_STRUCTURE] = chestTracker->VectorNorm( delta );
+		}
+		else slice[i].interUnitCoherence[CHEST_STRUCTURE] = MISSING_DOUBLE;
 	}
+
+
 
 }
 
@@ -224,6 +246,7 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		// It is convenient to compute some derived values here.
 		ComputeGraspRTDerivedValues( &graspDataSlice[ nDataSlices ] );
 
+		// The file was written by Grasp.exe, so all records are of that type.
 		graspDataSlice[ nDataSlices ].clientType = GraspRealtimeDataSlice::GRASP;
 
 		// The pse file unfortunately does not include the enable bits of the VR objects.
@@ -581,8 +604,22 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	ViewColor( view, color_by_object[HMD_STRUCTURE]);
 	ViewBox( view );
 
-	// Set the plotting limits.
 	ViewSetXLimits( view, first_instant, last_instant );
+
+	// Plot coherency between coda1-computed pose and coda2-computed pose.
+	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
+	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewFillPlotClippedDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].interUnitCoherence[HMD_STRUCTURE], 
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
+		MISSING_DOUBLE);
+
+
+	ViewSetYLimits( view, - headPositionRadius, headPositionRadius );
+	// Set the plotting limits for the position data.
 	if ( autoscaleHMD->Checked ) {
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.
@@ -754,9 +791,20 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewColor( view, color_by_object[HAND_STRUCTURE]);
 	ViewBox( view );
+	ViewSetXLimits( view, first_instant, last_instant );
+
+	// Plot coherency between coda1-computed pose and coda2-computed pose.
+	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
+	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewFillPlotClippedDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].interUnitCoherence[HAND_STRUCTURE], 
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
+		MISSING_DOUBLE);
 
 	// Set the plotting limits.
-	ViewSetXLimits( view, first_instant, last_instant );
 	if ( autoscaleHMD->Checked ) {
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.
@@ -823,9 +871,20 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	view = LayoutView( poseStripChartLayout, row, 0 );
 	ViewColor( view, color_by_object[CHEST_STRUCTURE]);
 	ViewBox( view );
+	ViewSetXLimits( view, first_instant, last_instant );
+
+	// Plot coherency between coda1-computed pose and coda2-computed pose.
+	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
+	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewFillPlotClippedDoubles( view, 
+		&graspDataSlice[0].absoluteTime, 
+		&graspDataSlice[0].interUnitCoherence[CHEST_STRUCTURE], 
+		first_rt_sample, last_rt_sample - 1, step,
+		sizeof( graspDataSlice[first_rt_sample] ), 
+		sizeof( graspDataSlice[first_rt_sample] ),
+		MISSING_DOUBLE);
 
 	// Set the plotting limits.
-	ViewSetXLimits( view, first_instant, last_instant );
 	if ( autoscaleHMD->Checked ) {
 		// We can't use the ViewAutoscale... functions because only the visibility flag gets set in the arrays.
 		// Position and quaternion values are not defined when visibility is false.

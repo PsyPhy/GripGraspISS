@@ -71,6 +71,7 @@ namespace GraspMMI {
 		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
 		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
 		static double	residualMaximum = 10.0;
+		static double	coherenceMaximum = 100.0;
 
 		double taskViewBottom;
 		double taskViewTop;

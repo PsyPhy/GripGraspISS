@@ -62,6 +62,7 @@ namespace GraspMMI {
 
 		// Computed Items
 		double visibleMarkers[MAX_UNITS][MARKER_STRUCTURES];
+		double interUnitCoherence[MARKER_STRUCTURES];
 
 		double hmdRotationAngle;	// Rotation of the HMD away from straight ahead, including pitch and yaw, in degrees.
 		double hmdRollAngle;		// Rotation of the HMD around the roll axis.
