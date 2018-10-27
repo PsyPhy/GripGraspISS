@@ -315,7 +315,6 @@ namespace GraspMMIColumbus {
 			this->sidePanel->Name = L"sidePanel";
 			this->sidePanel->Size = System::Drawing::Size(600, 300);
 			this->sidePanel->TabIndex = 1;
-//			this->sidePanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::sidePanel_SizeChanged);
 			// 
 			// configurationGroupBox
 			// 
@@ -711,7 +710,7 @@ namespace GraspMMIColumbus {
 			this->Controls->Add(this->endconeGroupBox);
 			this->Controls->Add(this->nodeGroupBox);
 			this->Controls->Add(this->topGroupBox);
-			this->Location = System::Drawing::Point(10, 100);
+			this->Location = System::Drawing::Point(-300, -1000);
 			this->Name = L"GraspMMIColumbusForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GraspMMI Columbus";

@@ -507,10 +507,10 @@ namespace GraspMMI {
 			this->dataLiveCheckBox->AutoSize = true;
 			this->dataLiveCheckBox->Checked = true;
 			this->dataLiveCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->dataLiveCheckBox->Location = System::Drawing::Point(958, 33);
+			this->dataLiveCheckBox->Location = System::Drawing::Point(956, 33);
 			this->dataLiveCheckBox->Name = L"dataLiveCheckBox";
 			this->dataLiveCheckBox->RightToLeft = System::Windows::Forms::RightToLeft::No;
-			this->dataLiveCheckBox->Size = System::Drawing::Size(46, 17);
+			this->dataLiveCheckBox->Size = System::Drawing::Size(48, 19);
 			this->dataLiveCheckBox->TabIndex = 9;
 			this->dataLiveCheckBox->Text = L"Live";
 			this->dataLiveCheckBox->UseVisualStyleBackColor = true;
@@ -553,9 +553,9 @@ namespace GraspMMI {
 			// 
 			this->poseGraphGroupBox->Controls->Add(this->plotSelectionComboBox);
 			this->poseGraphGroupBox->Controls->Add(this->poseGraphPanel);
-			this->poseGraphGroupBox->Location = System::Drawing::Point(8, 96);
+			this->poseGraphGroupBox->Location = System::Drawing::Point(7, 96);
 			this->poseGraphGroupBox->Name = L"poseGraphGroupBox";
-			this->poseGraphGroupBox->Size = System::Drawing::Size(1098, 585);
+			this->poseGraphGroupBox->Size = System::Drawing::Size(1098, 429);
 			this->poseGraphGroupBox->TabIndex = 1;
 			this->poseGraphGroupBox->TabStop = false;
 			this->poseGraphGroupBox->Text = L"Kinematics";
@@ -582,7 +582,7 @@ namespace GraspMMI {
 			this->poseGraphPanel->Controls->Add(this->autoscaleIndicator);
 			this->poseGraphPanel->Location = System::Drawing::Point(6, 23);
 			this->poseGraphPanel->Name = L"poseGraphPanel";
-			this->poseGraphPanel->Size = System::Drawing::Size(1086, 556);
+			this->poseGraphPanel->Size = System::Drawing::Size(1086, 396);
 			this->poseGraphPanel->TabIndex = 0;
 			this->poseGraphPanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::poseGraphPanel_SizeChanged);
 			// 
@@ -592,14 +592,14 @@ namespace GraspMMI {
 			this->hmdContextMenu->Name = L"contextMenuStrip1";
 			this->hmdContextMenu->ShowCheckMargin = true;
 			this->hmdContextMenu->ShowImageMargin = false;
-			this->hmdContextMenu->Size = System::Drawing::Size(133, 26);
+			this->hmdContextMenu->Size = System::Drawing::Size(127, 26);
 			this->hmdContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::hmdContextMenu_ItemClicked);
 			// 
 			// autoscaleHMD
 			// 
 			this->autoscaleHMD->CheckOnClick = true;
 			this->autoscaleHMD->Name = L"autoscaleHMD";
-			this->autoscaleHMD->Size = System::Drawing::Size(132, 22);
+			this->autoscaleHMD->Size = System::Drawing::Size(126, 22);
 			this->autoscaleHMD->Text = L"Autoscale";
 			// 
 			// autoscaleIndicator
@@ -619,7 +619,7 @@ namespace GraspMMI {
 			// 
 			this->taskGraphGroupBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->taskGraphGroupBox->Controls->Add(this->taskGraphPanel);
-			this->taskGraphGroupBox->Location = System::Drawing::Point(7, 803);
+			this->taskGraphGroupBox->Location = System::Drawing::Point(7, 645);
 			this->taskGraphGroupBox->Name = L"taskGraphGroupBox";
 			this->taskGraphGroupBox->Size = System::Drawing::Size(1098, 110);
 			this->taskGraphGroupBox->TabIndex = 2;
@@ -645,7 +645,7 @@ namespace GraspMMI {
 				this->toolStripSeparator2, this->toolStripTextBox2, this->toolStripMenuItem400, this->toolStripMenuItem500, this->toolStripMenuItem600, 
 				this->toolStripSeparator3, this->toolStripMenuItem000, this->toolStripMenuItem900});
 			this->taskContextMenu->Name = L"taskContextMenu";
-			this->taskContextMenu->Size = System::Drawing::Size(179, 268);
+			this->taskContextMenu->Size = System::Drawing::Size(181, 268);
 			this->taskContextMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &GraspMMIGraphsForm::taskContextMenu_ItemClicked);
 			// 
 			// toolStripMenuItemAll
@@ -653,7 +653,7 @@ namespace GraspMMI {
 			this->toolStripMenuItemAll->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
 			this->toolStripMenuItemAll->ImageScaling = System::Windows::Forms::ToolStripItemImageScaling::None;
 			this->toolStripMenuItemAll->Name = L"toolStripMenuItemAll";
-			this->toolStripMenuItemAll->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItemAll->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItemAll->Tag = L"";
 			this->toolStripMenuItemAll->Text = L"Show All";
 			this->toolStripMenuItemAll->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -661,7 +661,7 @@ namespace GraspMMI {
 			// toolStripSeparator1
 			// 
 			this->toolStripSeparator1->Name = L"toolStripSeparator1";
-			this->toolStripSeparator1->Size = System::Drawing::Size(175, 6);
+			this->toolStripSeparator1->Size = System::Drawing::Size(177, 6);
 			// 
 			// toolStripTextBox1
 			// 
@@ -674,28 +674,28 @@ namespace GraspMMI {
 			// toolStripMenuItem100
 			// 
 			this->toolStripMenuItem100->Name = L"toolStripMenuItem100";
-			this->toolStripMenuItem100->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem100->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem100->Tag = L"100";
 			this->toolStripMenuItem100->Text = L"100 Visual-Manual";
 			// 
 			// toolStripMenuItem200
 			// 
 			this->toolStripMenuItem200->Name = L"toolStripMenuItem200";
-			this->toolStripMenuItem200->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem200->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem200->Tag = L"200";
 			this->toolStripMenuItem200->Text = L"200 Visual-Visual";
 			// 
 			// toolStripMenuItem300
 			// 
 			this->toolStripMenuItem300->Name = L"toolStripMenuItem300";
-			this->toolStripMenuItem300->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem300->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem300->Tag = L"300";
 			this->toolStripMenuItem300->Text = L"300 Manual-Manual";
 			// 
 			// toolStripSeparator2
 			// 
 			this->toolStripSeparator2->Name = L"toolStripSeparator2";
-			this->toolStripSeparator2->Size = System::Drawing::Size(175, 6);
+			this->toolStripSeparator2->Size = System::Drawing::Size(177, 6);
 			// 
 			// toolStripTextBox2
 			// 
@@ -708,40 +708,40 @@ namespace GraspMMI {
 			// toolStripMenuItem400
 			// 
 			this->toolStripMenuItem400->Name = L"toolStripMenuItem400";
-			this->toolStripMenuItem400->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem400->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem400->Tag = L"400";
 			this->toolStripMenuItem400->Text = L"400 Visual-Visual";
 			// 
 			// toolStripMenuItem500
 			// 
 			this->toolStripMenuItem500->Name = L"toolStripMenuItem500";
-			this->toolStripMenuItem500->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem500->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem500->Tag = L"500";
 			this->toolStripMenuItem500->Text = L"500 Visual-Manual";
 			// 
 			// toolStripMenuItem600
 			// 
 			this->toolStripMenuItem600->Name = L"toolStripMenuItem600";
-			this->toolStripMenuItem600->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem600->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem600->Tag = L"600";
 			this->toolStripMenuItem600->Text = L"600 Manual-Manual";
 			// 
 			// toolStripSeparator3
 			// 
 			this->toolStripSeparator3->Name = L"toolStripSeparator3";
-			this->toolStripSeparator3->Size = System::Drawing::Size(175, 6);
+			this->toolStripSeparator3->Size = System::Drawing::Size(177, 6);
 			// 
 			// toolStripMenuItem000
 			// 
 			this->toolStripMenuItem000->Name = L"toolStripMenuItem000";
-			this->toolStripMenuItem000->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem000->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem000->Tag = L"0";
 			this->toolStripMenuItem000->Text = L"000 Setup / Stow";
 			// 
 			// toolStripMenuItem900
 			// 
 			this->toolStripMenuItem900->Name = L"toolStripMenuItem900";
-			this->toolStripMenuItem900->Size = System::Drawing::Size(178, 22);
+			this->toolStripMenuItem900->Size = System::Drawing::Size(180, 22);
 			this->toolStripMenuItem900->Tag = L"900";
 			this->toolStripMenuItem900->Text = L"900 Maintenance";
 			// 
@@ -749,7 +749,7 @@ namespace GraspMMI {
 			// 
 			this->visibilityGraphGroupBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->visibilityGraphGroupBox->Controls->Add(this->markerGraphPanel);
-			this->visibilityGraphGroupBox->Location = System::Drawing::Point(7, 687);
+			this->visibilityGraphGroupBox->Location = System::Drawing::Point(7, 529);
 			this->visibilityGraphGroupBox->Name = L"visibilityGraphGroupBox";
 			this->visibilityGraphGroupBox->Size = System::Drawing::Size(1098, 110);
 			this->visibilityGraphGroupBox->TabIndex = 2;
@@ -808,11 +808,11 @@ namespace GraspMMI {
 			this->codaGroupBox->Controls->Add(this->codaPanel0);
 			this->codaGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->codaGroupBox->Location = System::Drawing::Point(1112, 224);
+			this->codaGroupBox->Location = System::Drawing::Point(1112, 193);
 			this->codaGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->codaGroupBox->Name = L"codaGroupBox";
 			this->codaGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->codaGroupBox->Size = System::Drawing::Size(418, 196);
+			this->codaGroupBox->Size = System::Drawing::Size(418, 164);
 			this->codaGroupBox->TabIndex = 21;
 			this->codaGroupBox->TabStop = false;
 			this->codaGroupBox->Text = L"Coda  View";
@@ -853,7 +853,7 @@ namespace GraspMMI {
 			this->codaPanel1->Location = System::Drawing::Point(218, 22);
 			this->codaPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->codaPanel1->Name = L"codaPanel1";
-			this->codaPanel1->Size = System::Drawing::Size(192, 160);
+			this->codaPanel1->Size = System::Drawing::Size(192, 132);
 			this->codaPanel1->TabIndex = 1;
 			// 
 			// codaPanel0
@@ -861,7 +861,7 @@ namespace GraspMMI {
 			this->codaPanel0->Location = System::Drawing::Point(13, 22);
 			this->codaPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->codaPanel0->Name = L"codaPanel0";
-			this->codaPanel0->Size = System::Drawing::Size(192, 160);
+			this->codaPanel0->Size = System::Drawing::Size(192, 132);
 			this->codaPanel0->TabIndex = 0;
 			// 
 			// chestGroupBox
@@ -870,11 +870,11 @@ namespace GraspMMI {
 			this->chestGroupBox->Controls->Add(this->chestPanel0);
 			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->chestGroupBox->Location = System::Drawing::Point(1113, 822);
+			this->chestGroupBox->Location = System::Drawing::Point(1112, 697);
 			this->chestGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->chestGroupBox->Name = L"chestGroupBox";
 			this->chestGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->chestGroupBox->Size = System::Drawing::Size(418, 196);
+			this->chestGroupBox->Size = System::Drawing::Size(418, 164);
 			this->chestGroupBox->TabIndex = 18;
 			this->chestGroupBox->TabStop = false;
 			this->chestGroupBox->Text = L"Chest Marker Visibility";
@@ -885,7 +885,7 @@ namespace GraspMMI {
 			this->chestPanel1->Location = System::Drawing::Point(218, 22);
 			this->chestPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->chestPanel1->Name = L"chestPanel1";
-			this->chestPanel1->Size = System::Drawing::Size(192, 160);
+			this->chestPanel1->Size = System::Drawing::Size(192, 132);
 			this->chestPanel1->TabIndex = 2;
 			// 
 			// chestPanel0
@@ -893,7 +893,7 @@ namespace GraspMMI {
 			this->chestPanel0->Location = System::Drawing::Point(9, 22);
 			this->chestPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->chestPanel0->Name = L"chestPanel0";
-			this->chestPanel0->Size = System::Drawing::Size(192, 160);
+			this->chestPanel0->Size = System::Drawing::Size(192, 132);
 			this->chestPanel0->TabIndex = 1;
 			// 
 			// handGroupBox
@@ -902,11 +902,11 @@ namespace GraspMMI {
 			this->handGroupBox->Controls->Add(this->handPanel0);
 			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->handGroupBox->Location = System::Drawing::Point(1113, 622);
+			this->handGroupBox->Location = System::Drawing::Point(1112, 529);
 			this->handGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->handGroupBox->Name = L"handGroupBox";
 			this->handGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->handGroupBox->Size = System::Drawing::Size(418, 196);
+			this->handGroupBox->Size = System::Drawing::Size(418, 164);
 			this->handGroupBox->TabIndex = 17;
 			this->handGroupBox->TabStop = false;
 			this->handGroupBox->Text = L"Hand Marker Visibility";
@@ -917,7 +917,7 @@ namespace GraspMMI {
 			this->handPanel1->Location = System::Drawing::Point(218, 22);
 			this->handPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->handPanel1->Name = L"handPanel1";
-			this->handPanel1->Size = System::Drawing::Size(192, 160);
+			this->handPanel1->Size = System::Drawing::Size(192, 132);
 			this->handPanel1->TabIndex = 2;
 			// 
 			// handPanel0
@@ -925,7 +925,7 @@ namespace GraspMMI {
 			this->handPanel0->Location = System::Drawing::Point(9, 22);
 			this->handPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->handPanel0->Name = L"handPanel0";
-			this->handPanel0->Size = System::Drawing::Size(192, 160);
+			this->handPanel0->Size = System::Drawing::Size(192, 132);
 			this->handPanel0->TabIndex = 1;
 			// 
 			// hmdGroupBox
@@ -934,11 +934,11 @@ namespace GraspMMI {
 			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdGroupBox->Location = System::Drawing::Point(1113, 423);
+			this->hmdGroupBox->Location = System::Drawing::Point(1111, 361);
 			this->hmdGroupBox->Margin = System::Windows::Forms::Padding(2);
 			this->hmdGroupBox->Name = L"hmdGroupBox";
 			this->hmdGroupBox->Padding = System::Windows::Forms::Padding(2);
-			this->hmdGroupBox->Size = System::Drawing::Size(418, 196);
+			this->hmdGroupBox->Size = System::Drawing::Size(418, 164);
 			this->hmdGroupBox->TabIndex = 16;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
@@ -949,7 +949,7 @@ namespace GraspMMI {
 			this->hmdPanel1->Location = System::Drawing::Point(218, 22);
 			this->hmdPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->hmdPanel1->Name = L"hmdPanel1";
-			this->hmdPanel1->Size = System::Drawing::Size(192, 160);
+			this->hmdPanel1->Size = System::Drawing::Size(192, 132);
 			this->hmdPanel1->TabIndex = 2;
 			// 
 			// hmdPanel0
@@ -957,7 +957,7 @@ namespace GraspMMI {
 			this->hmdPanel0->Location = System::Drawing::Point(9, 22);
 			this->hmdPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->hmdPanel0->Name = L"hmdPanel0";
-			this->hmdPanel0->Size = System::Drawing::Size(192, 160);
+			this->hmdPanel0->Size = System::Drawing::Size(192, 132);
 			this->hmdPanel0->TabIndex = 1;
 			// 
 			// worldTabs
@@ -967,7 +967,7 @@ namespace GraspMMI {
 			this->worldTabs->Location = System::Drawing::Point(1112, 4);
 			this->worldTabs->Name = L"worldTabs";
 			this->worldTabs->SelectedIndex = 0;
-			this->worldTabs->Size = System::Drawing::Size(417, 216);
+			this->worldTabs->Size = System::Drawing::Size(417, 184);
 			this->worldTabs->TabIndex = 22;
 			this->worldTabs->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::worldTabs_SelectedIndexChanged);
 			// 
@@ -979,7 +979,7 @@ namespace GraspMMI {
 			this->trackerTab->Location = System::Drawing::Point(4, 24);
 			this->trackerTab->Name = L"trackerTab";
 			this->trackerTab->Padding = System::Windows::Forms::Padding(3);
-			this->trackerTab->Size = System::Drawing::Size(409, 188);
+			this->trackerTab->Size = System::Drawing::Size(409, 156);
 			this->trackerTab->TabIndex = 0;
 			this->trackerTab->Text = L"Tracker";
 			this->trackerTab->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::trackerTab_SizeChanged);
@@ -989,7 +989,7 @@ namespace GraspMMI {
 			this->forwardPanel->Location = System::Drawing::Point(211, 7);
 			this->forwardPanel->Margin = System::Windows::Forms::Padding(2);
 			this->forwardPanel->Name = L"forwardPanel";
-			this->forwardPanel->Size = System::Drawing::Size(191, 167);
+			this->forwardPanel->Size = System::Drawing::Size(191, 132);
 			this->forwardPanel->TabIndex = 3;
 			// 
 			// sidePanel
@@ -997,7 +997,7 @@ namespace GraspMMI {
 			this->sidePanel->Location = System::Drawing::Point(7, 7);
 			this->sidePanel->Margin = System::Windows::Forms::Padding(2);
 			this->sidePanel->Name = L"sidePanel";
-			this->sidePanel->Size = System::Drawing::Size(191, 167);
+			this->sidePanel->Size = System::Drawing::Size(191, 132);
 			this->sidePanel->TabIndex = 2;
 			// 
 			// VRTab
@@ -1057,7 +1057,7 @@ namespace GraspMMI {
 			this->playbackGroupBox->Controls->Add(this->taskRightTimeLimit);
 			this->playbackGroupBox->Controls->Add(this->playbackScrollBar);
 			this->playbackGroupBox->Controls->Add(this->panel1);
-			this->playbackGroupBox->Location = System::Drawing::Point(7, 919);
+			this->playbackGroupBox->Location = System::Drawing::Point(8, 761);
 			this->playbackGroupBox->Name = L"playbackGroupBox";
 			this->playbackGroupBox->Size = System::Drawing::Size(1098, 99);
 			this->playbackGroupBox->TabIndex = 3;
@@ -1234,7 +1234,7 @@ namespace GraspMMI {
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->ClientSize = System::Drawing::Size(1538, 1026);
+			this->ClientSize = System::Drawing::Size(1538, 867);
 			this->Controls->Add(this->alignmentFrameTextBox);
 			this->Controls->Add(this->playbackGroupBox);
 			this->Controls->Add(this->worldTabs);
