@@ -933,15 +933,11 @@ MarkerStructureGLObject *GraspGLObjects::CreateHmdMarkerStructure ( char *model_
 	bar = new Slab( STRUCTURE_BAR_RADIUS, STRUCTURE_BAR_RADIUS, 40 );
 	bar->SetPosition( 110.0, 0.0, 20.0 );
 	frame->AddComponent( bar );
-
-
 	frame->SetPosition( 0.0, 0.0, -10.0 );
 
 	structure->AddComponent( frame );
-
-
 	structure->SetColor( Translucid( GRAY ) );
-	//	structure->SetOrientation( 0.0, 0.0, 90.0 );
+
 	return( structure );
 }
 
@@ -994,12 +990,13 @@ MarkerStructureGLObject *GraspGLObjects::CreateHandMarkerStructure ( char *model
 	plate->SetPosition( -10.0, 0.0, 0.0 );
 	frame->AddComponent( plate );
 
-	square->SetColor( Translucid( GRAY ) );
-	diamond->SetColor( Translucid( GRAY ) );
-	plate->SetColor( Translucid( GRAY ) );
+	//square->SetColor( Translucid( GRAY ) );
+	//diamond->SetColor( Translucid( GRAY ) );
+	//plate->SetColor( Translucid( GRAY ) );
 	frame->SetOffset( 0.0, 0.0, 70.0 );
 
 	structure->AddComponent( frame );
+	structure->SetColor( Translucid( GRAY ) );
 	return( structure );
 }
 
@@ -1016,7 +1013,6 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][X] = 130.0;
 	vertices[3][Y] = -90.0;
 	Extrusion *plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
-	plate->SetColor( 0.5, 0.5, 0.5, 0.25 );
 	plate->SetPosition( 0.0, 0.0, 60.0 );
 	structure->AddComponent( plate );
 
@@ -1030,8 +1026,8 @@ MarkerStructureGLObject *GraspGLObjects::CreateChestMarkerStructure ( char *mode
 	vertices[3][Y] = 0.0;
 	plate = new Extrusion( STRUCTURE_BAR_RADIUS, vertices, 4 );
 	plate->SetPosition( 0.0, 0.0,  0.0 );
-	plate->SetColor(  0.25, 0.25, 0.25, 0.25  );
 	structure->AddComponent( plate );
+	structure->SetColor( Translucid( GRAY ) );
 
 	return( structure );
 }

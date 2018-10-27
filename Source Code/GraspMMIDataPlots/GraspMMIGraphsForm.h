@@ -37,10 +37,6 @@
 
 #include "../GripGraspVersionControl/GripGraspVersionControl.h"
 
-#define MAX_SLICES	(8*60*60*10)
-// Time span in seconds for each position of the span selector.
-#define SPAN_VALUES	8
-extern double windowSpanSeconds[SPAN_VALUES];
 static ::Timer playbackElapsedTimer;
 
 namespace GraspMMI {
@@ -858,6 +854,7 @@ namespace GraspMMI {
 			// 
 			// codaPanel0
 			// 
+			this->codaPanel0->ForeColor = System::Drawing::SystemColors::ControlText;
 			this->codaPanel0->Location = System::Drawing::Point(13, 22);
 			this->codaPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->codaPanel0->Name = L"codaPanel0";
@@ -1250,10 +1247,10 @@ namespace GraspMMI {
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
-			this->Location = System::Drawing::Point(10, 20);
+			this->Location = System::Drawing::Point(-260, -960);
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspMMIGraphsForm";
-			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
+			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GraspMMI Data Plots";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspMMIGraphsForm::GraspMMIGraphsForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIGraphsForm::GraspMMIGraphsForm_Shown);

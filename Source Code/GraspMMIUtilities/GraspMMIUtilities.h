@@ -7,6 +7,12 @@
 #include "../VectorsMixin/VectorsMixin.h"
 #include "../Grip/GripPackets.h"
 
+#include <gl\gl.h>
+#include <gl\glu.h>
+
+#include "../Useful/OpenGLUseful.h"
+#include "../OpenGLObjects/OpenGLColors.h"
+
 #define CHEST_STRUCTURE	0
 #define HAND_STRUCTURE	1
 #define HMD_STRUCTURE	2
@@ -87,6 +93,14 @@ namespace GraspMMI {
 		double		visibleMarkers[MARKER_STRUCTURES];
 		unsigned int	scriptEngine;
 	} GraspHousekeepingSlice;
+
+	// Time span in seconds for each position of the span selector.
+	#define SPAN_VALUES	8
+	extern double	windowSpanSeconds[SPAN_VALUES];
+	extern int		color_by_object[MARKER_STRUCTURES];
+	extern float	color_by_unit[MAX_UNITS][4];
+
+	#define MAX_SLICES	(8*60*60*10)
 
 	void ComputeGraspRTDerivedValues( GraspRealtimeDataSlice *slice );
 	int	GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );

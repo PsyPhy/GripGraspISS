@@ -14,13 +14,13 @@ using namespace GraspMMI;
 using namespace Grasp;
 using namespace PsyPhy;
 
-///
-/// Extract the individual slices of data from a Grasp Realtime telemetry packet.
-/// NB It is up to the caller to ensure that the array of slices has enough room 
-/// to hold all the slices (GRASP_RT_SLICES_PER_PACKET) in the packet.
-///
 
 namespace GraspMMI {
+
+	// Time span in seconds for each position of the span selector.
+	double	windowSpanSeconds[SPAN_VALUES] = { 43200.0, 14400.0, 3600.0, 1800.0, 600.0, 300.0, 60.0, 30.0 };
+	int		color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
+	float	color_by_unit[MAX_UNITS][4] = { {0.5f, 0.0f, 0.5f, 0.25f}, {0.75f, 0.25f, 0.0f, 0.25f }};
 
 	bool LoadGraspCodaAlignment ( GraspRealtimeDataSlice *slice, const char *filename ) {
 
@@ -130,6 +130,11 @@ namespace GraspMMI {
 
 	}
 
+	///
+	/// Extract the individual slices of data from a Grasp Realtime telemetry packet.
+	/// NB It is up to the caller to ensure that the array of slices has enough room 
+	/// to hold all the slices (GRASP_RT_SLICES_PER_PACKET) in the packet.
+	///
 	u32 ExtractGraspRealtimeDataSliceContent( GraspRealtimeDataSlice *slice, u8 *buffer, u32 p ) {
 
 		static VectorsMixin vm;

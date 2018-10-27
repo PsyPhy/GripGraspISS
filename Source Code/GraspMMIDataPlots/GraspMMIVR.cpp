@@ -390,13 +390,15 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 
-		// Now look at where each object is measured to be by each coda unit.
-		// Tell each tracker to use the marker frame corresponding to coda 0 to compute the pose
-		// and then set the pose of the corresponding object to that pose.
 		// Show which markers are on or off for each object.
+		// The marker structure itself is color coded to match the stripcharts.
+		hmdStationary->SetColor( color_by_unit[unit] );
 		hmdStationary->ShowVisibility( unitMarkerFrame[unit], GREEN );
+		handStationary->SetColor( color_by_unit[unit] );
 		handStationary->ShowVisibility( unitMarkerFrame[unit], CYAN );
+		chestStationary->SetColor( color_by_unit[unit] );
 		chestStationary->ShowVisibility( unitMarkerFrame[unit], BLUE );
+
 		// Show the position and orientation of each marker structure
 		// from the perspective of each CODA unit.
 		hmdMobile->ShowVisibility( unitMarkerFrame[unit], GREEN );

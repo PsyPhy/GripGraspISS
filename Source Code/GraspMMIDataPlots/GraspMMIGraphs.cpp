@@ -52,9 +52,6 @@ using namespace GraspMMI;
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
-// Time span in seconds for each position of the span selector.
-double  windowSpanSeconds[SPAN_VALUES] = { 43200.0, 14400.0, 3600.0, 1800.0, 600.0, 300.0, 60.0, 30.0 };
-
 // Trial parameters.
 // I have to put them here as statics because a managed class
 // cannot have mixed types.
@@ -546,10 +543,6 @@ void GraspMMIGraphsForm::MoveToLatest( void ) {
 // Here we do the actual work of plotting the strip charts and phase plots.
 // It is assumed that the global data arrays have been filled. The time span
 // of the plots is determined by the scroll bar and span slider.
-
-
-static int color_by_object[MARKER_STRUCTURES] = { BLUE, CYAN, GREEN };
-static float color_by_unit[MAX_UNITS][3] = { {0.5f, 0.0f, 0.5f}, {0.75f, 0.25f, 0.0f }};
 
 void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) {
 
