@@ -288,6 +288,11 @@ extern "C" {
 		int start, int end, int step,
 		unsigned xsize, unsigned ysize,
 		double NA );
+	void ViewFillPlotClippedDoubles (View view, 
+		double *xarray, double *yarray, 
+		int start, int end, int step,
+		unsigned xsize, unsigned ysize,
+		double NA );
 
 #ifdef __cplusplus
 }

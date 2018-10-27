@@ -982,6 +982,61 @@ void ViewXYPlotClippedDoubles (View view, double *xarray, double *yarray,
 	}
 }
 
+
+void ViewFillPlotAvailableDoubles (View view, 
+	double *xarray, double *yarray, 
+	int start, int end, int step,
+	unsigned xsize, unsigned ysize,
+	double NA )
+{
+
+	register int i;
+	register double	*xpt1, *xpt2, *ypt1, *ypt2;
+
+	for (i = start + 1; i <= end; i += step ) {
+
+		xpt1 = (double *)(((char *) xarray) + (i-1) * xsize);
+		xpt2 = (double *)(((char *) xarray) + i * xsize);
+		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
+		ypt2 = (double *)(((char *) yarray) + i * ysize);
+		if ( *xpt1 != NA && *xpt2 != NA && *ypt1 != NA && *ypt2 != NA ) {
+			// mid = (*xpt1 + *xpt2) / 2.0;
+			//ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
+			//ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
+			ViewFilledRectangle(view, *xpt1, 0.0, *xpt2, *ypt1 );
+		}
+
+	}
+}
+
+void ViewFillPlotClippedDoubles (View view, double *xarray, double *yarray, 
+	int start, int end, int step,
+	unsigned xsize, unsigned ysize, 
+	double na)
+{
+
+	register int i;
+	register double   *xpt1, *ypt1, *xpt2, *ypt2;
+
+	double left = min(  view->user_left,  view->user_right );
+	double right = max(  view->user_left,  view->user_right );
+	double bottom = min(  view->user_top,  view->user_bottom );
+	double top = max(  view->user_top,  view->user_bottom );
+
+	for (i = start + 1; i <= end; i += step ) {
+
+		xpt1 = (double *)(((char *) xarray) + (i-1) * xsize);
+		xpt2 = (double *)(((char *) xarray) + i * xsize);
+		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
+		ypt2 = (double *)(((char *) yarray) + i * ysize);
+		if (*xpt1 != na && *xpt1 >= left && *xpt1 <= right &&
+			*xpt2 != na && *xpt2 >= left && *xpt2 <= right &&
+			*ypt1 != na && *ypt1 >= bottom && *ypt1 <= top &&
+			*ypt2 != na && *ypt2 >= bottom && *ypt2 <= top ) {
+			ViewFilledRectangle(view, *xpt1, 0.0, *xpt2, *ypt1 );
+		}
+	}
+}
 /***************************************************************************/
 /*                              Scatter Plots                              */
 /***************************************************************************/
@@ -1147,30 +1202,3 @@ void ViewTiltPlotAvailableDoubles (View view,
 	}
 }
 
-/***************************************************************************/
-
-void ViewFillPlotAvailableDoubles (View view, 
-	double *xarray, double *yarray, 
-	int start, int end, int step,
-	unsigned xsize, unsigned ysize,
-	double NA )
-{
-
-	register int i;
-	register double	*xpt1, *xpt2, *ypt1, *ypt2;
-
-	for (i = start + 1; i <= end; i += step ) {
-
-		xpt1 = (double *)(((char *) xarray) + (i-1) * xsize);
-		xpt2 = (double *)(((char *) xarray) + i * xsize);
-		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
-		ypt2 = (double *)(((char *) yarray) + i * ysize);
-		if ( *xpt1 != NA && *xpt2 != NA && *ypt1 != NA && *ypt2 != NA ) {
-			// mid = (*xpt1 + *xpt2) / 2.0;
-			//ViewFilledRectangle(view, *xpt1, 0.0, mid, *ypt1 );
-			//ViewFilledRectangle(view, mid, 0.0, *xpt2, *ypt2 );
-			ViewFilledRectangle(view, *xpt1, 0.0, *xpt2, *ypt1 );
-		}
-
-	}
-}
