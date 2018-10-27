@@ -958,6 +958,11 @@ void ViewXYPlotClippedDoubles (View view, double *xarray, double *yarray,
 	register int i;
 	register double   *xpt1, *ypt1, *xpt2, *ypt2;
 
+	double left = min(  view->user_left,  view->user_right );
+	double right = max(  view->user_left,  view->user_right );
+	double bottom = min(  view->user_top,  view->user_bottom );
+	double top = max(  view->user_top,  view->user_bottom );
+
 	i = start;
 	while (i <= (end - step) ) {
 
@@ -966,10 +971,10 @@ void ViewXYPlotClippedDoubles (View view, double *xarray, double *yarray,
 		i += step;
 		xpt2 = (double *)(((char *) xarray) + i * xsize);
 		ypt2 = (double *)(((char *) yarray) + i * ysize);
-		if (*xpt1 != na && *xpt1 >= view->user_left && *xpt1 <= view->user_right &&
-			*xpt2 != na && *xpt2 >= view->user_left && *xpt2 <= view->user_right &&
-			*ypt1 != na && *ypt1 >= view->user_bottom && *ypt1 <= view->user_top &&
-			*ypt2 != na && *ypt2 >= view->user_bottom && *ypt2 <= view->user_top ) {
+		if (*xpt1 != na && *xpt1 >= left && *xpt1 <= right &&
+			*xpt2 != na && *xpt2 >= left && *xpt2 <= right &&
+			*ypt1 != na && *ypt1 >= bottom && *ypt1 <= top &&
+			*ypt2 != na && *ypt2 >= bottom && *ypt2 <= top ) {
 				ViewLine(view, 
 					(double) *xpt1, (double) *ypt1,
 					(double) *xpt2, (double) *ypt2 );
