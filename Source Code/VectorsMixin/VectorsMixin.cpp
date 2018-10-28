@@ -730,7 +730,9 @@ double VectorsMixin::RollAngle( const Quaternion q1 ) {
 
 	RotateVector( up_vector1, pitch_yaw_transformation, jVector );
 	RotateVector( up_vector2, q1, jVector );
-	double angle = acos( DotProduct( up_vector1, up_vector2 ) );
+	double projection = DotProduct( up_vector1, up_vector2  );
+	double angle = acos( projection );
+	if ( !_finite( angle ) ) angle = 0.0;
 	ComputeCrossProduct( up_cross, up_vector1, up_vector2 );
 	if ( DotProduct( up_cross, sight_axis ) > 0.0 ) return( angle );
 	else return( - angle );
