@@ -997,11 +997,11 @@ void ViewFillPlotAvailableDoubles (View view,
 	register int i;
 	register double	*xpt1, *xpt2, *ypt1, *ypt2;
 
-	for (i = start + 1; i <= end; i += step ) {
+	for (i = start + step; i <= end; i += step ) {
 
-		xpt1 = (double *)(((char *) xarray) + (i-1) * xsize);
+		xpt1 = (double *)(((char *) xarray) + (i - step) * xsize);
 		xpt2 = (double *)(((char *) xarray) + i * xsize);
-		ypt1 = (double *)(((char *) yarray) + (i-1) * ysize);
+		ypt1 = (double *)(((char *) yarray) + (i - step) * ysize);
 		ypt2 = (double *)(((char *) yarray) + i * ysize);
 		if ( *xpt1 != NA && *xpt2 != NA && *ypt1 != NA && *ypt2 != NA ) {
 			// mid = (*xpt1 + *xpt2) / 2.0;
@@ -1028,9 +1028,9 @@ void ViewFillPlotClippedDoubles (View view, double *xarray, double *yarray,
 
 	double x1, x2, y1, y2;
 
-	for (i = start + 1; i <= end; i += step ) {
+	for (i = start + step; i <= end; i += step ) {
 
-		x1 = *((double *)(((char *) xarray) + (i-1) * xsize));
+		x1 = *((double *)(((char *) xarray) + ( i - step ) * xsize));
 		y1 = 0.0;
 		x2 = *((double *)(((char *) xarray) + i * xsize));
 		y2 = *((double *)(((char *) yarray) + i * ysize));
