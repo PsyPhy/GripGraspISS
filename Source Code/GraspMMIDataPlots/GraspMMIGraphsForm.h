@@ -70,8 +70,10 @@ namespace GraspMMI {
 		static double	rotationRadius = 90.0;	// Range of rotation amplitudes, in degrees.
 		static	int		refreshInterval = 200;	// How often to update the display, in milliseconds.
 		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
-		static double	residualMaximum = 10.0;
-		static double	coherenceMaximum = 100.0;
+		static double	residualPlotMaximum = 10.0;
+		static double	coherencePlotMaximum = 200.0;
+		static double	coherenceThreshold = 50.0;
+		static double	coherenceFilterConstant = 20.0;	// Lowpass filtering of positions for coherence check.
 
 		double taskViewBottom;
 		double taskViewTop;

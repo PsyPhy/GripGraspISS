@@ -77,6 +77,8 @@ int n_trials;
 
 void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSlice *slice, int n_slices ) {
 
+	static VectorsMixin vm;
+
 	for ( int i = 0; i < n_slices; i++ ) {
 
 		// Compute the pose, the fidelity and the marker visibility for each unit.
@@ -99,29 +101,61 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 				}
 			}
 		}
-		// Compute a check on the coherence of the position data between the coda units.
-		// This can be used to detect if the data from the codas is out of sync.
-		if (  slice[i].unitHMD[0].visible && slice[i].unitHMD[1].visible ) {
+	}
+	
+	// Compute a check on the coherence of the position data between the coda units.
+	// This can be used to detect if the data from the codas is out of sync.
+	// We use the position of the objects, rather than the position of individual markers,
+	// because the computation of the object pose rejects reflections and other anomalies
+	// that can affect a single marker.
+	// The positions are filtered because otherwise skew in time creates incoherence
+	// between the unit-specific poses in the real-time data because each telemetry record
+	// contains a marker frame from only one unit.
+	Vector3 filtered_hmd[MAX_UNITS];
+	Vector3 filtered_hand[MAX_UNITS];
+	Vector3 filtered_chest[MAX_UNITS];
+	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		vm.CopyVector( filtered_hmd[unit], vm.zeroVector );
+		vm.CopyVector( filtered_hand[unit], vm.zeroVector );
+		vm.CopyVector( filtered_chest[unit], vm.zeroVector );
+	}
+
+	for ( int i = 0; i < n_slices; i++ ) {
+
+		if (   slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitHMD[0].visible && slice[i-2].unitHMD[0].visible && slice[i].unitHMD[1].visible ) {
+		for ( int unit = 0; unit < 2; unit++ ) {
+				vm.ScaleVector( filtered_hmd[unit], filtered_hmd[unit], coherenceFilterConstant );
+				vm.AddVectors( filtered_hmd[unit], filtered_hmd[unit], slice[i].unitHMD[unit].pose.position );
+				vm.ScaleVector( filtered_hmd[unit], filtered_hmd[unit], 1.0 / (coherenceFilterConstant + 1.0) );
+			}
 			Vector3 delta;
-			hmdTracker->SubtractVectors( delta, slice[i].unitHMD[0].pose.position, slice[i].unitHMD[1].pose.position );
-			slice[i].interUnitCoherence[HMD_STRUCTURE] = hmdTracker->VectorNorm( delta );
+			vm.SubtractVectors( delta, filtered_hmd[0], filtered_hmd[1] );
+			slice[i].interUnitCoherence[HMD_STRUCTURE] =vm.VectorNorm( delta );
 		}
 		else slice[i].interUnitCoherence[HMD_STRUCTURE] = MISSING_DOUBLE;
-		if (  slice[i].unitHand[0].visible && slice[i].unitHand[1].visible ) {
+		if (  slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitHand[0].visible && slice[i].unitHand[1].visible ) {
+			for ( int unit = 0; unit < 2; unit++ ) {
+				vm.ScaleVector( filtered_hand[unit], filtered_hand[unit], coherenceFilterConstant );
+				vm.AddVectors( filtered_hand[unit], filtered_hand[unit], slice[i].unitHand[unit].pose.position );
+				vm.ScaleVector( filtered_hand[unit], filtered_hand[unit], 1.0 / (coherenceFilterConstant + 1.0) );
+			}
 			Vector3 delta;
-			handTracker->SubtractVectors( delta, slice[i].unitHand[0].pose.position, slice[i].unitHand[1].pose.position );
-			slice[i].interUnitCoherence[HAND_STRUCTURE] = handTracker->VectorNorm( delta );
+			vm.SubtractVectors( delta, filtered_hand[0], filtered_hand[1] );
+			slice[i].interUnitCoherence[HAND_STRUCTURE] =vm.VectorNorm( delta );
 		}
 		else slice[i].interUnitCoherence[HAND_STRUCTURE] = MISSING_DOUBLE;
-		if (  slice[i].unitChest[0].visible && slice[i].unitChest[1].visible ) {
+		if (  slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitChest[0].visible && slice[i].unitChest[1].visible ) {
+			for ( int unit = 0; unit < 2; unit++ ) {
+				vm.ScaleVector( filtered_chest[unit], filtered_chest[unit], coherenceFilterConstant );
+				vm.AddVectors( filtered_chest[unit], filtered_chest[unit], slice[i].unitChest[unit].pose.position );
+				vm.ScaleVector( filtered_chest[unit], filtered_chest[unit], 1.0 / (coherenceFilterConstant + 1.0) );
+			}
 			Vector3 delta;
-			chestTracker->SubtractVectors( delta, slice[i].unitChest[0].pose.position, slice[i].unitChest[1].pose.position );
-			slice[i].interUnitCoherence[CHEST_STRUCTURE] = chestTracker->VectorNorm( delta );
+			vm.SubtractVectors( delta, filtered_chest[0], filtered_chest[1] );
+			slice[i].interUnitCoherence[CHEST_STRUCTURE] =vm.VectorNorm( delta );
 		}
 		else slice[i].interUnitCoherence[CHEST_STRUCTURE] = MISSING_DOUBLE;
 	}
-
-
 
 }
 
@@ -608,7 +642,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[HMD_STRUCTURE], 
@@ -768,7 +802,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	// Overlay the residuals.
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
-		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
 		ViewXYPlotAvailableDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -795,7 +829,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[HAND_STRUCTURE], 
@@ -849,7 +883,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	// Overlay the residuals.
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
-		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
 		ViewXYPlotAvailableDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
@@ -875,7 +909,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, 0.0, coherenceMaximum );
+	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[CHEST_STRUCTURE], 
@@ -938,7 +972,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 	// Overlay the residuals.
 	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
-		ViewSetYLimits( view, - pow( -1.0, unit ) * residualMaximum, pow( -1.0, unit ) * residualMaximum );
+		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
 		ViewXYPlotAvailableDoubles( view, 
 			&graspDataSlice[0].absoluteTime, 
