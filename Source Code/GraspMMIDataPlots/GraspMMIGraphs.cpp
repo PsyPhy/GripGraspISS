@@ -82,7 +82,7 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 	for ( int i = 0; i < n_slices; i++ ) {
 
 		// Compute the pose, the fidelity and the marker visibility for each unit.
-		for ( int unit = 0; unit < MAX_UNITS; unit++  ) {
+		for ( int unit = 0; unit < CODA_UNITS; unit++  ) {
 			hmdTracker->ComputePose( slice[i].unitHMD[unit], &slice[i].codaFrame[unit], true );
 			slice[i].visibleMarkers[unit][HMD_STRUCTURE] = 
 				hmdTracker->VisibleMarkers( &slice[i].codaFrame[unit] );
@@ -111,10 +111,10 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 	// The positions are filtered because otherwise skew in time creates incoherence
 	// between the unit-specific poses in the real-time data because each telemetry record
 	// contains a marker frame from only one unit.
-	Vector3 filtered_hmd[MAX_UNITS];
-	Vector3 filtered_hand[MAX_UNITS];
-	Vector3 filtered_chest[MAX_UNITS];
-	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+	Vector3 filtered_hmd[CODA_UNITS];
+	Vector3 filtered_hand[CODA_UNITS];
+	Vector3 filtered_chest[CODA_UNITS];
+	for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 		vm.CopyVector( filtered_hmd[unit], vm.zeroVector );
 		vm.CopyVector( filtered_hand[unit], vm.zeroVector );
 		vm.CopyVector( filtered_chest[unit], vm.zeroVector );
@@ -122,7 +122,7 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 
 	for ( int i = 0; i < n_slices; i++ ) {
 
-		if (   slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitHMD[0].visible && slice[i-2].unitHMD[0].visible && slice[i].unitHMD[1].visible ) {
+		if (   slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitHMD[0].visible && slice[i].unitHMD[1].visible ) {
 		for ( int unit = 0; unit < 2; unit++ ) {
 				vm.ScaleVector( filtered_hmd[unit], filtered_hmd[unit], coherenceFilterConstant );
 				vm.AddVectors( filtered_hmd[unit], filtered_hmd[unit], slice[i].unitHMD[unit].pose.position );
@@ -259,7 +259,7 @@ bool GraspMMIGraphsForm::ReadGraspData( String^ root ) {
 		fscanf( fid, " ; " );
 		vm.CopyQuaternion( graspDataSlice[ nDataSlices ].rollQuaternion, pose.pose.orientation );
 
-		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 			if ( ! ReadMarkerFrame( graspDataSlice[ nDataSlices ].codaFrame[unit], fid ) ) break;
 		}
 
@@ -800,7 +800,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 		MISSING_DOUBLE);
 
 	// Overlay the residuals.
-	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+	for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
 		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
@@ -881,7 +881,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	// Overlay the residuals.
-	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+	for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
 		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
@@ -970,7 +970,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 		sizeof( graspDataSlice[first_rt_sample] ),
 		MISSING_DOUBLE);
 	// Overlay the residuals.
-	for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+	for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 		// The following is a trick to invert one of the two traces.
 		ViewSetYLimits( view, - pow( -1.0, unit ) * residualPlotMaximum, pow( -1.0, unit ) * residualPlotMaximum );
 		ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
@@ -998,7 +998,7 @@ void GraspMMIGraphsForm::PlotMarkers( int unit, double first_instant, double las
 	int first_unit, last_unit;
 	if ( unit == -1 ) {
 		first_unit = 0;
-		last_unit = MAX_UNITS - 1;
+		last_unit = CODA_UNITS - 1;
 	}
 	else first_unit = last_unit = unit;
 
@@ -1098,7 +1098,7 @@ void GraspMMIGraphsForm::PlotVisibility( double first_instant, double last_insta
 			sizeof( *graspHousekeepingSlice ),
 			MISSING_DOUBLE );
 
-		for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+		for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 			ViewSetColorRGB( view, color_by_unit[unit][0], color_by_unit[unit][1], color_by_unit[unit][2] );
 			ViewXYPlotAvailableDoubles( view,
 				&graspDataSlice[0].absoluteTime, 

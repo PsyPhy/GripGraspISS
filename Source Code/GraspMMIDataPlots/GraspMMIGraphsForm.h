@@ -37,6 +37,12 @@
 
 #include "../GripGraspVersionControl/GripGraspVersionControl.h"
 
+#define CODA_UNITS 2
+
+#define VISIBILITY_ONLY 0
+#define FROM_FRONT 1
+#define FROM_CODA 2
+
 static ::Timer playbackElapsedTimer;
 
 namespace GraspMMI {
@@ -72,7 +78,7 @@ namespace GraspMMI {
 		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
 		static double	residualPlotMaximum = 10.0;
 		static double	coherencePlotMaximum = 200.0;
-		static double	coherencePlotMinimum = 40.0;
+		static double	coherencePlotMinimum = 20.0;
 		static double	coherenceThreshold = 50.0;
 		static double	coherenceFilterConstant = 20.0;	// Lowpass filtering of positions for coherence check.
 
@@ -171,7 +177,10 @@ namespace GraspMMI {
 		bool	playbackForward;
 
 		bool	prepped;
-	
+private: System::Windows::Forms::ComboBox^  visibilityViewpointComboBox;
+private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+
+
 		// Query what is the background color of the VR panels so that we
 		// can restore it if we need to. 
 		System::Drawing::Color normalBackgroundColor;
@@ -266,6 +275,7 @@ namespace GraspMMI {
 				delete components;
 			}
 		}
+
 	private: System::Windows::Forms::Panel^  handWarningPanel;
 	private: System::Windows::Forms::Panel^  chestWarningPanel;
 	private: System::Windows::Forms::Panel^  hmdWarningPanel;
@@ -294,7 +304,7 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Panel^  sidePanel;
 	private: System::Windows::Forms::Panel^  vrSubjectPanel;
 	private: System::Windows::Forms::Panel^  forwardPanel;
-	private: System::Windows::Forms::CheckBox^  fromCodaCheckBox;
+
 	private: System::Windows::Forms::Panel^  vrSidePanel;
 	private: System::Windows::Forms::GroupBox^  timeSeriesGroupBox;
 	private: System::Windows::Forms::TextBox^  lastAbsoluteTimeTextBox;
@@ -345,7 +355,7 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Panel^  hmdPanel1;
 	private: System::Windows::Forms::Panel^  hmdPanel0;
 	private: System::ComponentModel::IContainer^  components;
-	private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+
 
 
 	private:
@@ -402,8 +412,6 @@ namespace GraspMMI {
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->gripPicture = (gcnew System::Windows::Forms::PictureBox());
 			this->codaGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->fromCodaCheckBox = (gcnew System::Windows::Forms::CheckBox());
-			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -415,6 +423,8 @@ namespace GraspMMI {
 			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
+			this->visibilityViewpointComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->hmdWarningPanel = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
@@ -496,6 +506,8 @@ namespace GraspMMI {
 			// 
 			this->filenameLabel->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->filenameLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 7, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
 			this->filenameLabel->Location = System::Drawing::Point(277, 59);
 			this->filenameLabel->Name = L"filenameLabel";
 			this->filenameLabel->Size = System::Drawing::Size(589, 19);
@@ -815,7 +827,6 @@ namespace GraspMMI {
 			// 
 			// codaGroupBox
 			// 
-			this->codaGroupBox->Controls->Add(this->fromCodaCheckBox);
 			this->codaGroupBox->Controls->Add(this->realMarkersCheckBox);
 			this->codaGroupBox->Controls->Add(this->codaPanel1);
 			this->codaGroupBox->Controls->Add(this->codaPanel0);
@@ -830,36 +841,6 @@ namespace GraspMMI {
 			this->codaGroupBox->TabStop = false;
 			this->codaGroupBox->Text = L"Coda  View";
 			this->codaGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::codaGroupBox_SizeChanged);
-			// 
-			// fromCodaCheckBox
-			// 
-			this->fromCodaCheckBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->fromCodaCheckBox->AutoSize = true;
-			this->fromCodaCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->fromCodaCheckBox->Location = System::Drawing::Point(325, 1);
-			this->fromCodaCheckBox->Name = L"fromCodaCheckBox";
-			this->fromCodaCheckBox->Size = System::Drawing::Size(82, 17);
-			this->fromCodaCheckBox->TabIndex = 3;
-			this->fromCodaCheckBox->Text = L"From CODA";
-			this->fromCodaCheckBox->UseVisualStyleBackColor = true;
-			this->fromCodaCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::fromCodaCheckBox_CheckedChanged);
-			// 
-			// realMarkersCheckBox
-			// 
-			this->realMarkersCheckBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->realMarkersCheckBox->AutoSize = true;
-			this->realMarkersCheckBox->Checked = true;
-			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->realMarkersCheckBox->Location = System::Drawing::Point(218, 1);
-			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
-			this->realMarkersCheckBox->Size = System::Drawing::Size(89, 17);
-			this->realMarkersCheckBox->TabIndex = 4;
-			this->realMarkersCheckBox->Text = L"Real Markers";
-			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
-			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
 			// 
 			// codaPanel1
 			// 
@@ -967,6 +948,7 @@ namespace GraspMMI {
 			// 
 			// hmdGroupBox
 			// 
+			this->hmdGroupBox->Controls->Add(this->visibilityViewpointComboBox);
 			this->hmdGroupBox->Controls->Add(this->hmdWarningPanel);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
@@ -978,6 +960,36 @@ namespace GraspMMI {
 			this->hmdGroupBox->TabIndex = 16;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
+			// 
+			// realMarkersCheckBox
+			// 
+			this->realMarkersCheckBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->realMarkersCheckBox->AutoSize = true;
+			this->realMarkersCheckBox->Checked = true;
+			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->realMarkersCheckBox->Location = System::Drawing::Point(317, 1);
+			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
+			this->realMarkersCheckBox->Size = System::Drawing::Size(89, 17);
+			this->realMarkersCheckBox->TabIndex = 31;
+			this->realMarkersCheckBox->Text = L"Real Markers";
+			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
+			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
+			// 
+			// visibilityViewpointComboBox
+			// 
+			this->visibilityViewpointComboBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->visibilityViewpointComboBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->visibilityViewpointComboBox->FormattingEnabled = true;
+			this->visibilityViewpointComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {L"Visibilty Only", L"From Front", 
+				L"From CODA"});
+			this->visibilityViewpointComboBox->Location = System::Drawing::Point(301, 0);
+			this->visibilityViewpointComboBox->Name = L"visibilityViewpointComboBox";
+			this->visibilityViewpointComboBox->Size = System::Drawing::Size(106, 21);
+			this->visibilityViewpointComboBox->TabIndex = 30;
+			this->visibilityViewpointComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::visibilityViewpointComboBox_SelectedIndexChanged);
 			// 
 			// hmdWarningPanel
 			// 
@@ -1354,7 +1366,7 @@ namespace GraspMMI {
 		}
 		void OnOneShotElapsed( System::Object^ source, System::EventArgs ^ e ) {
 			RefreshGraphics();
-			// MoveToInstant( current_vr_instant );
+			MoveToInstant( current_vr_instant );
 		}
 		void CueRefresh( void ) {
 			oneShot->Start();
@@ -1435,6 +1447,7 @@ namespace GraspMMI {
 			dataLiveCheckBox->Checked = true;
 			normalBackgroundColor = handGroupBox->BackColor;
 			plotSelectionComboBox->SelectedIndex = 0;
+			visibilityViewpointComboBox->SelectedIndex = 0;
 			CreateRefreshTimer( refreshInterval );
 			CreatePlaybackTimer( playbackRefreshInterval );
 			CreateOneShotTimer();
@@ -1540,13 +1553,12 @@ namespace GraspMMI {
 			alignmentFrameTextBox->Visible = ( worldTabs->SelectedIndex == 0 );
 			MoveToInstant( current_vr_instant );
 		}			 
-		System::Void fromCodaCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			MoveToInstant( current_vr_instant );
-		}
 		System::Void realMarkersCheckBox_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			MoveToInstant( current_vr_instant );
+			if ( prepped ) MoveToInstant( current_vr_instant );
 		}
-
+		System::Void visibilityViewpointComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+			if ( prepped ) MoveToInstant( current_vr_instant );
+		 }
 		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			unsigned int index;
 			dataLiveCheckBox->Checked = false;
@@ -1845,6 +1857,7 @@ namespace GraspMMI {
 	private: System::Void plotSelectionComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 				 if ( prepped ) CueRefresh();
 			 }
+
 
 };
 }
