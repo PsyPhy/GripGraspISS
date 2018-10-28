@@ -130,7 +130,7 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 			}
 			Vector3 delta;
 			vm.SubtractVectors( delta, filtered_hmd[0], filtered_hmd[1] );
-			slice[i].interUnitCoherence[HMD_STRUCTURE] =vm.VectorNorm( delta );
+			slice[i].interUnitCoherence[HMD_STRUCTURE] = vm.VectorNorm( delta );
 		}
 		else slice[i].interUnitCoherence[HMD_STRUCTURE] = MISSING_DOUBLE;
 		if (  slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitHand[0].visible && slice[i].unitHand[1].visible ) {
@@ -141,7 +141,7 @@ void GraspMMIGraphsForm::ComputeIndividualMarkerVisibility( GraspRealtimeDataSli
 			}
 			Vector3 delta;
 			vm.SubtractVectors( delta, filtered_hand[0], filtered_hand[1] );
-			slice[i].interUnitCoherence[HAND_STRUCTURE] =vm.VectorNorm( delta );
+			slice[i].interUnitCoherence[HAND_STRUCTURE] = vm.VectorNorm( delta );
 		}
 		else slice[i].interUnitCoherence[HAND_STRUCTURE] = MISSING_DOUBLE;
 		if (  slice[i].absoluteTime != MISSING_DOUBLE && slice[i].unitChest[0].visible && slice[i].unitChest[1].visible ) {
@@ -642,7 +642,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
+	ViewSetYLimits( view, coherencePlotMinimum, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[HMD_STRUCTURE], 
@@ -829,7 +829,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
+	ViewSetYLimits( view, coherencePlotMinimum, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[HAND_STRUCTURE], 
@@ -909,7 +909,7 @@ void GraspMMIGraphsForm::PlotPoses( double first_instant, double last_instant ) 
 
 	// Plot coherency between coda1-computed pose and coda2-computed pose.
 	ViewSetColorRGB( view, 1.0, 0.5, 0.5 );
-	ViewSetYLimits( view, coherenceThreshold, coherencePlotMaximum );
+	ViewSetYLimits( view, coherencePlotMinimum, coherencePlotMaximum );
 	ViewFillPlotClippedDoubles( view, 
 		&graspDataSlice[0].absoluteTime, 
 		&graspDataSlice[0].interUnitCoherence[CHEST_STRUCTURE], 

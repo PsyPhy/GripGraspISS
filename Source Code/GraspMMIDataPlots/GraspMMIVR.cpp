@@ -411,6 +411,13 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 			hmdMobile->Enable();
 		}
 		else hmdMobile->Disable();
+
+		if (  graspDataSlice[index].interUnitCoherence[HMD_STRUCTURE] != MISSING_DOUBLE && graspDataSlice[index].interUnitCoherence[HMD_STRUCTURE] > coherenceThreshold ) {
+			hmdWarningPanel->BackColor = System::Drawing::Color::IndianRed;
+		}
+		else hmdWarningPanel->BackColor = normalBackgroundColor;
+		hmdWarningPanel->Update();
+
 		if ( hmdPose.visible && show_from_coda ) {
 			LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
 			if ( show_real_markers ) hmdMobile->ShowRealMarkers( unitMarkerFrame[unit] );
@@ -424,12 +431,26 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 			handMobile->Enable();
 		}
 		else handMobile->Disable();
+
+		if (  graspDataSlice[index].interUnitCoherence[HAND_STRUCTURE] != MISSING_DOUBLE && graspDataSlice[index].interUnitCoherence[HAND_STRUCTURE] > coherenceThreshold ) {
+			handWarningPanel->BackColor = System::Drawing::Color::IndianRed;
+		}
+		else handWarningPanel->BackColor = normalBackgroundColor;
+		handWarningPanel->Update();
+
 		if ( handPose.visible && show_from_coda ) {
 			LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
 			if ( show_real_markers ) handMobile->ShowRealMarkers( unitMarkerFrame[unit] );
 			RenderWindow( handWindow[unit], focusViewpoint, handMobile );
 		}
 		else RenderWindow( handWindow[unit], objectViewpoint, handStationary );
+
+		if (  graspDataSlice[index].interUnitCoherence[CHEST_STRUCTURE] != MISSING_DOUBLE && graspDataSlice[index].interUnitCoherence[CHEST_STRUCTURE] > coherenceThreshold ) {
+			chestWarningPanel->BackColor = System::Drawing::Color::IndianRed;
+		}
+		else chestWarningPanel->BackColor = normalBackgroundColor;
+		chestWarningPanel->Update();
+
 		chestTracker->ComputePose( chestPose, &unitMarkerFrame[unit] );
 		if ( chestPose.visible ) {
 			chestMobile->SetPose( chestPose.pose );
@@ -554,6 +575,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		RenderSubjectView( vrSubjectWindow, vrSubjectViewpoint, false );
 		RenderSubjectView( vrSideWindow, vrSideViewpoint, false );
 	}
+
 	PlotCursor();
 }
 

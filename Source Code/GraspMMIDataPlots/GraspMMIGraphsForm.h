@@ -72,6 +72,7 @@ namespace GraspMMI {
 		static	int		playbackRefreshInterval = 100;	// How often to update the display, in milliseconds.
 		static double	residualPlotMaximum = 10.0;
 		static double	coherencePlotMaximum = 200.0;
+		static double	coherencePlotMinimum = 40.0;
 		static double	coherenceThreshold = 50.0;
 		static double	coherenceFilterConstant = 20.0;	// Lowpass filtering of positions for coherence check.
 
@@ -170,6 +171,10 @@ namespace GraspMMI {
 		bool	playbackForward;
 
 		bool	prepped;
+	
+		// Query what is the background color of the VR panels so that we
+		// can restore it if we need to. 
+		System::Drawing::Color normalBackgroundColor;
 
 
 	private: void InitializeVR( void );
@@ -204,7 +209,6 @@ namespace GraspMMI {
 	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
 	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
 
-	private:
 
 
 
@@ -262,6 +266,9 @@ namespace GraspMMI {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::Panel^  handWarningPanel;
+	private: System::Windows::Forms::Panel^  chestWarningPanel;
+	private: System::Windows::Forms::Panel^  hmdWarningPanel;
 	private: System::Windows::Forms::ComboBox^  plotSelectionComboBox;
 	private: System::Windows::Forms::TextBox^  alignmentFrameTextBox;
 	private: System::Windows::Forms::OpenFileDialog^  readGraspAlignmentDialog;
@@ -278,7 +285,8 @@ namespace GraspMMI {
 	private: System::Windows::Forms::Button^  stepForwardButton;
 	private: System::Windows::Forms::TextBox^  vrFrameTextBox;
 	private: System::Windows::Forms::Button^  playForwardButton;
-	private: System::Windows::Forms::Button^  stopPlaybackButton;	private: System::Windows::Forms::OpenFileDialog^  readFileDialog;
+	private: System::Windows::Forms::Button^  stopPlaybackButton;	
+	private: System::Windows::Forms::OpenFileDialog^  readFileDialog;
 	private: System::Windows::Forms::Label^  filenameLabel;
 	private: System::Windows::Forms::TabControl^  worldTabs;
 	private: System::Windows::Forms::TabPage^  trackerTab;
@@ -399,12 +407,15 @@ namespace GraspMMI {
 			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->chestWarningPanel = (gcnew System::Windows::Forms::Panel());
 			this->chestPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->chestPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->handGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->handWarningPanel = (gcnew System::Windows::Forms::Panel());
 			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->hmdWarningPanel = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->worldTabs = (gcnew System::Windows::Forms::TabControl());
@@ -442,8 +453,11 @@ namespace GraspMMI {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->gripPicture))->BeginInit();
 			this->codaGroupBox->SuspendLayout();
 			this->chestGroupBox->SuspendLayout();
+			this->chestWarningPanel->SuspendLayout();
 			this->handGroupBox->SuspendLayout();
+			this->handWarningPanel->SuspendLayout();
 			this->hmdGroupBox->SuspendLayout();
+			this->hmdWarningPanel->SuspendLayout();
 			this->worldTabs->SuspendLayout();
 			this->trackerTab->SuspendLayout();
 			this->VRTab->SuspendLayout();
@@ -866,8 +880,7 @@ namespace GraspMMI {
 			// 
 			// chestGroupBox
 			// 
-			this->chestGroupBox->Controls->Add(this->chestPanel1);
-			this->chestGroupBox->Controls->Add(this->chestPanel0);
+			this->chestGroupBox->Controls->Add(this->chestWarningPanel);
 			this->chestGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->chestGroupBox->Location = System::Drawing::Point(1112, 697);
@@ -878,11 +891,23 @@ namespace GraspMMI {
 			this->chestGroupBox->TabIndex = 18;
 			this->chestGroupBox->TabStop = false;
 			this->chestGroupBox->Text = L"Chest Marker Visibility";
-			this->chestGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::chestGroupBox_SizeChanged);
+			// 
+			// chestWarningPanel
+			// 
+			this->chestWarningPanel->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->chestWarningPanel->Controls->Add(this->chestPanel1);
+			this->chestWarningPanel->Controls->Add(this->chestPanel0);
+			this->chestWarningPanel->Location = System::Drawing::Point(4, 17);
+			this->chestWarningPanel->Name = L"chestWarningPanel";
+			this->chestWarningPanel->Size = System::Drawing::Size(410, 142);
+			this->chestWarningPanel->TabIndex = 3;
+			this->chestWarningPanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::chestWarningPanel_SizeChanged);
 			// 
 			// chestPanel1
 			// 
-			this->chestPanel1->Location = System::Drawing::Point(218, 22);
+			this->chestPanel1->Location = System::Drawing::Point(214, 5);
 			this->chestPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->chestPanel1->Name = L"chestPanel1";
 			this->chestPanel1->Size = System::Drawing::Size(192, 132);
@@ -890,7 +915,7 @@ namespace GraspMMI {
 			// 
 			// chestPanel0
 			// 
-			this->chestPanel0->Location = System::Drawing::Point(9, 22);
+			this->chestPanel0->Location = System::Drawing::Point(5, 5);
 			this->chestPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->chestPanel0->Name = L"chestPanel0";
 			this->chestPanel0->Size = System::Drawing::Size(192, 132);
@@ -898,8 +923,8 @@ namespace GraspMMI {
 			// 
 			// handGroupBox
 			// 
-			this->handGroupBox->Controls->Add(this->handPanel1);
-			this->handGroupBox->Controls->Add(this->handPanel0);
+			this->handGroupBox->BackColor = System::Drawing::SystemColors::Control;
+			this->handGroupBox->Controls->Add(this->handWarningPanel);
 			this->handGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->handGroupBox->Location = System::Drawing::Point(1112, 529);
@@ -910,11 +935,23 @@ namespace GraspMMI {
 			this->handGroupBox->TabIndex = 17;
 			this->handGroupBox->TabStop = false;
 			this->handGroupBox->Text = L"Hand Marker Visibility";
-			this->handGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::handGroupBox_SizeChanged);
+			// 
+			// handWarningPanel
+			// 
+			this->handWarningPanel->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->handWarningPanel->Controls->Add(this->handPanel1);
+			this->handWarningPanel->Controls->Add(this->handPanel0);
+			this->handWarningPanel->Location = System::Drawing::Point(4, 17);
+			this->handWarningPanel->Name = L"handWarningPanel";
+			this->handWarningPanel->Size = System::Drawing::Size(410, 142);
+			this->handWarningPanel->TabIndex = 3;
+			this->handWarningPanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::handWarningPanel_SizeChanged);
 			// 
 			// handPanel1
 			// 
-			this->handPanel1->Location = System::Drawing::Point(218, 22);
+			this->handPanel1->Location = System::Drawing::Point(214, 5);
 			this->handPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->handPanel1->Name = L"handPanel1";
 			this->handPanel1->Size = System::Drawing::Size(192, 132);
@@ -922,7 +959,7 @@ namespace GraspMMI {
 			// 
 			// handPanel0
 			// 
-			this->handPanel0->Location = System::Drawing::Point(9, 22);
+			this->handPanel0->Location = System::Drawing::Point(5, 5);
 			this->handPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->handPanel0->Name = L"handPanel0";
 			this->handPanel0->Size = System::Drawing::Size(192, 132);
@@ -930,8 +967,7 @@ namespace GraspMMI {
 			// 
 			// hmdGroupBox
 			// 
-			this->hmdGroupBox->Controls->Add(this->hmdPanel1);
-			this->hmdGroupBox->Controls->Add(this->hmdPanel0);
+			this->hmdGroupBox->Controls->Add(this->hmdWarningPanel);
 			this->hmdGroupBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->hmdGroupBox->Location = System::Drawing::Point(1111, 361);
@@ -942,11 +978,23 @@ namespace GraspMMI {
 			this->hmdGroupBox->TabIndex = 16;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
-			this->hmdGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::hmdGroupBox_SizeChanged);
+			// 
+			// hmdWarningPanel
+			// 
+			this->hmdWarningPanel->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->hmdWarningPanel->Controls->Add(this->hmdPanel1);
+			this->hmdWarningPanel->Controls->Add(this->hmdPanel0);
+			this->hmdWarningPanel->Location = System::Drawing::Point(4, 17);
+			this->hmdWarningPanel->Name = L"hmdWarningPanel";
+			this->hmdWarningPanel->Size = System::Drawing::Size(410, 142);
+			this->hmdWarningPanel->TabIndex = 3;
+			this->hmdWarningPanel->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::hmdWarningPanel_SizeChanged);
 			// 
 			// hmdPanel1
 			// 
-			this->hmdPanel1->Location = System::Drawing::Point(218, 22);
+			this->hmdPanel1->Location = System::Drawing::Point(214, 5);
 			this->hmdPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->hmdPanel1->Name = L"hmdPanel1";
 			this->hmdPanel1->Size = System::Drawing::Size(192, 132);
@@ -954,7 +1002,7 @@ namespace GraspMMI {
 			// 
 			// hmdPanel0
 			// 
-			this->hmdPanel0->Location = System::Drawing::Point(9, 22);
+			this->hmdPanel0->Location = System::Drawing::Point(5, 5);
 			this->hmdPanel0->Margin = System::Windows::Forms::Padding(2);
 			this->hmdPanel0->Name = L"hmdPanel0";
 			this->hmdPanel0->Size = System::Drawing::Size(192, 132);
@@ -1007,7 +1055,7 @@ namespace GraspMMI {
 			this->VRTab->Location = System::Drawing::Point(4, 22);
 			this->VRTab->Name = L"VRTab";
 			this->VRTab->Padding = System::Windows::Forms::Padding(3);
-			this->VRTab->Size = System::Drawing::Size(409, 190);
+			this->VRTab->Size = System::Drawing::Size(409, 158);
 			this->VRTab->TabIndex = 1;
 			this->VRTab->Text = L"  VR";
 			this->VRTab->UseVisualStyleBackColor = true;
@@ -1272,8 +1320,11 @@ namespace GraspMMI {
 			this->codaGroupBox->ResumeLayout(false);
 			this->codaGroupBox->PerformLayout();
 			this->chestGroupBox->ResumeLayout(false);
+			this->chestWarningPanel->ResumeLayout(false);
 			this->handGroupBox->ResumeLayout(false);
+			this->handWarningPanel->ResumeLayout(false);
 			this->hmdGroupBox->ResumeLayout(false);
+			this->hmdWarningPanel->ResumeLayout(false);
 			this->worldTabs->ResumeLayout(false);
 			this->trackerTab->ResumeLayout(false);
 			this->VRTab->ResumeLayout(false);
@@ -1382,6 +1433,7 @@ namespace GraspMMI {
 			InitializeGraphics();
 			InitializeVR();
 			dataLiveCheckBox->Checked = true;
+			normalBackgroundColor = handGroupBox->BackColor;
 			plotSelectionComboBox->SelectedIndex = 0;
 			CreateRefreshTimer( refreshInterval );
 			CreatePlaybackTimer( playbackRefreshInterval );
@@ -1652,10 +1704,13 @@ namespace GraspMMI {
 
 			 }
 
-	private: System::Void GraspMMIGraphsForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
-
+// There is an incompatibility between the constants that I have define and references to X and Y in a Point.
+// So I have to undefine them here and redefine them later.
 #undef X
 #undef Y
+
+	private: System::Void GraspMMIGraphsForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+
 				 int spacer = 6;
 				 int tab_extra = 24;
 				 int vcr_group_height = playbackGroupBox->Size.Height;
@@ -1704,40 +1759,39 @@ namespace GraspMMI {
 				 CueRefresh();
 			 }
 
-			 static int spacer = 16;
-			 static int font_height = 6;
+			 static int spacer = 8;
+			 static int font_height = 16;
 
-	private: System::Void chestGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void chestWarningPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
-
-				 int width = ( chestGroupBox->ClientSize.Width - 3 * spacer ) / 2;
-				 int height = chestGroupBox->ClientSize.Height - font_height - 2 * spacer;
+				 int width = ( chestWarningPanel->ClientSize.Width - 3 * spacer ) / 2;
+				 int height = chestWarningPanel->ClientSize.Height - 2 * spacer;
 
 				 chestPanel0->Size = System::Drawing::Size( width, height );
-				 chestPanel0->Location = System::Drawing::Point( spacer, font_height + spacer );
+				 chestPanel0->Location = System::Drawing::Point( spacer, spacer );
 				 chestPanel1->Size = System::Drawing::Size( width, height );
-				 chestPanel1->Location = System::Drawing::Point(   chestPanel0->Location.X + chestPanel0->Size.Width + spacer, font_height + spacer );
+				 chestPanel1->Location = System::Drawing::Point(   chestPanel0->Location.X + chestPanel0->Size.Width + spacer, spacer );
 			 }
 
-	private: System::Void handGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void handWarningPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 int width = ( handGroupBox->ClientSize.Width - 3 * spacer ) / 2;
-				 int height = handGroupBox->ClientSize.Height - font_height - 2 * spacer;
+				 int width = ( handWarningPanel->ClientSize.Width - 3 * spacer ) / 2;
+				 int height = handWarningPanel->ClientSize.Height - 2 * spacer;
 
 				 handPanel0->Size = System::Drawing::Size( width, height );
-				 handPanel0->Location = System::Drawing::Point( spacer, font_height + spacer );
+				 handPanel0->Location = System::Drawing::Point( spacer, spacer );
 				 handPanel1->Size = System::Drawing::Size( width, height );
-				 handPanel1->Location = System::Drawing::Point(   handPanel0->Location.X + handPanel0->Size.Width + spacer, font_height + spacer );
+				 handPanel1->Location = System::Drawing::Point(   handPanel0->Location.X + handPanel0->Size.Width + spacer, spacer );
 			 }
-	private: System::Void hmdGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void hmdWarningPanel_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
-				 int width = ( hmdGroupBox->ClientSize.Width - 3 * spacer ) / 2;
-				 int height = hmdGroupBox->ClientSize.Height - font_height - 2 * spacer;
+				 int width = ( hmdWarningPanel->ClientSize.Width - 3 * spacer ) / 2;
+				 int height = hmdWarningPanel->ClientSize.Height - 2 * spacer;
 
 				 hmdPanel0->Size = System::Drawing::Size( width, height );
-				 hmdPanel0->Location = System::Drawing::Point( spacer, font_height + spacer );
+				 hmdPanel0->Location = System::Drawing::Point( spacer, spacer );
 				 hmdPanel1->Size = System::Drawing::Size( width, height );
-				 hmdPanel1->Location = System::Drawing::Point(   hmdPanel0->Location.X + hmdPanel0->Size.Width + spacer, font_height + spacer );
+				 hmdPanel1->Location = System::Drawing::Point(   hmdPanel0->Location.X + hmdPanel0->Size.Width + spacer, spacer );
 			 }
 	private: System::Void codaGroupBox_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -1791,6 +1845,7 @@ namespace GraspMMI {
 	private: System::Void plotSelectionComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 				 if ( prepped ) CueRefresh();
 			 }
+
 };
 }
 
