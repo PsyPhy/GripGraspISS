@@ -213,10 +213,10 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 	private: void AdjustScrollSpan( void );
 	private: void MoveToLatest( void );
 
-	private: int  ParseLine( char *token[MAX_TOKENS], char *line );
-	private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
-	private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
-	private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
+	//private: int  ParseLine( char *token[MAX_TOKENS], char *line );
+	//private: void ParseSubjectFile( System::Windows::Forms::TreeView^ tree, String^ filename );
+	//private: void ParseSessionFile( System::Windows::Forms::TreeNode^  parent, String^ filename );
+	//private: void ParseProtocolFile( System::Windows::Forms::TreeNode^ protocol, String ^filename );
 
 
 
@@ -229,10 +229,10 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 
 		int	TimebaseOffset;				// Offset to convert GPS time to UTC.
 		String^ packetCacheFileRoot;	// Path to the packet cache files.
+//		String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
 	public: 
 
-		String^ scriptDirectory;		// Path to root file of the GUI menu tree.
 
 		GraspMMIGraphsForm() : 
 		TimebaseOffset( -17 ), 

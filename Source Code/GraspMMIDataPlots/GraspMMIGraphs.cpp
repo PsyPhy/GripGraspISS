@@ -1236,7 +1236,7 @@ void GraspMMIGraphsForm::KillGraphics( void ) {
 	DisplayClose( poseDisplay );
 }
 
-
+#if 0
 // Parse a line from the script files.
 #define PARSER_BUFFERS	16
 #define iswhite( c ) ( c <= 0x20 || c >= 0x7f )
@@ -1374,5 +1374,5 @@ void GraspMMIGraphsForm::ParseProtocolFile( System::Windows::Forms::TreeNode^ pr
 }
 
 
-
+#endif
 
