@@ -972,7 +972,10 @@ void ViewXYPlotClippedDoubles (View view, double *xarray, double *yarray,
 		i += step;
 		x2 = *((double *)(((char *) xarray) + i * xsize));
 		y2 = *((double *)(((char *) yarray) + i * ysize));
-		if ( x1 != na && x2 != na && y1 != na && y2 != na ) {
+		if ( x1 != na && _finite( x1 ) 
+			&& x2 != na && _finite( x2 )
+			&& y1 != na && _finite( y1 )
+			&& y2 != na && _finite( y2 ) ) {
 				if ( x1 < left ) x1 = left;
 				if ( x1 > right ) x1 = right;
 				if ( x2 < left ) x2 = left;
