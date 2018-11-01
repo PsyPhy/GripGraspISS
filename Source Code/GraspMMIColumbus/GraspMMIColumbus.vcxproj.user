@@ -4,4 +4,8 @@
     <LocalDebuggerWorkingDirectory>..\..\GraspMMIMirrorEnvironments\GRASP Runtime Flight %282017-11-02 16h20m20s%29</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerWorkingDirectory>..\..\GraspMMIMirrorEnvironments\GRASP Runtime Flight %282017-11-02 16h20m20s%29</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

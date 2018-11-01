@@ -177,8 +177,7 @@ namespace GraspMMI {
 		bool	playbackForward;
 
 		bool	prepped;
-private: System::Windows::Forms::ComboBox^  visibilityViewpointComboBox;
-private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+private: System::Windows::Forms::TextBox^  alignmentFrameTextBox;
 
 
 		// Query what is the background color of the VR panels so that we
@@ -276,11 +275,14 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			}
 		}
 
+	private: System::Windows::Forms::ComboBox^  visibilityViewpointComboBox;
+	private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
+	private: System::Windows::Forms::FolderBrowserDialog^  screenshotFolderDialog;
 	private: System::Windows::Forms::Panel^  handWarningPanel;
 	private: System::Windows::Forms::Panel^  chestWarningPanel;
 	private: System::Windows::Forms::Panel^  hmdWarningPanel;
 	private: System::Windows::Forms::ComboBox^  plotSelectionComboBox;
-	private: System::Windows::Forms::TextBox^  alignmentFrameTextBox;
+
 	private: System::Windows::Forms::OpenFileDialog^  readGraspAlignmentDialog;
 	private: System::Windows::Forms::GroupBox^  playbackGroupBox;
 	private: System::Windows::Forms::Button^  exitButton;
@@ -412,6 +414,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->clearAllErrorHighlights = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->gripPicture = (gcnew System::Windows::Forms::PictureBox());
 			this->codaGroupBox = (gcnew System::Windows::Forms::GroupBox());
+			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->codaPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->codaPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->chestGroupBox = (gcnew System::Windows::Forms::GroupBox());
@@ -423,7 +426,6 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->handPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->handPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->hmdGroupBox = (gcnew System::Windows::Forms::GroupBox());
-			this->realMarkersCheckBox = (gcnew System::Windows::Forms::CheckBox());
 			this->visibilityViewpointComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->hmdWarningPanel = (gcnew System::Windows::Forms::Panel());
 			this->hmdPanel1 = (gcnew System::Windows::Forms::Panel());
@@ -451,6 +453,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->taskRightTimeLimit = (gcnew System::Windows::Forms::TextBox());
 			this->playbackScrollBar = (gcnew System::Windows::Forms::HScrollBar());
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
+			this->screenshotFolderDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->alignmentFrameTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->timeSeriesGroupBox->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->spanSelector))->BeginInit();
@@ -644,7 +647,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// 
 			this->taskGraphGroupBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->taskGraphGroupBox->Controls->Add(this->taskGraphPanel);
-			this->taskGraphGroupBox->Location = System::Drawing::Point(7, 645);
+			this->taskGraphGroupBox->Location = System::Drawing::Point(8, 641);
 			this->taskGraphGroupBox->Name = L"taskGraphGroupBox";
 			this->taskGraphGroupBox->Size = System::Drawing::Size(1098, 110);
 			this->taskGraphGroupBox->TabIndex = 2;
@@ -774,7 +777,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// 
 			this->visibilityGraphGroupBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
 			this->visibilityGraphGroupBox->Controls->Add(this->markerGraphPanel);
-			this->visibilityGraphGroupBox->Location = System::Drawing::Point(7, 529);
+			this->visibilityGraphGroupBox->Location = System::Drawing::Point(9, 529);
 			this->visibilityGraphGroupBox->Name = L"visibilityGraphGroupBox";
 			this->visibilityGraphGroupBox->Size = System::Drawing::Size(1098, 110);
 			this->visibilityGraphGroupBox->TabIndex = 2;
@@ -841,6 +844,22 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->codaGroupBox->TabStop = false;
 			this->codaGroupBox->Text = L"Coda  View";
 			this->codaGroupBox->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::codaGroupBox_SizeChanged);
+			// 
+			// realMarkersCheckBox
+			// 
+			this->realMarkersCheckBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->realMarkersCheckBox->AutoSize = true;
+			this->realMarkersCheckBox->Checked = true;
+			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
+			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->realMarkersCheckBox->Location = System::Drawing::Point(317, 1);
+			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
+			this->realMarkersCheckBox->Size = System::Drawing::Size(89, 17);
+			this->realMarkersCheckBox->TabIndex = 31;
+			this->realMarkersCheckBox->Text = L"Real Markers";
+			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
+			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
 			// 
 			// codaPanel1
 			// 
@@ -961,22 +980,6 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->hmdGroupBox->TabStop = false;
 			this->hmdGroupBox->Text = L"HMD Marker Visibility";
 			// 
-			// realMarkersCheckBox
-			// 
-			this->realMarkersCheckBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->realMarkersCheckBox->AutoSize = true;
-			this->realMarkersCheckBox->Checked = true;
-			this->realMarkersCheckBox->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->realMarkersCheckBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->realMarkersCheckBox->Location = System::Drawing::Point(317, 1);
-			this->realMarkersCheckBox->Name = L"realMarkersCheckBox";
-			this->realMarkersCheckBox->Size = System::Drawing::Size(89, 17);
-			this->realMarkersCheckBox->TabIndex = 31;
-			this->realMarkersCheckBox->Text = L"Real Markers";
-			this->realMarkersCheckBox->UseVisualStyleBackColor = true;
-			this->realMarkersCheckBox->CheckedChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::realMarkersCheckBox_CheckedChanged);
-			// 
 			// visibilityViewpointComboBox
 			// 
 			this->visibilityViewpointComboBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
@@ -1024,10 +1027,10 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// 
 			this->worldTabs->Controls->Add(this->trackerTab);
 			this->worldTabs->Controls->Add(this->VRTab);
-			this->worldTabs->Location = System::Drawing::Point(1112, 4);
+			this->worldTabs->Location = System::Drawing::Point(1112, 11);
 			this->worldTabs->Name = L"worldTabs";
 			this->worldTabs->SelectedIndex = 0;
-			this->worldTabs->Size = System::Drawing::Size(417, 184);
+			this->worldTabs->Size = System::Drawing::Size(417, 177);
 			this->worldTabs->TabIndex = 22;
 			this->worldTabs->SelectedIndexChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::worldTabs_SelectedIndexChanged);
 			// 
@@ -1039,7 +1042,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->trackerTab->Location = System::Drawing::Point(4, 24);
 			this->trackerTab->Name = L"trackerTab";
 			this->trackerTab->Padding = System::Windows::Forms::Padding(3);
-			this->trackerTab->Size = System::Drawing::Size(409, 156);
+			this->trackerTab->Size = System::Drawing::Size(409, 149);
 			this->trackerTab->TabIndex = 0;
 			this->trackerTab->Text = L"Tracker";
 			this->trackerTab->SizeChanged += gcnew System::EventHandler(this, &GraspMMIGraphsForm::trackerTab_SizeChanged);
@@ -1117,7 +1120,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->playbackGroupBox->Controls->Add(this->taskRightTimeLimit);
 			this->playbackGroupBox->Controls->Add(this->playbackScrollBar);
 			this->playbackGroupBox->Controls->Add(this->panel1);
-			this->playbackGroupBox->Location = System::Drawing::Point(8, 761);
+			this->playbackGroupBox->Location = System::Drawing::Point(7, 757);
 			this->playbackGroupBox->Name = L"playbackGroupBox";
 			this->playbackGroupBox->Size = System::Drawing::Size(1098, 99);
 			this->playbackGroupBox->TabIndex = 3;
@@ -1283,18 +1286,17 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			// alignmentFrameTextBox
 			// 
 			this->alignmentFrameTextBox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->alignmentFrameTextBox->Location = System::Drawing::Point(1328, 3);
+			this->alignmentFrameTextBox->Location = System::Drawing::Point(1327, 4);
 			this->alignmentFrameTextBox->Margin = System::Windows::Forms::Padding(4);
 			this->alignmentFrameTextBox->Name = L"alignmentFrameTextBox";
 			this->alignmentFrameTextBox->Size = System::Drawing::Size(190, 21);
-			this->alignmentFrameTextBox->TabIndex = 28;
+			this->alignmentFrameTextBox->TabIndex = 30;
 			this->alignmentFrameTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			this->alignmentFrameTextBox->Click += gcnew System::EventHandler(this, &GraspMMIGraphsForm::alignmentFrameTextBox_Click);
 			// 
 			// GraspMMIGraphsForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
-			this->ClientSize = System::Drawing::Size(1538, 867);
+			this->ClientSize = System::Drawing::Size(1535, 863);
 			this->Controls->Add(this->alignmentFrameTextBox);
 			this->Controls->Add(this->playbackGroupBox);
 			this->Controls->Add(this->worldTabs);
@@ -1313,7 +1315,6 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			this->Location = System::Drawing::Point(-260, -960);
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"GraspMMIGraphsForm";
-			this->StartPosition = System::Windows::Forms::FormStartPosition::Manual;
 			this->Text = L"GraspMMI Data Plots";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &GraspMMIGraphsForm::GraspMMIGraphsForm_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIGraphsForm::GraspMMIGraphsForm_Shown);
@@ -1444,7 +1445,6 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 		System::Void GraspMMIGraphsForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 			InitializeGraphics();
 			InitializeVR();
-			dataLiveCheckBox->Checked = true;
 			normalBackgroundColor = handGroupBox->BackColor;
 			plotSelectionComboBox->SelectedIndex = 0;
 			visibilityViewpointComboBox->SelectedIndex = 0;
@@ -1578,7 +1578,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 		}
 		System::Void visibilityViewpointComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 			if ( prepped ) MoveToInstant( current_vr_instant );
-		 }
+		}
 		System::Void stepForwardButton_Click(System::Object^  sender, System::EventArgs^  e) {
 			unsigned int index;
 			dataLiveCheckBox->Checked = false;
@@ -1624,8 +1624,10 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 		}
 
 		// Add an 'About ...' item to the system menu. 
-#define SYSMENU_ABOUT_ID		0x01
-#define SYSMENU_READ_FILE_ID	0x02
+#define SYSMENU_ABOUT_ID				0x01
+#define SYSMENU_READ_FILE_ID			0x02
+#define	SYSMENU_SCREESHOT_DIRECTORY_ID	0x03
+#define	SYSMENU_TAKE_SCREENSHOT_ID		0x04
 
 	protected:  virtual void OnHandleCreated( System::EventArgs^ e) override {	
 
@@ -1640,6 +1642,8 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 					AppendMenu(hSysMenu, MF_SEPARATOR, 0, "" );
 					// Add the About menu item
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_READ_FILE_ID, "Read data from file …");
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_SCREESHOT_DIRECTORY_ID, "Set screenshot directory …");
+					AppendMenu(hSysMenu, MF_STRING, SYSMENU_TAKE_SCREENSHOT_ID, "Save screenshot …");
 					AppendMenu(hSysMenu, MF_STRING, SYSMENU_ABOUT_ID, "&About …");
 
 				}
@@ -1675,10 +1679,17 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 						else if ( (int) m.WParam == SYSMENU_READ_FILE_ID  ) {
 							readFileDialog->ShowDialog();
 						}
+						else if ( (int) m.WParam == SYSMENU_SCREESHOT_DIRECTORY_ID  ) {
+							screenshotFolderDialog->ShowDialog();
+						}
+						else if ( (int) m.WParam == SYSMENU_TAKE_SCREENSHOT_ID  ) {
+							TakeScreenshot();
+						}
 					}
 					// Do what one would normally do.
 					Form::WndProc( m );
 				}
+
 
 	private: System::Void readFileDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 
@@ -1714,9 +1725,7 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 				 RefreshGraphics();
 			 }
 	private: System::Void alignmentFrameTextBox_Click(System::Object^  sender, System::EventArgs^  e) {
-
 				 readGraspAlignmentDialog->ShowDialog();
-
 			 }
 	private: System::Void readGraspAlignmentDialog_FileOk(System::Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 
@@ -1736,10 +1745,27 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 
 			 }
 
-// There is an incompatibility between the constants that I have define and references to X and Y in a Point.
-// So I have to undefine them here and redefine them later.
+			 // There is an incompatibility between the constants that I have define and references to X and Y in a Point.
+			 // So I have to undefine them here and redefine them later.
 #undef X
 #undef Y
+
+	protected:  Bitmap^ memoryImage;
+	protected:  System::Void TakeScreenshot( void ) {
+
+					Graphics^ myGraphics = this->CreateGraphics();
+					memoryImage = gcnew Bitmap(this->Size.Width, this->Size.Height, myGraphics);
+					Graphics^ memoryGraphics = Graphics::FromImage( memoryImage );
+					memoryGraphics->CopyFromScreen( this->Location.X, this->Location.Y, 0, 0, this->Size );
+
+					SYSTEMTIME st;
+					GetSystemTime( &st );
+					char datetimestr[MAX_PATH];
+					sprintf( datetimestr, "%02d%02d%02d_%02d%02d%02d", st.wYear - 2000, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+
+					memoryImage->Save( screenshotFolderDialog->SelectedPath + "\\GraspMMIGraphs_" + gcnew String( datetimestr ) + ".png" );
+
+				}
 
 	private: System::Void GraspMMIGraphsForm_SizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
@@ -1879,6 +1905,8 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			 }
 
 
+	private: System::Void alignmentFrameTextBox_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			 }
 };
 }
 

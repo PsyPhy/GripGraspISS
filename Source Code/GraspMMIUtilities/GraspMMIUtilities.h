@@ -101,7 +101,7 @@ namespace GraspMMI {
 	extern int		color_by_object[MARKER_STRUCTURES];
 	extern float	color_by_unit[MAX_UNITS][4];
 
-	#define MAX_SLICES	(8*60*60*10)
+	#define MAX_SLICES	(4*60*60*10)
 
 	void ComputeGraspRTDerivedValues( GraspRealtimeDataSlice *slice );
 	int	GetGraspRT( GraspRealtimeDataSlice grasp_data_slice[], int max_slices, char *filename_root );
