@@ -285,7 +285,6 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 
 	int alignment_index;
 	static VectorsMixin vm;
-	bool show_from_coda;
 	bool show_real_markers = realMarkersCheckBox->Checked;
 
 	// Show the time instant corresponding to this slice.
@@ -419,7 +418,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		else hmdWarningPanel->BackColor = normalBackgroundColor;
 		hmdWarningPanel->Update();
 		if ( hmdPose.visible && visibilityViewpointComboBox->SelectedIndex != VISIBILITY_ONLY ) {
-			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA ) LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
+			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA && alignment_index >= 0 ) LookAtFrom( focusViewpoint, hmdPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
 			else LookAtFrom( focusViewpoint, hmdPose.pose.position, front_viewpoint );
 			RenderWindow( hmdWindow[unit], focusViewpoint, hmdMobile );
 		}
@@ -437,7 +436,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		else handWarningPanel->BackColor = normalBackgroundColor;
 		handWarningPanel->Update();
 		if ( handPose.visible && visibilityViewpointComboBox->SelectedIndex != VISIBILITY_ONLY ) {
-			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA ) LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
+			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA && alignment_index >= 0 ) LookAtFrom( focusViewpoint, handPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
 			else LookAtFrom( focusViewpoint, handPose.pose.position, front_viewpoint );
 			RenderWindow( handWindow[unit], focusViewpoint, handMobile );
 		}
@@ -455,7 +454,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 		else chestWarningPanel->BackColor = normalBackgroundColor;
 		chestWarningPanel->Update();
 		if ( chestPose.visible &&  visibilityViewpointComboBox->SelectedIndex != VISIBILITY_ONLY ) {
-			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA ) LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
+			if ( visibilityViewpointComboBox->SelectedIndex == FROM_CODA && alignment_index >= 0 ) LookAtFrom( focusViewpoint, chestPose.pose.position, graspDataSlice[alignment_index].alignmentOffset[unit] );
 			else LookAtFrom( focusViewpoint, chestPose.pose.position, front_viewpoint );
 			RenderWindow( chestWindow[unit], focusViewpoint, chestMobile );
 		}

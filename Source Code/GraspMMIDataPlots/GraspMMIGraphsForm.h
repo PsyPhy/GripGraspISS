@@ -1451,8 +1451,28 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			CreateRefreshTimer( refreshInterval );
 			CreatePlaybackTimer( playbackRefreshInterval );
 			CreateOneShotTimer();
+
+			// Initial the data buffers with a missing data entry;
+			// In many places, the code relies on there being at 
+			// least one entry, i.e. that nDataSlices and nHousekeepingSlices are
+			// greater than 0.
+			graspDataSlice[0].absoluteTime = MISSING_DOUBLE;
+			graspHousekeepingSlice[0].absoluteTime = MISSING_DOUBLE;
+			nDataSlices = 1;
+			nHousekeepingSlices = 1;
+
 			prepped = true;
-			StartRefreshTimer();
+			if ( packetCacheFileRoot != nullptr ) {
+				dataLiveCheckBox->Checked = true;
+				dataLiveCheckBox->Enabled = true;
+				StartRefreshTimer();
+			}
+			else {
+				dataLiveCheckBox->Checked = false;
+				dataLiveCheckBox->Enabled = false;
+				CueRefresh();
+			}
+
 		}
 		System::Void GraspMMIGraphsForm_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 			playbackTimer->Stop();
@@ -1473,8 +1493,8 @@ private: System::Windows::Forms::CheckBox^  realMarkersCheckBox;
 			StopRefreshTimer();
 			fOutputDebugString( "\n" );
 			fOutputDebugString( "Timer triggered.\n" );
-			// Erase the filename of any manually loaded file.
-			filenameLabel->Text = "";
+			// Show the source of the packets in the display.
+			filenameLabel->Text = packetCacheFileRoot;
 			// Get the realtime science data packets, if any. 
 			ReadTelemetryCache( packetCacheFileRoot );
 			// Adjust the scrollbar limits according to the newly loaded data.

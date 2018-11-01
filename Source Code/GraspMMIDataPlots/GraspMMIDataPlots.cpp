@@ -27,29 +27,30 @@ using namespace PsyPhy;
 int main(array<System::String ^> ^args)
 {
 
-	// Default locations for packet buffer files.
-	String^ packetRoot = gcnew String( "GraspPackets" );
-	String^ scriptDirectory = gcnew String( "Scripts\\" );
-
-	// Parse the command line arguments.
-	if ( args->Length > 0 ) packetRoot = args[0];	// Where to look for packets written by GripGroundMonitorClient.exe
-	if ( args->Length > 1 ) scriptDirectory = args[1];	// Where to look for the GraspGUI script structure.
-
 	// Enabling Windows XP visual effects before any controls are created
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
-	// Wait for the first packets.
-	GraspMMIDataPlotsStartup^ startupForm = gcnew GraspMMIDataPlotsStartup( packetRoot );
-	System::Windows::Forms::DialogResult result = startupForm->ShowDialog();
+	//String^ scriptDirectory = gcnew String( "Scripts\\" );
 
-	if ( result != System::Windows::Forms::DialogResult::Cancel ) {
-		// Create the main window.
-		GraspMMIGraphsForm^	mainForm = gcnew GraspMMIGraphsForm();
-		// Set parameters from the command line, or others.
-		mainForm->packetCacheFileRoot = packetRoot;
-		mainForm->scriptDirectory = scriptDirectory;
-		// Run the form.
+	// Create the main window.
+	GraspMMIGraphsForm^	mainForm = gcnew GraspMMIGraphsForm();
+	//mainForm->scriptDirectory = scriptDirectory;
+
+	// Parse the command line arguments.
+	//if ( args->Length > 1 ) scriptDirectory = args[1];	// Where to look for the GraspGUI script structure.
+	if ( args->Length > 0 ) {
+		String^ packetRoot = args[0];	// Where to look for packets written by GripGroundMonitorClient.exe
+		// Wait for the first packets.
+		GraspMMIDataPlotsStartup^ startupForm = gcnew GraspMMIDataPlotsStartup( packetRoot );
+		System::Windows::Forms::DialogResult result = startupForm->ShowDialog();
+		if ( result != System::Windows::Forms::DialogResult::Cancel ) {
+			mainForm->packetCacheFileRoot = packetRoot;
+			Application::Run( mainForm );
+		}
+	}
+	else {
+		mainForm->packetCacheFileRoot = nullptr;
 		Application::Run( mainForm );
 	}
 
