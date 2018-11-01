@@ -93,7 +93,7 @@ REM Directory holding cache files
 REM
 
 REM The client program will store packets received from the CLWS in this directory.
-set CacheDir=c:\DexCache
+set CacheDir=d:\DexCache
 
 REM 
 REM Location of restart batch file.
