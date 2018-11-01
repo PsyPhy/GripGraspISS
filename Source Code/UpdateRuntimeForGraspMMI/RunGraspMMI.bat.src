@@ -94,7 +94,7 @@ REM
 
 REM The client program will store packets received from the CLWS in this directory.
 REM *** The path defined here MUST be an absolute path.
-set CacheDir=c:\DexCache
+set CacheDir=d:\GraspMMI
 
 REM 
 REM UTC versus GPS time of day.
