@@ -75,7 +75,7 @@ public:
 };
 
 
-class OrthoViewpoint : public OpenGLObject {
+class OrthoViewpoint : public Viewpoint {
 
 private:
 

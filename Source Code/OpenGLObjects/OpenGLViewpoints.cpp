@@ -263,7 +263,7 @@ OrthoViewpoint::OrthoViewpoint( double min_x, double max_x,
   this->min_y = min_y;
   this->max_y = max_y;
   this->nearest = min_depth;
-  this->nearest = max_depth;
+  this->farthest = max_depth;
   this->square = square;
 
   OpenGLObject();   // Do what every OpenGLObject does at creation.
@@ -271,13 +271,27 @@ OrthoViewpoint::OrthoViewpoint( double min_x, double max_x,
 
 void OrthoViewpoint::Apply( OpenGLWindow *wnd, Eye eye ) {
 
+	if ( square ) {
+		double y_range = max_y - min_y;
+		double x_range =  max_x - min_x;
+		if ( y_range / x_range *  wnd->width <  wnd->height ) {
+			double y_margin = ( wnd->height - y_range / x_range *  wnd->width );
+			 glViewport(0, y_margin / 2.0, wnd->width, wnd->height - y_margin );
+		}
+		else {
+			double x_margin = ( wnd->width - x_range / y_range *  wnd->height );
+			glViewport( x_margin / 2.0, 0, wnd->width - x_margin, wnd->height );
+		}
 
-  glViewport(0, 0, wnd->width, wnd->height );
+	}
+	else glViewport(0, 0, wnd->width, wnd->height );
 
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
   glOrtho( min_x, max_x, min_y, max_y, nearest, farthest );
 
+  double g[16];
+  glGetDoublev(  GL_PROJECTION_MATRIX, g );
   // This additional translation and rotationallows us to change the 
   // control point of the viewpoint, i.e. where it is looking
   // when it's postion is zero.
