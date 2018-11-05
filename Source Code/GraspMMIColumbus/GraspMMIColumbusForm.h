@@ -1153,7 +1153,7 @@ namespace GraspMMIColumbus {
 			iss->AddComponent( presetCodas );
 			iss->AddComponent( tabletSupine );
 			iss->AddComponent( tabletSeated );
-
+			iss->AddComponent( bodies );
 
 			LayoutVR();
 			Render();
