@@ -38,8 +38,11 @@ PsyPhy::Vector3 aimingPositionSupine = { 0.0, -200.0, 1000 };
 
 PsyPhy::Vector3 chairPosition = { -250.0, -200.0, 1900 };
 PsyPhy::Vector3 chairPositionHead = { -250.0, 200.0, 1900 };
-PsyPhy::Vector3 platePosition = { 0.0, 0.0, 1300 };
-PsyPhy::Vector3 platePositionHead = { 0.0, -400.0, 1000 };
+PsyPhy::Vector3 platePosition = { 0.0, 0.0, 1500 };
+PsyPhy::Vector3 platePositionHead = { 0.0, -400.0, 1200 };
+
+static float background_color[4] = { .1, .1, .3, 1.0 };
+
 
 typedef struct {
 	char	*label;
@@ -744,10 +747,6 @@ namespace GraspMMIColumbus {
 		OpenGLWindow	*topWindow, *sideWindow, *endconeWindow, *nodeWindow;
 		OpenGLWindow	**codaWindow;
 
-		Viewpoint		*topViewpoint, *sideViewpoint, *endconeViewpoint, *nodeViewpoint, **codaViewpoint;
-		Viewpoint		*sideOrthoViewpoint;
-		Viewpoint		*topOrthoViewpoint;
-
 		// A class that provides methods for making a lot of the 
 		// OpenGLObjects that we need for displaying the status.
 		GraspGLObjects *renderer;
@@ -761,6 +760,8 @@ namespace GraspMMIColumbus {
 		Assembly	*chair;
 		GripTablet	*tabletLocal, *tabletSeated, *tabletSupine;
 		Assembly	*manipulandum;
+
+		Assembly	*bodyCoda, *bodySeated, *bodies, *bodyQFF;
 
 		Coda		**coda;
 		Assembly	*codas;
@@ -783,6 +784,12 @@ namespace GraspMMIColumbus {
 		Cord  ***manipulandumPath;
 		Cord  ***wristPath;
 		Cord  ***tabletPath;
+
+		Viewpoint		**codaViewpoint;
+		Viewpoint		*topViewpoint, *sideViewpoint;
+		OrthoViewpoint	*topOrthoViewpoint, *sideOrthoViewpoint;
+		Viewpoint		*nodeViewpoint, *endconeViewpoint;
+		OrthoViewpoint	*nodeOrthoViewpoint, *endconeOrthoViewpoint;
 
 		// Bars showing the canonical axes.
 		Assembly *axes;
@@ -848,32 +855,30 @@ namespace GraspMMIColumbus {
 			topViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 15000.0);
 			topViewpoint->SetPosition( 0.0, 6000.0, 0.0 );
 			topViewpoint->SetOrientation( -90.0, - 90.0, 180.0 );
-
-			topOrthoViewpoint = new Viewpoint( 6.0, 15.0, 8000.0, 15000.0);
-			topOrthoViewpoint->SetPosition( 0.0, 10000.0, 0.0 );
-			topOrthoViewpoint->SetOrientation( -90.0, - 90.0, 180.0 );
-			//topOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000 );
-			//topOrthoViewpoint->SetPosition( 0.0, - 6000.0, 0.0 );
-			//topOrthoViewpoint->SetOrientation( 0.0, - 90.0, 0.0 );
+			topOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000, true );
+			topOrthoViewpoint->SetPosition( 0.0, 2000.0, 0.0 );
+			topOrthoViewpoint->SetOrientation(  - 90.0, - 90.0, 180.0 );
 
 			sideViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 15000.0);
 			sideViewpoint->SetPosition( - 6000.0, 0.0, 0.0 );
 			sideViewpoint->SetOrientation( 0.0, 0.0, 90.0 );
-
-			sideOrthoViewpoint = new Viewpoint( 6.0, 15.0, 9000.0, 15000.0);
-			sideOrthoViewpoint->SetPosition( -10000.0, 0.0, 0.0 );
+			sideOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000, true );
+			sideOrthoViewpoint->SetPosition( - 6000.0, 0.0, 0.0 );
 			sideOrthoViewpoint->SetOrientation( 0.0, 0.0, 90.0 );
-			//sideOrthoViewpoint = new OrthoViewpoint( - 2500, 2500, -1250, 1250, 10, 10000 );
-			//sideOrthoViewpoint->SetPosition( -5000.0, 0.0, 0.0 );
-			//sideOrthoViewpoint->SetOrientation( 0.0, 0.0, - 90.0 );
 
-			endconeViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 8000.0);
-			endconeViewpoint->SetPosition( 0.0, 0.0, -3000.0 );
+			endconeViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 15000.0);
+			endconeViewpoint->SetPosition( 0.0, 0.0, - 6000.0 );
 			endconeViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+			endconeOrthoViewpoint = new OrthoViewpoint( - 1250,  1250, - 1250, 1250, 10, 10000, true );			
+			endconeOrthoViewpoint->SetPosition( 0.0, 0.0, -6000.0 );
+			endconeOrthoViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
-			nodeViewpoint = new Viewpoint( 6.0, 45.0, 10.0, 8000.0);
-			nodeViewpoint->SetPosition( 0.0, 0.0, 3000.0 );
+			nodeViewpoint = new Viewpoint( 6.0, 20.0, 10.0, 15000.0);
+			nodeViewpoint->SetPosition( 0.0, 0.0, 6000.0 );
 			nodeViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
+			nodeOrthoViewpoint = new OrthoViewpoint( - 1250,  1250, - 1250, 1250, 10, 10000, true );			
+			nodeOrthoViewpoint->SetPosition( 0.0, 0.0, 6000.0 );
+			nodeOrthoViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 			// Create objects representing the racks.
 			double rack_bar_thickness = 10.0;
@@ -901,8 +906,12 @@ namespace GraspMMIColumbus {
 				rack->SetPosition( 0.0, - rack_on_centers, r * rack_on_centers );
 				racks->AddComponent( rack );
 			}
-			//rack = new WindowFrame( 2000.0, 2000.0, rack_bar_thickness );
-			//rack->SetPosition( 0.0, 0.0, - 2000.0 );
+			rack = new WindowFrame( 2000.0, 2000.0, rack_bar_thickness );
+			rack->SetPosition( 0.0, 0.0, - 2500.0 );
+			racks->AddComponent( rack );
+			rack = new WindowFrame( 2000.0, 2000.0, rack_bar_thickness );
+			rack->SetPosition( 0.0, 0.0,   2500.0 );
+			racks->AddComponent( rack );
 
 
 			// Create the OpenGLObjects that depict the marker array structure.
@@ -947,21 +956,53 @@ namespace GraspMMIColumbus {
 			hand = renderer->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chest = renderer->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );
 
+			double nominal_head_height = 500.0;
+			double nominal_chest_depth = 200.0;
+			double nominal_shoulder_breadth = 450.0;
+			double nominal_reach = 600.0;
+			Assembly *head, *torso;
+			head = renderer->CreateHead();
+			torso = renderer->CreateTorso();
+			head->SetPosition( 0.0, nominal_head_height, - 0.3 * nominal_chest_depth );
+			torso->SetPosition( 0.0, 0.4 * nominal_head_height, - nominal_chest_depth / 2.0 );
+			hmd->SetPosition( 0.0, nominal_head_height, - nominal_chest_depth );
+			hand->SetPosition( nominal_shoulder_breadth / 2.0, 0.7 * nominal_head_height, - nominal_reach - nominal_chest_depth );
+			chest->SetPosition( 0.0, 0.0, - nominal_chest_depth );
+
+			bodySeated = new Assembly();
+			bodySeated->AddComponent( head );
+			bodySeated->AddComponent( torso );
+			bodySeated->AddComponent( hmd );
+			bodySeated->AddComponent( hand );
+			bodySeated->AddComponent( chest );
+			bodySeated->SetPosition(chairPosition );
+
+			bodyQFF = new Assembly();
+			bodyQFF->AddComponent( head );
+			bodyQFF->AddComponent( torso );
+			bodyQFF->AddComponent( hmd );
+			bodyQFF->AddComponent( hand );
+			bodyQFF->AddComponent( chest );
+			bodyQFF->SetPosition( platePosition );
+			bodyQFF->SetOrientation( 180.0, - 26.0, 0.0 );
+
+			bodies = new Assembly();
+			bodies->AddComponent( bodySeated );
+			bodies->AddComponent( bodyQFF );
+
+			bodyCoda = new Assembly();
+			bodyCoda->AddComponent( head );
+			bodyCoda->AddComponent( torso );
+			bodyCoda->AddComponent( hmd );
+			bodyCoda->AddComponent( hand );
+			bodyCoda->AddComponent( chest );
+
 			hmd->Disable();
 			hand->Disable();
 			chest->Disable();
 
 			// Set nominal values for the pose of each object.
-			double nominal_head_height = 500.0;
-			double nominal_chest_depth = 200.0;
-			double nominal_shoulder_breadth = 450.0;
-			double nominal_reach = 600.0;
-			hmd->SetPosition( 0.0, nominal_head_height, - nominal_chest_depth );
-			hand->SetPosition( nominal_shoulder_breadth / 2.0, 0.7 * nominal_head_height, - nominal_reach - nominal_chest_depth );
-			chest->SetPosition( 0.0, 0.0, - nominal_chest_depth );
 
-			renderer->head->SetPosition( 0.0, nominal_head_height, - 0.3 * nominal_chest_depth );
-			renderer->torso->SetPosition( 0.0, 0.4 * nominal_head_height, - nominal_chest_depth / 2.0 );
 
 			// Add a cones to the marker structures to show the emission pattern.
 			double cone_length = 2000.0;
@@ -1104,8 +1145,7 @@ namespace GraspMMIColumbus {
 			ensemble->AddComponent( hand );
 			ensemble->AddComponent( chest );
 			ensemble->AddComponent( tabletLocal );
-			ensemble->AddComponent( renderer->head );
-			ensemble->AddComponent( renderer->torso );
+			//ensemble->AddComponent( bodyCoda );
 
 			// These other items are drawn in the ISS reference frame.
 			iss = new Assembly();
@@ -1138,7 +1178,7 @@ namespace GraspMMIColumbus {
 		// Draw the 3D graphics.
 		void RenderWindow( OpenGLWindow *window, Viewpoint *viewpoint ) {
 			window->Activate();
-			window->Clear( 0.10, 0.10, 0.30 );
+			window->Clear( background_color );
 			viewpoint->Apply( window, CYCLOPS );
 			renderer->SetLighting();
 			iss->Draw();
@@ -1149,7 +1189,7 @@ namespace GraspMMIColumbus {
 		// Draw the 3D graphics.
 		void RenderWindow( OpenGLWindow *window, OrthoViewpoint *viewpoint ) {
 			window->Activate();
-			window->Clear( 0.10, 0.10, 0.30 );
+			window->Clear( background_color );
 			viewpoint->Apply( window, CYCLOPS );
 			renderer->SetLighting();
 			iss->Draw();
@@ -1159,7 +1199,7 @@ namespace GraspMMIColumbus {
 		// Draw the 3D graphics in the local reference frame.
 		void RenderWindowLocal( OpenGLWindow *window, Viewpoint *viewpoint ) {
 			window->Activate();
-			window->Clear( 0.10, 0.10, 0.30 );
+			window->Clear( background_color );
 			viewpoint->Apply( window, CYCLOPS );
 			renderer->SetLighting();
 			for ( int i = 0; i < ensemble->components; i ++ ) ensemble->component[i]->Draw();
@@ -1195,20 +1235,24 @@ namespace GraspMMIColumbus {
 			else if ( graspSeatedButton->Checked ) {
 				ensemble->SetPosition( chairPosition );
 				ensemble->SetOrientation( 0.0, 0.0, 0.0 );
+				bodySeated->enabled = true;
+				bodyQFF->enabled = false;
 				for ( int unit = 0; unit < CODA_UNITS; unit++ ) presetCoda[unit]->PointYAt( chairPositionHead, up[unit] );
 			}
 			else if ( graspFreefloatingButton->Checked ) {
 				ensemble->SetPosition( platePosition );
 				ensemble->SetOrientation( 180.0, - 26.0, 0.0 );
+				bodySeated->enabled = false;
+				bodyQFF->enabled = true;
 				for ( int unit = 0; unit < CODA_UNITS; unit++ ) presetCoda[unit]->PointYAt( platePositionHead, up[unit] );
 			}
 
 			codas->enabled = !( presetCodas->enabled = nominalCodaCheckBox->Checked );
 			hmd->enabled = hand->enabled = chest->enabled = markerStructureCheckBox->Checked;
-			renderer->head->enabled = bodyCheckBox->Checked;
-			renderer->torso->enabled = bodyCheckBox->Checked;
 			axes->enabled = axesCheckBox->Checked;
+			bodies->enabled = bodyCoda->enabled = bodyCheckBox->Checked;
 			tabletLocal->enabled = tabletCheckBox->Checked;
+			tabletSeated->enabled = tabletCheckBox->Checked;
 			gripTracers->enabled = gripTracerCheckBox->Checked;
 			graspTracers->enabled = graspTracerCheckBox->Checked;
 
@@ -1250,8 +1294,8 @@ namespace GraspMMIColumbus {
 
 			// Another hack. Don't draw the cone when looking from either end.
 			handEmissionCone->Disable();
-			RenderWindow( endconeWindow, endconeViewpoint );
-			RenderWindow( nodeWindow, nodeViewpoint );
+			RenderWindow( endconeWindow, endconeOrthoViewpoint );
+			RenderWindow( nodeWindow, nodeOrthoViewpoint );
 
 			for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
 				coda[unit]->bar->Disable();
@@ -1621,7 +1665,6 @@ namespace GraspMMIColumbus {
 				 Button_Click( sender, e );
 
 			 }
-
 
 	private: System::Void presetComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
 				 nominalCodaCheckBox->Checked = true;
