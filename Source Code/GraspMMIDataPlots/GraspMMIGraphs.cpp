@@ -46,7 +46,7 @@ using namespace GraspMMI;
 #define VISIBILITY_STRIPCHARTS	MARKER_STRUCTURES
 #define HISTORY_STRIPCHARTS	1
 #define MAX_PLOT_STEP PACKET_STREAM_BREAK_INSERT_SAMPLES	// Maximum down sampling to display data.
-#define MAX_PLOT_SAMPLES (3 * 60 * 20)						// Max samples to plot at one time.
+#define MAX_PLOT_SAMPLES (2 * 60 * 20)						// Max samples to plot at one time.
 #define MAX_TILT_SAMPLES 200
 
 // We need InteropServics in order to convert a String to a char *.
