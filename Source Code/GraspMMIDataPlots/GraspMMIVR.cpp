@@ -84,7 +84,7 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	// Look forward toward the codas. 
 	// We shift it forward and up so that the codas fall in a reasonable field of view.
 	forwardViewpoint = new Viewpoint( 6.0, 25.0, 10.0, 8000.0);
-	forwardViewpoint->SetPosition( 0.0, 0.0, 3000.0 );
+	forwardViewpoint->SetPosition( 0.0, 500.0, 3000.0 );
 	forwardViewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 	// This is the viewpoint of the subject in the virtual world.
 	// Default is looking straight ahead.
@@ -122,8 +122,19 @@ void GraspMMIGraphsForm::InitializeVR( void ) {
 	coda[1]->proximity->SetColor( 0.5, 0.5, 1.0, 0.2 );
 	coda[0]->proximity->Disable();
 	coda[1]->proximity->Disable();
+	coda[0]->rays->Disable();
+	coda[1]->rays->Disable();
 	coda[0]->fov->SetColor( 1.0, 0.0, 0.0, 0.5 );
 	coda[1]->fov->SetColor( 0.0, 0.0, 1.0, 0.5 );
+
+	// Create an anchor that we can rotate and displace to take into account
+	// where the origin is with respect to the ISS module for a given hardware configuration.
+	ensemble = new Assembly();
+	ensemble->AddComponent( codas );
+	static Vector3 chairPosition = { -250.0, -200.0, 1900 };
+	ensemble->SetPosition( chairPosition );
+	ensemble->SetOrientation( 0.0, 0.0, 0.0 );
+
 
 
 	// Create trackers that will transform marker positions into poses.
@@ -323,6 +334,29 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 			alignmentFrameTextBox->Text = CreateTimeString( graspDataSlice[alignment_index].absoluteTime ) + " POST";
 		}
 
+		FILE *fp = fopen( "tempxform.dat", "w" );
+		fprintf( fp, "header\n" );
+		for ( int unit = 0; unit < CODA_UNITS; unit++ ) {
+			fprintf( fp, "sn\n" );
+			fprintf( fp, "Offset%d=%f,%f,%f\n", unit,
+				graspDataSlice[alignment_index].alignmentOffset[unit][X],
+				graspDataSlice[alignment_index].alignmentOffset[unit][Y],
+				graspDataSlice[alignment_index].alignmentOffset[unit][Z] );
+			fprintf( fp, "TransformX%d=%f,%f,%f\n", unit,
+				graspDataSlice[alignment_index].alignmentRotation[unit][X][X],
+				graspDataSlice[alignment_index].alignmentRotation[unit][X][Y],
+				graspDataSlice[alignment_index].alignmentRotation[unit][X][Z] );
+			fprintf( fp, "TransformY%d=%f,%f,%f\n", unit,
+				graspDataSlice[alignment_index].alignmentRotation[unit][Y][X],
+				graspDataSlice[alignment_index].alignmentRotation[unit][Y][Y],
+				graspDataSlice[alignment_index].alignmentRotation[unit][Y][Z] );
+			fprintf( fp, "TransformZ%d=%f,%f,%f\n", unit,
+				graspDataSlice[alignment_index].alignmentRotation[unit][Z][X],
+				graspDataSlice[alignment_index].alignmentRotation[unit][Z][Y],
+				graspDataSlice[alignment_index].alignmentRotation[unit][Z][Z] );
+		}
+		fclose( fp );
+
 	}
 
 	else {
@@ -376,7 +410,7 @@ void GraspMMIGraphsForm::RenderVR( unsigned int index ) {
 	RenderWindow( sideWindow, sideViewpoint, mobiles );
 	
 	// Show where the CODAs are, looking from the origin.
-	RenderWindow( forwardWindow, forwardViewpoint, codas );
+	RenderWindow( forwardWindow, forwardViewpoint, ensemble );
 
 
 
