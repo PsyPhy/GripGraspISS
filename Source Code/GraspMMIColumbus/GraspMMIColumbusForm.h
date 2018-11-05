@@ -41,7 +41,7 @@ PsyPhy::Vector3 chairPositionHead = { -250.0, 200.0, 1900 };
 PsyPhy::Vector3 platePosition = { 0.0, 0.0, 1500 };
 PsyPhy::Vector3 platePositionHead = { 0.0, -400.0, 1200 };
 
-static float background_color[4] = { .1, .1, .3, 1.0 };
+static float background_color[4] = { .1f, .1f, .3f, 1.0f };
 
 
 typedef struct {
@@ -243,7 +243,7 @@ namespace GraspMMIColumbus {
 			this->endconeGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->endconeGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->endconeGroupBox->Controls->Add(this->endconePanel);
-			this->endconeGroupBox->Location = System::Drawing::Point(759, 353);
+			this->endconeGroupBox->Location = System::Drawing::Point(725, 353);
 			this->endconeGroupBox->Name = L"endconeGroupBox";
 			this->endconeGroupBox->Size = System::Drawing::Size(316, 339);
 			this->endconeGroupBox->TabIndex = 0;
@@ -263,7 +263,7 @@ namespace GraspMMIColumbus {
 			this->topGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->topGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->topGroupBox->Controls->Add(this->topPanel);
-			this->topGroupBox->Location = System::Drawing::Point(137, 7);
+			this->topGroupBox->Location = System::Drawing::Point(103, 7);
 			this->topGroupBox->Name = L"topGroupBox";
 			this->topGroupBox->Size = System::Drawing::Size(616, 339);
 			this->topGroupBox->TabIndex = 1;
@@ -284,7 +284,7 @@ namespace GraspMMIColumbus {
 			this->nodeGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->nodeGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->nodeGroupBox->Controls->Add(this->nodePanel);
-			this->nodeGroupBox->Location = System::Drawing::Point(1081, 350);
+			this->nodeGroupBox->Location = System::Drawing::Point(1047, 350);
 			this->nodeGroupBox->Name = L"nodeGroupBox";
 			this->nodeGroupBox->Size = System::Drawing::Size(316, 339);
 			this->nodeGroupBox->TabIndex = 2;
@@ -304,7 +304,7 @@ namespace GraspMMIColumbus {
 			this->sideGroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->sideGroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->sideGroupBox->Controls->Add(this->sidePanel);
-			this->sideGroupBox->Location = System::Drawing::Point(137, 353);
+			this->sideGroupBox->Location = System::Drawing::Point(103, 353);
 			this->sideGroupBox->Name = L"sideGroupBox";
 			this->sideGroupBox->Size = System::Drawing::Size(616, 339);
 			this->sideGroupBox->TabIndex = 3;
@@ -584,7 +584,7 @@ namespace GraspMMIColumbus {
 			this->coda0GroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->coda0GroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->coda0GroupBox->Controls->Add(this->coda0Panel);
-			this->coda0GroupBox->Location = System::Drawing::Point(759, 7);
+			this->coda0GroupBox->Location = System::Drawing::Point(725, 7);
 			this->coda0GroupBox->Name = L"coda0GroupBox";
 			this->coda0GroupBox->Size = System::Drawing::Size(316, 339);
 			this->coda0GroupBox->TabIndex = 3;
@@ -604,7 +604,7 @@ namespace GraspMMIColumbus {
 			this->coda1GroupBox->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->coda1GroupBox->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->coda1GroupBox->Controls->Add(this->coda1Panel);
-			this->coda1GroupBox->Location = System::Drawing::Point(1081, 7);
+			this->coda1GroupBox->Location = System::Drawing::Point(1047, 7);
 			this->coda1GroupBox->Name = L"coda1GroupBox";
 			this->coda1GroupBox->Size = System::Drawing::Size(316, 339);
 			this->coda1GroupBox->TabIndex = 4;
@@ -651,7 +651,7 @@ namespace GraspMMIColumbus {
 			this->loadingLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->loadingLabel->ForeColor = System::Drawing::Color::Red;
-			this->loadingLabel->Location = System::Drawing::Point(386, 300);
+			this->loadingLabel->Location = System::Drawing::Point(251, 300);
 			this->loadingLabel->Name = L"loadingLabel";
 			this->loadingLabel->Size = System::Drawing::Size(800, 200);
 			this->loadingLabel->TabIndex = 8;
@@ -700,7 +700,7 @@ namespace GraspMMIColumbus {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1370, 707);
+			this->ClientSize = System::Drawing::Size(1303, 707);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->loadingLabel);
 			this->Controls->Add(this->selectScreenshotButton);
@@ -715,6 +715,7 @@ namespace GraspMMIColumbus {
 			this->Controls->Add(this->topGroupBox);
 			this->Location = System::Drawing::Point(-300, -1000);
 			this->Name = L"GraspMMIColumbusForm";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspMMI Columbus";
 			this->Shown += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_Shown);
 			this->SizeChanged += gcnew System::EventHandler(this, &GraspMMIColumbusForm::GraspMMIColumbusForm_SizeChanged);
