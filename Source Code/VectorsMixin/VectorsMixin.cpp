@@ -269,7 +269,13 @@ void VectorsMixin::TransposeMatrix( Matrix3x3 destination, const Matrix3x3 sourc
 		}
 	}
 }
-
+void VectorsMixin::TransposeMatrix( Matrix3x3 destination, const fMatrix3x3 source ){
+	for ( int i = 0; i < 3; i++ ) {
+		for ( int j = 0; j < 3; j++ ) {
+			destination[j][i] = source[i][j];
+		}
+	}
+}
 void VectorsMixin::ScaleMatrix( Matrix3x3 destination, const Matrix3x3 source, const double scaling ){
 	for ( int i = 0; i < 3; i++ ) {
 		for ( int j = 0; j < 3; j++ ) {

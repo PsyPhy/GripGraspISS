@@ -112,6 +112,7 @@ public:
 	void CopyMatrix( fMatrix3x3 destination, const fMatrix3x3 source );
 
 	void TransposeMatrix( Matrix3x3 destination, const Matrix3x3 source );
+	void TransposeMatrix( Matrix3x3 destination, const fMatrix3x3 source );
 	void ScaleMatrix( Matrix3x3 destination, const Matrix3x3 source, const double scaling );
 	void MultiplyMatrices( Matrix3x3 result, const Matrix3x3 left, const Matrix3x3 right );
 
