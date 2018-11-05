@@ -182,3 +182,4 @@ REM First parameter is the path to the packet caches that serve as inputs.
 start /D %MirrorDir% GraspMMIExecutables\GraspMMIMirror.exe %CachePath%
 start /D %MirrorDir% GraspMMIExecutables\GraspMMIHistory.exe %CachePath% 
 start /D %MirrorDir% GraspMMIExecutables\GraspMMIDataPlots.exe %CachePath% 
+start /D %MirrorDir% GraspMMIExecutables\GraspMMIColumbus.exe %CachePath% 
