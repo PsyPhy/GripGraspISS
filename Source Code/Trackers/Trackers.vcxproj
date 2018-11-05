@@ -84,6 +84,7 @@
     <ClInclude Include="CodaRTnetContinuousTracker.h" />
     <ClInclude Include="CodaRTnetDaemonTracker.h" />
     <ClInclude Include="CodaRTnetNullTracker.h" />
+    <ClInclude Include="CodaRTnetPolledTracker.h" />
     <ClInclude Include="CodaRTnetTracker.h" />
     <ClInclude Include="MouseTracker.h" />
     <ClInclude Include="NullPoseTracker.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="CodaRTnetContinuousTracker.cpp" />
     <ClCompile Include="CodaRTnetDaemonTracker.cpp" />
     <ClCompile Include="CodaRTnetNullTracker.cpp" />
+    <ClCompile Include="CodaRTnetPolledTracker.cpp" />
     <ClCompile Include="CodaRTnetTracker.cpp" />
     <ClCompile Include="NullPoseTracker.cpp" />
     <ClCompile Include="OculusRemotePoseTracker.cpp" />

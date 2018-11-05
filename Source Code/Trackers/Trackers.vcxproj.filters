@@ -21,6 +21,7 @@
     <ClInclude Include="CodaLegacyContinuousTracker.h" />
     <ClInclude Include="CodaLegacyPolledTracker.h" />
     <ClInclude Include="WindowsMousePoseTrackers.h" />
+    <ClInclude Include="CodaRTnetPolledTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -38,5 +39,6 @@
     <ClCompile Include="CodaLegacyContinuousTracker.cpp" />
     <ClCompile Include="CodaLegacyPolledTracker.cpp" />
     <ClCompile Include="WindowsMousePoseTrackers.cpp" />
+    <ClCompile Include="CodaRTnetPolledTracker.cpp" />
   </ItemGroup>
 </Project>
