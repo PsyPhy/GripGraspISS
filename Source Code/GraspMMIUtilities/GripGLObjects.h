@@ -47,6 +47,11 @@ namespace PsyPhy {
 			slab->SetPosition( - 0.265 * tablet_width, 0.0, 0.0 );
 			AddComponent( slab );
 
+			Slab *screen = new Slab( 0.35 * tablet_width, 0.55 * tablet_length, 20.0 );
+			screen->SetColor( CYAN );
+			screen->SetPosition( 0.265 * tablet_width, 0.175 * tablet_length, tablet_thickness );
+			AddComponent( screen );
+
 			Assembly *mast = new Assembly();
 			Sphere *target;
 			double mast_width = 25.0;
