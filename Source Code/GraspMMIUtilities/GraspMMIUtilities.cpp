@@ -181,7 +181,7 @@ namespace GraspMMI {
 				else  slice[i].clientType = GraspRealtimeDataSlice::ALIGNPOST;
 				for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
 					vm.CopyVector( slice[i].alignmentOffset[unit], align->offsets[unit] );
-					vm.CopyMatrix( slice[i].alignmentRotation[unit], align->rotations[unit] );
+					vm.TransposeMatrix( slice[i].alignmentRotation[unit], align->rotations[unit] );
 				}
 			}
 
