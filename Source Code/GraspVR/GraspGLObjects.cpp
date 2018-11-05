@@ -727,15 +727,15 @@ Assembly *GraspGLObjects::CreateHead( void ) {
 	Assembly *head = new Assembly();
 	// Skull
 	Ellipsoid *skull = new Ellipsoid( head_shape );
-	skull->SetColor( .4f, 0.0f, .4f );
+	skull->SetColor( .4f, 0.0f, .4f, 0.25f );
 	// Eyes
 	head->AddComponent( skull );
 	Sphere *sphere = new Sphere( 20.0 );
-	sphere->SetColor( 0.0f, 0.0f, 1.0f );
+	sphere->SetColor( 0.0f, 0.0f, 1.0f, 0.25f );
 	sphere->SetPosition( -50.0, 20.0, -100.0 );
 	head->AddComponent( sphere );
 	sphere = new Sphere( 20.0 );
-	sphere->SetColor( 0.0f, 0.0f, 1.0f );
+	sphere->SetColor( 0.0f, 0.0f, 1.0f, 0.25f );
 	sphere->SetPosition( 50.0, 20.0, -100.0 );
 	head->AddComponent( sphere );
 	// Nose
@@ -767,7 +767,6 @@ Coda *GraspGLObjects::CreateCodaBar( double r, double g, double b ) {
 	coda->SetColor( r, g, b );
 	return coda;
 }
-
 
 void GraspGLObjects::CreateAuxiliaryObjects( void ) {
 
@@ -1107,7 +1106,7 @@ const Vector3 Coda::coda_shape = { 800.0, 100.0, 80.0 };
 const double Coda::ray_length = 3000.0;
 Coda::Coda( void ) {
 
-	double camera_a_offset = - 0.4 * coda_shape[X];
+	double camera_a_offset = - 0.50 * coda_shape[X];
 
 	bar = new Assembly();
 	rays = new Assembly();
@@ -1123,6 +1122,18 @@ Coda::Coda( void ) {
 		bar->AddComponent( slab );
 	}
 	AddComponent( bar );
+	double bezel = 15.0;
+	WindowFrame *cap = new WindowFrame( coda_shape[Z], coda_shape[Y], bezel );
+	cap->SetColor( BLACK );
+	cap->SetPosition( 0.5 * coda_shape[X], 0.0, 0.0 );
+	cap->SetOrientation( 0.0, 0.0, 90.0 );
+	bar->AddComponent( cap );
+	cap = new WindowFrame( coda_shape[Z], coda_shape[Y], bezel );
+	cap->SetColor( BLACK );
+	cap->SetPosition( - 0.5 * coda_shape[X], 0.0, 0.0 );
+	cap->SetOrientation( 0.0, 0.0, 90.0 );
+	bar->AddComponent( cap );
+
 	for ( int lens = 0; lens < 3; lens ++ ) {
 		// Make the ray length negative so that it shoots out the front of the CODA.
 		ray[lens] = new Ray( - ray_length );
@@ -1151,7 +1162,7 @@ Coda::Coda( void ) {
 	// When then CODA is in it's 0 orientation, it points along
 	// the positive Y axis. This attitude reflects that in the 
 	// representation of the CODA bar.
-	SetAttitude( 180.0, - 90.0, 0.0 );
+	SetAttitude( 0.0, - 90.0, 0.0 );
 	// The origin of the CODA intrinsic coordinate system is the 
 	// center of the A camera.
 	SetOffset( camera_a_offset, 0.0, 0.0 );
