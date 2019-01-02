@@ -21,11 +21,16 @@
 
 #include "TMdata.h"
 
-// Connection to Dex hardware via the ET port.
-#define DEFAULT_DEX_SERVER "10.80.12.103"
+// Connection to DEX hardware via the ETD port.
+#define DEX_ETD_SERVER "10.80.12.103"
+// Connection to DEX hardware via the EPM port.
+#define DEX_EPM_SERVER "192.168.200.133"
+// Pick one of the above to be the default.
+#define DEFAULT_DEX_SERVER DEX_ETD_SERVER
 #define DEFAULT_DEX_PORT 2128
 
 // IP address to be used when we pass through a proxy.
+// Here we have the proxy running on the same machine as the client.
 #define PROXY_DEX_SERVER		"127.0.0.1"
 #define PROXY_DEX_PORT			8212
 #define PROXY_DEX_PORT_STRING	"8212"

@@ -8,7 +8,11 @@
 [CodaRTnet]
 
 ;;; Host running the CodaRTnet server.
+;;; One possibility is via the ETD LAN
 CodaServerHost = 10.80.12.103
+;;; The other is via the EPM LAN
+;;; CodaServerHost = 192.168.200.133
+;;; In both cases the port is 10111
 CodaServerPort = 10111
 
 ;;; Define the serial numbers of each of the coda units.
