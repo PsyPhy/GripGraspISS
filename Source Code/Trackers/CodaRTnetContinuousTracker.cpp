@@ -45,26 +45,40 @@ void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
 }
 
 // StartContinuousAcquisition() is specific to the continuous tracker. It puts the CODA RTnet server
-// into continuous acquisition mode. It is called once byt Initialize() and may well never be needed elsewhere.
+// into continuous acquisition mode. It is called once byt Initialize() and also when the 
+// acquisition needs to be restarted to avoid overrunning the RTnet server.
 void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
-	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
+	// There is a bug in the RTnet server code that can cause a serious
+	// anomaly. If the start acquisition happens precisely when a sync pulse 
+	// occurs, the multiple codas can get out of sync, with old data being reported
+	// by CODA 2 and beyone. What we try to do here is
+	// to launch a single frame of acqusition, then restart the acquisition. If this is
+	// done quickly enough (faster than the sample period), the second start will not 
+	// happen on a sync boundary.
 	OutputDebugString( "cl.startAcqContinuous()\n" );
+	cl.setAcqMaxTicks( DEVICEID_CX1, 1 );
 	cl.startAcqContinuous();
+	while ( nFrames == 0 ) Update();
 	TimerSet( runningTimer, maxContinuous );
+	cl.stopAcq();
+	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
+	cl.startAcqContinuous();
+	fprintf( stderr, "Restart took %f seconds.\n", TimerElapsedTime( runningTimer ) );
+	TimerSet( runningTimer, maxContinuous );
+
 }
 
-// Attempt to halt an ongoing aquisition. 
-// Does not care if it was actually acquiring or not.
-// Does not retrieve the data.
+// Stop and restart a continuous acquisition. This can be useful when 
+// to avoid eating up all the memory on the server.
 void CodaRTnetContinuousTracker::RestartContinuousAcquisition( void ) {
 	Timer timer;
 	TimerStart( timer );
 	cl.stopAcq();
 	cl.prepareForAcq();
-	cl.startAcqContinuous();
+	// cl.startAcqContinuous();
+	StartContinuousAcquisition();
 	double elapsed = TimerElapsedTime( timer );
 	fOutputDebugString( "CodaRTnetContinuousTracker:Restarting acquisition took %f s.\n", elapsed );
-	TimerSet( runningTimer, maxContinuous );
 }
 
 
