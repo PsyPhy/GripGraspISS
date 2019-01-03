@@ -1,0 +1,13 @@
+[CODA System Alignment]
+CX1SerialNumber0=3006
+Offset0=1006.27,2860.36,566.207
+TransformX0=0.0145243,-0.395707,-0.918263
+TransformY0=0.281814,-0.879509,0.383463
+TransformZ0=-0.959359,-0.264349,0.0987413
+CX1SerialNumber0=3007
+Offset1=502.019,2548.67,789.405
+TransformX1=0.998039,-0.0487712,0.0392277
+TransformY1=-0.06241,-0.822892,0.56476
+TransformZ1=0.00473616,-0.566101,-0.824322
+;;; Test at CADMOS to debug offsets
+;;; Calibration by GRIP in Supine

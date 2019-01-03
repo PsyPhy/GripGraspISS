@@ -1,0 +1,3 @@
+# Protocol Definition: Prepare for floating operations. 
+021; SCRIPT; Prepare for Quasi-Freefloating; PrepareFloating.tsk
+029; INSTRUCTION; End of Subsession; ProtocolFinished.instruction.html
