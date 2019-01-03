@@ -4,6 +4,10 @@
 /*                                                                               */
 /*********************************************************************************/
 
+// Disable warnings about unsafe functions.
+// We use the 'unsafe' versions to maintain source-code compatibility with Visual C++ 6
+#define _CRT_SECURE_NO_WARNINGS
+
 // Access the Oculus head tracker in the PsyPhy domain. We simply take whatever
 //  pose the Oculus has computed using whatever means it usually uses. It will 
 //  presumably use the compass and gravity to cancel drift in the inertial 

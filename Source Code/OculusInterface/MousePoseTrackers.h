@@ -3,6 +3,7 @@
 /*                               MousePoseTrackers.h                             */
 /*                                                                               */
 /*********************************************************************************/
+#define _CRT_SECURE_NO_WARNINGS
 
 // Use the mouse to drive a pose in various ways.
 

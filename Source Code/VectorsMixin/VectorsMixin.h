@@ -7,9 +7,9 @@
 
 // Suport routines for vector and matrix operations.
 // Vectors here are 3D. Quaternions are 4D.
+#define _CRT_SECURE_NO_WARNINGS
 
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
 
 #include "../Useful/Useful.h"
 

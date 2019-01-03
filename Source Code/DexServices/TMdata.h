@@ -2,6 +2,7 @@
 // Telemetry types for GRIP and GRASP, based on example programs from Qinetiq.
 
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 
 #include "../Trackers/Trackers.h"
 #include "../Trackers/PoseTrackers.h"

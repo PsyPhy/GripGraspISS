@@ -1,3 +1,7 @@
+// Disable warnings about unsafe functions.
+// We use the 'unsafe' versions to maintain source-code compatibility with Visual C++ 6
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "OculusInterface.h"
 #include "../OpenGLObjects/OpenGLObjects.h"
 #include "../OpenGLObjects/OpenGLViewpoints.h"
