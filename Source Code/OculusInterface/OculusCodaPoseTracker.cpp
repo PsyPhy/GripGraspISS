@@ -27,9 +27,11 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 
 	// A small value to react quickly to the first CODA pose.
 	precaptureInertialWeighting = 10.0;
-	// The value used after the first CODA sample has been used to initialize the pose.
+	// The value used when data from the CODA are readily available.
 	// The value is large to filter artifacts from the computed CODA pose.
-	postcaptureInertialWeighting = 10.0;
+	postcaptureInertialWeighting = 100.0;
+	// Time constant to determine how to adapt the weight.
+	occlusionWeightingTimeConstant = 0.01;
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();
@@ -134,12 +136,19 @@ bool OculusCodaPoseTracker::Update( void ) {
 		if ( absolutePose.visible ) {
 			// fOutputDebugString( "Cycle %4d: %s  %s  %s\n", cycle_counter, qstr( dQ ), qstr( currentState.pose.orientation ), qstr( absolutePose.pose.orientation ) );
 			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
-			// Once we have updated once toward a pose from the absolute tracker, subsequent steps
-			// will use a larger weigthing factor to slow down the corrective actions.
-			InertialWeighting = postcaptureInertialWeighting;
 			CopyVector( currentState.pose.position, absolutePose.pose.position );
+			// Once we have updated once toward a pose from the absolute tracker, subsequent steps
+			// will use a larger and larger weigthing factor to slow down the corrective actions.
+			InertialWeighting += ( postcaptureInertialWeighting - InertialWeighting ) * occlusionWeightingTimeConstant;
+			fOutputDebugString( "Cycle %4d: %f Step toward Absolute.\n", cycle_counter, occlusionWeightingTimeConstant );
 		}
-//		else fOutputDebugString( "Cycle %4d: No absolute update.\n", cycle_counter );
+		else {
+			// The longer the absolute tracker data has been missing, the more rapidly we want to
+			// move to the absolute position when it comes back, to avoid a slow convergence to the
+			// absolute data that is noticeable in the VR.
+			InertialWeighting += ( precaptureInertialWeighting - InertialWeighting ) * 0.01;
+			fOutputDebugString( "Cycle %4d: %f No absolute update.\n", cycle_counter, InertialWeighting );
+		}
 	}
 	//else fOutputDebugString( "Cycle %4d: No absolute tracker.\n", cycle_counter );
 	cycle_counter++;

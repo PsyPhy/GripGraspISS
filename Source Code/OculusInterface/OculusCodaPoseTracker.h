@@ -43,11 +43,27 @@ class OculusCodaPoseTracker : public PoseTracker {
 		// The second value is presumably much larger. We assume that the inertial model 
 		// is working well and that corrections for drift should be applied slowly. This
 		// effectively filters the values from the absolute tracker, avoiding jumps in the 
-		// output pose when the optical tracker experiences an anomalie.
+		// output pose when the optical tracker experiences an anomaly.
 		double postcaptureInertialWeighting;
+		// We adaptively adjust the weighting between the extremes. If the absolute data
+		// has been missing for a while, adjust the InertialWeighting toward the precapture
+		// value and vice-versa. The following constant determines how fast to adapt the
+		// weight. 
+		double	occlusionWeightingTimeConstant;
 
 		OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda );
 		~OculusCodaPoseTracker();
+
+		// Provide the means to read a .ini file to set configuration parameters.
+		// This is defined here as static because its address is sent as a callback to a parsing routine.
+		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			OculusCodaPoseTracker *instance = (OculusCodaPoseTracker *) which_instance;
+			if ( !strcmp( name, "precaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->precaptureInertialWeighting = atoi( value );
+			if ( !strcmp( name, "postcaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->postcaptureInertialWeighting = atoi( value );
+			if ( !strcmp( name, "occlusionWeightingTimeConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->occlusionWeightingTimeConstant = atoi( value );
+			return 1;
+		}
+
 
 		bool Initialize( void );
 		bool  Update( void );

@@ -39,7 +39,13 @@ chestOffset = 100
 hmdCodaCascade = 2
 handCodaCascade = 21
 chestCodaCascade = 21
+cascadeRealignment = false
 
 hmdFilterConstant = 2.0
 handFilterConstant = 2.0
 chestFilterConstant = 10.0
+
+;;; HMD Adaptive Kalman Filter
+occlusionWeightingTimeConstant = 0.01
+precaptureInertialWeighting = 10.0;
+postcaptureInertialWeighting = 100.0;
