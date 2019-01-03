@@ -76,6 +76,12 @@ void GraspDexTrackers::InitializeCodaTrackers( void ) {
 	handCascadeTracker = new CascadePoseTracker();
 	chestCascadeTracker = new CascadePoseTracker();
 
+	// Decide wherher the cascaded trackers should attemp to realign
+	// to each other, depending on a parameter in the .ini file.
+	hmdCascadeTracker->performLocalRealignment = cascadeRealignment;
+	handCascadeTracker->performLocalRealignment = cascadeRealignment;
+	chestCascadeTracker->performLocalRealignment = cascadeRealignment;
+
 	// Define cascade for HMD.
 	if ( hmdCodaCascade == 2  ) {
 		int unit = 1;

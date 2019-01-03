@@ -161,6 +161,7 @@ namespace Grasp {
 		CascadePoseTracker *hmdCascadeTracker;
 		CascadePoseTracker *handCascadeTracker;
 		CascadePoseTracker *chestCascadeTracker;
+		bool	cascadeRealignment;
 
 		// Filtered versions of the coda-based trackers.
 		PoseTrackerFilter *hmdFilteredTracker;
@@ -175,6 +176,7 @@ namespace Grasp {
 		  hmdCodaCascade( -1 ),
 		  handCodaCascade( -1 ), 
 		  chestCodaCascade( -1 ),
+		  cascadeRealignment( false ),
 
 		  chestFilterConstant( 10.0 ),
 		  handFilterConstant( 2.0 ),
@@ -195,6 +197,7 @@ namespace Grasp {
 			if ( !strcmp( name, "hmdCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdCodaCascade = atoi( value );
 			if ( !strcmp( name, "handCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->handCodaCascade = atoi( value );
 			if ( !strcmp( name, "chestCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestCodaCascade = atoi( value );
+			if ( !strcmp( name, "cascadeRealignment" ) && !strcmp( section, "GraspTrackers" ) ) instance->cascadeRealignment = ( value[0] == 't' || value[0] == 'T' );
 			if ( !strcmp( name, "hmdFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdFilterConstant = atof( value );
 			if ( !strcmp( name, "handFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->handFilterConstant = atof( value );
 			if ( !strcmp( name, "chestFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestFilterConstant = atof( value );

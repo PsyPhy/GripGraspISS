@@ -28,6 +28,7 @@ class CascadePoseTracker : public PoseTracker {
 		CascadePoseTracker( PoseTracker *tracker = nullptr );
 		int AddTracker( PoseTracker *tracker );
 		~CascadePoseTracker();
+		bool performLocalRealignment;
 
 		bool Initialize( void );
 		bool  Update( void );
