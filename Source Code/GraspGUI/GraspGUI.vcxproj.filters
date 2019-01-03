@@ -78,6 +78,9 @@
     <EmbeddedResource Include="HistoryForm.resx">
       <Filter>Source Files\Resource Files</Filter>
     </EmbeddedResource>
+    <EmbeddedResource Include="CmdLinePopup.resx">
+      <Filter>Source Files\Resource Files</Filter>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\Lib\GLAUX.LIB">
