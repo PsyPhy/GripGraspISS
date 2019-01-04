@@ -35,17 +35,37 @@ chestOffset = 100
 
 [GraspTrackers]
 
-;;; 1 for Coda 1 only, 2 for Coda 2 only or 0 for cascade of both (first 2 then 1)
+;;; 1 for Coda 1 only, 2 for Coda 2 only 
+;;; 21 for cascade (first 2 then 1)
+;;; 12 for cascade (first 1 then 2)
 hmdCodaCascade = 2
 handCodaCascade = 21
 chestCodaCascade = 21
-cascadeRealignment = false
 
+;;; Determines whether the pose tracker for each cascade object is 
+;;; realigned to the pose of the tracker above it in the hierarchy
+;;; whenever both are visible. (true or false)
+cascadeRealignment = true
+
+;;; These are the filters for the CODA based pose trackers.
+;;; The higher the value, the greater the low-pass filtering.
+;;; A high value will supress jitter but will introduce lag.
+;;; Note that the filtering of the HMD is further affected by 
+;;; the parameters of the Kalman filter below.
 hmdFilterConstant = 2.0
 handFilterConstant = 2.0
 chestFilterConstant = 10.0
 
 ;;; HMD Adaptive Kalman Filter
+;;; When the optical markers have not been seen for awhile, we want
+;;; to converge quickly to the optical data, rather than drifting
+;;; slowly toward it. On the other hand, when the optical data is 
+;;; readily available, we can filter it to reduce noise, as it is only
+;;; used to correct for slow drift of the inertial estimate. 
+;;; Here we define 2 weighting factors and a time constant for how
+;;; the system shifts between them.  If you want to negate this 
+;;; behavior, set both weighting factors to the same value (e.g. 10.0).
 occlusionWeightingTimeConstant = 0.01
 precaptureInertialWeighting = 10.0;
-postcaptureInertialWeighting = 100.0;
+postcaptureInertialWeighting = 1.0;
+
