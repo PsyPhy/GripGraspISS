@@ -15,7 +15,9 @@
 
 using namespace PsyPhy;
 
-CascadePoseTracker::CascadePoseTracker( PoseTracker *tracker ) : nTrackers(0), performLocalRealignment(false) {
+CascadePoseTracker::CascadePoseTracker( PoseTracker *tracker ) {
+	nTrackers = 0;
+	performLocalRealignment = false;
 	if ( tracker ) AddTracker( tracker );
 	PoseTracker::PoseTracker();
 }
@@ -57,22 +59,25 @@ bool CascadePoseTracker::GetCurrentPoseIntrinsic( PsyPhy::TrackerPose &pose ) {
 	TrackerPose component_pose[MAX_CASCADED_TRACKERS];
 	pose.visible = false;
 	pose.time = 0.0;
-	for ( int trk = nTrackers - 1; trk >= 0; trk++ ) {
-		// Compute the pose from each component tracker.
+	// Compute the pose from each component tracker.
+	// We work our way up from the lowest in the hierarchy.
+	// The highest one in the list that is visible will
+	// determine the pose of the cascade.
+	for ( int trk = nTrackers - 1; trk >= 0; trk-- ) {
 		tracker[trk]->GetCurrentPose( component_pose[trk] );
-		// The highest one in the list that is visible will
-		// determine the pose of the cascade.
 		if ( component_pose[trk].visible ) {
 			CopyTrackerPose( pose, component_pose[trk] );
 			pose.time = component_pose[trk].time;
 			pose.visible = component_pose[trk].visible;
 		}
 	}
-	// Realign each component tracker locally to the immediate previous one, if they 
-	// are both visible. This should reduce jumps in the data when there is a transition
-	// from one tracker to the next.
-	for ( int trk = 1; trk < nTrackers; trk++ ) {
-		if ( component_pose[trk-1].visible ) tracker[trk]->BoresightTo( component_pose[trk-1].pose );
+	if ( performLocalRealignment ) {
+		// Realign each component tracker locally to the immediate previous one, if they 
+		// are both visible. This should reduce jumps in the data when there is a transition
+		// from one tracker to the next.
+		for ( int trk = 1; trk < nTrackers; trk++ ) {
+			if ( component_pose[trk-1].visible ) tracker[trk]->BoresightTo( component_pose[trk-1].pose );
+		}
 	}
 	cycle_counter++;
 	return pose.visible; 
