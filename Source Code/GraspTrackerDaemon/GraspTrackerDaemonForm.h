@@ -5,6 +5,8 @@
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
+typedef enum{ CONTINUOUS, POLLING, LEGACY, FAKE } TrackingType;
+
 namespace GraspTrackerDaemon {
 
 	using namespace System;
@@ -23,9 +25,8 @@ namespace GraspTrackerDaemon {
 	{
 	public:
 
-		bool use_coda;
-		bool use_legacy;
-		bool autohide;
+		bool			autohide;
+		TrackingType	tracking;
 
 		PsyPhy::Tracker				*coda;
 		Grasp::GraspDexTrackers		*trackers;
@@ -46,13 +47,15 @@ namespace GraspTrackerDaemon {
 	public: 
 		PsyPhy::VectorsMixin	*vm;
 
-		Form1(void) : use_coda( true ), use_legacy( false ), autohide( false ), recording( false ), nPoseSamples( 0 )
+		Form1(void) : tracking( CONTINUOUS ), autohide( false ), recording( false ), nPoseSamples( 0 )
 		{
 			InitializeComponent();
 			// By default, the daemon uses a CodaRTnet tracker to interface to the tracking hardware.
 			// One can change for other trackers by creating different cookie files.
-			if ( FileExists( "FakeCoda.flg" ) ) use_coda = false;
-			if ( FileExists( "LegacyCoda.flg") ) { use_coda = false; use_legacy = true; }
+			if ( FileExists( "FakeCoda.flg" ) ) tracking = FAKE;
+			if ( FileExists( "LegacyCoda.flg") ) tracking = LEGACY;
+			if ( FileExists( "PolledCoda.flg") ) tracking = POLLING;
+
 			// Create an object that provides us with vector and matrix capabilities.
 			vm = new VectorsMixin();
 		}

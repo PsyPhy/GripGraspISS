@@ -120,19 +120,31 @@ namespace GraspTrackerDaemon {
 		// Select which tracker to use to provide the marker data.
 		// The flags are set when the Form is instantiated. Here we
 		// do the actual work to create an instance of the appropriate tracker.
-		if ( use_coda ) {
+		switch ( tracking ) {
+			
+		case CONTINUOUS:
 			coda = new CodaRTnetContinuousTracker();
-			this->Text = this->Text + " (Coda RTnet Tracker)";
-		}
-		else if ( use_legacy ) {
+			this->Text = this->Text + " (Coda RTnet Continuous Tracker)";
+			break;
+
+		case LEGACY:
 			coda = new CodaLegacyPolledTracker();
-			this->Text = this->Text + " (Coda Legacy Tracker)";
-		}
-		else {
+			this->Text = this->Text + " (Coda Legacy Polled Tracker)";
+			break;
+
+		case POLLING:
+			coda = new CodaRTnetTracker();
+			this->Text = this->Text + " (Coda RTnet Polled Tracker)";
+			break;
+		
+		case FAKE:
+		default:
 			CodaRTnetNullTracker *null_tracker = new CodaRTnetNullTracker();
 			null_tracker->fakeMovements = true;
 			coda = null_tracker;
 			this->Text = this->Text + " (Null Tracker)";
+			break;
+
 		}
 
 		// We use GraspDexTrackers to provide the infrastructure for the pose trackers
@@ -141,7 +153,7 @@ namespace GraspTrackerDaemon {
 		// we create a null pose tracker just to fill in.
 		PoseTracker *roll = new NullPoseTracker();
 		// Create a set of Pose tracker so that poses can be computed here in the daemon.
-		trackers = new GraspDexTrackers( coda, roll );
+		trackers = new GraspDexTrackers( coda, roll, "Grasp.ini" );
 		trackers->Initialize();
 		// Get the alignment transforms for the tracker units. These will be sent with
 		// each record of marker data. The underlying assumption is that the alignment 
