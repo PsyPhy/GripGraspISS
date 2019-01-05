@@ -1,167 +1,67 @@
-﻿Build started 03/01/2019 07:26:33.
-Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (build target(s)).
-Building with tools version "4.0".
-Target "_CheckForInvalidConfigurationAndPlatform" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (entry point):
-Task "Error" skipped, due to false condition; ( '$(_InvalidConfigurationError)' == 'true' ) was evaluated as ( '' == 'true' ).
-Task "Warning" skipped, due to false condition; ( '$(_InvalidConfigurationWarning)' == 'true' ) was evaluated as ( '' == 'true' ).
-Task "Message"
-  Configuration=Training
-Done executing task "Message".
-Task "Message"
-  Platform=Win32
-Done executing task "Message".
-Task "Error" skipped, due to false condition; ('$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')) was evaluated as ('D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\Training\' != '' and !HasTrailingSlash('D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\Training\')).
-Task "Error" skipped, due to false condition; ('$(BaseIntermediateOutputPath)' != '' and !HasTrailingSlash('$(BaseIntermediateOutputPath)')) was evaluated as ('obj\' != '' and !HasTrailingSlash('obj\')).
-Task "Error" skipped, due to false condition; ('$(IntermediateOutputPath)' != '' and !HasTrailingSlash('$(IntermediateOutputPath)')) was evaluated as ('obj\Win32\Training\' != '' and !HasTrailingSlash('obj\Win32\Training\')).
-Done building target "_CheckForInvalidConfigurationAndPlatform" in project "ReleaseGrasp.vcxproj".
-Target "SetBuildDefaultEnvironmentVariables" in file "C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.Cpp.targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "PrepareForNMakeBuild" depends on it):
-Using "SetEnv" task from assembly "Microsoft.Build.CppTasks.Common, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a".
-Task "SetEnv"
-  PATH=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\Tools\bin;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\tools;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\ide;C:\Program Files (x86)\HTML Help Workshop;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\\bin;C:\Windows\Microsoft.NET\Framework\v4.0.30319\;C:\Program Files (x86)\Microsoft Visual Studio 10.0\;C:\Windows\SysWow64;;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Vodafone\Vodafone Mobile Broadband\Optimization Client\;C:\Program Files (x86)\QuickTime\QTSystem\;C:\ProgramData\oracle\Java\Javapath;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\WindowsPowerShell\v1.0\;D:\Users\E14001\AppData\Local\GitHubDesktop\bin;
-Done executing task "SetEnv".
-Task "SetEnv" skipped, due to false condition; ('$(_IsNativeEnvironment)' == 'true') was evaluated as ('' == 'true').
-Task "SetEnv"
-  LIB=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\atlmfc\lib;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\lib;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\\lib
-Done executing task "SetEnv".
-Task "SetEnv"
-  LIBPATH=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\atlmfc\lib;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib
-Done executing task "SetEnv".
-Task "SetEnv"
-  INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\atlmfc\include;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\include;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\\include;
-Done executing task "SetEnv".
-Done building target "SetBuildDefaultEnvironmentVariables" in project "ReleaseGrasp.vcxproj".
-Target "SetUserMacroEnvironmentVariables" skipped, due to false condition; ('@(BuildMacro)' != '') was evaluated as ('' != '').
-Target "PrepareForNMakeBuild" in file "C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.MakeFile.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "Build" depends on it):
-Task "MakeDir"
-Done executing task "MakeDir".
-Done building target "PrepareForNMakeBuild" in project "ReleaseGrasp.vcxproj".
-Target "BeforeResolveReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveReferences" depends on it):
-Done building target "BeforeResolveReferences" in project "ReleaseGrasp.vcxproj".
-Target "AssignProjectConfiguration" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveReferences" depends on it):
-Task "AssignProjectConfiguration"
-  Project reference "..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj" has been assigned the "Release|Win32" configuration.
-Done executing task "AssignProjectConfiguration".
-Done building target "AssignProjectConfiguration" in project "ReleaseGrasp.vcxproj".
-Target "AssignProjectConfiguration" skipped. Previously built successfully.
-Target "_SplitProjectReferencesByFileExistence" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveProjectReferences" depends on it):
-Task "ResolveNonMSBuildProjectOutput"
-  Resolving project reference "..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj".
-  Project reference "..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj" has not been resolved.
-Done executing task "ResolveNonMSBuildProjectOutput".
-Done building target "_SplitProjectReferencesByFileExistence" in project "ReleaseGrasp.vcxproj".
-Target "ResolveProjectReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveReferences" depends on it):
-Task "MSBuild" skipped, due to false condition; ('%(_MSBuildProjectReferenceExistent.BuildReference)' == 'true' and '@(ProjectReferenceWithConfiguration)' != '' and ('$(BuildingInsideVisualStudio)' == 'true' or '$(BuildProjectReferences)' != 'true') and '$(VisualStudioVersion)' != '10.0' and '@(_MSBuildProjectReferenceExistent)' != '') was evaluated as ('true' == 'true' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '' and ('true' == 'true' or 'true' != 'true') and '10.0' != '10.0' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '').
-Task "MSBuild"
-  Global Properties:
-    Configuration=Release
-    Platform=Win32
-Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (1) is building "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj" (2) on node 2 (GetTargetPath target(s)).
-Building with tools version "4.0".
-Target "_CheckForInvalidConfigurationAndPlatform" skipped. Previously built successfully.
-Target "GetTargetPath" skipped. Previously built successfully.
-Done Building Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj" (GetTargetPath target(s)).
-Done executing task "MSBuild".
-Task "MSBuild" skipped, due to false condition; ('%(_MSBuildProjectReferenceExistent.BuildReference)' == 'true' and '@(ProjectReferenceWithConfiguration)' != '' and '$(BuildingInsideVisualStudio)' != 'true' and '$(BuildProjectReferences)' == 'true' and '@(_MSBuildProjectReferenceExistent)' != '') was evaluated as ('true' == 'true' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '' and 'true' != 'true' and 'true' == 'true' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '').
-Task "MSBuild" skipped, due to false condition; ('%(_MSBuildProjectReferenceExistent.BuildReference)' == 'true' and '@(ProjectReferenceWithConfiguration)' != '' and '$(BuildingProject)' == 'true' and '@(_MSBuildProjectReferenceExistent)' != '') was evaluated as ('true' == 'true' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '' and 'false' == 'true' and '..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '').
-Task "Warning" skipped, due to false condition; ('@(ProjectReferenceWithConfiguration)' != '' and '@(_MSBuildProjectReferenceNonexistent)' != '') was evaluated as ('..\UpdateRuntimeForGrasp\UpdateRuntimeForGrasp.vcxproj' != '' and '' != '').
-Done building target "ResolveProjectReferences" in project "ReleaseGrasp.vcxproj".
-Target "ResolveNativeReferences" skipped, due to false condition; ('@(NativeReference)'!='') was evaluated as (''!='').
-Target "GetFrameworkPaths" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.NETFramework.targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveAssemblyReferences" depends on it):
-Done building target "GetFrameworkPaths" in project "ReleaseGrasp.vcxproj".
-Target "GetWinFXPath" skipped, due to false condition; (('@(Page)' != '' or '@(ApplicationDefinition)' != '' or '@(Resource)' != '') and ('$(GetWinFXNativePath)' != '' or '$(GetWinFXWoWPath)' != '' )) was evaluated as (('' != '' or '' != '' or '' != '') and ('' != '' or '' != '' )).
-Target "GetReferenceAssemblyPaths" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveAssemblyReferences" depends on it):
-Task "GetReferenceAssemblyPaths" skipped, due to false condition; ('$(TargetFrameworkMoniker)' != '' and ('$(_TargetFrameworkDirectories)' == '' or '$(_FullFrameworkReferenceAssemblyPaths)' == '')) was evaluated as ('.NETFramework,Version=v4.0' != '' and ('C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0' == '' or 'C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0' == '')).
-Done building target "GetReferenceAssemblyPaths" in project "ReleaseGrasp.vcxproj".
-Target "GetFrameworkPaths" skipped. Previously built successfully.
-Target "GetReferenceAssemblyPaths" skipped. Previously built successfully.
-Target "PrepareForBuild" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveAssemblyReferences" depends on it):
-Task "FindAppConfigFile"
-Done executing task "FindAppConfigFile".
-Task "MakeDir"
-Done executing task "MakeDir".
-Done building target "PrepareForBuild" in project "ReleaseGrasp.vcxproj".
-Target "GetInstalledSDKLocations" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveSDKReferences" depends on it):
-Task "GetInstalledSDKLocations" skipped, due to false condition; ('@(SDKReference)' != '') was evaluated as ('' != '').
-Done building target "GetInstalledSDKLocations" in project "ReleaseGrasp.vcxproj".
-Target "ResolveSDKReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveAssemblyReferences" depends on it):
-Task "ResolveSDKReference" skipped, due to false condition; ('@(SDKReference)'!='') was evaluated as (''!='').
-Done building target "ResolveSDKReferences" in project "ReleaseGrasp.vcxproj".
-Target "ResolveSDKReferences" skipped. Previously built successfully.
-Target "ExpandSDKReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveAssemblyReferences" depends on it):
-Task "GetSDKReferenceFiles" skipped, due to false condition; ('@(ResolvedSDKReference)'!='') was evaluated as (''!='').
-Done building target "ExpandSDKReferences" in project "ReleaseGrasp.vcxproj".
-Target "ResolveAssemblyReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveReferences" depends on it):
-Task "ResolveAssemblyReference"
-Done executing task "ResolveAssemblyReference".
-Done building target "ResolveAssemblyReferences" in project "ReleaseGrasp.vcxproj".
-Target "ResolveComReferences" skipped, due to false condition; ('@(COMReference)'!='' or '@(COMFileReference)'!='') was evaluated as (''!='' or ''!='').
-Target "AfterResolveReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "ResolveReferences" depends on it):
-Done building target "AfterResolveReferences" in project "ReleaseGrasp.vcxproj".
-Target "ImplicitlyExpandDesignTimeFacades" skipped, due to false condition; ('$(ImplicitlyExpandDesignTimeFacades)' == 'true') was evaluated as ('' == 'true').
-Target "ResolveReferences" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "Build" depends on it):
-Done building target "ResolveReferences" in project "ReleaseGrasp.vcxproj".
-Target "GetTargetPath" in file "C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.MakeFile.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (target "Build" depends on it):
-Done building target "GetTargetPath" in project "ReleaseGrasp.vcxproj".
-Target "Build" in file "C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.MakeFile.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (entry point):
-Task "VCMessage" skipped, due to false condition; ('$(NMakeBuildCommandLine)'=='') was evaluated as ('nmake /NOLOGO ReleaseGrasp.training.mak'=='').
-Task "Exec"
+﻿Build started 1/4/2019 3:46:39 PM.
+Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (build target(s)).
+Build:
   nmake /NOLOGO ReleaseGrasp.training.mak
   	ReleaseGrasp.bat Training
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>setlocal
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>setlocal
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM  
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM  
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM ReleaseGrasp.bat 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM ReleaseGrasp.bat 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM A batch file that creates a tar archive with the GRASPonISS runtime installation. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM A batch file that creates a tar archive with the GRASPonISS runtime installation. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM Create a file tag based on the compiled build date and time. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM Create a file tag based on the compiled build date and time. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM The batch file  D:\Users\E14001\AppData\Local\Temp\SetCommonTimestamp.bat was created by the CommonTimestamp project. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM The batch file  C:\DOCUME~1\psyphy\LOCALS~1\Temp\SetCommonTimestamp.bat was created by the CommonTimestamp project. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM We call it here to get the timestamp info that was compiled into the executables. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM We call it here to get the timestamp info that was compiled into the executables. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>call D:\Users\E14001\AppData\Local\Temp\SetCommonTimestamp.bat 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>call C:\DOCUME~1\psyphy\LOCALS~1\Temp\SetCommonTimestamp.bat 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-01-03 07h26m14s 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-01-04 15h46m18s 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAG=(2019-01-03 07h26m14s) 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAG=(2019-01-04 15h46m18s) 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" 
-  Creating Grasp Runtime Release "..\GRASP Runtime Training (2019-01-03 07h26m14s).tar"
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" 
+  Creating Grasp Runtime Release "..\GRASP Runtime Training (2019-01-04 15h46m18s).tar"
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAR=Utils\tar.exe 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAR=Utils\tar.exe 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set VERBOSE= 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set VERBOSE= 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>pushd ..\.. 
+  C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp>pushd ..\.. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --create  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" RunGRASP.bat 
+  C:\GitHub\GripGraspISS>Utils\tar.exe --create  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" RunGRASP.bat 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>if NOT Training == Training goto :NOTTRAINING 
+  C:\GitHub\GripGraspISS>if NOT Training == Training goto :NOTTRAINING 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>REM If we are creating a training version, then by default set for mirroring mode. 
+  C:\GitHub\GripGraspISS>REM If we are creating a training version, then by default set for mirroring mode. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo Enabling mirroring. 
+  C:\GitHub\GripGraspISS>echo Enabling mirroring. 
   Enabling mirroring.
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "Mirroring on."  1>Mirroring.flg 
+  C:\GitHub\GripGraspISS>echo "Mirroring on."  1>Mirroring.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Mirroring.flg 
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Mirroring.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>REM Configure for EAC Codas and Marker Structures 
+  C:\GitHub\GripGraspISS>echo chest  1>ChestAlignGaze.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini  
-          1 file(s) copied.
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" ChestAlignGaze.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>copy /Y Bdy\TrM\*.bdy Bdy 
+  C:\GitHub\GripGraspISS>REM Configure for EAC Codas and Marker Structures 
+  
+  C:\GitHub\GripGraspISS>copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini  
+          1 fichier(s) copié(s).
+  
+  C:\GitHub\GripGraspISS>copy /Y Bdy\TrM\*.bdy Bdy 
   Bdy\TrM\Chest.bdy
   Bdy\TrM\ChestTilted.bdy
   Bdy\TrM\Hand.bdy
@@ -169,61 +69,39 @@ Task "Exec"
   Bdy\TrM\measuredChest.bdy
   Bdy\TrM\measuredHand.bdy
   Bdy\TrM\measuredHMD.bdy
-          7 file(s) copied.
+          7 fichier(s) copié(s).
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>goto :COMMON 
+  C:\GitHub\GripGraspISS>goto :COMMON 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Bdy/* 
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Bdy/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Bmp/* 
-  Utils\tar.exe: Cannot write to ..\GRASP Runtime Training (2019-01-03 07h26m14s).tar: No space left on device
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Bmp/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Executables/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Executables/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Utils/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Utils/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Instructions/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Instructions/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Scripts/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Scripts/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Sequences/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Sequences/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" InitFiles/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" InitFiles/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Documentation/* 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Documentation/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" CodaRTnet.ini 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" CodaRTnet.ini 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-03 07h26m14s).tar" Grasp.ini 
-  Utils\tar.exe: Unexpected EOF on archive file
-  Utils\tar.exe: Error is not recoverable: exiting now
+  C:\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Training (2019-01-04 15h46m18s).tar" Grasp.ini 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>REM Keep a record of releases. 
+  C:\GitHub\GripGraspISS>REM Keep a record of releases. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Training (2019-01-03 07h26m14s).tar"  1>>GripGraspReleases.log 
+  C:\GitHub\GripGraspISS>echo "..\GRASP Runtime Training (2019-01-04 15h46m18s).tar"  1>>GripGraspReleases.log 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Training (2019-01-03 07h26m14s).tar"  1>>GraspReleases.log 
-Done executing task "Exec".
-Done building target "Build" in project "ReleaseGrasp.vcxproj".
-Done Building Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (build target(s)).
+  C:\GitHub\GripGraspISS>echo "..\GRASP Runtime Training (2019-01-04 15h46m18s).tar"  1>>GraspReleases.log 
+Done Building Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.11
+Time Elapsed 00:00:22.71
