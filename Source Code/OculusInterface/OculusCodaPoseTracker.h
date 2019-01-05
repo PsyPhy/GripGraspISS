@@ -51,7 +51,7 @@ class OculusCodaPoseTracker : public PoseTracker {
 		// weight. 
 		double	occlusionWeightingTimeConstant;
 
-		OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda );
+		OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda, const char *ini_filename = nullptr );
 		~OculusCodaPoseTracker();
 
 		// Provide the means to read a .ini file to set configuration parameters.

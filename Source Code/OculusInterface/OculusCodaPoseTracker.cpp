@@ -14,10 +14,12 @@
 #include "OculusCodaPoseTracker.h"
 #include "../Useful/Useful.h"
 #include "../Useful/fOutputDebugString.h"
+#include "../Useful/fMessageBox.h"
+#include "../Useful/ini.h"
 
 using namespace PsyPhy;
 
-OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda ) {
+OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker *coda, const char *ini_filename ) {
 
 	oculusMapper = mapper;
 	absoluteTracker = coda;
@@ -35,6 +37,13 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();
+
+	if ( ini_filename ) {
+		fOutputDebugString( "Parsing %s for OculusCodaPoseTracker.\n", ini_filename );
+		int error = ini_parse( ini_filename, iniHandler, this );
+		if ( error != 0 ) fAbortMessage( "OculusCodaPoseTracker","Parsing error %d for file %s.\n", error, ini_filename );
+	}
+
 }
 bool OculusCodaPoseTracker::Initialize( void ) { 
 	
@@ -140,13 +149,13 @@ bool OculusCodaPoseTracker::Update( void ) {
 			// Once we have updated once toward a pose from the absolute tracker, subsequent steps
 			// will use a larger and larger weigthing factor to slow down the corrective actions.
 			InertialWeighting += ( postcaptureInertialWeighting - InertialWeighting ) * occlusionWeightingTimeConstant;
-			fOutputDebugString( "Cycle %4d: %f Step toward Absolute.\n", cycle_counter, occlusionWeightingTimeConstant );
+			fOutputDebugString( "Cycle %4d: %f Step toward Absolute.\n", cycle_counter, InertialWeighting );
 		}
 		else {
 			// The longer the absolute tracker data has been missing, the more rapidly we want to
 			// move to the absolute position when it comes back, to avoid a slow convergence to the
 			// absolute data that is noticeable in the VR.
-			InertialWeighting += ( precaptureInertialWeighting - InertialWeighting ) * 0.01;
+			InertialWeighting += ( precaptureInertialWeighting - InertialWeighting ) * occlusionWeightingTimeConstant;
 			fOutputDebugString( "Cycle %4d: %f No absolute update.\n", cycle_counter, InertialWeighting );
 		}
 	}

@@ -291,7 +291,9 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	InitializeCodaTrackers();
 
 	// Create a pose tracker that combines Coda and Oculus data for head tracking.
-	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdFilteredTracker );
+	// Note that oculusCodaPoseTracker has the ability to parse a .ini file, so 
+	// we pass to it the same filename as the one used by GraspOculusCodaTrackers.
+	oculusCodaPoseTracker = new PsyPhy::OculusCodaPoseTracker( oculusMapper, hmdFilteredTracker, ini_filename );
 	fAbortMessageOnCondition( !oculusCodaPoseTracker->Initialize(), "GraspVR", "Error initializing oculusCodaPoseTracker." );
 
 	// Create a tracker to control the roll orientation via the mouse.
