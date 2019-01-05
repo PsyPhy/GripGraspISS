@@ -30,6 +30,7 @@
 #include "../Trackers/PoseTrackers.h"
 #include "../Trackers/CodaRTnetTracker.h"
 #include "../Trackers/CodaRTnetContinuousTracker.h"
+#include "../Trackers/CodaRTnetPolledTracker.h"
 #include "../Trackers/CodaRTnetDaemonTracker.h"
 #include "../Trackers/CodaRTnetNullTracker.h"
 #include "../Trackers/CodaLegacyPolledTracker.h"
@@ -66,6 +67,7 @@ namespace Grasp {
 		static double	mouseGain;
 		static double	arrowGain;
 		static Pose		chestPoseSim;
+		const char		*ini_filename;
 
 	public: 
 
@@ -80,7 +82,15 @@ namespace Grasp {
 		PoseTracker *chestTracker;
 		PoseTracker *rollTracker;
 
-		GraspTrackers() {}
+		GraspTrackers(  const char *ini_filename = nullptr ) {
+			this->ini_filename = ini_filename;
+		}
+		// By convention, the constructor code allows one to parse a .ini file.
+		// Provide a default callback for parsing an init file.
+		// This one does nothing, but derived classes may have their own.
+		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			return 1;
+		}
 		virtual void Initialize( void ) = 0;
 		virtual void Update( void );
 		virtual bool GetCurrentHMDPose( TrackerPose &pose ) {
@@ -117,12 +127,17 @@ namespace Grasp {
 		OpenGLWindow	*window;
 
 	public:
-		virtual void Initialize( void );
-		GraspSimulatedTrackers( void ) {}
-		GraspSimulatedTrackers( OpenGLWindow *window ) {
+		GraspSimulatedTrackers( OpenGLWindow *window, const char *ini_filename = nullptr ) {
 			this->window = window;
+			this->ini_filename = ini_filename;
+			if ( ini_filename ) {
+				fOutputDebugString( "Parsing %s for GraspSimulatedTrackers.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fAbortMessage( "GraspSimulatedTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			}
 		}
 		~GraspSimulatedTrackers( void ) {}
+		void Initialize( void );
 	};
 
 	// GraspDexTrackers is any set of trackers that relies on the DEX hardware.
@@ -172,47 +187,59 @@ namespace Grasp {
 		void UpdatePoseTrackers( void );
 
 	public:
-		GraspDexTrackers( Tracker *tracker = nullptr, PoseTracker *roll = nullptr ) : 
+		GraspDexTrackers( Tracker *tracker = nullptr, PoseTracker *roll = nullptr, const char *ini_filename = nullptr   ) : 
+
 		  hmdCodaCascade( -1 ),
-		  handCodaCascade( -1 ), 
-		  chestCodaCascade( -1 ),
-		  cascadeRealignment( false ),
+			  handCodaCascade( -1 ), 
+			  chestCodaCascade( -1 ),
+			  cascadeRealignment( false ),
 
-		  chestFilterConstant( 10.0 ),
-		  handFilterConstant( 2.0 ),
-		  hmdFilterConstant( 2.0 )
-		  
+			  chestFilterConstant( 10.0 ),
+			  handFilterConstant( 2.0 ),
+			  hmdFilterConstant( 2.0 ),
+
+			  nMarkers( 24 ),
+			  nCodaUnits( 2 )
+
 		  {
-				nMarkers = 24;
-				nCodaUnits = 2;
-				codaTracker = tracker;
-				rollTracker = roll;
-				int error = ini_parse( "Grasp.ini", iniHandler, this );
-				if ( error != 0 ) fOutputDebugString( "GraspTrackers: Parsing error (%d).\n", error );
-			}
-		// Provide the means to read a .ini file to set configuration parameters.
-		// This is defined here as static because its address is sent as a callback to a parsing routine.
-		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
-			GraspDexTrackers *instance = (GraspDexTrackers *) which_instance;
-			if ( !strcmp( name, "hmdCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdCodaCascade = atoi( value );
-			if ( !strcmp( name, "handCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->handCodaCascade = atoi( value );
-			if ( !strcmp( name, "chestCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestCodaCascade = atoi( value );
-			if ( !strcmp( name, "cascadeRealignment" ) && !strcmp( section, "GraspTrackers" ) ) instance->cascadeRealignment = ( value[0] == 't' || value[0] == 'T' );
-			if ( !strcmp( name, "hmdFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdFilterConstant = atof( value );
-			if ( !strcmp( name, "handFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->handFilterConstant = atof( value );
-			if ( !strcmp( name, "chestFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestFilterConstant = atof( value );
-			return 1;
-		}
-		virtual void Initialize( void );
-		virtual void InitializeCodaTrackers( void );
-		virtual unsigned int GetTrackerStatus( void );
-		virtual void Update( void );
-		virtual void Release( void );
+			  codaTracker = tracker;
+			  rollTracker = roll;
+			  this->ini_filename = ini_filename;
+			  // Read parameters from an init file, if one has been specified by the caller.
+			  if ( ini_filename ) {
+				  fOutputDebugString( "Parsing %s for GraspDexTrackers.\n", ini_filename );
+				  int error = ini_parse( ini_filename, iniHandler, this );
+				  if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			  }
+		  }
+		  ~GraspDexTrackers( void ) {}
 
-		void WriteAdditionalColumnHeadings( FILE *fp );
-		void WriteAdditionalTrackerData( FILE *fp );
+		  // Provide the means to read a .ini file to set configuration parameters.
+		  // This is defined here as static because its address is sent as a callback to a parsing routine.
+		  static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
+			  GraspDexTrackers *instance = (GraspDexTrackers *) which_instance;
+			  if ( !strcmp( name, "hmdCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdCodaCascade = atoi( value );
+			  else if ( !strcmp( name, "handCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->handCodaCascade = atoi( value );
+			  else if ( !strcmp( name, "chestCodaCascade" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestCodaCascade = atoi( value );
+			  else if ( !strcmp( name, "cascadeRealignment" ) && !strcmp( section, "GraspTrackers" ) ) instance->cascadeRealignment = ( value[0] == 't' || value[0] == 'T' );
+			  else if ( !strcmp( name, "hmdFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->hmdFilterConstant = atof( value );
+			  else if ( !strcmp( name, "handFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->handFilterConstant = atof( value );
+			  else if ( !strcmp( name, "chestFilterConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->chestFilterConstant = atof( value );
+			  else return 1;
+			  // If we get to here, there was a match in the list above.
+			  // So show what was found when debugging.
+			  fOutputDebugString( "Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
+			  return 1;
+		  }
+		  virtual void Initialize( void );
+		  virtual void InitializeCodaTrackers( void );
+		  virtual unsigned int GetTrackerStatus( void );
+		  virtual void Update( void );
+		  virtual void Release( void );
 
-		~GraspDexTrackers( void ) {}
+		  void WriteAdditionalColumnHeadings( FILE *fp );
+		  void WriteAdditionalTrackerData( FILE *fp );
+
 
 	private:
 
@@ -230,11 +257,16 @@ namespace Grasp {
 	public:
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 		OculusCodaPoseTracker *oculusCodaPoseTracker;
-		GraspOculusCodaTrackers( void ) {}
-		GraspOculusCodaTrackers( OculusMapper *mapper, CodaRTnetTracker *tracker ) {
+		GraspOculusCodaTrackers( OculusMapper *mapper, CodaRTnetTracker *tracker, const char *ini_filename = nullptr ) {
 			oculusMapper = mapper;
 			codaTracker = tracker;
-			GraspOculusCodaTrackers();
+			this->ini_filename = ini_filename;
+			// Read parameters from an init file, if one has been specified by the caller.
+			if ( ini_filename ) {
+				fOutputDebugString( "Parsing %s for GraspOculusCodaTrackers.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			}
 		}
 		void Initialize( void );
 	};
@@ -246,14 +278,18 @@ namespace Grasp {
 
 	public:
 		PoseTracker *chestTrackerRaw;
-		GraspOculusTrackers( void ) {}
-		GraspOculusTrackers( OculusMapper *mapper ) {
+		GraspOculusTrackers( OculusMapper *mapper, const char *ini_filename = nullptr   ) {
 			oculusMapper = mapper;
-			GraspOculusTrackers();
+			this->ini_filename = ini_filename;
+			// Read parameters from an init file, if one has been specified by the caller.
+			if ( ini_filename ) {
+				fOutputDebugString( "Parsing %s for GraspOculusTrackers.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fAbortMessage( "GraspOculusTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			}
 		}
 		void Initialize( void );
 	};
-
 
 	// GraspOculusLiteTrackers provides a solution when the Coda is not available
 	// and when we don't have the Oculus touch sensors.
@@ -266,11 +302,18 @@ namespace Grasp {
 
 	public:
 		PoseTracker *chestTrackerRaw;
-		void Initialize( void );
-		GraspOculusLiteTrackers( OculusMapper *mapper ) {
+		GraspOculusLiteTrackers( OculusMapper *mapper, const char *ini_filename = nullptr  ) {
 			oculusMapper = mapper;
+			this->ini_filename = ini_filename;
+			// Read parameters from an init file, if one has been specified by the caller.
+			if ( ini_filename ) {
+				fOutputDebugString( "Parsing %s for GraspOculusLiteTrackers.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fAbortMessage( "GraspOculusLiteTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			}
 		}
 		~GraspOculusLiteTrackers( void ) {}
+		void Initialize( void );
 	};
 
 

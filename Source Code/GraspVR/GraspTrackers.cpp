@@ -239,15 +239,6 @@ void GraspDexTrackers::Release( void ) {
 	// Do what all flavors of GraspTrackers do.
 	GraspTrackers::Release();
 
-#ifdef BACKGROUND_GET_DATA
-
-	// Halt the Coda real-time frame acquisition that is occuring in a background thread.
-	if ( threadHandle ) {
-		stopMarkerGrabs = true;
-		WaitForSingleObject( threadHandle, INFINITE );
-	}
-#endif
-
 	// Halt the continuous Coda acquisition.
 	codaTracker->AbortAcquisition();
 	codaTracker->Quit();
@@ -327,7 +318,7 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 
 // GraspOculusOnlyTrackers is a version that uses only the Oculus and simulated trackers.
 
-void GraspOculusTrackers::Initialize( void ) {
+void GraspOculusTrackers::Initialize( void  ) {
 
 	// Create a pose tracker that uses only the Oculus.
 	
@@ -402,6 +393,7 @@ void GraspOculusLiteTrackers::Initialize( void ) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // GraspSimulatedTrackers avoids all specific hardware. For now, it does no tracking at all.
+
 
 void GraspSimulatedTrackers::Initialize( void ) {
 
