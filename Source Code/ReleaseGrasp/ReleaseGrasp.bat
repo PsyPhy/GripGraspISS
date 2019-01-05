@@ -31,6 +31,8 @@ REM If we are creating a training version, then by default set for mirroring mod
 echo Enabling mirroring.
 echo "Mirroring on." > Mirroring.flg
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Mirroring.flg
+echo chest > ChestAlignGaze.flg
+%TAR% --append %VERBOSE% --file=%ARCHIVE% ChestAlignGaze.flg
 
 REM Configure for EAC Codas and Marker Structures
 copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini 
