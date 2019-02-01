@@ -249,9 +249,11 @@ void GraspDexTrackers::Release( void ) {
 // The base class GraspTrackers takes care of writing out the pose data from each cycle.
 // Derived classes are given the chance to add additional columns to the data file.
 // When it is a Dex tracker, we use this feature to add the marker data to the file.
+
 void GraspDexTrackers::WriteAdditionalColumnHeadings( FILE *fp ) {
 	for ( int unit = 0; unit < codaTracker->nUnits; unit++ ) codaTracker->WriteColumnHeadings( fp, unit );
 }
+
 void GraspDexTrackers::WriteAdditionalTrackerData( FILE *fp ) {
 	for ( int unit = 0; unit < codaTracker->nUnits; unit++ ) codaTracker->WriteMarkerData( fp, markerFrame[unit] );
 }
@@ -271,7 +273,7 @@ void GraspDexTrackers::Initialize( void ) {
 	hmdTracker = hmdFilteredTracker;
 	handTracker = handFilteredTracker;
 	chestTracker = chestFilteredTracker;
-	
+
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
 
@@ -306,7 +308,7 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	handTracker = handFilteredTracker;
 	chestTracker = chestFilteredTracker;
 	rollTracker = mouseRollTracker;
-	
+
 	// Place the hand at a constant position relative to the origin.
 	rollTracker->OffsetTo( handPoseV );
 
@@ -315,18 +317,33 @@ void GraspOculusCodaTrackers::Initialize( void ) {
 	// Allow them to update.
 	Update();
 } 
+// We also show the state of the adaptive Kalman filter.
+// This will probably be removed.
+void GraspOculusCodaTrackers::WriteAdditionalColumnHeadings( FILE *fp ) {
+	GraspDexTrackers::WriteAdditionalColumnHeadings( fp );
+	fprintf( fp, " Pre; Post; TC; Weight" );
+}
+void GraspOculusCodaTrackers::WriteAdditionalTrackerData( FILE *fp ) {
+	GraspDexTrackers::WriteAdditionalTrackerData( fp );
+	fprintf( fp, " %f; %f; %f; %f" , 
+		oculusCodaPoseTracker->precaptureInertialWeighting,
+		oculusCodaPoseTracker->postcaptureInertialWeighting,
+		oculusCodaPoseTracker->occlusionWeightingTimeConstant,
+		oculusCodaPoseTracker->InertialWeighting
+		);
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// GraspOculusOnlyTrackers is a version that uses only the Oculus and simulated trackers.
+// GraspOculusOnlyTrackers is a version that uses only the Oculus trackers, including the hand controllers.
 
 void GraspOculusTrackers::Initialize( void  ) {
 
 	// Create a pose tracker that uses only the Oculus.
-	
+
 	// This one uses the full Oculus tracker, incuding drift compensation with gravity.
-	 hmdTracker = new PsyPhy::OculusHMDPoseTracker( oculusMapper );
-	 fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspOculusTrackers", "Error initializing OculusPoseTracker." );
+	hmdTracker = new PsyPhy::OculusHMDPoseTracker( oculusMapper );
+	fAbortMessageOnCondition( !hmdTracker->Initialize(), "GraspOculusTrackers", "Error initializing OculusPoseTracker." );
 
 	// The hand tracker is based on the right hand Oculus Touch.
 	handTracker = new PsyPhy::OculusRightHandPoseTracker( oculusMapper );
@@ -338,7 +355,7 @@ void GraspOculusTrackers::Initialize( void  ) {
 	// Filter the chest pose.
 	chestTracker = new PoseTrackerFilter( chestTrackerRaw, 2.0 );
 	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspOculusTrackers", "Error initializing PoseTrackerFilter." );
-	
+
 	// Create a tracker to control roll movements of the hand for the *-V responses.
 	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspOculusTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );
@@ -347,14 +364,16 @@ void GraspOculusTrackers::Initialize( void  ) {
 	rollTracker->OffsetTo( handPoseV );
 
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// GraspOculusOnlyTrackers is a version that uses only the Oculus and simulated trackers.
+// GraspOculusOnlyTrackers is a version that uses only the Oculus for the HMD
+// and simulated trackers for the hand and chest.
 
 void GraspOculusLiteTrackers::Initialize( void ) {
 
 	// Create a pose tracker that uses only the Oculus.
-	
+
 	// Pick one of the two Oculus-only hmd trackers by commenting or uncommenting below:
 	// This one uses the full Oculus tracker, incuding drift compensation with gravity.
 	hmdTracker = new PsyPhy::OculusHMDPoseTracker( oculusMapper );
@@ -381,7 +400,7 @@ void GraspOculusLiteTrackers::Initialize( void ) {
 	// Filter the chest pose.
 	chestTracker = new PoseTrackerFilter( chestTrackerRaw, 10.0 );
 	fAbortMessageOnCondition( !chestTracker->Initialize(), "GraspOculusLiteTrackers", "Error initializing PoseTrackerFilter." );
-	
+
 	// Create a tracker to control roll movements of the hand for the *-V responses.
 	rollTracker = new PsyPhy::MouseRollPoseTracker( oculusMapper, mouseGain );
 	fAbortMessageOnCondition( !rollTracker->Initialize(), "GraspOculusLiteTrackers", "Error initializing MouseRollPoseTracker for the mouse tracker." );

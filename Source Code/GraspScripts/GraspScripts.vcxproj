@@ -128,11 +128,6 @@
     <None Include="V-Vseated-training.pcl" />
     <None Include="V-Vseated.pcl" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
-      <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
