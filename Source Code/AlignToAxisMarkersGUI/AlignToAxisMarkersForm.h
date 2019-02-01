@@ -41,7 +41,8 @@ namespace AlignToAxisMarkersGUI {
 		PsyPhy::OpenGLWindow					*fovWindow1, *fovWindow2, *worldWindow;
 		PsyPhy::Viewpoint						*codaViewpoint, *worldViewpoint;
 		PsyPhy::Assembly						*fovSweetSpot;
-		PsyPhy::CodaLegacyPolledTracker			*coda;
+		// PsyPhy::CodaLegacyPolledTracker			*coda;
+		PsyPhy::CodaRTnetTracker				*coda;
 		PsyPhy::Sphere							*ball;
 		PsyPhy::Box								*block;
 
@@ -784,7 +785,8 @@ namespace AlignToAxisMarkersGUI {
 				 ReadMarkerAssignments();
 
 				 // Create the CODA tracker.
-				 coda = new CodaLegacyPolledTracker();
+//				 coda = new CodaLegacyPolledTracker();
+				 coda = new CodaRTnetTracker();
 				 // Start up the CODA tracker.
 				 coda->Initialize();
 

@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AlignToAxisMarkers.ini" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
