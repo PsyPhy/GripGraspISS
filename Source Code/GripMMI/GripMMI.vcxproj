@@ -144,12 +144,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
-      <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Grip\Grip.vcxproj">
-      <Project>{2b114bed-a19b-4bd5-9ca2-24c6418284f9}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
       <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>
     </ProjectReference>

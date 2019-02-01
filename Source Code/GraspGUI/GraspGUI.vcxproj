@@ -164,17 +164,11 @@
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
-      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
       <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspScripts\GraspScripts.vcxproj">
       <Project>{06fb1c1d-0fe6-4fb8-91b1-7ddda4165782}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspSequences\GraspSequences.vcxproj">
-      <Project>{a063702b-6be1-4939-96f1-19fb77921c29}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
       <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>

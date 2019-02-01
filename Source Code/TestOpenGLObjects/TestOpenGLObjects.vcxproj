@@ -92,9 +92,6 @@
     <ClCompile Include="TestOpenGLObjects.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenGLObjects\OpenGLObjects.vcxproj">
-      <Project>{8aff76e8-b71a-4241-8142-ed248f243a5a}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
     </ProjectReference>

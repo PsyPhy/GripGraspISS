@@ -91,9 +91,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PsyPhy2dGraphicsLib\PsyPhy2dGraphicsLib.vcxproj">
-      <Project>{415bac9d-f0ef-42c3-88f7-7b1386df49de}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Useful\Useful.vcxproj">
       <Project>{9dcdabb9-8979-4ef4-9d74-10ed8c1d7a56}</Project>
     </ProjectReference>

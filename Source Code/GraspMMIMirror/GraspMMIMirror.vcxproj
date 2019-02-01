@@ -124,9 +124,6 @@
     <ProjectReference Include="..\DexServices\DexServices.vcxproj">
       <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
-      <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GraspMMIUtilities\GraspMMIUtilities.vcxproj">
       <Project>{02a2555c-7310-461e-856d-6b1a75a56c57}</Project>
     </ProjectReference>

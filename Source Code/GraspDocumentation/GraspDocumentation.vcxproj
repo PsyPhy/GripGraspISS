@@ -37,14 +37,8 @@
     <ClInclude Include="macros.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
-      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
       <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Grasp\Grasp.vcxproj">
-      <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

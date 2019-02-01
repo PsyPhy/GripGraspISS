@@ -5,11 +5,11 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-     <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-   </ItemGroup>
+  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PsyPhyOculusDemo.cpp" />
     <ClCompile Include="PsyPhyRendering.cpp" />
