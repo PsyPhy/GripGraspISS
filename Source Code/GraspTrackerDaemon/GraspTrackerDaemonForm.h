@@ -5,6 +5,8 @@
 // We need InteropServics in order to convert a String to a char *.
 using namespace System::Runtime::InteropServices;
 
+// We can use one of several different Tracker classes and methods
+// to interface to the tracking hardware.
 typedef enum{ CONTINUOUS, POLLING, LEGACY, FAKE } TrackingType;
 
 namespace GraspTrackerDaemon {
@@ -612,7 +614,8 @@ namespace GraspTrackerDaemon {
 
 		System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
-			// Disable the form to indicate that the buttons will not work.
+			// Disable the form to indicate that the buttons will not work
+			// until we are up and running.
 			Enabled = false;
 			Refresh();
 
@@ -636,7 +639,15 @@ namespace GraspTrackerDaemon {
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
 
+			// 
+			// GraspTrackerDaemon also acts as a proxy to transmit information
+			// to the DEX hardware for transmission from the ISS to ground. 
+			// It is not needed when using this system locally, but it will not
+			// fail either if not connected to the DEX hardware. So I just leave
+			// it in place to keep things simple.
+			//
 			// Connect to dex for telemetry and snapshots.
+			//
 			dex = new Grasp::DexServices();
 			// Initialize without a log file.
 			dex->Initialize( nullptr );
@@ -662,6 +673,8 @@ namespace GraspTrackerDaemon {
 			Enabled = false;
 			Refresh();
 
+			// Let DEX know that we are stopping and so there is no 
+			// valid information about the task, etc. to be had.
 			dex->ResetTaskInfo();
 			dex->Disconnect();
 			dex->Release();
@@ -676,14 +689,14 @@ namespace GraspTrackerDaemon {
 		// A timer to handle animations and screen refresh, and associated actions.
 		static System::Windows::Forms::Timer^ refreshTimer;
 		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-
+			// Stop the timer so that we do not get overrun.
 			StopRefreshTimer();
 			if ( dex->HandleProxyConnection() ) {
 
 				// The following is a hack to deal with the CODA RTnet server memory overrun.
 				// Detect when we get a new client connection and restart the continuous CODA
 				// acquisition at that moment. It is likely to be a moment where the
-				// 1 seccond pause in data will not be too critical.
+				// 1 second pause in data will not be too critical.
 				if ( ! clientConnectedButton->Checked ) coda->RestartContinuousAcquisition();
 
 				// Put some values for housekeeping just for testing.
@@ -696,10 +709,13 @@ namespace GraspTrackerDaemon {
 
 			}
 			else clientConnectedButton->Checked = false;
-
+			// Actually process the tracker data.
 			ProcessCodaInputs();
+			// Restart the timer for the next cycle.
 			StartRefreshTimer();
 		}
+
+		// A timer to trigger periodic updates.
 		void CreateRefreshTimer( int interval ) {
 			refreshTimer = gcnew( System::Windows::Forms::Timer );
 			refreshTimer->Interval = interval;
@@ -721,6 +737,8 @@ namespace GraspTrackerDaemon {
 				 startButton->Enabled = false;
 				 stopButton->Enabled = true;
 				 saveButton->Enabled = false;
+				 // Start an acquisition that will last up to 1000 seconds.
+				 // Typically one will make a shorter acquisition by pressing Stop.
 				 trackers->codaTracker->StartAcquisition( 1000.0 );
 				 nPoseSamples = 0;
 				 recording = true;

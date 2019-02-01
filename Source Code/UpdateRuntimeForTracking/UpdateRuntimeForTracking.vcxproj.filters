@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="InstallTracking.debug.mak" />
+    <None Include="InstallTracking.mak" />
+    <None Include="InstallTracking.release.mak" />
+    <None Include="RunTrackerDaemon.bat.src" />
+    <None Include="RunCharnwoodAlignment.bat.src" />
+    <None Include="RunCodaVisibility.bat.src" />
+  </ItemGroup>
+</Project>

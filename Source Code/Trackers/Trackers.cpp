@@ -4,7 +4,9 @@
 /*                                                                               */
 /*********************************************************************************/
 
-// Base class for a 3D/6D Tracker.
+// Base class for a 3D/6D Tracker.  This class does not actually provide a working
+// tracker, but it provides a set of default routines for many of the required 
+// methods. Thus, an actual tracker need only provide the essential methods.
 
 #include "stdafx.h"
 #include "Trackers.h"
@@ -13,7 +15,7 @@ using namespace PsyPhy;
 
 /**************************************************************************************/
 
-// Provide some generic methods for copying marker frames.
+// Provide some generic methods for reading or copying marker frames.
 
 bool PsyPhy::ReadMarkerFrame( MarkerFrame &frame, FILE *fid ) {
 	int result;
@@ -47,6 +49,8 @@ void PsyPhy::CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source ) {
 	}
 }
 
+// Fill a frame with all markers marked as invisible. Used to fill in blanks
+// in time series of marker frames.
 void PsyPhy::OccludeMarkerFrame( MarkerFrame &destination ) {
 	int mrk;
 	for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) destination.marker[mrk].visibility = false;
@@ -95,7 +99,7 @@ int Tracker::GetNumberOfMarkers( void ) {
 	return( nMarkers );
 }
 
-// Wait until an acquisition with a set number of frames has been completed.
+// Wait until an acquisition that was started for a set number of frames has been completed.
 void Tracker::WaitAcquisitionCompleted( void ) {
 	while ( GetAcquisitionState() ) {
 		Update();
@@ -224,9 +228,8 @@ void Tracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rota
 }
 
 
-// Now provide the means to retrieve the frames and express the data in the intinsic frame.
-// Note that there is not a "combined" version of this because it makes no sense
-//  to combine the marker data in the intrinsic reference frames.
+// Now provide the means to back compute the data in the intinsic frame. It takes the data
+// in the aligned frame and performs the inverse transformation.
 void Tracker::ComputeIntrinsicMarkerFrame( MarkerFrame &iframe, int unit, MarkerFrame &frame ) {
 
 	Vector3		offset;
@@ -250,7 +253,9 @@ void Tracker::ComputeIntrinsicMarkerFrame( MarkerFrame &iframe, int unit, Marker
 	}
 
 }
-
+// Now provide the means to retrieve the frames and express the data in the intinsic frame.
+// Note that there is not a "combined" version of this because it makes no sense
+//  to combine the marker data in the intrinsic reference frames.
 bool Tracker::GetCurrentMarkerFrameIntrinsic( MarkerFrame &iframe, int unit ) {
 	MarkerFrame	frame;
 	int			status;

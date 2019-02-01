@@ -20,20 +20,17 @@
     <ProjectReference Include="..\CharnwoodAlignment\CharnwoodAlignment.vcxproj">
       <Project>{ba718ec0-44bd-4821-871b-0a35a77e3251}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\CodaVisibility\CodaVisibility.vcxproj">
+      <Project>{c5cc589f-3534-4691-8772-bb74742f58b5}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\CreateRigidBodyModelFile\CreateRigidBodyModelFile.vcxproj">
       <Project>{a80917f9-ef9d-4b0a-aa31-acaee6bd26e2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspDocumentation\GraspDocumentation.vcxproj">
-      <Project>{19e97a5a-dfcf-45d0-862e-48316001c0cb}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspGUI\GraspGUI.vcxproj">
       <Project>{41bbf00c-df99-4192-a876-d57c22ecfd53}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspHardwareStatus\GraspHardwareStatus.vcxproj">
       <Project>{3b9ea91d-4b96-465c-94f7-d64d41b29155}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
-      <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GraspTrackerDaemon\GraspTrackerDaemon.vcxproj">
       <Project>{e987eba3-c5e3-4b00-9bf0-08b0c7e2ae3b}</Project>
@@ -76,8 +73,8 @@
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.mak" />
     <None Include="InstallGrasp.release.mak" />
-    <None Include="LoadCodaCals.bat" />
-    <None Include="MakeRigidBodies.bat" />
+    <None Include="LoadCodaCals.bat.src" />
+    <None Include="MakeRigidBodies.bat.src" />
     <None Include="RunDaemon.bat.src" />
     <None Include="RunGRASP.bat.src" />
   </ItemGroup>

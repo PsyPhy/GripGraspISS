@@ -7,6 +7,21 @@
 ///
 /// Another version of the CodaRTnetTracker that uses unbuffered acquisition.
 ///
+
+// A tracker that uses the CODA RTnet interface. In this version the RTnet 
+// server is polled as needed to get the most recent data.
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+// This is not yet what it says it is.  It is actually a copy of 
+// CodaRTnetContinuousTracker which puts the CODA into continuous mode.
+// It needs to be modified to do only polled acquisitions to the CODA
+// and it needs to be tested
+//
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 #pragma once
 
 // Disable warnings about "unsafe" functions.

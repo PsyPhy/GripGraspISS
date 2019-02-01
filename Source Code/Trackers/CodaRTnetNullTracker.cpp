@@ -1,12 +1,12 @@
 /***************************************************************************/
 /*                                                                         */
-/*                               CodaRTnetTracker                          */
+/*                             CodaRTnetNullTracker                        */
 /*                                                                         */
 /***************************************************************************/
 
 #include "stdafx.h"
 
-// A tracker that uses the CODA RTnet interface.
+// Fake a tracker that uses the CODA RTnet interface for offline testing.
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -117,7 +117,8 @@ void CodaRTnetNullTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x
 }
 void CodaRTnetNullTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {}
 
-// Because CodaRTnetNullTracker is build on CodaRTnetTracker, we have to undo what CodaRTnetTracker does to these routines.
+// Because CodaRTnetNullTracker is built on CodaRTnetTracker, we have to undo what CodaRTnetTracker 
+// does to these routines and call what the base class does instead.
 void CodaRTnetNullTracker::SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] ) {
 	Tracker::SetAlignmentTransforms( offsets, rotations );
 }
@@ -125,6 +126,7 @@ void CodaRTnetNullTracker::GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], M
 	Tracker::GetAlignmentTransforms( offsets, rotations );
 }
 
+// Simulate movement of some markers.
 void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {
 
 	static double angle = 0.0;

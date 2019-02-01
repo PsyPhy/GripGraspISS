@@ -1,4 +1,7 @@
 // GraspTrackerDaemonTrackers.cpp 
+
+// Here is the code that actually interfaces with the CODA tracking system.
+
 #include "stdafx.h"
 #include "../GraspVR/GraspTrackers.h"
 #include "../Trackers/NullPoseTracker.h"
@@ -10,6 +13,9 @@ using namespace Grasp;
 
 //
 // The items below have to be external to the Form because they are 'unmanaged'.
+// That sucks because it means that the date buffers are not specific to a given
+// instance of the Form.  But since there is no conceivable reason to run multiple
+// instances inside the same process, we go ahead this way to keep it simple.
 //
 
 // A structured data buffer with fields for all of the tracker data.
@@ -118,7 +124,7 @@ namespace GraspTrackerDaemon {
 	void Form1::Initialize( void ) {
 
 		// Select which tracker to use to provide the marker data.
-		// The flags are set when the Form is instantiated. Here we
+		// The enum is set when the Form is instantiated. Here we
 		// do the actual work to create an instance of the appropriate tracker.
 		switch ( tracking ) {
 			
@@ -133,6 +139,12 @@ namespace GraspTrackerDaemon {
 			break;
 
 		case POLLING:
+			// Strictly speaking, we should use CodaRTnetPolledTracker
+			// to avoid doing any kind of continuous or buffered acquisition
+			// on the CODA side. But CodaRTnetPolledTracker has not been 
+			// fully implemented. CodaRTnetTracker does polled aquisition 
+			// as long as the acquisition of a buffer full of data has not
+			// been requested, so it suits our purposes here as well.
 			coda = new CodaRTnetTracker();
 			this->Text = this->Text + " (Coda RTnet Polled Tracker)";
 			break;
@@ -178,7 +190,7 @@ namespace GraspTrackerDaemon {
 			CopyMarkerFrame(  record.frame[unit], trackers->markerFrame[unit] );
 		}
 
-		// Get the poses from the CODA tracker.
+		// Get the poses from the pose trackers.
 		trackers->hmdTracker->GetCurrentPose( record.codaHmd );
 		trackers->handTracker->GetCurrentPose( record.hand );
 		trackers->chestTracker->GetCurrentPose( record.chest );

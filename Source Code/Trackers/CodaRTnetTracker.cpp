@@ -147,10 +147,11 @@ void CodaRTnetTracker::Startup( void ) {
 			cl.startSystem( configs.config[codaConfig].dwAddressHandle );
 
 			// Here we set the marker acquisition frequency, decimation and whether or
-			//  not external sync is enabled. The values are set during class initialization.
+			//  not external sync is enabled. The values are set by the class constructor.
 			cl.setDeviceOptions( coda_mode );
 
-			// This says that we want individual data from each coda.
+			// This says wheter or no we want individual data from each coda.
+			// Again, the choice is established in the call constructor code.
 			cl.setDeviceOptions( packet_mode );
 			OutputDebugString( "OK.\n" );
 
@@ -160,17 +161,6 @@ void CodaRTnetTracker::Startup( void ) {
 		OutputDebugString( "cl.prepareForAcq() ... " );
 		cl.prepareForAcq();
 		OutputDebugString( "OK.\n" );
-
-		//// Find out how many Coda units are actually in use.
-		//// I don't really need the alignment information, but that structure
-		//// includes the number of Codas specified in the configuration that is in use.
-		//// So we do a bogus alignment.
-		//DeviceOptionsAlignment align(1, 1, 1, 1, 1);
-		//cl.setDeviceOptions( align );
-		//// Then this is what tells us how many units are there.
-		//DeviceInfoAlignment align_info;
-		//cl.getDeviceInfo( align_info );
-		//fOutputDebugString( "Number of connected CODA units: %d\n", nUnits = align_info.dev.dwNumUnits );
 
 		// Find out how many Coda units are actually in use.
 		DeviceInfoUnitCoordSystem devinfo;  
@@ -295,7 +285,7 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 	for ( frm = 0; frm < nFrames; frm++ ) {
 
 		//* Try to read the packets. Normally they should get here the first try.
-		//* But theoretically, they could get lost or the could get corrupted. 
+		//* But theoretically, they could get lost or they could get corrupted. 
 		//* So if we get a time out or checksum errors, we should try again.
 		for ( retry = 0; retry < maxRetries; retry++ ) {
 			try
@@ -307,7 +297,7 @@ void CodaRTnetTracker::StopAcquisition( void ) {
 			{
 				OutputDebugString( "Caught error from cl.requestAcqBufferPacket()\n" );
 			}
-			//* We are supposed to get nCoda packets per request.
+			// We are supposed to get nCoda packets per request.
 			unit_count = 0;
 			while ( unit_count < nUnits ) {
 				// Time out means we did not get as many packets as expected.
@@ -614,7 +604,7 @@ void  CodaRTnetTracker::SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matri
 	// Open a file locally to accept the alignment information.
 	FILE *fp = fopen( local_filename, "w" );
 	fAbortMessageOnCondition( !fp, "CodaRTnetTracker", "Unable to open %s for writing.", local_filename );
-	// In RTnet we can cancel the alignment by either deleting the alignment file on the RTnet server
+	// In RTnet we can cancel the current alignment by either deleting the alignment file on the RTnet server
 	// or by replacing it with a file that does not contain valid alignment data. I choose the latter 
 	// so that we have a record of what is going on. And it may be that it is impossible to delete the file
 	// via the FTP server; one can only replace the contents. This is a further reason to replace.
@@ -654,7 +644,7 @@ void  CodaRTnetTracker::SetAlignmentTransforms( Vector3 offset[MAX_UNITS], Matri
 	// See https://msdn.microsoft.com/en-us/library/windows/desktop/ms687393(v=vs.85).aspx
 	if ( 31 > WinExec( command_line, SW_HIDE ) ) fAbortMessage( "CodaRTnetTracker", "Error executing FTP command:\n  %s", command_line );
 	// WinExec() returns right away if GetMessage() is not called within a timeout, but WinSCP doesn't call it.
-	// So I sleep here to let the command to finish.
+	// So I sleep here to let the command finish.
 	Sleep( 2000 );
 	// The CODA needs to be shutdown and restarted to take into account the new alignment.
 	Shutdown();

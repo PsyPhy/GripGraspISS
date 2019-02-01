@@ -5,7 +5,9 @@
 /*********************************************************************************/
 
 // A 'Tracker' is a device that tracks in 3D the movements of a set of markers.
-// The interface is designed around the CodaRTnet interface.
+// The interface is designed around the CodaRTnet interface, but can be applied
+// to other technologies as well.
+
 // The main functions allow to:
 //	1) start and stop continuous acquisitions at a fixed frequency
 //	2) retrieve the time series of marker positions and their visibility
@@ -27,14 +29,15 @@
 //  large enough to handle most options. Here I have set them for the GRASP project.
 
 // On GRASP with DEX, the max number of markers is 24, but the CODA will acquire 28
-//  when in 200Hz mode. So we allocate enough space for all to keep the retrieval 
-//  routines happy.
+//  when in 200Hz mode. Normally we would allocate enough space for all 28, but apparently
+//  I decided to be more frugal.
 #define MAX_MARKERS				24
+
 // On DEX (GRASP) we have 2 units. In the lab we could have more, but I set it to
 //  2 in order to save buffer space.
 #define MAX_UNITS				2
 // The longest duration of acquisition allowed. (samples/sec * sec/min * min)
-#define MAX_MINUTES	10
+#define MAX_MINUTES				10
 #define MAX_FRAMES				(200 * 60 * MAX_MINUTES)
 #define DEFAULT_SAMPLE_PERIOD	0.005
 #define INVISIBLE				-99999.99999
@@ -50,6 +53,9 @@ typedef struct {
 	double		time;
 } MarkerFrame;
 
+// Certain trackers like the CODA can acquire data for the same marker position
+// from multiple sensors in parallel. The can be combined to form a single 
+// common representation of a marker's position, or they can be stored separately.
 typedef struct {
 	MarkerFrame	combinedFrame;
 	MarkerFrame unitFrame[MAX_UNITS];
@@ -60,7 +66,9 @@ typedef struct {
 
 namespace PsyPhy {
 
+// Copy a marker frame.
 extern void	CopyMarkerFrame( MarkerFrame &destination, MarkerFrame &source );
+// Create a null frame of marker data in which all markers are occluded.
 extern void	OccludeMarkerFrame( MarkerFrame &destination );
 extern void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
 extern bool ReadMarkerFrame( MarkerFrame &frame, FILE *fid );
@@ -86,6 +94,10 @@ class Tracker : public PsyPhy::VectorsMixin {
 		double samplePeriod;
 
 		Tracker() : nUnits( 0 ), nMarkers( MAX_MARKERS ), samplePeriod( DEFAULT_SAMPLE_PERIOD ) {} ;
+
+		virtual double	GetSamplePeriod( void );
+		virtual int		GetNumberOfUnits( void );
+		virtual int		GetNumberOfMarkers( void );
 
 		// These are the core functions that each tracker must provide.
 		virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" ) = 0;
@@ -113,24 +125,32 @@ class Tracker : public PsyPhy::VectorsMixin {
 			StopAcquisition();
 		}
 
-		// Retieve all the marker data 
+		// Retieve all the marker data that has been recorded between StartAcquisition and
+		// StopAcquisition.
 		virtual int		RetrieveMarkerFrames( MarkerFrame frames[], int max_frames );
 		virtual int		RetrieveMarkerFramesUnit( MarkerFrame frames[], int max_frames, int unit );
-
+		// Get the current location of each marker in a frame, either from a specified
+		// tracker unit or the locations computed from the combination of data from all units.
 		virtual bool	GetCurrentMarkerFrame( MarkerFrame &frame );
 		virtual bool	GetCurrentMarkerFrameUnit( MarkerFrame &frame, int unit );
+		// Data from individual sensors must be transformed into a common reference frame.
+		// The routines above report the data from each sensor, but in the common reference
+		// frame. Here it is possible to retrieve the data from each sensor in its own 
+		// intrinsic reference frame.
 		virtual bool	GetCurrentMarkerFrameIntrinsic( MarkerFrame &frame, int unit );
+		// Provide the means to compute an average frame. I'm not sure why we have this method
+		// and the global function defined above.
+		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
+		// If what we have is the data in the common reference frame, it is possible to compute
+		// what must be the location in the intrinsic frame.
 		virtual void	ComputeIntrinsicMarkerFrame( MarkerFrame &iframe, int unit, MarkerFrame &frame );
-
-		virtual double	GetSamplePeriod( void );
-		virtual int		GetNumberOfUnits( void );
-		virtual int		GetNumberOfMarkers( void );
+		// One can also manipulate the alignment transformations, allowing on to create
+		// procedures for aligning the individual sensors.
 		virtual void	GetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
 		virtual void	SetUnitTransform( int unit, PsyPhy::Vector3 &offset, PsyPhy::Matrix3x3 &rotation );
 		virtual void	GetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
 		virtual void	SetAlignmentTransforms( Vector3 offsets[MAX_UNITS], Matrix3x3 rotations[MAX_UNITS] );
-
-		void	ComputeAverageMarkerFrame( MarkerFrame &frame, MarkerFrame frames[], int n_frames );
+		// Make it easier to write data into a text file.
 		void	WriteColumnHeadings( FILE *fp, int unit ) ;
 		void	WriteMarkerData( FILE *fp, MarkerFrame &frame ) ;
 		void	WriteMarkerFile( char *filename );

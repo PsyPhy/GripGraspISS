@@ -7,7 +7,6 @@ EXECUTABLES = \
 	..\Grasp\GraspPackData.bat.src \
 	..\GraspGUI\Grasp.ico ..\$(BUILDCONFIGURATION)\GraspGUI.exe \
 	..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe \
-	..\GraspTrackerDaemon\StartGraspTrackerDaemon.bat \
 	..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe \
 	..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe \
 	..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe \
@@ -23,11 +22,13 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\StartOculus.exe \
 	..\$(BUILDCONFIGURATION)\SendGraspData.exe \
 	..\$(BUILDCONFIGURATION)\OculusStartupCheck.exe \
+	..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe \
+	..\$(BUILDCONFIGURATION)\CodaVisibility.exe \
 	..\GraspScripts\UseBalls.bat.src \
 	..\GraspScripts\UseBars.bat.src \
 	GraspPacketsForSimulator.gpk \
-	LoadCodaCals.bat \
-	MakeRigidBodies.bat \
+	LoadCodaCals.bat.src \
+	MakeRigidBodies.bat.src \
 	RunDaemon.bat.src \
 	RunGRASP.bat.src 
 
@@ -52,9 +53,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\TweakRigidBodyModel.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe $(DESTINATION)
-	copy ..\GraspTrackerDaemon\StartGraspTrackerDaemon.bat $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CharnwoodAlignment.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\CodaVisibility.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\StartOculus.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\SendGraspData.exe $(DESTINATION)
@@ -63,9 +64,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\GraspScripts\UseBalls.bat.src $(DESTINATION)\UseBalls.bat
 	copy ..\GraspScripts\UseBars.bat.src $(DESTINATION)\UseBars.bat
 	copy GraspPacketsForSimulator.gpk $(DESTINATION)
-	copy LoadCodaCals.bat $(DESTINATION)
+	copy LoadCodaCals.bat.src $(DESTINATION)\LoadCodaCals.bat
 	-copy ..\DLLs\*.dll $(DESTINATION)
-	copy MakeRigidBodies.bat $(ROOT)\Bdy
+	copy MakeRigidBodies.bat.src $(ROOT)\Bdy\MakeRigidBodies.bat
 	copy RunGRASP.bat.src $(ROOT)\RunGRASP.bat
 	copy RunDaemon.bat.src $(ROOT)\RunDaemon.bat
 	copy ..\GraspScreenshots\MakeCommScreenshots.bat.src $(ROOT)\MakeCommScreenshots.bat

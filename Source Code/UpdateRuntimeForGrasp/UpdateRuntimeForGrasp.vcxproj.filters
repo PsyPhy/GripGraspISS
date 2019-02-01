@@ -4,9 +4,9 @@
     <None Include="InstallGrasp.debug.mak" />
     <None Include="InstallGrasp.release.mak" />
     <None Include="InstallGrasp.mak" />
-    <None Include="LoadCodaCals.bat" />
-    <None Include="MakeRigidBodies.bat" />
     <None Include="RunGRASP.bat.src" />
     <None Include="RunDaemon.bat.src" />
+    <None Include="MakeRigidBodies.bat.src" />
+    <None Include="LoadCodaCals.bat.src" />
   </ItemGroup>
 </Project>

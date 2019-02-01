@@ -10,8 +10,30 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="InstallTracking.debug.mak" />
+    <None Include="InstallTracking.mak" />
+    <None Include="InstallTracking.release.mak" />
+    <None Include="RunCharnwoodAlignment.bat.src" />
+    <None Include="RunCodaVisibility.bat.src" />
+    <None Include="RunTrackerDaemon.bat.src" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CharnwoodAlignment\CharnwoodAlignment.vcxproj">
+      <Project>{ba718ec0-44bd-4821-871b-0a35a77e3251}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\CodaVisibility\CodaVisibility.vcxproj">
+      <Project>{c5cc589f-3534-4691-8772-bb74742f58b5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspTrackerDaemon\GraspTrackerDaemon.vcxproj">
+      <Project>{e987eba3-c5e3-4b00-9bf0-08b0c7e2ae3b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\WaitForCodaDaemon\WaitForCodaDaemon.vcxproj">
+      <Project>{c8fb03d6-66af-46cd-a8fa-0d70b32a68c0}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{6AD8B336-2D20-4E2A-9766-91B367578405}</ProjectGuid>
+    <ProjectGuid>{914B67C7-1FA6-431D-892D-7EAA4B01E369}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -34,27 +56,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGripMMI.debug.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGripMMI.debug.mak</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
     <NMakeOutput>
     </NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallTracking.debug.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallTracking.debug.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>
+    </NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>NMake /NOLOGO InstallGripMMI.release.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>NMake /NOLOGO InstallGripMMI.release.mak</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>@echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallTracking.release.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallTracking.release.mak</NMakeReBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <None Include="InstallGripMMI.debug.mak" />
-    <None Include="InstallGripMMI.mak" />
-    <None Include="InstallGripMMI.release.mak" />
-    <None Include="RunGripMMI.bat.src" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
