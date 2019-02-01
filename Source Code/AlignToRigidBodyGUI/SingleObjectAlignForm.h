@@ -37,7 +37,7 @@ namespace AlignToRigidBodyGUI {
 
 	private:
 
-		DexServicesByProxy	*dex;
+		DexServices		*dex;
 
 	protected:
 
@@ -50,7 +50,7 @@ namespace AlignToRigidBodyGUI {
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 		PsyPhy::Assembly						*fovSweetSpot;
 
-		PsyPhy::CodaRTnetDaemonTracker			*coda;
+		PsyPhy::CodaRTnetTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
 
 		String^ modelFile;
@@ -60,7 +60,7 @@ namespace AlignToRigidBodyGUI {
 		double maxOrientationError;
 
 	public:
-		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServicesByProxy *dex ) :
+		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, PsyPhy::CodaRTnetTracker *coda ) :
 		  maxPositionError( 10.0 ),
 			  maxOrientationError( 2.0 ),
 			  forceShow( false )
@@ -69,6 +69,7 @@ namespace AlignToRigidBodyGUI {
 			  modelFile = model_file;
 			  filenameRoot = filename_root;
 			  this->dex = dex;
+			  this->coda = coda;
 		  }
 
 	protected:
@@ -425,8 +426,6 @@ namespace AlignToRigidBodyGUI {
 				 // Wait to make sure that the tracker is up and running so that we can kill it.
 				 Sleep( 5000 );
 
-				 // Create the CODA tracker.
-				 coda = new CodaRTnetDaemonTracker();
 				 coda->Initialize();
 
 				 // Send a message to ground as part of housekeeping to show our progress.

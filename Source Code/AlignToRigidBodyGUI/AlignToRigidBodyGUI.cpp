@@ -25,10 +25,11 @@ int main(array<System::String ^> ^args)
 	//  further down when DexServices parses the command line arguments as well.
 	String ^model_file = gcnew String( "Bdy\\Chest.bdy" );
 	String ^filename_root = gcnew String( "CodaAlignment" );
-	bool noCoda = false;
+	bool use_daemon = true;
 	for ( int i = 0; i < args->Length; i++ ) {
 		if ( args[i]->StartsWith( "--body" ) ) model_file = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
 		if ( args[i]->StartsWith( "--output" ) ) filename_root = args[i]->Substring( args[i]->IndexOf( '=' ) + 1 );
+		if ( args[i]->StartsWith( "--direct" ) ) use_daemon = false;
 	}
 
 	// Establish a connection with DEX for transmitting housekeeping and marker visibility.
@@ -45,8 +46,14 @@ int main(array<System::String ^> ^args)
 	dex->SendSubstep( 0 );
 	dex->SnapPicture( "PREALIGN" );
 
+	// Create the CODA tracker.
+	CodaRTnetTracker *coda;
+	
+	if ( use_daemon ) coda = new CodaRTnetDaemonTracker();
+	else coda = new CodaRTnetTracker();
+
 	// Create the main window and run it
-	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex ));
+	Application::Run(gcnew SingleObjectForm( model_file, filename_root, dex, coda ));
 
 	// Ask DEX to take a final snapshot and then disconnect.
 	dex->SnapPicture( "POSTALGN" );
