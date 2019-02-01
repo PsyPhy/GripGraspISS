@@ -45,7 +45,7 @@ chestCodaCascade = 21
 ;;; Determines whether the pose tracker for each cascade object is 
 ;;; realigned to the pose of the tracker above it in the hierarchy
 ;;; whenever both are visible. (true or false)
-cascadeRealignment = true
+cascadeRealignment = false
 
 ;;; These are the filters for the CODA based pose trackers.
 ;;; The higher the value, the greater the low-pass filtering.
