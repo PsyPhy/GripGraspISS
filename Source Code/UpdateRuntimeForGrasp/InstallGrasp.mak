@@ -75,6 +75,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	-copy ..\CodaCalFiles\FM2 $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\GM $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\SM $(DESTINATION)\CodaCalFiles
+	-rmdir /S /Q $(ROOT)\InitFiles
+	mkdir $(ROOT)\InitFiles
+	-copy ..\InitFiles\*.* $(ROOT)\InitFiles
 	echo Grasp Version Information > $(DESTINATION)\GraspVersionInfo.txt
 	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GraspVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@

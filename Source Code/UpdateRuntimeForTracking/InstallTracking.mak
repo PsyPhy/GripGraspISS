@@ -29,3 +29,7 @@ install: $(EXECUTABLES) InstallTracking.mak
 	-copy ..\CodaCalFiles\SM $(DESTINATION)\CodaCalFiles
 	-copy ..\CodaCalFiles\TECNALIA $(DESTINATION)\CodaCalFiles
 	-copy ..\DLLs\*.dll $(DESTINATION)
+	-rmdir /S /Q $(ROOT)\InitFiles
+	mkdir $(ROOT)\InitFiles
+	-copy ..\InitFiles\*.* $(ROOT)\InitFiles
+
