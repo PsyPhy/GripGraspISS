@@ -1,0 +1,22 @@
+[CX1]
+SerialNumber=1271
+[Geometry]
+BaseLine=660.2125
+FocalDistance=3000.00
+CalDistances=2100,2500,3000,3600,4300
+CTCentre=3976.500000
+[Calibrated Range]
+MinA=82.0
+MinB=81.0
+MinC=78.0
+MaxA=3960.0
+MaxB=3912.0
+MaxC=3909.0
+[Camera Calibration]
+IScale=400.0
+[Correction Factors]
+SkewA=3.849092e-003
+SkewC=6.378906e-004
+TiltA=1.292744e-006
+TiltC=1.301441e-007
+YawB=7.690340e-007
