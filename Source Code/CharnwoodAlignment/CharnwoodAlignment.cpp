@@ -20,23 +20,13 @@ int main( int argc,  char *argv[] )
 
 	MarkerFrame localFrame[2];
 
+	// Default values for identifying which markers are used to perform the alignment.
+	// Here they are 0 based.  
 	int origin = 7;
 	int x_minus = 7;
 	int x_plus = 17;
 	int y_minus = 7;
 	int y_plus = 14;
-
-	//int origin = 0;
-	//int x_minus = 2;
-	//int x_plus = 0;
-	//int y_minus = 1;
-	//int y_plus = 0;
-
-	//int origin = 3;
-	//int x_minus = 8;
-	//int x_plus = 3;
-	//int y_minus = 8;
-	//int y_plus = 14;
 
 	for ( int i = 0; i < argc; i++ ) {
 		if ( !strncmp( argv[i], "--origin=", strlen( "--origin=" ) ) ) sscanf( argv[i], "--origin=%d", &origin );
