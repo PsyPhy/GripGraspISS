@@ -55,23 +55,28 @@ void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
 	// to launch a single frame of acqusition, then restart the acquisition. If this is
 	// done quickly enough (faster than the sample period), the second start will not 
 	// happen on a sync boundary.
-	OutputDebugString( "cl.startAcqContinuous()\n" );
 	TimerSet( runningTimer, maxContinuous );
 	// Start a single frame acquisition.
-	cl.setAcqMaxTicks( DEVICEID_CX1, 1 );
+	OutputDebugString( "entering cl.setAcqMaxTicks()\n" );
+	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
+	OutputDebugString( "entering cl.startAcqContinuous()\n" );
 	cl.startAcqContinuous();
+	StartAcquisition( 1000.0 );
 	// Wait until it sends back the data.
+	OutputDebugString( "entering Update()\n" );
 	while ( nFrames == 0 ) Update();
 	// Set a local timer here. I am just trying to see if
 	// the restart is fast enough to be useful. This can 
 	// be deleted once it works.
 	Timer	transitionTimer;
 	TimerSet( transitionTimer, maxContinuous );
+	acquiring = false;
 	// Stop the acquisition. I don't know if this is necessary
 	// given that we only allowed a single frame anyway.
 	cl.stopAcq();
 	// Now restart the continuous acquisition. Hopefully we have 
 	// avoided starting on a sync pulse.
+	cl.prepareForAcq();
 	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
 	cl.startAcqContinuous();
 	fprintf( stderr, "Restart took %f seconds.\n", TimerElapsedTime( transitionTimer ) );
