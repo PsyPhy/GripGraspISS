@@ -59,7 +59,7 @@ namespace Grasp {
 	// a roll-only tracker used to orient the virtual hand in a visual response mode.
 	// GraspTrackers defines the set of trackers and the functionality that is required
 	// from those trackers. Dervied classes will then define the actual combinations 
-	// of trackers to be used depending on the hardware.
+	// of trackers to be used depending on the hardware that is available.
 
 	class GraspTrackers : public VectorsMixin {
 
@@ -120,30 +120,12 @@ namespace Grasp {
 
 	};
 
-	// GraspSimulatedTrackers are intended to provide simulated movements of the 
-	// individual trackers without any tracking hardware.
-	class GraspSimulatedTrackers : public GraspTrackers {
-	protected:
-		OpenGLWindow	*window;
-
-	public:
-		GraspSimulatedTrackers( OpenGLWindow *window, const char *ini_filename = nullptr ) {
-			this->window = window;
-			this->ini_filename = ini_filename;
-			if ( ini_filename ) {
-				fOutputDebugString( "Parsing %s for GraspSimulatedTrackers.\n", ini_filename );
-				int error = ini_parse( ini_filename, iniHandler, this );
-				if ( error != 0 ) fAbortMessage( "GraspSimulatedTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
-			}
-		}
-		~GraspSimulatedTrackers( void ) {}
-		void Initialize( void );
-	};
-
+	//
 	// GraspDexTrackers is any set of trackers that relies on the DEX hardware.
 	// It can be used by itself to do marker-only tracking, but it is more
 	// likely to be part of a derived class that combines marker data with the 
 	// Oculus inertial data.
+	//
 	class GraspDexTrackers : public GraspTrackers {
 
 	public:
@@ -246,9 +228,11 @@ namespace Grasp {
 
 	};
 
+	//
 	// GraspOculusCodaTrackers is nominally the best tracker set for Grasp.
 	// It uses a combined Oculus-Coda tracker for the HMD and marker-based Pose
 	// trackers for the chest and hand.
+	//
 	class GraspOculusCodaTrackers : public GraspDexTrackers {
 
 	protected:
@@ -269,9 +253,16 @@ namespace Grasp {
 			}
 		}
 		void Initialize( void );
+		void WriteAdditionalColumnHeadings( FILE *fp );
+		void WriteAdditionalTrackerData( FILE *fp );
 	};
 
-	// We use this one when we want to pretend that we have CODAs.
+	//
+	// GraspOculusTrackers provides a solution when the Coda is not available.
+	// It uses the standard Oculus tracker with its own constellation system
+	//  for drift correction, and uses the Oculus hand controller for the 
+	//  chest and the hand. 
+	//
 	class GraspOculusTrackers : public GraspTrackers {
 	protected:
 		OculusMapper	*oculusMapper;
@@ -291,11 +282,13 @@ namespace Grasp {
 		void Initialize( void );
 	};
 
+	//
 	// GraspOculusLiteTrackers provides a solution when the Coda is not available
 	// and when we don't have the Oculus touch sensors.
 	// It uses the standard Oculus tracker with its own constellation system
 	//  for drift correction, and substitutes mouse and keyboard trackers for
-	// the chest and hand. Perhaps a future version could use the Oculus hand controllers.
+	// the chest and hand. 
+	//
 	class GraspOculusLiteTrackers : public GraspTrackers {
 	protected:
 		OculusMapper	*oculusMapper;
@@ -316,8 +309,26 @@ namespace Grasp {
 		void Initialize( void );
 	};
 
+	//
+	// GraspSimulatedTrackers are intended to provide simulated movements of the 
+	// individual trackers without any tracking hardware.
+	//
+	class GraspSimulatedTrackers : public GraspTrackers {
+	protected:
+		OpenGLWindow	*window;
+
+	public:
+		GraspSimulatedTrackers( OpenGLWindow *window, const char *ini_filename = nullptr ) {
+			this->window = window;
+			this->ini_filename = ini_filename;
+			if ( ini_filename ) {
+				fOutputDebugString( "Parsing %s for GraspSimulatedTrackers.\n", ini_filename );
+				int error = ini_parse( ini_filename, iniHandler, this );
+				if ( error != 0 ) fAbortMessage( "GraspSimulatedTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
+			}
+		}
+		~GraspSimulatedTrackers( void ) {}
+		void Initialize( void );
+	};
 
 };
-
-
-
