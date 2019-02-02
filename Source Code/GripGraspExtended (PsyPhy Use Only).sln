@@ -172,6 +172,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestOpenGLWindowsInForm", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateRuntimeForTracking", "UpdateRuntimeForTracking\UpdateRuntimeForTracking.vcxproj", "{914B67C7-1FA6-431D-892D-7EAA4B01E369}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GripAimingTool", "GripAimingTool\GripAimingTool.vcxproj", "{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1496,6 +1498,22 @@ Global
 		{914B67C7-1FA6-431D-892D-7EAA4B01E369}.ReleaseTraining|Win32.Build.0 = Release|Win32
 		{914B67C7-1FA6-431D-892D-7EAA4B01E369}.Test|Win32.ActiveCfg = Release|Win32
 		{914B67C7-1FA6-431D-892D-7EAA4B01E369}.Test|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Debug|Win32.Build.0 = Debug|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.DebugTraining|Win32.ActiveCfg = Debug|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.DebugTraining|Win32.Build.0 = Debug|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Release|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Release|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseBedrest|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseBedrest|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseDraft|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseFlight|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseFlight|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseTraining|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.ReleaseTraining|Win32.Build.0 = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Test|Win32.ActiveCfg = Release|Win32
+		{A67D2854-EC6E-4CC3-A49C-14CC247FB43B}.Test|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
