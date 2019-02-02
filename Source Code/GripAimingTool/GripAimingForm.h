@@ -33,12 +33,13 @@ namespace GripAimingTool {
 	public ref class GripAimingForm : public System::Windows::Forms::Form
 	{
 	public:
-		GripAimingForm(void)
+
+		Tracker *tracker;
+
+		GripAimingForm( Tracker *tracker )
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			this->tracker = tracker;
 		}
 
 	protected:
@@ -64,6 +65,9 @@ namespace GripAimingTool {
 	private: System::Windows::Forms::Panel^  wristPanel0;
 	private: System::Windows::Forms::Panel^  tabletPanel0;
 	private: System::Windows::Forms::Panel^  distancePanel0;
+	private: System::Windows::Forms::TextBox^  instructions;
+
+	private: System::Windows::Forms::TextBox^  intializing;
 
 	private:
 		/// <summary>
@@ -78,17 +82,20 @@ namespace GripAimingTool {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(GripAimingForm::typeid));
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox6 = (gcnew System::Windows::Forms::GroupBox());
+			this->manipulandumPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+			this->wristPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
+			this->tabletPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->distancePanel0 = (gcnew System::Windows::Forms::Panel());
 			this->boresightGroup0 = (gcnew System::Windows::Forms::GroupBox());
 			this->boresightPanel0 = (gcnew System::Windows::Forms::Panel());
-			this->distancePanel0 = (gcnew System::Windows::Forms::Panel());
-			this->tabletPanel0 = (gcnew System::Windows::Forms::Panel());
-			this->wristPanel0 = (gcnew System::Windows::Forms::Panel());
-			this->manipulandumPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->instructions = (gcnew System::Windows::Forms::TextBox());
+			this->intializing = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox1->SuspendLayout();
 			this->groupBox6->SuspendLayout();
 			this->groupBox5->SuspendLayout();
@@ -108,7 +115,7 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox1->Location = System::Drawing::Point(12, 12);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(710, 738);
+			this->groupBox1->Size = System::Drawing::Size(710, 782);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Tracking Camera 1";
@@ -120,10 +127,20 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox6->Location = System::Drawing::Point(480, 577);
 			this->groupBox6->Name = L"groupBox6";
-			this->groupBox6->Size = System::Drawing::Size(224, 152);
+			this->groupBox6->Size = System::Drawing::Size(224, 199);
 			this->groupBox6->TabIndex = 2;
 			this->groupBox6->TabStop = false;
 			this->groupBox6->Text = L"Manipulandum Markers";
+			// 
+			// manipulandumPanel0
+			// 
+			this->manipulandumPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->manipulandumPanel0->Location = System::Drawing::Point(8, 25);
+			this->manipulandumPanel0->Name = L"manipulandumPanel0";
+			this->manipulandumPanel0->Size = System::Drawing::Size(208, 167);
+			this->manipulandumPanel0->TabIndex = 1;
 			// 
 			// groupBox5
 			// 
@@ -132,10 +149,20 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox5->Location = System::Drawing::Point(243, 577);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(224, 152);
+			this->groupBox5->Size = System::Drawing::Size(224, 199);
 			this->groupBox5->TabIndex = 2;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Wrist Markers";
+			// 
+			// wristPanel0
+			// 
+			this->wristPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->wristPanel0->Location = System::Drawing::Point(8, 25);
+			this->wristPanel0->Name = L"wristPanel0";
+			this->wristPanel0->Size = System::Drawing::Size(208, 167);
+			this->wristPanel0->TabIndex = 1;
 			// 
 			// groupBox4
 			// 
@@ -144,10 +171,20 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox4->Location = System::Drawing::Point(8, 577);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(224, 152);
+			this->groupBox4->Size = System::Drawing::Size(224, 199);
 			this->groupBox4->TabIndex = 1;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Tablet Markers";
+			// 
+			// tabletPanel0
+			// 
+			this->tabletPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->tabletPanel0->Location = System::Drawing::Point(8, 25);
+			this->tabletPanel0->Name = L"tabletPanel0";
+			this->tabletPanel0->Size = System::Drawing::Size(208, 167);
+			this->tabletPanel0->TabIndex = 0;
 			// 
 			// groupBox3
 			// 
@@ -160,6 +197,16 @@ namespace GripAimingTool {
 			this->groupBox3->TabIndex = 1;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Distance";
+			// 
+			// distancePanel0
+			// 
+			this->distancePanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->distancePanel0->Location = System::Drawing::Point(10, 26);
+			this->distancePanel0->Name = L"distancePanel0";
+			this->distancePanel0->Size = System::Drawing::Size(87, 498);
+			this->distancePanel0->TabIndex = 0;
 			// 
 			// boresightGroup0
 			// 
@@ -183,51 +230,40 @@ namespace GripAimingTool {
 			this->boresightPanel0->Size = System::Drawing::Size(562, 499);
 			this->boresightPanel0->TabIndex = 0;
 			// 
-			// distancePanel0
+			// instructions
 			// 
-			this->distancePanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
+			this->instructions->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->distancePanel0->Location = System::Drawing::Point(10, 26);
-			this->distancePanel0->Name = L"distancePanel0";
-			this->distancePanel0->Size = System::Drawing::Size(87, 498);
-			this->distancePanel0->TabIndex = 0;
+			this->instructions->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->instructions->Location = System::Drawing::Point(16, 800);
+			this->instructions->Multiline = true;
+			this->instructions->Name = L"instructions";
+			this->instructions->ReadOnly = true;
+			this->instructions->Size = System::Drawing::Size(1422, 147);
+			this->instructions->TabIndex = 1;
+			this->instructions->Text = resources->GetString(L"instructions.Text");
 			// 
-			// tabletPanel0
+			// intializing
 			// 
-			this->tabletPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->tabletPanel0->Location = System::Drawing::Point(8, 25);
-			this->tabletPanel0->Name = L"tabletPanel0";
-			this->tabletPanel0->Size = System::Drawing::Size(208, 120);
-			this->tabletPanel0->TabIndex = 0;
-			// 
-			// wristPanel0
-			// 
-			this->wristPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->wristPanel0->Location = System::Drawing::Point(8, 25);
-			this->wristPanel0->Name = L"wristPanel0";
-			this->wristPanel0->Size = System::Drawing::Size(208, 120);
-			this->wristPanel0->TabIndex = 1;
-			// 
-			// manipulandumPanel0
-			// 
-			this->manipulandumPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->manipulandumPanel0->Location = System::Drawing::Point(8, 25);
-			this->manipulandumPanel0->Name = L"manipulandumPanel0";
-			this->manipulandumPanel0->Size = System::Drawing::Size(208, 120);
-			this->manipulandumPanel0->TabIndex = 1;
+			this->intializing->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 72, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->intializing->ForeColor = System::Drawing::Color::DarkRed;
+			this->intializing->Location = System::Drawing::Point(265, 421);
+			this->intializing->Name = L"intializing";
+			this->intializing->Size = System::Drawing::Size(921, 116);
+			this->intializing->TabIndex = 3;
+			this->intializing->Text = L"Initializing Tracker";
+			this->intializing->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
+			this->intializing->Visible = false;
 			// 
 			// GripAimingForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1450, 762);
+			this->ClientSize = System::Drawing::Size(1450, 959);
+			this->Controls->Add(this->intializing);
+			this->Controls->Add(this->instructions);
 			this->Controls->Add(this->groupBox1);
 			this->Name = L"GripAimingForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
@@ -240,6 +276,7 @@ namespace GripAimingTool {
 			this->groupBox3->ResumeLayout(false);
 			this->boresightGroup0->ResumeLayout(false);
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -329,6 +366,7 @@ namespace GripAimingTool {
 				 window->Activate();
 				 window->Clear( 0.65, 0.85, 0.65, 1.0 );
 				 distanceViewpoint->Apply( window );
+				 SetLighting();
 				 lowerExclusionZone->Draw();
 				 upperExclusionZone->Draw();
 				 distanceBars->Draw();
@@ -356,7 +394,25 @@ namespace GripAimingTool {
 				 window->Swap();
 			 }
 
+
+	private: void Redraw( void ) {
+				 for ( int unit = 0; unit < DEX_CODA_UNITS; unit++ ) {
+					 DrawDistance( distanceWindow[unit] );
+					 DrawBoresight( boresightWindow[unit] );
+					 DrawObject( manipulandumWindow[unit], objectViewpoint, manipulandum );
+					 DrawObject( tabletWindow[unit], tabletViewpoint, tablet );
+					 DrawObject( wristWindow[unit], objectViewpoint, wrist );
+				 }
+			 }
+
 	private: System::Void GripAimingForm_Shown(System::Object^  sender, System::EventArgs^  e) {
+
+				 intializing->Visible = true;
+				 instructions->SelectionStart = 5000;
+				 instructions->SelectionLength = 0;
+				 Refresh();
+				 tracker->Initialize( "CodaRTnet.ini" );
+				 intializing->Visible = false;
 
 				 // Create the required OpenGLWindows each linked to a pane in the Form.
 				 // Forms does not allow mixed managed and unmanaged arrays.
@@ -424,11 +480,11 @@ namespace GripAimingTool {
 
 
 
-				 objectViewpoint = new Viewpoint( 6.0, 2.0, 10.0, 10000.0);
+				 objectViewpoint = new Viewpoint( 6.0, 2.5, 10.0, 10000.0);
 				 objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 				 objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
-				 static GLfloat	manipulandumColor[] = { 0.5, 0.0, 0.5, 0.5 }; 
+				 static GLfloat	manipulandumColor[] = { 0.3f, 0.0f, 0.5f, 0.5f }; 
 				 manipulandum = new GripManipulandum();
 				 manipulandum->SetAttitude( 0.0, 0.0, - 90.0 );
 				 for ( int mrk = firstManipulandum; mrk <= lastManipulandum; mrk++ ) {
@@ -447,30 +503,30 @@ namespace GripAimingTool {
 				 objectMarker[firstManipulandum + 6]->SetPosition( -10.0, 25.0, -9.0 );
 				 objectMarker[firstManipulandum + 7]->SetPosition( -10.0, 25.0,  9.0 );
 
-
 				 tabletViewpoint = new Viewpoint( 6.0, 30.0, 10.0, 10000.0);
 				 tabletViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 				 tabletViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
-				 static GLfloat	tabletColor[] = { 0.0, 1.0, 1.0, 0.5 }; 
+				 static GLfloat	tabletColor[] = { BLUE, CYAN, MAGENTA, ORANGE }; 
 				 tablet = new GripTablet();
 				 tablet->SetOrientation( 0.0, 0.0, 180.0 );
 				 tablet->SetPosition( 250.0, -200.0, 0.0 );
 				 for ( int mrk = firstTablet; mrk <= lastTablet; mrk++ ) {
-					 markerSpheres->component[mrk]->SetColor( tabletColor );
-					 distanceBars->component[mrk]->SetColor( tabletColor );
-					 objectMarker[mrk]->SetColor( tabletColor );
+					 int color = tabletColor[mrk - firstTablet];
+					 markerSpheres->component[mrk]->SetColor( color );
+					 distanceBars->component[mrk]->SetColor( color );
+					 objectMarker[mrk]->SetColor( color );
 					 objectMarker[mrk]->SetRadius( tabletMarkerRadius );
 					 tablet->AddComponent( objectMarker[mrk] );
 				 }
-				 objectMarker[firstTablet + 0]->SetPosition(     220.0,   -250.0,  25.0 );
-				 objectMarker[firstTablet + 1]->SetPosition(   - 220.0,   -250.0,  25.0 );
+				 objectMarker[firstTablet + 0]->SetPosition(     220.0,   -250.0,  35.0 );
+				 objectMarker[firstTablet + 1]->SetPosition(   - 220.0,   -250.0,  35.0 );
 				 objectMarker[firstTablet + 2]->SetPosition(   - 220.0,   -100.0, 600.0 );
 				 objectMarker[firstTablet + 3]->SetPosition(   - 220.0,   -100.0, 100.0 );
 
-				 static GLfloat	wristColor[] = { 0.75, 0.5, 0.0, 0.5 }; 
+				 static GLfloat	wristColor[] = { 0.75, 0.5, 0.5, 0.5 }; 
 				 wrist = new GripWrist();
-				 wrist->SetOrientation( 0.0, 90.0, 0.0 );
+				 wrist->SetOrientation( -90.0, 0.0, 0.0 );
 				 for ( int mrk = firstWrist; mrk <= lastWrist; mrk++ ) {
 					 markerSpheres->component[mrk]->SetColor( wristColor );
 					 distanceBars->component[mrk]->SetColor( wristColor );
@@ -481,26 +537,45 @@ namespace GripAimingTool {
 				 objectMarker[firstWrist + 1]->SetPosition(  -8.0, -20.0,  -30.0 );
 				 objectMarker[firstWrist + 2]->SetPosition(   8.0, -20.0,  -30.0 );
 				 objectMarker[firstWrist + 3]->SetPosition(  24.0, -20.0,  -20.0 );
-				 objectMarker[firstWrist + 4]->SetPosition( -18.0,  20.0,  -30.0 );
-				 objectMarker[firstWrist + 5]->SetPosition(  -6.0,  20.0,  -30.0 );
-				 objectMarker[firstWrist + 6]->SetPosition(   6.0,  20.0,  -30.0 );
-				 objectMarker[firstWrist + 7]->SetPosition(  18.0,  20.0,  -30.0 );
+				 objectMarker[firstWrist + 4]->SetPosition( -18.0,  20.0,  -15.0 );
+				 objectMarker[firstWrist + 5]->SetPosition(  -6.0,  20.0,  -25.0 );
+				 objectMarker[firstWrist + 6]->SetPosition(   6.0,  20.0,  -25.0 );
+				 objectMarker[firstWrist + 7]->SetPosition(  18.0,  20.0,  -15.0 );
 
 				 for ( int unit = 0; unit < DEX_CODA_UNITS; unit++ ) {
 					 EraseWindow( boresightWindow[unit] );
 					 EraseWindow( tabletWindow[unit] );
 					 EraseWindow( wristWindow[unit] );
 					 EraseWindow( manipulandumWindow[unit] );
-					 DrawDistance( distanceWindow[unit] );
-					 DrawBoresight( boresightWindow[unit] );
-					 DrawObject( manipulandumWindow[unit], objectViewpoint, manipulandum );
-					 DrawObject( tabletWindow[unit], tabletViewpoint, tablet );
-					 DrawObject( wristWindow[unit], objectViewpoint, wrist );
 				 }
+
+
+				 Redraw();
+				 CreateRefreshTimer( 500 );
+				 StartRefreshTimer();
 
 
 
 			 }
+		// A timer to handle animations and screen refresh, and associated actions.
+		static System::Windows::Forms::Timer^ refreshTimer;
+		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+			StopRefreshTimer();
+			Redraw();
+			StartRefreshTimer();
+		}
+		void CreateRefreshTimer( int interval ) {
+			refreshTimer = gcnew( System::Windows::Forms::Timer );
+			refreshTimer->Interval = interval;
+			refreshTimer->Tick += gcnew EventHandler( this, &GripAimingForm::OnTimerElapsed );
+		}
+		void StartRefreshTimer( void ) {
+			refreshTimer->Start();
+		}
+		void StopRefreshTimer( void ) {
+			refreshTimer->Stop();
+		}		
+
 	};
 }
 

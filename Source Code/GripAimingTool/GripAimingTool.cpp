@@ -12,7 +12,9 @@ int main(array<System::String ^> ^args)
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false); 
 
+	CodaRTnetDaemonTracker *tracker = new CodaRTnetDaemonTracker();
+
 	// Create the main window and run it
-	Application::Run(gcnew GripAimingForm());
+	Application::Run(gcnew GripAimingForm( tracker ));
 	return 0;
 }

@@ -117,4 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="instructions.Text" xml:space="preserve">
+    <value>
+  Adjust the position and orientation of each Tracking Camera until the green dot is centered in the respective boresighting windows.
+  All 4 markers on the Workspace Tablet must be visible. It is not necessary that all wrist or manipulandum markers be visible.
+  All markers should fall within the green zone in the Distance windows. If not, advance or retract the Tracking Camera(s) accordingly.
+  Beware of stray markers (i.e. tablet, wrist or manipulandum markers that are far from the others in the same group)  that could be caused by reflections.</value>
+  </data>
 </root>

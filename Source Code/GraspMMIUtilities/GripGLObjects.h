@@ -50,8 +50,8 @@ namespace PsyPhy {
 			AddComponent( slab );
 
 			Slab *screen = new Slab( 0.35 * tablet_width, 0.55 * tablet_length, 20.0 );
-			screen->SetColor( CYAN );
-			screen->SetPosition( 0.265 * tablet_width, 0.175 * tablet_length, tablet_thickness );
+			screen->SetColor( 0.1, 0.5, 0.5, 1.0 );
+			screen->SetPosition( 0.265 * tablet_width, 0.175 * tablet_length, tablet_thickness - 20.0 );
 			AddComponent( screen );
 
 			Assembly *mast = new Assembly();
@@ -99,6 +99,11 @@ namespace PsyPhy {
 	public:
 
 		GripWrist( void ) {
+
+			Cylinder *cable = new Cylinder( 10.0, 10.0, 200.0 );
+			cable->SetColor( 0.0, 0.2, 0.0 );
+			cable->SetOrientation( 0.0, 90.0, 0.0 );
+			AddComponent( cable );
 
 			Cylinder *cone = new Cylinder( 30.0, 24.0, 50.0 );
 			cone->SetOrientation( 0.0, 90.0, 0.0 );
