@@ -48,36 +48,13 @@ void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
 // into continuous acquisition mode. It is called once byt Initialize() and also when the 
 // acquisition needs to be restarted to avoid overrunning the RTnet server.
 void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
-	// There is a bug in the RTnet server code that can cause a serious
-	// anomaly. If the start acquisition happens precisely when a sync pulse 
-	// occurs, the multiple codas can get out of sync, with old data being reported
-	// by CODA 2 and beyone. What we try to do here is
-	// to launch a single frame of acqusition, then restart the acquisition. If this is
-	// done quickly enough (faster than the sample period), the second start will not 
-	// happen on a sync boundary.
-	TimerSet( runningTimer, maxContinuous );
-	// Start a single frame acquisition.
-	OutputDebugString( "entering cl.setAcqMaxTicks()\n" );
-	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
-	OutputDebugString( "entering cl.startAcqContinuous()\n" );
-	cl.startAcqContinuous();
-	StartAcquisition( 1000.0 );
-	// Wait until it sends back the data.
-	OutputDebugString( "entering Update()\n" );
-	while ( nFrames == 0 ) Update();
-	// Set a local timer here. I am just trying to see if
-	// the restart is fast enough to be useful. This can 
-	// be deleted once it works.
 	Timer	transitionTimer;
 	TimerSet( transitionTimer, maxContinuous );
-	acquiring = false;
 	// Stop the acquisition. I don't know if this is necessary
 	// given that we only allowed a single frame anyway.
 	cl.stopAcq();
-	// Now restart the continuous acquisition. Hopefully we have 
-	// avoided starting on a sync pulse.
+	// Now restart the continuous acquisition. 
 	cl.prepareForAcq();
-	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
 	cl.startAcqContinuous();
 	fprintf( stderr, "Restart took %f seconds.\n", TimerElapsedTime( transitionTimer ) );
 	fOutputDebugString( "Restart took %f seconds.\n", TimerElapsedTime( transitionTimer ) );
