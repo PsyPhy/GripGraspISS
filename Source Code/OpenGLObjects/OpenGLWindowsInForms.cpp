@@ -11,16 +11,16 @@ namespace PsyPhy {
 #ifdef _MANAGED
 	System::Void OpenGLWindowPanelSizeChanged(System::Object^  sender, System::EventArgs^  e) {
 
-		System::Windows::Forms::Panel^  panel = (System::Windows::Forms::Panel^) sender;
+		System::Windows::Forms::Control^  panel = (System::Windows::Forms::Control^) sender;
 		HWND panel_window = static_cast<HWND>( panel->Handle.ToPointer() );
 		OpenGLWindow *window = (OpenGLWindow *) GetWindowLongPtr( panel_window, GWLP_USERDATA );
-		SetWindowPos( window->hWnd, HWND_TOP, 0, 0, panel->ClientSize.Width, panel->ClientSize.Height, SWP_NOMOVE );
+		SetWindowPos( window->hWnd, HWND_TOP, panel->ClientRectangle.Left, panel->ClientRectangle.Top, panel->ClientSize.Width, panel->ClientSize.Height, SWP_NOMOVE );
 
 		fOutputDebugString( "sender (panel) %p   Window: %08lx\n", (LONG_PTR) &sender, (unsigned long) window );  
 
 	}
 
-	OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel, HGLRC shared_hRC ) {
+	OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Control^ panel, HGLRC shared_hRC ) {
 
 		HWND			parent = static_cast<HWND>( panel->Handle.ToPointer() );
 		OpenGLWindow	*window = new OpenGLWindow();
@@ -28,7 +28,7 @@ namespace PsyPhy {
 
 		fOutputDebugString( "sender (panel) %p   Window: %08lx\n", (LONG_PTR) &panel, (unsigned long) window );  
 
-		if ( !window->Create( parent, "HMD", 0, 0,panel->Width, panel->Height, shared_hRC ) ) {
+		if ( !window->Create( parent, "HMD", panel->ClientRectangle.Left, panel->ClientRectangle.Top, panel->ClientSize.Width, panel->ClientSize.Height, shared_hRC ) ) {
 			fMessageBox( MB_OK, "GraspGUI", "Error creating OpenGLWindow inside Forms Panel." );
 			exit( -1 );
 		}  
@@ -39,7 +39,7 @@ namespace PsyPhy {
 		return( window );
 	}
 
-	OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Panel^ panel ) {
+	OpenGLWindow *CreateOpenGLWindowInForm( System::Windows::Forms::Control^ panel ) {
 		return( CreateOpenGLWindowInForm( panel, nullptr ) );
 	}
 

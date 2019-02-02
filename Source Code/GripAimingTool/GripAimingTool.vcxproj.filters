@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Library Files">
+      <UniqueIdentifier>{38526a2d-d28b-4172-ae2c-94fc126712f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -28,6 +31,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenGLObjects\OpenGLWindowsInForms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,5 +57,19 @@
     <EmbeddedResource Include="GripAimingForm.resX">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Lib\GLAUX.LIB">
+      <Filter>Library Files</Filter>
+    </Library>
+    <Library Include="..\Lib\GLU32.LIB">
+      <Filter>Library Files</Filter>
+    </Library>
+    <Library Include="..\Lib\glut32.lib">
+      <Filter>Library Files</Filter>
+    </Library>
+    <Library Include="..\Lib\OPENGL32.LIB">
+      <Filter>Library Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>
