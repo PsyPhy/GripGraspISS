@@ -47,6 +47,9 @@
     <ClInclude Include="GripAimingForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\GraspMMIUtilities\GripGLObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

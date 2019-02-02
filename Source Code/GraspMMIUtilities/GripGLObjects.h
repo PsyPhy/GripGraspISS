@@ -31,6 +31,8 @@ namespace PsyPhy {
 
 	GLfloat tablet_color[4] = { .5f, .35f, .25f, 1.0f };
 	GLfloat phantom_tablet_color[4] = { .25f, .85f, .25f, 0.25f };
+	GLfloat manipulandum_color[4] = { .5f, .5f, .5f, 1.0f };
+	GLfloat wrist_color[4] = { .35f, .35f, .35f, 1.0f };
 
 	public class GripTablet : public Assembly {
 
@@ -72,9 +74,40 @@ namespace PsyPhy {
 			SetColor( tablet_color );
 
 		}
+
 	};
 
+	public class GripManipulandum : public Assembly {
 
+	public:
+
+		GripManipulandum( void ) {
+
+			double profile[][2] = { { 13.0, -25.0 }, { -13.0, -25.0 }, { -13.0, 25.0 }, { 5.0, 25.0 }, { 13.0, 18.0 } }; 
+
+			// Create objects to represent the GRIP manipulandum.
+			Extrusion *extrusion = new Extrusion( 25.0, profile, 5 );
+			extrusion->SetColor( manipulandum_color );
+			AddComponent( extrusion );
+
+		}
+
+	};
+
+	public class GripWrist : public Assembly {
+
+	public:
+
+		GripWrist( void ) {
+
+			Cylinder *cone = new Cylinder( 30.0, 24.0, 50.0 );
+			cone->SetOrientation( 0.0, 90.0, 0.0 );
+			cone->SetColor( wrist_color );
+			AddComponent( cone );
+
+		}
+
+	};
 
 }
 

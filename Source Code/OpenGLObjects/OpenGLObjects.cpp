@@ -866,6 +866,7 @@ void Extrusion::Draw( void ) {
 	glBegin( GL_POLYGON );
 	glNormal3d( 0.0, 0.0, - 1.0 );
 	for ( i = 0; i < vertices; i++ ) glVertex3d( vertex[i][X], vertex[i][Y], l2 );
+	glVertex3d( vertex[0][X], vertex[0][Y], l2 );
 	glEnd();
 	glBegin( GL_POLYGON );
 	glNormal3d( 0.0, 0.0,   1.0 );
