@@ -1,5 +1,8 @@
 // CodaVisibility.cpp : Defines the entry point for the console application.
 //
+
+// A simple program to show CODA realtime monitoring.
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <WinSock2.h>
 #include <stdio.h>
@@ -31,6 +34,10 @@ int main(int argc, char *argv[])
 	Vector3	offsets[MAX_UNITS];
 	Matrix3x3 rotations[MAX_UNITS];
 	
+	// Show the position of one marker on the screen.
+	int which_marker = 20;
+
+
 	bool use_daemon = false;
 	bool use_legacy = false;
 	for ( int i = 0; i < argc; i++ ) {
@@ -40,15 +47,17 @@ int main(int argc, char *argv[])
 
 	// A device that records 3D marker positions.
 	PsyPhy::Tracker *codaTracker;
+	// Run GraspTrackerDaemon and connect to it to get CODA data.
 	if ( use_daemon ) codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
+	// Use the old method to access the CODA. Used mostly by Michele.
 	else if ( use_legacy ) codaTracker = new PsyPhy::CodaLegacyPolledTracker();
+	// In the default case, start up the CODA in continuous flux mode.
 	else codaTracker = new PsyPhy::CodaRTnetContinuousTracker();
 
 	// Make sure that the GraspTrackerDaemon has time to bind its socket.
 	Sleep( 500 );
 
 	MarkerFrame localFrame[2];
-	int which_marker = 20;
 
 	fprintf( stderr, "Initializing coda tracker ..." );
 	codaTracker->Initialize();
@@ -71,6 +80,7 @@ int main(int argc, char *argv[])
 			}
 			fprintf( stderr, "  " );
 		}
+		// Indicate the amount of misalignment between XYZ coordinates taken by CODA 0 vs 1;
 		if ( nUnits > 1 ) {
 			fprintf( stderr, "Algt: " );
 			for ( int mrk = 0; mrk < 24; mrk++ ) {
@@ -100,6 +110,8 @@ int main(int argc, char *argv[])
 		else  fprintf( stderr, "%s\n", codaTracker->vstr( localFrame[0].marker[which_marker].position) );
 		Sleep( 40 );
 	}
+
+	// Runs until there is a key hit.
 	int key = _getch(); // Clear the _kbhit().
 	codaTracker->AbortAcquisition();
 	codaTracker->Quit();
