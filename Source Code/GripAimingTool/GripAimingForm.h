@@ -144,7 +144,7 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox1->Location = System::Drawing::Point(12, 12);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(710, 782);
+			this->groupBox1->Size = System::Drawing::Size(750, 929);
 			this->groupBox1->TabIndex = 0;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Tracking Camera 1";
@@ -154,9 +154,9 @@ namespace GripAimingTool {
 			this->groupBox6->Controls->Add(this->manipulandumPanel0);
 			this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox6->Location = System::Drawing::Point(480, 577);
+			this->groupBox6->Location = System::Drawing::Point(506, 712);
 			this->groupBox6->Name = L"groupBox6";
-			this->groupBox6->Size = System::Drawing::Size(224, 199);
+			this->groupBox6->Size = System::Drawing::Size(237, 211);
 			this->groupBox6->TabIndex = 2;
 			this->groupBox6->TabStop = false;
 			this->groupBox6->Text = L"Manipulandum Markers";
@@ -168,7 +168,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->manipulandumPanel0->Location = System::Drawing::Point(8, 25);
 			this->manipulandumPanel0->Name = L"manipulandumPanel0";
-			this->manipulandumPanel0->Size = System::Drawing::Size(208, 167);
+			this->manipulandumPanel0->Size = System::Drawing::Size(221, 179);
 			this->manipulandumPanel0->TabIndex = 1;
 			// 
 			// boresightGroup0
@@ -176,9 +176,9 @@ namespace GripAimingTool {
 			this->boresightGroup0->Controls->Add(this->boresightPanel0);
 			this->boresightGroup0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, 
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->boresightGroup0->Location = System::Drawing::Point(122, 28);
+			this->boresightGroup0->Location = System::Drawing::Point(94, 28);
 			this->boresightGroup0->Name = L"boresightGroup0";
-			this->boresightGroup0->Size = System::Drawing::Size(582, 537);
+			this->boresightGroup0->Size = System::Drawing::Size(650, 678);
 			this->boresightGroup0->TabIndex = 0;
 			this->boresightGroup0->TabStop = false;
 			this->boresightGroup0->Text = L"Boresight";
@@ -190,7 +190,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->boresightPanel0->Location = System::Drawing::Point(10, 26);
 			this->boresightPanel0->Name = L"boresightPanel0";
-			this->boresightPanel0->Size = System::Drawing::Size(562, 499);
+			this->boresightPanel0->Size = System::Drawing::Size(630, 640);
 			this->boresightPanel0->TabIndex = 0;
 			// 
 			// groupBox5
@@ -198,9 +198,9 @@ namespace GripAimingTool {
 			this->groupBox5->Controls->Add(this->wristPanel0);
 			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox5->Location = System::Drawing::Point(243, 577);
+			this->groupBox5->Location = System::Drawing::Point(257, 712);
 			this->groupBox5->Name = L"groupBox5";
-			this->groupBox5->Size = System::Drawing::Size(224, 199);
+			this->groupBox5->Size = System::Drawing::Size(237, 211);
 			this->groupBox5->TabIndex = 2;
 			this->groupBox5->TabStop = false;
 			this->groupBox5->Text = L"Wrist Markers";
@@ -212,7 +212,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->wristPanel0->Location = System::Drawing::Point(8, 25);
 			this->wristPanel0->Name = L"wristPanel0";
-			this->wristPanel0->Size = System::Drawing::Size(208, 167);
+			this->wristPanel0->Size = System::Drawing::Size(221, 179);
 			this->wristPanel0->TabIndex = 1;
 			// 
 			// groupBox4
@@ -220,9 +220,9 @@ namespace GripAimingTool {
 			this->groupBox4->Controls->Add(this->tabletPanel0);
 			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox4->Location = System::Drawing::Point(8, 577);
+			this->groupBox4->Location = System::Drawing::Point(8, 712);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(224, 199);
+			this->groupBox4->Size = System::Drawing::Size(237, 211);
 			this->groupBox4->TabIndex = 1;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Tablet Markers";
@@ -234,7 +234,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->tabletPanel0->Location = System::Drawing::Point(8, 25);
 			this->tabletPanel0->Name = L"tabletPanel0";
-			this->tabletPanel0->Size = System::Drawing::Size(208, 167);
+			this->tabletPanel0->Size = System::Drawing::Size(221, 179);
 			this->tabletPanel0->TabIndex = 0;
 			// 
 			// groupBox3
@@ -244,7 +244,7 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox3->Location = System::Drawing::Point(8, 28);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(107, 537);
+			this->groupBox3->Size = System::Drawing::Size(80, 678);
 			this->groupBox3->TabIndex = 1;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Distance";
@@ -256,7 +256,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->distancePanel0->Location = System::Drawing::Point(10, 26);
 			this->distancePanel0->Name = L"distancePanel0";
-			this->distancePanel0->Size = System::Drawing::Size(87, 498);
+			this->distancePanel0->Size = System::Drawing::Size(60, 639);
 			this->distancePanel0->TabIndex = 0;
 			// 
 			// instructions
@@ -265,16 +265,17 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->instructions->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->instructions->Location = System::Drawing::Point(16, 800);
+			this->instructions->Location = System::Drawing::Point(16, 947);
 			this->instructions->Multiline = true;
 			this->instructions->Name = L"instructions";
 			this->instructions->ReadOnly = true;
-			this->instructions->Size = System::Drawing::Size(1422, 147);
+			this->instructions->Size = System::Drawing::Size(1504, 147);
 			this->instructions->TabIndex = 1;
 			this->instructions->Text = resources->GetString(L"instructions.Text");
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->groupBox2->Controls->Add(this->groupBox7);
 			this->groupBox2->Controls->Add(this->groupBox8);
 			this->groupBox2->Controls->Add(this->groupBox9);
@@ -282,10 +283,10 @@ namespace GripAimingTool {
 			this->groupBox2->Controls->Add(this->groupBox11);
 			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(728, 12);
+			this->groupBox2->Location = System::Drawing::Point(770, 12);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-			this->groupBox2->Size = System::Drawing::Size(710, 782);
+			this->groupBox2->Size = System::Drawing::Size(750, 929);
 			this->groupBox2->TabIndex = 4;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Tracking Camera 2";
@@ -295,9 +296,10 @@ namespace GripAimingTool {
 			this->groupBox7->Controls->Add(this->manipulandumPanel1);
 			this->groupBox7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox7->Location = System::Drawing::Point(480, 577);
+			this->groupBox7->Location = System::Drawing::Point(504, 718);
 			this->groupBox7->Name = L"groupBox7";
-			this->groupBox7->Size = System::Drawing::Size(224, 199);
+			this->groupBox7->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox7->Size = System::Drawing::Size(237, 211);
 			this->groupBox7->TabIndex = 2;
 			this->groupBox7->TabStop = false;
 			this->groupBox7->Text = L"Manipulandum Markers";
@@ -309,7 +311,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->manipulandumPanel1->Location = System::Drawing::Point(8, 25);
 			this->manipulandumPanel1->Name = L"manipulandumPanel1";
-			this->manipulandumPanel1->Size = System::Drawing::Size(208, 167);
+			this->manipulandumPanel1->Size = System::Drawing::Size(221, 179);
 			this->manipulandumPanel1->TabIndex = 1;
 			// 
 			// groupBox8
@@ -317,9 +319,10 @@ namespace GripAimingTool {
 			this->groupBox8->Controls->Add(this->wristPanel1);
 			this->groupBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox8->Location = System::Drawing::Point(243, 577);
+			this->groupBox8->Location = System::Drawing::Point(255, 718);
 			this->groupBox8->Name = L"groupBox8";
-			this->groupBox8->Size = System::Drawing::Size(224, 199);
+			this->groupBox8->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox8->Size = System::Drawing::Size(237, 211);
 			this->groupBox8->TabIndex = 2;
 			this->groupBox8->TabStop = false;
 			this->groupBox8->Text = L"Wrist Markers";
@@ -331,7 +334,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->wristPanel1->Location = System::Drawing::Point(8, 25);
 			this->wristPanel1->Name = L"wristPanel1";
-			this->wristPanel1->Size = System::Drawing::Size(208, 167);
+			this->wristPanel1->Size = System::Drawing::Size(221, 179);
 			this->wristPanel1->TabIndex = 1;
 			// 
 			// groupBox9
@@ -339,9 +342,10 @@ namespace GripAimingTool {
 			this->groupBox9->Controls->Add(this->tabletPanel1);
 			this->groupBox9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox9->Location = System::Drawing::Point(8, 577);
+			this->groupBox9->Location = System::Drawing::Point(6, 718);
 			this->groupBox9->Name = L"groupBox9";
-			this->groupBox9->Size = System::Drawing::Size(224, 199);
+			this->groupBox9->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox9->Size = System::Drawing::Size(237, 211);
 			this->groupBox9->TabIndex = 1;
 			this->groupBox9->TabStop = false;
 			this->groupBox9->Text = L"Tablet Markers";
@@ -353,7 +357,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->tabletPanel1->Location = System::Drawing::Point(8, 25);
 			this->tabletPanel1->Name = L"tabletPanel1";
-			this->tabletPanel1->Size = System::Drawing::Size(208, 167);
+			this->tabletPanel1->Size = System::Drawing::Size(221, 179);
 			this->tabletPanel1->TabIndex = 0;
 			// 
 			// groupBox10
@@ -361,9 +365,10 @@ namespace GripAimingTool {
 			this->groupBox10->Controls->Add(this->distancePanel1);
 			this->groupBox10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox10->Location = System::Drawing::Point(597, 28);
+			this->groupBox10->Location = System::Drawing::Point(664, 28);
 			this->groupBox10->Name = L"groupBox10";
-			this->groupBox10->Size = System::Drawing::Size(107, 537);
+			this->groupBox10->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox10->Size = System::Drawing::Size(80, 678);
 			this->groupBox10->TabIndex = 1;
 			this->groupBox10->TabStop = false;
 			this->groupBox10->Text = L"Distance";
@@ -375,7 +380,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->distancePanel1->Location = System::Drawing::Point(10, 26);
 			this->distancePanel1->Name = L"distancePanel1";
-			this->distancePanel1->Size = System::Drawing::Size(87, 498);
+			this->distancePanel1->Size = System::Drawing::Size(60, 639);
 			this->distancePanel1->TabIndex = 0;
 			// 
 			// groupBox11
@@ -385,7 +390,8 @@ namespace GripAimingTool {
 				static_cast<System::Byte>(0)));
 			this->groupBox11->Location = System::Drawing::Point(8, 28);
 			this->groupBox11->Name = L"groupBox11";
-			this->groupBox11->Size = System::Drawing::Size(582, 537);
+			this->groupBox11->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox11->Size = System::Drawing::Size(650, 678);
 			this->groupBox11->TabIndex = 0;
 			this->groupBox11->TabStop = false;
 			this->groupBox11->Text = L"Boresight";
@@ -397,7 +403,7 @@ namespace GripAimingTool {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->boresightPanel1->Location = System::Drawing::Point(10, 26);
 			this->boresightPanel1->Name = L"boresightPanel1";
-			this->boresightPanel1->Size = System::Drawing::Size(562, 499);
+			this->boresightPanel1->Size = System::Drawing::Size(630, 640);
 			this->boresightPanel1->TabIndex = 0;
 			// 
 			// intializing
@@ -417,7 +423,7 @@ namespace GripAimingTool {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1450, 959);
+			this->ClientSize = System::Drawing::Size(1532, 1106);
 			this->Controls->Add(this->intializing);
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->instructions);
