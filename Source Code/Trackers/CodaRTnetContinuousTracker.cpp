@@ -48,33 +48,19 @@ void CodaRTnetContinuousTracker::Initialize( const char *ini_filename ) {
 // into continuous acquisition mode. It is called once byt Initialize() and also when the 
 // acquisition needs to be restarted to avoid overrunning the RTnet server.
 void CodaRTnetContinuousTracker::StartContinuousAcquisition( void ) {
-	Timer	transitionTimer;
-	TimerSet( transitionTimer, maxContinuous );
-	// Stop the acquisition. I don't know if this is necessary
-	// given that we only allowed a single frame anyway.
-	cl.stopAcq();
-	// Now restart the continuous acquisition. 
-	cl.prepareForAcq();
+	cl.setAcqMaxTicks( DEVICEID_CX1, CODANET_ACQ_UNLIMITED );
 	cl.startAcqContinuous();
-	fprintf( stderr, "Restart took %f seconds.\n", TimerElapsedTime( transitionTimer ) );
-	fOutputDebugString( "Restart took %f seconds.\n", TimerElapsedTime( transitionTimer ) );
-
+	TimerSet( runningTimer, maxContinuous );
 }
 
 // Stop and restart a continuous acquisition. This can be useful when 
 // to avoid eating up all the memory on the server.
 void CodaRTnetContinuousTracker::RestartContinuousAcquisition( void ) {
-	Timer timer;
-	TimerStart( timer );
 	cl.stopAcq();
 	cl.prepareForAcq();
-	// cl.startAcqContinuous();
-	StartContinuousAcquisition();
-	double elapsed = TimerElapsedTime( timer );
-	fOutputDebugString( "CodaRTnetContinuousTracker:Restarting acquisition took %f s.\n", elapsed );
+	cl.startAcqContinuous();
+	TimerSet( runningTimer, maxContinuous );
 }
-
-
 
 // Attempt to halt an ongoing aquisition. 
 // Does not care if it was actually acquiring or not.
