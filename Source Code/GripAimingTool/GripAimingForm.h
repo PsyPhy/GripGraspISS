@@ -66,8 +66,20 @@ namespace GripAimingTool {
 	private: System::Windows::Forms::Panel^  tabletPanel0;
 	private: System::Windows::Forms::Panel^  distancePanel0;
 	private: System::Windows::Forms::TextBox^  instructions;
-
+	private: System::Windows::Forms::GroupBox^  groupBox2;
+	private: System::Windows::Forms::GroupBox^  groupBox7;
+	private: System::Windows::Forms::Panel^  manipulandumPanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox8;
+	private: System::Windows::Forms::Panel^  wristPanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox9;
+	private: System::Windows::Forms::Panel^  tabletPanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox10;
+	private: System::Windows::Forms::Panel^  distancePanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox11;
+	private: System::Windows::Forms::Panel^  boresightPanel1;
 	private: System::Windows::Forms::TextBox^  intializing;
+
+
 
 	private:
 		/// <summary>
@@ -86,31 +98,48 @@ namespace GripAimingTool {
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->groupBox6 = (gcnew System::Windows::Forms::GroupBox());
 			this->manipulandumPanel0 = (gcnew System::Windows::Forms::Panel());
+			this->boresightGroup0 = (gcnew System::Windows::Forms::GroupBox());
+			this->boresightPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
 			this->wristPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
 			this->tabletPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			this->distancePanel0 = (gcnew System::Windows::Forms::Panel());
-			this->boresightGroup0 = (gcnew System::Windows::Forms::GroupBox());
-			this->boresightPanel0 = (gcnew System::Windows::Forms::Panel());
 			this->instructions = (gcnew System::Windows::Forms::TextBox());
+			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox7 = (gcnew System::Windows::Forms::GroupBox());
+			this->manipulandumPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox8 = (gcnew System::Windows::Forms::GroupBox());
+			this->wristPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox9 = (gcnew System::Windows::Forms::GroupBox());
+			this->tabletPanel1 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox10 = (gcnew System::Windows::Forms::GroupBox());
+			this->distancePanel1 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox11 = (gcnew System::Windows::Forms::GroupBox());
+			this->boresightPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->intializing = (gcnew System::Windows::Forms::TextBox());
 			this->groupBox1->SuspendLayout();
 			this->groupBox6->SuspendLayout();
+			this->boresightGroup0->SuspendLayout();
 			this->groupBox5->SuspendLayout();
 			this->groupBox4->SuspendLayout();
 			this->groupBox3->SuspendLayout();
-			this->boresightGroup0->SuspendLayout();
+			this->groupBox2->SuspendLayout();
+			this->groupBox7->SuspendLayout();
+			this->groupBox8->SuspendLayout();
+			this->groupBox9->SuspendLayout();
+			this->groupBox10->SuspendLayout();
+			this->groupBox11->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// groupBox1
 			// 
 			this->groupBox1->Controls->Add(this->groupBox6);
+			this->groupBox1->Controls->Add(this->boresightGroup0);
 			this->groupBox1->Controls->Add(this->groupBox5);
 			this->groupBox1->Controls->Add(this->groupBox4);
 			this->groupBox1->Controls->Add(this->groupBox3);
-			this->groupBox1->Controls->Add(this->boresightGroup0);
 			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->groupBox1->Location = System::Drawing::Point(12, 12);
@@ -141,6 +170,28 @@ namespace GripAimingTool {
 			this->manipulandumPanel0->Name = L"manipulandumPanel0";
 			this->manipulandumPanel0->Size = System::Drawing::Size(208, 167);
 			this->manipulandumPanel0->TabIndex = 1;
+			// 
+			// boresightGroup0
+			// 
+			this->boresightGroup0->Controls->Add(this->boresightPanel0);
+			this->boresightGroup0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->boresightGroup0->Location = System::Drawing::Point(122, 28);
+			this->boresightGroup0->Name = L"boresightGroup0";
+			this->boresightGroup0->Size = System::Drawing::Size(582, 537);
+			this->boresightGroup0->TabIndex = 0;
+			this->boresightGroup0->TabStop = false;
+			this->boresightGroup0->Text = L"Boresight";
+			// 
+			// boresightPanel0
+			// 
+			this->boresightPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->boresightPanel0->Location = System::Drawing::Point(10, 26);
+			this->boresightPanel0->Name = L"boresightPanel0";
+			this->boresightPanel0->Size = System::Drawing::Size(562, 499);
+			this->boresightPanel0->TabIndex = 0;
 			// 
 			// groupBox5
 			// 
@@ -191,7 +242,7 @@ namespace GripAimingTool {
 			this->groupBox3->Controls->Add(this->distancePanel0);
 			this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox3->Location = System::Drawing::Point(596, 34);
+			this->groupBox3->Location = System::Drawing::Point(8, 28);
 			this->groupBox3->Name = L"groupBox3";
 			this->groupBox3->Size = System::Drawing::Size(107, 537);
 			this->groupBox3->TabIndex = 1;
@@ -208,28 +259,6 @@ namespace GripAimingTool {
 			this->distancePanel0->Size = System::Drawing::Size(87, 498);
 			this->distancePanel0->TabIndex = 0;
 			// 
-			// boresightGroup0
-			// 
-			this->boresightGroup0->Controls->Add(this->boresightPanel0);
-			this->boresightGroup0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->boresightGroup0->Location = System::Drawing::Point(8, 34);
-			this->boresightGroup0->Name = L"boresightGroup0";
-			this->boresightGroup0->Size = System::Drawing::Size(582, 537);
-			this->boresightGroup0->TabIndex = 0;
-			this->boresightGroup0->TabStop = false;
-			this->boresightGroup0->Text = L"Boresight";
-			// 
-			// boresightPanel0
-			// 
-			this->boresightPanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
-				| System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->boresightPanel0->Location = System::Drawing::Point(10, 26);
-			this->boresightPanel0->Name = L"boresightPanel0";
-			this->boresightPanel0->Size = System::Drawing::Size(562, 499);
-			this->boresightPanel0->TabIndex = 0;
-			// 
 			// instructions
 			// 
 			this->instructions->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
@@ -244,6 +273,133 @@ namespace GripAimingTool {
 			this->instructions->TabIndex = 1;
 			this->instructions->Text = resources->GetString(L"instructions.Text");
 			// 
+			// groupBox2
+			// 
+			this->groupBox2->Controls->Add(this->groupBox7);
+			this->groupBox2->Controls->Add(this->groupBox8);
+			this->groupBox2->Controls->Add(this->groupBox9);
+			this->groupBox2->Controls->Add(this->groupBox10);
+			this->groupBox2->Controls->Add(this->groupBox11);
+			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox2->Location = System::Drawing::Point(728, 12);
+			this->groupBox2->Name = L"groupBox2";
+			this->groupBox2->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
+			this->groupBox2->Size = System::Drawing::Size(710, 782);
+			this->groupBox2->TabIndex = 4;
+			this->groupBox2->TabStop = false;
+			this->groupBox2->Text = L"Tracking Camera 2";
+			// 
+			// groupBox7
+			// 
+			this->groupBox7->Controls->Add(this->manipulandumPanel1);
+			this->groupBox7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox7->Location = System::Drawing::Point(480, 577);
+			this->groupBox7->Name = L"groupBox7";
+			this->groupBox7->Size = System::Drawing::Size(224, 199);
+			this->groupBox7->TabIndex = 2;
+			this->groupBox7->TabStop = false;
+			this->groupBox7->Text = L"Manipulandum Markers";
+			// 
+			// manipulandumPanel1
+			// 
+			this->manipulandumPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->manipulandumPanel1->Location = System::Drawing::Point(8, 25);
+			this->manipulandumPanel1->Name = L"manipulandumPanel1";
+			this->manipulandumPanel1->Size = System::Drawing::Size(208, 167);
+			this->manipulandumPanel1->TabIndex = 1;
+			// 
+			// groupBox8
+			// 
+			this->groupBox8->Controls->Add(this->wristPanel1);
+			this->groupBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox8->Location = System::Drawing::Point(243, 577);
+			this->groupBox8->Name = L"groupBox8";
+			this->groupBox8->Size = System::Drawing::Size(224, 199);
+			this->groupBox8->TabIndex = 2;
+			this->groupBox8->TabStop = false;
+			this->groupBox8->Text = L"Wrist Markers";
+			// 
+			// wristPanel1
+			// 
+			this->wristPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->wristPanel1->Location = System::Drawing::Point(8, 25);
+			this->wristPanel1->Name = L"wristPanel1";
+			this->wristPanel1->Size = System::Drawing::Size(208, 167);
+			this->wristPanel1->TabIndex = 1;
+			// 
+			// groupBox9
+			// 
+			this->groupBox9->Controls->Add(this->tabletPanel1);
+			this->groupBox9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox9->Location = System::Drawing::Point(8, 577);
+			this->groupBox9->Name = L"groupBox9";
+			this->groupBox9->Size = System::Drawing::Size(224, 199);
+			this->groupBox9->TabIndex = 1;
+			this->groupBox9->TabStop = false;
+			this->groupBox9->Text = L"Tablet Markers";
+			// 
+			// tabletPanel1
+			// 
+			this->tabletPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->tabletPanel1->Location = System::Drawing::Point(8, 25);
+			this->tabletPanel1->Name = L"tabletPanel1";
+			this->tabletPanel1->Size = System::Drawing::Size(208, 167);
+			this->tabletPanel1->TabIndex = 0;
+			// 
+			// groupBox10
+			// 
+			this->groupBox10->Controls->Add(this->distancePanel1);
+			this->groupBox10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox10->Location = System::Drawing::Point(597, 28);
+			this->groupBox10->Name = L"groupBox10";
+			this->groupBox10->Size = System::Drawing::Size(107, 537);
+			this->groupBox10->TabIndex = 1;
+			this->groupBox10->TabStop = false;
+			this->groupBox10->Text = L"Distance";
+			// 
+			// distancePanel1
+			// 
+			this->distancePanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->distancePanel1->Location = System::Drawing::Point(10, 26);
+			this->distancePanel1->Name = L"distancePanel1";
+			this->distancePanel1->Size = System::Drawing::Size(87, 498);
+			this->distancePanel1->TabIndex = 0;
+			// 
+			// groupBox11
+			// 
+			this->groupBox11->Controls->Add(this->boresightPanel1);
+			this->groupBox11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox11->Location = System::Drawing::Point(8, 28);
+			this->groupBox11->Name = L"groupBox11";
+			this->groupBox11->Size = System::Drawing::Size(582, 537);
+			this->groupBox11->TabIndex = 0;
+			this->groupBox11->TabStop = false;
+			this->groupBox11->Text = L"Boresight";
+			// 
+			// boresightPanel1
+			// 
+			this->boresightPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->boresightPanel1->Location = System::Drawing::Point(10, 26);
+			this->boresightPanel1->Name = L"boresightPanel1";
+			this->boresightPanel1->Size = System::Drawing::Size(562, 499);
+			this->boresightPanel1->TabIndex = 0;
+			// 
 			// intializing
 			// 
 			this->intializing->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 72, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
@@ -252,7 +408,7 @@ namespace GripAimingTool {
 			this->intializing->Location = System::Drawing::Point(265, 421);
 			this->intializing->Name = L"intializing";
 			this->intializing->Size = System::Drawing::Size(921, 116);
-			this->intializing->TabIndex = 3;
+			this->intializing->TabIndex = 5;
 			this->intializing->Text = L"Initializing Tracker";
 			this->intializing->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
 			this->intializing->Visible = false;
@@ -263,6 +419,7 @@ namespace GripAimingTool {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1450, 959);
 			this->Controls->Add(this->intializing);
+			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->instructions);
 			this->Controls->Add(this->groupBox1);
 			this->Name = L"GripAimingForm";
@@ -271,17 +428,23 @@ namespace GripAimingTool {
 			this->Shown += gcnew System::EventHandler(this, &GripAimingForm::GripAimingForm_Shown);
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox6->ResumeLayout(false);
+			this->boresightGroup0->ResumeLayout(false);
 			this->groupBox5->ResumeLayout(false);
 			this->groupBox4->ResumeLayout(false);
 			this->groupBox3->ResumeLayout(false);
-			this->boresightGroup0->ResumeLayout(false);
+			this->groupBox2->ResumeLayout(false);
+			this->groupBox7->ResumeLayout(false);
+			this->groupBox8->ResumeLayout(false);
+			this->groupBox9->ResumeLayout(false);
+			this->groupBox10->ResumeLayout(false);
+			this->groupBox11->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
 
-#define DEX_CODA_UNITS 1
+#define DEX_CODA_UNITS 2
 #define DEX_MARKERS 20
 
 
@@ -298,6 +461,8 @@ namespace GripAimingTool {
 		OrthoViewpoint *distanceViewpoint;
 		Patch *lowerExclusionZone, *upperExclusionZone;
 		Assembly	*distanceBars;
+		Sphere		**objectMarker;
+
 
 		static double	minDisplayDistance = 1000.0;
 		static double	maxDisplayDistance = 5000.0;
@@ -315,6 +480,9 @@ namespace GripAimingTool {
 		static int		lastTablet = 11;
 		static int		firstWrist = 12;
 		static int		lastWrist = 19;
+
+		static int lowerMastMarker = 11;
+		static int upperMastMarker = 12;
 
 		GripManipulandum	*manipulandum;
 		GripTablet			*tablet;
@@ -396,7 +564,29 @@ namespace GripAimingTool {
 
 
 	private: void Redraw( void ) {
+
+				 static VectorsMixin vm;
+
+				 MarkerFrame frame;
 				 for ( int unit = 0; unit < DEX_CODA_UNITS; unit++ ) {
+					 tracker->GetCurrentMarkerFrameIntrinsic( frame, unit );
+					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
+						 markerSpheres->component[mrk]->enabled = frame.marker[mrk].visibility;
+						 distanceBars->component[mrk]->enabled = frame.marker[mrk].visibility;
+						 objectMarker[mrk]->enabled = frame.marker[mrk].visibility;
+						 if ( frame.marker[mrk].visibility	) {
+							 markerSpheres->component[mrk]->SetPosition( frame.marker[mrk].position );
+							 distanceBars->component[mrk]->SetPosition( 0.0, frame.marker[mrk].position[Y], 5.0 );
+						 }
+						 if ( frame.marker[lowerMastMarker].visibility && frame.marker[upperMastMarker].visibility ) {
+							 Vector3 average;
+							 vm.AddVectors( average, frame.marker[lowerMastMarker].position, frame.marker[upperMastMarker].position );
+							 vm.ScaleVector( average, average, 0.5 );
+							 targetSphere->SetPosition( average );
+							 targetSphere->Enable();
+						 }
+						 else targetSphere->Disable();
+					 }
 					 DrawDistance( distanceWindow[unit] );
 					 DrawBoresight( boresightWindow[unit] );
 					 DrawObject( manipulandumWindow[unit], objectViewpoint, manipulandum );
@@ -420,7 +610,7 @@ namespace GripAimingTool {
 				 // allocated at runtime. 
 				 boresightWindow = CreateOpenGLWindowArray( DEX_CODA_UNITS );
 				 boresightWindow[0] = CreateOpenGLWindowInForm( boresightPanel0 );
-				 //boresightWindow[1] = CreateOpenGLWindowInForm( boresightPanel1, boresightWindow[0]->hRC );
+				 boresightWindow[1] = CreateOpenGLWindowInForm( boresightPanel1, boresightWindow[0]->hRC );
 				 boresightViewpoint =  new Viewpoint( 6.0, 70.0, 1000.0, 6000.0);
 				 // When then CODA is in it's 0 orientation, it points along
 				 // the positive Y axis. This attitude reflects that in the 
@@ -432,27 +622,27 @@ namespace GripAimingTool {
 
 				 tabletWindow = CreateOpenGLWindowArray( DEX_CODA_UNITS );
 				 tabletWindow[0] = CreateOpenGLWindowInForm( tabletPanel0, boresightWindow[0]->hRC );
-				 //tabletWindow[1] = CreateOpenGLWindowInForm( tabletPanel1, tabletWindow[0]->hRC );
+				 tabletWindow[1] = CreateOpenGLWindowInForm( tabletPanel1, tabletWindow[0]->hRC );
 				 wristWindow = CreateOpenGLWindowArray( DEX_CODA_UNITS );
 				 wristWindow[0] = CreateOpenGLWindowInForm( wristPanel0, boresightWindow[0]->hRC );
-				 //wristWindow[1] = CreateOpenGLWindowInForm( wristPanel1, wristWindow[0]->hRC );
+				 wristWindow[1] = CreateOpenGLWindowInForm( wristPanel1, wristWindow[0]->hRC );
 				 manipulandumWindow = CreateOpenGLWindowArray( DEX_CODA_UNITS );
 				 manipulandumWindow[0] = CreateOpenGLWindowInForm( manipulandumPanel0, boresightWindow[0]->hRC );
-				 //manipulandumWindow[1] = CreateOpenGLWindowInForm( manipulandumPanel1, manipulandumWindow[0]->hRC );
+				 manipulandumWindow[1] = CreateOpenGLWindowInForm( manipulandumPanel1, manipulandumWindow[0]->hRC );
 
 				 // Create objects for the distance display.
 				 distanceWindow = CreateOpenGLWindowArray( DEX_CODA_UNITS );
 				 distanceWindow[0] = CreateOpenGLWindowInForm( distancePanel0, boresightWindow[0]->hRC );
-				 //distanceWindow[1] = CreateOpenGLWindowInForm( distancePanel1, distanceWindow[0]->hRC );
+				 distanceWindow[1] = CreateOpenGLWindowInForm( distancePanel1, distanceWindow[0]->hRC );
 				 distanceViewpoint = new OrthoViewpoint( -1.0, 1.0, minDisplayDistance, maxDisplayDistance );
 				 lowerExclusionZone = new Patch( 2.0, minAcceptableDistance - minDisplayDistance );
 				 lowerExclusionZone->SetOffset( 0.0, ( minAcceptableDistance - minDisplayDistance ) / 2.0, 0.0 );
 				 lowerExclusionZone->SetPosition( 0.0, minDisplayDistance, - 10.0 );
-				 lowerExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.05 );
+				 lowerExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.5 );
 				 upperExclusionZone = new Patch( 2.0, maxDisplayDistance - maxAcceptableDistance );
 				 upperExclusionZone->SetOffset( 0.0, - ( maxDisplayDistance - maxAcceptableDistance ) / 2.0, 0.0 );
 				 upperExclusionZone->SetPosition( 0.0, maxDisplayDistance, - 10.0 );
-				 upperExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.05 );
+				 upperExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.5 );
 				 distanceBars = new Assembly();
 				 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
 					 Slab *bar = new Slab( 1.0, 30.0, 20.0 );
@@ -473,12 +663,11 @@ namespace GripAimingTool {
 				 targetSphere->SetPosition( 0.0, minDisplayDistance + 9  * 100.0, 0.0 );
 				 targetSphere->SetAttitude( 90.0, 0.0, 0.0 );
 
-				 Sphere *objectMarker[DEX_MARKERS];
+				 objectMarker = (Sphere **) calloc( DEX_MARKERS, sizeof(Sphere *) );
+				 fAbortMessageOnCondition( objectMarker == 0, "Grip Aiming Form", "Error allocating memory for marker spheres." );
 				 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
 					 objectMarker[mrk] = new Sphere( objectMarkerRadius );
 				 }
-
-
 
 				 objectViewpoint = new Viewpoint( 6.0, 2.5, 10.0, 10000.0);
 				 objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
@@ -557,24 +746,24 @@ namespace GripAimingTool {
 
 
 			 }
-		// A timer to handle animations and screen refresh, and associated actions.
-		static System::Windows::Forms::Timer^ refreshTimer;
-		void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
-			StopRefreshTimer();
-			Redraw();
-			StartRefreshTimer();
-		}
-		void CreateRefreshTimer( int interval ) {
-			refreshTimer = gcnew( System::Windows::Forms::Timer );
-			refreshTimer->Interval = interval;
-			refreshTimer->Tick += gcnew EventHandler( this, &GripAimingForm::OnTimerElapsed );
-		}
-		void StartRefreshTimer( void ) {
-			refreshTimer->Start();
-		}
-		void StopRefreshTimer( void ) {
-			refreshTimer->Stop();
-		}		
+			 // A timer to handle animations and screen refresh, and associated actions.
+			 static System::Windows::Forms::Timer^ refreshTimer;
+			 void OnTimerElapsed( System::Object^ source, System::EventArgs^ e ) {
+				 StopRefreshTimer();
+				 Redraw();
+				 StartRefreshTimer();
+			 }
+			 void CreateRefreshTimer( int interval ) {
+				 refreshTimer = gcnew( System::Windows::Forms::Timer );
+				 refreshTimer->Interval = interval;
+				 refreshTimer->Tick += gcnew EventHandler( this, &GripAimingForm::OnTimerElapsed );
+			 }
+			 void StartRefreshTimer( void ) {
+				 refreshTimer->Start();
+			 }
+			 void StopRefreshTimer( void ) {
+				 refreshTimer->Stop();
+			 }		
 
 	};
 }
