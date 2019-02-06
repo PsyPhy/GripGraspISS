@@ -702,10 +702,8 @@ namespace GraspTrackerDaemon {
 					 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
 				 }
 				 fOutputDebugString( "Sending tracker alignments.\n" );
-				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ) );
-				 Sleep( 2000 );
+				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ), true );
 				 fOutputDebugString( "Done sending tracker alignments.\n" );
-
 
 				// Put some values for housekeeping just for testing.
 				userTextBox->Text = dex->static_user.ToString();

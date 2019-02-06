@@ -191,7 +191,7 @@ void DexServices::AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose
 
 }
 
-void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
+void DexServices::AddClientSlice( unsigned char *data, int bytes, bool advance ) {
 
 	int max_bytes = sizeof( rt.Slice[slice_count].clientData );
 	assert( bytes <= max_bytes );
@@ -201,8 +201,19 @@ void DexServices::AddClientSlice( unsigned char *data, int bytes  ) {
 	// Set the rest of the client data to zero.
 	for ( int i = bytes; i < max_bytes; i++  ) rt.Slice[slice_count].clientData[i] = 0;
 
-	AdvanceIfReady();
+	if ( advance ) Advance();
+	else AdvanceIfReady();
 
+}
+
+void DexServices::Advance( void ) {
+		slice_count++;
+		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
+			SendScienceRealtimeData();
+			NullifyClientInfo();
+			slice_count = 0;
+		}
+		TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
 }
 
 void DexServices::AdvanceIfReady( void ) {
@@ -215,15 +226,8 @@ void DexServices::AdvanceIfReady( void ) {
 	// to the next slice. When there are enough slices to fill the
 	// packet, it gets sent, and we reset back to the begining of the
 	// slice buffer.
-	if ( TimerTimeout( slice_timer ) ) {
-		slice_count++;
-		if ( slice_count >= GRASP_RT_SLICES_PER_PACKET ) {
-			SendScienceRealtimeData();
-			NullifyClientInfo();
-			slice_count = 0;
-		}
-		TimerSet( slice_timer, GRASP_RT_SLICE_INTERVAL );
-	}
+	if ( TimerTimeout( slice_timer ) ) Advance();
+
 }
 
 int DexServices::SendScienceRealtimeData( void ) {

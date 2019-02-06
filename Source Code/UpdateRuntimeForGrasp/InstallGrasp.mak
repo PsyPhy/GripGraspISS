@@ -7,6 +7,7 @@ EXECUTABLES = \
 	..\Grasp\GraspPackData.bat.src \
 	..\GraspGUI\Grasp.ico ..\$(BUILDCONFIGURATION)\GraspGUI.exe \
 	..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe \
+	..\$(BUILDCONFIGURATION)\GripAimingTool.exe \
 	..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe \
 	..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe \
 	..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe \
@@ -48,6 +49,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\GraspGUI\Grasp.ico $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GripAimingTool.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\TweakRigidBodyModel.exe $(DESTINATION)

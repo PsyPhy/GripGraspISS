@@ -160,7 +160,7 @@ namespace Grasp {
 
 		  // Realtime Science Data
 		  virtual void AddTrackerSlice( PsyPhy::TrackerPose &hmd, PsyPhy::TrackerPose &hand, PsyPhy::TrackerPose &chest, MarkerFrame frame[2] );
-		  virtual void AddClientSlice( unsigned char *data, int bytes );
+		  virtual void AddClientSlice( unsigned char *data, int bytes, bool advance = false );
 		  virtual void NullifyClientInfo( void );
 
 		  // Proxy Server - Used to create a relay between local processes and DEX.
@@ -195,6 +195,7 @@ namespace Grasp {
 #endif
 	private: 
 		int SendScienceRealtimeData( void );
+		virtual void Advance( void );
 		virtual void AdvanceIfReady( void );
 	};
 
