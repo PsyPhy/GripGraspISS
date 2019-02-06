@@ -304,6 +304,22 @@ namespace Grasp {
 
 	};
 
+	// Tag in the telemetry client packet to say whether the
+//  alignment transforms are pre-alignment or post-alignment
+#define PRE 0
+#define POST 1
+#define CURRENT 2
+
+	typedef struct {
+
+		char ID[8];
+
+		int	prePost;
+		PsyPhy::fVector3		offsets[MAX_UNITS];
+		PsyPhy::fMatrix3x3		rotations[MAX_UNITS];
+
+	} AlignClientBuffer;
+
 
 }
 

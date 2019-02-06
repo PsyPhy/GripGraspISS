@@ -15,21 +15,3 @@
 #define ABORT_REQUESTED		8888
 #define RESET_REQUESTED		7777
 	
-// Tag in the telemetry client packet to say whether the
-//  alignment transforms are pre-alignment or post-alignment
-#define PRE 0
-#define POST 1
-
-namespace AlignToRigidBodyGUI {
-
-	typedef struct {
-
-		char ID[8];
-
-		int	prePost;
-		PsyPhy::fVector3		offsets[MAX_UNITS];
-		PsyPhy::fMatrix3x3		rotations[MAX_UNITS];
-
-	} AlignClientBuffer;
-
-}

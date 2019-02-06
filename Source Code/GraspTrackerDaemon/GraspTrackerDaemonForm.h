@@ -36,17 +36,6 @@ namespace GraspTrackerDaemon {
 
 		bool recording;
 		unsigned int nPoseSamples;
-	private: System::Windows::Forms::TextBox^  trackerStatusTextBox;
-	public: 
-
-	private: System::Windows::Forms::Label^  label13;
-
-	public: 
-
-
-	public: 
-
-	public: 
 		PsyPhy::VectorsMixin	*vm;
 
 		Form1(void) : tracking( CONTINUOUS ), autohide( false ), recording( false ), nPoseSamples( 0 )
@@ -116,6 +105,8 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::TextBox^  taskTextBox;
 		System::Windows::Forms::Label^  label10;
 		System::Windows::Forms::Label^  label11;
+		System::Windows::Forms::TextBox^  trackerStatusTextBox;
+		System::Windows::Forms::Label^  label13;
 
 	private:
 		/// Required designer variable.
@@ -650,7 +641,7 @@ namespace GraspTrackerDaemon {
 			//
 			dex = new Grasp::DexServices();
 			// Initialize without a log file.
-			dex->Initialize( nullptr );
+			dex->Initialize();
 			dex->Connect();
 			dex->InitializeProxySocket();
 			Refresh();
@@ -698,6 +689,23 @@ namespace GraspTrackerDaemon {
 				// acquisition at that moment. It is likely to be a moment where the
 				// 1 second pause in data will not be too critical.
 				if ( ! clientConnectedButton->Checked ) coda->RestartContinuousAcquisition();
+
+				 // Send the current tracker alignment in an RT science packet.
+				 AlignClientBuffer clientBuffer;
+				 Vector3	offsets[MAX_UNITS];
+				 Matrix3x3	rotations[MAX_UNITS];
+				 strncpy( clientBuffer.ID, "ALIGN", sizeof( clientBuffer.ID ) );
+				 clientBuffer.prePost = CURRENT;
+				 coda->GetAlignmentTransforms( offsets, rotations );
+				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+					 coda->CopyVector( clientBuffer.offsets[unit], offsets[unit] );
+					 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
+				 }
+				 fOutputDebugString( "Sending tracker alignments.\n" );
+				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ) );
+				 Sleep( 2000 );
+				 fOutputDebugString( "Done sending tracker alignments.\n" );
+
 
 				// Put some values for housekeeping just for testing.
 				userTextBox->Text = dex->static_user.ToString();
