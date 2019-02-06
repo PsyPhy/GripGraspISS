@@ -26,6 +26,10 @@ double	GraspVR::desiredHeadRollSweetZone = 2.0;
 // the are expressed as the cosine of the tolerance angle.
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
 double	GraspVR::straightAheadThreshold = 0.995;	// approx. 2.5° Corresponds roughly to center target radius.
+double  GraspVR::pointingThreshold = 1.0;
+bool	GraspVR::stopCheating = false;
+bool	GraspVR::noLasers = false;
+bool	GraspVR::snuffLaser = false;
 
 double GraspVR::interpupillary_distance = 60.0;
 // Define how much the chest markers are ahead of or behind the HMD markers
@@ -493,7 +497,6 @@ ArmStatus GraspVR::HandleHandElevation( void ) {
 	}
 	else {
 		renderer->kTool->SetColor( 0.0, 0.0, 1.0, 1.0 );	// kTool is always blue regardless of the orientation.
-//		renderer->kkTool->SetColor( 0.5, 0.5, 0.5, 1.0 );	// This should be overridden by a subsequent call to HandleHandOrientation.
 		renderer->SetHandColor( renderer->vkTool, true );
 		return( raised );
 	}
@@ -611,9 +614,10 @@ void GraspVR::HandleLasers( void ) {
 #endif
 
 		// Lasers should be visible only if the hand is in the field of view.
-
 		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
 		renderer->handLaser->SetOffset( 0.0, 0.0, renderer->laser_distance );
+		// If the hand is not raised, we cannot be on the target.
+		renderer->positionOnlyTarget->SetColor( Translucid( ORANGE ) );
 
 	}
 	else {
@@ -628,7 +632,20 @@ void GraspVR::HandleLasers( void ) {
 		Vector3 tunnel_axis, hand_axis;
 		MultiplyVector( tunnel_axis, renderer->kVector, renderer->room->orientation );
 		MultiplyVector( hand_axis, renderer->kVector, renderer->hand->orientation );
+		if ( stopCheating ) {
+			Vector3 laser_ray;
+			ScaleVector( laser_ray, hand_axis, renderer->laser_distance );
+			AddVectors( hand_axis, laser_ray, renderer->hand->position );
+			NormalizeVector( hand_axis );
+		}
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
+		// As another way of avoiding cheating, we turn the laser off if the hand
+		// has been properly aligned for at least an instant.  If you set the
+		// threshold above 1.0 in the .ini file, this feature will be disabled.
+		if ( projection > pointingThreshold ) {
+			Translucid( CYAN );
+			if ( snuffLaser ) renderer->handLaser->Disable();
+		}
 		renderer->handLaser->SetEccentricity( projection );
 
 	}

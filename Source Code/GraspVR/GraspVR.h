@@ -97,6 +97,10 @@ namespace Grasp {
 			if ( !strcmp( name, "viewpointOffset" ) && !strcmp( section, "GraspVR" ) ) instance->viewpointOffset = atof( value );
 			if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
 			if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
+			if ( !strcmp( name, "pointingThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->pointingThreshold = atof( value );
+			if ( !strcmp( name, "stopCheating" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
+			if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );
+			if ( !strcmp( name, "snuffLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
 			return 1;
 		}
 
@@ -155,6 +159,11 @@ namespace Grasp {
 		static double	desiredHeadRollSweetZone;
 		static double	desiredHeadRollTolerance;		
 		static double	straightAheadThreshold;
+		static double	pointingThreshold;
+		static bool		stopCheating;
+		static bool		noLasers;
+		static bool		snuffLaser;
+
 		AlignmentStatus	HandleHeadAlignment( bool use_arrow );
 		AlignmentStatus HandleHeadOnShoulders( bool use_arrow );
 		AlignmentStatus HandleGazeDirection( void );

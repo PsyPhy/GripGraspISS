@@ -189,6 +189,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	// The 'Chest' methods asks the subject to gaze in a direction defined by the hmd and chest marker arrays.
 	if ( FileExists("ChestAlignGaze.flg" ) && useCoda ) grasp->straightenHeadMethod = CHEST_STRAIGHTEN;
 
+	if ( FileExists( "NoLasers.flg" ) || strstr( lpCmdLine, "--nolaser" ) ) grasp->noLasers = true;
+	if ( FileExists( "NoCheating.flg" ) || strstr( lpCmdLine, "--nocheat" ) ) grasp->stopCheating = true;
+
 	grasp->Initialize( display, trackers, dex );
 	int return_code = grasp->RunTrialBlock( sequence_filename, output_filename_root );
 	grasp->Release();

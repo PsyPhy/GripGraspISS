@@ -107,6 +107,8 @@ int GraspGLObjects::curve_facets = 20;
 const double GraspGLObjects::errorColorMapTransparency = 0.5;
 const double GraspGLObjects::errorColorMapFadeDistance = 7.5;
 
+// Characteristics of the fuzzy laser pointer.
+
 // Set up the lighting and material properties.
 void GraspGLObjects::SetLighting( void ) {
 
@@ -1063,7 +1065,8 @@ Vector3 FuzzyPointer::beamOffset[LASER_BEAMS] = {
 	{ -0.2, -0.5, 7.0 }
 };
 
-FuzzyPointer::FuzzyPointer() {
+FuzzyPointer::FuzzyPointer() : diffusion_constant( LASER_DIFFUSION_CONSTANT )
+{
 
 	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
 		sphere[beam] = new Disk( LASER_FOCUSED_SIZE );
@@ -1084,7 +1087,7 @@ void FuzzyPointer::SetEccentricity( double projection ) {
 		else {
 			Vector3 offset;
 			double distance = 2000.0 * (LASER_CLOSE_ALIGNMENT_THRESHOLD - projection);
-			double expand = LASER_DIFFUSION_CONSTANT * distance;
+			double expand = diffusion_constant * distance;
 			ScaleVector( offset, beamOffset[beam], 1.25 * expand );
 			sphere[beam]->SetOffset( offset );
 			sphere[beam]->SetRadius( LASER_FOCUSED_SIZE + expand );

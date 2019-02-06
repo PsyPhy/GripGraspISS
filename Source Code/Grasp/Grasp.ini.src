@@ -18,7 +18,10 @@ targetBars = 10
 useBars = true
 fingerBallRadius = 10.0
 fingerLength = 100.0
-laser_distance = 2000.0
+
+
+laserDistance = 2000.0
+laserDiffusionConstant = 1.0
 
 headArrowLocation = < 0.0 0.0 -600.0 >
 headArrowRadius = 250.0
@@ -27,11 +30,35 @@ handArrowRadius = 60.0
 [GraspVR]
 	
 IPD = 50.0
+
+;;; The following used to determine whether the hand was raised or not.
+;;; But the algorithm was changed to that of checking if the hand is
+;;; in front of the viewer and within the circular cross section of the tunnel.
+;;; So I do not believe that this parameter is still used.
+;;; Parameters for the new algorithm are hard coded.
 armRaisedThreshold = 0.9
+
+;;; Threshold to determine when gaze angle is aligned with tunnel.
 straightAheadThreshold = 0.995
+
+;;; The following parameter determines the threshold at which the alignment is 
+;;; considered to be good enough. 
+pointingThreshold = 0.995
+
+;;; Another way to avoid cheating is to require that the hand point
+;;; near the center of the end of the tunnel, not just aligned with
+;;; its axis. This flags turns this feature off and on.
+stopCheating = true
+
+;;; One way to avoid using the laser to cheat is to have the laser turn
+;;; off once the hand has been properly aligned for at least an instant.
+snuffLaser = false
+
+;;; Finally, another way is to skip the laser pointer altogether.
+noLasers = false
+
 viewpointOffset = 100
 chestOffset = 100
-
 
 [GraspTrackers]
 

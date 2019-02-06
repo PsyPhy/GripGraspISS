@@ -61,6 +61,7 @@ namespace Grasp {
 	class FuzzyPointer : public PsyPhy::Assembly {
 	public:
 		Disk *sphere[LASER_BEAMS];
+		double diffusion_constant;
 		static Vector3 beamOffset[LASER_BEAMS];
 		void SetColor( float r, float g, float b, float a = 1.0f );
 		void SetEccentricity( double projection );
@@ -149,8 +150,8 @@ namespace Grasp {
 		static double target_bar_radius;	//Tagliabue
 		static double target_bar_spacing;	//Tagliabue
 		static double finger_length;
-		static double laser_distance;
 
+		static double laser_distance;
 		static double hmdTransparency;
 
 		static const double errorColorMapTransparency;
@@ -325,9 +326,6 @@ namespace Grasp {
 		// Need to be able to change the color of the fingers according to the position of the hand.
 		// OpenGLObjects does not provide an easy way to override the color, so this hack lets us do it.
 		void SetHandColor( Assembly *hand, bool enabled );
-		// Need to be able to enable or disable a laser attached to a hand.
-		void EnableHandLaser( Assembly *hand );
-		void DisableHandLaser( Assembly *hand );
 		void SetHandLaserEccentricity( Assembly *hand, double projection );
 			
 
@@ -398,6 +396,7 @@ namespace Grasp {
 			if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
 			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
 			if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
+			if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->handLaser->diffusion_constant = atof( value );
 			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
 			return 1;
 		}
