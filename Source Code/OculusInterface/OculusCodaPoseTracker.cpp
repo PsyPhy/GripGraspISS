@@ -33,7 +33,7 @@ OculusCodaPoseTracker::OculusCodaPoseTracker( OculusMapper *mapper, PoseTracker 
 	// The value is large to filter artifacts from the computed CODA pose.
 	postcaptureInertialWeighting = 100.0;
 	// Time constant to determine how to adapt the weight.
-	occlusionWeightingTimeConstant = 0.01;
+	occlusionWeightingTimeConstant = 0.1;
 
 	// Do what all PoseTrackers need to do.
 	PoseTracker::PoseTracker();
