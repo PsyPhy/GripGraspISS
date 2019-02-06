@@ -93,6 +93,6 @@ chestFilterConstant = 10.0
 ;;; the system shifts between them.  If you want to negate this 
 ;;; behavior, set both weighting factors to the same value (e.g. 10.0).
 occlusionWeightingTimeConstant = 0.01
-precaptureInertialWeighting = 10.0;
-postcaptureInertialWeighting = 1.0;
+precaptureInertialWeighting = 1.0;
+postcaptureInertialWeighting = 100.0;
 

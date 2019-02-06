@@ -147,7 +147,8 @@ bool OculusCodaPoseTracker::Update( void ) {
 			for ( int i = 0; i < 4; i++ ) currentState.pose.orientation[i] = InertialWeighting * currentState.pose.orientation[i] + absolutePose.pose.orientation[i];
 			CopyVector( currentState.pose.position, absolutePose.pose.position );
 			// Once we have updated once toward a pose from the absolute tracker, subsequent steps
-			// will use a larger and larger weigthing factor to slow down the corrective actions.
+			// will use a larger and larger inertial weigthing factor to slow down the action of
+			// optical data.
 			InertialWeighting += ( postcaptureInertialWeighting - InertialWeighting ) * occlusionWeightingTimeConstant;
 			fOutputDebugString( "Cycle %4d: %f Step toward Absolute.\n", cycle_counter, InertialWeighting );
 		}

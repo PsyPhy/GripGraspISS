@@ -58,9 +58,9 @@ class OculusCodaPoseTracker : public PoseTracker {
 		// This is defined here as static because its address is sent as a callback to a parsing routine.
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			OculusCodaPoseTracker *instance = (OculusCodaPoseTracker *) which_instance;
-			if ( !strcmp( name, "precaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->precaptureInertialWeighting = atoi( value );
-			if ( !strcmp( name, "postcaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->postcaptureInertialWeighting = atoi( value );
-			if ( !strcmp( name, "occlusionWeightingTimeConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->occlusionWeightingTimeConstant = atoi( value );
+			if ( !strcmp( name, "precaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->precaptureInertialWeighting = atof( value );
+			if ( !strcmp( name, "postcaptureInertialWeighting" ) && !strcmp( section, "GraspTrackers" ) ) instance->postcaptureInertialWeighting = atof( value );
+			if ( !strcmp( name, "occlusionWeightingTimeConstant" ) && !strcmp( section, "GraspTrackers" ) ) instance->occlusionWeightingTimeConstant = atof( value );
 			return 1;
 		}
 
