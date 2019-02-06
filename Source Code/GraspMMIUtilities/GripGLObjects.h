@@ -100,7 +100,7 @@ namespace PsyPhy {
 
 		GripWrist( void ) {
 
-			Cylinder *cable = new Cylinder( 10.0, 10.0, 200.0 );
+			Cylinder *cable = new Cylinder( 6.0, 6.0, 160.0 );
 			cable->SetColor( 0.0, 0.2, 0.0 );
 			cable->SetOrientation( 0.0, 90.0, 0.0 );
 			AddComponent( cable );
