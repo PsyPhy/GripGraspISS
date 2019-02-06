@@ -1,10 +1,111 @@
-﻿Build started 1/12/2019 7:59:13 PM.
-Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (clean target(s)).
-CoreClean:
-  @echo No need to clean.
-  No need to clean.
-Done Building Project "C:\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (clean target(s)).
+﻿Build started 2/6/2019 9:35:58 AM.
+Project "C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (build target(s)).
+Build:
+  nmake /NOLOGO ReleaseGrasp.draft.mak
+  	ReleaseGrasp.bat Draft
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>setlocal
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM  
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM ReleaseGrasp.bat 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM A batch file that creates a tar archive with the GRASPonISS runtime installation. 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM Create a file tag based on the compiled build date and time. 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM The batch file  C:\DOCUME~1\psyphy\LOCALS~1\Temp\SetCommonTimestamp.bat was created by the CommonTimestamp project. 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM We call it here to get the timestamp info that was compiled into the executables. 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>call C:\DOCUME~1\psyphy\LOCALS~1\Temp\SetCommonTimestamp.bat 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-02-06 09h35m46s 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set TAG=(2019-02-06 09h35m46s) 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" 
+  Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set TAR=Utils\tar.exe 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set VERBOSE= 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>REM This gets executed inside the Visual Studio project directory. We move to the GRASPonISS root directoy. 
+  
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>pushd ..\.. 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --create  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" RunGRASP.bat 
+  
+  C:\GitHub\GripGraspISS2>if NOT Draft == Training goto :NOTTRAINING 
+  
+  C:\GitHub\GripGraspISS2>if Draft == Flight goto :FLIGHT 
+  
+  C:\GitHub\GripGraspISS2>if Draft == Draft goto :FLIGHT 
+  
+  C:\GitHub\GripGraspISS2>REM Configure for Flight-like (Draft) 
+  
+  C:\GitHub\GripGraspISS2>REM Configure for FM2 Codas and FM Marker Structures 
+  
+  C:\GitHub\GripGraspISS2>copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini  
+          1 fichier(s) copié(s).
+  
+  C:\GitHub\GripGraspISS2>copy /Y Bdy\FM\*.bdy Bdy 
+  Bdy\FM\Chest.bdy
+  Bdy\FM\ChestTilted.bdy
+  Bdy\FM\Hand.bdy
+  Bdy\FM\HMD.bdy
+  Bdy\FM\measuredChest.bdy
+  Bdy\FM\measuredHand.bdy
+  Bdy\FM\measuredHMD.bdy
+          7 fichier(s) copié(s).
+  
+  C:\GitHub\GripGraspISS2>echo chest  1>ChestAlignGaze.flg 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" ChestAlignGaze.flg 
+  
+  C:\GitHub\GripGraspISS2>echo Enabling mirroring. 
+  Enabling mirroring.
+  
+  C:\GitHub\GripGraspISS2>echo "Mirroring on."  1>Mirroring.flg 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Mirroring.flg 
+  
+  C:\GitHub\GripGraspISS2>goto :COMMON 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Bdy/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Bmp/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Executables/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Utils/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Instructions/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Scripts/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Sequences/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" InitFiles/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Documentation/* 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" CodaRTnet.ini 
+  
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Grasp.ini 
+  
+  C:\GitHub\GripGraspISS2>REM Keep a record of releases. 
+  
+  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"  1>>GripGraspReleases.log 
+  
+  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"  1>>GraspReleases.log 
+Done Building Project "C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.06
+Time Elapsed 00:00:27.31
