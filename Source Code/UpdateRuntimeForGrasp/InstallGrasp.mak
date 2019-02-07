@@ -8,6 +8,7 @@ EXECUTABLES = \
 	..\GraspGUI\Grasp.ico ..\$(BUILDCONFIGURATION)\GraspGUI.exe \
 	..\$(BUILDCONFIGURATION)\GraspHardwareStatus.exe \
 	..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe \
+	..\$(BUILDCONFIGURATION)\GripAimingTool.exe \
 	..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe \
 	..\$(BUILDCONFIGURATION)\PsyPhyOculusDemo.exe \
 	..\$(BUILDCONFIGURATION)\OculusMouse.exe \
@@ -46,6 +47,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\GraspScreenshots.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspGUI.exe $(DESTINATION)
 	copy ..\GraspGUI\Grasp.ico $(DESTINATION)
+	copy ..\$(BUILDCONFIGURATION)\GripAimingTool.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe $(DESTINATION)

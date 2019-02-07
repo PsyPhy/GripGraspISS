@@ -38,6 +38,9 @@
     <ProjectReference Include="..\Grasp\Grasp.vcxproj">
       <Project>{423dbcdb-eb88-4cff-9b04-d863f2bde835}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GripAimingTool\GripAimingTool.vcxproj">
+      <Project>{a67d2854-ec6e-4cc3-a49c-14cc247fb43b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GripMMIShowVersionInfo\GripMMIShowVersionInfo.vcxproj">
       <Project>{6da9ed6e-c775-49c7-9526-38ebd30cd8cc}</Project>
     </ProjectReference>

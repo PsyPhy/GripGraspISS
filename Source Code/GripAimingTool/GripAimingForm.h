@@ -616,7 +616,7 @@ static GLfloat  markerColor[][4] = {
 			static double	maxAcceptableDistance = 4000.0;
 
 			Assembly		*markerSpheres;
-			static double	markerRadius = 20.0;
+			static double	markerRadius = 30.0;
 			Sphere			*targetSphere;
 			static double	targetRadius = 200.0;
 
@@ -631,8 +631,8 @@ static GLfloat  markerColor[][4] = {
 
 			static int lowerMastMarker = 11;
 			static int upperMastMarker = 10;
-			static int leftTabletMarker = 8;
-			static int rightTabletMarker = 9;
+			static int leftTabletMarker = 9;
+			static int rightTabletMarker = 8;
 
 			GripTablet			*tablet;
 			GripManipulandum	*manipulandum;
@@ -694,7 +694,7 @@ static GLfloat  markerColor[][4] = {
 
 		private: void DrawBoresight( OpenGLWindow *window ) {
 					 window->Activate();
-					 window->Clear( 0.85, 0.85, 0.85, 1.0 );
+					 window->Clear( 0.0, 0.0, 0.05, 1.0 );
 					 // Draw the other objects with the hopes of seeing specular reflections. 
 					 boresightViewpoint->Apply( window );
 					 SetLighting();

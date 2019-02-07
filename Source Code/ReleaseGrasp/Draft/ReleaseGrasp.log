@@ -1,4 +1,4 @@
-﻿Build started 2/6/2019 9:35:58 AM.
+﻿Build started 2/6/2019 11:54:12 AM.
 Project "C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (build target(s)).
 Build:
   nmake /NOLOGO ReleaseGrasp.draft.mak
@@ -22,14 +22,14 @@ Build:
   
   C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>call C:\DOCUME~1\psyphy\LOCALS~1\Temp\SetCommonTimestamp.bat 
   
-  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-02-06 09h35m46s 
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-02-06 11h54m04s 
   
-  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set TAG=(2019-02-06 09h35m46s) 
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set TAG=(2019-02-06 11h54m04s) 
   
-  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" 
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" 
   
-  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" 
-  Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"
+  C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" 
+  Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar"
   
   C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>set TAR=Utils\tar.exe 
   
@@ -39,7 +39,7 @@ Build:
   
   C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp>pushd ..\.. 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --create  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" RunGRASP.bat 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --create  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" RunGRASP.bat 
   
   C:\GitHub\GripGraspISS2>if NOT Draft == Training goto :NOTTRAINING 
   
@@ -66,46 +66,46 @@ Build:
   
   C:\GitHub\GripGraspISS2>echo chest  1>ChestAlignGaze.flg 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" ChestAlignGaze.flg 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" ChestAlignGaze.flg 
   
   C:\GitHub\GripGraspISS2>echo Enabling mirroring. 
   Enabling mirroring.
   
   C:\GitHub\GripGraspISS2>echo "Mirroring on."  1>Mirroring.flg 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Mirroring.flg 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Mirroring.flg 
   
   C:\GitHub\GripGraspISS2>goto :COMMON 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Bdy/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Bdy/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Bmp/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Bmp/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Executables/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Executables/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Utils/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Utils/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Instructions/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Instructions/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Scripts/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Scripts/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Sequences/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Sequences/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" InitFiles/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" InitFiles/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Documentation/* 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Documentation/* 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" CodaRTnet.ini 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" CodaRTnet.ini 
   
-  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar" Grasp.ini 
+  C:\GitHub\GripGraspISS2>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar" Grasp.ini 
   
   C:\GitHub\GripGraspISS2>REM Keep a record of releases. 
   
-  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"  1>>GripGraspReleases.log 
+  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar"  1>>GripGraspReleases.log 
   
-  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 09h35m46s).tar"  1>>GraspReleases.log 
+  C:\GitHub\GripGraspISS2>echo "..\GRASP Runtime Draft (2019-02-06 11h54m04s).tar"  1>>GraspReleases.log 
 Done Building Project "C:\GitHub\GripGraspISS2\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:27.31
+Time Elapsed 00:00:18.01
