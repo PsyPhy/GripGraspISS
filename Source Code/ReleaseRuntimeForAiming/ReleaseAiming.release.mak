@@ -1,0 +1,2 @@
+default:
+	ReleaseAiming.bat Release

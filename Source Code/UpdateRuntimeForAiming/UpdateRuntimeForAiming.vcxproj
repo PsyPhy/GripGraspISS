@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D828C658-AA23-4624-89E6-D8DE50D9C9BD}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallAiming.debug.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallAiming.debug.mak</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeCleanCommandLine>echo No need to clean.</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>NMake /NOLOGO InstallAiming.release.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>NMake /NOLOGO InstallAiming.release.mak</NMakeReBuildCommandLine>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="Hook2.bat.src" />
+    <None Include="InstallAiming.mak" />
+    <None Include="InstallAiming.release.mak" />
+    <None Include="InstallAiming.debug.mak" />
+    <None Include="readme.txt" />
+    <None Include="RunAIMING.bat.src" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraspTrackerDaemon\GraspTrackerDaemon.vcxproj">
+      <Project>{e987eba3-c5e3-4b00-9bf0-08b0c7e2ae3b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GripAimingTool\GripAimingTool.vcxproj">
+      <Project>{a67d2854-ec6e-4cc3-a49c-14cc247fb43b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GripGraspVersionControl\GripGraspVersionControl.vcxproj">
+      <Project>{4329f637-d4ed-43c3-b510-6e7cfc14bfa3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\WaitForCodaDaemon\WaitForCodaDaemon.vcxproj">
+      <Project>{c8fb03d6-66af-46cd-a8fa-0d70b32a68c0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
