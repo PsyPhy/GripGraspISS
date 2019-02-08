@@ -103,12 +103,15 @@ static GLfloat  markerColor[][4] = {
 		private: System::Windows::Forms::Button^  exitButton;
 		private: System::Windows::Forms::TextBox^  intializing;
 		private: System::Windows::Forms::TextBox^  instructions;
-		private: System::Windows::Forms::Button^  narrowButton;
+
 		private: System::Windows::Forms::Label^  label4;
 		private: System::Windows::Forms::Label^  label3;
 		private: System::Windows::Forms::Label^  label2;
 		private: System::Windows::Forms::Label^  label1;
+		private: System::Windows::Forms::GroupBox^  groupBox2;
 		private: System::Windows::Forms::Button^  wideButton;
+		private: System::Windows::Forms::Button^  narrowButton;
+
 
 
 
@@ -146,16 +149,18 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 				this->distancePanel0 = (gcnew System::Windows::Forms::Panel());
 				this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-				this->wideButton = (gcnew System::Windows::Forms::Button());
-				this->narrowButton = (gcnew System::Windows::Forms::Button());
 				this->cameraButton1 = (gcnew System::Windows::Forms::Button());
 				this->cameraButton0 = (gcnew System::Windows::Forms::Button());
 				this->exitButton = (gcnew System::Windows::Forms::Button());
+				this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+				this->wideButton = (gcnew System::Windows::Forms::Button());
+				this->narrowButton = (gcnew System::Windows::Forms::Button());
 				this->boresightGroup0->SuspendLayout();
 				this->groupBox4->SuspendLayout();
 				this->groupBox6->SuspendLayout();
 				this->groupBox3->SuspendLayout();
 				this->groupBox1->SuspendLayout();
+				this->groupBox2->SuspendLayout();
 				this->SuspendLayout();
 				// 
 				// instructions
@@ -190,9 +195,9 @@ static GLfloat  markerColor[][4] = {
 				this->boresightGroup0->Controls->Add(this->boresightPanel0);
 				this->boresightGroup0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, 
 					System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-				this->boresightGroup0->Location = System::Drawing::Point(107, 181);
+				this->boresightGroup0->Location = System::Drawing::Point(119, 181);
 				this->boresightGroup0->Name = L"boresightGroup0";
-				this->boresightGroup0->Size = System::Drawing::Size(1153, 913);
+				this->boresightGroup0->Size = System::Drawing::Size(1141, 913);
 				this->boresightGroup0->TabIndex = 6;
 				this->boresightGroup0->TabStop = false;
 				this->boresightGroup0->Text = L"Boresight";
@@ -204,7 +209,7 @@ static GLfloat  markerColor[][4] = {
 					| System::Windows::Forms::AnchorStyles::Right));
 				this->boresightPanel0->Location = System::Drawing::Point(10, 26);
 				this->boresightPanel0->Name = L"boresightPanel0";
-				this->boresightPanel0->Size = System::Drawing::Size(1133, 875);
+				this->boresightPanel0->Size = System::Drawing::Size(1121, 875);
 				this->boresightPanel0->TabIndex = 0;
 				// 
 				// groupBox4
@@ -230,12 +235,14 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox6->Controls->Add(this->rightStabilityMeter0);
 				this->groupBox6->Controls->Add(this->lowerStabilityMeter0);
 				this->groupBox6->Controls->Add(this->upperStabilityMeter0);
+				this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
 				this->groupBox6->Location = System::Drawing::Point(9, 225);
 				this->groupBox6->Name = L"groupBox6";
 				this->groupBox6->Size = System::Drawing::Size(236, 101);
 				this->groupBox6->TabIndex = 1;
 				this->groupBox6->TabStop = false;
-				this->groupBox6->Text = L"Stability";
+				this->groupBox6->Text = L"Visibility Stability";
 				// 
 				// label4
 				// 
@@ -346,7 +353,7 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox3->ForeColor = System::Drawing::SystemColors::ActiveCaption;
 				this->groupBox3->Location = System::Drawing::Point(12, 181);
 				this->groupBox3->Name = L"groupBox3";
-				this->groupBox3->Size = System::Drawing::Size(89, 913);
+				this->groupBox3->Size = System::Drawing::Size(101, 913);
 				this->groupBox3->TabIndex = 7;
 				this->groupBox3->TabStop = false;
 				this->groupBox3->Text = L"Distance";
@@ -358,61 +365,30 @@ static GLfloat  markerColor[][4] = {
 					| System::Windows::Forms::AnchorStyles::Right));
 				this->distancePanel0->Location = System::Drawing::Point(10, 26);
 				this->distancePanel0->Name = L"distancePanel0";
-				this->distancePanel0->Size = System::Drawing::Size(69, 874);
+				this->distancePanel0->Size = System::Drawing::Size(81, 874);
 				this->distancePanel0->TabIndex = 0;
 				// 
 				// groupBox1
 				// 
-				this->groupBox1->Controls->Add(this->wideButton);
-				this->groupBox1->Controls->Add(this->narrowButton);
 				this->groupBox1->Controls->Add(this->cameraButton1);
 				this->groupBox1->Controls->Add(this->cameraButton0);
-				this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+				this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->groupBox1->Location = System::Drawing::Point(1266, 524);
 				this->groupBox1->Name = L"groupBox1";
-				this->groupBox1->Size = System::Drawing::Size(254, 503);
+				this->groupBox1->Size = System::Drawing::Size(254, 305);
 				this->groupBox1->TabIndex = 9;
 				this->groupBox1->TabStop = false;
 				this->groupBox1->Text = L"Tracking Camera";
-				// 
-				// wideButton
-				// 
-				this->wideButton->BackColor = System::Drawing::SystemColors::Highlight;
-				this->wideButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-				this->wideButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-					static_cast<System::Byte>(0)));
-				this->wideButton->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->wideButton->Location = System::Drawing::Point(29, 347);
-				this->wideButton->Name = L"wideButton";
-				this->wideButton->Size = System::Drawing::Size(196, 70);
-				this->wideButton->TabIndex = 14;
-				this->wideButton->Text = L"Wide View";
-				this->wideButton->UseVisualStyleBackColor = false;
-				this->wideButton->Click += gcnew System::EventHandler(this, &GripAimingForm::wideButton_Click);
-				// 
-				// narrowButton
-				// 
-				this->narrowButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-				this->narrowButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-					static_cast<System::Byte>(0)));
-				this->narrowButton->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->narrowButton->Location = System::Drawing::Point(29, 423);
-				this->narrowButton->Name = L"narrowButton";
-				this->narrowButton->Size = System::Drawing::Size(196, 70);
-				this->narrowButton->TabIndex = 13;
-				this->narrowButton->Text = L"Narrow View";
-				this->narrowButton->UseVisualStyleBackColor = true;
-				this->narrowButton->Click += gcnew System::EventHandler(this, &GripAimingForm::narrowButton_Click);
 				// 
 				// cameraButton1
 				// 
 				this->cameraButton1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 72, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->cameraButton1->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->cameraButton1->Location = System::Drawing::Point(29, 182);
+				this->cameraButton1->Location = System::Drawing::Point(29, 162);
 				this->cameraButton1->Name = L"cameraButton1";
-				this->cameraButton1->Size = System::Drawing::Size(196, 148);
+				this->cameraButton1->Size = System::Drawing::Size(196, 128);
 				this->cameraButton1->TabIndex = 12;
 				this->cameraButton1->Text = L"2";
 				this->cameraButton1->UseVisualStyleBackColor = true;
@@ -426,7 +402,7 @@ static GLfloat  markerColor[][4] = {
 				this->cameraButton0->ForeColor = System::Drawing::SystemColors::ControlText;
 				this->cameraButton0->Location = System::Drawing::Point(29, 28);
 				this->cameraButton0->Name = L"cameraButton0";
-				this->cameraButton0->Size = System::Drawing::Size(196, 148);
+				this->cameraButton0->Size = System::Drawing::Size(196, 128);
 				this->cameraButton0->TabIndex = 11;
 				this->cameraButton0->Text = L"1";
 				this->cameraButton0->UseVisualStyleBackColor = false;
@@ -438,7 +414,7 @@ static GLfloat  markerColor[][4] = {
 				this->exitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->exitButton->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->exitButton->Location = System::Drawing::Point(1320, 1033);
+				this->exitButton->Location = System::Drawing::Point(1331, 1034);
 				this->exitButton->Name = L"exitButton";
 				this->exitButton->Size = System::Drawing::Size(146, 48);
 				this->exitButton->TabIndex = 10;
@@ -446,12 +422,55 @@ static GLfloat  markerColor[][4] = {
 				this->exitButton->UseVisualStyleBackColor = true;
 				this->exitButton->Click += gcnew System::EventHandler(this, &GripAimingForm::exitButton_Click);
 				// 
+				// groupBox2
+				// 
+				this->groupBox2->Controls->Add(this->wideButton);
+				this->groupBox2->Controls->Add(this->narrowButton);
+				this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
+				this->groupBox2->Location = System::Drawing::Point(1266, 835);
+				this->groupBox2->Name = L"groupBox2";
+				this->groupBox2->Size = System::Drawing::Size(254, 186);
+				this->groupBox2->TabIndex = 11;
+				this->groupBox2->TabStop = false;
+				this->groupBox2->Text = L"Boresight Zoom";
+				// 
+				// wideButton
+				// 
+				this->wideButton->BackColor = System::Drawing::SystemColors::Highlight;
+				this->wideButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
+				this->wideButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
+				this->wideButton->ForeColor = System::Drawing::SystemColors::ControlText;
+				this->wideButton->Location = System::Drawing::Point(29, 28);
+				this->wideButton->Name = L"wideButton";
+				this->wideButton->Size = System::Drawing::Size(196, 70);
+				this->wideButton->TabIndex = 16;
+				this->wideButton->Text = L"Wide";
+				this->wideButton->UseVisualStyleBackColor = false;
+				this->wideButton->Click += gcnew System::EventHandler(this, &GripAimingForm::wideButton_Click);
+				// 
+				// narrowButton
+				// 
+				this->narrowButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
+				this->narrowButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
+				this->narrowButton->ForeColor = System::Drawing::SystemColors::ControlText;
+				this->narrowButton->Location = System::Drawing::Point(29, 104);
+				this->narrowButton->Name = L"narrowButton";
+				this->narrowButton->Size = System::Drawing::Size(196, 70);
+				this->narrowButton->TabIndex = 15;
+				this->narrowButton->Text = L"Narrow";
+				this->narrowButton->UseVisualStyleBackColor = true;
+				this->narrowButton->Click += gcnew System::EventHandler(this, &GripAimingForm::narrowButton_Click);
+				// 
 				// GripAimingForm
 				// 
 				this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 				this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 				this->CancelButton = this->exitButton;
 				this->ClientSize = System::Drawing::Size(1532, 1106);
+				this->Controls->Add(this->groupBox2);
 				this->Controls->Add(this->exitButton);
 				this->Controls->Add(this->groupBox1);
 				this->Controls->Add(this->boresightGroup0);
@@ -470,6 +489,7 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox6->PerformLayout();
 				this->groupBox3->ResumeLayout(false);
 				this->groupBox1->ResumeLayout(false);
+				this->groupBox2->ResumeLayout(false);
 				this->ResumeLayout(false);
 				this->PerformLayout();
 
@@ -494,6 +514,11 @@ static GLfloat  markerColor[][4] = {
 
 			static double	wide_fov = 70.0;
 			static double	zoom_fov = 30.0;
+
+			static double crosshair_thickness = 2.0;
+			static double crosshair_radius = 600.0;
+			static double wide_crosshair_distance = 1000.0;
+			static double zoom_crosshair_distance = 2400.0;
 
 			static bool		show_all = false;
 
@@ -642,6 +667,7 @@ static GLfloat  markerColor[][4] = {
 					 tracker->Initialize( "CodaRTnet.ini" );
 					 intializing->Visible = false;
 
+					 // The boresight window shows the markers from the perspective of the CODA location.
 					 boresightWindow = CreateOpenGLWindowInForm( boresightPanel0 );
 					 boresightViewpoint =  new Viewpoint( 6.0, wide_fov, 1000.0, 6000.0);
 					 // When then CODA is in it's 0 orientation, it points along
@@ -654,33 +680,27 @@ static GLfloat  markerColor[][4] = {
 
 					 // Create a targeting scope.
 					 fovSweetSpot = new Assembly();
-					 Hole *hole = new Hole( 500.0,  2000.0, 2000.0 );
-					 hole->SetColor( 0.15, 0.0, 0.0, 0.5 );	
-					 hole->SetPosition( 0.0, 0.0, -100.0 );
-					 fovSweetSpot->AddComponent( hole );
 
-					 hole = new Hole( 100.0,  2000.0, 2000.0 );
-					 hole->SetColor( 0.0, 0.0, 0.5, 0.25 );	
-					 fovSweetSpot->AddComponent( hole );
+					 Annulus *ring = new Annulus( crosshair_radius, crosshair_thickness );
+					 ring->SetColor( GRAY );
+					 ring->SetOrientation( 0.0, 90.0, 0.0 );
+					 fovSweetSpot->AddComponent( ring );
 
-					 Bar *bar = new Bar( 2000.0, 5.0, 5.0 );
-					 bar->SetPosition( 0.0, -1000.0, 0.0 );
-					 bar->SetOrientation( 0.0, 90.0, 0.0 );
-					 bar->SetColor( GRAY );
-					 fovSweetSpot->AddComponent( bar );
-					 bar = new Bar( 2000.0, 5.0, 5.0 );
-					 bar->SetPosition( 1000.0, 0.0, 0.0 );
-					 bar->SetOrientation( 0.0, 0.0, 90.0 );
-					 bar->SetColor( GRAY );
-					 fovSweetSpot->AddComponent( bar );
+					 Bar *crosshair = new Bar( 2.0 * crosshair_radius, crosshair_thickness, crosshair_thickness );
+					 crosshair->SetPosition( 0.0, - crosshair_radius, 0.0 );
+					 crosshair->SetOrientation( 0.0, 90.0, 0.0 );
+					 crosshair->SetColor( GRAY );
+					 fovSweetSpot->AddComponent( crosshair );
+
+					 crosshair = new Bar( 2.0 * crosshair_radius, crosshair_thickness, crosshair_thickness );
+					 crosshair->SetPosition( crosshair_radius, 0.0, 0.0 );
+					 crosshair->SetOrientation( 0.0, 0.0, 90.0 );
+					 crosshair->SetColor( GRAY );
+					 fovSweetSpot->AddComponent( crosshair );
 
 					 fovSweetSpot->SetOrientation( 0.0, 90.0, 0.0 );
 					 fovSweetSpot->SetOffset( -400.0, 0.0, 0.0 );
 					 fovSweetSpot->SetPosition( 0.0, 1000.0, 0.0 );
-
-
-
-					 tabletWindow = CreateOpenGLWindowInForm( tabletPanel0, boresightWindow->hRC );
 
 					 // Create objects for the distance display.
 					 distanceWindow = CreateOpenGLWindowInForm( distancePanel0, boresightWindow->hRC );
@@ -694,14 +714,15 @@ static GLfloat  markerColor[][4] = {
 					 upperExclusionZone->SetPosition( 0.0, maxDisplayDistance, - 10.0 );
 					 upperExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.5 );
 
-					 distanceBars = new Assembly();
-					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
-						 Slab *bar = new Slab( 1.0, 30.0, 20.0 );
-						 bar->SetPosition( 0.0, minDisplayDistance + ( mrk + 2)  * 100.0, 5.0 );
-						 bar->SetAttitude( 0.0, 0.0, 0.0 );
-						 distanceBars->AddComponent( bar );
-					 }
+					 // The tablet window is where we show the visibility
+					 // of the reference markers supperimposed on a 3D representation
+					 // of the GRIP workspace tablet.
+					 tabletWindow = CreateOpenGLWindowInForm( tabletPanel0, boresightWindow->hRC );
+					 tabletViewpoint = new Viewpoint( 6.0, 30.0, 10.0, 10000.0);
+					 tabletViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
+					 tabletViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
 
+					 // Create a set of spheres to be shown in the boresight view.
 					 markerSpheres = new Assembly();
 					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
 						 Sphere *sphere = new Sphere( markerRadius );
@@ -713,18 +734,27 @@ static GLfloat  markerColor[][4] = {
 					 targetSphere->SetPosition( 0.0, minDisplayDistance + 9  * 100.0, 0.0 );
 					 targetSphere->SetAttitude( 90.0, 0.0, 0.0 );
 
+					 // These bars indicate the distance of the marker in depth 
+					 // from the position of the CODA unit.
+					 distanceBars = new Assembly();
+					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
+						 Slab *bar = new Slab( 1.0, 30.0, 20.0 );
+						 bar->SetPosition( 0.0, minDisplayDistance + ( mrk + 2)  * 100.0, 5.0 );
+						 bar->SetAttitude( 0.0, 0.0, 0.0 );
+						 distanceBars->AddComponent( bar );
+					 }
+
+					 // Finally, we have a set of marker spheres that are superimposed on the 
+					 // objects to show visibility.
 					 objectMarker = (Sphere **) calloc( DEX_MARKERS, sizeof(Sphere *) );
 					 fAbortMessageOnCondition( objectMarker == 0, "Grip Aiming Form", "Error allocating memory for marker spheres." );
 					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
 						 objectMarker[mrk] = new Sphere( tabletMarkerRadius );
 					 }
 
-					 tabletViewpoint = new Viewpoint( 6.0, 30.0, 10.0, 10000.0);
-					 tabletViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
-					 tabletViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
-
+					 // The tablet is the one and only object for which we show visibility.
 					 tablet = new GripTablet();
-					 tablet->SetOrientation( 0.0, 0.0, 180.0 );
+					 tablet->SetOrientation( 0.0, 10.0, 180.0 );
 					 tablet->SetPosition( 250.0, -200.0, 0.0 );
 					 for ( int mrk = firstTablet; mrk <= lastTablet; mrk++ ) {
 						 objectMarker[mrk]->SetRadius( tabletMarkerRadius );
@@ -740,6 +770,14 @@ static GLfloat  markerColor[][4] = {
 						 objectMarker[mrk]->SetColor( markerColor[mrk] );
 						 markerSpheres->component[mrk]->SetColor( markerColor[mrk] );
 						 distanceBars->component[mrk]->SetColor( markerColor[mrk] );
+						 objectMarker[mrk]->Disable();
+						 markerSpheres->component[mrk]->Disable();
+						 distanceBars->component[mrk]->Disable();
+					 }
+					 for ( int mrk = firstTablet; mrk <= lastTablet; mrk++ ) {
+						 objectMarker[mrk]->Enable();
+						 markerSpheres->component[mrk]->Enable();
+						 distanceBars->component[mrk]->Enable();
 					 }
 
 					 for ( int unit = 0; unit < DEX_CODA_UNITS; unit++ ) {
@@ -794,19 +832,20 @@ static GLfloat  markerColor[][4] = {
 					 Close();
 				 }
 
-private: System::Void wideButton_Click(System::Object^  sender, System::EventArgs^  e) {
-						 boresightViewpoint->fov = wide_fov;
-						 wideButton->BackColor = System::Drawing::SystemColors::Highlight;
-						 narrowButton->BackColor = System::Drawing::SystemColors::Control;
-		 }
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		 }
-private: System::Void narrowButton_Click(System::Object^  sender, System::EventArgs^  e) {
-						 boresightViewpoint->fov = zoom_fov;
-						 narrowButton->BackColor = System::Drawing::SystemColors::Highlight;
-						 wideButton->BackColor = System::Drawing::SystemColors::Control;
-		 }
-};
+		private: System::Void wideButton_Click(System::Object^  sender, System::EventArgs^  e) {
+					 boresightViewpoint->fov = wide_fov;
+					 fovSweetSpot->SetPosition( 0.0, wide_crosshair_distance, 0.0 );
+					 wideButton->BackColor = System::Drawing::SystemColors::Highlight;
+					 narrowButton->BackColor = System::Drawing::SystemColors::Control;
+				 }
+
+		private: System::Void narrowButton_Click(System::Object^  sender, System::EventArgs^  e) {
+					 boresightViewpoint->fov = zoom_fov;
+					 fovSweetSpot->SetPosition( 0.0, zoom_crosshair_distance, 0.0 );
+					 narrowButton->BackColor = System::Drawing::SystemColors::Highlight;
+					 wideButton->BackColor = System::Drawing::SystemColors::Control;
+				 }
+		};
 
 	}
 
