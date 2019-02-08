@@ -107,6 +107,8 @@ int GraspGLObjects::curve_facets = 20;
 const double GraspGLObjects::errorColorMapTransparency = 0.5;
 const double GraspGLObjects::errorColorMapFadeDistance = 7.5;
 
+double GraspGLObjects::diffusion_constant = LASER_DIFFUSION_CONSTANT;
+
 // Characteristics of the fuzzy laser pointer.
 
 // Set up the lighting and material properties.
@@ -620,6 +622,8 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	// A laser attached to the hand.
 	handLaser = CreateFuzzyLaserPointer();
 	handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
+	handLaser->diffusion_constant = diffusion_constant;
+	fOutputDebugString( "Diffusion: %f %f\n", diffusion_constant, handLaser->diffusion_constant );
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
 	// And to the gaze.

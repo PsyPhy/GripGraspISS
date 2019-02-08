@@ -44,6 +44,7 @@ namespace Grasp {
 
 		static const Vector3 coda_shape;
 		static const double ray_length;
+		static double diffusion_constant;
 
 	public:
 
@@ -153,6 +154,7 @@ namespace Grasp {
 
 		static double laser_distance;
 		static double hmdTransparency;
+		static double diffusion_constant;
 
 		static const double errorColorMapTransparency;
 		static const double errorColorMapFadeDistance;
@@ -396,7 +398,7 @@ namespace Grasp {
 			if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
 			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
 			if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
-			if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->handLaser->diffusion_constant = atof( value );
+			if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_constant = atof( value );
 			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
 			return 1;
 		}
