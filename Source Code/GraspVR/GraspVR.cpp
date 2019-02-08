@@ -617,7 +617,7 @@ void GraspVR::HandleLasers( void ) {
 		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
 		renderer->handLaser->SetOffset( 0.0, 0.0, renderer->laser_distance );
 		// If the hand is not raised, we cannot be on the target.
-		renderer->positionOnlyTarget->SetColor( Translucid( ORANGE ) );
+		renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
 
 	}
 	else {
@@ -640,12 +640,12 @@ void GraspVR::HandleLasers( void ) {
 		}
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
 		// As another way of avoiding cheating, we turn the laser off if the hand
-		// has been properly aligned for at least an instant.  If you set the
-		// threshold above 1.0 in the .ini file, this feature will be disabled.
+		// has been properly aligned for at least an instant.  
 		if ( projection > pointingThreshold ) {
-			Translucid( CYAN );
+			renderer->positionOnlyTarget->SetColor( Translucid( CYAN ) );
 			if ( snuffLaser ) renderer->handLaser->Disable();
 		}
+		else renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
 		renderer->handLaser->SetEccentricity( projection );
 
 	}
