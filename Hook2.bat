@@ -14,7 +14,7 @@ REM ****************************************************************************
 REM                       This must be installed in c:\ASW on DEX.
 REM ****************************************************************************************
 
-set COOKIEDIR=c:\
+set COOKIEDIR=c:
 set AIMINGCOOKIE=%COOKIEDIR%\AIMING.FLG
 set READYCOOKIE=%COOKIEDIR%\READY.FLG
 

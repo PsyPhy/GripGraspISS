@@ -33,7 +33,7 @@ REM Kill the tracker daemon.
 TaskKill /IM GraspTrackerDaemon.exe
 
 REM Remove the flag from DEX so that it can go on with GRIP.
-WinSCP.com /command "open ftp://3mbit:dex@192.168.200.133" "cd DATA1" "rm aiming.flg" exit
+WinSCP.com /command "open ftp://3mbit:dex@192.168.200.133" "cd /" "rm aiming.flg" exit
 
 
 
