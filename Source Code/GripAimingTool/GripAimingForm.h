@@ -103,7 +103,6 @@ static GLfloat  markerColor[][4] = {
 		private: System::Windows::Forms::Button^  exitButton;
 		private: System::Windows::Forms::TextBox^  intializing;
 		private: System::Windows::Forms::TextBox^  instructions;
-
 		private: System::Windows::Forms::Label^  label4;
 		private: System::Windows::Forms::Label^  label3;
 		private: System::Windows::Forms::Label^  label2;
@@ -111,6 +110,8 @@ static GLfloat  markerColor[][4] = {
 		private: System::Windows::Forms::GroupBox^  groupBox2;
 		private: System::Windows::Forms::Button^  wideButton;
 		private: System::Windows::Forms::Button^  narrowButton;
+		private: System::Windows::Forms::RadioButton^  supineButton;
+		private: System::Windows::Forms::RadioButton^  seatedButton;
 
 
 
@@ -136,6 +137,8 @@ static GLfloat  markerColor[][4] = {
 				this->boresightGroup0 = (gcnew System::Windows::Forms::GroupBox());
 				this->boresightPanel0 = (gcnew System::Windows::Forms::Panel());
 				this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
+				this->supineButton = (gcnew System::Windows::Forms::RadioButton());
+				this->seatedButton = (gcnew System::Windows::Forms::RadioButton());
 				this->groupBox6 = (gcnew System::Windows::Forms::GroupBox());
 				this->label4 = (gcnew System::Windows::Forms::Label());
 				this->label3 = (gcnew System::Windows::Forms::Label());
@@ -214,16 +217,40 @@ static GLfloat  markerColor[][4] = {
 				// 
 				// groupBox4
 				// 
+				this->groupBox4->Controls->Add(this->supineButton);
+				this->groupBox4->Controls->Add(this->seatedButton);
 				this->groupBox4->Controls->Add(this->groupBox6);
 				this->groupBox4->Controls->Add(this->tabletPanel0);
 				this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->groupBox4->Location = System::Drawing::Point(1266, 181);
 				this->groupBox4->Name = L"groupBox4";
-				this->groupBox4->Size = System::Drawing::Size(254, 337);
+				this->groupBox4->Size = System::Drawing::Size(254, 378);
 				this->groupBox4->TabIndex = 8;
 				this->groupBox4->TabStop = false;
 				this->groupBox4->Text = L"Reference Markers";
+				// 
+				// supineButton
+				// 
+				this->supineButton->AutoSize = true;
+				this->supineButton->Location = System::Drawing::Point(141, 224);
+				this->supineButton->Name = L"supineButton";
+				this->supineButton->Size = System::Drawing::Size(88, 28);
+				this->supineButton->TabIndex = 3;
+				this->supineButton->Text = L"Supine";
+				this->supineButton->UseVisualStyleBackColor = true;
+				// 
+				// seatedButton
+				// 
+				this->seatedButton->AutoSize = true;
+				this->seatedButton->Checked = true;
+				this->seatedButton->Location = System::Drawing::Point(26, 224);
+				this->seatedButton->Name = L"seatedButton";
+				this->seatedButton->Size = System::Drawing::Size(87, 28);
+				this->seatedButton->TabIndex = 2;
+				this->seatedButton->TabStop = true;
+				this->seatedButton->Text = L"Seated";
+				this->seatedButton->UseVisualStyleBackColor = true;
 				// 
 				// groupBox6
 				// 
@@ -237,7 +264,7 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox6->Controls->Add(this->upperStabilityMeter0);
 				this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->groupBox6->Location = System::Drawing::Point(9, 225);
+				this->groupBox6->Location = System::Drawing::Point(12, 271);
 				this->groupBox6->Name = L"groupBox6";
 				this->groupBox6->Size = System::Drawing::Size(236, 101);
 				this->groupBox6->TabIndex = 1;
@@ -374,21 +401,23 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox1->Controls->Add(this->cameraButton0);
 				this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->groupBox1->Location = System::Drawing::Point(1266, 524);
+				this->groupBox1->Location = System::Drawing::Point(1266, 565);
 				this->groupBox1->Name = L"groupBox1";
-				this->groupBox1->Size = System::Drawing::Size(254, 305);
+				this->groupBox1->Size = System::Drawing::Size(254, 280);
 				this->groupBox1->TabIndex = 9;
 				this->groupBox1->TabStop = false;
 				this->groupBox1->Text = L"Tracking Camera";
 				// 
 				// cameraButton1
 				// 
+				this->cameraButton1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+					| System::Windows::Forms::AnchorStyles::Right));
 				this->cameraButton1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 72, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->cameraButton1->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->cameraButton1->Location = System::Drawing::Point(29, 162);
+				this->cameraButton1->Location = System::Drawing::Point(29, 154);
 				this->cameraButton1->Name = L"cameraButton1";
-				this->cameraButton1->Size = System::Drawing::Size(196, 128);
+				this->cameraButton1->Size = System::Drawing::Size(196, 120);
 				this->cameraButton1->TabIndex = 12;
 				this->cameraButton1->Text = L"2";
 				this->cameraButton1->UseVisualStyleBackColor = true;
@@ -396,13 +425,15 @@ static GLfloat  markerColor[][4] = {
 				// 
 				// cameraButton0
 				// 
+				this->cameraButton0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+					| System::Windows::Forms::AnchorStyles::Right));
 				this->cameraButton0->BackColor = System::Drawing::SystemColors::Highlight;
 				this->cameraButton0->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 72, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->cameraButton0->ForeColor = System::Drawing::SystemColors::ControlText;
 				this->cameraButton0->Location = System::Drawing::Point(29, 28);
 				this->cameraButton0->Name = L"cameraButton0";
-				this->cameraButton0->Size = System::Drawing::Size(196, 128);
+				this->cameraButton0->Size = System::Drawing::Size(196, 120);
 				this->cameraButton0->TabIndex = 11;
 				this->cameraButton0->Text = L"1";
 				this->cameraButton0->UseVisualStyleBackColor = false;
@@ -414,7 +445,7 @@ static GLfloat  markerColor[][4] = {
 				this->exitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->exitButton->ForeColor = System::Drawing::SystemColors::ControlText;
-				this->exitButton->Location = System::Drawing::Point(1331, 1034);
+				this->exitButton->Location = System::Drawing::Point(1326, 1046);
 				this->exitButton->Name = L"exitButton";
 				this->exitButton->Size = System::Drawing::Size(146, 48);
 				this->exitButton->TabIndex = 10;
@@ -428,15 +459,17 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox2->Controls->Add(this->narrowButton);
 				this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->groupBox2->Location = System::Drawing::Point(1266, 835);
+				this->groupBox2->Location = System::Drawing::Point(1266, 851);
 				this->groupBox2->Name = L"groupBox2";
-				this->groupBox2->Size = System::Drawing::Size(254, 186);
+				this->groupBox2->Size = System::Drawing::Size(254, 180);
 				this->groupBox2->TabIndex = 11;
 				this->groupBox2->TabStop = false;
 				this->groupBox2->Text = L"Boresight Zoom";
 				// 
 				// wideButton
 				// 
+				this->wideButton->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+					| System::Windows::Forms::AnchorStyles::Right));
 				this->wideButton->BackColor = System::Drawing::SystemColors::Highlight;
 				this->wideButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 				this->wideButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
@@ -452,6 +485,8 @@ static GLfloat  markerColor[][4] = {
 				// 
 				// narrowButton
 				// 
+				this->narrowButton->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+					| System::Windows::Forms::AnchorStyles::Right));
 				this->narrowButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
 				this->narrowButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 20.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
@@ -485,6 +520,7 @@ static GLfloat  markerColor[][4] = {
 				this->Shown += gcnew System::EventHandler(this, &GripAimingForm::GripAimingForm_Shown);
 				this->boresightGroup0->ResumeLayout(false);
 				this->groupBox4->ResumeLayout(false);
+				this->groupBox4->PerformLayout();
 				this->groupBox6->ResumeLayout(false);
 				this->groupBox6->PerformLayout();
 				this->groupBox3->ResumeLayout(false);
@@ -645,6 +681,17 @@ static GLfloat  markerColor[][4] = {
 					 }
 					 DrawDistance( distanceWindow );
 					 DrawBoresight( boresightWindow );
+
+					 if ( seatedButton->Checked ) {
+						 tablet->SetOrientation( 0.0, 10.0, 180.0 );
+						 tablet->SetPosition( 250.0, -200.0, 0.0 );
+					 }
+					 else {
+						 tablet->SetOrientation( - 20.0, 90.0, 0.0 );
+						 tablet->SetPosition( -220.0, 200.0, 0.0 );
+					 }
+
+
 					 DrawObject( tabletWindow, tabletViewpoint, tablet );
 
 					 for ( int mrk = firstTablet; mrk <= lastTablet; mrk++ ) {
@@ -754,16 +801,14 @@ static GLfloat  markerColor[][4] = {
 
 					 // The tablet is the one and only object for which we show visibility.
 					 tablet = new GripTablet();
-					 tablet->SetOrientation( 0.0, 10.0, 180.0 );
-					 tablet->SetPosition( 250.0, -200.0, 0.0 );
 					 for ( int mrk = firstTablet; mrk <= lastTablet; mrk++ ) {
 						 objectMarker[mrk]->SetRadius( tabletMarkerRadius );
 						 tablet->AddComponent( objectMarker[mrk] );
 					 }
-					 objectMarker[leftTabletMarker]->SetPosition(    - 220.0,   -250.0,  35.0 );
-					 objectMarker[rightTabletMarker]->SetPosition(     220.0,   -250.0,  35.0 );
-					 objectMarker[upperMastMarker]->SetPosition(     - 220.0,   -100.0, 600.0 );
-					 objectMarker[lowerMastMarker]->SetPosition(     - 220.0,   -100.0, 100.0 );
+					 objectMarker[leftTabletMarker]->SetPosition(    - 220.0,   -270.0,  35.0 );
+					 objectMarker[rightTabletMarker]->SetPosition(     220.0,   -270.0,  35.0 );
+					 objectMarker[upperMastMarker]->SetPosition(     - 220.0,   -140.0, 600.0 );
+					 objectMarker[lowerMastMarker]->SetPosition(     - 220.0,   -140.0, 120.0 );
 
 
 					 for ( int mrk = 0; mrk < DEX_MARKERS; mrk++ ) {
