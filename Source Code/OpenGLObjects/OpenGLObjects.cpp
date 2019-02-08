@@ -1115,7 +1115,7 @@ void Cylinder::Draw( void ) {
 
 		glEnable( GL_TEXTURE_2D );
 		texture->Use();
-		for ( angle = 0.0; angle < 2.0 * Pi - deltaA; angle += deltaA ){
+		for ( angle = 0.0; angle <= 2.0 * Pi; angle += deltaA ){
 
 			x1 = top_radius * cos( angle );
 			x2 = top_radius * cos( angle + deltaA );
