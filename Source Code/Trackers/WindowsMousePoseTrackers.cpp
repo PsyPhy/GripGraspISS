@@ -35,6 +35,8 @@ double WindowsMousePoseTracker::GetTime( void ) {
 WindowsMouseRollPoseTracker::WindowsMouseRollPoseTracker( OpenGLWindow *window, double gain ) {
 	this->window = window;
 	this->gain = gain;
+	this->lastX = window->mouseCumulativeX;
+	this->lastY = window->mouseCumulativeY;
 	CopyVector( eulerAngles, zeroVector );
 	WindowsMousePoseTracker::WindowsMousePoseTracker( window, gain );
 }
@@ -70,15 +72,23 @@ bool WindowsMouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	// When using this tracker in simulation, it is useful to have the ability 
 	// to raise and lower the hand.
 
-	// Shift up or down.
+	// Shift position up or down.
 	if ( window->Key['W'] ) pose.pose.position[Y] = 250.0;
 	if ( window->Key['X'] ) pose.pose.position[Y] = -250.0;
 
-	// Shift left or right.
+	// Shift position left or right.
 	if ( window->Key['L'] ) pose.pose.position[X] =  100.0;
 	if ( window->Key['K'] ) pose.pose.position[X] =	  50.0;
 	if ( window->Key['J'] ) pose.pose.position[X] =  -50.0;
 	if ( window->Key['H'] ) pose.pose.position[X] = -100.0;
+
+	if ( window->Key[VK_SHIFT] ) {
+		eulerAngles[PITCH] += ( window->mouseCumulativeY - lastY ) * gain;
+		eulerAngles[YAW] += ( window->mouseCumulativeX - lastX ) * gain;
+	}
+	else eulerAngles[ROLL] = ( window->mouseCumulativeX - window->mouseCumulativeY ) * gain;
+	lastX = window->mouseCumulativeX;
+	lastY = window->mouseCumulativeY;
 
 	// Compute the orientation output based on the mouse position and the results
 	// of the various key presses handled in the Update() method.
@@ -87,7 +97,7 @@ bool WindowsMouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 	// A feature of the Oculus window on the laptop screen is that you can move the mouse infinitely in any direction.
 	// When the cursor gets to the edge of the screen, it wraps around to the other side.
 	// Here we use this feature to allow the roll angle to move without a limit.
-	SetQuaternion( rollQ, ( window->mouseCumulativeX - window->mouseCumulativeY ) * gain, kVector );
+	SetQuaternion( rollQ, eulerAngles[ROLL], kVector );
 	// Add in the pitch and yaw components, computed from eulerAngles[] that were modulated with key presses in Update().
 	SetQuaternion( pitchQ, eulerAngles[PITCH], iVector );
 	MultiplyQuaternions( intermediateQ, pitchQ, rollQ );

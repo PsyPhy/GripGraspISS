@@ -23,6 +23,9 @@ class WindowsMousePoseTracker : public PoseTracker {
 		OpenGLWindow *window;
 		double gain;
 
+		double lastX;
+		double lastY;
+
 	public:
 
 		WindowsMousePoseTracker( OpenGLWindow *ptr = nullptr, double gain = 1.0 );
