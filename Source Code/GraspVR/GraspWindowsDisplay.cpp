@@ -16,7 +16,8 @@ void GraspWindowsDisplay::Initialize( HINSTANCE instance, HWND parent_window ) {
 	hInstance = instance;
 	window = new OpenGLWindow();
 	window->FullScreen = fullscreen;
-	window->Create(	parent_window, "GRASP", 0, 0, 1920, 1080 );
+//	window->Create(	parent_window, "GRASP", 0, 0, 1920, 1080 );
+	window->Create(	parent_window, "GRASP", 0, 0, 1366, 768 );		// Tecnalia Laptop
 }
 
 void GraspWindowsDisplay::Release( void ) {

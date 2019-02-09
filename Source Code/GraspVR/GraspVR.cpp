@@ -72,7 +72,7 @@ void GraspVR::UpdateTrackers( void ) {
 		// Transform to the local reference frame centered on the initial HMD pose.
 		TransformPose( headPose.pose, localAlignment, headPose.pose );
 
-		// I shift the position backward.
+		// I shift the position backward towar the eyes.
 		Vector3 shift;
 		RotateVector( shift, headPose.pose.orientation, kVector );
 		ScaleVector( shift, shift, viewpointOffset );
@@ -183,6 +183,8 @@ void GraspVR::InitializeVR( void ) {
 	renderer = new GraspGLObjects();
 	renderer->SetLighting();
 	renderer->CreateVRObjects();
+	renderer->positionOnlyTarget->radius = sqrt( 1 - pointingThreshold * pointingThreshold ) * renderer->room_length / 2.0;
+
 	renderer->PlaceVRObjects();
 
 	// Initialize state of the objects.
@@ -196,6 +198,7 @@ void GraspVR::InitializeVR( void ) {
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
 	renderer->straightAheadTarget->Disable();
+	renderer->aimingErrorSphere->Disable();
 	renderer->headTiltPrompt->Disable();
 	renderer->handRollPrompt->Disable();
 	renderer->gazeLaser->Disable();
@@ -562,7 +565,7 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 		if ( angular_error < 0.0 ) renderer->handRollPrompt->SetAttitude( 0.0, 0.0, 0.0 );
 		if ( angular_error > 0.0 ) renderer->handRollPrompt->SetAttitude( 0.0, 0.0, 180.0 );
 
-		// If the hand is aligned do stuff depending on the time delays.
+		// If the roll angle of the hand is aligned with the target do stuff depending on the time delays.
 		if ( fabs( angular_error ) < desiredHandRollTolerance ) {
 			// Arrow gets turned off as soon as the angle is good.
 			renderer->handRollPrompt->Disable();
@@ -599,26 +602,18 @@ AlignmentStatus GraspVR::HandleHandAlignment( bool use_arrow ) {
 
 void GraspVR::HandleLasers( void ) {
 
-// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
-#if 1
+	// Check if the hand is raised in front of the eyes. If not, it is shown in grey.
 	Vector3 relativeHandPosition;
 	SubtractVectors( relativeHandPosition, renderer->hand->position, renderer->hmd->position );
 	double z = relativeHandPosition[Z];
 	relativeHandPosition[Z] = 0;
 	if ( z > -100.0 || VectorNorm( relativeHandPosition ) >= renderer->inner_visor_radius ) {
-#else
-	Vector3 relativeHandPosition;
-	SubtractVectors( relativeHandPosition,  renderer->hmd->position, renderer->hand->position );
-	NormalizeVector( relativeHandPosition );
-	if ( DotProduct( relativeHandPosition, kVector ) < armRaisedThreshold ) {
-#endif
-
 		// Lasers should be visible only if the hand is in the field of view.
+		// For 
 		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
 		renderer->handLaser->SetOffset( 0.0, 0.0, renderer->laser_distance );
 		// If the hand is not raised, we cannot be on the target.
 		renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
-
 	}
 	else {
 
@@ -629,25 +624,66 @@ void GraspVR::HandleLasers( void ) {
 		renderer->handLaser->SetOffset( 0.0, 0.0, - renderer->laser_distance );
 
 		// Lasers in the hand should become diffuse if they do not point down the tunnel.
+		// The original version used the angle between the tunnel and hand k-vectors to 
+		// assess how well the hand is aligned with the tunnel.
 		Vector3 tunnel_axis, hand_axis;
-		MultiplyVector( tunnel_axis, renderer->kVector, renderer->room->orientation );
-		MultiplyVector( hand_axis, renderer->kVector, renderer->hand->orientation );
+		Vector3 laser_ray, tip_location;
+		MultiplyVector( tunnel_axis, renderer->kVectorMinus, renderer->room->orientation );
+		MultiplyVector( hand_axis, renderer->kVectorMinus, renderer->hand->orientation );
+		// Early versions used only the pitch and yaw orientation of the hand to determine
+		// how much diffusion to apply. But that allowed for cheating because one could simply
+		// displace the hand, without tilting, to touch the walls of the tunnel. Here we approximate
+		// the endpoint of the laser and use its position with respect to the tunnel cross-section
+		// to determine the level of diffusion.  But we have a switch that allows us to revert
+		// to the old method, if desired.
 		if ( stopCheating ) {
-			Vector3 laser_ray;
 			ScaleVector( laser_ray, hand_axis, renderer->laser_distance );
-			AddVectors( hand_axis, laser_ray, renderer->hand->position );
-			NormalizeVector( hand_axis );
+			AddVectors( tip_location, laser_ray, renderer->hand->position );
+			NormalizeVector( hand_axis, tip_location );
 		}
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
-		// As another way of avoiding cheating, we turn the laser off if the hand
-		// has been properly aligned for at least an instant.  
-		if ( projection > pointingThreshold ) {
-			renderer->positionOnlyTarget->SetColor( Translucid( CYAN ) );
-			if ( snuffLaser ) renderer->handLaser->Disable();
-		}
-		else renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
 		renderer->handLaser->SetEccentricity( projection );
+		fOutputDebugString( "%f  %s %s\n", projection, vstr( tip_location ), vstr( hand_axis ) );
 
+		// As another way of avoiding cheating, we turn the laser off if the hand
+		// has been properly aligned for at least an instant, but then use an expanding target
+		// sphere to indicate when the hand orientation or displacement moves it out of the 
+		// acceptable range at the center of the tunnel.
+		if ( laserTargetingActive ) {
+			if ( projection > pointingThreshold ) {
+				laserTargetingAcquired = true;
+				// The target sphere comes on green to show that the hand is in the acceptable
+				// zone in terms of position and orientation.
+				renderer->positionOnlyTarget->Enable();
+				renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
+				renderer->aimingErrorSphere->Disable();
+				renderer->handLaser->Disable();
+			}
+
+			else {
+				// If we haven´t yet achieved an acceptable pose of the hand, the aiming target
+				// is visible but grey. The error sphere is hidden.
+				if ( !laserTargetingAcquired ) {
+					renderer->positionOnlyTarget->Enable();
+					renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+					renderer->aimingErrorSphere->Disable();
+				}
+				// But if an acceptable pose has been achieved at least briefly and then
+				// the hand exits the zone, the laser is turned off and the distance outside
+				// the acceptable zone is signaled by an expanding sphere.
+				else {
+					renderer->aimingErrorSphere->Enable();
+					renderer->positionOnlyTarget->Disable();
+					// Compute how far we are outside the acceptable zone.
+					double error = projection - pointingThreshold;
+					// The error sphere inflates the greater the error.
+					renderer->aimingErrorSphere->radius = ( 1.0 - error * 20 ) * renderer->positionOnlyTarget->radius;
+					// The error sphere gradually becomes more opaque as it expands. In this way the
+					// walls of the tunnel are hidden if the user tries to put the hand in front of them.
+					renderer->aimingErrorSphere->SetColor( 1.0, 0.0, 1.0, 0.5 - 20.0 * error );
+				}
+			}
+		}
 	}
 
 }

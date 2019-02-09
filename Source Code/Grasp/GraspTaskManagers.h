@@ -216,6 +216,7 @@ namespace Grasp {
 			if ( renderer->tunnel->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->starrySky->enabled ) data.enableBits |= bit; bit = bit << 1;
 			if ( renderer->darkSky->enabled ) data.enableBits |= bit; bit = bit << 1;
+			if ( renderer->aimingErrorSphere->enabled ) data.enableBits |= bit; bit = bit << 1;
 
 			data.spinnerBits = 0;
 			bit = 0x01;

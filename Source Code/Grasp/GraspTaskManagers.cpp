@@ -742,10 +742,12 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the visible tools, if any.
 	renderer->kkTool->Disable();
 	renderer->handRollPrompt->Disable();
+	laserTargetingActive = false;
 	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
 	renderer->raiseHandIndicator->Disable();
 	renderer->handLaser->Disable();
+	renderer->aimingErrorSphere->Disable();
 	// Change the sky background to remove the visual reference that it provides.
 	renderer->starrySky->Disable();
 	renderer->darkSky->Enable();
@@ -872,6 +874,7 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	renderer->vTool->Disable();
 	renderer->wristZone->Disable();
 	renderer->handLaser->Disable();
+	StopAiming();
 	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];

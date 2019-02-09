@@ -15,11 +15,14 @@ using namespace PsyPhy;
 
 void KtoK::EnterPresentTarget( void ) {
 	// Show the subject where to point.
-	renderer->positionOnlyTarget->Enable();
+	//renderer->positionOnlyTarget->Enable();
+	//renderer->positionOnlyTarget->SetColor( Translucid( CYAN ) );
+	//renderer->aimingErrorSphere->Disable();
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
 	// The orientation will be reflected by the color.
 	renderer->kkTool->Enable();
 	if ( ! noLasers ) renderer->handLaser->Enable();
+	StartAiming();
 	// The target orientation for the hand.
 	SetDesiredHandRoll( trialParameters[currentTrial].targetOrientation, hapticTargetOrientationTolerance );
 	// Set a timeout to achieve the target orientation of the hand.
@@ -32,6 +35,7 @@ void KtoK::EnterObtainResponse( void ) {
 	// Show the visual representation of the hand.
 	renderer->kTool->Enable();
 	if ( ! noLasers ) renderer->handLaser->Enable();
+	StartAiming();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }

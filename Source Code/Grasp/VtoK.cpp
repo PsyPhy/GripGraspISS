@@ -28,6 +28,7 @@ void VtoK::EnterObtainResponse( void ) {
 	//  by the mouse or buttons.
 	renderer->kTool->Enable();
 	if ( ! noLasers ) renderer->handLaser->Enable();
+	StartAiming();
 	// Do all the default actions as well.
 	GraspTaskManager::EnterObtainResponse();
 }

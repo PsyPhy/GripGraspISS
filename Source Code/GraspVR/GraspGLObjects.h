@@ -34,9 +34,9 @@ namespace Grasp {
 	using namespace PsyPhy;
 
 #define LASER_BEAMS 7
-#define LASER_FOCUSED_SIZE 7.0
+#define LASER_FOCUSED_SIZE 20.0
 #define LASER_DIFFUSION_CONSTANT 1.0
-#define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.99
+#define LASER_CLOSE_ALIGNMENT_THRESHOLD 0.995
 
 	class Coda : public PsyPhy::Assembly {
 
@@ -45,6 +45,7 @@ namespace Grasp {
 		static const Vector3 coda_shape;
 		static const double ray_length;
 		static double diffusion_constant;
+		static double diffusion_deadzone;
 
 	public:
 
@@ -63,6 +64,7 @@ namespace Grasp {
 	public:
 		Disk *sphere[LASER_BEAMS];
 		double diffusion_constant;
+		double diffusion_deadzone;
 		static Vector3 beamOffset[LASER_BEAMS];
 		void SetColor( float r, float g, float b, float a = 1.0f );
 		void SetEccentricity( double projection );
@@ -155,6 +157,7 @@ namespace Grasp {
 		static double laser_distance;
 		static double hmdTransparency;
 		static double diffusion_constant;
+		static double diffusion_deadzone;
 
 		static const double errorColorMapTransparency;
 		static const double errorColorMapFadeDistance;
@@ -261,8 +264,9 @@ namespace Grasp {
 	public:
 
 		Assembly		*orientationTarget;		// Shows the target orientation.
-		Assembly		*positionOnlyTarget;	// Shows the center of the target location. Allows subject to aim without showing the target orientation.
-		Assembly		*straightAheadTarget;	// Placed straight ahead of the subject wrt the chest.
+		Sphere			*positionOnlyTarget;	// Shows the center of the target location. Allows subject to aim without showing the target orientation.
+		Sphere			*aimingErrorSphere;	// A sphere that expands or contracts depending on how far off center is the aiming.
+		Sphere			*straightAheadTarget;	// Placed straight ahead of the subject wrt the chest.
 		Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
 		Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
 		Assembly		*multiProjectile;
@@ -348,7 +352,7 @@ namespace Grasp {
 		Assembly *CreateZone( void );
 
 		Assembly *CreateOrientationTarget( void );
-		Assembly *CreatePositionOnlyTarget( void );
+		Sphere	 *CreatePositionOnlyTarget( void );
 		Assembly *CreateResponse( void );
 		Assembly *CreateRollPrompt( double size );
 		Assembly *CreateSuccessIndicator( void );
@@ -399,6 +403,7 @@ namespace Grasp {
 			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
 			if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
 			if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_constant = atof( value );
+			if ( !strcmp( name, "laserDiffusionDeadzone" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_deadzone = atof( value );
 			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
 			return 1;
 		}

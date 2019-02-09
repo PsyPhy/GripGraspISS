@@ -9,6 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)\..\..</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>--VtoV --bars --nocoda --sequence=Sequences\TiltTest.seq --output=TestGrasp </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--KtoK --bars --nocoda --sequence=Sequences\TiltTest.seq --output=TestGrasp </LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

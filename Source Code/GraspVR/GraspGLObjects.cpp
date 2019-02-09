@@ -108,6 +108,7 @@ const double GraspGLObjects::errorColorMapTransparency = 0.5;
 const double GraspGLObjects::errorColorMapFadeDistance = 7.5;
 
 double GraspGLObjects::diffusion_constant = LASER_DIFFUSION_CONSTANT;
+double GraspGLObjects::diffusion_deadzone = LASER_CLOSE_ALIGNMENT_THRESHOLD;
 
 // Characteristics of the fuzzy laser pointer.
 
@@ -248,11 +249,11 @@ Assembly *GraspGLObjects::CreateResponse( void ) {
 	return projectiles;
 }
 
-Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
-	Assembly *target = new Assembly();
+Sphere *GraspGLObjects::CreatePositionOnlyTarget( void ) {
+
 	Sphere *sphere = new Sphere( room_radius - 100.0 );
-	target->AddComponent( sphere );
-	target->SetColor( Translucid( CYAN ) );
+	sphere->SetColor( 0.0, 1.0, 1.0, 0.5 );
+	sphere->Disable();
 
 	// I put back the sphere so that we don't get a flattened disk in an oblique view.
 	// I changed the color to CYAN to provide a better background to the yellow-red hand.
@@ -261,7 +262,7 @@ Assembly *GraspGLObjects::CreatePositionOnlyTarget( void ) {
 	//disk->SetPosition(0.0 , 0.0 , 5.0);//Tagliabue (moved slightly in front of the sky otherwhise interferences)
 	//target->AddComponent( disk );//Tagliabue
 	//target->SetColor( Translucid( ORANGE ) );//Tagliabue (translucid is to avoid to see too clearly the pixels)
-	return target;
+	return sphere;
 }
 
 Glasses *GraspGLObjects::CreateGlasses( void ) {
@@ -340,7 +341,7 @@ Assembly *GraspGLObjects::CreateKinestheticTool( void ) {
 
 Assembly *GraspGLObjects::CreateLaserPointer( void ) {
 	Assembly *laserPointer = new Assembly();
-	Sphere *sphere = new Sphere( finger_ball_radius*2.0 );
+	Sphere *sphere = new Sphere( finger_ball_radius * 10.0 );
 	sphere->SetPosition( 0.0, 0.0, - laser_distance );
 	laserPointer->AddComponent( sphere );
 	// Laser is off by default.
@@ -583,6 +584,9 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	orientationTarget = CreateOrientationTarget();
 	positionOnlyTarget = CreatePositionOnlyTarget();
 	straightAheadTarget =  CreatePositionOnlyTarget();
+	aimingErrorSphere = CreatePositionOnlyTarget();
+	aimingErrorSphere->SetColor( 1.0, 0.0, 1.0, 0.5 );
+	aimingErrorSphere->Disable();
 
 	response = CreateResponse();
 	successIndicator = CreateSuccessIndicator();
@@ -590,6 +594,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	// Attach these objects to the room so that they move when conflict is applied.
 	room->AddComponent( orientationTarget );
 	room->AddComponent( positionOnlyTarget );
+	room->AddComponent( aimingErrorSphere );
 	room->AddComponent( response );
 	room->AddComponent( successIndicator );
 
@@ -623,6 +628,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	handLaser = CreateFuzzyLaserPointer();
 	handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
 	handLaser->diffusion_constant = diffusion_constant;
+	handLaser->diffusion_deadzone = diffusion_deadzone;
 	fOutputDebugString( "Diffusion: %f %f\n", diffusion_constant, handLaser->diffusion_constant );
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
@@ -639,6 +645,7 @@ void GraspGLObjects::PlaceVRObjects( void ) {
 	successIndicator->SetPosition( prompt_location );
 	orientationTarget->SetPosition( target_location );
 	positionOnlyTarget->SetPosition( end_of_tunnel );
+	aimingErrorSphere->SetPosition( end_of_tunnel );
 	straightAheadTarget->SetPosition( end_of_tunnel );
 	// Place the stationary object that shows the subject's response a little bit in front of the targets.
 	response->SetPosition( target_location[X], target_location[Y], target_location[Z] + target_ball_radius * 2.0 );
@@ -1069,7 +1076,7 @@ Vector3 FuzzyPointer::beamOffset[LASER_BEAMS] = {
 	{ -0.2, -0.5, 7.0 }
 };
 
-FuzzyPointer::FuzzyPointer() : diffusion_constant( LASER_DIFFUSION_CONSTANT )
+FuzzyPointer::FuzzyPointer() : diffusion_constant( LASER_DIFFUSION_CONSTANT ), diffusion_deadzone( LASER_CLOSE_ALIGNMENT_THRESHOLD )
 {
 
 	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
@@ -1084,14 +1091,14 @@ void FuzzyPointer::SetColor( float r, float g, float b, float a ) {
 }
 void FuzzyPointer::SetEccentricity( double projection ) {
 	for ( int beam = 0; beam < LASER_BEAMS; beam++ ) {
-		if ( projection > LASER_CLOSE_ALIGNMENT_THRESHOLD ) {
+		if ( projection > diffusion_deadzone ) {
 			sphere[beam]->SetOffset( 0.0, 0.0, (double) beam );
 			sphere[beam]->SetRadius( LASER_FOCUSED_SIZE );
 		}
 		else {
 			Vector3 offset;
-			double distance = 2000.0 * (LASER_CLOSE_ALIGNMENT_THRESHOLD - projection);
-			double expand = diffusion_constant * distance;
+			double distance = 2000.0 * (projection - diffusion_deadzone);
+			double expand = - diffusion_constant * distance;
 			ScaleVector( offset, beamOffset[beam], 1.25 * expand );
 			sphere[beam]->SetOffset( offset );
 			sphere[beam]->SetRadius( LASER_FOCUSED_SIZE + expand );

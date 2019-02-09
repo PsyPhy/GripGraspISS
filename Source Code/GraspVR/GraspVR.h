@@ -70,6 +70,7 @@ namespace Grasp {
 		static double viewpointOffset;
 		static double interpupillary_distance;
 
+
 		GraspVR( char *ini_filename = "Grasp.ini" )  : 
 
 			display( nullptr ),
@@ -78,6 +79,9 @@ namespace Grasp {
 			desiredHeadRoll( 20.0 ), 
 			desiredHandRoll( -35.0 ),
 			currentProjectileState( cocked ),
+
+			laserTargetingActive( false ),
+			laserTargetingAcquired( false ),
 
 			conflictGain( 1.0 )
 
@@ -98,11 +102,24 @@ namespace Grasp {
 			if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
 			if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
 			if ( !strcmp( name, "pointingThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->pointingThreshold = atof( value );
-			if ( !strcmp( name, "stopCheating" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
+			if ( !strcmp( name, "useLaserEndpoint" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
+			if ( !strcmp( name, "extinguishLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
 			if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );
-			if ( !strcmp( name, "snuffLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
 			return 1;
 		}
+
+		bool	laserTargetingActive;
+		bool	laserTargetingAcquired;
+
+		void StartAiming ( void ) {
+			laserTargetingActive = true;
+			laserTargetingAcquired = false;
+		}
+		void StopAiming( void ) {
+			laserTargetingActive = false;
+			renderer->aimingErrorSphere->Disable();
+		}
+
 
 		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs ) {
 				display = dsply;
