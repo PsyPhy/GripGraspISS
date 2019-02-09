@@ -11,6 +11,7 @@
     <None Include="Grasp.bat.src" />
     <None Include="GraspPackData.bat.src" />
     <None Include="Grasp.ini.src" />
+    <None Include="..\..\Grasp.ini" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />

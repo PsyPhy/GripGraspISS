@@ -874,7 +874,7 @@ void  GraspTaskManager::ExitObtainResponse( void ) {
 	renderer->vTool->Disable();
 	renderer->wristZone->Disable();
 	renderer->handLaser->Disable();
-	StopAiming();
+	StopHandAiming();
 	renderer->raiseHandIndicator->Disable();
 	renderer->positionOnlyTarget->Disable();
 	char tag[32];

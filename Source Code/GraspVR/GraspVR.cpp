@@ -22,14 +22,12 @@ double	GraspVR::desiredHandRollSweetZone = 2.0;
 double	GraspVR::desiredHeadRollTolerance = 5.0;
 double	GraspVR::desiredHeadRollSweetZone = 2.0;
 
-// The next two are angular tolerances as well, but
+// The next three are angular tolerances as well, but
 // the are expressed as the cosine of the tolerance angle.
 double	GraspVR::armRaisedThreshold = 0.9;			// approx. 25°. Corresponds roughly to tunnel outline.
 double	GraspVR::straightAheadThreshold = 0.995;	// approx. 2.5° Corresponds roughly to center target radius.
-double  GraspVR::pointingThreshold = 1.0;
-bool	GraspVR::stopCheating = false;
-bool	GraspVR::noLasers = false;
-bool	GraspVR::snuffLaser = false;
+double  GraspVR::pointingThreshold = 0.98;
+
 
 double GraspVR::interpupillary_distance = 60.0;
 // Define how much the chest markers are ahead of or behind the HMD markers
@@ -643,7 +641,14 @@ void GraspVR::HandleLasers( void ) {
 		}
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
 		renderer->handLaser->SetEccentricity( projection );
-		fOutputDebugString( "%f  %s %s\n", projection, vstr( tip_location ), vstr( hand_axis ) );
+		fOutputDebugString( "Aiming %f %f  %s %s\n", projection, pointingThreshold, vstr( tip_location ), vstr( hand_axis ) );
+
+		// Change the color of the targeting sphere depending on if the hand alignment is good or not.
+		if ( projection > pointingThreshold ) {
+			renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
+			if ( snuffLaser ) renderer->handLaser->Disable();
+		}
+		else renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
 
 		// As another way of avoiding cheating, we turn the laser off if the hand
 		// has been properly aligned for at least an instant, but then use an expanding target
@@ -652,12 +657,10 @@ void GraspVR::HandleLasers( void ) {
 		if ( laserTargetingActive ) {
 			if ( projection > pointingThreshold ) {
 				laserTargetingAcquired = true;
-				// The target sphere comes on green to show that the hand is in the acceptable
+				// The target sphere comes on to show that the hand is in the acceptable
 				// zone in terms of position and orientation.
 				renderer->positionOnlyTarget->Enable();
-				renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
 				renderer->aimingErrorSphere->Disable();
-				renderer->handLaser->Disable();
 			}
 
 			else {
@@ -665,7 +668,6 @@ void GraspVR::HandleLasers( void ) {
 				// is visible but grey. The error sphere is hidden.
 				if ( !laserTargetingAcquired ) {
 					renderer->positionOnlyTarget->Enable();
-					renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
 					renderer->aimingErrorSphere->Disable();
 				}
 				// But if an acceptable pose has been achieved at least briefly and then
@@ -677,7 +679,7 @@ void GraspVR::HandleLasers( void ) {
 					// Compute how far we are outside the acceptable zone.
 					double error = projection - pointingThreshold;
 					// The error sphere inflates the greater the error.
-					renderer->aimingErrorSphere->radius = ( 1.0 - error * 20 ) * renderer->positionOnlyTarget->radius;
+					renderer->aimingErrorSphere->radius = ( 1.0 - error * balloonInflationRate ) * renderer->positionOnlyTarget->radius;
 					// The error sphere gradually becomes more opaque as it expands. In this way the
 					// walls of the tunnel are hidden if the user tries to put the hand in front of them.
 					renderer->aimingErrorSphere->SetColor( 1.0, 0.0, 1.0, 0.5 - 20.0 * error );

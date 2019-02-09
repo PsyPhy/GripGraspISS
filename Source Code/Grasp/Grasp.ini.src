@@ -42,8 +42,8 @@ armRaisedThreshold = 0.9
 ;;; Threshold to determine when gaze angle is aligned with tunnel.
 straightAheadThreshold = 0.995
 
-;;; The following parameter determines the threshold at which the alignment is 
-;;; considered to be good enough. 
+;;; The following parameter determines the threshold at which the alignment  
+;;; of the hand in pitch and yaw is considered to be good enough. 
 pointingThreshold = 0.98
 
 ;;; Another way to work  is to require that the hand point
@@ -57,6 +57,15 @@ extinguishLaser = true
 
 ;;; Or one can skip the laser pointer altogether.
 noLasers = false
+
+;;; Finally, one can try to foil attempts to point at visual targets
+;;; by inflating a ballon in front of the subject when he or she
+;;; points toward the tunnel walls. 
+;;; 
+;;; NB: One should activate extinguishLaser above to have the best effect.
+;;;
+balloonMask = false;
+balloonInflationRate = 20.0;
 
 ;;; The requirements on head pitch and yaw depend on how the
 ;;; chest markers sit on the torso of the subject.
