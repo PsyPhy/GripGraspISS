@@ -20,8 +20,9 @@ fingerBallRadius = 10.0
 fingerLength = 100.0
 
 
-laserDistance = 2000.0
-laserDiffusionConstant = 1.0
+laserDistance = 1600.0
+laserDiffusionConstant = 0.0
+laserDiffusionDeadzone = 0.0
 
 headArrowLocation = < 0.0 0.0 -600.0 >
 headArrowRadius = 250.0
@@ -43,25 +44,35 @@ straightAheadThreshold = 0.995
 
 ;;; The following parameter determines the threshold at which the alignment is 
 ;;; considered to be good enough. 
-pointingThreshold = 0.995
+pointingThreshold = 0.98
 
-;;; Another way to avoid cheating is to require that the hand point
+;;; Another way to work  is to require that the hand point
 ;;; near the center of the end of the tunnel, not just aligned with
 ;;; its axis. This flags turns this feature off and on.
-stopCheating = true
+useLaserEndpoint = true
 
-;;; One way to avoid using the laser to cheat is to have the laser turn
-;;; off once the hand has been properly aligned for at least an instant.
-snuffLaser = false
+;;; To avoid distraction by the laser, one can extinguish it
+;;; once the hand has been properly aligned for at least an instant.
+extinguishLaser = true
 
-;;; Finally, another way is to skip the laser pointer altogether.
+;;; Or one can skip the laser pointer altogether.
 noLasers = false
 
+;;; The requirements on head pitch and yaw depend on how the
+;;; chest markers sit on the torso of the subject.
+;;; These paramerters allow one to virtually shift the structures in depth
+;;; in order to adjust to achieve a comfortable pose of the head with
+;;; level gaze when looking at the straight-ahead target.
 viewpointOffset = 100
+
+;;; The chest offset is frequently used to adjust for each subject on ground.
 chestOffset = 100
 
 [GraspTrackers]
 
+;;; Tracking priorities.
+;;; For each structure, the tracker uses data first from one tracker,
+;;; if available, and then from the other.
 ;;; 1 for Coda 1 only, 2 for Coda 2 only 
 ;;; 21 for cascade (first 2 then 1)
 ;;; 12 for cascade (first 1 then 2)
