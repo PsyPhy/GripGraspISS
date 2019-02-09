@@ -45,11 +45,19 @@ bool WindowsMouseRollPoseTracker::Update ( void ) {
 	// An alternative approach would be to move according to the number of key down
 	// events since the last cycle. That would allow for finer control and benefit from the
 	// accelerating nature of events when you hold down a key.
-	if ( window->Key[VK_SHIFT] ) {
-		if ( window->Key[VK_LEFT] ) eulerAngles[YAW] -= gain;
-		if ( window->Key[VK_RIGHT] ) eulerAngles[YAW] += gain;
-		if ( window->Key[VK_UP] ) eulerAngles[PITCH] -= gain;
-		if ( window->Key[VK_DOWN] ) eulerAngles[PITCH] += gain;
+	static double low_gain = 0.01;
+	static double high_gain = 0.1;
+	if ( window->Key[VK_SHIFT] && window->Key[VK_CONTROL] ) {
+		if ( window->Key[VK_LEFT] ) eulerAngles[YAW]   += high_gain;
+		if ( window->Key[VK_RIGHT] ) eulerAngles[YAW]  -= high_gain;
+		if ( window->Key[VK_UP] ) eulerAngles[PITCH]   += high_gain;
+		if ( window->Key[VK_DOWN] ) eulerAngles[PITCH] -= high_gain;
+	}
+	else if ( window->Key[VK_SHIFT] ) {
+		if ( window->Key[VK_LEFT] ) eulerAngles[YAW]	+= low_gain;
+		if ( window->Key[VK_RIGHT] ) eulerAngles[YAW]	-= low_gain;
+		if ( window->Key[VK_UP] ) eulerAngles[PITCH]	+= low_gain;
+		if ( window->Key[VK_DOWN] ) eulerAngles[PITCH]	-= low_gain;
 	}
 	return true;
 }
@@ -58,12 +66,19 @@ bool WindowsMouseRollPoseTracker::GetCurrentPoseIntrinsic( TrackerPose &pose ) {
 
 	// Place the position of this simulated tracker.
 	CopyVector( pose.pose.position, zeroVector );
+
 	// When using this tracker in simulation, it is useful to have the ability 
 	// to raise and lower the hand.
-	static double simulated_hand_height;
-	if ( window->Key['W'] ) simulated_hand_height = 0.0;
-	if ( window->Key['X'] ) simulated_hand_height = -250.0;
-	pose.pose.position[Y] = simulated_hand_height;
+
+	// Shift up or down.
+	if ( window->Key['W'] ) pose.pose.position[Y] = 250.0;
+	if ( window->Key['X'] ) pose.pose.position[Y] = -250.0;
+
+	// Shift left or right.
+	if ( window->Key['L'] ) pose.pose.position[X] =  100.0;
+	if ( window->Key['K'] ) pose.pose.position[X] =	  50.0;
+	if ( window->Key['J'] ) pose.pose.position[X] =  -50.0;
+	if ( window->Key['H'] ) pose.pose.position[X] = -100.0;
 
 	// Compute the orientation output based on the mouse position and the results
 	// of the various key presses handled in the Update() method.
