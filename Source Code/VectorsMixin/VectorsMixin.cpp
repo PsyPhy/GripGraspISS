@@ -218,7 +218,10 @@ void VectorsMixin::NormalizeVector( Vector3 v ) {
 	// Normalize a vector in place.
 	ScaleVector( v, v, 1.0 / VectorNorm(v) );
 }
-
+void VectorsMixin::NormalizeVector( Vector3 destination, Vector3 source ) {
+	// Normalize a vector in place.
+	ScaleVector( destination, source, 1.0 / VectorNorm( source ) );
+}
 double VectorsMixin::DotProduct( const Vector3 v1, const Vector3 v2 ) {
 	return( v1[X] * v2[X] + v1[Y] * v2[Y] + v1[Z] * v2[Z] );
 }

@@ -102,6 +102,7 @@ public:
 
 	double VectorNorm( const Vector3 vector );
 	void   NormalizeVector( Vector3 v );
+	void   NormalizeVector( Vector3 destination, Vector3 source );
 	double DotProduct( const Vector3 v1, const Vector3 v2 );
 	double AngleBetweenVectors( const Vector3 v1, const Vector3 v2 );
 	void   ComputeCrossProduct( Vector3 result, const Vector3 v1, const Vector3 v2 );
