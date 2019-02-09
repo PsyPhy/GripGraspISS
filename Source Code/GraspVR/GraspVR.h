@@ -80,7 +80,7 @@ namespace Grasp {
 		static double interpupillary_distance;
 
 
-		GraspVR( char *ini_filename = "Grasp.ini" )  : 
+		GraspVR( char *ini_filename = nullptr )  : 
 
 			display( nullptr ),
 			trackers( nullptr ),
@@ -100,12 +100,13 @@ namespace Grasp {
 			conflictGain( 1.0 )
 
 			{
-			if ( ini_filename ) {
-				fOutputDebugString( "GraspVR: Parsing %s.\n", ini_filename );
-				int error = ini_parse( ini_filename, iniHandler, this );
-				if ( error != 0 ) fOutputDebugString( "GraspVR: Parsing error (%d).\n", error );
+				if ( ini_filename ) {
+					fOutputDebugString( "GraspVR: Parsing %s.\n", ini_filename );
+					int error = ini_parse( ini_filename, iniHandler, this );
+					if ( error != 0 ) fOutputDebugString( "GraspVR: Parsing error (%d).\n", error );
+				}
+				renderer = new GraspGLObjects( ini_filename );
 			}
-		}
 
 		bool	laserTargetingActive;
 		bool	laserTargetingAcquired;
@@ -210,15 +211,17 @@ namespace Grasp {
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			GraspVR *instance = (GraspVR *) which_instance;
 			if ( !strcmp( name, "IPD" ) && !strcmp( section, "GraspVR" ) ) instance->interpupillary_distance = atof( value );
-			if ( !strcmp( name, "chestOffset" ) && !strcmp( section, "GraspVR" ) ) instance->chestOffset = atof( value );
-			if ( !strcmp( name, "viewpointOffset" ) && !strcmp( section, "GraspVR" ) ) instance->viewpointOffset = atof( value );
-			if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
-			if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
-			if ( !strcmp( name, "pointingThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->pointingThreshold = atof( value );
-			if ( !strcmp( name, "useLaserEndpoint" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
-			if ( !strcmp( name, "extinguishLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
-			if ( !strcmp( name, "balloonMask" ) && !strcmp( section, "GraspVR" ) ) instance->balloon = ( *value == 'T' || *value == 't' );
-			if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "chestOffset" ) && !strcmp( section, "GraspVR" ) ) instance->chestOffset = atof( value );
+			else if ( !strcmp( name, "viewpointOffset" ) && !strcmp( section, "GraspVR" ) ) instance->viewpointOffset = atof( value );
+			else if ( !strcmp( name, "armRaisedThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->armRaisedThreshold = atof( value );
+			else if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
+			else if ( !strcmp( name, "pointingThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->pointingThreshold = atof( value );
+			else if ( !strcmp( name, "useLaserEndpoint" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "extinguishLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "balloonMask" ) && !strcmp( section, "GraspVR" ) ) instance->balloon = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );
+			else return 1;
+			fOutputDebugString( "GraspVR: Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
 			return 1;
 		}
 	};

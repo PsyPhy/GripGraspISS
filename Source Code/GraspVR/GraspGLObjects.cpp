@@ -629,7 +629,7 @@ void GraspGLObjects::CreateVRObjects( void ) {
 	handLaser->SetColor( 1.0, 0.0, 1.0, 1.0 );
 	handLaser->diffusion_constant = diffusion_constant;
 	handLaser->diffusion_deadzone = diffusion_deadzone;
-	fOutputDebugString( "Diffusion: %f %f\n", diffusion_constant, handLaser->diffusion_constant );
+	fOutputDebugString( "GraspGLObjects:: Diffusion: %f %f\n", diffusion_constant, handLaser->diffusion_constant );
 	// Collect all the things that may be attached to the hand.
 	hand = CreateHand();
 	// And to the gaze.

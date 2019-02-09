@@ -35,7 +35,7 @@ namespace Grasp {
 			double	conflictGain;
 			bool	provideFeedback;
 		} trialParameters[MAX_GRASP_TRIALS];
-		
+
 		int nTrials;				// Total number of trials to be performed. This gets incremented if a trial is set to be repeated.
 		int currentTrial;			// Where we are in the list of trials.
 		int retriesRemaining;		// Erroneous trials get repeated at the end of the block, but only up to a certain number of repetitions.
@@ -172,93 +172,119 @@ namespace Grasp {
 
 	public:
 		// Constructor, with initialization of some elements.
-		GraspTaskManager( void ) : nTrials(0), retriesRemaining(0), response_fp(NULL), pose_fp(NULL), frame_fp(NULL), tag("??to??" ) {}
-		~GraspTaskManager(){}
-		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs, DexServices *dex ) {
-			dexServices = dex;
-			GraspVR::Initialize( dsply, trkrs );
-		}
-		void Release( void ) {
-			GraspVR::Release();
-		}
+		GraspTaskManager( char *ini_filename = nullptr ) : 
+		  nTrials(0), 
+			  retriesRemaining(0), 
+			  response_fp(NULL), 
+			  pose_fp(NULL), 
+			  frame_fp(NULL), 
+			  tag("??to??" ) {
 
-		bool Validate( void ) {
-			return display->Validate();
-		}
-		void FillClientData( GraspClientData &data ) {
+				  ConstructorInitialize( ini_filename );
+		  }
 
-			strncpy( data.ID, "GRASP", sizeof( data.ID ));
-			data.enableBits = 0;
-			unsigned long bit = 0x01;
+		  void ConstructorInitialize( char *ini_filename ) {
+			  if ( ini_filename ) {
+				  fOutputDebugString( "GraspTaskManager (GraspVR): Parsing %s.\n", ini_filename );
+				  int error = ini_parse( ini_filename, GraspVR::iniHandler, this );
+				  if ( error != 0 ) fOutputDebugString( "GraspTaskManager (GraspVR): Parsing error (%d).\n", error );
+				  fOutputDebugString( "GraspTaskManager (GraspVR) - renderer: Parsing %s.\n", ini_filename );
+				  error = ini_parse( ini_filename, renderer->iniHandler, renderer );
+				  if ( error != 0 ) fOutputDebugString( "GraspTaskManager (GraspVR) - renderer: Parsing error (%d).\n", error );
+			  }
+		  }
 
-			// If you change the next lines, you need to change the #defines in Grasp.h.
+		  ~GraspTaskManager(){}
+		  void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs, DexServices *dex ) {
+			  dexServices = dex;
+			  GraspVR::Initialize( dsply, trkrs );
+		  }
+		  void Release( void ) {
+			  GraspVR::Release();
+		  }
 
-			if ( renderer->orientationTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->positionOnlyTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->straightAheadTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->response->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->projectiles->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->multiProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->monoProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->glasses->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->headTiltPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->gazeLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->handLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->successIndicator->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->vTool->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->kTool->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->vkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->kkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->handRollPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->lowerHandPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->wristZone->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->room->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->tunnel->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->starrySky->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->darkSky->enabled ) data.enableBits |= bit; bit = bit << 1;
-			if ( renderer->aimingErrorSphere->enabled ) data.enableBits |= bit; bit = bit << 1;
+		  bool Validate( void ) {
+			  return display->Validate();
+		  }
+		  void FillClientData( GraspClientData &data ) {
 
-			data.spinnerBits = 0;
-			bit = 0x01;
-			if ( renderer->readyToStartIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->blockCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->lowerHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->raiseHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->raiseArmTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->headMisalignIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->manualRejectIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->invalidateTrialIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->headAlignTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->timeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->responseTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->handRotateTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->handTooSoonIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->handShouldNotBeRaisedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->straightenHeadIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->vrCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
-			if ( renderer->demoIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  strncpy( data.ID, "GRASP", sizeof( data.ID ));
+			  data.enableBits = 0;
+			  unsigned long bit = 0x01;
 
-			data.currentState = currentState;
-			data.currentTrial = currentTrial;
-			data.paradigm = GetParadigm();
+			  // If you change the next lines, you need to change the #defines in Grasp.h.
 
-			CopyPose( data.headPose, headPose.pose );
-			CopyPose( data.handPose, handPose.pose );
-			CopyPose( data.chestPose, chestPose.pose );
-			CopyQuaternion( data.rollQuaternion, rollPose.pose.orientation );
+			  if ( renderer->orientationTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->positionOnlyTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->straightAheadTarget->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->response->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->projectiles->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->multiProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->monoProjectile->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->glasses->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->headTiltPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->gazeLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->handLaser->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->successIndicator->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->vTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->kTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->vkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->kkTool->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->handRollPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->lowerHandPrompt->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->wristZone->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->room->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->tunnel->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->starrySky->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->darkSky->enabled ) data.enableBits |= bit; bit = bit << 1;
+			  if ( renderer->aimingErrorSphere->enabled ) data.enableBits |= bit; bit = bit << 1;
 
-			data.targetHeadTiltD = trialParameters[currentTrial].targetHeadTilt * 100.0;
-			data.targetOrientationD = trialParameters[currentTrial].targetOrientation * 100.0;
-			data.responseHeadTiltD = trialParameters[currentTrial].responseHeadTilt * 100.0,
-			data.conflictGain = (float) trialParameters[currentTrial].conflictGain;
-			data.provideFeedback = trialParameters[currentTrial].provideFeedback;
-		}
+			  data.spinnerBits = 0;
+			  bit = 0x01;
+			  if ( renderer->readyToStartIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->blockCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->lowerHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->raiseHandIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->raiseArmTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->headMisalignIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->manualRejectIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->invalidateTrialIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->headAlignTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->timeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->responseTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->handRotateTimeoutIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->handTooSoonIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->handShouldNotBeRaisedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->straightenHeadIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->vrCompletedIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+			  if ( renderer->demoIndicator->enabled ) data.spinnerBits |= bit; bit = bit << 1;
+
+			  data.currentState = currentState;
+			  data.currentTrial = currentTrial;
+			  data.paradigm = GetParadigm();
+
+			  CopyPose( data.headPose, headPose.pose );
+			  CopyPose( data.handPose, handPose.pose );
+			  CopyPose( data.chestPose, chestPose.pose );
+			  CopyQuaternion( data.rollQuaternion, rollPose.pose.orientation );
+
+			  data.targetHeadTiltD = trialParameters[currentTrial].targetHeadTilt * 100.0;
+			  data.targetOrientationD = trialParameters[currentTrial].targetOrientation * 100.0;
+			  data.responseHeadTiltD = trialParameters[currentTrial].responseHeadTilt * 100.0,
+				  data.conflictGain = (float) trialParameters[currentTrial].conflictGain;
+			  data.provideFeedback = trialParameters[currentTrial].provideFeedback;
+		  }
 
 
 	};
 
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
+	public:
+		VtoV( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
+
 		Paradigm GetParadigm( void ) { return( VTOV ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->vTool; tag = "VtoV"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateVisualTarget(); }
@@ -268,6 +294,10 @@ namespace Grasp {
 	};
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
+	public:
+		VtoVK( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
 		Paradigm GetParadigm( void ) { return( VTOVK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoVK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
@@ -277,6 +307,10 @@ namespace Grasp {
 	};
 	// V-K protocol. 
 	class VtoK : public GraspTaskManager {
+	public:
+		VtoK( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
 		Paradigm GetParadigm( void ) { return( VTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
@@ -286,6 +320,10 @@ namespace Grasp {
 	};
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
+	public:
+		KtoK( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
 		Paradigm GetParadigm( void ) { return( KTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "KtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateKinestheticTarget(); }
@@ -295,6 +333,10 @@ namespace Grasp {
 	};
 	// DEMO protocol. 
 	class DemoP : public GraspTaskManager {
+	public:
+		DemoP( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
 		Paradigm GetParadigm( void ) { return( DEMO ); }
 		// Initialize the tool to be used and also override the intial state of the state machine.
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "DEMO"; currentState = Demo; }
@@ -302,6 +344,10 @@ namespace Grasp {
 
 	// QuitVR protocol. 
 	class QuitVR : public GraspTaskManager {
+	public:
+		QuitVR( char *ini_filename ) {
+			ConstructorInitialize( ini_filename );
+		}
 		Paradigm GetParadigm( void ) { return( QUITVR ); }
 		// Initialize the tool to be used and also override the intial state of the state machine.
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "QUIT"; currentState = VRCompleted; }

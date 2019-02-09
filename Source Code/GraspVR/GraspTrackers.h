@@ -189,7 +189,7 @@ namespace Grasp {
 			  this->ini_filename = ini_filename;
 			  // Read parameters from an init file, if one has been specified by the caller.
 			  if ( ini_filename ) {
-				  fOutputDebugString( "Parsing %s for GraspDexTrackers.\n", ini_filename );
+				  fOutputDebugString( "GraspDexTrackers: Parsing %s.\n", ini_filename );
 				  int error = ini_parse( ini_filename, iniHandler, this );
 				  if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			  }
@@ -210,7 +210,7 @@ namespace Grasp {
 			  else return 1;
 			  // If we get to here, there was a match in the list above.
 			  // So show what was found when debugging.
-			  fOutputDebugString( "Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
+			  fOutputDebugString( "--GraspDexTrackers: Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
 			  return 1;
 		  }
 		  virtual void Initialize( void );
@@ -241,13 +241,13 @@ namespace Grasp {
 	public:
 		// For the HMD we can combine pose information from both the HMD and a Coda tracker.
 		OculusCodaPoseTracker *oculusCodaPoseTracker;
-		GraspOculusCodaTrackers( OculusMapper *mapper, CodaRTnetTracker *tracker, const char *ini_filename = nullptr ) {
+		GraspOculusCodaTrackers( OculusMapper *mapper, CodaRTnetTracker *tracker, const char *ini_filename ) {
 			oculusMapper = mapper;
 			codaTracker = tracker;
 			this->ini_filename = ini_filename;
 			// Read parameters from an init file, if one has been specified by the caller.
 			if ( ini_filename ) {
-				fOutputDebugString( "Parsing %s for GraspOculusCodaTrackers.\n", ini_filename );
+				fOutputDebugString( "GraspOculusCodaTrackers: Parsing %s.\n", ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
 				if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			}
@@ -269,12 +269,12 @@ namespace Grasp {
 
 	public:
 		PoseTracker *chestTrackerRaw;
-		GraspOculusTrackers( OculusMapper *mapper, const char *ini_filename = nullptr   ) {
+		GraspOculusTrackers( OculusMapper *mapper, const char *ini_filename ) {
 			oculusMapper = mapper;
 			this->ini_filename = ini_filename;
 			// Read parameters from an init file, if one has been specified by the caller.
 			if ( ini_filename ) {
-				fOutputDebugString( "Parsing %s for GraspOculusTrackers.\n", ini_filename );
+				fOutputDebugString( "GraspOculusTrackers: Parsing %s.\n", ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
 				if ( error != 0 ) fAbortMessage( "GraspOculusTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			}
@@ -295,12 +295,12 @@ namespace Grasp {
 
 	public:
 		PoseTracker *chestTrackerRaw;
-		GraspOculusLiteTrackers( OculusMapper *mapper, const char *ini_filename = nullptr  ) {
+		GraspOculusLiteTrackers( OculusMapper *mapper, const char *ini_filename ) {
 			oculusMapper = mapper;
 			this->ini_filename = ini_filename;
 			// Read parameters from an init file, if one has been specified by the caller.
 			if ( ini_filename ) {
-				fOutputDebugString( "Parsing %s for GraspOculusLiteTrackers.\n", ini_filename );
+				fOutputDebugString( "GraspOculusLiteTrackers: Parsing %s.\n", ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
 				if ( error != 0 ) fAbortMessage( "GraspOculusLiteTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			}
@@ -318,11 +318,11 @@ namespace Grasp {
 		OpenGLWindow	*window;
 
 	public:
-		GraspSimulatedTrackers( OpenGLWindow *window, const char *ini_filename = nullptr ) {
+		GraspSimulatedTrackers( OpenGLWindow *window, const char *ini_filename ) {
 			this->window = window;
 			this->ini_filename = ini_filename;
 			if ( ini_filename ) {
-				fOutputDebugString( "Parsing %s for GraspSimulatedTrackers.\n", ini_filename );
+				fOutputDebugString( "GraspSimulatedTrackers: Parsing %s.\n", ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
 				if ( error != 0 ) fAbortMessage( "GraspSimulatedTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			}

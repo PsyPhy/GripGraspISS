@@ -314,7 +314,7 @@ namespace Grasp {
 
 	public: 
 
-		GraspGLObjects( char *ini_filename = "Grasp.ini" ) {
+		GraspGLObjects( char *ini_filename ) {
 			if ( ini_filename ) {
 				fOutputDebugString( "GraspGLObjects: Parsing %s.\n", ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
@@ -380,31 +380,33 @@ namespace Grasp {
 		void DrawTorso( TrackerPose *pose = nullptr );
 		void DrawBody( TrackerPose *pose = nullptr );
 
-		protected:
+		public:
 		
 		// Provide the means to read a .ini file to set configuration parameters.
 		// This is defined here as static because its address is sent as a callback to a parsing routine.
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			GraspGLObjects *instance = (GraspGLObjects *) which_instance;
 			if ( !strcmp( name, "vToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->v_tool_size = atof( value );
-			if ( !strcmp( name, "vkToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->vk_tool_size = atof( value );
-			if ( !strcmp( name, "vToolLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->v_tool_location[X], &instance->v_tool_location[Y], &instance->v_tool_location[Z] );
-			if ( !strcmp( name, "headArrowLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->arrow_location[X], &instance->arrow_location[Y], &instance->arrow_location[Z] );
-			if ( !strcmp( name, "headArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->head_arrow_radius = atof( value );
-			if ( !strcmp( name, "handArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hand_arrow_radius = atof( value );
-			if ( !strcmp( name, "targetBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_radius = atof( value );
-			if ( !strcmp( name, "targetBallSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_spacing = atof( value );
-			if ( !strcmp( name, "targetBalls" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_balls = atoi( value );
-			if ( !strcmp( name, "targetBarRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_radius = atof( value );
-			if ( !strcmp( name, "targetBarSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_spacing = atof( value );
-			if ( !strcmp( name, "targetBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bars = atoi( value );
-			if ( !strcmp( name, "useBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->useBars = (NULL != strstr( value, "true" ));
-			if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
-			if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
-			if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
-			if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_constant = atof( value );
-			if ( !strcmp( name, "laserDiffusionDeadzone" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_deadzone = atof( value );
-			if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
+			else if ( !strcmp( name, "vkToolSize" ) && !strcmp( section, "GraspGLObjects" ) ) instance->vk_tool_size = atof( value );
+			else if ( !strcmp( name, "vToolLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->v_tool_location[X], &instance->v_tool_location[Y], &instance->v_tool_location[Z] );
+			else if ( !strcmp( name, "headArrowLocation" ) && !strcmp( section, "GraspGLObjects" ) ) sscanf( value, "< %lf %lf %lf >", &instance->arrow_location[X], &instance->arrow_location[Y], &instance->arrow_location[Z] );
+			else if ( !strcmp( name, "headArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->head_arrow_radius = atof( value );
+			else if ( !strcmp( name, "handArrowRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hand_arrow_radius = atof( value );
+			else if ( !strcmp( name, "targetBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_radius = atof( value );
+			else if ( !strcmp( name, "targetBallSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_ball_spacing = atof( value );
+			else if ( !strcmp( name, "targetBalls" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_balls = atoi( value );
+			else if ( !strcmp( name, "targetBarRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_radius = atof( value );
+			else if ( !strcmp( name, "targetBarSpacing" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bar_spacing = atof( value );
+			else if ( !strcmp( name, "targetBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->target_bars = atoi( value );
+			else if ( !strcmp( name, "useBars" ) && !strcmp( section, "GraspGLObjects" ) ) instance->useBars = (NULL != strstr( value, "true" ));
+			else if ( !strcmp( name, "fingerBallRadius" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_ball_radius = atof( value );
+			else if ( !strcmp( name, "fingerLength" ) && !strcmp( section, "GraspGLObjects" ) ) instance->finger_length = atof( value );
+			else if ( !strcmp( name, "laserDistance" ) && !strcmp( section, "GraspGLObjects" ) ) instance->laser_distance = atof( value );
+			else if ( !strcmp( name, "laserDiffusionConstant" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_constant = atof( value );
+			else if ( !strcmp( name, "laserDiffusionDeadzone" ) && !strcmp( section, "GraspGLObjects" ) ) instance->diffusion_deadzone = atof( value );
+			else if ( !strcmp( name, "hmdTransparency" ) && !strcmp( section, "GraspGLObjects" ) ) instance->hmdTransparency = atof( value );
+			else return 1;
+			fOutputDebugString( "GraspGLObjects: Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
 			return 1;
 		}
 

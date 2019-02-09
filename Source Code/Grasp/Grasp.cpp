@@ -53,6 +53,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	char sequence_filename[FILENAME_MAX] = "";
 	char output_filename_root[FILENAME_MAX] = "";
 	char dex_log_filename[FILENAME_MAX] = "";
+	char init_filename[FILENAME_MAX] = "Grasp.ini";
 
 	// Parse the command line.
 	int items;
@@ -64,6 +65,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	if ( FileExists( "Touch.flg" ) || strstr( lpCmdLine, "--touch" ) ) {
 		useTouch = true;
 		useCoda = false;
+	}
+
+	if ( ptr = strstr( lpCmdLine, "--initfile=" ) ) {
+		items = sscanf( ptr, "--initfile=%s", init_filename );
+		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for init file.\n\n  %s\n\n(Remember: no spaces around '=')", lpCmdLine );
 	}
 
 	if ( ptr = strstr( lpCmdLine, "--sequence" ) ) {
@@ -81,6 +87,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		items = sscanf( ptr, "--output=%s", output_filename_root );
 		fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for --output.\n\n  %s\n\n(Remember: no spaces around '=')", lpCmdLine );
 	}
+
+	fOutputDebugString( "Grasp: Init file is %s.\n", init_filename );
+	fOutputDebugString( "Grasp: Sequence file is %s.\n", sequence_filename );
+	fOutputDebugString( "Grasp: Output file root is %s.\n", output_filename_root );
 
 	HWND parentWindow = nullptr;
 	if ( ptr = strstr( lpCmdLine, "--parent" ) ) {
@@ -115,7 +125,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		display = oculus_display;
 		if ( useCoda ) {
 			codaTracker = new CodaRTnetDaemonTracker();
-			trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker, "Grasp.ini" );
+			trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker, init_filename );
 			//// Create a tracker to control the roll orientation via the mouse.
 			//// Here we use the mouse tracker tied to the OculusMapper. 
 			//MouseRollPoseTracker *mouseRollTracker = new PsyPhy::MouseRollPoseTracker( &_oculusMapper, - 0.001 );
@@ -123,17 +133,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			//trackers = new GraspDexTrackers( codaTracker, mouseRollTracker );
 		}
 		else if ( useTouch ) {
-			trackers = new GraspOculusTrackers( &_oculusMapper, "Grasp.ini" );
+			trackers = new GraspOculusTrackers( &_oculusMapper, init_filename );
 		}
 		else  {
-			trackers = new GraspOculusLiteTrackers( &_oculusMapper, "Grasp.ini" );
+			trackers = new GraspOculusLiteTrackers( &_oculusMapper, init_filename );
 		}
 	}
 	else {
 		windows_display = new GraspWindowsDisplay();
 		windows_display->Initialize( hInstance, parentWindow );
 		display = windows_display;
-		trackers = new GraspSimulatedTrackers( windows_display->window, "Grasp.ini" );
+		trackers = new GraspSimulatedTrackers( windows_display->window, init_filename );
 	}
 	trackers->Initialize();
 
@@ -142,13 +152,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	//
 	GraspTaskManager	*grasp;
 
-	if ( strstr( lpCmdLine, "--VtoV" ) ) grasp = new VtoV();
-	else if ( strstr( lpCmdLine, "--VtoVK" ) ) grasp = new VtoVK();
-	else if ( strstr( lpCmdLine, "--VtoK" ) ) grasp = new VtoK();
-	else if ( strstr( lpCmdLine, "--KtoK" ) ) grasp = new KtoK();
-	else if ( strstr( lpCmdLine, "--demo" ) ) grasp = new DemoP();
-	else if ( strstr( lpCmdLine, "--doff" ) ) grasp = new QuitVR();
-	else grasp = new DemoP();
+	if ( strstr( lpCmdLine, "--VtoV" ) ) grasp = new VtoV( init_filename );
+	else if ( strstr( lpCmdLine, "--VtoVK" ) ) grasp = new VtoVK( init_filename );
+	else if ( strstr( lpCmdLine, "--VtoK" ) ) grasp = new VtoK( init_filename );
+	else if ( strstr( lpCmdLine, "--KtoK" ) ) grasp = new KtoK( init_filename );
+	else if ( strstr( lpCmdLine, "--demo" ) ) grasp = new DemoP( init_filename );
+	else if ( strstr( lpCmdLine, "--doff" ) ) grasp = new QuitVR( init_filename );
+	else grasp = new DemoP( init_filename );
 
 	
 	//

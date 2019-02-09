@@ -178,7 +178,6 @@ void GraspVR::InitializeVR( void ) {
 	viewpoint->SetOrientation( 0.0, 0.0, 0.0 );
 
 	// Create all the necessary VR rendering objects.
-	renderer = new GraspGLObjects();
 	renderer->SetLighting();
 	renderer->CreateVRObjects();
 	renderer->positionOnlyTarget->radius = sqrt( 1 - pointingThreshold * pointingThreshold ) * renderer->room_length / 2.0;
@@ -641,7 +640,6 @@ void GraspVR::HandleLasers( void ) {
 		}
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
 		renderer->handLaser->SetEccentricity( projection );
-		fOutputDebugString( "Aiming %f %f  %s %s\n", projection, pointingThreshold, vstr( tip_location ), vstr( hand_axis ) );
 
 		// Change the color of the targeting sphere depending on if the hand alignment is good or not.
 		if ( projection > pointingThreshold ) {

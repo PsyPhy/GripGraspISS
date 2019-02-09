@@ -221,7 +221,7 @@ int GraspTaskManager::LoadTrialParameters( char *filename ) {
 		// comments. By convention, we start comment lines with a '#', but that is 
 		// not actually a requirement.
 		else {
-			fOutputDebugString( "Comment line: %s", line );
+			fOutputDebugString( "GraspTaskManager: Comment line: %s", line );
 		}
 	}
 	fclose( fp );
@@ -299,7 +299,7 @@ int GraspTaskManager::RunTrialBlock( char *sequence_filename, char *output_filen
 	// Load the trial parameters. If no sequence file was specified, LoadTrialParameters() will 
 	//  return zero for the number of trials.
 	int trials = LoadTrialParameters( sequence_filename );
-	fOutputDebugString( "Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
+	fOutputDebugString( "GraspTaskManager: Loaded paramters for %d trials from file %s.\n", trials, sequence_filename );
 	currentTrial = 0;
 
 	// Initiliaze the counter that limits the number of retries.
