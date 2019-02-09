@@ -688,24 +688,28 @@ namespace GraspTrackerDaemon {
 				// Detect when we get a new client connection and restart the continuous CODA
 				// acquisition at that moment. It is likely to be a moment where the
 				// 1 second pause in data will not be too critical.
-				if ( ! clientConnectedButton->Checked ) coda->RestartContinuousAcquisition();
+				if ( ! clientConnectedButton->Checked ) {
+					
+					coda->RestartContinuousAcquisition();
 
-				 // Send the current tracker alignment in an RT science packet.
-				 AlignClientBuffer clientBuffer;
-				 Vector3	offsets[MAX_UNITS];
-				 Matrix3x3	rotations[MAX_UNITS];
-				 strncpy( clientBuffer.ID, "ALIGN", sizeof( clientBuffer.ID ) );
-				 clientBuffer.prePost = CURRENT;
-				 coda->GetAlignmentTransforms( offsets, rotations );
-				 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
-					 coda->CopyVector( clientBuffer.offsets[unit], offsets[unit] );
-					 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
-				 }
-				 fOutputDebugString( "Sending tracker alignments.\n" );
-				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ), true );
-				 fOutputDebugString( "Done sending tracker alignments.\n" );
+					 // Send the current tracker alignment in an RT science packet.
+					 AlignClientBuffer clientBuffer;
+					 Vector3	offsets[MAX_UNITS];
+					 Matrix3x3	rotations[MAX_UNITS];
+					 strncpy( clientBuffer.ID, "ALIGN", sizeof( clientBuffer.ID ) );
+					 clientBuffer.prePost = CURRENT;
+					 fOutputDebugString( "Retrieving tracker alignments.\n" );
+					 coda->GetAlignmentTransforms( offsets, rotations );
+					 for ( int unit = 0; unit < MAX_UNITS; unit++ ) {
+						 coda->CopyVector( clientBuffer.offsets[unit], offsets[unit] );
+						 coda->CopyMatrix( clientBuffer.rotations[unit], rotations[unit] );
+					 }
+					 fOutputDebugString( "Sending tracker alignments to ground.\n" );
+					 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ), true );
+					 fOutputDebugString( "Done sending tracker alignments.\n" );
 
-				// Put some values for housekeeping just for testing.
+				}
+
 				userTextBox->Text = dex->static_user.ToString();
 				protocolTextBox->Text = dex->static_protocol.ToString();
 				taskTextBox->Text = dex->static_task.ToString();
