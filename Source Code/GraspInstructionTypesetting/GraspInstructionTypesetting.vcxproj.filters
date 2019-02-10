@@ -261,6 +261,18 @@
     <None Include="TaskFinished.instruction.html">
       <Filter>HTML Output Files</Filter>
     </None>
+    <None Include="SetContinuousReady.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="SetFlightSubjects1-10Ready.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="SetFlightSubjects6-15Ready.prompt.md">
+      <Filter>Install</Filter>
+    </None>
+    <None Include="SetPollingReady.prompt.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

@@ -119,8 +119,12 @@
     <None Include="ProtocolFinished.instruction.html" />
     <None Include="ProtocolFinished.instruction.md" />
     <None Include="ProtocolFinished.prompt.html" />
+    <None Include="SetContinuousReady.prompt.md" />
+    <None Include="SetFlightSubjects1-10Ready.prompt.md" />
+    <None Include="SetFlightSubjects6-15Ready.prompt.md" />
     <None Include="SetNoCodaReady.prompt.html" />
     <None Include="SetNoCodaReady.prompt.md" />
+    <None Include="SetPollingReady.prompt.md" />
     <None Include="SetWithCodaReady.prompt.html" />
     <None Include="SetWithCodaReady.prompt.md" />
     <None Include="StepErrorFinish.status.html" />

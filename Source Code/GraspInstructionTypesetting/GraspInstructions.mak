@@ -24,7 +24,10 @@ ALL_HTML=GraspWelcome.html \
 	03TiltHead.instruction.html 04RespondK.instruction.html 04RespondV.instruction.html \
 	05Feedback.instruction.html 05FeedbackBalls.instruction.html 05FeedbackBars.instruction.html \
 	StepReady.prompt.html StepRunning.instruction.html StepNormalFinish.status.html StepErrorFinish.status.html \
-	TaskFinished.instruction.html ProtocolFinished.instruction.html ProtocolFinished.prompt.html SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html \
+	TaskFinished.instruction.html ProtocolFinished.instruction.html ProtocolFinished.prompt.html \
+	SetNoCodaReady.prompt.html SetWithCodaReady.prompt.html SetOculusTouchReady.prompt.html\
+	SetPollingReady.prompt.html SetContinuousReady.prompt.html \
+	SetFlightSubjects1-10Ready.prompt.html SetFlightSubjects6-15Ready.prompt.html \
 	MaintenanceWelcome.instruction.html FileTransferReady.prompt.html \
 	FileTransferErrorFinish.status.html IncompleteErrorFinish.status.html MaxRetriesErrorFinish.status.html \
 	AlignCodaInterruptFinish.status.html AlignCodaMisalignFinish.status.html

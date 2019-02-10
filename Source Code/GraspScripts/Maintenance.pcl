@@ -1,10 +1,15 @@
 # Protocol Definition: Hardware Configuration 
 900; INSTRUCTION=; Hardware Configuration; MaintenanceWelcome.instruction.html
-901; SYSTEM=; Use HMD Tracking Only; echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
-902; SYSTEM=; Use GRIP 3D (CODA) tracker; del /F /Q NoCoda.flg; SetWithCodaReady.prompt.html
-903; SYSTEM=; Use FM Marker Supports; copy /Y Bdy\FM\*.bdy Bdy; StepReady.prompt.html
-904; SYSTEM=; Use TrM Marker Supports; copy /Y Bdy\TrM\*.bdy Bdy; StepReady.prompt.html
+901; SYSTEM=; Use FM Marker Supports; copy /Y Bdy\FM\*.bdy Bdy; StepReady.prompt.html
+902; SYSTEM=; Use TrM Marker Supports; copy /Y Bdy\TrM\*.bdy Bdy; StepReady.prompt.html
 910; SYSTEM=; Use TrM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.TMa CodaRTnet.ini; StepReady.prompt.html
 911; SYSTEM=; Use GM  Tracker Units; copy /Y InitFiles\CodaRTnet.ini.GM1  CodaRTnet.ini; StepReady.prompt.html
 912; SYSTEM=; Use ScM Tracker Units; copy /Y InitFiles\CodaRTnet.ini.SM  CodaRTnet.ini; StepReady.prompt.html
 913; SYSTEM=; Use FM2 Tracker Units; copy /Y InitFiles\CodaRTnet.ini.FM2 CodaRTnet.ini; StepReady.prompt.html
+920; SYSTEM=; Use HMD Tracking Only; del /F /Q Touch.flg, echo "NO CODA" > NoCoda.flg; SetNoCodaReady.prompt.html
+921; SYSTEM=; Use Oculus Touch tracker; del /F /Q NoCoda.flg, echo "TOUCH" > Touch.flg; SetOculusTouchReady.prompt.html
+922; SYSTEM=; Use GRIP 3D (CODA) tracker; del /F /Q NoCoda.flg Touch.flg; SetWithCodaReady.prompt.html
+930; SYSTEM=; Use POLLED Tracking; echo "POLLING ON" > PolledCODA.flg; SetPollingReady.prompt.html
+931; SYSTEM=; Use CONTINUOUS Tracking; del /F /Q PolledCODA.flg; SetContinuousReady.prompt.html
+940; SYSTEM=; Use Desktop Only; echo "NO HMD" > NoHMD.flg; StepReady.prompt.html
+941; SYSTEM=; Use Oculus HMD; del /F /Q NoHMD.flg; StepReady.prompt.html

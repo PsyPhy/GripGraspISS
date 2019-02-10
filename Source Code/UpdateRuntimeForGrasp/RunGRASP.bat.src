@@ -54,6 +54,7 @@ Start "OculusMouse" /b Executables\OculusMouse.exe
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 if exist NoCODA.flg goto NOCODA
+if exist Touch.flg goto NOCODA
 
 REM Start up the CODA system and wait for it to be active. The Daemon window will minimize automatically.
 Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide
