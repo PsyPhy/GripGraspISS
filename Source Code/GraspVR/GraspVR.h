@@ -61,6 +61,7 @@ namespace Grasp {
 	public:
 
 		// Flags that determine different modes.
+		bool		showGoodAiming;
 		bool		stopCheating;
 		bool		noLasers;
 		bool		snuffLaser;
@@ -80,7 +81,7 @@ namespace Grasp {
 		static double interpupillary_distance;
 
 
-		GraspVR( char *ini_filename = nullptr )  : 
+		GraspVR( char *ini_filename )  : 
 
 			display( nullptr ),
 			trackers( nullptr ),
@@ -91,6 +92,7 @@ namespace Grasp {
 
 			laserTargetingActive( false ),
 			laserTargetingAcquired( false ),
+			showGoodAiming( false ),
 			stopCheating( true ),
 			snuffLaser( false ),
 			noLasers( false ),
@@ -101,7 +103,7 @@ namespace Grasp {
 
 			{
 				if ( ini_filename ) {
-					fOutputDebugString( "GraspVR: Parsing %s.\n", ini_filename );
+					fOutputDebugString( "GraspVR (%p): Parsing %s.\n", this, ini_filename );
 					int error = ini_parse( ini_filename, iniHandler, this );
 					if ( error != 0 ) fOutputDebugString( "GraspVR: Parsing error (%d).\n", error );
 				}

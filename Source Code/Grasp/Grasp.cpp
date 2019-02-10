@@ -125,7 +125,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		display = oculus_display;
 		if ( useCoda ) {
 			codaTracker = new CodaRTnetDaemonTracker();
-			trackers = new GraspOculusCodaTrackers( &_oculusMapper, codaTracker, init_filename );
+			trackers = new GraspOculusCodaTrackers( codaTracker, &_oculusMapper, init_filename );
 			//// Create a tracker to control the roll orientation via the mouse.
 			//// Here we use the mouse tracker tied to the OculusMapper. 
 			//MouseRollPoseTracker *mouseRollTracker = new PsyPhy::MouseRollPoseTracker( &_oculusMapper, - 0.001 );

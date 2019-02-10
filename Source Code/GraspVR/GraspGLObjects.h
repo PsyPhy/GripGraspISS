@@ -316,7 +316,7 @@ namespace Grasp {
 
 		GraspGLObjects( char *ini_filename ) {
 			if ( ini_filename ) {
-				fOutputDebugString( "GraspGLObjects: Parsing %s.\n", ini_filename );
+				fOutputDebugString( "GraspGLObjects (%p): Parsing %s.\n", this, ini_filename );
 				int error = ini_parse( ini_filename, iniHandler, this );
 				if ( error != 0 ) fOutputDebugString( "GraspGLObjects: Parsing error (%d).\n", error );
 			}

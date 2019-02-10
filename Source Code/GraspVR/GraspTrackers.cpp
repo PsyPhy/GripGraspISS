@@ -291,7 +291,7 @@ void GraspDexTrackers::Initialize( void ) {
 
 void GraspOculusCodaTrackers::Initialize( void ) {
 
-	// Initialize all of the low-leve coda-based pose trackers.
+	// Initialize all of the low-level, coda-based pose trackers.
 	InitializeCodaTrackers();
 
 	// Create a pose tracker that combines Coda and Oculus data for head tracking.

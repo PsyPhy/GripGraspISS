@@ -68,6 +68,7 @@ int _tmain(int argc, char *argv[])
 	char *filename = "GraspScreenshot.bmp";
 	int  size_x = 1024, size_y = 1024;
 	int  position_x = 10, position_y = 10;
+	char init_filename[FILENAME_MAX] = "Grasp.ini";
 
 	double hand_roll = 0.0, hand_pitch = 0.0, hand_yaw = 0.0;
 
@@ -76,6 +77,11 @@ int _tmain(int argc, char *argv[])
 	// Parse command line for arguments affecting the window.
 	for ( int arg = 1; arg < argc; arg++ ) {
 		int n;
+		char *ptr;
+		if ( ptr = strstr( argv[arg], "--initfile=" ) ) {
+			int items = sscanf( ptr, "--initfile=%s", init_filename );
+			fAbortMessageOnCondition( (items == 0), "Grasp", "Error parsing command line argument for init file.\n\n  %s\n\n(Remember: no spaces around '=')", argv[arg] );
+		}
 		if ( 0 < ( n = sscanf( argv[arg], "--size=%dx%d:%d,%d", &size_x, &size_y, &position_x, &position_y ) ) ) {
 			if ( n == 1) size_y = size_x;
 			fOutputDebugString( "Window size: %d x %d\n", size_x, size_y );
@@ -104,7 +110,7 @@ int _tmain(int argc, char *argv[])
 	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
 	viewpoint->SetOrientation(0.0, 0.0, 0.0 );
 
-	objects = new GraspGLObjects();
+	objects = new GraspGLObjects( init_filename );
 
 	objects->curve_facets = 180;
 	objects->outer_visor_radius = 600.0;

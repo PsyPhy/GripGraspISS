@@ -171,28 +171,17 @@ namespace Grasp {
 		virtual void ExitTrialInterrupted( void );
 
 	public:
-		// Constructor, with initialization of some elements.
-		GraspTaskManager( char *ini_filename = nullptr ) : 
+		// Constructor
+		GraspTaskManager( char *ini_filename ) : 
 		  nTrials(0), 
 			  retriesRemaining(0), 
 			  response_fp(NULL), 
 			  pose_fp(NULL), 
 			  frame_fp(NULL), 
-			  tag("??to??" ) {
-
-				  ConstructorInitialize( ini_filename );
-		  }
-
-		  void ConstructorInitialize( char *ini_filename ) {
-			  if ( ini_filename ) {
-				  fOutputDebugString( "GraspTaskManager (GraspVR): Parsing %s.\n", ini_filename );
-				  int error = ini_parse( ini_filename, GraspVR::iniHandler, this );
-				  if ( error != 0 ) fOutputDebugString( "GraspTaskManager (GraspVR): Parsing error (%d).\n", error );
-				  fOutputDebugString( "GraspTaskManager (GraspVR) - renderer: Parsing %s.\n", ini_filename );
-				  error = ini_parse( ini_filename, renderer->iniHandler, renderer );
-				  if ( error != 0 ) fOutputDebugString( "GraspTaskManager (GraspVR) - renderer: Parsing error (%d).\n", error );
-			  }
-		  }
+			  tag("??to??" ),
+			  GraspVR( ini_filename )
+		  
+		  {}
 
 		  ~GraspTaskManager(){}
 		  void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs, DexServices *dex ) {
@@ -281,10 +270,7 @@ namespace Grasp {
 	// V-V protocol. 
 	class VtoV : public GraspTaskManager {
 	public:
-		VtoV( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
-
+		VtoV( char *ini_filename ) : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( VTOV ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->vTool; tag = "VtoV"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateVisualTarget(); }
@@ -295,9 +281,7 @@ namespace Grasp {
 	// V-VK protocol. 
 	class VtoVK : public GraspTaskManager {
 	public:
-		VtoVK( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
+		VtoVK( char *ini_filename ) : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( VTOVK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoVK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
@@ -308,9 +292,7 @@ namespace Grasp {
 	// V-K protocol. 
 	class VtoK : public GraspTaskManager {
 	public:
-		VtoK( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
+		VtoK( char *ini_filename ) : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( VTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "VtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { 	return UpdateVisualTarget(); }
@@ -321,9 +303,7 @@ namespace Grasp {
 	// K-K protocol. 
 	class KtoK : public GraspTaskManager {
 	public:
-		KtoK( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
+		KtoK( char *ini_filename )  : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( KTOK ); }
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "KtoK"; }
 		GraspTrialState UpdatePresentTarget( void ) { return UpdateKinestheticTarget(); }
@@ -334,9 +314,7 @@ namespace Grasp {
 	// DEMO protocol. 
 	class DemoP : public GraspTaskManager {
 	public:
-		DemoP( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
+		DemoP( char *ini_filename )  : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( DEMO ); }
 		// Initialize the tool to be used and also override the intial state of the state machine.
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "DEMO"; currentState = Demo; }
@@ -345,9 +323,7 @@ namespace Grasp {
 	// QuitVR protocol. 
 	class QuitVR : public GraspTaskManager {
 	public:
-		QuitVR( char *ini_filename ) {
-			ConstructorInitialize( ini_filename );
-		}
+		QuitVR( char *ini_filename )  : GraspTaskManager( ini_filename ) {}
 		Paradigm GetParadigm( void ) { return( QUITVR ); }
 		// Initialize the tool to be used and also override the intial state of the state machine.
 		void Prepare( void ) { renderer->selectedTool = renderer->hand; tag = "QUIT"; currentState = VRCompleted; }

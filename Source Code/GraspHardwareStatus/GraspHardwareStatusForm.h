@@ -626,7 +626,7 @@ namespace GraspHardwareStatus {
 			codaViewpoint1->SetOrientation( back );
 
 			// Create the OpenGLObjects that depict the marker array structure.
-			objects = new Grasp::GraspGLObjects();
+			objects = new Grasp::GraspGLObjects( "Grasp.ini" );
 			hmdStationary0 = objects->CreateHmdMarkerStructure( "Bdy\\HMD.bdy" );
 			handStationary0 = objects->CreateHandMarkerStructure( "Bdy\\Hand.bdy" );
 			chestStationary0 = objects->CreateChestMarkerStructure( "Bdy\\Chest.bdy" );

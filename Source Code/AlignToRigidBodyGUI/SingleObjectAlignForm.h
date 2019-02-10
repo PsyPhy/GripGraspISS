@@ -332,7 +332,7 @@ namespace AlignToRigidBodyGUI {
 	private: System::Void Form1_Shown(System::Object^  sender, System::EventArgs^  e) {
 
 				 // Create the OpenGLObjects that depict the marker array structure.
-				 objects = new Grasp::GraspGLObjects();
+				 objects = new Grasp::GraspGLObjects( "Grasp.ini" );
 				 char *model_file = (char*)(void*)System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi( modelFile ).ToPointer();
 				 alignmentObject1 = objects->CreateChestMarkerStructure( model_file );
 				 Sphere *sphere1 = new Sphere( 140.0 );
