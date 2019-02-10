@@ -219,6 +219,7 @@ namespace Grasp {
 			else if ( !strcmp( name, "straightAheadThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->straightAheadThreshold = atof( value );
 			else if ( !strcmp( name, "pointingThreshold" ) && !strcmp( section, "GraspVR" ) ) instance->pointingThreshold = atof( value );
 			else if ( !strcmp( name, "useLaserEndpoint" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "showGoodAiming" ) && !strcmp( section, "GraspVR" ) ) instance->showGoodAiming = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "extinguishLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "balloonMask" ) && !strcmp( section, "GraspVR" ) ) instance->balloon = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );

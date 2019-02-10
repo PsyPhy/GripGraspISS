@@ -20,9 +20,16 @@ fingerBallRadius = 10.0
 fingerLength = 100.0
 
 
+;;; How much the laser diffuses when off alignment
+laserDiffusionConstant = 5.0
+;;; The following sets the zone within which the laser
+;;; is perfectly focused.  But the parameter is misnamed.
+;;; Set it to 1.0 if you want no deadzone. Set it to -1.0
+;;; if you want an infinite deadzone (always focused).
+laserDiffusionDeadzone = 1.0
+;;; The system places the dot representing the laser pointer
+;;; at a fixed distance from the hand of the subject.
 laserDistance = 1600.0
-laserDiffusionConstant = 0.0
-laserDiffusionDeadzone = 0.0
 
 headArrowLocation = < 0.0 0.0 -600.0 >
 headArrowRadius = 250.0
@@ -44,7 +51,14 @@ straightAheadThreshold = 0.995
 
 ;;; The following parameter determines the threshold at which the alignment  
 ;;; of the hand in pitch and yaw is considered to be good enough. 
-pointingThreshold = 0.98
+;;; Use 0.96 to have the original size of the cyan target ball.
+;;; I suggest 0.97 for the new method with the balloon mask.
+pointingThreshold = 0.96
+
+;;; Originally, the target disk was always cyan.
+;;; In the new version, we set it initially to be grey, until the 
+;;; laser enters the target region.
+showGoodAiming = false
 
 ;;; Another way to work  is to require that the hand point
 ;;; near the center of the end of the tunnel, not just aligned with
@@ -53,7 +67,7 @@ useLaserEndpoint = true
 
 ;;; To avoid distraction by the laser, one can extinguish it
 ;;; once the hand has been properly aligned for at least an instant.
-extinguishLaser = true
+extinguishLaser = false
 
 ;;; Or one can skip the laser pointer altogether.
 noLasers = false

@@ -646,7 +646,10 @@ void GraspVR::HandleLasers( void ) {
 			renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
 			if ( snuffLaser ) renderer->handLaser->Disable();
 		}
-		else renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+		else {
+			if ( showGoodAiming ) renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+			else renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
+		}
 
 		// As another way of avoiding cheating, we turn the laser off if the hand
 		// has been properly aligned for at least an instant, but then use an expanding target
