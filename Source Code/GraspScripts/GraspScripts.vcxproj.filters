@@ -16,35 +16,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="V-Vfloating.pcl">
-      <Filter>V-V</Filter>
-    </None>
-    <None Include="V-Vseated.pcl">
-      <Filter>V-V</Filter>
-    </None>
     <None Include="GraspNominalSessions.sss">
       <Filter>Generic</Filter>
     </None>
     <None Include="V-Vinstructions.tsk">
       <Filter>V-V</Filter>
     </None>
-    <None Include="V-Kfloating.pcl">
-      <Filter>V-K</Filter>
-    </None>
     <None Include="V-Kinstructions.tsk">
-      <Filter>V-K</Filter>
-    </None>
-    <None Include="V-Kseated.pcl">
       <Filter>V-K</Filter>
     </None>
     <None Include="GraspMaintenanceSessions.sss">
       <Filter>Generic</Filter>
-    </None>
-    <None Include="K-Kseated.pcl">
-      <Filter>K-K</Filter>
-    </None>
-    <None Include="K-Kfloating.pcl">
-      <Filter>K-K</Filter>
     </None>
     <None Include="Maintenance.pcl">
       <Filter>Generic</Filter>
@@ -129,6 +111,45 @@
       <Filter>Generic</Filter>
     </None>
     <None Include="DataReTransfer.tsk">
+      <Filter>Generic</Filter>
+    </None>
+    <None Include="K-KseatedFlight.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KfloatingBedrest.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KfloatingFlight.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="K-KseatedBedrest.pcl">
+      <Filter>K-K</Filter>
+    </None>
+    <None Include="V-KfloatingBedrest.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-KfloatingFlight.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-KseatedBedrest.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-KseatedFlight.pcl">
+      <Filter>V-K</Filter>
+    </None>
+    <None Include="V-VfloatingBedrest.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-VfloatingFlight.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-VseatedBedrest.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="V-VseatedFlight.pcl">
+      <Filter>V-V</Filter>
+    </None>
+    <None Include="SubjectsFlight2.sbj">
       <Filter>Generic</Filter>
     </None>
   </ItemGroup>

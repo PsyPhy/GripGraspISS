@@ -358,7 +358,7 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 				+ protocolID + "_" 
 				+ taskID + "_" 
 				+ DateTimeString()
-				+ " --user=" + subjectID
+				+ " --user=" + subjectID.ToString( "D2" )
 				+ " --protocol=" + protocolID
 				+ " --task=" + taskID
 				+ " --step=" + stepID;

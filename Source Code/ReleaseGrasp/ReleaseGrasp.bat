@@ -80,6 +80,7 @@ goto :COMMON
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Documentation/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Grasp.ini
+%TAR% --append %VERBOSE% --file=%ARCHIVE% Grasp.??.ini
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 

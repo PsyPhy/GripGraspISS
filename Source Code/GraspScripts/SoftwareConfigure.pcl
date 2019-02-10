@@ -9,6 +9,7 @@
 961; SYSTEM=; Disable VR Mirroring; del /F /Q Mirroring.flg; StepReady.prompt.html
 962; SYSTEM=; Enable FTP Safety Copy; del /F /Q NoFTP.flg; StepReady.prompt.html
 963; SYSTEM=; Disable FTP Safety Copy; echo "FTP" > NoFTP.flg; StepReady.prompt.html
-964; SYSTEM=; Enable Training Subjects; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
-965; SYSTEM=; Enable Bedrest Subjects; copy /Y /V Scripts\SubjectsBedrest.sbj Scripts\Subjects.sbj; StepReady.prompt.html
-966; SYSTEM=; Enable Flight Subjects; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+964; SYSTEM=; Enable Flight Subjects 1-10; copy /Y /V Scripts\SubjectsFlight.sbj Scripts\Subjects.sbj; SetFlightSubjects1-10Ready.prompt.html
+965; SYSTEM=; Enable Flight Subjects 6-15; copy /Y /V Scripts\SubjectsFlight2.sbj Scripts\Subjects.sbj; SetFlightSubjects6-15Ready.prompt.html
+966; SYSTEM=; Enable Training Subjects; copy /Y /V Scripts\SubjectsTraining.sbj Scripts\Subjects.sbj; StepReady.prompt.html
+967; SYSTEM=; Enable Bedrest Subjects; copy /Y /V Scripts\SubjectsBedrest.sbj Scripts\Subjects.sbj; StepReady.prompt.html

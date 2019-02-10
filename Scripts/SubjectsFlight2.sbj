@@ -1,0 +1,12 @@
+# Set of subject IDs and associated protocols (task lists)
+06; S6;	Subject 6;GraspNominalSessions.sss
+07; S7;	Subject 7;GraspNominalSessions.sss
+08; S8;	Subject 8;GraspNominalSessions.sss
+09; S9;	Subject 9;GraspNominalSessions.sss
+10; SA;	Subject 10;GraspNominalSessions.sss
+11; SB;	Subject 11;GraspNominalSessions.sss
+12; SC;	Subject 12;GraspNominalSessions.sss
+13; SD;	Subject 13;GraspNominalSessions.sss
+14; SE;	Subject 14;GraspNominalSessions.sss
+15; SF;	Subject 15;GraspNominalSessions.sss
+99; SM; Maintenance; GraspMaintenanceSessions.sss

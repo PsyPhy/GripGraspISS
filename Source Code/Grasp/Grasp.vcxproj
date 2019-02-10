@@ -82,6 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\Executables\Grasp.bat" />
     <None Include="..\..\Grasp.ini" />
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
     <None Include="Grasp.bat.src" />

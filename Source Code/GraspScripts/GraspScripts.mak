@@ -9,7 +9,6 @@ _flight: _common SubjectsFlight.sbj
 	-del /F /Q _training _bedrest
 	echo Installing scripts for FLIGHT.
 	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
-	copy /Y /V $(SCRIPT_DESTINATION)\SubjectsFlight.sbj $(SCRIPT_DESTINATION)\Subjects.sbj
 	copy /Y /V $(SCRIPT_DESTINATION)\V-KseatedFlight.pcl $(SCRIPT_DESTINATION)\V-Kseated.pcl
 	copy /Y /V $(SCRIPT_DESTINATION)\V-VseatedFlight.pcl $(SCRIPT_DESTINATION)\V-Vseated.pcl
 	copy /Y /V $(SCRIPT_DESTINATION)\K-KseatedFlight.pcl $(SCRIPT_DESTINATION)\K-Kseated.pcl

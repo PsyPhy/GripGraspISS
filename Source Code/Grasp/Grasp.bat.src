@@ -7,34 +7,56 @@ REM
 REM A batch file that executes Grasp.exe and then transfers the data files to DEX.
 REM
 
+set ALL=%*
+
+REM Find the filename root and the user ID amongst the parameters.
+REM The GraspGUI shell puts the results file root in the form --output=FNROOT.
+REM Note that the '=' is treated as a blank by the command processor.
+REM We therefore look for '--ouput' and then take the next parameter as the rootname.
+REM Idem for --user.
+set root=""
+set user=""
+:FIND
+if "%1"=="" goto ENDOFLIST
+echo Leading argument is %1
+if "%1"=="--output" goto FOUNDOUTPUT
+if "%1"=="--user" goto FOUNDUSER
+shift
+goto FIND
+
+:FOUNDOUTPUT
+set root=%2
+shift
+goto FIND
+
+:FOUNDUSER
+set user=%2
+shift
+goto FIND
+
+:ENDOFLIST
+if NOT "%root%"=="" goto CONTINUE
+echo Could not find filename root.
+exit -10
+
+:CONTINUE
+echo File root is %root%
+echo User ID is %user%
+
+if "%user%"=="" goto NOUSERSPECIFIED
+set ALL= --initfile=Grasp.%user%.ini %ALL%
+
+:NOUSERSPECIFIED
 REM
 REM Execute Grasp.exe with all the arguments.
 REM
-Executables\Grasp.exe %*
+echo Executing Executables\Grasp.exe with command line %ALL%
+Executables\Grasp.exe %ALL%
 set GRASPERRORLEVEL=%ERRORLEVEL%
 
 REM Now write the files to a directory on DEX, using the root filename to select which files to write.
 REM Do not attempt to send if the NoFTP.flg cookie is present.
 if exist NoFTP.flg goto NOFTP
-
-REM Find the filename root amongst the parameters.
-REM The GraspGUI shell puts the results file root in the form --output=FNROOT.
-REM Note that the '=' is treated as a blank by the command processor.
-REM We therefore look for '--ouput' and then take the next parameter as the rootname.
-:FIND
-if "%1"=="" goto NOTFOUND
-echo Leading argument is %1
-if "%1"=="--output" goto FOUND
-shift
-goto FIND
-
-:NOTFOUND 
-echo Could not find filename root.
-exit -10
-
-:FOUND
-set root=%2
-echo File root is %root%
 
 REM
 REM Strip off the filename root, leading only the path to the local results trajectory.
