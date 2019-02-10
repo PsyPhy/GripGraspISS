@@ -45,19 +45,50 @@ namespace AlignToRigidBodyGUI {
 
 		PsyPhy::OpenGLWindow					*visibilityWindow1, *visibilityWindow2;
 		PsyPhy::OpenGLWindow					*fovWindow1, *fovWindow2;
+		PsyPhy::OpenGLWindow					*distanceWindow1, *distanceWindow2;
 		PsyPhy::Viewpoint						*codaViewpoint1, *codaViewpoint2, *objectViewpoint;
+		PsyPhy::OrthoViewpoint					*distanceViewpoint;
 		Grasp::MarkerStructureGLObject			*alignmentObject1, *alignmentObject2;
 		Grasp::MarkerStructureGLObject			*visibilityObject1, *visibilityObject2;
 		PsyPhy::Assembly						*fovSweetSpot;
 
 		PsyPhy::CodaRTnetTracker				*coda;
 		Grasp::GraspGLObjects					*objects;
+		Assembly								*distanceBars;
+
 
 		String^ modelFile;
 		String^ filenameRoot;
 
+		static double	minDisplayDistance = 1000.0;
+		static double	maxDisplayDistance = 5000.0;
+		static double	minAcceptableDistance = 1800.0;
+		static double	maxAcceptableDistance = 4000.0;
+
 		double maxPositionError;
-		double maxOrientationError;
+	private: System::Windows::Forms::GroupBox^  groupBox2;
+	protected: 
+	private: System::Windows::Forms::Panel^  fovPanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox4;
+
+
+	private: System::Windows::Forms::GroupBox^  groupBox3;
+	private: System::Windows::Forms::Panel^  visibilityPanel1;
+	private: System::Windows::Forms::Panel^  distancePanel1;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::GroupBox^  groupBox6;
+	private: System::Windows::Forms::Panel^  distancePanel2;
+
+	private: System::Windows::Forms::GroupBox^  groupBox5;
+	private: System::Windows::Forms::Panel^  fovPanel2;
+
+	private: System::Windows::Forms::GroupBox^  groupBox7;
+	private: System::Windows::Forms::Panel^  visibilityPanel2;
+
+	private: System::Windows::Forms::GroupBox^  groupBox8;
+	private: System::Windows::Forms::TextBox^  instructionsTextBox;
+	private: System::Windows::Forms::Label^  busy;
+			 double maxOrientationError;
 
 	public:
 		SingleObjectForm( String ^model_file, String ^filename_root, Grasp::DexServices *dex, PsyPhy::CodaRTnetTracker *coda ) :
@@ -86,21 +117,23 @@ namespace AlignToRigidBodyGUI {
 
 
 	private:
-		System::Windows::Forms::TextBox^  instructionsTextBox;
-		System::Windows::Forms::GroupBox^	vrGroupBox2;
-		System::Windows::Forms::Panel^  visibilityPanel2;
+
+
+
 		System::Windows::Forms::GroupBox^	vrGroupBox1;
-		System::Windows::Forms::Panel^  visibilityPanel1;
+
 		System::Windows::Forms::Button^	alignButton;
 		System::Windows::Forms::Button^	cancelButton;
-		System::Windows::Forms::TextBox^  instructionsTextBox2;
-		System::Windows::Forms::GroupBox^  groupBox1;
-		System::Windows::Forms::Panel^  fovPanel2;
-		System::Windows::Forms::GroupBox^  groupBox2;
-		System::Windows::Forms::Panel^  fovPanel1;
-		System::Windows::Forms::Label^  busy;
-		System::Windows::Forms::TextBox^  instructionsTextBox3;
+
+
+
+
+
+
+
 		System::Windows::Forms::Button^  resetButton;
+
+
 
 	private:
 		/// <summary>
@@ -117,32 +150,45 @@ namespace AlignToRigidBodyGUI {
 		{
 			this->alignButton = (gcnew System::Windows::Forms::Button());
 			this->cancelButton = (gcnew System::Windows::Forms::Button());
-			this->vrGroupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			this->visibilityPanel2 = (gcnew System::Windows::Forms::Panel());
 			this->vrGroupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->visibilityPanel1 = (gcnew System::Windows::Forms::Panel());
-			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
-			this->instructionsTextBox2 = (gcnew System::Windows::Forms::TextBox());
-			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->fovPanel2 = (gcnew System::Windows::Forms::Panel());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->fovPanel1 = (gcnew System::Windows::Forms::Panel());
-			this->busy = (gcnew System::Windows::Forms::Label());
-			this->instructionsTextBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
+			this->distancePanel1 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->visibilityPanel1 = (gcnew System::Windows::Forms::Panel());
 			this->resetButton = (gcnew System::Windows::Forms::Button());
-			this->vrGroupBox2->SuspendLayout();
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox6 = (gcnew System::Windows::Forms::GroupBox());
+			this->distancePanel2 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
+			this->fovPanel2 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox7 = (gcnew System::Windows::Forms::GroupBox());
+			this->visibilityPanel2 = (gcnew System::Windows::Forms::Panel());
+			this->groupBox8 = (gcnew System::Windows::Forms::GroupBox());
+			this->instructionsTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->busy = (gcnew System::Windows::Forms::Label());
 			this->vrGroupBox1->SuspendLayout();
-			this->groupBox1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
+			this->groupBox4->SuspendLayout();
+			this->groupBox3->SuspendLayout();
+			this->groupBox1->SuspendLayout();
+			this->groupBox6->SuspendLayout();
+			this->groupBox5->SuspendLayout();
+			this->groupBox7->SuspendLayout();
+			this->groupBox8->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// alignButton
 			// 
-			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->alignButton->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->alignButton->Location = System::Drawing::Point(1361, 805);
+			this->alignButton->Location = System::Drawing::Point(1134, 670);
+			this->alignButton->Margin = System::Windows::Forms::Padding(2);
 			this->alignButton->Name = L"alignButton";
-			this->alignButton->Size = System::Drawing::Size(159, 56);
+			this->alignButton->Size = System::Drawing::Size(88, 38);
 			this->alignButton->TabIndex = 1;
 			this->alignButton->Text = L"OK";
 			this->alignButton->UseVisualStyleBackColor = true;
@@ -150,112 +196,233 @@ namespace AlignToRigidBodyGUI {
 			// 
 			// cancelButton
 			// 
+			this->cancelButton->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->cancelButton->Location = System::Drawing::Point(1181, 805);
+			this->cancelButton->Location = System::Drawing::Point(1041, 670);
+			this->cancelButton->Margin = System::Windows::Forms::Padding(2);
 			this->cancelButton->Name = L"cancelButton";
-			this->cancelButton->Size = System::Drawing::Size(159, 56);
+			this->cancelButton->Size = System::Drawing::Size(88, 38);
 			this->cancelButton->TabIndex = 3;
 			this->cancelButton->Text = L"Cancel";
 			this->cancelButton->UseVisualStyleBackColor = true;
 			this->cancelButton->Click += gcnew System::EventHandler(this, &SingleObjectForm::cancelButton_Click);
 			// 
-			// vrGroupBox2
-			// 
-			this->vrGroupBox2->Controls->Add(this->visibilityPanel2);
-			this->vrGroupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->vrGroupBox2->Location = System::Drawing::Point(1000, 22);
-			this->vrGroupBox2->Name = L"vrGroupBox2";
-			this->vrGroupBox2->Size = System::Drawing::Size(520, 341);
-			this->vrGroupBox2->TabIndex = 5;
-			this->vrGroupBox2->TabStop = false;
-			this->vrGroupBox2->Text = L"Tracker Camera 2";
-			// 
-			// visibilityPanel2
-			// 
-			this->visibilityPanel2->Location = System::Drawing::Point(10, 37);
-			this->visibilityPanel2->Name = L"visibilityPanel2";
-			this->visibilityPanel2->Size = System::Drawing::Size(500, 291);
-			this->visibilityPanel2->TabIndex = 1;
-			// 
 			// vrGroupBox1
 			// 
-			this->vrGroupBox1->Controls->Add(this->visibilityPanel1);
+			this->vrGroupBox1->Controls->Add(this->groupBox2);
+			this->vrGroupBox1->Controls->Add(this->groupBox4);
+			this->vrGroupBox1->Controls->Add(this->groupBox3);
 			this->vrGroupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->vrGroupBox1->Location = System::Drawing::Point(460, 22);
+			this->vrGroupBox1->Location = System::Drawing::Point(11, 8);
+			this->vrGroupBox1->Margin = System::Windows::Forms::Padding(2);
 			this->vrGroupBox1->Name = L"vrGroupBox1";
-			this->vrGroupBox1->Size = System::Drawing::Size(520, 341);
+			this->vrGroupBox1->Padding = System::Windows::Forms::Padding(2);
+			this->vrGroupBox1->Size = System::Drawing::Size(460, 693);
 			this->vrGroupBox1->TabIndex = 4;
 			this->vrGroupBox1->TabStop = false;
 			this->vrGroupBox1->Text = L"Tracker Camera 1";
 			// 
-			// visibilityPanel1
-			// 
-			this->visibilityPanel1->Location = System::Drawing::Point(10, 37);
-			this->visibilityPanel1->Name = L"visibilityPanel1";
-			this->visibilityPanel1->Size = System::Drawing::Size(500, 291);
-			this->visibilityPanel1->TabIndex = 0;
-			// 
-			// instructionsTextBox
-			// 
-			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox->Location = System::Drawing::Point(61, 59);
-			this->instructionsTextBox->Multiline = true;
-			this->instructionsTextBox->Name = L"instructionsTextBox";
-			this->instructionsTextBox->Size = System::Drawing::Size(324, 291);
-			this->instructionsTextBox->TabIndex = 6;
-			// 
-			// instructionsTextBox2
-			// 
-			this->instructionsTextBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox2->Location = System::Drawing::Point(61, 417);
-			this->instructionsTextBox2->Multiline = true;
-			this->instructionsTextBox2->Name = L"instructionsTextBox2";
-			this->instructionsTextBox2->Size = System::Drawing::Size(324, 358);
-			this->instructionsTextBox2->TabIndex = 13;
-			// 
-			// groupBox1
-			// 
-			this->groupBox1->Controls->Add(this->fovPanel2);
-			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->groupBox1->Location = System::Drawing::Point(1000, 380);
-			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(520, 409);
-			this->groupBox1->TabIndex = 12;
-			this->groupBox1->TabStop = false;
-			this->groupBox1->Text = L"Tracker Camera 2";
-			// 
-			// fovPanel2
-			// 
-			this->fovPanel2->Location = System::Drawing::Point(10, 37);
-			this->fovPanel2->Name = L"fovPanel2";
-			this->fovPanel2->Size = System::Drawing::Size(500, 358);
-			this->fovPanel2->TabIndex = 1;
-			// 
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->fovPanel1);
-			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->groupBox2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->groupBox2->Location = System::Drawing::Point(460, 380);
+			this->groupBox2->Location = System::Drawing::Point(66, 264);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(520, 409);
-			this->groupBox2->TabIndex = 11;
+			this->groupBox2->Size = System::Drawing::Size(389, 424);
+			this->groupBox2->TabIndex = 4;
 			this->groupBox2->TabStop = false;
-			this->groupBox2->Text = L"Tracker Camera 1";
+			this->groupBox2->Text = L"Boresight";
 			// 
 			// fovPanel1
 			// 
-			this->fovPanel1->Location = System::Drawing::Point(10, 37);
+			this->fovPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->fovPanel1->Location = System::Drawing::Point(5, 24);
+			this->fovPanel1->Margin = System::Windows::Forms::Padding(2);
 			this->fovPanel1->Name = L"fovPanel1";
-			this->fovPanel1->Size = System::Drawing::Size(500, 358);
-			this->fovPanel1->TabIndex = 0;
+			this->fovPanel1->Size = System::Drawing::Size(379, 395);
+			this->fovPanel1->TabIndex = 4;
+			// 
+			// groupBox4
+			// 
+			this->groupBox4->Controls->Add(this->distancePanel1);
+			this->groupBox4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox4->Location = System::Drawing::Point(5, 30);
+			this->groupBox4->Name = L"groupBox4";
+			this->groupBox4->Size = System::Drawing::Size(55, 658);
+			this->groupBox4->TabIndex = 5;
+			this->groupBox4->TabStop = false;
+			this->groupBox4->Text = L"Dist";
+			// 
+			// distancePanel1
+			// 
+			this->distancePanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->distancePanel1->Location = System::Drawing::Point(6, 23);
+			this->distancePanel1->Name = L"distancePanel1";
+			this->distancePanel1->Size = System::Drawing::Size(43, 630);
+			this->distancePanel1->TabIndex = 8;
+			// 
+			// groupBox3
+			// 
+			this->groupBox3->Controls->Add(this->visibilityPanel1);
+			this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox3->Location = System::Drawing::Point(66, 30);
+			this->groupBox3->Name = L"groupBox3";
+			this->groupBox3->Size = System::Drawing::Size(389, 233);
+			this->groupBox3->TabIndex = 0;
+			this->groupBox3->TabStop = false;
+			this->groupBox3->Text = L"Visibility";
+			// 
+			// visibilityPanel1
+			// 
+			this->visibilityPanel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->visibilityPanel1->Location = System::Drawing::Point(5, 23);
+			this->visibilityPanel1->Margin = System::Windows::Forms::Padding(2);
+			this->visibilityPanel1->Name = L"visibilityPanel1";
+			this->visibilityPanel1->Size = System::Drawing::Size(379, 205);
+			this->visibilityPanel1->TabIndex = 1;
+			// 
+			// resetButton
+			// 
+			this->resetButton->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->resetButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->resetButton->Location = System::Drawing::Point(949, 670);
+			this->resetButton->Margin = System::Windows::Forms::Padding(2);
+			this->resetButton->Name = L"resetButton";
+			this->resetButton->Size = System::Drawing::Size(88, 38);
+			this->resetButton->TabIndex = 17;
+			this->resetButton->Text = L"Reset";
+			this->resetButton->UseVisualStyleBackColor = true;
+			this->resetButton->Click += gcnew System::EventHandler(this, &SingleObjectForm::button1_Click);
+			// 
+			// groupBox1
+			// 
+			this->groupBox1->Controls->Add(this->groupBox6);
+			this->groupBox1->Controls->Add(this->groupBox5);
+			this->groupBox1->Controls->Add(this->groupBox7);
+			this->groupBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox1->Location = System::Drawing::Point(475, 8);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(2);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Padding = System::Windows::Forms::Padding(2);
+			this->groupBox1->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
+			this->groupBox1->Size = System::Drawing::Size(460, 693);
+			this->groupBox1->TabIndex = 6;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"Tracker Camera 2";
+			// 
+			// groupBox6
+			// 
+			this->groupBox6->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox6->Controls->Add(this->distancePanel2);
+			this->groupBox6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox6->Location = System::Drawing::Point(400, 30);
+			this->groupBox6->Name = L"groupBox6";
+			this->groupBox6->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox6->Size = System::Drawing::Size(55, 658);
+			this->groupBox6->TabIndex = 6;
+			this->groupBox6->TabStop = false;
+			this->groupBox6->Text = L"Dist";
+			// 
+			// distancePanel2
+			// 
+			this->distancePanel2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->distancePanel2->Location = System::Drawing::Point(6, 23);
+			this->distancePanel2->Name = L"distancePanel2";
+			this->distancePanel2->Size = System::Drawing::Size(43, 629);
+			this->distancePanel2->TabIndex = 8;
+			// 
+			// groupBox5
+			// 
+			this->groupBox5->Controls->Add(this->fovPanel2);
+			this->groupBox5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox5->Location = System::Drawing::Point(5, 269);
+			this->groupBox5->Name = L"groupBox5";
+			this->groupBox5->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox5->Size = System::Drawing::Size(389, 419);
+			this->groupBox5->TabIndex = 4;
+			this->groupBox5->TabStop = false;
+			this->groupBox5->Text = L"Boresight";
+			// 
+			// fovPanel2
+			// 
+			this->fovPanel2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->fovPanel2->Location = System::Drawing::Point(5, 24);
+			this->fovPanel2->Margin = System::Windows::Forms::Padding(2);
+			this->fovPanel2->Name = L"fovPanel2";
+			this->fovPanel2->Size = System::Drawing::Size(379, 390);
+			this->fovPanel2->TabIndex = 4;
+			// 
+			// groupBox7
+			// 
+			this->groupBox7->Controls->Add(this->visibilityPanel2);
+			this->groupBox7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox7->Location = System::Drawing::Point(5, 30);
+			this->groupBox7->Name = L"groupBox7";
+			this->groupBox7->RightToLeft = System::Windows::Forms::RightToLeft::No;
+			this->groupBox7->Size = System::Drawing::Size(389, 233);
+			this->groupBox7->TabIndex = 0;
+			this->groupBox7->TabStop = false;
+			this->groupBox7->Text = L"Visibility";
+			// 
+			// visibilityPanel2
+			// 
+			this->visibilityPanel2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->visibilityPanel2->Location = System::Drawing::Point(5, 23);
+			this->visibilityPanel2->Margin = System::Windows::Forms::Padding(2);
+			this->visibilityPanel2->Name = L"visibilityPanel2";
+			this->visibilityPanel2->Size = System::Drawing::Size(379, 205);
+			this->visibilityPanel2->TabIndex = 1;
+			// 
+			// groupBox8
+			// 
+			this->groupBox8->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->groupBox8->Controls->Add(this->instructionsTextBox);
+			this->groupBox8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->groupBox8->Location = System::Drawing::Point(940, 8);
+			this->groupBox8->Name = L"groupBox8";
+			this->groupBox8->Size = System::Drawing::Size(282, 657);
+			this->groupBox8->TabIndex = 18;
+			this->groupBox8->TabStop = false;
+			this->groupBox8->Text = L"Instructions";
+			// 
+			// instructionsTextBox
+			// 
+			this->instructionsTextBox->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, 
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->instructionsTextBox->Location = System::Drawing::Point(6, 30);
+			this->instructionsTextBox->Multiline = true;
+			this->instructionsTextBox->Name = L"instructionsTextBox";
+			this->instructionsTextBox->Size = System::Drawing::Size(270, 621);
+			this->instructionsTextBox->TabIndex = 16;
 			// 
 			// busy
 			// 
@@ -263,68 +430,48 @@ namespace AlignToRigidBodyGUI {
 			this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
 			this->busy->ForeColor = System::Drawing::Color::Maroon;
-			this->busy->Location = System::Drawing::Point(382, 346);
+			this->busy->Location = System::Drawing::Point(260, 273);
+			this->busy->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->busy->Name = L"busy";
-			this->busy->Size = System::Drawing::Size(888, 184);
-			this->busy->TabIndex = 15;
+			this->busy->Size = System::Drawing::Size(715, 167);
+			this->busy->TabIndex = 21;
 			this->busy->Text = L"Alignment in progress.\r\nPlease wait ...";
 			this->busy->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
-			// 
-			// instructionsTextBox3
-			// 
-			this->instructionsTextBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Regular, 
-				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->instructionsTextBox3->Location = System::Drawing::Point(61, 793);
-			this->instructionsTextBox3->Multiline = true;
-			this->instructionsTextBox3->Name = L"instructionsTextBox3";
-			this->instructionsTextBox3->Size = System::Drawing::Size(324, 68);
-			this->instructionsTextBox3->TabIndex = 16;
-			this->instructionsTextBox3->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
-			// resetButton
-			// 
-			this->resetButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
-				static_cast<System::Byte>(0)));
-			this->resetButton->Location = System::Drawing::Point(1000, 805);
-			this->resetButton->Name = L"resetButton";
-			this->resetButton->Size = System::Drawing::Size(159, 56);
-			this->resetButton->TabIndex = 17;
-			this->resetButton->Text = L"Reset";
-			this->resetButton->UseVisualStyleBackColor = true;
-			this->resetButton->Click += gcnew System::EventHandler(this, &SingleObjectForm::button1_Click);
 			// 
 			// SingleObjectForm
 			// 
 			this->AcceptButton = this->alignButton;
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->CancelButton = this->cancelButton;
-			this->ClientSize = System::Drawing::Size(1652, 876);
+			this->ClientSize = System::Drawing::Size(1234, 712);
 			this->ControlBox = false;
-			this->Controls->Add(this->resetButton);
-			this->Controls->Add(this->instructionsTextBox3);
 			this->Controls->Add(this->busy);
-			this->Controls->Add(this->instructionsTextBox2);
+			this->Controls->Add(this->groupBox8);
 			this->Controls->Add(this->groupBox1);
-			this->Controls->Add(this->groupBox2);
-			this->Controls->Add(this->instructionsTextBox);
-			this->Controls->Add(this->vrGroupBox2);
+			this->Controls->Add(this->resetButton);
 			this->Controls->Add(this->vrGroupBox1);
 			this->Controls->Add(this->cancelButton);
 			this->Controls->Add(this->alignButton);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
 			this->Location = System::Drawing::Point(20, 40);
+			this->Margin = System::Windows::Forms::Padding(2);
 			this->Name = L"SingleObjectForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"CODA Tracker Alignment";
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &SingleObjectForm::Form1_FormClosing);
 			this->Shown += gcnew System::EventHandler(this, &SingleObjectForm::Form1_Shown);
-			this->vrGroupBox2->ResumeLayout(false);
 			this->vrGroupBox1->ResumeLayout(false);
-			this->groupBox1->ResumeLayout(false);
 			this->groupBox2->ResumeLayout(false);
+			this->groupBox4->ResumeLayout(false);
+			this->groupBox3->ResumeLayout(false);
+			this->groupBox1->ResumeLayout(false);
+			this->groupBox6->ResumeLayout(false);
+			this->groupBox5->ResumeLayout(false);
+			this->groupBox7->ResumeLayout(false);
+			this->groupBox8->ResumeLayout(false);
+			this->groupBox8->PerformLayout();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -365,6 +512,23 @@ namespace AlignToRigidBodyGUI {
 				 objectViewpoint = new Viewpoint( 6.0, 10.0, 10.0, 10000.0);
 				 objectViewpoint->SetPosition( 0.0, 0.0, - 2000.0 );
 				 objectViewpoint->SetOrientation( 0.0, 0.0, 180.0 );
+
+				 // Create windows and viewpoints to show the distance of the markers from the tracker unit.
+				 distanceWindow1 = PsyPhy::CreateOpenGLWindowInForm( distancePanel1);
+				 distanceWindow2 = PsyPhy::CreateOpenGLWindowInForm( distancePanel2, distanceWindow1->hRC );
+
+				 // Create a viewpoint that looks at the origin from the negative Z axis.
+				 // This is the cannonical viewpoint for an object at zero position and orientation.
+				distanceViewpoint = new OrthoViewpoint( -1.0, MAX_MARKERS, minDisplayDistance, maxDisplayDistance );
+				// These bars indicate the distance of the marker in depth 
+				// from the position of the CODA unit.
+				distanceBars = new Assembly();
+				for ( int mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
+					Slab *bar = new Slab( 1.0, 30.0, 20.0 );
+					bar->SetPosition( 0.0, minDisplayDistance + ( mrk + 2)  * 100.0, 5.0 );
+					bar->SetAttitude( 0.0, 0.0, 0.0 );
+					distanceBars->AddComponent( bar );
+				}
 
 				 // Create windows and viewpoints to show what the CODA units are seeing.
 				 fovWindow1 = PsyPhy::CreateOpenGLWindowInForm( fovPanel1 );
@@ -448,9 +612,10 @@ namespace AlignToRigidBodyGUI {
 				 // Re-enable the Form as being inactive.
 				 Enabled = true;
 				 // Prompt for the required action.
-				 instructionsTextBox->Text = "Check that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).";
-				 instructionsTextBox2->Text = "Adjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.\r\n\r\nIf no green ball, contact COL-CC (if possible) or perform Reset.";
-				 instructionsTextBox3->Text = "When all conditions are met, press 'OK'.";
+				 instructionsTextBox->Text =  "Distance\r\n\r\nAdjust Tracker Camera distance so that all markers are in the green zone.\r\n\r\n";
+				 instructionsTextBox->Text += "Visibility\r\n\r\nCheck that all Chest Marker Support markers are visible to each Tracker Camera (all dots green).\r\n\r\n";
+				 instructionsTextBox->Text += "Boresight\r\n\r\nAdjust the orientation of the Tracker Cameras until the green ball is centered in the crosshairs for each Tracker Camera.\r\n\r\nIf no green ball, contact COL-CC (if possible) or perform Reset.\r\n\r\n";
+				 instructionsTextBox->Text += "When all conditions are met, press 'OK'.";
 
 				// Start a refresh time that will update the visibility of the LEDs in the GUI display.
 				CreateRefreshTimer( 300 );
@@ -491,8 +656,6 @@ namespace AlignToRigidBodyGUI {
 
 				 // Remove instruction.
 				 instructionsTextBox->Text = "";
-				 instructionsTextBox2->Text = "";
-				 instructionsTextBox3->Text = "";
 				 Refresh();
 				 Application::DoEvents();
 				 // Show a message while we are busy acquiring and computing the new alignment.
@@ -508,7 +671,7 @@ namespace AlignToRigidBodyGUI {
 
 				 // Acquire a short burst of marker data to be used to perform the alignment.
 				 // Send a message to ground to show our progress.
-				 instructionsTextBox->Text = "[ Acquiring alignment data ... ]";
+				 busy->Text = "Acquiring alignment data ...";
 				 Sleep( 10 );
 				 Refresh();
 				 Application::DoEvents();
@@ -541,7 +704,7 @@ namespace AlignToRigidBodyGUI {
 				 // We will then invert the pose to compute the transformation required by each unit.
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( COMPUTE_ALIGNMENT );
-				 instructionsTextBox->Text = "[ Computing transforms ... ]";
+				 busy->Text = "Computing transforms ...";
 				 Refresh();
 				 Application::DoEvents();
 				 MarkerFrame avgFrame;
@@ -568,7 +731,7 @@ namespace AlignToRigidBodyGUI {
 					 coda->CopyPose( poses[unit], tracker_pose.pose );
 				 }
 				 dex->SendSubstep( INSTALL_ALIGNMENT );
-				 instructionsTextBox->Text = "[ Installing transforms ... ]";
+				 busy->Text = "Installing transforms ...";
 				 Refresh();
 				 Application::DoEvents();
 				 // Log the data acquired in aligned coordinates.
@@ -589,7 +752,7 @@ namespace AlignToRigidBodyGUI {
 				 // Restart and acquire a short burst of marker data to be used to verify the alignment.
 				 // Send a message to ground to show our progress.
 				 dex->SendSubstep( ACQUIRE_ALIGNED );
-				 instructionsTextBox->Text = "[ Acquiring to confirm ... ]";
+				 busy->Text = "Acquiring to confirm ...";
 				 Refresh();
 				 Application::DoEvents();
 				 // Send more details as part of an RT science packet.
@@ -605,7 +768,7 @@ namespace AlignToRigidBodyGUI {
 				 }
 				 dex->AddClientSlice( (unsigned char *) &clientBuffer, sizeof( clientBuffer ) );
 
-				 fprintf( stderr, "[ Acquiring to confirm ... ]" );
+				 fprintf( stderr, "Acquiring to confirm ..." );
 				 coda->StartAcquisition( 5.0 );
 				 fprintf( stderr, "OK.\nAcquiring " );
 				 // Just wait for the acquisition to finish. 
@@ -699,6 +862,16 @@ namespace AlignToRigidBodyGUI {
 				 alignmentObject1->Draw();
 				 fovSweetSpot->Draw();
 				 fovWindow1->Swap();
+
+				 distanceWindow1->Activate();
+				 distanceWindow1->Clear( 0.0, 0.0, 0.0 );
+				 distanceViewpoint->Apply( distanceWindow1, CYCLOPS );
+ 				 distanceWindow1->Swap();
+
+				 distanceWindow2->Activate();
+				 distanceWindow2->Clear( 0.0, 0.0, 0.0 );
+				 distanceViewpoint->Apply( distanceWindow2, CYCLOPS );
+ 				 distanceWindow2->Swap();
 
 			 }
 
