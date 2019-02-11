@@ -200,9 +200,9 @@ namespace AlignToRigidBodyGUI {
 				// 
 				// alignButton
 				// 
-				this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				this->alignButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->alignButton->Location = System::Drawing::Point(1334, 703);
+				this->alignButton->Location = System::Drawing::Point(1337, 755);
 				this->alignButton->Margin = System::Windows::Forms::Padding(2);
 				this->alignButton->Name = L"alignButton";
 				this->alignButton->Size = System::Drawing::Size(80, 40);
@@ -214,9 +214,9 @@ namespace AlignToRigidBodyGUI {
 				// cancelButton
 				// 
 				this->cancelButton->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-				this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				this->cancelButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->cancelButton->Location = System::Drawing::Point(1247, 703);
+				this->cancelButton->Location = System::Drawing::Point(1248, 755);
 				this->cancelButton->Margin = System::Windows::Forms::Padding(2);
 				this->cancelButton->Name = L"cancelButton";
 				this->cancelButton->Size = System::Drawing::Size(80, 40);
@@ -236,7 +236,7 @@ namespace AlignToRigidBodyGUI {
 				this->vrGroupBox1->Margin = System::Windows::Forms::Padding(2);
 				this->vrGroupBox1->Name = L"vrGroupBox1";
 				this->vrGroupBox1->Padding = System::Windows::Forms::Padding(2);
-				this->vrGroupBox1->Size = System::Drawing::Size(565, 752);
+				this->vrGroupBox1->Size = System::Drawing::Size(565, 788);
 				this->vrGroupBox1->TabIndex = 4;
 				this->vrGroupBox1->TabStop = false;
 				this->vrGroupBox1->Text = L"Tracker Camera 1";
@@ -248,7 +248,7 @@ namespace AlignToRigidBodyGUI {
 					static_cast<System::Byte>(0)));
 				this->groupBox2->Location = System::Drawing::Point(104, 291);
 				this->groupBox2->Name = L"groupBox2";
-				this->groupBox2->Size = System::Drawing::Size(454, 452);
+				this->groupBox2->Size = System::Drawing::Size(454, 488);
 				this->groupBox2->TabIndex = 4;
 				this->groupBox2->TabStop = false;
 				this->groupBox2->Text = L"Boresight";
@@ -261,7 +261,7 @@ namespace AlignToRigidBodyGUI {
 				this->fovPanel1->Location = System::Drawing::Point(5, 24);
 				this->fovPanel1->Margin = System::Windows::Forms::Padding(2);
 				this->fovPanel1->Name = L"fovPanel1";
-				this->fovPanel1->Size = System::Drawing::Size(444, 423);
+				this->fovPanel1->Size = System::Drawing::Size(444, 459);
 				this->fovPanel1->TabIndex = 4;
 				// 
 				// groupBox4
@@ -273,7 +273,7 @@ namespace AlignToRigidBodyGUI {
 					static_cast<System::Byte>(0)));
 				this->groupBox4->Location = System::Drawing::Point(5, 30);
 				this->groupBox4->Name = L"groupBox4";
-				this->groupBox4->Size = System::Drawing::Size(93, 713);
+				this->groupBox4->Size = System::Drawing::Size(93, 749);
 				this->groupBox4->TabIndex = 5;
 				this->groupBox4->TabStop = false;
 				this->groupBox4->Text = L"Distance";
@@ -285,7 +285,7 @@ namespace AlignToRigidBodyGUI {
 					| System::Windows::Forms::AnchorStyles::Right));
 				this->distancePanel1->Location = System::Drawing::Point(6, 42);
 				this->distancePanel1->Name = L"distancePanel1";
-				this->distancePanel1->Size = System::Drawing::Size(81, 641);
+				this->distancePanel1->Size = System::Drawing::Size(81, 677);
 				this->distancePanel1->TabIndex = 8;
 				// 
 				// label2
@@ -293,7 +293,7 @@ namespace AlignToRigidBodyGUI {
 				this->label2->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 				this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->label2->Location = System::Drawing::Point(8, 681);
+				this->label2->Location = System::Drawing::Point(8, 717);
 				this->label2->Name = L"label2";
 				this->label2->Size = System::Drawing::Size(77, 21);
 				this->label2->TabIndex = 10;
@@ -305,7 +305,7 @@ namespace AlignToRigidBodyGUI {
 				// 
 				this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->label1->Location = System::Drawing::Point(8, 15);
+				this->label1->Location = System::Drawing::Point(10, 18);
 				this->label1->Name = L"label1";
 				this->label1->Size = System::Drawing::Size(77, 21);
 				this->label1->TabIndex = 9;
@@ -337,9 +337,9 @@ namespace AlignToRigidBodyGUI {
 				// 
 				// resetButton
 				// 
-				this->resetButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				this->resetButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->resetButton->Location = System::Drawing::Point(1160, 703);
+				this->resetButton->Location = System::Drawing::Point(1159, 755);
 				this->resetButton->Margin = System::Windows::Forms::Padding(2);
 				this->resetButton->Name = L"resetButton";
 				this->resetButton->Size = System::Drawing::Size(80, 40);
@@ -360,7 +360,7 @@ namespace AlignToRigidBodyGUI {
 				this->groupBox1->Name = L"groupBox1";
 				this->groupBox1->Padding = System::Windows::Forms::Padding(2);
 				this->groupBox1->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-				this->groupBox1->Size = System::Drawing::Size(565, 752);
+				this->groupBox1->Size = System::Drawing::Size(565, 788);
 				this->groupBox1->TabIndex = 6;
 				this->groupBox1->TabStop = false;
 				this->groupBox1->Text = L"Tracker Camera 2";
@@ -378,7 +378,7 @@ namespace AlignToRigidBodyGUI {
 				this->groupBox6->Location = System::Drawing::Point(465, 30);
 				this->groupBox6->Name = L"groupBox6";
 				this->groupBox6->RightToLeft = System::Windows::Forms::RightToLeft::No;
-				this->groupBox6->Size = System::Drawing::Size(93, 713);
+				this->groupBox6->Size = System::Drawing::Size(93, 749);
 				this->groupBox6->TabIndex = 6;
 				this->groupBox6->TabStop = false;
 				this->groupBox6->Text = L"Distance";
@@ -390,7 +390,7 @@ namespace AlignToRigidBodyGUI {
 					| System::Windows::Forms::AnchorStyles::Right));
 				this->distancePanel2->Location = System::Drawing::Point(6, 42);
 				this->distancePanel2->Name = L"distancePanel2";
-				this->distancePanel2->Size = System::Drawing::Size(81, 641);
+				this->distancePanel2->Size = System::Drawing::Size(81, 677);
 				this->distancePanel2->TabIndex = 8;
 				// 
 				// label3
@@ -398,7 +398,7 @@ namespace AlignToRigidBodyGUI {
 				this->label3->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 				this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->label3->Location = System::Drawing::Point(8, 684);
+				this->label3->Location = System::Drawing::Point(8, 720);
 				this->label3->Name = L"label3";
 				this->label3->Size = System::Drawing::Size(77, 21);
 				this->label3->TabIndex = 12;
@@ -409,7 +409,7 @@ namespace AlignToRigidBodyGUI {
 				// 
 				this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
-				this->label4->Location = System::Drawing::Point(8, 15);
+				this->label4->Location = System::Drawing::Point(8, 20);
 				this->label4->Name = L"label4";
 				this->label4->Size = System::Drawing::Size(77, 21);
 				this->label4->TabIndex = 11;
@@ -424,7 +424,7 @@ namespace AlignToRigidBodyGUI {
 				this->groupBox5->Location = System::Drawing::Point(10, 291);
 				this->groupBox5->Name = L"groupBox5";
 				this->groupBox5->RightToLeft = System::Windows::Forms::RightToLeft::No;
-				this->groupBox5->Size = System::Drawing::Size(454, 452);
+				this->groupBox5->Size = System::Drawing::Size(454, 488);
 				this->groupBox5->TabIndex = 4;
 				this->groupBox5->TabStop = false;
 				this->groupBox5->Text = L"Boresight";
@@ -437,7 +437,7 @@ namespace AlignToRigidBodyGUI {
 				this->fovPanel2->Location = System::Drawing::Point(5, 24);
 				this->fovPanel2->Margin = System::Windows::Forms::Padding(2);
 				this->fovPanel2->Name = L"fovPanel2";
-				this->fovPanel2->Size = System::Drawing::Size(444, 423);
+				this->fovPanel2->Size = System::Drawing::Size(444, 459);
 				this->fovPanel2->TabIndex = 4;
 				// 
 				// groupBox7
@@ -471,7 +471,7 @@ namespace AlignToRigidBodyGUI {
 					static_cast<System::Byte>(0)));
 				this->groupBox8->Location = System::Drawing::Point(1156, 8);
 				this->groupBox8->Name = L"groupBox8";
-				this->groupBox8->Size = System::Drawing::Size(264, 686);
+				this->groupBox8->Size = System::Drawing::Size(264, 742);
 				this->groupBox8->TabIndex = 18;
 				this->groupBox8->TabStop = false;
 				this->groupBox8->Text = L"Instructions";
@@ -487,7 +487,7 @@ namespace AlignToRigidBodyGUI {
 				this->instructionsTextBox->Multiline = true;
 				this->instructionsTextBox->Name = L"instructionsTextBox";
 				this->instructionsTextBox->ReadOnly = true;
-				this->instructionsTextBox->Size = System::Drawing::Size(252, 650);
+				this->instructionsTextBox->Size = System::Drawing::Size(252, 706);
 				this->instructionsTextBox->TabIndex = 16;
 				// 
 				// busy
@@ -496,10 +496,10 @@ namespace AlignToRigidBodyGUI {
 				this->busy->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 48, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
 				this->busy->ForeColor = System::Drawing::Color::Maroon;
-				this->busy->Location = System::Drawing::Point(355, 300);
+				this->busy->Location = System::Drawing::Point(256, 271);
 				this->busy->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 				this->busy->Name = L"busy";
-				this->busy->Size = System::Drawing::Size(715, 167);
+				this->busy->Size = System::Drawing::Size(912, 265);
 				this->busy->TabIndex = 24;
 				this->busy->Text = L"Alignment in progress.\r\nPlease wait ...";
 				this->busy->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
@@ -509,7 +509,7 @@ namespace AlignToRigidBodyGUI {
 				this->AcceptButton = this->alignButton;
 				this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 				this->CancelButton = this->cancelButton;
-				this->ClientSize = System::Drawing::Size(1425, 767);
+				this->ClientSize = System::Drawing::Size(1425, 807);
 				this->Controls->Add(this->busy);
 				this->Controls->Add(this->groupBox8);
 				this->Controls->Add(this->groupBox1);
