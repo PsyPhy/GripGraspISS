@@ -178,6 +178,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateRuntimeForAiming", "U
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReleaseRuntimeForAiming", "ReleaseRuntimeForAiming\ReleaseRuntimeForAiming.vcxproj", "{FC51D847-3CB8-4AA0-94A6-304E907C858E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestReturnCodes", "TestReturnCodes\TestReturnCodes.vcxproj", "{FA981F81-F5B9-4E4F-976B-50F7391C748B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1550,6 +1552,22 @@ Global
 		{FC51D847-3CB8-4AA0-94A6-304E907C858E}.ReleaseTraining|Win32.Build.0 = Release|Win32
 		{FC51D847-3CB8-4AA0-94A6-304E907C858E}.Test|Win32.ActiveCfg = Release|Win32
 		{FC51D847-3CB8-4AA0-94A6-304E907C858E}.Test|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Debug|Win32.Build.0 = Debug|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.DebugTraining|Win32.ActiveCfg = Debug|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.DebugTraining|Win32.Build.0 = Debug|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Release|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Release|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseBedrest|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseBedrest|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseDraft|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseDraft|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseFlight|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseFlight|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseTraining|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.ReleaseTraining|Win32.Build.0 = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Test|Win32.ActiveCfg = Release|Win32
+		{FA981F81-F5B9-4E4F-976B-50F7391C748B}.Test|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

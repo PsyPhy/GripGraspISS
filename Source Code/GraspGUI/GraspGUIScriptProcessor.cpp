@@ -403,6 +403,8 @@ void GraspDesktop::instructionViewer_DocumentCompleted(System::Object^  sender, 
 		// Negative return codes can come back as positive numbers in a unsigned char.
 		// So convert larger return codes to negative values.
 		if ( return_code > 127 ) return_code -= 128;
+		// The following is a hack. When I get an FTP error it comes back with 127 instead of -1.
+		if ( return_code == 127 ) return_code = -1;
 
 		// Add the return code to the log.
 		log_fp = fopen( log_filename, "a+" );
