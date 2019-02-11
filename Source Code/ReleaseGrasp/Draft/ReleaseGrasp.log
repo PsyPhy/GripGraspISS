@@ -1,4 +1,4 @@
-﻿Build started 08/02/2019 16:00:12.
+﻿Build started 11/02/2019 02:11:14.
 Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" on node 2 (build target(s)).
 Building with tools version "4.0".
 Target "_CheckForInvalidConfigurationAndPlatform" in file "C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.Targets" from project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (entry point):
@@ -126,14 +126,14 @@ Task "Exec"
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>call D:\Users\E14001\AppData\Local\Temp\SetCommonTimestamp.bat 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-02-08 15h59m54s 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set __COMMONTIMESTAMP__=2019-02-11 02h11m03s 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAG=(2019-02-08 15h59m54s) 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAG=(2019-02-11 02h11m03s) 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set ARCHIVE="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" 
-  Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar"
+  D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>echo Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" 
+  Creating Grasp Runtime Release "..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar"
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>set TAR=Utils\tar.exe 
   
@@ -143,7 +143,7 @@ Task "Exec"
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp>pushd ..\.. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --create  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" RunGRASP.bat 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --create  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" RunGRASP.bat 
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>if NOT Draft == Training goto :NOTTRAINING 
   
@@ -170,48 +170,50 @@ Task "Exec"
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>echo chest  1>ChestAlignGaze.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" ChestAlignGaze.flg 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" ChestAlignGaze.flg 
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>echo Enabling mirroring. 
   Enabling mirroring.
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "Mirroring on."  1>Mirroring.flg 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Mirroring.flg 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Mirroring.flg 
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>goto :COMMON 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Bdy/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Bdy/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Bmp/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Bmp/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Executables/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Executables/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Utils/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Utils/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Instructions/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Instructions/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Scripts/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Scripts/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Sequences/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Sequences/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" InitFiles/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" InitFiles/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Documentation/* 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Documentation/* 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" CodaRTnet.ini 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" CodaRTnet.ini 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar" Grasp.ini 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Grasp.ini 
+  
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>Utils\tar.exe --append  --file="..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar" Grasp.??.ini 
   
   D:\Users\E14001\Documents\GitHub\GripGraspISS>REM Keep a record of releases. 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar"  1>>GripGraspReleases.log 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar"  1>>GripGraspReleases.log 
   
-  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Draft (2019-02-08 15h59m54s).tar"  1>>GraspReleases.log 
+  D:\Users\E14001\Documents\GitHub\GripGraspISS>echo "..\GRASP Runtime Draft (2019-02-11 02h11m03s).tar"  1>>GraspReleases.log 
 Done executing task "Exec".
 Done building target "Build" in project "ReleaseGrasp.vcxproj".
 Done Building Project "D:\Users\E14001\Documents\GitHub\GripGraspISS\Source Code\ReleaseGrasp\ReleaseGrasp.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:05.36
+Time Elapsed 00:00:04.78
