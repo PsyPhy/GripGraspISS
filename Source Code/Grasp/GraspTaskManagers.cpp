@@ -739,15 +739,18 @@ void  GraspTaskManager::ExitPresentTarget( void ) {
 	// Hide the visible targets.
 	renderer->orientationTarget->Disable();
 	renderer->positionOnlyTarget->Disable();
+	renderer->aimingErrorSphere->Disable();
 	// Hide the visible tools, if any.
 	renderer->kkTool->Disable();
+	renderer->kTool->Disable();
+	renderer->vTool->Disable();
+	renderer->vkTool->Disable();
 	renderer->handRollPrompt->Disable();
 	laserTargetingActive = false;
 	// Hide the wrist zone indication and the raise hand indicator, if they were on.
 	renderer->wristZone->Disable();
 	renderer->raiseHandIndicator->Disable();
 	renderer->handLaser->Disable();
-	renderer->aimingErrorSphere->Disable();
 	// Change the sky background to remove the visual reference that it provides.
 	renderer->starrySky->Disable();
 	renderer->darkSky->Enable();
@@ -771,7 +774,10 @@ GraspTrialState GraspTaskManager::UpdateTiltHead( void ) {
 	AlignmentStatus status = HandleHeadAlignment( true );
 	// The hand must be lowered before leaving this state. If it is still raised after a short
 	// delay, we activate the prompt to remind the subject to lower the arm.
-	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > lowerHandPromptDelay ) renderer->lowerHandPrompt->Enable();
+	if ( raised == HandleHandElevation() && TimerElapsedTime( tiltHeadTimer ) > lowerHandPromptDelay ) {
+		renderer->kTool->Enable();		
+		renderer->lowerHandPrompt->Enable();
+	}
 	else renderer->lowerHandPrompt->Disable();
 	// The hand must be lowered before leaving this state.
 	// If we are almost to the end of the time allocated to tilt the head,

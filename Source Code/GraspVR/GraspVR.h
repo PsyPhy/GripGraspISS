@@ -64,7 +64,9 @@ namespace Grasp {
 		bool		showGoodAiming;
 		bool		stopCheating;
 		bool		noLasers;
+		bool		noHands;
 		bool		snuffLaser;
+		bool		snuffHandResponse;
 		bool		balloon;
 		double		balloonInflationRate;
 
@@ -95,6 +97,8 @@ namespace Grasp {
 			showGoodAiming( false ),
 			stopCheating( true ),
 			snuffLaser( false ),
+			snuffHandResponse( false ),
+			noHands( false ),
 			noLasers( false ),
 			balloon( false ),
 			balloonInflationRate( 20.0 ),
@@ -115,8 +119,6 @@ namespace Grasp {
 
 		void StartHandAiming ( void ) {
 			if ( !noLasers ) renderer->handLaser->Enable();
-			renderer->aimingErrorSphere->Disable();
-			renderer->positionOnlyTarget->Enable();
 			if ( balloon ) {
 				laserTargetingActive = true;
 				laserTargetingAcquired = false;
@@ -125,7 +127,6 @@ namespace Grasp {
 		}
 		void StopHandAiming( void ) {
 			laserTargetingActive = false;
-			renderer->aimingErrorSphere->Disable();
 		}
 
 		void Initialize( GraspDisplay *dsply, GraspTrackers *trkrs ) {
@@ -221,6 +222,7 @@ namespace Grasp {
 			else if ( !strcmp( name, "useLaserEndpoint" ) && !strcmp( section, "GraspVR" ) ) instance->stopCheating = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "showGoodAiming" ) && !strcmp( section, "GraspVR" ) ) instance->showGoodAiming = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "extinguishLaser" ) && !strcmp( section, "GraspVR" ) ) instance->snuffLaser = ( *value == 'T' || *value == 't' );
+			else if ( !strcmp( name, "extinguishHandResponse" ) && !strcmp( section, "GraspVR" ) ) instance->snuffHandResponse = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "balloonMask" ) && !strcmp( section, "GraspVR" ) ) instance->balloon = ( *value == 'T' || *value == 't' );
 			else if ( !strcmp( name, "noLasers" ) && !strcmp( section, "GraspVR" ) ) instance->noLasers = ( *value == 'T' || *value == 't' );
 			else return 1;

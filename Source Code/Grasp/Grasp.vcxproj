@@ -87,6 +87,7 @@
     <None Include="..\..\Sequences\DemoGraspSequence.seq" />
     <None Include="Grasp.bat.src" />
     <None Include="Grasp.ini.src" />
+    <None Include="GraspNew.ini.src" />
     <None Include="GraspPackData.bat.src" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

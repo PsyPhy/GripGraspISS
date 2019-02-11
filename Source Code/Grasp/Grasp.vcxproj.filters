@@ -13,6 +13,7 @@
     <None Include="Grasp.ini.src" />
     <None Include="..\..\Grasp.ini" />
     <None Include="..\..\Executables\Grasp.bat" />
+    <None Include="GraspNew.ini.src" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grasp.h" />

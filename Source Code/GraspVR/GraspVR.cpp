@@ -181,7 +181,6 @@ void GraspVR::InitializeVR( void ) {
 	renderer->SetLighting();
 	renderer->CreateVRObjects();
 	renderer->positionOnlyTarget->radius = sqrt( 1 - pointingThreshold * pointingThreshold ) * renderer->room_length / 2.0;
-
 	renderer->PlaceVRObjects();
 
 	// Initialize state of the objects.
@@ -606,11 +605,11 @@ void GraspVR::HandleLasers( void ) {
 	relativeHandPosition[Z] = 0;
 	if ( z > -100.0 || VectorNorm( relativeHandPosition ) >= renderer->inner_visor_radius ) {
 		// Lasers should be visible only if the hand is in the field of view.
-		// For 
 		renderer->handLaser->SetColor( 0.0, 0.0, 0.0, 0.0 );
 		renderer->handLaser->SetOffset( 0.0, 0.0, renderer->laser_distance );
 		// If the hand is not raised, we cannot be on the target.
-		renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+		if ( showGoodAiming ) renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+		else renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
 	}
 	else {
 
@@ -641,15 +640,15 @@ void GraspVR::HandleLasers( void ) {
 		double projection = renderer->DotProduct( hand_axis, tunnel_axis );
 		renderer->handLaser->SetEccentricity( projection );
 
-		// Change the color of the targeting sphere depending on if the hand alignment is good or not.
 		if ( projection > pointingThreshold ) {
-			renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
 			if ( snuffLaser ) renderer->handLaser->Disable();
+			if ( snuffHandResponse ) renderer->kTool->Disable();
 		}
-		else {
-			if ( showGoodAiming ) renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
-			else renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
-		}
+
+		// Change the color of the targeting sphere depending on if the hand alignment is good or not.
+		if ( projection > pointingThreshold ) renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
+		else if ( showGoodAiming ) renderer->positionOnlyTarget->SetColor( Translucid( GRAY ) );
+		else renderer->positionOnlyTarget->SetColor( 0.0, 1.0, 1.0, 0.5 );
 
 		// As another way of avoiding cheating, we turn the laser off if the hand
 		// has been properly aligned for at least an instant, but then use an expanding target
@@ -666,7 +665,7 @@ void GraspVR::HandleLasers( void ) {
 
 			else {
 				// If we haven´t yet achieved an acceptable pose of the hand, the aiming target
-				// is visible but grey. The error sphere is hidden.
+				// remains visible and the error sphere is hidden.
 				if ( !laserTargetingAcquired ) {
 					renderer->positionOnlyTarget->Enable();
 					renderer->aimingErrorSphere->Disable();
@@ -675,8 +674,8 @@ void GraspVR::HandleLasers( void ) {
 				// the hand exits the zone, the laser is turned off and the distance outside
 				// the acceptable zone is signaled by an expanding sphere.
 				else {
-					renderer->aimingErrorSphere->Enable();
 					renderer->positionOnlyTarget->Disable();
+					renderer->aimingErrorSphere->Enable();
 					// Compute how far we are outside the acceptable zone.
 					double error = projection - pointingThreshold;
 					// The error sphere inflates the greater the error.
@@ -687,6 +686,10 @@ void GraspVR::HandleLasers( void ) {
 				}
 			}
 		}
+		else {
+		}
+
+
 	}
 
 }

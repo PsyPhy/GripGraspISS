@@ -15,9 +15,7 @@ using namespace PsyPhy;
 
 void KtoK::EnterPresentTarget( void ) {
 	// Show the subject where to point.
-	//renderer->positionOnlyTarget->Enable();
-	//renderer->positionOnlyTarget->SetColor( Translucid( CYAN ) );
-	//renderer->aimingErrorSphere->Disable();
+	renderer->positionOnlyTarget->Enable();
 	// Visualize the hand, but not its actual roll orientation, by using the kkTool.
 	// The orientation will be reflected by the color.
 	renderer->kkTool->Enable();
@@ -31,6 +29,8 @@ void KtoK::EnterPresentTarget( void ) {
 }
 
 void KtoK::EnterObtainResponse( void ) {
+	// Show the subject where to point.
+	renderer->positionOnlyTarget->Enable();
 	// Show the visual representation of the hand.
 	renderer->kTool->Enable();
 	StartHandAiming();

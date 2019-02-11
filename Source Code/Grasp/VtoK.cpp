@@ -24,8 +24,9 @@ void VtoK::EnterPresentTarget( void ) {
 
 
 void VtoK::EnterObtainResponse( void ) {
-	// Show the visual representation of the hand that is driven 
-	//  by the mouse or buttons.
+	// Show the subject where to point.
+	renderer->positionOnlyTarget->Enable();
+	// Show the visual representation of the hand.
 	renderer->kTool->Enable();
 	StartHandAiming();
 	// Do all the default actions as well.

@@ -265,7 +265,7 @@ namespace Grasp {
 
 		Assembly		*orientationTarget;		// Shows the target orientation.
 		Sphere			*positionOnlyTarget;	// Shows the center of the target location. Allows subject to aim without showing the target orientation.
-		Sphere			*aimingErrorSphere;	// A sphere that expands or contracts depending on how far off center is the aiming.
+		Sphere			*aimingErrorSphere;		// A sphere that expands or contracts depending on how far off center is the aiming.
 		Sphere			*straightAheadTarget;	// Placed straight ahead of the subject wrt the chest.
 		Assembly		*response;				// Similar to the line of targets. Used to show the subject what was his or her repsonse.
 		Assembly		*projectiles;			// Another way of showing the subject his or her response. These can be shot out of the tool.
