@@ -100,6 +100,9 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\Grasp\GraspNew.ini.src $(ROOT)\Grasp.13.ini
 	copy ..\Grasp\GraspNew.ini.src $(ROOT)\Grasp.14.ini
 	copy ..\Grasp\GraspNew.ini.src $(ROOT)\Grasp.15.ini
+	copy ..\Grasp\Grasp.ini.src $(ROOT)\Grasp.97.ini
+	copy ..\Grasp\GraspNew.ini.src $(ROOT)\Grasp.98.ini
+	copy ..\Grasp\GraspNew.ini.src $(ROOT)\Grasp.99.ini
 	echo Grasp Version Information > $(DESTINATION)\GraspVersionInfo.txt
 	..\$(BUILDCONFIGURATION)\GripGraspShowVersionInfo.exe >> $(DESTINATION)\GraspVersionInfo.txt
 	echo $(BUILDCONFIGURATION) %date% %time% > $@
