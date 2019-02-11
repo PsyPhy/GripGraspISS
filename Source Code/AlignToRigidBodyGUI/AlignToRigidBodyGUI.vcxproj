@@ -94,6 +94,7 @@
     <None Include="..\..\CodaAlignment.aligned.mrk" />
     <None Include="..\..\CodaAlignment.intrinsic.mrk" />
     <None Include="app.ico" />
+    <None Include="CodaAlignment.ini" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\GraspVR\GraspGLObjects.cpp" />

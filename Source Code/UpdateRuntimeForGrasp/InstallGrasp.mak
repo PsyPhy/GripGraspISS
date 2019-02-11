@@ -16,6 +16,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\MinimizeAll.exe \
 	..\$(BUILDCONFIGURATION)\GraspScreenshots.exe \
 	..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe \
+	..\AlignToRigidBodyGUI\CodaAlignment.ini \
 	..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe \
 	..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe  \
 	..\$(BUILDCONFIGURATION)\CreateRigidBodyModelFile.exe \
@@ -50,6 +51,7 @@ install: $(EXECUTABLES) InstallGrasp.mak
 	copy ..\$(BUILDCONFIGURATION)\GraspGUI.exe $(DESTINATION)
 	copy ..\GraspGUI\Grasp.ico $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\AlignToRigidBodyGUI.exe $(DESTINATION)
+	copy ..\AlignToRigidBodyGUI\CodaAlignment.ini $(ROOT)\CodaAlignment.ini
 	copy ..\$(BUILDCONFIGURATION)\AlignToAxisMarkersGUI.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GripAimingTool.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\TaskProcessUnitTester.exe $(DESTINATION)
