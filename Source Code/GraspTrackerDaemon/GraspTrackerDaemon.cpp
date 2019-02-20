@@ -16,6 +16,7 @@ int main(array<System::String ^> ^args)
 	Form1^ form = gcnew Form1();
 	for ( int i = 0; i < args->Length; i++ ) {
 		if ( args[i]->StartsWith( "--hide" ) ) form->autohide = true;
+		if ( args[i]->StartsWith( "--epm" ) ) form->dexHost = DEX_EPM_SERVER;
 	}
 	Application::Run( form );
 	return 0;

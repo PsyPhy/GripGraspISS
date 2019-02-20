@@ -59,7 +59,7 @@ int DexServices::Connect ( void ) {
 
 	if ( log ) {
 		printDateTime( log );
-		fprintf( log, " Attempting connection to DEX.\n" );
+		fprintf( log, " Attempting connection to DEX at %s.\n", server_name );
 	}
 
 	int retval;
