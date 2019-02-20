@@ -34,6 +34,8 @@ namespace GraspTrackerDaemon {
 		Grasp::GraspDexTrackers		*trackers;
 		Grasp::DexServices			*dex;
 
+		char	*dexHost;
+
 		bool recording;
 		unsigned int nPoseSamples;
 		PsyPhy::VectorsMixin	*vm;
@@ -46,6 +48,8 @@ namespace GraspTrackerDaemon {
 			if ( FileExists( "FakeCoda.flg" ) ) tracking = FAKE;
 			if ( FileExists( "LegacyCoda.flg") ) tracking = LEGACY;
 			if ( FileExists( "PolledCoda.flg") ) tracking = POLLING;
+
+			dexHost = DEX_ETD_SERVER;
 
 			// Create an object that provides us with vector and matrix capabilities.
 			vm = new VectorsMixin();
@@ -639,7 +643,7 @@ namespace GraspTrackerDaemon {
 			//
 			// Connect to dex for telemetry and snapshots.
 			//
-			dex = new Grasp::DexServices();
+			dex = new Grasp::DexServices( dexHost );
 			// Initialize without a log file.
 			dex->Initialize();
 			dex->Connect();

@@ -711,7 +711,6 @@ static GLfloat  markerColor[][4] = {
 					 instructions->SelectionStart = 5000;
 					 instructions->SelectionLength = 0;
 					 Refresh();
-					 tracker->Initialize( "CodaRTnet.ini" );
 					 intializing->Visible = false;
 
 					 // The boresight window shows the markers from the perspective of the CODA location.
