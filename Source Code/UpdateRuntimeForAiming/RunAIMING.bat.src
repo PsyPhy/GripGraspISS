@@ -23,11 +23,11 @@ REM Start up the CODA system and wait for it to be active. The Daemon window wil
 Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide --epm
 
 REM Don't proceed until output from the tracker daemon has been detected.
-Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
+Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  --epm
 if NOT ERRORLEVEL 0 GOTO :EOF
 
 REM Here we actually start the Grasp user interface.
-Executables\GripAimingTool.exe 
+Executables\GripAimingTool.exe --user=99 --protocol=99 --task=99 --step=99
 
 REM Kill the tracker daemon.
 TaskKill /IM GraspTrackerDaemon.exe
