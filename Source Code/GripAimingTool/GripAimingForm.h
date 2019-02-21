@@ -112,6 +112,8 @@ static GLfloat  markerColor[][4] = {
 		private: System::Windows::Forms::Button^  narrowButton;
 		private: System::Windows::Forms::RadioButton^  supineButton;
 		private: System::Windows::Forms::RadioButton^  seatedButton;
+		private: System::Windows::Forms::Label^  label6;
+		private: System::Windows::Forms::Label^  label5;
 
 
 
@@ -158,6 +160,8 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 				this->wideButton = (gcnew System::Windows::Forms::Button());
 				this->narrowButton = (gcnew System::Windows::Forms::Button());
+				this->label5 = (gcnew System::Windows::Forms::Label());
+				this->label6 = (gcnew System::Windows::Forms::Label());
 				this->boresightGroup0->SuspendLayout();
 				this->groupBox4->SuspendLayout();
 				this->groupBox6->SuspendLayout();
@@ -374,6 +378,8 @@ static GLfloat  markerColor[][4] = {
 				// 
 				// groupBox3
 				// 
+				this->groupBox3->Controls->Add(this->label6);
+				this->groupBox3->Controls->Add(this->label5);
 				this->groupBox3->Controls->Add(this->distancePanel0);
 				this->groupBox3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 					static_cast<System::Byte>(0)));
@@ -390,9 +396,9 @@ static GLfloat  markerColor[][4] = {
 				this->distancePanel0->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
 					| System::Windows::Forms::AnchorStyles::Left) 
 					| System::Windows::Forms::AnchorStyles::Right));
-				this->distancePanel0->Location = System::Drawing::Point(10, 26);
+				this->distancePanel0->Location = System::Drawing::Point(10, 48);
 				this->distancePanel0->Name = L"distancePanel0";
-				this->distancePanel0->Size = System::Drawing::Size(81, 874);
+				this->distancePanel0->Size = System::Drawing::Size(81, 834);
 				this->distancePanel0->TabIndex = 0;
 				// 
 				// groupBox1
@@ -498,6 +504,28 @@ static GLfloat  markerColor[][4] = {
 				this->narrowButton->Text = L"Narrow";
 				this->narrowButton->UseVisualStyleBackColor = true;
 				this->narrowButton->Click += gcnew System::EventHandler(this, &GripAimingForm::narrowButton_Click);
+				// 
+				// label5
+				// 
+				this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
+				this->label5->Location = System::Drawing::Point(10, 26);
+				this->label5->Name = L"label5";
+				this->label5->Size = System::Drawing::Size(80, 22);
+				this->label5->TabIndex = 1;
+				this->label5->Text = L"far";
+				this->label5->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+				// 
+				// label6
+				// 
+				this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Italic, System::Drawing::GraphicsUnit::Point, 
+					static_cast<System::Byte>(0)));
+				this->label6->Location = System::Drawing::Point(11, 885);
+				this->label6->Name = L"label6";
+				this->label6->Size = System::Drawing::Size(80, 22);
+				this->label6->TabIndex = 2;
+				this->label6->Text = L"near";
+				this->label6->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 				// 
 				// GripAimingForm
 				// 
