@@ -25,6 +25,29 @@
 using namespace PsyPhy;
 
 void CodaRTnetNullTracker::Initialize( const char *ini_filename ) {
+	// If there is an .ini file, parse it for serial numbers, server address, etc.
+	if ( ini_filename ) {
+		fOutputDebugString( "CodaRTnetNullTracker: Parsing %s (not really).\n", ini_filename );
+		if ( !FileExists( ini_filename ) ) fAbortMessage( "CodaRTnetNullTracker", "Init file %s does not exist.", ini_filename );
+	}
+
+	// Load rigid body models that we will use to generate fake data.
+	hmd = new CodaPoseTracker();
+	hmd->ReadModelMarkerPositions( "bdy\\hmd.bdy" );
+
+	hand = new CodaPoseTracker();
+	hand->ReadModelMarkerPositions( "bdy\\hand.bdy" );
+
+	chest = new CodaPoseTracker();
+	chest->ReadModelMarkerPositions( "bdy\\chest.bdy" );
+
+	CopyVector( transformTranslation[0], zeroVector );
+	transformTranslation[0][Z] = -2700.0;
+	SetRotationMatrix( transformRotation[0], 0.0, ToRadians( -85.0 ), 0.0 );
+	CopyVector( transformTranslation[1], zeroVector );
+	transformTranslation[1][Z] = -2300.0;
+	SetRotationMatrix( transformRotation[1], 0.0, ToRadians( -88.0 ), 0.0 );
+
 	acquiring = false;
 	overrun = false;
 	nUnits = 2;
@@ -110,10 +133,8 @@ bool CodaRTnetNullTracker::GetCurrentMarkerFrameUnit( MarkerFrame &frame, int se
 
 // Create fake unit transforms. 
 void CodaRTnetNullTracker::GetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {
-	offset[X] = 0.0;
-	offset[Y] = 0.0;
-	offset[Z] = -2000.0;
-	SetRotationMatrix( rotation, 45.0 * (double)( unit + 1), 0.0, 30.0 );
+	CopyVector( offset, transformTranslation[unit] );
+	CopyMatrix( rotation, transformRotation[unit] );
 }
 void CodaRTnetNullTracker::SetUnitTransform( int unit, Vector3 &offset, Matrix3x3 &rotation ) {}
 
@@ -141,9 +162,9 @@ void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {
 	for ( mrk = 8; mrk < 16; mrk++ ) {
 		id = mrk;
 		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, zeroVector );
-		recordedMarkerFrames[unit][index].marker[id].position[Z] -= 300.0;
-		recordedMarkerFrames[unit][index].marker[id].position[Y] -= 250.0;
-		recordedMarkerFrames[unit][index].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
+		//recordedMarkerFrames[unit][index].marker[id].position[Z] -= 300.0;
+		//recordedMarkerFrames[unit][index].marker[id].position[Y] -= 250.0;
+		//recordedMarkerFrames[unit][index].marker[id].position[X] += 100.0 + 200.0 * sin( angle );
 		recordedMarkerFrames[unit][index].marker[id].visibility = true;
 	}
 	for ( mrk = 16; mrk < 24; mrk++ ) {
@@ -151,9 +172,21 @@ void CodaRTnetNullTracker::FakeMovementData( int unit, int index ) {
 		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, zeroVector );
 		recordedMarkerFrames[unit][index].marker[id].visibility = true;
 	}
+
+	for ( mrk = 0; mrk < hmd->nModelMarkers; mrk++ ) {
+		int id = hmd->modelMarker[mrk].id;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, hmd->modelMarker[mrk].position );
+	}
+	for ( mrk = 0; mrk < hand->nModelMarkers; mrk++ ) {
+		int id = hand->modelMarker[mrk].id;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, hand->modelMarker[mrk].position );
+	}
+	for ( mrk = 0; mrk < chest->nModelMarkers; mrk++ ) {
+		int id = chest->modelMarker[mrk].id;
+		CopyVector( recordedMarkerFrames[unit][index].marker[id].position, chest->modelMarker[mrk].position );
+	}
 	// The following code causes intermittent occlusions of the simulated markers.
 	for ( int unit = 0; unit < nUnits; unit++ ) {
-		int mrk;
 		for ( mrk = 0; mrk < MAX_MARKERS; mrk++ ) {
 			if ( ( (mrk + count / 10 ) / 8 ) % 6 == unit ) recordedMarkerFrames[unit][index].marker[mrk].visibility = false;
 			else recordedMarkerFrames[unit][index].marker[mrk].visibility = true;
