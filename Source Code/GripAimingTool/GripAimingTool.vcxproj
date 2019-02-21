@@ -115,6 +115,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DexServices\DexServices.vcxproj">
+      <Project>{8ee947df-d3d6-4548-88d1-2dd46eab049b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ForceRebuild\ForceRebuild.vcxproj">
       <Project>{22a5f628-dc55-43a9-a729-95bd524b7054}</Project>
     </ProjectReference>

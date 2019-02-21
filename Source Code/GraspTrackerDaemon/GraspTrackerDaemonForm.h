@@ -188,9 +188,10 @@ namespace GraspTrackerDaemon {
 			this->exitButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
 			this->exitButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->exitButton->Location = System::Drawing::Point(600, 253);
+			this->exitButton->Location = System::Drawing::Point(450, 206);
+			this->exitButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->exitButton->Name = L"exitButton";
-			this->exitButton->Size = System::Drawing::Size(133, 46);
+			this->exitButton->Size = System::Drawing::Size(100, 37);
 			this->exitButton->TabIndex = 1;
 			this->exitButton->Text = L"Exit";
 			this->exitButton->UseVisualStyleBackColor = true;
@@ -202,52 +203,60 @@ namespace GraspTrackerDaemon {
 			this->groupBox1->Controls->Add(this->label7);
 			this->groupBox1->Controls->Add(this->visibilityTextBox1);
 			this->groupBox1->Controls->Add(this->visibilityTextBox0);
-			this->groupBox1->Location = System::Drawing::Point(231, 12);
+			this->groupBox1->Location = System::Drawing::Point(185, 10);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(502, 94);
+			this->groupBox1->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox1->Size = System::Drawing::Size(401, 76);
 			this->groupBox1->TabIndex = 4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Marker Visibility";
 			// 
 			// label6
 			// 
+			this->label6->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->label6->AutoSize = true;
 			this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label6->Location = System::Drawing::Point(11, 22);
+			this->label6->Location = System::Drawing::Point(3, 18);
+			this->label6->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(144, 20);
+			this->label6->Size = System::Drawing::Size(122, 17);
 			this->label6->TabIndex = 12;
 			this->label6->Text = L"Tracker Camera 1";
 			// 
 			// label7
 			// 
+			this->label7->Anchor = System::Windows::Forms::AnchorStyles::None;
 			this->label7->AutoSize = true;
 			this->label7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label7->Location = System::Drawing::Point(11, 58);
+			this->label7->Location = System::Drawing::Point(3, 47);
+			this->label7->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(144, 20);
+			this->label7->Size = System::Drawing::Size(122, 17);
 			this->label7->TabIndex = 11;
 			this->label7->Text = L"Tracker Camera 2";
 			// 
 			// visibilityTextBox1
 			// 
-			this->visibilityTextBox1->Font = (gcnew System::Drawing::Font(L"Consolas", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->visibilityTextBox1->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->visibilityTextBox1->Location = System::Drawing::Point(161, 53);
+			this->visibilityTextBox1->Location = System::Drawing::Point(131, 39);
+			this->visibilityTextBox1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->visibilityTextBox1->Name = L"visibilityTextBox1";
-			this->visibilityTextBox1->Size = System::Drawing::Size(335, 31);
+			this->visibilityTextBox1->Size = System::Drawing::Size(266, 22);
 			this->visibilityTextBox1->TabIndex = 4;
 			this->visibilityTextBox1->Text = L" 00000000  00000000  00000000 ";
 			// 
 			// visibilityTextBox0
 			// 
-			this->visibilityTextBox0->Font = (gcnew System::Drawing::Font(L"Consolas", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->visibilityTextBox0->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->visibilityTextBox0->Location = System::Drawing::Point(161, 17);
+			this->visibilityTextBox0->Location = System::Drawing::Point(131, 13);
+			this->visibilityTextBox0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->visibilityTextBox0->Name = L"visibilityTextBox0";
-			this->visibilityTextBox0->Size = System::Drawing::Size(335, 31);
+			this->visibilityTextBox0->Size = System::Drawing::Size(266, 22);
 			this->visibilityTextBox0->TabIndex = 3;
 			this->visibilityTextBox0->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -256,9 +265,10 @@ namespace GraspTrackerDaemon {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label2->Location = System::Drawing::Point(37, 60);
+			this->label2->Location = System::Drawing::Point(28, 49);
+			this->label2->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(68, 20);
+			this->label2->Size = System::Drawing::Size(58, 17);
 			this->label2->TabIndex = 6;
 			this->label2->Text = L"Counter";
 			// 
@@ -267,9 +277,10 @@ namespace GraspTrackerDaemon {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label1->Location = System::Drawing::Point(6, 22);
+			this->label1->Location = System::Drawing::Point(4, 18);
+			this->label1->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(99, 20);
+			this->label1->Size = System::Drawing::Size(83, 17);
 			this->label1->TabIndex = 5;
 			this->label1->Text = L"Time Stamp";
 			// 
@@ -279,9 +290,11 @@ namespace GraspTrackerDaemon {
 			this->groupBox2->Controls->Add(this->timeTextBox0);
 			this->groupBox2->Controls->Add(this->label2);
 			this->groupBox2->Controls->Add(this->label1);
-			this->groupBox2->Location = System::Drawing::Point(16, 12);
+			this->groupBox2->Location = System::Drawing::Point(12, 10);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(209, 94);
+			this->groupBox2->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox2->Size = System::Drawing::Size(169, 76);
 			this->groupBox2->TabIndex = 5;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Frame";
@@ -290,9 +303,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->timeTextBox1->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->timeTextBox1->Location = System::Drawing::Point(111, 54);
+			this->timeTextBox1->Location = System::Drawing::Point(96, 43);
+			this->timeTextBox1->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->timeTextBox1->Name = L"timeTextBox1";
-			this->timeTextBox1->Size = System::Drawing::Size(91, 30);
+			this->timeTextBox1->Size = System::Drawing::Size(69, 26);
 			this->timeTextBox1->TabIndex = 7;
 			this->timeTextBox1->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -300,9 +314,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->timeTextBox0->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->timeTextBox0->Location = System::Drawing::Point(111, 18);
+			this->timeTextBox0->Location = System::Drawing::Point(96, 14);
+			this->timeTextBox0->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->timeTextBox0->Name = L"timeTextBox0";
-			this->timeTextBox0->Size = System::Drawing::Size(91, 30);
+			this->timeTextBox0->Size = System::Drawing::Size(69, 26);
 			this->timeTextBox0->TabIndex = 1;
 			this->timeTextBox0->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
 			// 
@@ -314,9 +329,11 @@ namespace GraspTrackerDaemon {
 			this->groupBox3->Controls->Add(this->chestPoseTextBox);
 			this->groupBox3->Controls->Add(this->handPoseTextBox);
 			this->groupBox3->Controls->Add(this->hmdPoseTextBox);
-			this->groupBox3->Location = System::Drawing::Point(16, 112);
+			this->groupBox3->Location = System::Drawing::Point(12, 91);
+			this->groupBox3->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox3->Name = L"groupBox3";
-			this->groupBox3->Size = System::Drawing::Size(717, 134);
+			this->groupBox3->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox3->Size = System::Drawing::Size(574, 109);
 			this->groupBox3->TabIndex = 6;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"Pose Trackers";
@@ -326,9 +343,10 @@ namespace GraspTrackerDaemon {
 			this->label5->AutoSize = true;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label5->Location = System::Drawing::Point(14, 99);
+			this->label5->Location = System::Drawing::Point(10, 80);
+			this->label5->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(53, 20);
+			this->label5->Size = System::Drawing::Size(44, 17);
 			this->label5->TabIndex = 10;
 			this->label5->Text = L"Chest";
 			this->label5->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -338,9 +356,10 @@ namespace GraspTrackerDaemon {
 			this->label4->AutoSize = true;
 			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(18, 62);
+			this->label4->Location = System::Drawing::Point(14, 50);
+			this->label4->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(49, 20);
+			this->label4->Size = System::Drawing::Size(42, 17);
 			this->label4->TabIndex = 9;
 			this->label4->Text = L"Hand";
 			this->label4->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -350,40 +369,44 @@ namespace GraspTrackerDaemon {
 			this->label3->AutoSize = true;
 			this->label3->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label3->Location = System::Drawing::Point(18, 25);
+			this->label3->Location = System::Drawing::Point(14, 20);
+			this->label3->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(49, 20);
+			this->label3->Size = System::Drawing::Size(39, 17);
 			this->label3->TabIndex = 8;
 			this->label3->Text = L"HMD";
 			this->label3->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			// 
 			// chestPoseTextBox
 			// 
-			this->chestPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->chestPoseTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->chestPoseTextBox->Location = System::Drawing::Point(75, 95);
+			this->chestPoseTextBox->Location = System::Drawing::Point(56, 77);
+			this->chestPoseTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->chestPoseTextBox->Name = L"chestPoseTextBox";
-			this->chestPoseTextBox->Size = System::Drawing::Size(636, 29);
+			this->chestPoseTextBox->Size = System::Drawing::Size(514, 22);
 			this->chestPoseTextBox->TabIndex = 7;
 			this->chestPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
 			// handPoseTextBox
 			// 
-			this->handPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->handPoseTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->handPoseTextBox->Location = System::Drawing::Point(75, 58);
+			this->handPoseTextBox->Location = System::Drawing::Point(56, 47);
+			this->handPoseTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->handPoseTextBox->Name = L"handPoseTextBox";
-			this->handPoseTextBox->Size = System::Drawing::Size(636, 29);
+			this->handPoseTextBox->Size = System::Drawing::Size(514, 22);
 			this->handPoseTextBox->TabIndex = 6;
 			this->handPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
 			// hmdPoseTextBox
 			// 
-			this->hmdPoseTextBox->Font = (gcnew System::Drawing::Font(L"Consolas", 10.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+			this->hmdPoseTextBox->Font = (gcnew System::Drawing::Font(L"Courier New", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->hmdPoseTextBox->Location = System::Drawing::Point(75, 21);
+			this->hmdPoseTextBox->Location = System::Drawing::Point(56, 17);
+			this->hmdPoseTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->hmdPoseTextBox->Name = L"hmdPoseTextBox";
-			this->hmdPoseTextBox->Size = System::Drawing::Size(636, 29);
+			this->hmdPoseTextBox->Size = System::Drawing::Size(514, 22);
 			this->hmdPoseTextBox->TabIndex = 5;
 			this->hmdPoseTextBox->Text = L" 00000000  00000000  00000000 ";
 			// 
@@ -392,9 +415,10 @@ namespace GraspTrackerDaemon {
 			this->startButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
 			this->startButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->startButton->Location = System::Drawing::Point(15, 254);
+			this->startButton->Location = System::Drawing::Point(33, 206);
+			this->startButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->startButton->Name = L"startButton";
-			this->startButton->Size = System::Drawing::Size(133, 46);
+			this->startButton->Size = System::Drawing::Size(100, 37);
 			this->startButton->TabIndex = 7;
 			this->startButton->Text = L"Record";
 			this->startButton->UseVisualStyleBackColor = true;
@@ -406,9 +430,10 @@ namespace GraspTrackerDaemon {
 			this->stopButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
 			this->stopButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->stopButton->Location = System::Drawing::Point(154, 254);
+			this->stopButton->Location = System::Drawing::Point(138, 206);
+			this->stopButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->stopButton->Name = L"stopButton";
-			this->stopButton->Size = System::Drawing::Size(133, 46);
+			this->stopButton->Size = System::Drawing::Size(100, 37);
 			this->stopButton->TabIndex = 8;
 			this->stopButton->Text = L"Stop";
 			this->stopButton->UseVisualStyleBackColor = true;
@@ -420,9 +445,10 @@ namespace GraspTrackerDaemon {
 			this->saveButton->FlatStyle = System::Windows::Forms::FlatStyle::System;
 			this->saveButton->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->saveButton->Location = System::Drawing::Point(293, 254);
+			this->saveButton->Location = System::Drawing::Point(242, 206);
+			this->saveButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->saveButton->Name = L"saveButton";
-			this->saveButton->Size = System::Drawing::Size(133, 46);
+			this->saveButton->Size = System::Drawing::Size(100, 37);
 			this->saveButton->TabIndex = 9;
 			this->saveButton->Text = L"Save";
 			this->saveButton->UseVisualStyleBackColor = true;
@@ -447,9 +473,11 @@ namespace GraspTrackerDaemon {
 			this->groupBox4->Controls->Add(this->userTextBox);
 			this->groupBox4->Controls->Add(this->label8);
 			this->groupBox4->Controls->Add(this->label9);
-			this->groupBox4->Location = System::Drawing::Point(16, 306);
+			this->groupBox4->Location = System::Drawing::Point(12, 249);
+			this->groupBox4->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->groupBox4->Name = L"groupBox4";
-			this->groupBox4->Size = System::Drawing::Size(717, 66);
+			this->groupBox4->Padding = System::Windows::Forms::Padding(2, 2, 2, 2);
+			this->groupBox4->Size = System::Drawing::Size(562, 54);
 			this->groupBox4->TabIndex = 10;
 			this->groupBox4->TabStop = false;
 			this->groupBox4->Text = L"Housekeeping  ";
@@ -458,9 +486,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->trackerStatusTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->trackerStatusTextBox->Location = System::Drawing::Point(646, 26);
+			this->trackerStatusTextBox->Location = System::Drawing::Point(512, 21);
+			this->trackerStatusTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->trackerStatusTextBox->Name = L"trackerStatusTextBox";
-			this->trackerStatusTextBox->Size = System::Drawing::Size(52, 30);
+			this->trackerStatusTextBox->Size = System::Drawing::Size(40, 26);
 			this->trackerStatusTextBox->TabIndex = 16;
 			this->trackerStatusTextBox->Text = L"000";
 			this->trackerStatusTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -470,9 +499,10 @@ namespace GraspTrackerDaemon {
 			this->label13->AutoSize = true;
 			this->label13->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label13->Location = System::Drawing::Point(572, 31);
+			this->label13->Location = System::Drawing::Point(455, 25);
+			this->label13->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label13->Name = L"label13";
-			this->label13->Size = System::Drawing::Size(66, 20);
+			this->label13->Size = System::Drawing::Size(57, 17);
 			this->label13->TabIndex = 15;
 			this->label13->Text = L"Tracker";
 			this->label13->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -480,9 +510,10 @@ namespace GraspTrackerDaemon {
 			// clientConnectedButton
 			// 
 			this->clientConnectedButton->AutoSize = true;
-			this->clientConnectedButton->Location = System::Drawing::Point(575, -1);
+			this->clientConnectedButton->Location = System::Drawing::Point(431, -1);
+			this->clientConnectedButton->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->clientConnectedButton->Name = L"clientConnectedButton";
-			this->clientConnectedButton->Size = System::Drawing::Size(136, 21);
+			this->clientConnectedButton->Size = System::Drawing::Size(106, 17);
 			this->clientConnectedButton->TabIndex = 14;
 			this->clientConnectedButton->TabStop = true;
 			this->clientConnectedButton->Text = L"Client Connected";
@@ -492,9 +523,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->scriptTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->scriptTextBox->Location = System::Drawing::Point(490, 26);
+			this->scriptTextBox->Location = System::Drawing::Point(384, 21);
+			this->scriptTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->scriptTextBox->Name = L"scriptTextBox";
-			this->scriptTextBox->Size = System::Drawing::Size(74, 30);
+			this->scriptTextBox->Size = System::Drawing::Size(56, 26);
 			this->scriptTextBox->TabIndex = 13;
 			this->scriptTextBox->Text = L"00000";
 			this->scriptTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -503,9 +535,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->stepTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->stepTextBox->Location = System::Drawing::Point(428, 26);
+			this->stepTextBox->Location = System::Drawing::Point(337, 21);
+			this->stepTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->stepTextBox->Name = L"stepTextBox";
-			this->stepTextBox->Size = System::Drawing::Size(54, 30);
+			this->stepTextBox->Size = System::Drawing::Size(42, 26);
 			this->stepTextBox->TabIndex = 11;
 			this->stepTextBox->Text = L"000";
 			this->stepTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -514,9 +547,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->taskTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->taskTextBox->Location = System::Drawing::Point(315, 26);
+			this->taskTextBox->Location = System::Drawing::Point(248, 21);
+			this->taskTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->taskTextBox->Name = L"taskTextBox";
-			this->taskTextBox->Size = System::Drawing::Size(54, 30);
+			this->taskTextBox->Size = System::Drawing::Size(42, 26);
 			this->taskTextBox->TabIndex = 8;
 			this->taskTextBox->Text = L"000";
 			this->taskTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -526,9 +560,10 @@ namespace GraspTrackerDaemon {
 			this->label10->AutoSize = true;
 			this->label10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label10->Location = System::Drawing::Point(377, 31);
+			this->label10->Location = System::Drawing::Point(299, 25);
+			this->label10->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(43, 20);
+			this->label10->Size = System::Drawing::Size(37, 17);
 			this->label10->TabIndex = 10;
 			this->label10->Text = L"Step";
 			this->label10->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -538,9 +573,10 @@ namespace GraspTrackerDaemon {
 			this->label11->AutoSize = true;
 			this->label11->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label11->Location = System::Drawing::Point(262, 31);
+			this->label11->Location = System::Drawing::Point(208, 25);
+			this->label11->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label11->Name = L"label11";
-			this->label11->Size = System::Drawing::Size(45, 20);
+			this->label11->Size = System::Drawing::Size(39, 17);
 			this->label11->TabIndex = 9;
 			this->label11->Text = L"Task";
 			this->label11->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -549,9 +585,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->protocolTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->protocolTextBox->Location = System::Drawing::Point(200, 26);
+			this->protocolTextBox->Location = System::Drawing::Point(158, 21);
+			this->protocolTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->protocolTextBox->Name = L"protocolTextBox";
-			this->protocolTextBox->Size = System::Drawing::Size(54, 30);
+			this->protocolTextBox->Size = System::Drawing::Size(42, 26);
 			this->protocolTextBox->TabIndex = 7;
 			this->protocolTextBox->Text = L"000";
 			this->protocolTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -560,9 +597,10 @@ namespace GraspTrackerDaemon {
 			// 
 			this->userTextBox->Font = (gcnew System::Drawing::Font(L"Arial", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->userTextBox->Location = System::Drawing::Point(59, 26);
+			this->userTextBox->Location = System::Drawing::Point(44, 21);
+			this->userTextBox->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->userTextBox->Name = L"userTextBox";
-			this->userTextBox->Size = System::Drawing::Size(54, 30);
+			this->userTextBox->Size = System::Drawing::Size(42, 26);
 			this->userTextBox->TabIndex = 1;
 			this->userTextBox->Text = L"000";
 			this->userTextBox->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
@@ -572,9 +610,10 @@ namespace GraspTrackerDaemon {
 			this->label8->AutoSize = true;
 			this->label8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label8->Location = System::Drawing::Point(121, 31);
+			this->label8->Location = System::Drawing::Point(99, 25);
+			this->label8->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(71, 20);
+			this->label8->Size = System::Drawing::Size(60, 17);
 			this->label8->TabIndex = 6;
 			this->label8->Text = L"Protocol";
 			this->label8->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
@@ -584,19 +623,19 @@ namespace GraspTrackerDaemon {
 			this->label9->AutoSize = true;
 			this->label9->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->label9->Location = System::Drawing::Point(6, 31);
+			this->label9->Location = System::Drawing::Point(4, 25);
+			this->label9->Margin = System::Windows::Forms::Padding(2, 0, 2, 0);
 			this->label9->Name = L"label9";
-			this->label9->Size = System::Drawing::Size(45, 20);
+			this->label9->Size = System::Drawing::Size(38, 17);
 			this->label9->TabIndex = 5;
 			this->label9->Text = L"User";
 			this->label9->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			// 
 			// Form1
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->CancelButton = this->exitButton;
-			this->ClientSize = System::Drawing::Size(745, 384);
+			this->ClientSize = System::Drawing::Size(597, 312);
 			this->Controls->Add(this->groupBox4);
 			this->Controls->Add(this->saveButton);
 			this->Controls->Add(this->stopButton);
@@ -606,6 +645,7 @@ namespace GraspTrackerDaemon {
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->exitButton);
 			this->KeyPreview = true;
+			this->Margin = System::Windows::Forms::Padding(2, 2, 2, 2);
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GraspTrackerDaemon";
