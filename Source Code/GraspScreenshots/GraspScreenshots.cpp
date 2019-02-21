@@ -107,7 +107,7 @@ int _tmain(int argc, char *argv[])
 	*  100.0 to 10000.0  depth clipping planes - making this smaller would improve the depth resolution.
 	*/
 	viewpoint = new Viewpoint( 6.0, 70.0, 10.0, 10000.0);
-	viewpoint->SetPosition( 0.0, 0.0, 0.0 );
+	viewpoint->SetPosition( 0.0, 0.0, 150.0 );
 	viewpoint->SetOrientation(0.0, 0.0, 0.0 );
 
 	objects = new GraspGLObjects( init_filename );
