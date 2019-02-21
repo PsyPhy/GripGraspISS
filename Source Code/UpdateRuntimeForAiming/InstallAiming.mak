@@ -5,6 +5,7 @@ EXECUTABLES = \
 	..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe \
 	..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe \
 	..\Grasp\Grasp.ini.src \
+	..\GripAimingTool\GripAimingTool.ini.src \
 	RunAiming.bat.src 
 
 ROOT=..\..
@@ -18,6 +19,7 @@ install: $(EXECUTABLES) InstallAiming.mak
 	mkdir $(ROOT)\InitFiles
 	copy ..\InitFiles\*.* $(ROOT)\InitFiles
 	copy $(ROOT)\InitFiles\EpmRTnet.ini.FM2 $(ROOT)\EpmRTnet.ini
+	copy ..\GripAimingTool\GripAimingTool.ini.src $(ROOT)\GripAimingTool.ini
 	copy ..\$(BUILDCONFIGURATION)\GripAimingTool.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\GraspTrackerDaemon.exe $(DESTINATION)
 	copy ..\$(BUILDCONFIGURATION)\WaitForCodaDaemon.exe $(DESTINATION)

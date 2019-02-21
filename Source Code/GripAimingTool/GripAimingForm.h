@@ -735,6 +735,15 @@ static GLfloat  markerColor[][4] = {
 
 		private: System::Void GripAimingForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 
+					 char *init_file = "GripAimingTool.ini";  
+					 fOutputDebugString( "GripAimingForm (%p): Parsing %s.\n", this, init_file );
+					 FILE *fp = fopen( init_file, "r" );
+					 if ( !fp ) fAbortMessage( "Grip Aiming Tool", "Unable to open configuration file %s", init_file );
+					 fscanf( fp, "%lf %lf %lf %lf", &minDisplayDistance, &minAcceptableDistance, &maxAcceptableDistance, &maxDisplayDistance );
+					 fclose( fp );
+					 fOutputDebugString( "Limits: %f  %f  %f  %f\n",  minDisplayDistance, minAcceptableDistance, maxAcceptableDistance, maxDisplayDistance );
+
+
 					 intializing->Visible = true;
 					 instructions->SelectionStart = 5000;
 					 instructions->SelectionLength = 0;
