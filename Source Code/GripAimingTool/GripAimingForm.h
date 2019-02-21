@@ -694,7 +694,7 @@ static GLfloat  markerColor[][4] = {
 						 if ( frame.marker[mrk].visibility	) {
 							 objectMarker[mrk]->SetColor( markerColor[mrk] );
 							 markerSpheres->component[mrk]->SetPosition( frame.marker[mrk].position );
-							 distanceBars->component[mrk]->SetPosition( 0.0, frame.marker[mrk].position[Y], 5.0 );
+							 distanceBars->component[mrk]->SetPosition( mrk, frame.marker[mrk].position[Y], 5.0 );
 						 }
 						 else objectMarker[mrk]->SetColor( BLACK );
 
@@ -778,14 +778,14 @@ static GLfloat  markerColor[][4] = {
 
 					 // Create objects for the distance display.
 					 distanceWindow = CreateOpenGLWindowInForm( distancePanel0, boresightWindow->hRC );
-					 distanceViewpoint = new OrthoViewpoint( -1.0, 1.0, minDisplayDistance, maxDisplayDistance );
-					 lowerExclusionZone = new Patch( 2.0, minAcceptableDistance - minDisplayDistance );
+					 distanceViewpoint = new OrthoViewpoint( firstTablet - 1.0, lastTablet + 1.0, minDisplayDistance, maxDisplayDistance );
+					 lowerExclusionZone = new Patch( lastTablet - firstTablet + 2.0, minAcceptableDistance - minDisplayDistance );
 					 lowerExclusionZone->SetOffset( 0.0, ( minAcceptableDistance - minDisplayDistance ) / 2.0, 0.0 );
-					 lowerExclusionZone->SetPosition( 0.0, minDisplayDistance, - 10.0 );
+					 lowerExclusionZone->SetPosition( ( lastTablet + firstTablet ) / 2.0, minDisplayDistance, - 10.0 );
 					 lowerExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.5 );
-					 upperExclusionZone = new Patch( 2.0, maxDisplayDistance - maxAcceptableDistance );
+					 upperExclusionZone = new Patch( lastTablet - firstTablet + 2.0, maxDisplayDistance - maxAcceptableDistance );
 					 upperExclusionZone->SetOffset( 0.0, - ( maxDisplayDistance - maxAcceptableDistance ) / 2.0, 0.0 );
-					 upperExclusionZone->SetPosition( 0.0, maxDisplayDistance, - 10.0 );
+					 upperExclusionZone->SetPosition(( lastTablet + firstTablet ) / 2.0, maxDisplayDistance, - 10.0 );
 					 upperExclusionZone->SetColor( 1.0, 0.5, 0.5, 0.5 );
 
 					 // The tablet window is where we show the visibility
