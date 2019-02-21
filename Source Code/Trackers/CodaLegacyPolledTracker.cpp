@@ -34,6 +34,13 @@ using namespace PsyPhy;
 
 void CodaLegacyPolledTracker::Initialize( const char *ini_filename ) {
 
+
+	// If there is an .ini file, parse it for serial numbers, server address, etc.
+	if ( ini_filename ) {
+		fOutputDebugString( "CodaLegacyPolledTracker: Parsing %s.\n", ini_filename );
+		ini_parse( ini_filename, iniHandler, this );
+	}
+
 	// Initialize the CODA hardware.
 	int status = CodaConnectStartAndPrepare( NULL );		// Will get the host address from an Environment variable.
 	fAbortMessageOnCondition( status != CODA_OK, "CodaLegacyPolledTracker", "Error initializing tracker." );
