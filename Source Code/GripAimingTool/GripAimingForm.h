@@ -31,7 +31,7 @@ static GLfloat  markerColor[][4] = {
 	MANIPULANDUM_MARKER_COLOR,
 	MANIPULANDUM_MARKER_COLOR,
 	MANIPULANDUM_MARKER_COLOR,
-	{ 0.0f, 0.0f, 1.0f, 1.0f },
+	{ 0.0f, 0.5f, 0.0f, 1.0f },
 	{ 0.0f, 1.0f, 1.0f, 1.0f },
 	{ 1.0f, 0.0f, 0.8f, 1.0f },
 	{ !.0f, 0.8f, 0.0f, 1.0f },
@@ -273,7 +273,7 @@ static GLfloat  markerColor[][4] = {
 				this->groupBox6->Size = System::Drawing::Size(236, 101);
 				this->groupBox6->TabIndex = 1;
 				this->groupBox6->TabStop = false;
-				this->groupBox6->Text = L"Visibility Stability";
+				this->groupBox6->Text = L"Marker Visibility";
 				// 
 				// label4
 				// 
@@ -314,7 +314,7 @@ static GLfloat  markerColor[][4] = {
 				// leftStabilityMeter0
 				// 
 				this->leftStabilityMeter0->BackColor = System::Drawing::SystemColors::ControlDark;
-				this->leftStabilityMeter0->ForeColor = System::Drawing::Color::Blue;
+				this->leftStabilityMeter0->ForeColor = System::Drawing::Color::Green;
 				this->leftStabilityMeter0->Location = System::Drawing::Point(147, 66);
 				this->leftStabilityMeter0->Maximum = 10;
 				this->leftStabilityMeter0->Name = L"leftStabilityMeter0";
@@ -711,11 +711,11 @@ static GLfloat  markerColor[][4] = {
 					 DrawBoresight( boresightWindow );
 
 					 if ( seatedButton->Checked ) {
-						 tablet->SetOrientation( 0.0, 10.0, 180.0 );
-						 tablet->SetPosition( 250.0, -200.0, 0.0 );
+						 tablet->SetOrientation( 0.0, 40.0, 180.0 );
+						 tablet->SetPosition( 250.0, -300.0, 0.0 );
 					 }
 					 else {
-						 tablet->SetOrientation( - 20.0, 90.0, 0.0 );
+						 tablet->SetOrientation( 0.0, 90.0, 0.0 );
 						 tablet->SetPosition( -220.0, 200.0, 0.0 );
 					 }
 
@@ -843,7 +843,7 @@ static GLfloat  markerColor[][4] = {
 					 }
 					 objectMarker[leftTabletMarker]->SetPosition(    - 220.0,   -270.0,  35.0 );
 					 objectMarker[rightTabletMarker]->SetPosition(     220.0,   -270.0,  35.0 );
-					 objectMarker[upperMastMarker]->SetPosition(     - 220.0,   -140.0, 600.0 );
+					 objectMarker[upperMastMarker]->SetPosition(     - 220.0,   -140.0, 700.0 );
 					 objectMarker[lowerMastMarker]->SetPosition(     - 220.0,   -140.0, 120.0 );
 
 

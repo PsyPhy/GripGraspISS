@@ -120,7 +120,7 @@
   <data name="instructions.Text" xml:space="preserve">
     <value>Adjust the position and orientation of each Tracking Camera, one by one, until:
      - All markers fall within the green zone in the Distance window. 
-     - All 4 Reference Markers are visible and stable (full bars).
+     - All 4 Reference Markers are continuously visible (full bars).
      - The green dot is centered in the crosshairs of the Boresight window.</value>
   </data>
 </root>
