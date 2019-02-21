@@ -22,9 +22,14 @@
 using namespace PsyPhy;
 int main(int argc, char *argv[])
 {
+	char *init_file = "CodaRTnet.ini" ;
+	for ( int arg = 1; arg < argc; arg++ ) {
+		if ( !strcmp( argv[arg], "--epm" ) ) init_file = "EpmRTnet.ini";
+		else fAbortMessage( "WaitForCodaDaemon", "Unrecognized command line argument: %s", argv[arg] );
+	}
 	fprintf( stderr, "Waiting for CodaRTnetDaemon ..." );
 	PsyPhy::CodaRTnetDaemonTracker *codaTracker = new PsyPhy::CodaRTnetDaemonTracker();
-	codaTracker->Initialize();
+	codaTracker->Initialize( init_file );
 	codaTracker->Quit();
 	return 0;
 }
