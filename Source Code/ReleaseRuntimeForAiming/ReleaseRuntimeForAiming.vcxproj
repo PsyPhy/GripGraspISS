@@ -45,7 +45,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="readme.txt" />
+    <None Include="..\..\AimingReleases.log" />
     <None Include="ReleaseAiming.bat" />
   </ItemGroup>
   <ItemGroup>
