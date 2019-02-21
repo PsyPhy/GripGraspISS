@@ -100,7 +100,7 @@ class Tracker : public PsyPhy::VectorsMixin {
 		virtual int		GetNumberOfMarkers( void );
 
 		// These are the core functions that each tracker must provide.
-		virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" ) = 0;
+		virtual void Initialize( const char *ini_filename ) = 0;
 		virtual void StartAcquisition( float max_duration ) = 0;
 		virtual void StopAcquisition( void ) = 0;
 		virtual bool GetAcquisitionState( void ) = 0;

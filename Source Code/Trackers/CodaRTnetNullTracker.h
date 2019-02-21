@@ -15,6 +15,7 @@
 #include "../Useful/fOutputDebugString.h"
 #include "../Useful/Timers.h"
 #include "CodaRTnetTracker.h"
+#include "CodaPoseTracker.h"
 
 namespace PsyPhy {
 
@@ -31,8 +32,16 @@ public:
 
 	bool	fakeMovements;
 
+	CodaPoseTracker	*hmd;
+	CodaPoseTracker	*hand;
+	CodaPoseTracker	*chest;
+
+	Vector3		transformTranslation[MAX_UNITS];
+	Matrix3x3	transformRotation[MAX_UNITS];
+
+
 	CodaRTnetNullTracker( void ) : acquiring(false), fakeMovements(false)  {}
-	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void Initialize( const char *ini_filename );
 	virtual void StartContinuousAcquisition( void );
 	virtual void StartAcquisition( double duration );
 	virtual bool GetAcquisitionState();
@@ -45,7 +54,6 @@ public:
 	virtual void AbortAcquisition( void );
 	virtual void Quit( void );
 	virtual int  Update( void );
-
 	virtual void RestartContinuousAcquisition( void );
 
 };

@@ -480,7 +480,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR command_line, int)
 
 	// Initialize the connection to the CODA tracking system.
 	if ( useCoda ) {
-		codaTracker->Initialize();
+		codaTracker->Initialize( "CodaRTnet.ini" );
 		nCodaUnits = codaTracker->GetNumberOfCodas();
 	}
 

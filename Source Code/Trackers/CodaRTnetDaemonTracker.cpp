@@ -136,6 +136,7 @@ void CodaRTnetDaemonTracker::Initialize( const char *ini_filename ) {
 	// If there is an .ini file, parse it for serial numbers, server address, etc.
 	// As of now, this server does not use any of those parameters, but it might in the future.
 	if ( ini_filename ) {
+		initFilename = _strdup( ini_filename );
 		fOutputDebugString( "CodaRTnetDaemonTracker: Parsing %s.\n", ini_filename );
 		ini_parse( ini_filename, iniHandler, this );
 	}
@@ -227,5 +228,5 @@ void CodaRTnetDaemonTracker::Startup( void ) {
 	// different applications.
 	WinExec( "Executables\\GraspTrackerDaemon.exe" , SW_MINIMIZE );
 	// Re-establish a connection with the daemon.
-	Initialize();
+	Initialize( initFilename );
 }

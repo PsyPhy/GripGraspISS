@@ -207,7 +207,7 @@ protected:
 	}
 
 public:
-	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void Initialize( const char *ini_filename );
 	virtual int  Update( void );
 	virtual void Quit( void );
 

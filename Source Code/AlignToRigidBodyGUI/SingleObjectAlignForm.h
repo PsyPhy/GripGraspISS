@@ -683,7 +683,7 @@ namespace AlignToRigidBodyGUI {
 					 // Wait to make sure that the tracker is up and running so that we can kill it.
 					 Sleep( 5000 );
 
-					 coda->Initialize();
+					 coda->Initialize( "CodaRTnet.ini" );
 
 					 // Send a message to ground as part of housekeeping to show our progress.
 					 dex->SendSubstep( VISIBILITY );

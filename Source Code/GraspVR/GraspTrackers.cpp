@@ -60,10 +60,10 @@ void GraspTrackers::Release( void ) {
 
 // GraspDexTrackers uses trackers based on the Oculus and DEX/CODA tracker.
 
-void GraspDexTrackers::InitializeCodaTrackers( void ) {
+void GraspDexTrackers::InitializeCodaTrackers( const char *init_file ) {
 
 	// Initialize the connection to the CODA tracking system.
-	codaTracker->Initialize();
+	codaTracker->Initialize( init_file );
 	nCodaUnits = codaTracker->nUnits;
 
 	// Start continuous acquisition of Coda marker data for a maximum duration.
@@ -261,10 +261,10 @@ void GraspDexTrackers::WriteAdditionalTrackerData( FILE *fp ) {
 }
 
 
-void GraspDexTrackers::Initialize( void ) {
+void GraspDexTrackers::Initialize( const char *init_file ) {
 
 	// Initialize all of the low-level coda-based pose trackers.
-	InitializeCodaTrackers();
+	InitializeCodaTrackers( init_file );
 
 	//// Create a tracker to control the roll orientation via the mouse.
 	//OculusRemotePoseTracker *oculusRemoteRollTracker;
@@ -289,10 +289,10 @@ void GraspDexTrackers::Initialize( void ) {
 
 // GraspOculusCodaTrackers is a version of GraspTrackers that uses a combination of Coda and Oculus trackers.
 
-void GraspOculusCodaTrackers::Initialize( void ) {
+void GraspOculusCodaTrackers::Initialize( const char *init_file ) {
 
 	// Initialize all of the low-level, coda-based pose trackers.
-	InitializeCodaTrackers();
+	InitializeCodaTrackers( init_file );
 
 	// Create a pose tracker that combines Coda and Oculus data for head tracking.
 	// Note that oculusCodaPoseTracker has the ability to parse a .ini file, so 

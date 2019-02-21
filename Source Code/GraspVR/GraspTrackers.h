@@ -91,7 +91,7 @@ namespace Grasp {
 		static int iniHandler( void *which_instance, const char* section, const char* name, const char* value ) {
 			return 1;
 		}
-		virtual void Initialize( void ) = 0;
+		virtual void Initialize( const char *init_file ) = 0;
 		virtual void Update( void );
 		virtual bool GetCurrentHMDPose( TrackerPose &pose ) {
 			return( hmdTracker->GetCurrentPose( pose ) );
@@ -193,6 +193,7 @@ namespace Grasp {
 				  int error = ini_parse( ini_filename, iniHandler, this );
 				  if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			  }
+			  else fOutputDebugString( "GraspDexTrackers (%p): No .ini file specified.\n", this );
 		  }
 		  ~GraspDexTrackers( void ) {}
 
@@ -213,8 +214,8 @@ namespace Grasp {
 			  fOutputDebugString( "--GraspDexTrackers: Hit when parsing .ini file: section = %s name = %s value = %s\n", section, name, value );
 			  return 1;
 		  }
-		  virtual void Initialize( void );
-		  virtual void InitializeCodaTrackers( void );
+		  virtual void Initialize( const char *init_file );
+		  virtual void InitializeCodaTrackers( const char *init_file );
 		  virtual unsigned int GetTrackerStatus( void );
 		  virtual void Update( void );
 		  virtual void Release( void );
@@ -252,7 +253,7 @@ namespace Grasp {
 				if ( error != 0 ) fAbortMessage( "GraspDexTrackers", "Parsing error %d for file %s.\n", error, ini_filename  );
 			}
 		}
-		void Initialize( void );
+		void Initialize( const char *init_file );
 		void WriteAdditionalColumnHeadings( FILE *fp );
 		void WriteAdditionalTrackerData( FILE *fp );
 	};

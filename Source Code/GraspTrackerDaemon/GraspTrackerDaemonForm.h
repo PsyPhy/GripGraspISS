@@ -34,13 +34,20 @@ namespace GraspTrackerDaemon {
 		Grasp::GraspDexTrackers		*trackers;
 		Grasp::DexServices			*dex;
 
-		char	*dexHost;
+		// IP address of DEX for telemetry
+		char	*dexServicesHost;	
+		// .ini file for the tracker. 
+		// Includes the IP address for the Coda RTnet server.
+		char	*codaInitFile;		
+		// .ini file for additional parameters like pose filtering.
+		// Typically, this is Grasp.ini.
+		char	*applicationInitFile;
 
 		bool recording;
 		unsigned int nPoseSamples;
 		PsyPhy::VectorsMixin	*vm;
 
-		Form1(void) : tracking( CONTINUOUS ), autohide( false ), recording( false ), nPoseSamples( 0 )
+		Form1( array<System::String ^> ^args ) : tracking( CONTINUOUS ), autohide( false ), recording( false ), nPoseSamples( 0 )
 		{
 			InitializeComponent();
 			// By default, the daemon uses a CodaRTnet tracker to interface to the tracking hardware.
@@ -49,10 +56,29 @@ namespace GraspTrackerDaemon {
 			if ( FileExists( "LegacyCoda.flg") ) tracking = LEGACY;
 			if ( FileExists( "PolledCoda.flg") ) tracking = POLLING;
 
-			dexHost = DEX_ETD_SERVER;
+			// Defaults for various parameter settings.
+			dexServicesHost = DEX_ETD_SERVER;
+			codaInitFile = "CodaRTnet.ini";
+			applicationInitFile = "Grasp.ini";
 
 			// Create an object that provides us with vector and matrix capabilities.
 			vm = new VectorsMixin();
+
+			// 
+			// GraspTrackerDaemon also acts as a proxy to transmit information
+			// to the DEX hardware for transmission from the ISS to ground. 
+			// It is not needed when using this system locally, but it will not
+			// fail either if not connected to the DEX hardware. So I just leave
+			// it in place to keep things simple.
+			//
+			// Connect to dex for telemetry and snapshots.
+			//
+			dex = new Grasp::DexServices( dexServicesHost );
+			// Initialize without a log file.
+			dex->Initialize();
+			dex->Connect();
+			dex->InitializeProxySocket();
+
 		}
 
 	protected:
@@ -67,13 +93,11 @@ namespace GraspTrackerDaemon {
 			}
 		}
 		
-	protected: 
+#pragma region Windows Form Designer generated code
+	private: 
 		///
 		/// Designer generated objects
-	private: 
-
 		System::Windows::Forms::RadioButton^  clientConnectedButton;
-
 		System::Windows::Forms::Button^  exitButton;
 		System::Windows::Forms::GroupBox^  groupBox1;
 		System::Windows::Forms::Label^  label2;
@@ -87,7 +111,6 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::Button^  stopButton;
 		System::Windows::Forms::Button^  saveButton;
 		System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
-
 		System::Windows::Forms::GroupBox^  groupBox3;
 		System::Windows::Forms::TextBox^  chestPoseTextBox;
 		System::Windows::Forms::TextBox^  handPoseTextBox;
@@ -95,7 +118,6 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::Label^  label3;
 		System::Windows::Forms::Label^  label5;
 		System::Windows::Forms::Label^  label4;
-
 		System::Windows::Forms::Label^  label6;
 		System::Windows::Forms::Label^  label7;
 		System::Windows::Forms::GroupBox^  groupBox4;
@@ -104,19 +126,15 @@ namespace GraspTrackerDaemon {
 		System::Windows::Forms::Label^  label8;
 		System::Windows::Forms::Label^  label9;
 		System::Windows::Forms::TextBox^  scriptTextBox;
-
 		System::Windows::Forms::TextBox^  stepTextBox;
 		System::Windows::Forms::TextBox^  taskTextBox;
 		System::Windows::Forms::Label^  label10;
 		System::Windows::Forms::Label^  label11;
 		System::Windows::Forms::TextBox^  trackerStatusTextBox;
 		System::Windows::Forms::Label^  label13;
-
-	private:
 		/// Required designer variable.
 		System::ComponentModel::Container ^components;
 
-#pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -624,7 +642,7 @@ namespace GraspTrackerDaemon {
 			Application::DoEvents();
 
 			InitializeSockets();
-			Initialize();
+			InitializeTrackers();
 			Refresh();
 			Application::DoEvents();
 
@@ -634,20 +652,6 @@ namespace GraspTrackerDaemon {
 			CreateRefreshTimer( 2 );
 			StartRefreshTimer();
 
-			// 
-			// GraspTrackerDaemon also acts as a proxy to transmit information
-			// to the DEX hardware for transmission from the ISS to ground. 
-			// It is not needed when using this system locally, but it will not
-			// fail either if not connected to the DEX hardware. So I just leave
-			// it in place to keep things simple.
-			//
-			// Connect to dex for telemetry and snapshots.
-			//
-			dex = new Grasp::DexServices( dexHost );
-			// Initialize without a log file.
-			dex->Initialize();
-			dex->Connect();
-			dex->InitializeProxySocket();
 			Refresh();
 			Application::DoEvents();
 
@@ -773,7 +777,7 @@ namespace GraspTrackerDaemon {
 	
 	private:
 		
-		void Initialize( void );
+		void InitializeTrackers( void );
 		void ProcessCodaInputs( void );
 		void ReleaseCoda( void );
 		void InitializeBroadcastSocket( void );

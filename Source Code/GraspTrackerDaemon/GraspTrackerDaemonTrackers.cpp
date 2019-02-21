@@ -121,7 +121,7 @@ namespace GraspTrackerDaemon {
 #endif
 	}
 
-	void Form1::Initialize( void ) {
+	void Form1::InitializeTrackers( void ) {
 
 		// Select which tracker to use to provide the marker data.
 		// The enum is set when the Form is instantiated. Here we
@@ -130,7 +130,7 @@ namespace GraspTrackerDaemon {
 			
 		case CONTINUOUS:
 			coda = new CodaRTnetContinuousTracker();
-			this->Text = this->Text + " (Coda RTnet Continuous Tracker)";
+			this->Text = this->Text + " (Coda RTnet Continuous Tracker) ";
 			break;
 
 		case LEGACY:
@@ -165,8 +165,8 @@ namespace GraspTrackerDaemon {
 		// we create a null pose tracker just to fill in.
 		PoseTracker *roll = new NullPoseTracker();
 		// Create a set of Pose tracker so that poses can be computed here in the daemon.
-		trackers = new GraspDexTrackers( coda, roll, "Grasp.ini" );
-		trackers->Initialize();
+		trackers = new GraspDexTrackers( coda, roll, applicationInitFile );
+		trackers->Initialize( codaInitFile );
 		// Get the alignment transforms for the tracker units. These will be sent with
 		// each record of marker data. The underlying assumption is that the alignment 
 		// transformations will not change once the daemon is initialized. This may not

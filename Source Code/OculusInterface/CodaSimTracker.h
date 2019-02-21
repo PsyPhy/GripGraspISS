@@ -51,7 +51,7 @@ public:
 		for ( int i = 0; i < MARKER_ARRAYS; i++ ) structure[i].nVertices = 0;
 	}
 
-	void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	void  Initialize( const char *ini_filename );
 	int  Update( void );
 	void Quit( void );
 

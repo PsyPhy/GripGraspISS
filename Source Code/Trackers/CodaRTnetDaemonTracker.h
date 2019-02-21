@@ -35,6 +35,8 @@ private:
 
 	Timer	timer;
 
+	char *initFilename;
+
 public:
 
 	int nFramesPerUnit[MAX_UNITS];
@@ -45,7 +47,7 @@ public:
 	CodaRTnetDaemonTracker( void ) : daemonSocket(0) {
 			daemonAddrLength = sizeof( daemonAddr );
 	}
-	virtual void  Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void  Initialize( const char *ini_filename );
 	virtual void StartAcquisition( float max_seconds );
 	virtual bool GetAcquisitionState( void );
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );

@@ -43,7 +43,7 @@ protected:
 public:
 
 	CodaRTnetContinuousTracker( void ) : acquiring(false), maxContinuous( MAX_CONTINUOUS_DURATION ) {}
-	virtual void Initialize( const char *ini_filename = "CodaRTnet.ini" );
+	virtual void Initialize( const char *ini_filename );
 	virtual void StartAcquisition( float duration );
 	virtual bool GetAcquisitionState();
 	virtual bool GetCurrentMarkerFrameUnit( MarkerFrame &frame, int selected_unit );

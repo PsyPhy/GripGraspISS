@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	MarkerFrame localFrame[2];
 
 	fprintf( stderr, "Initializing coda tracker ..." );
-	codaTracker->Initialize();
+	codaTracker->Initialize( "CodaRTnet.ini" );
 	fprintf( stderr, "OK.\n" );
 
 	nUnits = codaTracker->nUnits;
