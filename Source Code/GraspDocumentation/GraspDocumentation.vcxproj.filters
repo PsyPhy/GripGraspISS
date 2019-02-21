@@ -48,6 +48,54 @@
     <None Include="GeneralInstructions.pdf">
       <Filter>PDF Output</Filter>
     </None>
+    <None Include="GUIScreenshots\Alert.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\BackNext.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\BackSkipExecute.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\ErrorCodeRestartIgnoreRetry.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\Execute.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\GraspTrackerDaemon.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\HistoryDisplay.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\Instruction.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\Login.PNG">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\OculusStartupCheck1.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\OculusStartupCheck2.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\SelectSubsession.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\StartTask.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\StatusDisplay.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\Success.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
+    <None Include="GUIScreenshots\TrackerAlignment.png">
+      <Filter>GUIScreenshots</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />
@@ -55,6 +103,9 @@
   <ItemGroup>
     <Filter Include="PDF Output">
       <UniqueIdentifier>{a2d8b9e3-120b-4c43-a85c-42c1df635933}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUIScreenshots">
+      <UniqueIdentifier>{fa7b184a-05ed-482d-9bae-0ecf3beda071}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -91,6 +91,7 @@
     <None Include="AlignCodaMisalignFinish.status.html" />
     <None Include="AlignCodaMisalignFinish.status.md" />
     <None Include="AlignmentRunning.instruction.html" />
+    <None Include="AlignmentRunning.instruction.md" />
     <None Include="CodaAlignFloating.prompt.html" />
     <None Include="CodaAlignFloating.prompt.md" />
     <None Include="CodaAlignSeated.prompt.html" />

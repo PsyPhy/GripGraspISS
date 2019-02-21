@@ -273,6 +273,9 @@
     <None Include="SetPollingReady.prompt.md">
       <Filter>Install</Filter>
     </None>
+    <None Include="AlignmentRunning.instruction.md">
+      <Filter>Install</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsyPhyMDmacros.h" />

@@ -21,6 +21,22 @@
     <None Include="GraspIntro.md" />
     <None Include="GraspIntro.pdf" />
     <None Include="GraspVRMessages.pdf" />
+    <None Include="GUIScreenshots\Alert.png" />
+    <None Include="GUIScreenshots\BackNext.png" />
+    <None Include="GUIScreenshots\BackSkipExecute.png" />
+    <None Include="GUIScreenshots\ErrorCodeRestartIgnoreRetry.png" />
+    <None Include="GUIScreenshots\Execute.png" />
+    <None Include="GUIScreenshots\GraspTrackerDaemon.png" />
+    <None Include="GUIScreenshots\HistoryDisplay.png" />
+    <None Include="GUIScreenshots\Instruction.png" />
+    <None Include="GUIScreenshots\Login.PNG" />
+    <None Include="GUIScreenshots\OculusStartupCheck1.png" />
+    <None Include="GUIScreenshots\OculusStartupCheck2.png" />
+    <None Include="GUIScreenshots\SelectSubsession.png" />
+    <None Include="GUIScreenshots\StartTask.png" />
+    <None Include="GUIScreenshots\StatusDisplay.png" />
+    <None Include="GUIScreenshots\Success.png" />
+    <None Include="GUIScreenshots\TrackerAlignment.png" />
     <None Include="InstallFloating.pdf" />
     <None Include="InstallSeated.pdf" />
     <None Include="ManualManualInstructions.pdf" />
@@ -37,6 +53,12 @@
     <ClInclude Include="macros.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GraspBMPs\GraspBMPs.vcxproj">
+      <Project>{b36bad29-9483-4cb8-a052-0ecfb8a13b3d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GraspInstructionTypesetting\GraspInstructionTypesetting.vcxproj">
+      <Project>{f238fc55-ff73-4094-8bde-f14a39b1db0a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GraspScreenshots\GraspScreenshots.vcxproj">
       <Project>{3cb4c789-1c1b-4673-88fd-c161257d4c9c}</Project>
     </ProjectReference>
