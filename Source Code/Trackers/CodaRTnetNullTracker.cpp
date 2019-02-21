@@ -42,7 +42,7 @@ void CodaRTnetNullTracker::Initialize( const char *ini_filename ) {
 	chest->ReadModelMarkerPositions( "bdy\\chest.bdy" );
 
 	CopyVector( transformTranslation[0], zeroVector );
-	transformTranslation[0][Z] = -2700.0;
+	transformTranslation[0][Z] = -2000.0;
 	SetRotationMatrix( transformRotation[0], 0.0, ToRadians( -85.0 ), 0.0 );
 	CopyVector( transformTranslation[1], zeroVector );
 	transformTranslation[1][Z] = -2300.0;
