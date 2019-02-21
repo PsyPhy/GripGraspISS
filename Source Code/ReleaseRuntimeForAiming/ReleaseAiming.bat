@@ -41,7 +41,7 @@ echo polled >PolledCODA.flg
 :FINISHED
 REM Keep a record of releases.
 echo %ARCHIVE% >> GripGraspReleases.log
-echo %ARCHIVE% >> GraspReleases.log
+echo %ARCHIVE% >> AimingReleases.log
 
 popd
 
