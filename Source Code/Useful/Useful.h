@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <io.h>
 #include <windows.h>
 
 #define MAX_PATHLENGTH	1024
