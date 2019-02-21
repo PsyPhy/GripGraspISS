@@ -1,0 +1,38 @@
+;;;;;  
+;;;;; Configuration file for the CodaRTnet trackers.
+;;;;; This instance is configured for Flight Model 2 (FM2)
+;;;;; accessed via the EPM LAN.
+;;;;;
+
+[CodaRTnet]
+
+;;; Host running the CodaRTnet server.
+;;; One possibility is via the ETD LAN
+;;; CodaServerHost = 10.80.12.103
+
+;;; The other is via the EPM LAN
+CodaServerHost = 192.168.200.133
+
+;;; In both cases the port is 10111
+CodaServerPort = 10111
+
+;;; Define the serial numbers of each of the coda units.
+CX1SerialNumber0 = 3004
+CX1SerialNumber1 = 3010
+
+;;; Path to the calibration files on the CODA server.
+;;; This is used to copy an alignment file via ftp.
+;;; The DEX machines and AH1007 are set to this path:
+CodaCalFilePath = c:\CodaMotion\RTnet\Binaries\		
+;;; The more traditional path is:
+;;; CodaCalFilePath = c:\CodaMotion\coda\		
+
+;;; CodaRTnetTracker uses ftp to transfer the alignment files.
+;;; These are the parameters for the local ftp client.
+CodaServerLogin = administrator
+CodaServerPassword = dex
+
+;;; Local path to where WinSCP.com resides.
+LocalExecutablesPath = Utils\
+
+

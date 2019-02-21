@@ -28,7 +28,7 @@ pushd ..\..
 
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Executables/*
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Bdy/*.bdy
-%TAR% --append %VERBOSE% --file=%ARCHIVE% CodaRTnet.ini
+%TAR% --append %VERBOSE% --file=%ARCHIVE% EpmRTnet.ini
 %TAR% --append %VERBOSE% --file=%ARCHIVE% Grasp.ini
 REM Force the system to use the polling method to avoid coda desync.
 echo polled >PolledCODA.flg

@@ -20,7 +20,7 @@ REM So clear the console window to hide any message about processes that are not
 cls
 
 REM Start up the CODA system and wait for it to be active. The Daemon window will minimize automatically.
-Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide
+Start "GRASP Tracker" Executables\GraspTrackerDaemon.exe --hide --epm
 
 REM Don't proceed until output from the tracker daemon has been detected.
 Start "Wait For Tracker" /MIN /WAIT Executables\WaitForCodaDaemon.exe  
